@@ -59,9 +59,11 @@ def rentang_tafsir(kasus, hasil_default, varian=None, berkas_perusahaan=(), kb=N
     return rentang
 
 
-def hitung(kasus, varian=None, berkas_perusahaan=(), audit=False, ablasi=(), kb=None, dengan_rentang=False):
+def hitung(kasus, varian=None, berkas_perusahaan=(), audit=False, ablasi=(), kb=None, dengan_rentang=False,
+           per_tanggal_kb=None):
+    """per_tanggal_kb (date): hitung dengan KB sebagaimana DIKETAHUI pada tanggal itu (bitemporal, §6.4)."""
     kb_pakai = kb or kb_aktif(berkas_perusahaan)
-    ev = Evaluasi(kb_pakai, kasus, varian, ablasi=ablasi).jalankan()
+    ev = Evaluasi(kb_pakai, kasus, varian, ablasi=ablasi, per_tanggal_kb=per_tanggal_kb).jalankan()
     hasil = ev.hasil()
     if audit:
         hasil["audit"] = metadata_audit(asumsi=[f"{k}={v}" for k, v in sorted((varian or {}).items())])

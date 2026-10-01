@@ -13,7 +13,8 @@ from .ekspresi import Ekspresi, jumlah_konjungsi
 from .muat import ROOT, KesalahanKB, muat_registri_pembulatan, muat_tabel, muat_yaml, validasi_skema
 
 DIR_REGULASI = ROOT / "kb" / "regulasi"
-BERKAS_ATURAN_REGULASI = ["aturan_umum.yaml", "aturan_ter.yaml", "aturan_per16.yaml", "aturan_dtp.yaml", "klasifikasi.yaml"]
+BERKAS_ATURAN_REGULASI = ["aturan_umum.yaml", "aturan_ter.yaml", "aturan_per16.yaml", "aturan_dtp.yaml", "klasifikasi.yaml",
+                          "pencatatan.yaml"]
 
 
 @dataclass(frozen=True)
@@ -80,6 +81,7 @@ class Aturan:
     prioritas: int = 0
     sumbu_waktu: str = "masa_pajak"
     berkas: str = ""
+    dicatat: object = None   # knowledge time (None = sejak awal KB)
 
     @property
     def spesifisitas(self):
@@ -112,7 +114,7 @@ def _bangun_aturan(d, lapisan, berkas):
             titik_tetap=d.get("titik_tetap", False), prioritas=d.get("prioritas", 0),
             batas_bawah=Ekspresi(d["batas_titik_tetap"]["bawah"], FUNGSI) if d.get("batas_titik_tetap") else None,
             batas_atas=Ekspresi(d["batas_titik_tetap"]["atas"], FUNGSI) if d.get("batas_titik_tetap") else None,
-            sumbu_waktu=d.get("sumbu_waktu", "masa_pajak"), berkas=berkas)
+            sumbu_waktu=d.get("sumbu_waktu", "masa_pajak"), berkas=berkas, dicatat=_tanggal(d.get("dicatat")))
     except (KesalahanKB, PelanggaranPresisi, ValueError) as e:
         raise KesalahanKB(f"{berkas}: aturan {d.get('id')}: {e}") from None
 
@@ -143,6 +145,7 @@ class KnowledgeBase:
     berkas: list = field(default_factory=list)
     komponen: list = field(default_factory=list)
     klasifikasi: list = field(default_factory=list)
+    pencatatan: dict = field(default_factory=dict)
 
     def aturan_untuk(self, fakta):
         return [a for a in self.aturan if a.menghasilkan == fakta]
@@ -177,7 +180,7 @@ def muat_kb(berkas_tambahan=(), berkas_regulasi=None, dir_regulasi=None):
     """dir_regulasi: direktori lapisan regulasi alternatif (dipakai mutation testing E4)."""
     dreg = Path(dir_regulasi or DIR_REGULASI)
     berkas = [dreg / b for b in (berkas_regulasi or BERKAS_ATURAN_REGULASI)] + [Path(b) for b in berkas_tambahan]
-    aturan, komponen, klasifikasi = [], [], []
+    aturan, komponen, klasifikasi, pencatatan = [], [], [], {}
     registri = muat_registri_pembulatan(dreg / "pembulatan.yaml")
     for p in berkas:
         data = _iso(muat_yaml(p))
@@ -196,10 +199,13 @@ def muat_kb(berkas_tambahan=(), berkas_regulasi=None, dir_regulasi=None):
                                              _tanggal(k["berlaku"].get("sampai")), k["sumber"]) for k in data["klasifikasi_wajib"]]
         if data.get("pembulatan"):
             registri.tambah(data["pembulatan"], lapisan)
+        for c in data.get("pencatatan") or []:
+            pencatatan[c["regulasi"]] = _tanggal(c["dicatat"])
     tabel = {n: muat_tabel(n, dreg / "tabel_manifest.yaml") for n in ("ter_bulanan", "tarif_pasal17", "ptkp", "klu_dtp")}
     kb = KnowledgeBase(aturan=aturan, registri=registri,
                        parameter=_muat_parameter(dreg / "parameter.yaml"), tabel=tabel,
-                       berkas=[p.name for p in berkas], komponen=komponen, klasifikasi=klasifikasi)
+                       berkas=[p.name for p in berkas], komponen=komponen, klasifikasi=klasifikasi,
+                       pencatatan=pencatatan)
     verifikasi_statis(kb)
     return kb
 

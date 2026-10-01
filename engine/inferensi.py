@@ -45,7 +45,8 @@ def _normal(v):
 
 
 class Evaluasi:
-    def __init__(self, kb, kasus, varian=None, ablasi=()):
+    def __init__(self, kb, kasus, varian=None, ablasi=(), per_tanggal_kb=None):
+        self.per_tanggal_kb = per_tanggal_kb   # knowledge time: KB sebagaimana diketahui pada tanggal ini
         self.ablasi = set(ablasi)
         if self.ablasi - ABLASI_SAH:
             raise KesalahanKB(f"saklar ablasi tidak dikenal: {sorted(self.ablasi - ABLASI_SAH)}")
@@ -102,6 +103,8 @@ class Evaluasi:
                 if a.sampai is not None:   # hanya versi yang masih berlaku 'sekarang' yang tersisa
                     continue
             elif not a.berlaku_di_tahun(self.tahun):
+                continue
+            if self.per_tanggal_kb is not None and a.dicatat is not None and a.dicatat > self.per_tanggal_kb:
                 continue
             if a.tafsir:
                 v = self.varian.get(a.tafsir)
@@ -469,11 +472,18 @@ class Konteks:
 
 # ---------------------------------------------------------------------- fungsi tabel
 
+def _mulai_ptkp(r):
+    teks = (r.get("berlaku_mulai") or r.get("berlaku") or "2016-01-01")[:10]
+    return date.fromisoformat(teks)
+
+
 def _ptkp(ev, status):
-    for r in ev.kb.tabel["ptkp"]:
-        if r["status"] == status:
-            return r["ptkp_setahun"]
-    raise KesalahanKB(f"status PTKP tidak dikenal: {status}")
+    """PTKP berversi: baris dengan tanggal mulai berlaku terbaru <= awal tahun pajak (PMK 168 Ps. 9(4))."""
+    awal = date(9999, 1, 1) if "A1_tanpa_versi_waktu" in ev.ablasi else date(ev.tahun, 1, 1)
+    kandidat = [r for r in ev.kb.tabel["ptkp"] if r["status"] == status and _mulai_ptkp(r) <= awal]
+    if not kandidat:
+        raise KesalahanKB(f"status PTKP tidak dikenal/berlaku: {status} ({ev.tahun})")
+    return max(kandidat, key=_mulai_ptkp)["ptkp_setahun"]
 
 
 def _kategori_ter(ev, status):
@@ -608,6 +618,12 @@ def _klu(ev, klu, tahun, bulan):
     for r in ev.kb.tabel["klu_dtp"]:
         if r["klu"] != klu or int(r["masa_mulai"][:4]) != tahun:
             continue
+        if ev.per_tanggal_kb is not None:
+            reg = r["regulasi"].split(" Lampiran")[0]
+            if reg not in ev.kb.pencatatan:
+                raise KesalahanKB(f"tanggal pencatatan {reg} tidak diketahui (kb/regulasi/pencatatan.yaml)")
+            if ev.kb.pencatatan[reg] > ev.per_tanggal_kb:
+                continue
         if bulan is None or int(r["masa_mulai"][5:7]) <= bulan <= int(r["masa_akhir"][5:7]):
             return True
     return False

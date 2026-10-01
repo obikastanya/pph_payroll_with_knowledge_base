@@ -2,42 +2,229 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Berkas aturan KB (research_plan.md §6.2)",
   "type": "object",
-  "required": ["lapisan", "aturan"],
+  "required": [
+    "lapisan",
+    "aturan"
+  ],
   "additionalProperties": false,
   "properties": {
-    "lapisan": {"enum": ["regulasi", "perusahaan"]},
-    "keterangan": {"type": "string"},
+    "lapisan": {
+      "enum": [
+        "regulasi",
+        "perusahaan"
+      ]
+    },
+    "keterangan": {
+      "type": "string"
+    },
     "aturan": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "sifat", "berlaku", "lingkup", "menghasilkan", "maka", "tipe_hasil", "sumber"],
+        "required": [
+          "id",
+          "sifat",
+          "berlaku",
+          "lingkup",
+          "menghasilkan",
+          "maka",
+          "tipe_hasil",
+          "sumber"
+        ],
         "additionalProperties": false,
         "properties": {
-          "id": {"type": "string", "pattern": "^[A-Z0-9]+(-[A-Za-z0-9]+)+$"},
-          "sifat": {"enum": ["wajib", "default", "opsional", "tafsir"]},
-          "tafsir": {"type": "string"},
-          "varian": {"type": "string"},
-          "varian_default": {"type": "boolean"},
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Z0-9]+(-[A-Za-z0-9]+)+$"
+          },
+          "sifat": {
+            "enum": [
+              "wajib",
+              "default",
+              "opsional",
+              "tafsir"
+            ]
+          },
+          "tafsir": {
+            "type": "string"
+          },
+          "varian": {
+            "type": "string"
+          },
+          "varian_default": {
+            "type": "boolean"
+          },
           "berlaku": {
-            "type": "object", "required": ["mulai"], "additionalProperties": false,
-            "properties": {"mulai": {"type": "string", "format": "date"}, "sampai": {"type": ["string", "null"]}}
+            "type": "object",
+            "required": [
+              "mulai"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "mulai": {
+                "type": "string",
+                "format": "date"
+              },
+              "sampai": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
           },
-          "sumbu_waktu": {"enum": ["masa_pajak", "periode_iuran"]},
-          "lingkup": {"enum": ["masa", "tahun"]},
-          "menghasilkan": {"type": "string", "pattern": "^_?[a-z][a-z0-9_]*$"},
-          "jika": {"type": "string"},
-          "maka": {"type": "string"},
-          "tipe_hasil": {"enum": ["rupiah", "tarif", "kategori", "bool", "bilangan", "eksak"]},
-          "pembulatan": {"type": "string"},
-          "titik_tetap": {"type": "boolean"},
+          "sumbu_waktu": {
+            "enum": [
+              "masa_pajak",
+              "periode_iuran"
+            ]
+          },
+          "lingkup": {
+            "enum": [
+              "masa",
+              "tahun"
+            ]
+          },
+          "menghasilkan": {
+            "type": "string",
+            "pattern": "^_?[a-z][a-z0-9_]*$"
+          },
+          "jika": {
+            "type": "string"
+          },
+          "maka": {
+            "type": "string"
+          },
+          "tipe_hasil": {
+            "enum": [
+              "rupiah",
+              "tarif",
+              "kategori",
+              "bool",
+              "bilangan",
+              "eksak"
+            ]
+          },
+          "pembulatan": {
+            "type": "string"
+          },
+          "titik_tetap": {
+            "type": "boolean"
+          },
           "batas_titik_tetap": {
-            "type": "object", "required": ["bawah", "atas"], "additionalProperties": false,
-            "properties": {"bawah": {"type": "string"}, "atas": {"type": "string"}}
+            "type": "object",
+            "required": [
+              "bawah",
+              "atas"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "bawah": {
+                "type": "string"
+              },
+              "atas": {
+                "type": "string"
+              }
+            }
           },
-          "prioritas": {"type": "integer"},
-          "sumber": {"type": "string", "minLength": 1},
-          "catatan": {"type": "string"}
+          "prioritas": {
+            "type": "integer"
+          },
+          "sumber": {
+            "type": "string",
+            "minLength": 1
+          },
+          "catatan": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "id": {
+      "type": "string"
+    },
+    "nama": {
+      "type": "string"
+    },
+    "versi": {
+      "type": "string"
+    },
+    "komponen": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "fakta",
+          "jenis",
+          "kategori"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "fakta": {
+            "type": "string"
+          },
+          "jenis": {
+            "type": "string"
+          },
+          "kategori": {
+            "enum": [
+              "teratur",
+              "tidak_teratur",
+              "premi_objek",
+              "natura",
+              "iuran_pengurang",
+              "zakat",
+              "bukan_objek",
+              "tidak_diperhitungkan"
+            ]
+          },
+          "catatan": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pembulatan": {
+      "type": "array"
+    },
+    "klasifikasi_wajib": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "jenis",
+          "kategori",
+          "berlaku",
+          "sumber"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "jenis": {
+            "type": "string"
+          },
+          "kategori": {
+            "type": "string"
+          },
+          "sumber": {
+            "type": "string"
+          },
+          "berlaku": {
+            "type": "object",
+            "required": [
+              "mulai"
+            ],
+            "properties": {
+              "mulai": {
+                "type": "string"
+              },
+              "sampai": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
         }
       }
     }

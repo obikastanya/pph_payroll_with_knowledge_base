@@ -15,7 +15,7 @@ from datetime import date
 from fractions import Fraction
 
 from .angka import PelanggaranPresisi
-from .kb import FAKTA_DASAR_MASA, FAKTA_DASAR_TAHUN, FUNGSI, KesalahanKB, parameter_pada
+from .kb import FAKTA_DASAR_MASA, FAKTA_DASAR_TAHUN, FUNGSI, FUNGSI_KOMPONEN, KesalahanKB, parameter_pada
 from .pembulatan import bulatkan as _bulatkan
 
 BATAS_ITERASI = 10_000
@@ -42,6 +42,7 @@ class Evaluasi:
         self.varian = dict(varian or {})
         self.tahun = kasus["tahun_pajak"]
         self.peringatan = []
+        self._konflik = set()
         kasus = self.kasus = _terapkan_transaksi(kasus, self.peringatan)
         self.masa = sorted(kasus["masa"], key=lambda m: (m["bulan"] is None, m["bulan"] or 0))
         self.bulan = [m["bulan"] for m in self.masa]
@@ -99,11 +100,15 @@ class Evaluasi:
         self.per_fakta = per_fakta
         self.lingkup = {f: ats[0].lingkup for f, ats in per_fakta.items()}
         dasar = FAKTA_DASAR_TAHUN | FAKTA_DASAR_MASA
+        komp_prsh = {k.fakta for k in self.kb.komponen if k.fakta in per_fakta}
         tepi = {}
         for f, ats in per_fakta.items():
             dep = set()
             for a in ats:
-                for n in a.dependensi():
+                deps = set(a.dependensi())
+                if a.maka.fungsi & FUNGSI_KOMPONEN or (a.jika is not None and a.jika.fungsi & FUNGSI_KOMPONEN):
+                    deps |= komp_prsh - {f}
+                for n in deps:
                     if n in dasar:
                         continue
                     if n not in per_fakta:
@@ -336,6 +341,18 @@ def _validasi_input(kasus):
     """Kontrak input (§6.9.5): nominal komponen int >= 0, kategori dikenal; DATA_KURANG menghentikan."""
     from .waktu import InputTidakValid
     kategori_sah = {"teratur", "tidak_teratur", "premi_objek", "natura", "iuran_pengurang", "zakat", "rapel"}
+
+    def tanpa_float(obj, jalur):
+        if isinstance(obj, float):
+            raise InputTidakValid(f"{kasus['id']}: float di input {jalur} ({obj!r}); pakai int rupiah atau string desimal")
+        if isinstance(obj, dict):
+            for kk, vv in obj.items():
+                tanpa_float(vv, f"{jalur}.{kk}")
+        elif isinstance(obj, list):
+            for i, vv in enumerate(obj):
+                tanpa_float(vv, f"{jalur}[{i}]")
+    tanpa_float(kasus.get("data_hr") or {}, "data_hr")
+    tanpa_float(kasus.get("dtp") or {}, "dtp")
     for m in kasus["masa"]:
         for k in m["komponen"]:
             if k.get("kategori") not in kategori_sah:
@@ -413,6 +430,14 @@ class Konteks:
             return total
         if fn == "tolak":
             raise KasusTidakDidukung(f"{self.aturan.id}: {args[0]}")
+        if fn in ("hr", "hr_masa"):
+            return _hr(ev, self.b, fn, args)
+        if fn == "desimal":
+            from .angka import tarif
+            return tarif(args[0])
+        if fn in ("tanggal", "tanggal_masa", "tambah_hari", "geser_bulan", "selisih_hari", "selisih_bulan",
+                  "bulan_dari", "hari_dari", "tahun_dari"):
+            return _fungsi_tanggal(ev, self.b, fn, args)
         raise KesalahanKB(f"fungsi tidak dikenal: {fn}")
 
 
@@ -454,9 +479,32 @@ def _pasal17(ev, pkp, tgl):
     raise KesalahanKB(f"tidak ada tarif Pasal 17 yang berlaku pada {tgl}")
 
 
+def kategori_efektif(ev, kp, b):
+    """Lex superior: klasifikasi wajib regulasi mengalahkan pemetaan kategori perusahaan."""
+    tgl = ev._tanggal(b)
+    wajib = [w for w in ev.kb.klasifikasi if w.jenis == kp.jenis and w.mulai <= tgl and (w.sampai is None or tgl <= w.sampai)]
+    if wajib and wajib[0].kategori != kp.kategori:
+        kunci = ("KONFLIK_WAJIB", kp.fakta)
+        if kunci not in ev._konflik:
+            ev._konflik.add(kunci)
+            ev.peringatan.append({"kode": "KONFLIK_WAJIB", "fakta": kp.fakta, "jenis": kp.jenis,
+                                  "kategori_perusahaan": kp.kategori, "kategori_wajib": wajib[0].kategori,
+                                  "sumber": wajib[0].sumber, "berkas": kp.berkas})
+        return wajib[0].kategori
+    return kp.kategori
+
+
 def _komponen(ev, b, fn, args):
     kategori = args[0]
     total = 0
+    if fn != "komponen_valas" and (len(args) < 2 or fn == "komponen_kode" or args[1] == "bulan"):
+        for kp in ev.kb.komponen:
+            if kp.fakta not in ev.per_fakta or kategori_efektif(ev, kp, b) != kategori:
+                continue
+            if fn == "komponen_kode" and args[1] not in kp.fakta and args[1] not in kp.jenis:
+                continue
+            v = ev.nilai_masa.get(b, {}).get(kp.fakta)
+            total += 0 if v is None else v
     for k in ev.komp.get(b, []):
         if k["kategori"] != kategori:
             continue
@@ -471,6 +519,47 @@ def _komponen(ev, b, fn, args):
         elif fn == "komponen_kode" and args[1] in k["kode"]:
             total += k["nominal"]
     return total
+
+
+def _hr(ev, b, fn, args):
+    data = ev.kasus.get("data_hr") or {}
+    if fn == "hr":
+        if args[0] not in data:
+            raise KesalahanKB(f"data_hr.{args[0]} tidak tersedia (DATA_KURANG)")
+        return data[args[0]]
+    per = (data.get("per_masa") or {}).get(str(b)) or {}
+    if args[0] not in per:
+        if len(args) > 1:
+            return args[1]
+        raise KesalahanKB(f"data_hr.per_masa[{b}].{args[0]} tidak tersedia (DATA_KURANG)")
+    return per[args[0]]
+
+
+def _fungsi_tanggal(ev, b, fn, args):
+    import calendar
+    from datetime import timedelta
+    if fn == "tanggal":
+        return args[0] if isinstance(args[0], date) else date.fromisoformat(args[0])
+    if fn == "tanggal_masa":
+        return date(ev.tahun, b, 1)
+    if fn == "tambah_hari":
+        return args[0] + timedelta(days=args[1])
+    if fn == "geser_bulan":  # setara EDATE: tanggal sama, dipangkas ke akhir bulan bila perlu
+        t, n = args
+        m = t.month - 1 + n
+        y, m = t.year + m // 12, m % 12 + 1
+        return date(y, m, min(t.day, calendar.monthrange(y, m)[1]))
+    if fn == "selisih_hari":
+        return (args[1] - args[0]).days
+    if fn == "selisih_bulan":  # setara DATEDIF(a, b, "M")
+        a, c = args
+        n = (c.year - a.year) * 12 + (c.month - a.month)
+        return n - 1 if c.day < a.day else n
+    if fn == "bulan_dari":
+        return args[0].month
+    if fn == "hari_dari":
+        return args[0].day
+    return args[0].year
 
 
 def _klu(ev, klu, tahun, bulan):

@@ -13,7 +13,7 @@ from .ekspresi import Ekspresi, jumlah_konjungsi
 from .muat import ROOT, KesalahanKB, muat_registri_pembulatan, muat_tabel, muat_yaml, validasi_skema
 
 DIR_REGULASI = ROOT / "kb" / "regulasi"
-BERKAS_ATURAN_REGULASI = ["aturan_umum.yaml", "aturan_ter.yaml", "aturan_per16.yaml", "aturan_dtp.yaml"]
+BERKAS_ATURAN_REGULASI = ["aturan_umum.yaml", "aturan_ter.yaml", "aturan_per16.yaml", "aturan_dtp.yaml", "klasifikasi.yaml"]
 
 
 @dataclass(frozen=True)
@@ -33,7 +33,13 @@ FUNGSI = {
     "jumlah_masa": MetaFungsi(argumen_fakta=True),
     "jumlah_masa_selain_terakhir": MetaFungsi(argumen_fakta=True),
     "tolak": MetaFungsi(),
+    # data HR mentah (lapisan perusahaan) & tanggal
+    "hr": MetaFungsi(), "hr_masa": MetaFungsi(), "desimal": MetaFungsi(),
+    "tanggal": MetaFungsi(), "tanggal_masa": MetaFungsi(), "tambah_hari": MetaFungsi(), "geser_bulan": MetaFungsi(),
+    "selisih_hari": MetaFungsi(), "selisih_bulan": MetaFungsi(), "bulan_dari": MetaFungsi(), "hari_dari": MetaFungsi(),
+    "tahun_dari": MetaFungsi(),
 }
+FUNGSI_KOMPONEN = {"komponen", "komponen_kode", "komponen_valas"}
 
 # Fakta dasar yang disediakan engine dari input kasus (bukan hasil aturan).
 FAKTA_DASAR_TAHUN = {
@@ -111,6 +117,23 @@ def _bangun_aturan(d, lapisan, berkas):
         raise KesalahanKB(f"{berkas}: aturan {d.get('id')}: {e}") from None
 
 
+@dataclass(frozen=True)
+class KomponenPerusahaan:
+    fakta: str
+    jenis: str
+    kategori: str
+    berkas: str
+
+
+@dataclass(frozen=True)
+class KlasifikasiWajib:
+    jenis: str
+    kategori: str
+    mulai: date
+    sampai: object
+    sumber: str
+
+
 @dataclass
 class KnowledgeBase:
     aturan: list
@@ -118,6 +141,8 @@ class KnowledgeBase:
     parameter: dict
     tabel: dict
     berkas: list = field(default_factory=list)
+    komponen: list = field(default_factory=list)
+    klasifikasi: list = field(default_factory=list)
 
     def aturan_untuk(self, fakta):
         return [a for a in self.aturan if a.menghasilkan == fakta]
@@ -150,16 +175,29 @@ def _iso(obj):
 
 def muat_kb(berkas_tambahan=(), berkas_regulasi=None):
     berkas = [DIR_REGULASI / b for b in (berkas_regulasi or BERKAS_ATURAN_REGULASI)] + [Path(b) for b in berkas_tambahan]
-    aturan = []
+    aturan, komponen, klasifikasi = [], [], []
+    registri = muat_registri_pembulatan()
     for p in berkas:
         data = _iso(muat_yaml(p))
         validasi_skema(data, "aturan.schema.json")
+        lapisan = data["lapisan"]
         for d in data["aturan"]:
-            aturan.append(_bangun_aturan(d, data["lapisan"], p.name))
+            aturan.append(_bangun_aturan(d, lapisan, p.name))
+        if data.get("komponen"):
+            if lapisan != "perusahaan":
+                raise KesalahanKB(f"{p.name}: pemetaan komponen hanya boleh di lapisan perusahaan")
+            komponen += [KomponenPerusahaan(k["fakta"], k["jenis"], k["kategori"], p.name) for k in data["komponen"]]
+        if data.get("klasifikasi_wajib"):
+            if lapisan != "regulasi":
+                raise KesalahanKB(f"{p.name}: klasifikasi wajib hanya boleh di lapisan regulasi")
+            klasifikasi += [KlasifikasiWajib(k["jenis"], k["kategori"], _tanggal(k["berlaku"]["mulai"]),
+                                             _tanggal(k["berlaku"].get("sampai")), k["sumber"]) for k in data["klasifikasi_wajib"]]
+        if data.get("pembulatan"):
+            registri.tambah(data["pembulatan"], lapisan)
     tabel = {n: muat_tabel(n) for n in ("ter_bulanan", "tarif_pasal17", "ptkp", "klu_dtp")}
-    kb = KnowledgeBase(aturan=aturan, registri=muat_registri_pembulatan(),
+    kb = KnowledgeBase(aturan=aturan, registri=registri,
                        parameter=_muat_parameter(DIR_REGULASI / "parameter.yaml"), tabel=tabel,
-                       berkas=[p.name for p in berkas])
+                       berkas=[p.name for p in berkas], komponen=komponen, klasifikasi=klasifikasi)
     verifikasi_statis(kb)
     return kb
 
@@ -181,6 +219,11 @@ def verifikasi_statis(kb):
             raise KesalahanKB(f"{a.id}: aturan titik_tetap wajib punya batas_titik_tetap (bawah/atas) agar Tarski berlaku")
         if a.sampai is not None and a.sampai < a.mulai:
             raise KesalahanKB(f"{a.id}: masa berlaku terbalik")
+    for k in kb.komponen:
+        if k.fakta not in per_fakta:
+            raise KesalahanKB(f"komponen perusahaan {k.fakta} tidak dihasilkan aturan mana pun")
+        if per_fakta[k.fakta][0].lingkup != "masa" or per_fakta[k.fakta][0].tipe_hasil != "rupiah":
+            raise KesalahanKB(f"komponen perusahaan {k.fakta} wajib fakta masa bertipe rupiah")
     for fakta, daftar in per_fakta.items():
         lingkup = {a.lingkup for a in daftar}
         if len(lingkup) > 1:

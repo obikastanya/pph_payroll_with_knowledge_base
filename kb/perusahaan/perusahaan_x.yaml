@@ -1,0 +1,253 @@
+# Lapisan Kebijakan Perusahaan — "Perusahaan X" (anonim), direkonstruksi dari payroll_calculator.xlsx v8.
+# xlsx hanya REFERENSI (bisa salah); aturan di sini menyatakan kebijakan perusahaan, sedangkan aturan
+# pajak tetap milik lapisan regulasi. Rujukan sel: research_plan.md Lampiran D / dataset/02_studi_kasus.
+lapisan: perusahaan
+id: perusahaan_x
+nama: Perusahaan X
+versi: "2023.8"
+
+pembulatan:
+  - id: PX-BULAT-PRO
+    titik: "setiap komponen hasil prorata / persentase (gaji, tunjangan, premi & iuran BPJS, THR, kompensasi)"
+    satuan: 1
+    mode: setengah_menjauhi_nol
+    urutan: per_komponen
+    status: kebijakan
+    dasar: "Excel ROUND(x, 0) per baris pada xlsx v8 (temuan K-12)"
+
+komponen:
+  - {fakta: px_gaji, jenis: gaji, kategori: teratur}
+  - {fakta: px_tunjangan, jenis: tunjangan, kategori: teratur}
+  - {fakta: px_premi_jkk, jenis: premi_jkk, kategori: premi_objek}
+  - {fakta: px_premi_jkm, jenis: premi_jkm, kategori: premi_objek}
+  - {fakta: px_premi_kes, jenis: premi_jkn, kategori: premi_objek}
+  - {fakta: px_premi_jht_pk, jenis: iuran_jht_pemberi_kerja, kategori: bukan_objek}
+  - {fakta: px_premi_jp_pk, jenis: iuran_jp_pemberi_kerja, kategori: bukan_objek}
+  - {fakta: px_iuran_jht_pg, jenis: iuran_jht_pegawai, kategori: iuran_pengurang}
+  - {fakta: px_iuran_jp_pg, jenis: iuran_jp_pegawai, kategori: iuran_pengurang}
+  - {fakta: px_iuran_kes_pg, jenis: iuran_jkn_pegawai, kategori: tidak_diperhitungkan}
+  - {fakta: px_thr, jenis: thr, kategori: tidak_teratur}
+  - {fakta: px_kompensasi, jenis: insentif_kompensasi, kategori: tidak_teratur}
+  - {fakta: px_ota, jenis: insentif_ota, kategori: tidak_teratur}
+  - {fakta: px_lembur, jenis: lembur, kategori: tidak_teratur, catatan: "keputusan perusahaan (xlsx change log v5) -> diuji terhadap klasifikasi wajib"}
+  - {fakta: px_komisi, jenis: komisi, kategori: tidak_teratur, catatan: "tafsir K-03: komisi periodik vs tidak teratur"}
+
+aturan:
+  # ---------------------------------------------------------------- gaji & kenaikan gaji
+  - id: PX-NAIK-01
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: px_bulan_naik
+    maka: "bulan_dari(tanggal(hr('kenaikan_tanggal'))) if tahun_dari(tanggal(hr('kenaikan_tanggal'))) == tahun_pajak else 0"
+    tipe_hasil: bilangan
+    sumber: "xlsx v8 parameter DP14 (Appraisal Date)"
+  - id: PX-NAIK-02
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: px_hari_naik
+    maka: "hari_dari(tanggal(hr('kenaikan_tanggal')))"
+    tipe_hasil: bilangan
+    sumber: "xlsx v8 DP14"
+  - id: PX-GAJI-01
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_gaji_berlaku
+    maka: "hr('gaji_pokok') + (hr('kenaikan_nominal') if px_bulan_naik > 0 and (bulan > px_bulan_naik or (bulan == px_bulan_naik and px_hari_naik == 1)) else 0)"
+    tipe_hasil: rupiah
+    sumber: "xlsx v8 baris 5/9-11 (gaji lama sebelum & pada bulan kenaikan bila tanggal > 1)"
+  - id: PX-GAJI-02
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_gaji
+    maka: "px_gaji_berlaku * hr_masa('hk_aktual') / hr_masa('hk_penuh')"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "xlsx v8 baris 5: gaji x hari kerja aktual / hari kerja penuh"
+  - id: PX-GAJI-03
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_gaji
+    jika: "bulan == px_bulan_naik and px_hari_naik > 1"
+    maka: "(hr('gaji_pokok') * hr('kenaikan_hk_sebelum') + (hr('gaji_pokok') + hr('kenaikan_nominal')) * hr('kenaikan_hk_sesudah')) / hr_masa('hk_penuh')"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "xlsx v8 baris 5 & DP15/DP16 (kenaikan di tengah bulan dipecah per hari kerja aktual)"
+
+  # ---------------------------------------------------------------- tunjangan (Fixed vs Prorate)
+  - id: PX-TUNJ-01
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_tunjangan
+    maka: "hr('tunjangan_tetap_lama') + hr('tunjangan_prorata_lama') * hr_masa('hk_aktual') / hr_masa('hk_penuh')"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "xlsx v8 baris 8; sheet Allowance A1:C5 (sebelum kenaikan)"
+  - id: PX-TUNJ-02
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_tunjangan
+    jika: "px_bulan_naik > 0 and (bulan > px_bulan_naik or (bulan == px_bulan_naik and px_hari_naik == 1))"
+    maka: "hr('tunjangan_tetap_baru') + hr('tunjangan_prorata_baru') * hr_masa('hk_aktual') / hr_masa('hk_penuh')"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "xlsx v8 baris 8; sheet Allowance E5:G9 (sesudah kenaikan)"
+  - id: PX-TUNJ-03
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_tunjangan
+    jika: "bulan == px_bulan_naik and px_hari_naik > 1"
+    maka: "(hr('tunjangan_tetap_lama') * hr('kenaikan_hari_sebelum') + hr('tunjangan_prorata_lama') * hr('kenaikan_hk_sebelum') + hr('tunjangan_tetap_baru') * hr('kenaikan_hari_sesudah') + hr('tunjangan_prorata_baru') * hr('kenaikan_hk_sesudah')) / hr_masa('hk_penuh')"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "xlsx v8 baris 8 (bulan kenaikan: Fixed x hari total, Prorate x hari aktual; sheet Allowance G2:H3)"
+
+  # ---------------------------------------------------------------- BPJS (tarif & batas dari lapisan regulasi)
+  - id: PX-BPJS-00
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: _px_tk_aktif
+    maka: "bulan >= hr('bpjs_tk_mulai_bulan')"
+    tipe_hasil: bool
+    sumber: "xlsx v8 DP37 (BPJS TK registered date)"
+  - id: PX-BPJS-00K
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: _px_kes_aktif
+    maka: "bulan >= hr('bpjs_kes_mulai_bulan') and not (masa_terakhir and bulan_terakhir != 12)"
+    tipe_hasil: bool
+    sumber: "xlsx v8 DP36; change log v5: BPJS Kes tidak dibayar pada bulan resign (resign sungguhan, bukan akhir tahun -> K-04)"
+  - id: PX-BPJS-JKK
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_premi_jkk
+    maka: "persen(hr('kelas_jkk_persen')) * px_gaji_berlaku if _px_tk_aktif else 0"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "PP 44/2015 Ps. 16(1) (kelas risiko perusahaan); dasar upah = gaji pokok (kebijakan, temuan K-07)"
+  - id: PX-BPJS-JKM
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_premi_jkm
+    maka: "parameter('jkm_pk_persen') / 100 * px_gaji_berlaku if _px_tk_aktif else 0"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "PP 44/2015 Ps. 18(1)"
+  - id: PX-BPJS-KES
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_premi_kes
+    maka: "parameter('kes_pk_persen') / 100 * min(px_gaji_berlaku, parameter('kes_batas_upah')) if _px_kes_aktif else 0"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "Perpres 75/2019 jo. 59/2024"
+  - id: PX-BPJS-JHTPK
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_premi_jht_pk
+    maka: "parameter('jht_pk_persen') / 100 * px_gaji_berlaku if _px_tk_aktif else 0"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "PP 46/2015 Ps. 16(1)"
+  - id: PX-BPJS-JPPK
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_premi_jp_pk
+    maka: "parameter('jp_pk_persen') / 100 * min(px_gaji_berlaku, parameter('jp_batas_upah')) if _px_tk_aktif else 0"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "PP 45/2015 Ps. 28-29 (batas upah versi tanggal; xlsx menanam 9.559.600 untuk seluruh 2023 -> temuan K-06)"
+  - id: PX-BPJS-JHTPG
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_iuran_jht_pg
+    maka: "parameter('jht_pg_persen') / 100 * px_gaji_berlaku if _px_tk_aktif else 0"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "PP 46/2015 Ps. 16(2)"
+  - id: PX-BPJS-JPPG
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_iuran_jp_pg
+    maka: "parameter('jp_pg_persen') / 100 * min(px_gaji_berlaku, parameter('jp_batas_upah')) if _px_tk_aktif else 0"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "PP 45/2015 Ps. 28-29"
+  - id: PX-BPJS-KESPG
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_iuran_kes_pg
+    maka: "parameter('kes_pg_persen') / 100 * min(px_gaji_berlaku, parameter('kes_batas_upah')) if _px_kes_aktif else 0"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "Perpres 75/2019 jo. 59/2024"
+
+  # ---------------------------------------------------------------- THR, kompensasi, OTA, lembur, komisi
+  - id: PX-THR-00
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: px_bulan_thr
+    maka: "bulan_dari(min(tanggal(hr('tanggal_thr_bayar')), tanggal(hr('tanggal_lebaran'))))"
+    tipe_hasil: bilangan
+    sumber: "REG-WAKTU-01: masa = saat terutang (dibayar atau terutang, mana lebih dahulu); xlsx memakai bulan Lebaran (temuan K-11)"
+  - id: PX-THR-01
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_thr
+    jika: "bulan == px_bulan_thr"
+    maka: "(hr('gaji_pokok') + (hr('kenaikan_nominal') if geser_bulan(tanggal(hr('tanggal_lebaran')), -1) > tanggal(hr('kenaikan_tanggal')) else 0)) * min(selisih_hari(tanggal(hr('tanggal_masuk')), tanggal(hr('tanggal_lebaran'))), selisih_hari(geser_bulan(tambah_hari(tanggal(hr('tanggal_lebaran')), 1), -12), tanggal(hr('tanggal_lebaran')))) / selisih_hari(geser_bulan(tambah_hari(tanggal(hr('tanggal_lebaran')), 1), -12), tanggal(hr('tanggal_lebaran')))"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "xlsx v8 baris 34: gaji pokok x min(hari kerja s.d. Lebaran, hari setahun) / hari setahun (prorata per hari; bandingkan Permenaker 6/2016 -> temuan K-08/K-09)"
+  - id: PX-KOMP-01
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_kompensasi
+    maka: "desimal(hr_masa('kompensasi_persen', '0')) * hr('gaji_pokok') * min(selisih_bulan(tanggal(hr('tanggal_masuk_awal_bulan')), tanggal_masa()) + 1, 12) / 12"
+    pembulatan: PX-BULAT-PRO
+    tipe_hasil: rupiah
+    sumber: "xlsx v8 baris 36; sheet Compensation (persen x gaji pokok x min(bulan masa kerja, 12)/12)"
+  - id: PX-OTA-01
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_ota
+    maka: "hr_masa('ota', 0)"
+    tipe_hasil: rupiah
+    sumber: "xlsx v8 baris 38; sheet OTA"
+  - id: PX-LEMBUR-01
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_lembur
+    maka: "hr_masa('lembur', 0)"
+    tipe_hasil: rupiah
+    sumber: "xlsx v8 baris 40; sheet Overtime"
+  - id: PX-KOMISI-01
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_komisi
+    maka: "hr_masa('komisi', 0)"
+    tipe_hasil: rupiah
+    sumber: "xlsx v8 baris 42; sheet Commission"

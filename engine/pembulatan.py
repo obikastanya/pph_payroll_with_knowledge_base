@@ -112,6 +112,18 @@ class RegistriPembulatan:
                 alternatif=tuple(d.get("alternatif") or ())))
         return cls(entri)
 
+    def tambah(self, data, lapisan):
+        """Entri registri dari lapisan perusahaan (status wajib kebijakan/tafsir; tidak boleh menimpa)."""
+        for d in data:
+            e = EntriPembulatan(id=d["id"], titik=d["titik"], satuan=d["satuan"], mode=d["mode"], urutan=d["urutan"],
+                                status=d["status"], dasar=d["dasar"], alternatif=tuple(d.get("alternatif") or ()))
+            e.validasi()
+            if e.id in self._entri:
+                raise PelanggaranPresisi(f"entri pembulatan {e.id} dari lapisan {lapisan} menimpa entri yang ada")
+            if lapisan == "perusahaan" and e.status == "wajib":
+                raise PelanggaranPresisi(f"{e.id}: lapisan perusahaan tidak boleh mendeklarasikan pembulatan 'wajib'")
+            self._entri[e.id] = e
+
     def __contains__(self, id_):
         return id_ in self._entri
 

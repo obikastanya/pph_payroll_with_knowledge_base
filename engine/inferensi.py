@@ -41,6 +41,8 @@ class Evaluasi:
         self.kasus = kasus
         self.varian = dict(varian or {})
         self.tahun = kasus["tahun_pajak"]
+        self.peringatan = []
+        kasus = self.kasus = _terapkan_transaksi(kasus, self.peringatan)
         self.masa = sorted(kasus["masa"], key=lambda m: (m["bulan"] is None, m["bulan"] or 0))
         self.bulan = [m["bulan"] for m in self.masa]
         self.komp = {m["bulan"]: m["komponen"] for m in self.masa}
@@ -48,7 +50,6 @@ class Evaluasi:
         self.dasar_tahun = self._fakta_dasar()
         self.nilai_tahun = {}
         self.nilai_masa = {b: {} for b in self.bulan}
-        self.peringatan = []
         self.iterasi_titik_tetap = []
         self.aturan = self._pilih_aturan()
         self.urutan = self._urutan_evaluasi()
@@ -300,6 +301,35 @@ class Evaluasi:
         jejak = [self._jejak[k] for k in sorted(self._jejak, key=lambda k: (k[1] is None, k[1] or 0, k[0]))]
         return {"per_masa": per, "tahunan": tahun, "jejak": jejak, "peringatan": self.peringatan,
                 "titik_tetap": self.iterasi_titik_tetap, "varian": dict(self.varian)}
+
+
+def _terapkan_transaksi(kasus, peringatan):
+    """REG-WAKTU-01 (§6.9.4): transaksi bertanggal -> masa pajak = bulan saat terutang.
+
+    Transaksi yang terutang di tahun lain dikeluarkan (peringatan TRANSAKSI_TAHUN_LAIN); transaksi
+    di bulan tanpa masa kerja menjadi galat input (tidak ditebak).
+    """
+    import copy
+    from .waktu import InputTidakValid, TransaksiPenghasilan
+    daftar = kasus.get("transaksi") or []
+    if not daftar:
+        return kasus
+    k = copy.deepcopy(kasus)
+    masa = {m["bulan"]: m for m in k["masa"]}
+    for d in daftar:
+        t = TransaksiPenghasilan.dari_data(d)
+        tahun, bulan = t.masa_pajak
+        if tahun != k["tahun_pajak"]:
+            peringatan.append({"kode": "TRANSAKSI_TAHUN_LAIN", "komponen": t.komponen, "masa_pajak": f"{tahun}-{bulan:02d}",
+                               "aturan": "REG-WAKTU-01", "tafsir": t.tafsir_waktu()})
+            continue
+        if bulan not in masa:
+            raise InputTidakValid(f"{k['id']}: transaksi {t.komponen} terutang {tahun}-{bulan:02d} di luar masa kerja")
+        masa[bulan]["komponen"].append({"kode": d["komponen"], "kategori": d["kategori"], "satuan_periode": "bulan",
+                                        "nominal": t.nominal, "asal": "transaksi", "saat_terutang": t.saat_terutang.isoformat()})
+        if t.tafsir_waktu():
+            peringatan.append({"kode": "AMBIGU_TAFSIR", "aturan": "WAKTU-P16-01", "komponen": t.komponen})
+    return k
 
 
 def _validasi_input(kasus):

@@ -251,3 +251,71 @@ aturan:
     maka: "hr_masa('komisi', 0)"
     tipe_hasil: rupiah
     sumber: "xlsx v8 baris 42; sheet Commission"
+
+  # ---------------------------------------------------------------- slip gaji: take home pay (THP)
+  - id: PX-THP-00
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_penghasilan_tunai
+    maka: "px_gaji + px_tunjangan + atau('px_thr', 0) + px_kompensasi + px_ota + px_lembur + px_komisi"
+    tipe_hasil: rupiah
+    sumber: "slip gaji: komponen yang dibayar tunai ke pegawai (premi BPJS perusahaan tidak dibayar ke pegawai)"
+  - id: PX-THP-GU0
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: px_tunjangan_pajak_tunai
+    maka: "0"
+    tipe_hasil: rupiah
+    sumber: "gross-up rezim PER-16 tidak dimodelkan (README: di luar model)"
+  - id: PX-THP-GU1
+    sifat: opsional
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: px_tunjangan_pajak_tunai
+    maka: "atau('tunjangan_pajak', 0)"
+    tipe_hasil: rupiah
+    sumber: "gross-up: tunjangan pajak dibayarkan sebagai penghasilan (PMK 168/2023 Ps. 8(2)a)"
+  - id: PX-THP-DTP0
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01, sampai: 2024-12-31}
+    lingkup: masa
+    menghasilkan: px_dtp_tunai
+    maka: "0"
+    tipe_hasil: rupiah
+    sumber: "belum ada fasilitas PPh 21 DTP pegawai sebelum 2025"
+  - id: PX-THP-DTP1
+    sifat: opsional
+    berlaku: {mulai: 2025-01-01, sampai: 2026-12-31}
+    lingkup: masa
+    menghasilkan: px_dtp_tunai
+    maka: "atau('pph21_dtp', 0)"
+    tipe_hasil: rupiah
+    sumber: "PMK 10/2025 Ps. 5(3) & PMK 105/2025: PPh 21 DTP wajib dibayarkan tunai kepada pegawai"
+  - id: PX-THP-DTP2
+    sifat: opsional
+    berlaku: {mulai: 2027-01-01}
+    lingkup: masa
+    menghasilkan: px_dtp_tunai
+    maka: "0"
+    tipe_hasil: rupiah
+    sumber: "fasilitas DTP yang dikodifikasi berakhir 2026-12-31"
+  - id: PX-THP-01
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_thp
+    jika: "metode != 'ditanggung_pemberi_kerja'"
+    maka: "px_penghasilan_tunai + px_tunjangan_pajak_tunai - px_iuran_jht_pg - px_iuran_jp_pg - px_iuran_kes_pg - pph21 + px_dtp_tunai"
+    tipe_hasil: rupiah
+    sumber: "slip gaji: tunai - iuran pegawai - PPh 21 dipotong (lebih bayar masa terakhir dikembalikan, PMK 168/2023 Ps. 17); PPh 21 DTP dibayarkan tunai ke pegawai (PMK 10/2025 Ps. 5(3))"
+  - id: PX-THP-02
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_thp
+    jika: "metode == 'ditanggung_pemberi_kerja'"
+    maka: "px_penghasilan_tunai - px_iuran_jht_pg - px_iuran_jp_pg - px_iuran_kes_pg"
+    tipe_hasil: rupiah
+    sumber: "slip gaji: PPh 21 ditanggung pemberi kerja tidak dipotong dari pegawai"

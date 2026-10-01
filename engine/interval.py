@@ -102,6 +102,19 @@ def tabel_pasal17(baris, rezim="UU HPP"):
         [Lapisan(b["pkp_batas_bawah"], b["pkp_batas_atas"], b["tarif_persen"]) for b in pilih])
 
 
+def rincian_progresif(tabel, pkp):
+    """Fasilitas penjelasan: [(bawah, atas|None, tarif, dasar_kena, pajak)] per lapisan; Σ pajak == pajak_progresif."""
+    if isinstance(pkp, bool) or not isinstance(pkp, int) or pkp < 0:
+        raise PelanggaranPresisi(f"PKP wajib int >= 0: {pkp!r}")
+    hasil = []
+    for l in tabel.lapisan:
+        if pkp <= l.bawah:
+            break
+        atas = pkp if l.atas is None else min(pkp, l.atas)
+        hasil.append((l.bawah, l.atas, l.tarif, atas - l.bawah, (atas - l.bawah) * l.tarif))
+    return hasil
+
+
 def pajak_progresif(tabel, pkp):
     """Pajak progresif eksak (Fraction) atas pkp int: Σ tarif_i × bagian pkp di lapisan i."""
     if isinstance(pkp, bool) or not isinstance(pkp, int) or pkp < 0:

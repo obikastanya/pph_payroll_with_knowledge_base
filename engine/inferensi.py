@@ -65,6 +65,7 @@ class Evaluasi:
         self.nilai_tahun = {}
         self.nilai_masa = {b: {} for b in self.bulan}
         self.iterasi_titik_tetap = []
+        self.rincian_p17 = {}
         self.aturan = self._pilih_aturan()
         self.urutan = self._urutan_evaluasi()
 
@@ -331,8 +332,13 @@ class Evaluasi:
             per[b] = {f: _keluaran(v) for f, v in self.nilai_masa[b].items() if v is not None and not f.startswith("_")}
         tahun = {f: _keluaran(v) for f, v in self.nilai_tahun.items() if v is not None and not f.startswith("_")}
         jejak = [self._jejak[k] for k in sorted(self._jejak, key=lambda k: (k[1] is None, k[1] or 0, k[0]))]
+        rincian = [{"fakta": f, "bulan": b, "pkp": pkp, "rezim": rezim,
+                    "lapisan": [{"bawah": lo, "atas": hi, "tarif": str(t), "dasar": dasar,
+                                 "pajak": pj.numerator if pj.denominator == 1 else str(pj)}
+                                for lo, hi, t, dasar, pj in rinci]}
+                   for (f, b), (pkp, rezim, rinci) in sorted(self.rincian_p17.items(), key=lambda kv: (kv[0][1] is None, kv[0][1] or 0, kv[0][0]))]
         return {"per_masa": per, "tahunan": tahun, "jejak": jejak, "peringatan": self.peringatan,
-                "titik_tetap": self.iterasi_titik_tetap, "varian": dict(self.varian)}
+                "titik_tetap": self.iterasi_titik_tetap, "varian": dict(self.varian), "rincian_pasal17": rincian}
 
 
 def _terapkan_transaksi(kasus, peringatan, tanpa_tiga_tanggal=False):
@@ -436,7 +442,9 @@ class Konteks:
         if fn == "tarif_ter":
             return _tarif_ter(ev, args[0], args[1], self._tgl())
         if fn == "pasal17":
-            return _pasal17(ev, args[0], self._tgl())
+            total, rezim, rinci = _pasal17(ev, args[0], self._tgl(), dengan_rincian=True)
+            ev.rincian_p17[(self.aturan.menghasilkan, self.b)] = (args[0], rezim, rinci)   # fasilitas penjelasan
+            return total
         if fn in ("komponen", "komponen_kode", "komponen_valas"):
             return _komponen(ev, self.b, fn, args)
         if fn == "dtp_sektor_tahun":
@@ -507,8 +515,8 @@ def _tarif_ter(ev, kategori, bruto, tgl):
     return ev._cache_ter[kunci].cari(bruto).tarif
 
 
-def _pasal17(ev, pkp, tgl):
-    from .interval import pajak_progresif, tabel_pasal17
+def _pasal17(ev, pkp, tgl, dengan_rincian=False):
+    from .interval import pajak_progresif, rincian_progresif, tabel_pasal17
     if "A1_tanpa_versi_waktu" in ev.ablasi:
         tgl = date(9999, 12, 1)
     for rezim in ("UU HPP", "UU 36/2008 (pra-HPP)"):
@@ -516,7 +524,10 @@ def _pasal17(ev, pkp, tgl):
         mulai = date.fromisoformat(b[0]["berlaku_mulai"])
         sampai = b[0]["berlaku_sampai"] and date.fromisoformat(b[0]["berlaku_sampai"])
         if mulai <= tgl and (not sampai or tgl <= sampai):
-            return pajak_progresif(tabel_pasal17(ev.kb.tabel["tarif_pasal17"], rezim), pkp)
+            tabel = tabel_pasal17(ev.kb.tabel["tarif_pasal17"], rezim)
+            if dengan_rincian:
+                return pajak_progresif(tabel, pkp), rezim, rincian_progresif(tabel, pkp)
+            return pajak_progresif(tabel, pkp)
     raise KesalahanKB(f"tidak ada tarif Pasal 17 yang berlaku pada {tgl}")
 
 

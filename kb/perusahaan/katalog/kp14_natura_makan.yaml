@@ -1,0 +1,9 @@
+# KP-14 — makan bersama untuk seluruh pegawai: dicatat perusahaan, dikecualikan dari objek (PMK 66/2023)
+lapisan: perusahaan
+id: kp14
+komponen:
+  - {fakta: kp_gaji, jenis: gaji, kategori: teratur}
+  - {fakta: kp_makan, jenis: natura_makan_bersama_seluruh_pegawai, kategori: bukan_objek}
+aturan:
+  - {id: KP14-GAJI, sifat: opsional, berlaku: {mulai: 2016-01-01}, lingkup: masa, menghasilkan: kp_gaji, maka: "hr('gaji_pokok')", tipe_hasil: rupiah, sumber: "kebijakan"}
+  - {id: KP14-MAKAN, sifat: opsional, berlaku: {mulai: 2016-01-01}, lingkup: masa, menghasilkan: kp_makan, maka: "hr('nilai_makan')", tipe_hasil: rupiah, sumber: "kebijakan"}

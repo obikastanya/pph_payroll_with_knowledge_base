@@ -1,0 +1,9 @@
+# KP-12 — prorata hari kalender (gaji x hari kalender bekerja / 30), alih-alih hari kerja
+lapisan: perusahaan
+id: kp12
+komponen:
+  - {fakta: kp_gaji, jenis: gaji, kategori: teratur}
+aturan:
+  - {id: KP12-GAJI, sifat: opsional, berlaku: {mulai: 2016-01-01}, lingkup: masa, menghasilkan: kp_gaji, maka: "hr('gaji_pokok') * min(hr_masa('hari_kalender', 30), 30) / 30", pembulatan: KP12-BULAT, tipe_hasil: rupiah, sumber: "kebijakan"}
+pembulatan:
+  - {id: KP12-BULAT, titik: "prorata kalender", satuan: 1, mode: bawah, urutan: sekali, status: kebijakan, dasar: "kebijakan perusahaan"}

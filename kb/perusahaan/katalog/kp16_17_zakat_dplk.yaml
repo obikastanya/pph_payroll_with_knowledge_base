@@ -1,0 +1,13 @@
+# KP-16/KP-17 — zakat melalui pemberi kerja & iuran DPLK pegawai sebagai pengurang
+lapisan: perusahaan
+id: kp16_17
+komponen:
+  - {fakta: kp_gaji, jenis: gaji, kategori: teratur}
+  - {fakta: kp_zakat, jenis: zakat_melalui_pemberi_kerja, kategori: zakat}
+  - {fakta: kp_dplk, jenis: iuran_dplk_pegawai, kategori: iuran_pengurang}
+aturan:
+  - {id: KP16-GAJI, sifat: opsional, berlaku: {mulai: 2016-01-01}, lingkup: masa, menghasilkan: kp_gaji, maka: "hr('gaji_pokok')", tipe_hasil: rupiah, sumber: "kebijakan"}
+  - {id: KP16-ZAKAT, sifat: opsional, berlaku: {mulai: 2016-01-01}, lingkup: masa, menghasilkan: kp_zakat, maka: "hr('gaji_pokok') * desimal('0.025')", pembulatan: KP16-BULAT, tipe_hasil: rupiah, sumber: "kebijakan zakat 2,5%"}
+  - {id: KP16-DPLK, sifat: opsional, berlaku: {mulai: 2016-01-01}, lingkup: masa, menghasilkan: kp_dplk, maka: "hr('iuran_dplk')", tipe_hasil: rupiah, sumber: "kebijakan"}
+pembulatan:
+  - {id: KP16-BULAT, titik: "zakat", satuan: 1, mode: bawah, urutan: sekali, status: kebijakan, dasar: "kebijakan perusahaan"}

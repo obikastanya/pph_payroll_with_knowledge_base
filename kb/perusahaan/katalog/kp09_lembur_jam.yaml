@@ -1,0 +1,19 @@
+# KP-09 — upah lembur per jam = 1/173 x upah sebulan; jam pertama 1,5x, jam berikutnya 2x (PP 35/2021 Ps. 31)
+lapisan: perusahaan
+id: kp09
+komponen:
+  - {fakta: kp_gaji, jenis: gaji, kategori: teratur}
+  - {fakta: kp_lembur, jenis: lembur, kategori: teratur}
+aturan:
+  - {id: KP09-GAJI, sifat: opsional, berlaku: {mulai: 2016-01-01}, lingkup: masa, menghasilkan: kp_gaji, maka: "hr('gaji_pokok')", tipe_hasil: rupiah, sumber: "kebijakan"}
+  - id: KP09-LEMBUR
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: kp_lembur
+    maka: "hr('gaji_pokok') / 173 * (desimal('1.5') * hr_masa('jam_pertama', 0) + 2 * hr_masa('jam_berikutnya', 0))"
+    pembulatan: KP09-BULAT
+    tipe_hasil: rupiah
+    sumber: "PP 35/2021 Ps. 31-32"
+pembulatan:
+  - {id: KP09-BULAT, titik: "upah lembur", satuan: 1, mode: setengah_menjauhi_nol, urutan: sekali, status: kebijakan, dasar: "kebijakan perusahaan"}

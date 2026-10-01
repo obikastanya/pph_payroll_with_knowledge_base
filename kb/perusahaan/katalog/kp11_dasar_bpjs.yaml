@@ -1,0 +1,16 @@
+# KP-11 — dasar upah BPJS = gaji pokok + tunjangan tetap (PP 44/2015, PP 45/2015); batas JP & Kes dari regulasi
+lapisan: perusahaan
+id: kp11
+komponen:
+  - {fakta: kp_gaji, jenis: gaji, kategori: teratur}
+  - {fakta: kp_tunjangan, jenis: tunjangan, kategori: teratur}
+  - {fakta: kp_premi_kes, jenis: premi_jkn, kategori: premi_objek}
+  - {fakta: kp_iuran_jp, jenis: iuran_jp_pegawai, kategori: iuran_pengurang}
+aturan:
+  - {id: KP11-GAJI, sifat: opsional, berlaku: {mulai: 2016-01-01}, lingkup: masa, menghasilkan: kp_gaji, maka: "hr('gaji_pokok')", tipe_hasil: rupiah, sumber: "kebijakan"}
+  - {id: KP11-TUNJ, sifat: opsional, berlaku: {mulai: 2016-01-01}, lingkup: masa, menghasilkan: kp_tunjangan, maka: "hr('tunjangan_tetap')", tipe_hasil: rupiah, sumber: "kebijakan"}
+  - {id: KP11-UPAH, sifat: opsional, berlaku: {mulai: 2016-01-01}, lingkup: masa, menghasilkan: _kp_upah_bpjs, maka: "hr('gaji_pokok') + hr('tunjangan_tetap')", tipe_hasil: rupiah, sumber: "PP 45/2015 Ps. 1 angka 9"}
+  - {id: KP11-KES, sifat: opsional, berlaku: {mulai: 2016-01-01}, lingkup: masa, menghasilkan: kp_premi_kes, maka: "parameter('kes_pk_persen') / 100 * min(_kp_upah_bpjs, parameter('kes_batas_upah'))", pembulatan: KP11-BULAT, tipe_hasil: rupiah, sumber: "Perpres 59/2024"}
+  - {id: KP11-JP, sifat: opsional, berlaku: {mulai: 2016-01-01}, lingkup: masa, menghasilkan: kp_iuran_jp, maka: "parameter('jp_pg_persen') / 100 * min(_kp_upah_bpjs, parameter('jp_batas_upah'))", pembulatan: KP11-BULAT, tipe_hasil: rupiah, sumber: "PP 45/2015 Ps. 28-29"}
+pembulatan:
+  - {id: KP11-BULAT, titik: "premi/iuran BPJS", satuan: 1, mode: setengah_menjauhi_nol, urutan: per_komponen, status: kebijakan, dasar: "kebijakan perusahaan"}

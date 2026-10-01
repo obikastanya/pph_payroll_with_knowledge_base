@@ -1,0 +1,20 @@
+# KP-06 — THR prorata per BULAN masa kerja (Permenaker 6/2016 Ps. 3): (gaji + tunjangan tetap) x min(bulan, 12)/12
+lapisan: perusahaan
+id: kp06
+komponen:
+  - {fakta: kp_gaji, jenis: gaji, kategori: teratur}
+  - {fakta: kp_thr, jenis: thr, kategori: tidak_teratur}
+aturan:
+  - {id: KP06-GAJI, sifat: opsional, berlaku: {mulai: 2016-01-01}, lingkup: masa, menghasilkan: kp_gaji, maka: "hr('gaji_pokok') + hr('tunjangan_tetap')", tipe_hasil: rupiah, sumber: "kebijakan"}
+  - id: KP06-THR
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: kp_thr
+    jika: "bulan == bulan_dari(tanggal(hr('tanggal_lebaran')))"
+    maka: "(hr('gaji_pokok') + hr('tunjangan_tetap')) * min(selisih_bulan(tanggal(hr('tanggal_masuk')), tanggal(hr('tanggal_lebaran'))), 12) / 12"
+    pembulatan: KP06-BULAT
+    tipe_hasil: rupiah
+    sumber: "Permenaker 6/2016 Ps. 3(1)"
+pembulatan:
+  - {id: KP06-BULAT, titik: "THR prorata", satuan: 1, mode: bawah, urutan: sekali, status: kebijakan, dasar: "kebijakan perusahaan"}

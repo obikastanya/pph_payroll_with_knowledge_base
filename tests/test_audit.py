@@ -32,7 +32,7 @@ def test_metadata_audit_lengkap():
     m = metadata_audit(asumsi=["BULAT-TER-01=bawah"])
     assert m["versi_engine"] == VERSI_ENGINE
     assert m["versi_kb"]
-    assert len(m["hash_tabel"]) == 7 and all(len(h) == 64 for h in m["hash_tabel"].values())
+    assert len(m["hash_tabel"]) == 8 and all(len(h) == 64 for h in m["hash_tabel"].values())
     assert set(m["status_verifikasi_tabel"].values()) <= {"ekstraksi_1", "double_entry"}
     assert m["asumsi_dipakai"] == ["BULAT-TER-01=bawah"]
     periksa_keluaran(m)

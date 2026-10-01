@@ -1,0 +1,204 @@
+"""Pemuat & verifikator statis knowledge base aturan (research_plan.md §6.2, §6.6).
+
+Satu KB = kumpulan berkas aturan YAML (lapisan regulasi + opsional lapisan perusahaan),
+registri pembulatan, parameter berversi, dan tabel bertingkat (lewat manifest berhash).
+"""
+from dataclasses import dataclass, field
+from datetime import date
+from fractions import Fraction
+from pathlib import Path
+
+from .angka import PelanggaranPresisi, rupiah, tarif
+from .ekspresi import Ekspresi, jumlah_konjungsi
+from .muat import ROOT, KesalahanKB, muat_registri_pembulatan, muat_tabel, muat_yaml, validasi_skema
+
+DIR_REGULASI = ROOT / "kb" / "regulasi"
+BERKAS_ATURAN_REGULASI = ["aturan_umum.yaml", "aturan_ter.yaml", "aturan_per16.yaml", "aturan_dtp.yaml"]
+
+
+@dataclass(frozen=True)
+class MetaFungsi:
+    argumen_fakta: bool = False   # argumen pertama (string) adalah nama fakta -> dependensi
+
+
+# Fungsi yang boleh dipakai di DSL. Implementasinya ada di engine/inferensi.py.
+FUNGSI = {
+    "min": MetaFungsi(), "max": MetaFungsi(), "abs": MetaFungsi(),
+    "persen": MetaFungsi(), "parameter": MetaFungsi(), "bulatkan": MetaFungsi(),
+    "ptkp": MetaFungsi(), "kategori_ter": MetaFungsi(), "kawin": MetaFungsi(),
+    "tarif_ter": MetaFungsi(), "pasal17": MetaFungsi(),
+    "komponen": MetaFungsi(), "komponen_kode": MetaFungsi(), "komponen_valas": MetaFungsi(),
+    "dtp_sektor_tahun": MetaFungsi(), "dtp_masa_fasilitas": MetaFungsi(),
+    "atau": MetaFungsi(argumen_fakta=True), "nilai_masa": MetaFungsi(argumen_fakta=True),
+    "jumlah_masa": MetaFungsi(argumen_fakta=True),
+    "jumlah_masa_selain_terakhir": MetaFungsi(argumen_fakta=True),
+    "tolak": MetaFungsi(),
+}
+
+# Fakta dasar yang disediakan engine dari input kasus (bukan hasil aturan).
+FAKTA_DASAR_TAHUN = {
+    "tahun_pajak", "metode", "cakupan", "status_ptkp_input", "jenis_kelamin", "suami_tidak_berpenghasilan",
+    "punya_npwp", "subjektif_mulai", "subjektif_akhir", "bulan_masuk", "bulan_kerja_diketahui",
+    "periode_gaji", "hari_kerja_sebulan", "klu", "jenis_pemberi_kerja", "penghasilan_tetap_kontrak",
+    "rapel_n_bulan", "rapel_dipotong_per_bulan", "n_bulan_kerja", "bulan_pertama", "bulan_terakhir",
+}
+FAKTA_DASAR_MASA = {"bulan", "masa_terakhir"}
+
+
+def _tanggal(teks):
+    if teks is None:
+        return None
+    return date.fromisoformat(str(teks))
+
+
+@dataclass
+class Aturan:
+    id: str
+    lapisan: str
+    sifat: str
+    mulai: date
+    sampai: object
+    lingkup: str
+    menghasilkan: str
+    maka: Ekspresi
+    jika: object
+    tipe_hasil: str
+    sumber: str
+    tafsir: object = None
+    varian: object = None
+    varian_default: bool = False
+    pembulatan: object = None
+    titik_tetap: bool = False
+    prioritas: int = 0
+    sumbu_waktu: str = "masa_pajak"
+    berkas: str = ""
+
+    @property
+    def spesifisitas(self):
+        return jumlah_konjungsi(self.jika)
+
+    def berlaku_pada(self, tgl):
+        return self.mulai <= tgl and (self.sampai is None or tgl <= self.sampai)
+
+    def berlaku_di_tahun(self, tahun):
+        return self.mulai <= date(tahun, 12, 31) and (self.sampai is None or self.sampai >= date(tahun, 1, 1))
+
+    def dependensi(self):
+        d = self.maka.dependensi()
+        if self.jika is not None:
+            d |= self.jika.dependensi()
+        return d
+
+
+def _bangun_aturan(d, lapisan, berkas):
+    try:
+        return Aturan(
+            id=d["id"], lapisan=lapisan, sifat=d["sifat"], mulai=_tanggal(d["berlaku"]["mulai"]),
+            sampai=_tanggal(d["berlaku"].get("sampai")), lingkup=d["lingkup"], menghasilkan=d["menghasilkan"],
+            maka=Ekspresi(d["maka"], FUNGSI), jika=Ekspresi(d["jika"], FUNGSI) if d.get("jika") else None,
+            tipe_hasil=d["tipe_hasil"], sumber=d["sumber"], tafsir=d.get("tafsir"), varian=d.get("varian"),
+            varian_default=d.get("varian_default", False), pembulatan=d.get("pembulatan"),
+            titik_tetap=d.get("titik_tetap", False), prioritas=d.get("prioritas", 0),
+            sumbu_waktu=d.get("sumbu_waktu", "masa_pajak"), berkas=berkas)
+    except (KesalahanKB, PelanggaranPresisi, ValueError) as e:
+        raise KesalahanKB(f"{berkas}: aturan {d.get('id')}: {e}") from None
+
+
+@dataclass
+class KnowledgeBase:
+    aturan: list
+    registri: object
+    parameter: dict
+    tabel: dict
+    berkas: list = field(default_factory=list)
+
+    def aturan_untuk(self, fakta):
+        return [a for a in self.aturan if a.menghasilkan == fakta]
+
+
+def _muat_parameter(path):
+    data = muat_yaml(path)
+    hasil = {}
+    for p in data["parameter"]:
+        nilai = p["nilai"]
+        if isinstance(nilai, str):
+            nilai = tarif(nilai)
+        else:
+            nilai = rupiah(nilai)
+        hasil.setdefault(p["nama"], []).append((_tanggal(p["berlaku"]["mulai"]), _tanggal(p["berlaku"].get("sampai")),
+                                                 nilai, p["sumber"]))
+    return hasil
+
+
+def _iso(obj):
+    """Tanggal YAML (datetime.date) -> string ISO agar dapat divalidasi JSON Schema."""
+    if isinstance(obj, date):
+        return obj.isoformat()
+    if isinstance(obj, dict):
+        return {k: _iso(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_iso(v) for v in obj]
+    return obj
+
+
+def muat_kb(berkas_tambahan=(), berkas_regulasi=None):
+    berkas = [DIR_REGULASI / b for b in (berkas_regulasi or BERKAS_ATURAN_REGULASI)] + [Path(b) for b in berkas_tambahan]
+    aturan = []
+    for p in berkas:
+        data = _iso(muat_yaml(p))
+        validasi_skema(data, "aturan.schema.json")
+        for d in data["aturan"]:
+            aturan.append(_bangun_aturan(d, data["lapisan"], p.name))
+    tabel = {n: muat_tabel(n) for n in ("ter_bulanan", "tarif_pasal17", "ptkp", "klu_dtp")}
+    kb = KnowledgeBase(aturan=aturan, registri=muat_registri_pembulatan(),
+                       parameter=_muat_parameter(DIR_REGULASI / "parameter.yaml"), tabel=tabel,
+                       berkas=[p.name for p in berkas])
+    verifikasi_statis(kb)
+    return kb
+
+
+def verifikasi_statis(kb):
+    """Pemeriksaan yang tidak bergantung kasus (§6.6). Pemeriksaan per-tahun ada di inferensi.graf()."""
+    ids = [a.id for a in kb.aturan]
+    duplikat = {i for i in ids if ids.count(i) > 1}
+    if duplikat:
+        raise KesalahanKB(f"id aturan duplikat: {sorted(duplikat)}")
+    per_fakta = {}
+    for a in kb.aturan:
+        per_fakta.setdefault(a.menghasilkan, []).append(a)
+        if a.tipe_hasil == "rupiah" and a.pembulatan and a.pembulatan not in kb.registri:
+            raise KesalahanKB(f"{a.id}: pembulatan {a.pembulatan} tidak terdaftar di registri")
+        if a.sifat == "tafsir" and (not a.tafsir or not a.varian):
+            raise KesalahanKB(f"{a.id}: aturan tafsir wajib punya 'tafsir' dan 'varian'")
+        if a.sampai is not None and a.sampai < a.mulai:
+            raise KesalahanKB(f"{a.id}: masa berlaku terbalik")
+    for fakta, daftar in per_fakta.items():
+        lingkup = {a.lingkup for a in daftar}
+        if len(lingkup) > 1:
+            raise KesalahanKB(f"fakta {fakta} dihasilkan dengan lingkup berbeda: {lingkup}")
+        tipe = {a.tipe_hasil for a in daftar}
+        if len(tipe) > 1:
+            raise KesalahanKB(f"fakta {fakta} dihasilkan dengan tipe berbeda: {tipe}")
+        if fakta in FAKTA_DASAR_TAHUN | FAKTA_DASAR_MASA:
+            raise KesalahanKB(f"fakta dasar {fakta} tidak boleh dihasilkan aturan")
+    grup = {}
+    for a in kb.aturan:
+        if a.tafsir:
+            grup.setdefault(a.tafsir, []).append(a)
+    for t, ats in grup.items():
+        default = {a.varian for a in ats if a.varian_default}
+        if len(default) != 1:
+            raise KesalahanKB(f"tafsir {t}: wajib tepat satu varian default di seluruh KB (ditemukan {sorted(default)})")
+        tidak_konsisten = [a.id for a in ats if a.varian in default and not a.varian_default]
+        if tidak_konsisten:
+            raise KesalahanKB(f"tafsir {t}: aturan varian default tidak bertanda varian_default: {tidak_konsisten}")
+    return True
+
+
+def parameter_pada(kb, nama, tgl):
+    if nama not in kb.parameter:
+        raise KesalahanKB(f"parameter tidak dikenal: {nama}")
+    cocok = [v for mulai, sampai, v, _ in kb.parameter[nama] if mulai <= tgl and (sampai is None or tgl <= sampai)]
+    if len(cocok) != 1:
+        raise KesalahanKB(f"parameter {nama} pada {tgl}: {len(cocok)} versi berlaku (harus tepat 1)")
+    return cocok[0]

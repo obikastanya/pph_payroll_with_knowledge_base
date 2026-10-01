@@ -1,0 +1,92 @@
+# Lapisan regulasi — PPh 21 Ditanggung Pemerintah 2025-2026 (KODIFIKASI.md R24-DTP-01..03).
+lapisan: regulasi
+keterangan: "PMK 10/2025, PMK 72/2025, PMK 105/2025"
+aturan:
+  - id: DTP-00
+    sifat: wajib
+    berlaku: {mulai: 2025-01-01, sampai: 2026-12-31}
+    lingkup: masa
+    menghasilkan: _teratur_masa
+    maka: "komponen('teratur', 'bulan')"
+    tipe_hasil: rupiah
+    sumber: "PMK 10/2025 Ps. 4(2)b: penghasilan bruto bersifat tetap dan teratur"
+  - id: DTP-01a
+    sifat: wajib
+    berlaku: {mulai: 2025-01-01, sampai: 2026-12-31}
+    lingkup: tahun
+    menghasilkan: _penghasilan_tetap_awal
+    maka: "nilai_masa('_teratur_masa', bulan_pertama)"
+    tipe_hasil: rupiah
+    sumber: "PMK 10/2025 Ps. 4(2)b: Masa Pajak Januari atau bulan pertama bekerja"
+  - id: DTP-01b
+    sifat: wajib
+    berlaku: {mulai: 2025-01-01, sampai: 2026-12-31}
+    lingkup: tahun
+    menghasilkan: _penghasilan_tetap_awal
+    jika: "penghasilan_tetap_kontrak != None"
+    maka: "penghasilan_tetap_kontrak"
+    tipe_hasil: rupiah
+    sumber: "PMK 10/2025 Lampiran B contoh 4: diukur menurut kontrak/perjanjian kerja"
+  - id: DTP-02
+    sifat: wajib
+    berlaku: {mulai: 2025-01-01, sampai: 2026-12-31}
+    lingkup: tahun
+    menghasilkan: berhak_dtp
+    jika: "klu != None"
+    maka: "dtp_sektor_tahun(klu, tahun_pajak) and _penghasilan_tetap_awal <= parameter('dtp_batas_penghasilan_tetap')"
+    tipe_hasil: bool
+    sumber: "PMK 10/2025 Ps. 3-4 & Lampiran A (KLU); PMK 72/2025 (pariwisata); PMK 105/2025 Ps. 3-4 & Lampiran A"
+  - id: DTP-03
+    sifat: wajib
+    berlaku: {mulai: 2025-01-01, sampai: 2026-12-31}
+    lingkup: masa
+    menghasilkan: fasilitas_dtp
+    jika: "klu != None"
+    maka: "berhak_dtp and dtp_masa_fasilitas(klu, tahun_pajak, bulan)"
+    tipe_hasil: bool
+    sumber: "PMK 10/2025 Ps. 2 (masa Jan-Des 2025); PMK 72/2025 (pariwisata Okt-Des 2025); PMK 105/2025 Ps. 2 (Jan-Des 2026)"
+  - id: DTP-04a
+    sifat: wajib
+    berlaku: {mulai: 2025-01-01, sampai: 2026-12-31}
+    lingkup: masa
+    menghasilkan: pph21_dtp_berjalan
+    jika: "klu != None and not masa_terakhir"
+    maka: "pph21_berjalan if fasilitas_dtp else 0"
+    tipe_hasil: rupiah
+    sumber: "PMK 10/2025 Ps. 5(1): PPh 21 terutang ditanggung pemerintah (termasuk atas penghasilan tidak teratur)"
+  - id: DTP-04b
+    sifat: wajib
+    berlaku: {mulai: 2025-01-01, sampai: 2026-12-31}
+    lingkup: masa
+    menghasilkan: pph21_dtp
+    jika: "klu != None and not masa_terakhir"
+    maka: "pph21_dtp_berjalan"
+    tipe_hasil: rupiah
+    sumber: "PMK 10/2025 Ps. 5"
+  - id: DTP-04c
+    sifat: wajib
+    berlaku: {mulai: 2025-01-01, sampai: 2026-12-31}
+    lingkup: masa
+    menghasilkan: pph21_dtp
+    jika: "klu != None and masa_terakhir and pph21 >= 0"
+    maka: "pph21 if fasilitas_dtp else 0"
+    tipe_hasil: rupiah
+    sumber: "PMK 10/2025 Ps. 5; contoh Lampiran B no. 1-2"
+  - id: DTP-04d
+    sifat: wajib
+    berlaku: {mulai: 2025-01-01, sampai: 2026-12-31}
+    lingkup: masa
+    menghasilkan: pph21_dtp
+    jika: "klu != None and masa_terakhir and pph21 < 0"
+    maka: "(pph21 + lebih_bayar_dikembalikan) if berhak_dtp else 0"
+    tipe_hasil: rupiah
+    sumber: "PMK 10/2025 Ps. 5(5); PMK 168/2023 Lamp. B I.2 angka 8: kelebihan yang berasal dari DTP tidak dikembalikan"
+  - id: DTP-05
+    sifat: wajib
+    berlaku: {mulai: 2025-01-01, sampai: 2026-12-31}
+    lingkup: tahun
+    menghasilkan: lebih_bayar_dikembalikan
+    jika: "cakupan == 'setahun' and klu != None and berhak_dtp and pph21_masa_terakhir < 0"
+    maka: "max(0, 0 - pph21_masa_terakhir - jumlah_masa_selain_terakhir('pph21_dtp_berjalan'))"
+    tipe_hasil: rupiah
+    sumber: "PMK 72/2025 Ps. 5(5a); PMK 168/2023 Lamp. B I.2 angka 8: yang dikembalikan hanya bagian yang tidak ditanggung pemerintah"

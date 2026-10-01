@@ -1,0 +1,272 @@
+# Lapisan regulasi — aturan lintas rezim (kb/regulasi/KODIFIKASI.md bagian A & B).
+lapisan: regulasi
+keterangan: "PTKP, biaya jabatan, pengurang, natura, perhitungan setahun/masa pajak terakhir"
+aturan:
+  # ---------------------------------------------------------------- PTKP
+  - id: REG-PTKP-00
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: status_ptkp_efektif
+    maka: "status_ptkp_input"
+    tipe_hasil: kategori
+    sumber: "UU PPh Ps. 7(1); PMK 101/2016"
+  - id: REG-PTKP-03
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: status_ptkp_efektif
+    jika: "jenis_kelamin == 'P' and kawin(status_ptkp_input) and not suami_tidak_berpenghasilan"
+    maka: "'TK/0'"
+    tipe_hasil: kategori
+    sumber: "PMK 168/2023 Ps. 9(2)a & (3); PER-16/PJ/2016 Ps. 11(3)-(4): karyawati kawin -> PTKP diri sendiri"
+  - id: REG-PTKP-01
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: ptkp
+    maka: "ptkp(status_ptkp_efektif)"
+    tipe_hasil: rupiah
+    sumber: "PMK 101/PMK.010/2016 Ps. 1 (tabel ptkp.csv, double-entry)"
+
+  # ---------------------------------------------------------------- kewajiban subjektif (REG-MT-04)
+  - id: REG-SUB-00
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: n_subjektif
+    maka: "12"
+    tipe_hasil: bilangan
+    sumber: "PMK 168/2023 Ps. 15(3): kewajiban subjektif penuh setahun"
+  - id: REG-SUB-01
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: n_subjektif
+    jika: "subjektif_mulai != None"
+    maka: "12 - subjektif_mulai + 1"
+    tipe_hasil: bilangan
+    sumber: "PMK 168/2023 Ps. 15(3); Lamp. B I.2 angka 6c"
+  - id: REG-SUB-02
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: n_subjektif
+    jika: "subjektif_akhir != None"
+    maka: "subjektif_akhir"
+    tipe_hasil: bilangan
+    sumber: "PMK 168/2023 Ps. 15(3); Lamp. B I.2 angka 6c"
+  - id: REG-SUB-03
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: n_subjektif
+    jika: "subjektif_mulai != None and subjektif_akhir != None"
+    maka: "subjektif_akhir - subjektif_mulai + 1"
+    tipe_hasil: bilangan
+    sumber: "PMK 168/2023 Ps. 15(3)"
+
+  # ---------------------------------------------------------------- natura (REG-NAT-*)
+  - id: REG-NAT-01
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-06-30}
+    lingkup: masa
+    menghasilkan: natura_objek
+    maka: "jenis_pemberi_kerja == 'deemed_profit'"
+    tipe_hasil: bool
+    sumber: "PER-16/PJ/2016 (contoh I.10): natura objek PPh 21 bila pemberi kerja tidak dikenakan PPh umum (deemed profit)"
+  - id: REG-NAT-02
+    sifat: wajib
+    berlaku: {mulai: 2023-07-01}
+    lingkup: masa
+    menghasilkan: natura_objek
+    maka: "True"
+    tipe_hasil: bool
+    sumber: "PMK 66/2023 Ps. 27 (berlaku 1-7-2023); PMK 168/2023 Ps. 5(2), 7b (pengecualian dimodelkan di lapisan komponen)"
+
+  # ---------------------------------------------------------------- pengurang setahun
+  - id: REG-PENG-01
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: iuran_masa
+    maka: "komponen('iuran_pengurang', 'bulan')"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 10(1)b; PER-16/PJ/2016 Ps. 10(3)b: iuran pensiun/JHT/JP yang dibayar pegawai"
+  - id: REG-PENG-01T
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: iuran_pengurang
+    jika: "cakupan == 'setahun'"
+    maka: "jumlah_masa('iuran_masa')"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Lamp. B I.2 angka 5a"
+  - id: REG-PENG-02T
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: zakat
+    jika: "cakupan == 'setahun'"
+    maka: "jumlah_masa('zakat_masa')"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 10(1)c (2024-); PER-16 Ps. 10(3) (2016-2023: zakat_masa = 0)"
+
+  # ---------------------------------------------------------------- biaya jabatan setahun (REG-BJ-01/02)
+  - id: REG-BJ-02a
+    sifat: tafsir
+    tafsir: REG-BJ-02
+    varian: a
+    varian_default: true
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: biaya_jabatan
+    jika: "cakupan == 'setahun'"
+    maka: "min(bulatkan('BULAT-BJ-01', parameter('bj_persen') / 100 * bruto_setahun), parameter('bj_maks_bulan') * n_bulan_kerja, parameter('bj_maks_tahun'))"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 10(2); contoh PMK168-B-I.2.x, PMK105-B-3, PER16-II.1.1 (plafon n x 500.000)"
+  - id: REG-BJ-02b-M
+    sifat: tafsir
+    tafsir: REG-BJ-02
+    varian: b
+    varian_default: false
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: _bj_per_bulan
+    maka: "min(bulatkan('BULAT-BJ-01', parameter('bj_persen') / 100 * bruto_total_masa), parameter('bj_maks_bulan'))"
+    tipe_hasil: rupiah
+    sumber: "Tafsir (b) dari contoh PMK 10/2025 Lampiran B no. 3: plafon per bulan"
+  - id: REG-BJ-02b
+    sifat: tafsir
+    tafsir: REG-BJ-02
+    varian: b
+    varian_default: false
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: biaya_jabatan
+    jika: "cakupan == 'setahun'"
+    maka: "min(jumlah_masa('_bj_per_bulan'), parameter('bj_maks_tahun'))"
+    tipe_hasil: rupiah
+    sumber: "Tafsir (b) dari contoh PMK 10/2025 Lampiran B no. 3"
+
+  # ---------------------------------------------------------------- setahun / masa pajak terakhir (REG-MT-*)
+  - id: REG-MT-BRUTO
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: bruto_setahun
+    jika: "cakupan == 'setahun'"
+    maka: "jumlah_masa('bruto_total_masa')"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Lamp. B I.2 angka 5a, 6a (penghasilan selama bekerja)"
+  - id: REG-MT-NETO
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: neto_setahun
+    jika: "cakupan == 'setahun'"
+    maka: "bruto_setahun - biaya_jabatan - iuran_pengurang - zakat"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 8(5), Lamp. B I.2 angka 5a"
+  - id: REG-MT-04a
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: _neto_disetahunkan_eksak
+    jika: "cakupan == 'setahun' and n_subjektif < 12"
+    maka: "neto_setahun * 12 / n_subjektif"
+    tipe_hasil: eksak
+    sumber: "PMK 168/2023 Ps. 15(3); Lamp. B I.2 angka 6c (disetahunkan)"
+  - id: REG-MT-04b
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: neto_disetahunkan
+    jika: "cakupan == 'setahun' and n_subjektif < 12"
+    maka: "_neto_disetahunkan_eksak"
+    tipe_hasil: eksak
+    sumber: "PMK 168/2023 Ps. 15(3)"
+  - id: REG-PKP-01
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: pkp
+    jika: "cakupan == 'setahun'"
+    maka: "max(0, bulatkan('BULAT-PKP-01', neto_setahun - ptkp))"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 8(3)-(4); PER-16 Ps. 14(8)"
+  - id: REG-PKP-01S
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: pkp
+    jika: "cakupan == 'setahun' and n_subjektif < 12"
+    maka: "max(0, bulatkan('BULAT-PKP-01', _neto_disetahunkan_eksak - ptkp))"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 8(4), 15(3)"
+  - id: REG-P17-01
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: pph21_setahun
+    jika: "cakupan == 'setahun'"
+    maka: "pasal17(pkp)"
+    pembulatan: BULAT-P17-01
+    tipe_hasil: rupiah
+    sumber: "UU PPh Ps. 17(1)a (versi tabel menurut tanggal); PMK 168/2023 Ps. 15(2)"
+  - id: REG-P17-01S
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: pph21_disetahunkan
+    jika: "cakupan == 'setahun' and n_subjektif < 12"
+    maka: "pasal17(pkp)"
+    pembulatan: BULAT-P17-01
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 15(3)"
+  - id: REG-MT-04c
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: pph21_setahun
+    jika: "cakupan == 'setahun' and n_subjektif < 12"
+    maka: "pph21_disetahunkan * n_subjektif / 12"
+    pembulatan: BULAT-PROPORSI-01
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 15(3): pajak proporsional terhadap jumlah bulan bagian tahun pajak"
+  - id: REG-MT-02
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: pph21_masa_terakhir
+    jika: "cakupan == 'setahun'"
+    maka: "pph21_setahun - pph21_dipotong_sebelumnya"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 15(1)b; Lamp. B I.2 angka 1"
+  - id: REG-MT-01a
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: pph21
+    jika: "not masa_terakhir"
+    maka: "pph21_berjalan"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 15(1)a; PER-16 Ps. 14"
+  - id: REG-MT-01b
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: pph21
+    jika: "masa_terakhir"
+    maka: "pph21_masa_terakhir"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 15(1)b; Lamp. B I.2 (Desember / bulan terakhir bekerja)"
+  - id: REG-MT-LB0
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01}
+    lingkup: tahun
+    menghasilkan: lebih_bayar_dikembalikan
+    jika: "cakupan == 'setahun'"
+    maka: "max(0, 0 - pph21_masa_terakhir)"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 21(1); Lamp. B I.2 angka 7: kelebihan dikembalikan kepada pegawai"

@@ -1,0 +1,321 @@
+# Lapisan regulasi — rezim disetahunkan PER-16/PJ/2016 (KODIFIKASI.md bagian D).
+# Berlaku 2016-01-01 s.d. 2023-12-31 (asumsi A-01). Tabel Pasal 17 dipilih menurut tanggal.
+lapisan: regulasi
+keterangan: "PER-16/PJ/2016 (metode disetahunkan)"
+aturan:
+  - id: R16-GU-TOLAK
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: tahun
+    menghasilkan: _validasi_metode
+    jika: "metode == 'gross_up'"
+    maka: "tolak('gross-up rezim PER-16 belum dimodelkan di KB v1')"
+    tipe_hasil: bool
+    sumber: "Batas model (KODIFIKASI.md bagian E)"
+  - id: R16-01
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: bruto_teratur
+    maka: "komponen('teratur', 'bulan') + 4 * komponen('teratur', 'minggu') + (hari_kerja_sebulan * komponen('teratur', 'hari') if periode_gaji == 'harian' else 0) + komponen('premi_objek', 'bulan') + (komponen('natura', 'bulan') if natura_objek else 0) + komponen_valas('teratur')"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 1 angka 15 (penghasilan teratur, termasuk lembur); contoh I.1.x, I.2.1-I.2.3 (mingguan x4, harian x hari kerja), I.7 (valas)"
+  - id: R16-01b
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: bruto_total_masa
+    maka: "bruto_teratur + komponen('tidak_teratur', 'bulan') + komponen('rapel', 'bulan')"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 1 angka 15-16"
+  - id: R16-01c
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: bruto
+    jika: "not masa_terakhir"
+    maka: "bruto_teratur"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 contoh I.1.x (bruto sebulan teratur)"
+  - id: R16-01d
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: bruto
+    jika: "masa_terakhir"
+    maka: "bruto_total_masa"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 contoh I.12.1"
+  - id: R16-02a
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: biaya_jabatan_bulanan
+    jika: "not masa_terakhir"
+    maka: "min(bulatkan('BULAT-BJ-01', parameter('bj_persen') / 100 * bruto_teratur), parameter('bj_maks_bulan'))"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 10(3)a"
+  - id: R16-02b
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: iuran_pensiun_bulanan
+    jika: "not masa_terakhir"
+    maka: "komponen_kode('iuran_pengurang', 'pensiun')"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 10(3)b"
+  - id: R16-02c
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: iuran_jht_bulanan
+    jika: "not masa_terakhir"
+    maka: "komponen_kode('iuran_pengurang', 'jht')"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 10(3)b"
+  - id: R16-02d
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: total_pengurang_bulanan
+    jika: "not masa_terakhir"
+    maka: "biaya_jabatan_bulanan + iuran_pensiun_bulanan + iuran_jht_bulanan"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 10(3)"
+  - id: R16-02e
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: neto_sebulan
+    jika: "not masa_terakhir"
+    maka: "bruto_teratur - total_pengurang_bulanan"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 14(1)"
+  - id: R16-03a
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: tahun
+    menghasilkan: n_disetahunkan
+    maka: "12"
+    tipe_hasil: bilangan
+    sumber: "PER-16/PJ/2016 Ps. 14(2)"
+  - id: R16-03b
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: tahun
+    menghasilkan: n_disetahunkan
+    jika: "bulan_masuk != None and subjektif_mulai == None"
+    maka: "12 - bulan_masuk + 1"
+    tipe_hasil: bilangan
+    sumber: "PER-16/PJ/2016 contoh I.6.1.1: pegawai baru (subjektif sudah ada) -> neto x jumlah bulan tersisa"
+  - id: R16-03c
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: tahun
+    menghasilkan: n_disetahunkan
+    jika: "bulan_kerja_diketahui != None and subjektif_mulai == None and bulan_masuk == None"
+    maka: "bulan_kerja_diketahui"
+    tipe_hasil: bilangan
+    sumber: "PER-16/PJ/2016 contoh II.1.1: pensiun yang sudah pasti sejak awal tahun"
+  - id: R16-03d
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: neto_disetahunkan_bulanan
+    jika: "not masa_terakhir"
+    maka: "n_disetahunkan * neto_sebulan"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 14(2)"
+  - id: R16-03e
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pkp_bulanan
+    jika: "not masa_terakhir"
+    maka: "max(0, bulatkan('BULAT-PKP-01', neto_disetahunkan_bulanan - ptkp))"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 14(8)"
+  - id: R16-04a
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pph21_setahun_bulanan
+    jika: "not masa_terakhir"
+    maka: "pasal17(pkp_bulanan)"
+    pembulatan: BULAT-P17-01
+    tipe_hasil: rupiah
+    sumber: "UU PPh Ps. 17(1)a (versi tabel menurut tanggal)"
+  - id: R16-04b
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pph21_bagian_tahun
+    jika: "not masa_terakhir and subjektif_mulai != None and n_subjektif < 12"
+    maka: "pph21_setahun_bulanan * n_subjektif / 12"
+    pembulatan: BULAT-PROPORSI-01
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 contoh I.6.1.2 (4/12 x PPh disetahunkan)"
+  - id: R16-04c
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pph21_teratur
+    jika: "not masa_terakhir"
+    maka: "pph21_setahun_bulanan / n_disetahunkan"
+    pembulatan: BULAT-P16-01
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 14(2)"
+  - id: R16-04d
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pph21_teratur
+    jika: "not masa_terakhir and subjektif_mulai != None and n_subjektif < 12"
+    maka: "pph21_bagian_tahun / n_subjektif"
+    pembulatan: BULAT-P16-01
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 contoh I.6.1.2 (PPh sebulan = 1/n x PPh bagian tahun)"
+
+  # ---------------------------------------------------------------- penghasilan tidak teratur (R16-05)
+  - id: R16-05a
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: _bruto_dengan_tt
+    jika: "not masa_terakhir and komponen('tidak_teratur', 'bulan') > 0"
+    maka: "n_disetahunkan * bruto_teratur + komponen('tidak_teratur', 'bulan')"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 14(3); contoh I.4.1, I.4.2, I.6.2.2"
+  - id: R16-05b
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: _bruto_tanpa_tt
+    jika: "not masa_terakhir and komponen('tidak_teratur', 'bulan') > 0"
+    maka: "n_disetahunkan * bruto_teratur"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 14(3)"
+  - id: R16-05c
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pkp_dengan_tidak_teratur
+    jika: "not masa_terakhir and komponen('tidak_teratur', 'bulan') > 0"
+    maka: "max(0, bulatkan('BULAT-PKP-01', _bruto_dengan_tt - min(bulatkan('BULAT-BJ-01', parameter('bj_persen') / 100 * _bruto_dengan_tt), parameter('bj_maks_tahun')) - n_disetahunkan * (iuran_pensiun_bulanan + iuran_jht_bulanan) - ptkp))"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 14(3); biaya jabatan setahun maks Rp6.000.000"
+  - id: R16-05d
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pkp_tanpa_tidak_teratur
+    jika: "not masa_terakhir and komponen('tidak_teratur', 'bulan') > 0"
+    maka: "max(0, bulatkan('BULAT-PKP-01', _bruto_tanpa_tt - min(bulatkan('BULAT-BJ-01', parameter('bj_persen') / 100 * _bruto_tanpa_tt), parameter('bj_maks_tahun')) - n_disetahunkan * (iuran_pensiun_bulanan + iuran_jht_bulanan) - ptkp))"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 14(3)"
+  - id: R16-05e
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pph21_setahun_dengan_tidak_teratur
+    jika: "not masa_terakhir and komponen('tidak_teratur', 'bulan') > 0"
+    maka: "pasal17(pkp_dengan_tidak_teratur)"
+    pembulatan: BULAT-P17-01
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 14(3)"
+  - id: R16-05f
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pph21_setahun_tanpa_tidak_teratur
+    jika: "not masa_terakhir and komponen('tidak_teratur', 'bulan') > 0"
+    maka: "pasal17(pkp_tanpa_tidak_teratur)"
+    pembulatan: BULAT-P17-01
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 14(3)"
+  - id: R16-05g
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pph21_tidak_teratur
+    jika: "not masa_terakhir and komponen('tidak_teratur', 'bulan') > 0"
+    maka: "pph21_setahun_dengan_tidak_teratur - pph21_setahun_tanpa_tidak_teratur"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 14(4): PPh atas penghasilan tidak teratur = selisih"
+
+  # ---------------------------------------------------------------- rapel (R16-07)
+  - id: R16-07
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pph21_rapel
+    jika: "not masa_terakhir and komponen('rapel', 'bulan') > 0 and rapel_n_bulan != None"
+    maka: "rapel_n_bulan * (pph21_teratur - rapel_dipotong_per_bulan)"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 contoh I.3: PPh seharusnya dengan gaji baru - PPh yang telah dipotong"
+
+  # ---------------------------------------------------------------- NPWP, periode gaji, pemotongan berjalan
+  - id: R16-NPWP-0
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: _pph21_sebelum_npwp
+    jika: "not masa_terakhir"
+    maka: "pph21_teratur + atau('pph21_tidak_teratur', 0)"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 14"
+  - id: R16-NPWP-1
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pph21_tanpa_npwp
+    jika: "not masa_terakhir"
+    maka: "_pph21_sebelum_npwp * parameter('pengali_tanpa_npwp')"
+    pembulatan: BULAT-P16-01
+    tipe_hasil: rupiah
+    sumber: "UU 36/2008 Ps. 21(5a); PER-16/PJ/2016 Ps. 20; contoh I.1.1 catatan b"
+  - id: R16-BJLN-0
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pph21_berjalan
+    jika: "not masa_terakhir"
+    maka: "_pph21_sebelum_npwp"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 14"
+  - id: R16-BJLN-1
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pph21_berjalan
+    jika: "not masa_terakhir and not punya_npwp"
+    maka: "pph21_tanpa_npwp"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 20"
+  - id: R16-06
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: pph21_periode
+    jika: "not masa_terakhir and periode_gaji in ('mingguan', 'harian')"
+    maka: "pph21_berjalan / (4 if periode_gaji == 'mingguan' else hari_kerja_sebulan)"
+    pembulatan: BULAT-P16-01
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 contoh I.2.1-I.2.3"
+  - id: R16-PENG-02
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: masa
+    menghasilkan: zakat_masa
+    maka: "0"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 10(3): zakat bukan pengurang dalam pemotongan (REG-PENG-02-P16)"
+  - id: R16-MT-DIPOTONG
+    sifat: wajib
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: tahun
+    menghasilkan: pph21_dipotong_sebelumnya
+    jika: "cakupan == 'setahun'"
+    maka: "jumlah_masa_selain_terakhir('pph21_berjalan') + jumlah_masa_selain_terakhir('pph21_rapel')"
+    tipe_hasil: rupiah
+    sumber: "PER-16/PJ/2016 Ps. 14(5)"

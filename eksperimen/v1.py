@@ -105,4 +105,4 @@ if __name__ == "__main__":
         contoh = [r for r in hasil if r["kasus"] == kasus and r["status"] in ("SELISIH", "TIDAK_DIHASILKAN")][:4]
         print(f"  {kasus}: {n} | " + "; ".join(
             f"{r['fakta']}[{r['bulan']}] harap={r.get('terkoreksi', r['harapan'])} aktual={r.get('aktual_varian', r['aktual'])}"
-            + (f" ({r['galat']})" if r.get("galat") else "") for r in contoh))
+            for r in contoh[:3]) + (f" | galat: {contoh[0]['galat'][:160]}" if contoh[0].get("galat") else ""))

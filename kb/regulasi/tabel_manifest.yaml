@@ -9,14 +9,14 @@ tabel:
   - nama: ter_bulanan
     path: ../../dataset/01_regulasi/tables/ter_bulanan.csv
     sha256: 7890968b851996351460fe4b67bf3844a8ea42645dd173d6aeb1d60fd7fe5507
-    status_verifikasi: ekstraksi_1
+    status_verifikasi: double_entry
     kolom_rupiah: [batas_bawah, batas_atas]
     kolom_tarif: [tarif_desimal]
     boleh_kosong: [batas_atas]
   - nama: ter_harian
     path: ../../dataset/01_regulasi/tables/ter_harian.csv
     sha256: c90d68965dc288dcbb195afb6e9ed60c8c9b685967e4af8bae32695054982944
-    status_verifikasi: ekstraksi_1
+    status_verifikasi: double_entry
     kolom_rupiah: [batas_bawah, batas_atas]
     kolom_tarif: [tarif_desimal]
     boleh_kosong: [batas_atas, tarif_desimal]
@@ -24,33 +24,42 @@ tabel:
   - nama: tarif_pasal17
     path: ../../dataset/01_regulasi/tables/tarif_pasal17.csv
     sha256: 03ff5d14f3c9ffd820c3f0ce9dd4ab3234470bb7eaa12c47562a3fc9526db907
-    status_verifikasi: ekstraksi_1
+    status_verifikasi: double_entry
     kolom_rupiah: [pkp_batas_bawah, pkp_batas_atas]
     kolom_persen: [tarif_persen]
     boleh_kosong: [pkp_batas_atas]
   - nama: ptkp
     path: ../../dataset/01_regulasi/tables/ptkp.csv
     sha256: 743f281ef9b18976fd664d7279eb2d5f140dc93a66a12cb97fb391205aa2890d
-    status_verifikasi: ekstraksi_1
+    status_verifikasi: double_entry
     kolom_rupiah: [ptkp_diri, ptkp_kawin, ptkp_istri_digabung, ptkp_tanggungan, ptkp_setahun, ptkp_sebulan]
   - nama: biaya_jabatan
     path: ../../dataset/01_regulasi/tables/biaya_jabatan.csv
     sha256: d0ba0edb4f8979abcc72c0e75e1476a03157b9acac5a49df95e0b83147a7fc9b
-    status_verifikasi: ekstraksi_1
+    status_verifikasi: double_entry
     kolom_rupiah: [maks_bulanan, maks_tahunan]
     kolom_persen: [persen]
   - nama: bpjs
     path: ../../dataset/01_regulasi/tables/bpjs.csv
-    sha256: 2a6397d179e33be464dbf8518fda79e6333a799f16bd8600520085ef5c7fa868
-    status_verifikasi: ekstraksi_1
+    sha256: 1fc8ec6a842a61ec376242920c3fefcfc562be38cfb0ef5ed3a87adaabff82e2
+    status_verifikasi: double_entry
     kolom_persen: [tarif_pemberi_kerja_persen, tarif_pekerja_persen]
-    catatan: "kolom batas_upah_bulanan berisi teks 'tidak ada' untuk program tanpa batas -> belum dikonversi; normalisasi di WP1c"
+    kolom_rupiah: [batas_upah_bulanan]
+    boleh_kosong: [batas_upah_bulanan]
+    catatan: "dinormalisasi 2026-10-01 sesuai LAPORAN_DOUBLE_ENTRY (tidak ada -> kosong; tanggal ISO; JP 2022 tanpa tanggal mulai)"
   - nama: pembulatan_dan_lainnya
     path: ../../dataset/01_regulasi/tables/pembulatan_dan_lainnya.csv
     sha256: f33cce7a7313f526d0dd6654b3d74d6feb55dc1b6d168776acc88a8ebbbf2412
     status_verifikasi: ekstraksi_1
     catatan: "tabel naratif (bukan parameter numerik); dipakai sebagai rujukan dasar aturan"
+  - nama: klu_dtp
+    path: ../../dataset/01_regulasi/tables/klu_dtp.csv
+    sha256: 023d089c0d7b7487cbebf201dc7b8d74747fac3e3668f36d29aad5cd77f8cedf
+    status_verifikasi: ekstraksi_1
+    catatan: "lapisan teks Lampiran A PMK 10/72/105 2025; 96129 hanya di PMK 105 (perlu cek gambar halaman)"
 
 riwayat:
   - tanggal: "2026-10-01"
     perubahan: "manifest awal; hash dari hasil ekstraksi agen regulasi (dataset/01_regulasi/README.md)"
+  - tanggal: "2026-10-01"
+    perubahan: "WP1c double-entry dari gambar halaman: 512 sel cocok 100% (dataset/01_regulasi/tables_ekstraksi2/LAPORAN_DOUBLE_ENTRY.md); bpjs.csv dinormalisasi format; klu_dtp ditambahkan"

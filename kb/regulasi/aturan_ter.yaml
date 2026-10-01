@@ -1,0 +1,111 @@
+# Lapisan regulasi — rezim tarif efektif rata-rata (KODIFIKASI.md bagian C). Berlaku 2024-01-01.
+lapisan: regulasi
+keterangan: "PP 58/2023 dan PMK 168/2023"
+aturan:
+  - id: R24-01
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: kategori_ter
+    jika: "not masa_terakhir"
+    maka: "kategori_ter(status_ptkp_efektif)"
+    tipe_hasil: kategori
+    sumber: "PP 58/2023 Ps. 2(4); kategori dari status PTKP awal tahun (PMK 168 Ps. 9(4))"
+  - id: R24-03
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: _bruto_dasar
+    maka: "komponen('teratur', 'bulan') + komponen('tidak_teratur', 'bulan') + komponen('premi_objek', 'bulan') + (komponen('natura', 'bulan') if natura_objek else 0) + komponen_valas('teratur')"
+    pembulatan: BULAT-BRUTO-01
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 5(3), 8(2)a, Lamp. B I.1 angka 2a; valas: Ps. 5(4) (REG-VALAS-01)"
+  - id: R24-GU-00
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: tahun
+    menghasilkan: gross_up
+    maka: "False"
+    tipe_hasil: bool
+    sumber: "PMK 168/2023: metode gross (default)"
+  - id: R24-GU-01
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: tahun
+    menghasilkan: gross_up
+    jika: "metode in ('gross_up', 'ditanggung_pemberi_kerja')"
+    maka: "True"
+    tipe_hasil: bool
+    sumber: "PMK 168/2023 Lamp. B I.4: PPh ditanggung pemberi kerja = kenikmatan, objek PPh 21, dihitung full gross-up (REG-DITANGGUNG-02)"
+  - id: R24-05a
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: tunjangan_pajak
+    jika: "gross_up and not masa_terakhir"
+    maka: "pph21_berjalan"
+    tipe_hasil: rupiah
+    titik_tetap: true
+    sumber: "PMK 168/2023 Lamp. B I.4: T = PPh atas (B + T); titik tetap terkecil (research_plan §6.7)"
+  - id: R24-05b
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: tunjangan_pajak
+    jika: "gross_up and masa_terakhir"
+    maka: "pph21_masa_terakhir"
+    tipe_hasil: rupiah
+    titik_tetap: true
+    sumber: "PMK 168/2023 Lamp. B I.4 jo. Ps. 15(1)b: gross-up pada masa pajak terakhir (persamaan tahunan, §6.9.7)"
+  - id: R24-03b
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: bruto
+    maka: "_bruto_dasar + atau('tunjangan_pajak', 0)"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 8(2)a: seluruh penghasilan termasuk tunjangan pajak"
+  - id: R24-03c
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: bruto_total_masa
+    maka: "bruto"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Lamp. B I.2 angka 5a"
+  - id: R24-02a
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: tarif_ter
+    jika: "not masa_terakhir"
+    maka: "tarif_ter(kategori_ter, bruto)"
+    tipe_hasil: tarif
+    sumber: "PP 58/2023 Lampiran A-C (tabel ter_bulanan.csv, double-entry; interval (a, b])"
+  - id: R24-02b
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: pph21_berjalan
+    jika: "not masa_terakhir"
+    maka: "tarif_ter * bruto"
+    pembulatan: BULAT-TER-01
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 15(1)a"
+  - id: R24-PENG-02
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: zakat_masa
+    maka: "komponen('zakat', 'bulan')"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 10(1)c: zakat/sumbangan keagamaan wajib melalui pemberi kerja"
+  - id: R24-MT-DIPOTONG
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: tahun
+    menghasilkan: pph21_dipotong_sebelumnya
+    jika: "cakupan == 'setahun'"
+    maka: "jumlah_masa_selain_terakhir('pph21_berjalan')"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 15(1)b"

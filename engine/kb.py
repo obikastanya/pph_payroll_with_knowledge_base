@@ -173,10 +173,12 @@ def _iso(obj):
     return obj
 
 
-def muat_kb(berkas_tambahan=(), berkas_regulasi=None):
-    berkas = [DIR_REGULASI / b for b in (berkas_regulasi or BERKAS_ATURAN_REGULASI)] + [Path(b) for b in berkas_tambahan]
+def muat_kb(berkas_tambahan=(), berkas_regulasi=None, dir_regulasi=None):
+    """dir_regulasi: direktori lapisan regulasi alternatif (dipakai mutation testing E4)."""
+    dreg = Path(dir_regulasi or DIR_REGULASI)
+    berkas = [dreg / b for b in (berkas_regulasi or BERKAS_ATURAN_REGULASI)] + [Path(b) for b in berkas_tambahan]
     aturan, komponen, klasifikasi = [], [], []
-    registri = muat_registri_pembulatan()
+    registri = muat_registri_pembulatan(dreg / "pembulatan.yaml")
     for p in berkas:
         data = _iso(muat_yaml(p))
         validasi_skema(data, "aturan.schema.json")
@@ -194,16 +196,33 @@ def muat_kb(berkas_tambahan=(), berkas_regulasi=None):
                                              _tanggal(k["berlaku"].get("sampai")), k["sumber"]) for k in data["klasifikasi_wajib"]]
         if data.get("pembulatan"):
             registri.tambah(data["pembulatan"], lapisan)
-    tabel = {n: muat_tabel(n) for n in ("ter_bulanan", "tarif_pasal17", "ptkp", "klu_dtp")}
+    tabel = {n: muat_tabel(n, dreg / "tabel_manifest.yaml") for n in ("ter_bulanan", "tarif_pasal17", "ptkp", "klu_dtp")}
     kb = KnowledgeBase(aturan=aturan, registri=registri,
-                       parameter=_muat_parameter(DIR_REGULASI / "parameter.yaml"), tabel=tabel,
+                       parameter=_muat_parameter(dreg / "parameter.yaml"), tabel=tabel,
                        berkas=[p.name for p in berkas], komponen=komponen, klasifikasi=klasifikasi)
     verifikasi_statis(kb)
     return kb
 
 
+def _verifikasi_versi_tabel(kb):
+    """§6.6: versi tabel tidak boleh tumpang tindih; setiap versi TER per kategori harus tabel bertingkat sah."""
+    from .interval import tabel_ter
+    rezim = {}
+    for r in kb.tabel["tarif_pasal17"]:
+        rezim.setdefault(r["rezim"], (_tanggal(r["berlaku_mulai"]), _tanggal(r["berlaku_sampai"] or None)))
+    daftar = sorted(rezim.items(), key=lambda kv: kv[1][0])
+    for (n1, (m1, s1)), (n2, (m2, s2)) in zip(daftar, daftar[1:]):
+        if s1 is None or s1 >= m2:
+            raise KesalahanKB(f"tabel Pasal 17: versi '{n1}' dan '{n2}' berlaku bersamaan (tumpang tindih masa berlaku)")
+    for mulai in {r["berlaku_mulai"] for r in kb.tabel["ter_bulanan"]}:
+        versi = [r for r in kb.tabel["ter_bulanan"] if r["berlaku_mulai"] == mulai]
+        for k in sorted({r["kategori"] for r in versi}):
+            tabel_ter(versi, k)   # melempar bila celah / tumpang tindih / tidak berakhir di tak hingga
+
+
 def verifikasi_statis(kb):
     """Pemeriksaan yang tidak bergantung kasus (§6.6). Pemeriksaan per-tahun ada di inferensi.graf()."""
+    _verifikasi_versi_tabel(kb)
     ids = [a.id for a in kb.aturan]
     duplikat = {i for i in ids if ids.count(i) > 1}
     if duplikat:

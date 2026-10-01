@@ -178,3 +178,25 @@ def test_mr14_sumbu_waktu_transaksi():
     d = dengan([rapel])
     assert any(p["kode"] == "TRANSAKSI_TAHUN_LAIN" for p in d["peringatan"])
     assert d["tahunan"]["bruto_setahun"] == 120_000_000
+
+
+@CFG
+@given(status=status_s, gaji=st.integers(1_000_000, 80_000_000), bonus=st.integers(0, 40_000_000))
+def test_ditanggung_pemberi_kerja_setara_gross_up_sejak_2024(status, gaji, bonus):
+    """REG-DITANGGUNG-02 (PMK 168 Lamp. B I.4): PPh ditanggung pemberi kerja = kenikmatan -> full gross-up."""
+    a = hitung(_kasus(2024, status, gaji, 6, bonus, metode="gross_up"))
+    b = hitung(_kasus(2024, status, gaji, 6, bonus, metode="ditanggung_pemberi_kerja"))
+    assert a["per_masa"] == b["per_masa"] and a["tahunan"] == b["tahunan"]
+
+
+@CFG
+@given(tahun=st.sampled_from([2025, 2026]), klu=st.sampled_from(["13111", "55110", "14111", "79121"]),
+       gaji=st.integers(0, 15_000_000), status=status_s)
+def test_dtp_terdefinisi_setiap_masa(tahun, klu, gaji, status):
+    """Bila KLU tersedia, pph21_dtp terdefinisi di SETIAP masa (termasuk masa terakhir dengan PPh = 0)."""
+    k = _kasus(tahun, status, gaji)
+    k["pemberi_kerja"]["klu"] = klu
+    h = hitung(k)
+    for b, m in h["per_masa"].items():
+        assert "pph21_dtp" in m, b
+        assert 0 <= m["pph21_dtp"] <= m["pph21"] or m["pph21"] < 0, (b, m["pph21_dtp"], m["pph21"])

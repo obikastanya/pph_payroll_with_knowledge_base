@@ -19,6 +19,12 @@ def test_komponen_payroll_identik_dengan_xlsx(e8):
     assert beda == []
 
 
+def test_premi_bpjs_kes_identik_kecuali_desember(e8):
+    h, xl = e8
+    beda = [r for r in bandingkan(h, xl) if r["fakta"] in ("px_premi_kes", "px_iuran_kes_pg") and r["bulan"] < 12 and not r["sama"]]
+    assert beda == []
+
+
 def test_konflik_lembur_terdeteksi(e8):
     h, _ = e8
     k = [p for p in h["peringatan"] if p["kode"] == "KONFLIK_WAJIB"]

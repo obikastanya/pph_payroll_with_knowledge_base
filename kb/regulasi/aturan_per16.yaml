@@ -177,13 +177,35 @@ aturan:
     sumber: "PER-16/PJ/2016 contoh I.6.1.2 (PPh sebulan = 1/n x PPh bagian tahun)"
 
   # ---------------------------------------------------------------- penghasilan tidak teratur (R16-05)
+  - id: R16-05N-n
+    sifat: tafsir
+    tafsir: R16-05-N
+    varian: n
+    varian_default: true
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: tahun
+    menghasilkan: _n_tidak_teratur
+    maka: "n_disetahunkan"
+    tipe_hasil: bilangan
+    sumber: "Tafsir: penghasilan teratur disetahunkan dengan faktor yang sama dengan pemotongan bulanan (R16-03); contoh resmi hanya untuk N = 12 (I.4.1, I.4.2, I.6.2.2)"
+  - id: R16-05N-12
+    sifat: tafsir
+    tafsir: R16-05-N
+    varian: "12"
+    varian_default: false
+    berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
+    lingkup: tahun
+    menghasilkan: _n_tidak_teratur
+    maka: "12"
+    tipe_hasil: bilangan
+    sumber: "Tafsir alternatif: selalu x 12 (bunyi PER-16 Ps. 14(3) 'disetahunkan'); belum ada contoh resmi untuk pegawai masuk tengah tahun"
   - id: R16-05a
     sifat: wajib
     berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
     lingkup: masa
     menghasilkan: _bruto_dengan_tt
     jika: "not masa_terakhir and komponen('tidak_teratur', 'bulan') > 0"
-    maka: "n_disetahunkan * bruto_teratur + komponen('tidak_teratur', 'bulan')"
+    maka: "_n_tidak_teratur * bruto_teratur + komponen('tidak_teratur', 'bulan')"
     tipe_hasil: rupiah
     sumber: "PER-16/PJ/2016 Ps. 14(3); contoh I.4.1, I.4.2, I.6.2.2"
   - id: R16-05b
@@ -192,7 +214,7 @@ aturan:
     lingkup: masa
     menghasilkan: _bruto_tanpa_tt
     jika: "not masa_terakhir and komponen('tidak_teratur', 'bulan') > 0"
-    maka: "n_disetahunkan * bruto_teratur"
+    maka: "_n_tidak_teratur * bruto_teratur"
     tipe_hasil: rupiah
     sumber: "PER-16/PJ/2016 Ps. 14(3)"
   - id: R16-05c
@@ -201,7 +223,7 @@ aturan:
     lingkup: masa
     menghasilkan: pkp_dengan_tidak_teratur
     jika: "not masa_terakhir and komponen('tidak_teratur', 'bulan') > 0"
-    maka: "max(0, bulatkan('BULAT-PKP-01', _bruto_dengan_tt - min(bulatkan('BULAT-BJ-01', parameter('bj_persen') / 100 * _bruto_dengan_tt), parameter('bj_maks_tahun')) - n_disetahunkan * (iuran_pensiun_bulanan + iuran_jht_bulanan) - ptkp))"
+    maka: "max(0, bulatkan('BULAT-PKP-01', _bruto_dengan_tt - min(bulatkan('BULAT-BJ-01', parameter('bj_persen') / 100 * _bruto_dengan_tt), parameter('bj_maks_tahun')) - _n_tidak_teratur * (iuran_pensiun_bulanan + iuran_jht_bulanan) - ptkp))"
     tipe_hasil: rupiah
     sumber: "PER-16/PJ/2016 Ps. 14(3); biaya jabatan setahun maks Rp6.000.000"
   - id: R16-05d
@@ -210,7 +232,7 @@ aturan:
     lingkup: masa
     menghasilkan: pkp_tanpa_tidak_teratur
     jika: "not masa_terakhir and komponen('tidak_teratur', 'bulan') > 0"
-    maka: "max(0, bulatkan('BULAT-PKP-01', _bruto_tanpa_tt - min(bulatkan('BULAT-BJ-01', parameter('bj_persen') / 100 * _bruto_tanpa_tt), parameter('bj_maks_tahun')) - n_disetahunkan * (iuran_pensiun_bulanan + iuran_jht_bulanan) - ptkp))"
+    maka: "max(0, bulatkan('BULAT-PKP-01', _bruto_tanpa_tt - min(bulatkan('BULAT-BJ-01', parameter('bj_persen') / 100 * _bruto_tanpa_tt), parameter('bj_maks_tahun')) - _n_tidak_teratur * (iuran_pensiun_bulanan + iuran_jht_bulanan) - ptkp))"
     tipe_hasil: rupiah
     sumber: "PER-16/PJ/2016 Ps. 14(3)"
   - id: R16-05e

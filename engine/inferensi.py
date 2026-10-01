@@ -20,6 +20,15 @@ from .pembulatan import bulatkan as _bulatkan
 
 BATAS_ITERASI = 10_000
 
+# Saklar ablasi E5 (research_plan.md §12.1). HANYA untuk eksperimen; default kosong.
+ABLASI_SAH = {
+    "A1_tanpa_versi_waktu",       # abaikan masa berlaku: aturan & tabel versi terbaru selalu dipakai
+    "A3_tanpa_resolusi_konflik",  # perusahaan selalu menang; klasifikasi wajib diabaikan
+    "A4_iterasi_naif",            # titik tetap: satu iterasi dari 0 (bergantung jalur), tanpa deteksi ganda
+    "A5_pembulatan_naif",         # registri diabaikan: semua pembulatan = setengah_genap (perilaku round())
+    "A9_tanpa_tiga_tanggal",      # masa transaksi = periode kerja (bukan saat terutang)
+}
+
 
 class KasusTidakDidukung(ValueError):
     pass
@@ -36,14 +45,17 @@ def _normal(v):
 
 
 class Evaluasi:
-    def __init__(self, kb, kasus, varian=None):
+    def __init__(self, kb, kasus, varian=None, ablasi=()):
+        self.ablasi = set(ablasi)
+        if self.ablasi - ABLASI_SAH:
+            raise KesalahanKB(f"saklar ablasi tidak dikenal: {sorted(self.ablasi - ABLASI_SAH)}")
         self.kb = kb
         self.kasus = kasus
         self.varian = dict(varian or {})
         self.tahun = kasus["tahun_pajak"]
         self.peringatan = []
         self._konflik = set()
-        kasus = self.kasus = _terapkan_transaksi(kasus, self.peringatan)
+        kasus = self.kasus = _terapkan_transaksi(kasus, self.peringatan, "A9_tanpa_tiga_tanggal" in self.ablasi)
         self.masa = sorted(kasus["masa"], key=lambda m: (m["bulan"] is None, m["bulan"] or 0))
         self.bulan = [m["bulan"] for m in self.masa]
         self.komp = {m["bulan"]: m["komponen"] for m in self.masa}
@@ -78,13 +90,18 @@ class Evaluasi:
         }
 
     def _tanggal(self, bulan):
+        if "A1_tanpa_versi_waktu" in getattr(self, "ablasi", ()):
+            return date(9999, 12, 1)
         return date(self.tahun, bulan or self.dasar_tahun["bulan_terakhir"] or 12, 1)
 
     # ------------------------------------------------------------------ seleksi aturan & graf
     def _pilih_aturan(self):
         terpilih = []
         for a in self.kb.aturan:
-            if not a.berlaku_di_tahun(self.tahun):
+            if "A1_tanpa_versi_waktu" in self.ablasi:
+                if a.sampai is not None:   # hanya versi yang masih berlaku 'sekarang' yang tersisa
+                    continue
+            elif not a.berlaku_di_tahun(self.tahun):
                 continue
             if a.tafsir:
                 v = self.varian.get(a.tafsir)
@@ -193,6 +210,9 @@ class Evaluasi:
             if bawah > atas:
                 raise KesalahanKB(f"{a.id}: batas titik tetap terbalik ({bawah} > {atas})")
             batas[(f, b)] = (bawah, atas)
+        if "A4_iterasi_naif" in self.ablasi:
+            self._iterasi_kleene(anggota, titik, urut, {i: (None if v is None else 0) for i, v in batas.items()}, naik=None)
+            return
         solusi = {}
         for arah in ("terkecil", "terbesar"):
             awal = {i: (None if v is None else (v[0] if arah == "terkecil" else v[1])) for i, v in batas.items()}
@@ -239,7 +259,7 @@ class Evaluasi:
 
     def _evaluasi_instance(self, fakta, b):
         tgl = self._tanggal(b)
-        kandidat = [a for a in self.per_fakta[fakta] if a.berlaku_pada(tgl)]
+        kandidat = [a for a in self.per_fakta[fakta] if "A1_tanpa_versi_waktu" in self.ablasi or a.berlaku_pada(tgl)]
         menyala = []
         for a in kandidat:
             if a.jika is None or a.jika.evaluasi(Konteks(self, b, a)):
@@ -255,8 +275,10 @@ class Evaluasi:
     def _nilai_aturan(self, a, b):
         v = _normal(a.maka.evaluasi(Konteks(self, b, a)))
         if a.pembulatan:
-            mode = self.varian.get(a.pembulatan)
-            v = self.kb.registri.terapkan(a.pembulatan, v, mode=mode)
+            if "A5_pembulatan_naif" in self.ablasi:
+                v = _bulatkan(v, "setengah_genap", 1)
+            else:
+                v = self.kb.registri.terapkan(a.pembulatan, v, mode=self.varian.get(a.pembulatan))
         if a.tipe_hasil == "rupiah":
             if isinstance(v, bool) or not isinstance(v, int):
                 raise PelanggaranPresisi(f"{a.id}: hasil rupiah bukan int ({v!r}); tambahkan pembulatan dari registri")
@@ -267,7 +289,9 @@ class Evaluasi:
         prsh = [a for a in menyala if a.lapisan == "perusahaan"]
         reg_lain = [a for a in menyala if a.lapisan == "regulasi" and a.sifat not in ("wajib", "tafsir")]
         ditolak, alasan = [], []
-        if reg_wajib and prsh:
+        if "A3_tanpa_resolusi_konflik" in self.ablasi and prsh:
+            grup = prsh
+        elif reg_wajib and prsh:
             ditolak += [a.id for a in prsh]
             alasan.append("lex_superior")
             self.peringatan.append({"kode": "KONFLIK_WAJIB", "fakta": fakta, "bulan": b,
@@ -308,7 +332,7 @@ class Evaluasi:
                 "titik_tetap": self.iterasi_titik_tetap, "varian": dict(self.varian)}
 
 
-def _terapkan_transaksi(kasus, peringatan):
+def _terapkan_transaksi(kasus, peringatan, tanpa_tiga_tanggal=False):
     """REG-WAKTU-01 (§6.9.4): transaksi bertanggal -> masa pajak = bulan saat terutang.
 
     Transaksi yang terutang di tahun lain dikeluarkan (peringatan TRANSAKSI_TAHUN_LAIN); transaksi
@@ -323,7 +347,7 @@ def _terapkan_transaksi(kasus, peringatan):
     masa = {m["bulan"]: m for m in k["masa"]}
     for d in daftar:
         t = TransaksiPenghasilan.dari_data(d)
-        tahun, bulan = t.masa_pajak
+        tahun, bulan = t.periode_kerja if tanpa_tiga_tanggal else t.masa_pajak
         if tahun != k["tahun_pajak"]:
             peringatan.append({"kode": "TRANSAKSI_TAHUN_LAIN", "komponen": t.komponen, "masa_pajak": f"{tahun}-{bulan:02d}",
                                "aturan": "REG-WAKTU-01", "tafsir": t.tafsir_waktu()})
@@ -397,6 +421,8 @@ class Konteks:
         if fn == "parameter":
             return parameter_pada(ev.kb, args[0], self._tgl())
         if fn == "bulatkan":
+            if "A5_pembulatan_naif" in ev.ablasi:
+                return _bulatkan(args[1], "setengah_genap", 1)
             return ev.kb.registri.terapkan(args[0], args[1], mode=ev.varian.get(args[0]))
         if fn == "kawin":
             return str(args[0]).startswith("K/")
@@ -461,8 +487,11 @@ def _tarif_ter(ev, kategori, bruto, tgl):
     from .interval import tabel_ter
     if not hasattr(ev, "_cache_ter"):
         ev._cache_ter = {}
-    baris = [r for r in ev.kb.tabel["ter_bulanan"] if date.fromisoformat(r["berlaku_mulai"]) <= tgl]
-    kunci = (kategori, len(baris))
+    versi = sorted({r["berlaku_mulai"] for r in ev.kb.tabel["ter_bulanan"] if date.fromisoformat(r["berlaku_mulai"]) <= tgl})
+    if not versi:
+        raise KesalahanKB(f"tidak ada tabel TER yang berlaku pada {tgl}")
+    baris = [r for r in ev.kb.tabel["ter_bulanan"] if r["berlaku_mulai"] == versi[-1]]  # hanya versi terbaru
+    kunci = (kategori, versi[-1])
     if kunci not in ev._cache_ter:
         ev._cache_ter[kunci] = tabel_ter(baris, kategori)
     return ev._cache_ter[kunci].cari(bruto).tarif
@@ -470,6 +499,8 @@ def _tarif_ter(ev, kategori, bruto, tgl):
 
 def _pasal17(ev, pkp, tgl):
     from .interval import pajak_progresif, tabel_pasal17
+    if "A1_tanpa_versi_waktu" in ev.ablasi:
+        tgl = date(9999, 12, 1)
     for rezim in ("UU HPP", "UU 36/2008 (pra-HPP)"):
         b = [r for r in ev.kb.tabel["tarif_pasal17"] if r["rezim"] == rezim]
         mulai = date.fromisoformat(b[0]["berlaku_mulai"])
@@ -481,6 +512,8 @@ def _pasal17(ev, pkp, tgl):
 
 def kategori_efektif(ev, kp, b):
     """Lex superior: klasifikasi wajib regulasi mengalahkan pemetaan kategori perusahaan."""
+    if "A3_tanpa_resolusi_konflik" in ev.ablasi:
+        return kp.kategori
     tgl = ev._tanggal(b)
     wajib = [w for w in ev.kb.klasifikasi if w.jenis == kp.jenis and w.mulai <= tgl and (w.sampai is None or tgl <= w.sampai)]
     if wajib and wajib[0].kategori != kp.kategori:
@@ -491,6 +524,13 @@ def kategori_efektif(ev, kp, b):
                                   "kategori_perusahaan": kp.kategori, "kategori_wajib": wajib[0].kategori,
                                   "sumber": wajib[0].sumber, "berkas": kp.berkas})
         return wajib[0].kategori
+    if not wajib:
+        kunci = ("KLASIFIKASI_TIDAK_DIATUR", kp.fakta)
+        if kunci not in ev._konflik:
+            ev._konflik.add(kunci)
+            ev.peringatan.append({"kode": "KLASIFIKASI_TIDAK_DIATUR", "fakta": kp.fakta, "jenis": kp.jenis,
+                                  "kategori_perusahaan": kp.kategori,
+                                  "catatan": "regulasi tidak memuat klasifikasi wajib untuk jenis ini; kategori perusahaan dipakai (tafsir)"})
     return kp.kategori
 
 

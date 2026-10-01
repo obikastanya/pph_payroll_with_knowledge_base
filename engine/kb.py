@@ -69,6 +69,8 @@ class Aturan:
     varian_default: bool = False
     pembulatan: object = None
     titik_tetap: bool = False
+    batas_bawah: object = None
+    batas_atas: object = None
     prioritas: int = 0
     sumbu_waktu: str = "masa_pajak"
     berkas: str = ""
@@ -87,6 +89,9 @@ class Aturan:
         d = self.maka.dependensi()
         if self.jika is not None:
             d |= self.jika.dependensi()
+        for b in (self.batas_bawah, self.batas_atas):
+            if b is not None:
+                d |= b.dependensi()
         return d
 
 
@@ -99,6 +104,8 @@ def _bangun_aturan(d, lapisan, berkas):
             tipe_hasil=d["tipe_hasil"], sumber=d["sumber"], tafsir=d.get("tafsir"), varian=d.get("varian"),
             varian_default=d.get("varian_default", False), pembulatan=d.get("pembulatan"),
             titik_tetap=d.get("titik_tetap", False), prioritas=d.get("prioritas", 0),
+            batas_bawah=Ekspresi(d["batas_titik_tetap"]["bawah"], FUNGSI) if d.get("batas_titik_tetap") else None,
+            batas_atas=Ekspresi(d["batas_titik_tetap"]["atas"], FUNGSI) if d.get("batas_titik_tetap") else None,
             sumbu_waktu=d.get("sumbu_waktu", "masa_pajak"), berkas=berkas)
     except (KesalahanKB, PelanggaranPresisi, ValueError) as e:
         raise KesalahanKB(f"{berkas}: aturan {d.get('id')}: {e}") from None
@@ -170,6 +177,8 @@ def verifikasi_statis(kb):
             raise KesalahanKB(f"{a.id}: pembulatan {a.pembulatan} tidak terdaftar di registri")
         if a.sifat == "tafsir" and (not a.tafsir or not a.varian):
             raise KesalahanKB(f"{a.id}: aturan tafsir wajib punya 'tafsir' dan 'varian'")
+        if a.titik_tetap and (a.batas_bawah is None or a.batas_atas is None):
+            raise KesalahanKB(f"{a.id}: aturan titik_tetap wajib punya batas_titik_tetap (bawah/atas) agar Tarski berlaku")
         if a.sampai is not None and a.sampai < a.mulai:
             raise KesalahanKB(f"{a.id}: masa berlaku terbalik")
     for fakta, daftar in per_fakta.items():

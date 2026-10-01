@@ -44,6 +44,7 @@ class Evaluasi:
         self.masa = sorted(kasus["masa"], key=lambda m: (m["bulan"] is None, m["bulan"] or 0))
         self.bulan = [m["bulan"] for m in self.masa]
         self.komp = {m["bulan"]: m["komponen"] for m in self.masa}
+        _validasi_input(kasus)
         self.dasar_tahun = self._fakta_dasar()
         self.nilai_tahun = {}
         self.nilai_masa = {b: {} for b in self.bulan}
@@ -168,23 +169,66 @@ class Evaluasi:
         return self._jejak_map
 
     def _selesaikan_scc(self, anggota, titik):
-        """Iterasi Kleene: nilai awal titik tetap = 0, ulang sampai seluruh anggota stabil."""
-        for f in titik:
-            for b in self._instance(f):
-                self._simpan(f, b, (0, None))
+        """Titik tetap terkecil & terbesar (Knaster-Tarski) lewat iterasi Kleene dari batas bawah/atas.
+
+        Bila keduanya berbeda -> peringatan GROSSUP_GANDA; solusi dipilih deterministik menurut tafsir
+        TITIK-TETAP-PILIH (default 'terkecil'). Hasil tidak bergantung pada jalur iterasi.
+        """
         urut = _urut_dalam_scc(anggota, self.tepi, set(titik))
-        sebelumnya = None
+        instance = [(f, b) for f in titik for b in self._instance(f)]
+        batas = {}
+        for f, b in instance:
+            a = self._aturan_titik(f, b)
+            if a is None:
+                batas[(f, b)] = None
+                continue
+            ctx = Konteks(self, b, a)
+            bawah, atas = _normal(a.batas_bawah.evaluasi(ctx)), _normal(a.batas_atas.evaluasi(ctx))
+            if bawah > atas:
+                raise KesalahanKB(f"{a.id}: batas titik tetap terbalik ({bawah} > {atas})")
+            batas[(f, b)] = (bawah, atas)
+        solusi = {}
+        for arah in ("terkecil", "terbesar"):
+            awal = {i: (None if v is None else (v[0] if arah == "terkecil" else v[1])) for i, v in batas.items()}
+            solusi[arah] = self._iterasi_kleene(anggota, titik, urut, awal, naik=(arah == "terkecil"))
+        pilih = self.varian.get("TITIK-TETAP-PILIH", "terkecil")
+        if pilih not in solusi:
+            raise KesalahanKB(f"varian TITIK-TETAP-PILIH tidak dikenal: {pilih}")
+        for i in instance:
+            if solusi["terkecil"][i] != solusi["terbesar"][i]:
+                self.peringatan.append({"kode": "GROSSUP_GANDA", "fakta": i[0], "bulan": i[1],
+                                        "terkecil": solusi["terkecil"][i], "terbesar": solusi["terbesar"][i],
+                                        "dipilih": pilih})
+        self._iterasi_kleene(anggota, titik, urut, solusi[pilih], naik=None)
+
+    def _aturan_titik(self, f, b):
+        tgl = self._tanggal(b)
+        for a in self.per_fakta[f]:
+            if a.titik_tetap and a.berlaku_pada(tgl) and (a.jika is None or a.jika.evaluasi(Konteks(self, b, a))):
+                return a
+        return None
+
+    def _iterasi_kleene(self, anggota, titik, urut, awal, naik):
+        for (f, b), v in awal.items():
+            self._simpan(f, b, (v, None))
         for i in range(BATAS_ITERASI):
             for f in urut:
                 self._hitung_fakta(f)
+            berubah = False
             for f in titik:
-                self._hitung_fakta(f)
-            sekarang = tuple((f, b, self.nilai_fakta(f, b)) for f in sorted(anggota) for b in self._instance(f))
-            if sekarang == sebelumnya:
-                self.peringatan.append({"kode": "TITIK_TETAP", "anggota": sorted(anggota), "iterasi": i + 1}) \
-                    if i > 1 else None
-                return
-            sebelumnya = sekarang
+                for b in self._instance(f):
+                    lama = self.nilai_fakta(f, b)
+                    self._simpan(f, b, self._evaluasi_instance(f, b))
+                    baru = self.nilai_fakta(f, b)
+                    if baru != lama:
+                        berubah = True
+                        if naik is not None and lama is not None and baru is not None and (baru < lama) == naik:
+                            raise KesalahanKB(f"fungsi titik tetap {f}[{b}] tidak monoton (iterasi {'naik' if naik else 'turun'}:"
+                                              f" {lama} -> {baru}); asumsi Knaster-Tarski dilanggar")
+            if not berubah:
+                self.iterasi_titik_tetap.append({"anggota": sorted(titik), "iterasi": i + 1,
+                                                 "arah": {True: "dari_bawah", False: "dari_atas", None: "konfirmasi"}[naik]})
+                return {(f, b): self.nilai_fakta(f, b) for f in titik for b in self._instance(f)}
         raise KesalahanKB(f"titik tetap tidak konvergen dalam {BATAS_ITERASI} iterasi: {sorted(anggota)}")
 
     def _evaluasi_instance(self, fakta, b):
@@ -256,6 +300,19 @@ class Evaluasi:
         jejak = [self._jejak[k] for k in sorted(self._jejak, key=lambda k: (k[1] is None, k[1] or 0, k[0]))]
         return {"per_masa": per, "tahunan": tahun, "jejak": jejak, "peringatan": self.peringatan,
                 "titik_tetap": self.iterasi_titik_tetap, "varian": dict(self.varian)}
+
+
+def _validasi_input(kasus):
+    """Kontrak input (§6.9.5): nominal komponen int >= 0, kategori dikenal; DATA_KURANG menghentikan."""
+    from .waktu import InputTidakValid
+    kategori_sah = {"teratur", "tidak_teratur", "premi_objek", "natura", "iuran_pengurang", "zakat", "rapel"}
+    for m in kasus["masa"]:
+        for k in m["komponen"]:
+            if k.get("kategori") not in kategori_sah:
+                raise InputTidakValid(f"{kasus['id']}: kategori komponen tidak dikenal {k.get('kategori')!r}")
+            n = k["valas"]["jumlah"] if "valas" in k else k.get("nominal")
+            if isinstance(n, bool) or not isinstance(n, int) or n < 0:
+                raise InputTidakValid(f"{kasus['id']}: nominal {k.get('kode')} bulan {m['bulan']} wajib int >= 0, diterima {n!r}")
 
 
 def _keluaran(v):

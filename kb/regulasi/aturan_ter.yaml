@@ -41,30 +41,69 @@ aturan:
     sifat: wajib
     berlaku: {mulai: 2024-01-01}
     lingkup: masa
-    menghasilkan: tunjangan_pajak
+    menghasilkan: tunjangan_pajak_berjalan
     jika: "gross_up and not masa_terakhir"
     maka: "pph21_berjalan"
     tipe_hasil: rupiah
     titik_tetap: true
-    sumber: "PMK 168/2023 Lamp. B I.4: T = PPh atas (B + T); titik tetap terkecil (research_plan §6.7)"
+    batas_titik_tetap: {bawah: "0", atas: "_bruto_dasar"}
+    sumber: "PMK 168/2023 Lamp. B I.4: T = PPh atas (B + T). Tarski: f monoton, f(0) >= 0, f(B) <= 0,68B <= B"
   - id: R24-05b
     sifat: wajib
     berlaku: {mulai: 2024-01-01}
-    lingkup: masa
-    menghasilkan: tunjangan_pajak
-    jika: "gross_up and masa_terakhir"
+    lingkup: tahun
+    menghasilkan: tunjangan_pajak_akhir
+    jika: "gross_up and cakupan == 'setahun'"
     maka: "pph21_masa_terakhir"
     tipe_hasil: rupiah
     titik_tetap: true
-    sumber: "PMK 168/2023 Lamp. B I.4 jo. Ps. 15(1)b: gross-up pada masa pajak terakhir (persamaan tahunan, §6.9.7)"
+    batas_titik_tetap: {bawah: "0 - pph21_dipotong_sebelumnya", atas: "jumlah_masa('_bruto_dasar') + jumlah_masa('tunjangan_pajak_berjalan')"}
+    sumber: "PMK 168/2023 Lamp. B I.4 jo. Ps. 15(1)b: gross-up masa pajak terakhir (persamaan tahunan, §6.9.7). Tarski: f >= -dipotong; f(A) <= 0,35 x 2A <= A"
+  - id: R24-03a
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: bruto_berjalan
+    jika: "not masa_terakhir"
+    maka: "_bruto_dasar + atau('tunjangan_pajak_berjalan', 0)"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 8(2)a: seluruh penghasilan termasuk tunjangan pajak"
   - id: R24-03b
     sifat: wajib
     berlaku: {mulai: 2024-01-01}
     lingkup: masa
     menghasilkan: bruto
-    maka: "_bruto_dasar + atau('tunjangan_pajak', 0)"
+    jika: "not masa_terakhir"
+    maka: "bruto_berjalan"
     tipe_hasil: rupiah
-    sumber: "PMK 168/2023 Ps. 8(2)a: seluruh penghasilan termasuk tunjangan pajak"
+    sumber: "PMK 168/2023 Ps. 8(2)a"
+  - id: R24-03d
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: bruto
+    jika: "masa_terakhir"
+    maka: "_bruto_dasar + atau('tunjangan_pajak_akhir', 0)"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Ps. 8(2)a; Lamp. B I.4"
+  - id: R24-05c
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: tunjangan_pajak
+    jika: "gross_up and not masa_terakhir"
+    maka: "tunjangan_pajak_berjalan"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Lamp. B I.4"
+  - id: R24-05d
+    sifat: wajib
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: tunjangan_pajak
+    jika: "gross_up and masa_terakhir"
+    maka: "tunjangan_pajak_akhir"
+    tipe_hasil: rupiah
+    sumber: "PMK 168/2023 Lamp. B I.4"
   - id: R24-03c
     sifat: wajib
     berlaku: {mulai: 2024-01-01}
@@ -79,7 +118,7 @@ aturan:
     lingkup: masa
     menghasilkan: tarif_ter
     jika: "not masa_terakhir"
-    maka: "tarif_ter(kategori_ter, bruto)"
+    maka: "tarif_ter(kategori_ter, bruto_berjalan)"
     tipe_hasil: tarif
     sumber: "PP 58/2023 Lampiran A-C (tabel ter_bulanan.csv, double-entry; interval (a, b])"
   - id: R24-02b
@@ -88,7 +127,7 @@ aturan:
     lingkup: masa
     menghasilkan: pph21_berjalan
     jika: "not masa_terakhir"
-    maka: "tarif_ter * bruto"
+    maka: "tarif_ter * bruto_berjalan"
     pembulatan: BULAT-TER-01
     tipe_hasil: rupiah
     sumber: "PMK 168/2023 Ps. 15(1)a"

@@ -1,0 +1,187 @@
+{
+  "id": "PER16-I.1.2",
+  "sumber": {
+    "regulasi": "PER-16/PJ/2016",
+    "bagian": "Lampiran, Bagian Kedua, I.1.2, Bambang Eko",
+    "halaman_pdf": [
+      28,
+      29
+    ],
+    "halaman_dokumen": "-9-, -10-",
+    "catatan": "PDF hasil pindai; angka dibaca dari citra halaman (bukan hanya teks OCR)."
+  },
+  "rezim": "PER16_2023",
+  "dalam_lingkup": true,
+  "catatan_lingkup": "Contoh PER-16 bertahun 2016 dan memakai lapisan tarif Pasal 17 UU 36/2008 (5% s.d. Rp50 juta; 15% >50-250 juta; 25% >250-500 juta; 30% >500 juta). Rezim 'PER16_2023' = metode (disetahunkan, PPh sebulan = PPh setahun / 12); untuk tahun pajak 2023 berlaku lapisan UU HPP (5% s.d. Rp60 juta). Lihat kunci 'relevansi_tarif_2023'.",
+  "skenario": [
+    "metode_PER16_bulanan",
+    "premi_JKK_JKM",
+    "iuran_JHT",
+    "iuran_pensiun"
+  ],
+  "uraian": "Bambang Eko (menikah tanpa anak, K/0) Juli 2016: gaji 8 juta; premi JKK 0,5% & JKM 0,3% dibayar pemberi kerja (objek); JHT pegawai 2%; iuran pensiun pegawai.",
+  "input": {
+    "tahun_pajak": 2016,
+    "tarif_pasal17_dokumen": "UU 36/2008 (pra-HPP)",
+    "status_ptkp": "K/0",
+    "jenis_kelamin": "tidak_disebutkan",
+    "metode": "gross",
+    "masa": [
+      {
+        "bulan": 7,
+        "komponen": {
+          "gaji": 8000000,
+          "premi_jkk": 40000,
+          "premi_jkm": 24000,
+          "iuran_jht_pegawai": 160000,
+          "iuran_pensiun_pegawai": 100000
+        }
+      }
+    ],
+    "info_tambahan": {
+      "premi_jkk_persen": 0.005,
+      "premi_jkm_persen": 0.003,
+      "iuran_jht_pemberi_kerja_persen": 0.037,
+      "iuran_jht_pegawai_persen": 0.02,
+      "iuran_pensiun_pemberi_kerja": 200000,
+      "iuran_pensiun_pegawai_narasi": 100000
+    }
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 7,
+        "bruto": 8064000,
+        "biaya_jabatan": 403200,
+        "iuran_pensiun": 200000,
+        "iuran_jht": 160000,
+        "total_pengurang": 663200,
+        "neto_sebulan": 7400800,
+        "neto_setahun": 88809600,
+        "ptkp": 58500000,
+        "pkp_sebelum_pembulatan": 30309600,
+        "pkp": 30309000,
+        "pph21_setahun": 1515450,
+        "pph21": 126288
+      }
+    ]
+  },
+  "langkah_resmi": [
+    "Gaji 8.000.000 + Premi JKK 40.000 + Premi JKM 24.000 = Penghasilan bruto 8.064.000",
+    "Biaya Jabatan 5% X Rp 8.064.000,00 = 403.200; Iuran Pensiun Rp 200.000,00; Iuran JHT 160.000; jumlah Rp 663.200,00",
+    "Penghasilan neto sebulan 7.400.800; 12 X = 88.809.600; PTKP 58.500.000; 30.309.600 -> PKP 30.309.000",
+    "5% X Rp 30.309.000,00 = 1.515.450; PPh Pasal 21 bulan Januari [sic] Rp 1.515.450,00 : 12 = 126.288"
+  ],
+  "catatan_transkripsi": "DUGAAN ERRATUM (dicek pada citra hlm. -9-): (1) narasi menyebut iuran pensiun yang dibayar Bambang Eko Rp100.000 (PT membayar Rp200.000), dan baris pengurang tertulis 'Iuran Pensiun Rp 200.000,00', tetapi jumlah pengurang 663.200 = 403.200 + 100.000 + 160.000 dan neto 7.400.800 konsisten dengan 100.000. Jadi baris '200.000' kemungkinan salah ketik (nilai yang dipakai = 100.000). Expected.per_masa.iuran_pensiun mempertahankan angka tercetak 200.000. (2) Label 'PPh Pasal 21 bulan Januari' padahal contoh untuk Juli 2016. (3) 1.515.450/12 = 126.287,5 dibulatkan ke 126.288 (pembulatan normal) - bandingkan I.1.4 (103.087,5 -> 103.087, ke bawah).",
+  "cek_aritmetika": [
+    {
+      "item": "bruto",
+      "dokumen": 8064000,
+      "hitung_ulang": 8064000,
+      "status": "cocok"
+    },
+    {
+      "item": "JKK 0,5% x gaji",
+      "dokumen": 40000,
+      "hitung_ulang": 40000,
+      "status": "cocok"
+    },
+    {
+      "item": "JKM 0,3% x gaji",
+      "dokumen": 24000,
+      "hitung_ulang": 24000,
+      "status": "cocok"
+    },
+    {
+      "item": "JHT 2% x gaji",
+      "dokumen": 160000,
+      "hitung_ulang": 160000,
+      "status": "cocok"
+    },
+    {
+      "item": "jumlah pengurang dengan iuran pensiun TERCETAK 200.000",
+      "dokumen": 663200,
+      "hitung_ulang": 763200,
+      "status": "TIDAK COCOK"
+    },
+    {
+      "item": "Jul: biaya jabatan = min(5% x bruto. 500.000)",
+      "dokumen": 403200,
+      "hitung_ulang": 403200,
+      "status": "cocok"
+    },
+    {
+      "item": "Jul: jumlah pengurang",
+      "dokumen": 663200,
+      "hitung_ulang": 663200,
+      "status": "cocok"
+    },
+    {
+      "item": "Jul: neto sebulan = bruto - pengurang",
+      "dokumen": 7400800,
+      "hitung_ulang": 7400800,
+      "status": "cocok"
+    },
+    {
+      "item": "Jul: neto setahun = 12 x neto",
+      "dokumen": 88809600,
+      "hitung_ulang": 88809600,
+      "status": "cocok"
+    },
+    {
+      "item": "Jul: PKP sebelum pembulatan",
+      "dokumen": 30309600,
+      "hitung_ulang": 30309600,
+      "status": "cocok"
+    },
+    {
+      "item": "Jul: PKP (dibulatkan ribuan ke bawah)",
+      "dokumen": 30309000,
+      "hitung_ulang": 30309000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Juli = 1.515.450 / 12",
+      "dokumen": 126288,
+      "hitung_ulang": 126287.5,
+      "status": "cocok",
+      "pembulatan_teramati": "dibulatkan normal (half-up)"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "PTKP setahun K/0",
+      "dokumen": 58500000,
+      "tabel": 58500000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU 36/2008 (pra-HPP)) atas PKP 30.309.000",
+      "dokumen": 1515450,
+      "tabel": 1515450,
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 11,
+    "aritmetika_tidak_cocok": 1,
+    "tabel_cocok": 2,
+    "tabel_tidak_cocok": 0
+  },
+  "relevansi_tarif_2023": {
+    "keterangan": "Hitung ulang PPh setahun atas PKP dokumen dengan dua lapisan tarif (bukan nilai expected). Jika 'hasil_sama_di_kedua_tarif' = true, angka contoh juga berlaku untuk lapisan tarif 2023 (dengan asumsi PTKP sama - PTKP PMK 101/2016 masih berlaku 2023).",
+    "rincian": [
+      {
+        "pkp": 30309000,
+        "pph_dokumen": 1515450,
+        "pph_tarif_UU36_2008": 1515450,
+        "pph_tarif_UU_HPP": 1515450,
+        "hasil_sama_di_kedua_tarif": true
+      }
+    ]
+  },
+  "dugaan_erratum": "Baris iuran pensiun tercetak 200.000 (iuran pemberi kerja), sedangkan jumlah pengurang & neto memakai 100.000 (iuran pegawai).",
+  "catatan_minor": "label 'bulan Januari' utk Juli",
+  "verifikasi_pass2": "cocok"
+}

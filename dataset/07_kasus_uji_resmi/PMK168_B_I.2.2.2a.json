@@ -1,0 +1,214 @@
+{
+  "id": "PMK168-B-I.2.2.2a",
+  "sumber": {
+    "regulasi": "PMK 168/2023",
+    "bagian": "Lampiran huruf B, Bagian Kedua, I.2.2.2 (berhenti di satu pemberi kerja dan mulai bekerja di pemberi kerja lain), varian 'Tuan D tidak menyerahkan bukti pemotongan dari PT W ke PT AB'",
+    "halaman_pdf": [
+      40,
+      41
+    ]
+  },
+  "rezim": "TER_2024",
+  "dalam_lingkup": true,
+  "skenario": [
+    "TER_bulanan",
+    "masa_terakhir_desember",
+    "masuk_tengah_tahun",
+    "iuran_pensiun",
+    "lebih_potong"
+  ],
+  "uraian": "Lanjutan I.2.2.1: Tuan D (TK/0) bekerja di PT AB mulai September 2024, gaji 22,5 juta, iuran pensiun 100 ribu; PT AB menghitung tanpa penghasilan dari PT W.",
+  "input": {
+    "tahun_pajak": 2024,
+    "status_ptkp": "TK/0",
+    "jenis_kelamin": "L",
+    "metode": "gross",
+    "tanggal_masuk": "2024-09",
+    "bukti_potong_pemberi_kerja_sebelumnya_diserahkan": false,
+    "masa": [
+      {
+        "bulan": 9,
+        "komponen": {
+          "gaji": 22500000,
+          "iuran_pensiun_pegawai": 100000
+        }
+      },
+      {
+        "bulan": 10,
+        "komponen": {
+          "gaji": 22500000,
+          "iuran_pensiun_pegawai": 100000
+        }
+      },
+      {
+        "bulan": 11,
+        "komponen": {
+          "gaji": 22500000,
+          "iuran_pensiun_pegawai": 100000
+        }
+      },
+      {
+        "bulan": 12,
+        "komponen": {
+          "gaji": 22500000,
+          "iuran_pensiun_pegawai": 100000
+        }
+      }
+    ],
+    "jenis_kelamin_catatan": "disimpulkan dari sapaan 'Tuan' di dokumen"
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 9,
+        "bruto": 22500000,
+        "kategori_ter": "A",
+        "tarif_ter": 0.09,
+        "pph21": 2025000
+      },
+      {
+        "bulan": 10,
+        "bruto": 22500000,
+        "kategori_ter": "A",
+        "tarif_ter": 0.09,
+        "pph21": 2025000
+      },
+      {
+        "bulan": 11,
+        "bruto": 22500000,
+        "kategori_ter": "A",
+        "tarif_ter": 0.09,
+        "pph21": 2025000
+      },
+      {
+        "bulan": 12,
+        "bruto": 22500000,
+        "pph21": -4395000,
+        "keterangan": "Masa Pajak Terakhir (Pasal 17)"
+      }
+    ],
+    "tahunan": {
+      "bruto_setahun": 90000000,
+      "biaya_jabatan": 2000000,
+      "iuran_pensiun": 400000,
+      "total_pengurang": 2400000,
+      "neto_setahun": 87600000,
+      "ptkp": 54000000,
+      "pkp": 33600000,
+      "pph21_setahun": 1680000,
+      "pph21_dipotong_sebelumnya": 6075000,
+      "pph21_masa_terakhir": -4395000,
+      "keterangan_masa_terakhir": "lebih dipotong (Rp 4.395.000,00)"
+    },
+    "kredit_pajak_spt": {
+      "PT_W": 6180000,
+      "PT_AB": 1680000,
+      "total": 7860000
+    }
+  },
+  "langkah_resmi": [
+    "September-November 22.500.000 x 9% = 2.025.000; Jumlah 6.075.000",
+    "Biaya jabatan 5% X Rp90.000.000,00 (maksimal 4 X Rp500.000,00) Rp 2.000.000,00; Iuran pensiun 4 X Rp 100.000,00 Rp 400.000,00",
+    "Penghasilan neto setahun Rp 87.600.000,00; PTKP Rp 54.000.000,00; PKP Rp 33.600.000,00",
+    "5% X Rp 33.600.000,00 = Rp 1.680.000,00; dipotong Sept-Nov Rp 6.075.000,00; lebih dipotong (Rp 4.395.000,00)",
+    "Total kredit PPh 21 SPT Tahunan Tuan D Rp7.860.000,00"
+  ],
+  "catatan_transkripsi": "Tidak ada inkonsistensi.",
+  "cek_aritmetika": [
+    {
+      "item": "PPh bulan 9 = 0.09 x 22500000",
+      "dokumen": 2025000,
+      "hitung_ulang": 2025000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh bulan 10 = 0.09 x 22500000",
+      "dokumen": 2025000,
+      "hitung_ulang": 2025000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh bulan 11 = 0.09 x 22500000",
+      "dokumen": 2025000,
+      "hitung_ulang": 2025000,
+      "status": "cocok"
+    },
+    {
+      "item": "biaya jabatan",
+      "dokumen": 2000000,
+      "hitung_ulang": 2000000,
+      "status": "cocok"
+    },
+    {
+      "item": "neto",
+      "dokumen": 87600000,
+      "hitung_ulang": 87600000,
+      "status": "cocok"
+    },
+    {
+      "item": "PKP",
+      "dokumen": 33600000,
+      "hitung_ulang": 33600000,
+      "status": "cocok"
+    },
+    {
+      "item": "masa terakhir",
+      "dokumen": -4395000,
+      "hitung_ulang": -4395000,
+      "status": "cocok"
+    },
+    {
+      "item": "total kredit",
+      "dokumen": 7860000,
+      "hitung_ulang": 7860000,
+      "status": "cocok"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "tarif TER A utk bruto 22.500.000 (bulan 9)",
+      "dokumen": 0.09,
+      "tabel": 0.09,
+      "status": "cocok"
+    },
+    {
+      "item": "tarif TER A utk bruto 22.500.000 (bulan 10)",
+      "dokumen": 0.09,
+      "tabel": 0.09,
+      "status": "cocok"
+    },
+    {
+      "item": "tarif TER A utk bruto 22.500.000 (bulan 11)",
+      "dokumen": 0.09,
+      "tabel": 0.09,
+      "status": "cocok"
+    },
+    {
+      "item": "kategori TER utk status TK/0 (PP 58/2023 Ps. 2 ayat (4))",
+      "dokumen": "A",
+      "tabel": "A",
+      "status": "cocok"
+    },
+    {
+      "item": "PTKP setahun TK/0",
+      "dokumen": 54000000,
+      "tabel": 54000000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU HPP) atas PKP 33.600.000",
+      "dokumen": 1680000,
+      "tabel": 1680000,
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 8,
+    "aritmetika_tidak_cocok": 0,
+    "tabel_cocok": 6,
+    "tabel_tidak_cocok": 0
+  },
+  "dugaan_erratum": null,
+  "verifikasi_pass2": "cocok"
+}

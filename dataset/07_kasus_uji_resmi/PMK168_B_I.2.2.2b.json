@@ -1,0 +1,186 @@
+{
+  "id": "PMK168-B-I.2.2.2b",
+  "sumber": {
+    "regulasi": "PMK 168/2023",
+    "bagian": "Lampiran huruf B, Bagian Kedua, I.2.2.2, varian 'Tuan D menyerahkan bukti pemotongan dari PT W kepada PT AB' (tabel masa Sept-Nov di hlm. 40)",
+    "halaman_pdf": [
+      40,
+      41,
+      42
+    ]
+  },
+  "rezim": "TER_2024",
+  "dalam_lingkup": false,
+  "catatan_lingkup": "Memperhitungkan penghasilan neto & PPh dari pemberi kerja sebelumnya (lebih dari satu pemberi kerja) - di luar lingkup menurut research_plan §4.3. Ditranskripsi lengkap untuk referensi.",
+  "skenario": [
+    "TER_bulanan",
+    "masa_terakhir_desember",
+    "masuk_tengah_tahun",
+    "multi_pemberi_kerja"
+  ],
+  "uraian": "Tuan D (TK/0) di PT AB Sept-Des 2024 menyerahkan bukti potong PT W; PT AB menggabungkan neto PT W (135,2 juta) pada Masa Pajak Terakhir.",
+  "input": {
+    "tahun_pajak": 2024,
+    "status_ptkp": "TK/0",
+    "jenis_kelamin": "L",
+    "metode": "gross",
+    "tanggal_masuk": "2024-09",
+    "bukti_potong_pemberi_kerja_sebelumnya_diserahkan": true,
+    "data_pemberi_kerja_sebelumnya": {
+      "neto_jan_agt": 135200000,
+      "pph21_dipotong_jan_agt": 6180000
+    },
+    "masa": [
+      {
+        "bulan": 9,
+        "komponen": {
+          "gaji": 22500000,
+          "iuran_pensiun_pegawai": 100000
+        }
+      },
+      {
+        "bulan": 10,
+        "komponen": {
+          "gaji": 22500000,
+          "iuran_pensiun_pegawai": 100000
+        }
+      },
+      {
+        "bulan": 11,
+        "komponen": {
+          "gaji": 22500000,
+          "iuran_pensiun_pegawai": 100000
+        }
+      },
+      {
+        "bulan": 12,
+        "komponen": {
+          "gaji": 22500000,
+          "iuran_pensiun_pegawai": 100000
+        }
+      }
+    ],
+    "jenis_kelamin_catatan": "disimpulkan dari sapaan 'Tuan' di dokumen"
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 9,
+        "bruto": 22500000,
+        "kategori_ter": "A",
+        "tarif_ter": 0.09,
+        "pph21": 2025000
+      },
+      {
+        "bulan": 10,
+        "bruto": 22500000,
+        "kategori_ter": "A",
+        "tarif_ter": 0.09,
+        "pph21": 2025000
+      },
+      {
+        "bulan": 11,
+        "bruto": 22500000,
+        "kategori_ter": "A",
+        "tarif_ter": 0.09,
+        "pph21": 2025000
+      },
+      {
+        "bulan": 12,
+        "bruto": 22500000,
+        "pph21": 7065000,
+        "keterangan": "Masa Pajak Terakhir (Pasal 17)"
+      }
+    ],
+    "tahunan": {
+      "bruto_setahun": 90000000,
+      "biaya_jabatan": 2000000,
+      "iuran_pensiun": 400000,
+      "total_pengurang": 2400000,
+      "neto_pemberi_kerja_ini": 87600000,
+      "neto_pemberi_kerja_sebelumnya": 135200000,
+      "neto_setahun": 222800000,
+      "ptkp": 54000000,
+      "pkp": 168800000,
+      "pph21_lapisan": [
+        {
+          "tarif": 0.05,
+          "dasar": 60000000,
+          "pph": 3000000
+        },
+        {
+          "tarif": 0.15,
+          "dasar": 108800000,
+          "pph": 16320000
+        }
+      ],
+      "pph21_setahun": 19320000,
+      "pph21_dipotong_pemberi_kerja_sebelumnya": 6180000,
+      "pph21_terutang_sep_des": 13140000,
+      "pph21_dipotong_sebelumnya": 6075000,
+      "pph21_masa_terakhir": 7065000
+    },
+    "kredit_pajak_spt": {
+      "PT_W": 6180000,
+      "PT_AB": 13140000,
+      "total": 19320000
+    }
+  },
+  "langkah_resmi": [
+    "Biaya jabatan sebulan [sic] 5% X Rp90.000.000,00 (maksimal 4 X Rp500.000,00) Rp 2.000.000,00; Iuran pensiun Rp 400.000,00",
+    "Neto Sept-Des di PT AB Rp 87.600.000,00 + neto Jan-Agt di PT W Rp 135.200.000,00 = Rp 222.800.000,00",
+    "PKP Rp 168.800.000,00; 5% X 60.000.000 = 3.000.000; 15% X 108.800.000 = 16.320.000; jumlah 19.320.000",
+    "Dikurangi PPh PT W 6.180.000 = 13.140.000; dikurangi PPh PT AB Sept-Nov 6.075.000; wajib dipotong Desember Rp 7.065.000,00"
+  ],
+  "catatan_transkripsi": "Label 'Biaya jabatan sebulan' pada dokumen padahal nilainya biaya jabatan 4 bulan (salah label minor, angka konsisten).",
+  "cek_aritmetika": [
+    {
+      "item": "neto gabungan",
+      "dokumen": 222800000,
+      "hitung_ulang": 222800000,
+      "status": "cocok"
+    },
+    {
+      "item": "PKP",
+      "dokumen": 168800000,
+      "hitung_ulang": 168800000,
+      "status": "cocok"
+    },
+    {
+      "item": "terutang Sep-Des",
+      "dokumen": 13140000,
+      "hitung_ulang": 13140000,
+      "status": "cocok"
+    },
+    {
+      "item": "Desember",
+      "dokumen": 7065000,
+      "hitung_ulang": 7065000,
+      "status": "cocok"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "PTKP setahun TK/0",
+      "dokumen": 54000000,
+      "tabel": 54000000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU HPP) atas PKP 168.800.000",
+      "dokumen": 19320000,
+      "tabel": 19320000,
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 4,
+    "aritmetika_tidak_cocok": 0,
+    "tabel_cocok": 2,
+    "tabel_tidak_cocok": 0
+  },
+  "dugaan_erratum": null,
+  "catatan_minor": "label 'Biaya jabatan sebulan' utk 4 bulan",
+  "verifikasi_pass2": "cocok setelah perbaikan metadata: halaman_pdf ditambah 40 (tabel masa Sept-Nov)"
+}

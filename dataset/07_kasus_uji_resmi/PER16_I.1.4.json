@@ -1,0 +1,180 @@
+{
+  "id": "PER16-I.1.4",
+  "sumber": {
+    "regulasi": "PER-16/PJ/2016",
+    "bagian": "Lampiran, Bagian Kedua, I.1.4, Ikha Hapsari (karyawati, suami PNS)",
+    "halaman_pdf": [
+      30
+    ],
+    "halaman_dokumen": "-11-",
+    "catatan": "PDF hasil pindai; angka dibaca dari citra halaman (bukan hanya teks OCR)."
+  },
+  "rezim": "PER16_2023",
+  "dalam_lingkup": true,
+  "catatan_lingkup": "Contoh PER-16 bertahun 2016 dan memakai lapisan tarif Pasal 17 UU 36/2008 (5% s.d. Rp50 juta; 15% >50-250 juta; 25% >250-500 juta; 30% >500 juta). Rezim 'PER16_2023' = metode (disetahunkan, PPh sebulan = PPh setahun / 12); untuk tahun pajak 2023 berlaku lapisan UU HPP (5% s.d. Rp60 juta). Lihat kunci 'relevansi_tarif_2023'.",
+  "skenario": [
+    "metode_PER16_bulanan",
+    "pegawai_wanita_kawin",
+    "lembur",
+    "premi_JKK_JKM",
+    "iuran_JHT",
+    "iuran_pensiun"
+  ],
+  "uraian": "Karyawati Ikha Hapsari, menikah 3 anak, suami PNS berpenghasilan -> PTKP hanya diri sendiri (54 juta); Juli 2016 gaji 5 juta + lembur 2 juta; JKK 1%, JKM 0,3% (objek); JHT pegawai 2%; iuran pensiun pegawai 50 ribu.",
+  "input": {
+    "tahun_pajak": 2016,
+    "tarif_pasal17_dokumen": "UU 36/2008 (pra-HPP)",
+    "status_ptkp": "TK/0",
+    "status_ptkp_keterangan": "Keluarga K/3, tetapi PTKP yang dipakai pemotong = PTKP diri sendiri karena suami berpenghasilan",
+    "jenis_kelamin": "P",
+    "status_kawin": "kawin",
+    "jumlah_tanggungan_keluarga": 3,
+    "suami_berpenghasilan": true,
+    "metode": "gross",
+    "masa": [
+      {
+        "bulan": 7,
+        "komponen": {
+          "gaji": 5000000,
+          "lembur": 2000000,
+          "premi_jkk": 50000,
+          "premi_jkm": 15000,
+          "iuran_jht_pegawai": 100000,
+          "iuran_pensiun_pegawai": 50000
+        }
+      }
+    ],
+    "info_tambahan": {
+      "premi_jkk_persen": 0.01,
+      "premi_jkm_persen": 0.003,
+      "iuran_jht_pemberi_kerja_persen": 0.037,
+      "iuran_pensiun_pemberi_kerja": 60000,
+      "catatan": "Perusahaan juga ikut BPJS Kesehatan; dokumen tidak memasukkan premi BPJS Kesehatan ke perhitungan."
+    }
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 7,
+        "bruto": 7065000,
+        "biaya_jabatan": 353250,
+        "iuran_pensiun": 50000,
+        "iuran_jht": 100000,
+        "total_pengurang": 503250,
+        "neto_sebulan": 6561750,
+        "neto_setahun": 78741000,
+        "ptkp": 54000000,
+        "pkp": 24741000,
+        "pph21_setahun": 1237050,
+        "pph21": 103087
+      }
+    ]
+  },
+  "langkah_resmi": [
+    "Gaji 5.000.000 + Lembur 2.000.000 + Premi JKK 50.000 + Premi JKM 15.000 = 7.065.000",
+    "Biaya Jabatan 353.250; Iuran Pensiun 50.000; Iuran JHT 100.000; jumlah 503.250; neto 6.561.750",
+    "12 X 6.561.750 = 78.741.000; PTKP untuk Wajib Pajak sendiri 54.000.000; PKP 24.741.000",
+    "5% X 24.741.000 = 1.237.050; PPh Pasal 21 bulan Januari [sic] 1.237.050 : 12 = 103.087",
+    "Catatan: karena suami menerima penghasilan, PTKP = PTKP dirinya sendiri"
+  ],
+  "catatan_transkripsi": "Label 'bulan Januari' padahal Juli. 1.237.050/12 = 103.087,5 tercetak 103.087 (dibulatkan ke bawah) - tidak konsisten dengan I.1.2 (126.287,5 -> 126.288). Premi BPJS Kesehatan tidak dihitung dalam contoh.",
+  "cek_aritmetika": [
+    {
+      "item": "bruto",
+      "dokumen": 7065000,
+      "hitung_ulang": 7065000,
+      "status": "cocok"
+    },
+    {
+      "item": "JKK 1% x gaji",
+      "dokumen": 50000,
+      "hitung_ulang": 50000,
+      "status": "cocok"
+    },
+    {
+      "item": "JKM 0,3% x gaji",
+      "dokumen": 15000,
+      "hitung_ulang": 15000,
+      "status": "cocok"
+    },
+    {
+      "item": "JHT 2% x gaji",
+      "dokumen": 100000,
+      "hitung_ulang": 100000,
+      "status": "cocok"
+    },
+    {
+      "item": "Jul: biaya jabatan = min(5% x bruto. 500.000)",
+      "dokumen": 353250,
+      "hitung_ulang": 353250,
+      "status": "cocok"
+    },
+    {
+      "item": "Jul: jumlah pengurang",
+      "dokumen": 503250,
+      "hitung_ulang": 503250,
+      "status": "cocok"
+    },
+    {
+      "item": "Jul: neto sebulan = bruto - pengurang",
+      "dokumen": 6561750,
+      "hitung_ulang": 6561750,
+      "status": "cocok"
+    },
+    {
+      "item": "Jul: neto setahun = 12 x neto",
+      "dokumen": 78741000,
+      "hitung_ulang": 78741000,
+      "status": "cocok"
+    },
+    {
+      "item": "Jul: PKP (dibulatkan ribuan ke bawah)",
+      "dokumen": 24741000,
+      "hitung_ulang": 24741000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Juli = 1.237.050 / 12",
+      "dokumen": 103087,
+      "hitung_ulang": 103087.5,
+      "status": "cocok",
+      "pembulatan_teramati": "dibulatkan ke bawah"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "PTKP setahun TK/0",
+      "dokumen": 54000000,
+      "tabel": 54000000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU 36/2008 (pra-HPP)) atas PKP 24.741.000",
+      "dokumen": 1237050,
+      "tabel": 1237050,
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 10,
+    "aritmetika_tidak_cocok": 0,
+    "tabel_cocok": 2,
+    "tabel_tidak_cocok": 0
+  },
+  "relevansi_tarif_2023": {
+    "keterangan": "Hitung ulang PPh setahun atas PKP dokumen dengan dua lapisan tarif (bukan nilai expected). Jika 'hasil_sama_di_kedua_tarif' = true, angka contoh juga berlaku untuk lapisan tarif 2023 (dengan asumsi PTKP sama - PTKP PMK 101/2016 masih berlaku 2023).",
+    "rincian": [
+      {
+        "pkp": 24741000,
+        "pph_dokumen": 1237050,
+        "pph_tarif_UU36_2008": 1237050,
+        "pph_tarif_UU_HPP": 1237050,
+        "hasil_sama_di_kedua_tarif": true
+      }
+    ]
+  },
+  "dugaan_erratum": null,
+  "catatan_minor": "label 'bulan Januari' utk Juli; pembulatan 103.087,5 -> 103.087 (ke bawah) vs I.1.2 126.287,5 -> 126.288",
+  "verifikasi_pass2": "cocok"
+}

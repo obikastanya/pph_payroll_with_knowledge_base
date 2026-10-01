@@ -1,0 +1,96 @@
+# Lapisan Kebijakan Perusahaan — "Perusahaan X" (anonim)
+# Direkonstruksi dari payroll_calculator.xlsx sheet "Calculator PPh21 v8".
+# Setiap aturan mencatat baris xlsx asalnya agar dapat ditelusuri (traceability).
+# Status: DRAF v0 — skema final ditetapkan di research_plan.md §6.
+
+lapisan: perusahaan
+id: perusahaan_x
+versi: "2023.8"            # mengikuti versi kalkulator xlsx (v8)
+berlaku: {mulai: 2023-01-01, sampai: null}
+mewarisi: regulasi_id      # lapisan regulasi yang ditimpa/diperluas
+metode_pajak_default: gross
+
+parameter:
+  hari_kerja_penuh: hitung_networkdays(bulan, kalender_libur)   # xlsx DQ22:DQ33
+  kalender_libur: kalender_libur_nasional_2023                  # sheet Public Holiday
+
+pembulatan:              # registri pembulatan lapisan perusahaan (research_plan.md §6.9.2)
+  - id: PX-BULAT-PRO
+    titik: setiap komponen hasil prorata (gaji, tunjangan prorate, premi BPJS, iuran)
+    satuan: 1
+    mode: setengah_menjauhi_nol   # = Excel ROUND(x, 0) — xlsx v8 baris 5, 8–21
+    urutan: per_komponen          # dibulatkan per baris sebelum dijumlahkan (temuan K-12)
+    status: kebijakan
+    dasar: "Rekonstruksi dari rumus xlsx Perusahaan X v8 (ROUND per komponen); xlsx hanya referensi, bukan kebenaran"
+  # Catatan: pembulatan PKP (ribuan, ke bawah) adalah aturan WAJIB regulasi dan tidak boleh ditimpa di sini.
+
+waktu:                   # semantik tanggal (research_plan.md §6.9.4)
+  masa_pajak: saat_terutang          # min(tanggal_bayar, tanggal_terutang) — REG-WAKTU-01
+  thr_tanggal_bayar: input.thr.tanggal_transfer   # xlsx DP19; di xlsx tidak dipakai (temuan K-11)
+  tanggal_akhir_tahun_dan_tanggal_keluar: terpisah  # xlsx memakai satu sel DP8 untuk keduanya (temuan K-04)
+
+komponen:
+  - kode: gaji_pokok
+    kategori_pajak: penghasilan_teratur
+    rumus: gaji_pokok * hari_kerja_aktual / hari_kerja_penuh
+    catatan: prorata hanya pada bulan masuk, bulan keluar, dan bulan kenaikan gaji (xlsx baris 5)
+  - kode: tunjangan_telepon
+    kategori_pajak: penghasilan_teratur
+    tipe_prorata: tetap      # "Fixed": prorata hanya di bulan masuk/keluar
+  - kode: tunjangan_transport
+    kategori_pajak: penghasilan_teratur
+    tipe_prorata: tetap
+  - kode: tunjangan_akomodasi
+    kategori_pajak: penghasilan_teratur
+    tipe_prorata: hari_kerja # "Prorate": selalu × hari_kerja_aktual/hari_kerja_penuh
+  - kode: thr
+    kategori_pajak: penghasilan_tidak_teratur
+    rumus: gaji_berlaku * min(hari_sejak_masuk, 365) / 365   # xlsx baris 34 — prorata per HARI
+    dibayar: bulan(tanggal_lebaran)
+  - kode: kompensasi
+    kategori_pajak: penghasilan_tidak_teratur
+    rumus: persen * gaji_pokok * min(bulan_masa_kerja, 12) / 12 # xlsx baris 36
+    maks_kejadian_per_tahun: 4
+  - kode: insentif_ota
+    kategori_pajak: penghasilan_tidak_teratur
+    maks_kejadian_per_tahun: 4
+  - kode: lembur
+    kategori_pajak: penghasilan_tidak_teratur   # KEPUTUSAN PERUSAHAAN (xlsx v5) — lihat konflik K-02
+  - kode: komisi
+    kategori_pajak: penghasilan_tidak_teratur   # KEPUTUSAN PERUSAHAAN (xlsx v5)
+
+bpjs:                       # perusahaan menanggung porsi pemberi kerja sesuai regulasi
+  ditanggung_perusahaan: [jkk, jkm, bpjs_kes, jht, jp]
+  ditanggung_pegawai: [jht, jp, bpjs_kes]
+  dasar_upah: gaji_pokok_berlaku               # tunjangan tidak dimasukkan ke dasar upah
+  bpjs_kes_bulan_keluar: tidak_dibayar         # xlsx v5: tidak dipotong pada bulan resign
+  mulai: tanggal_daftar_bpjs                   # premi baru dihitung sejak terdaftar
+
+aturan:
+  - id: PX-R01
+    nama: Kenaikan gaji di tengah bulan dipecah berdasarkan hari kerja
+    jika: "bulan == bulan(kenaikan_gaji.tanggal) and hari(kenaikan_gaji.tanggal) > 1"
+    maka: "gaji = gaji_lama*hk_sebelum/hk_penuh + gaji_baru*hk_sesudah/hk_penuh"
+    sumber: xlsx v8 baris 5; parameter DP13–DP16
+  - id: PX-R02
+    nama: Struktur tunjangan berganti setelah tanggal kenaikan gaji
+    jika: "tanggal > kenaikan_gaji.tanggal"
+    maka: "pakai daftar tunjangan_sesudah_kenaikan"
+    sumber: sheet Allowance E5:G9
+  - id: PX-R03
+    nama: Pajak penghasilan tidak teratur dihitung dengan selisih (dengan − tanpa)
+    berlaku: {mulai: 2023-01-01, sampai: 2023-12-31}   # cara PER-16; tidak berlaku di rezim TER
+    maka: "pph_tidak_teratur = pph_setahun(teratur + komponen) - pph_setahun(teratur)"
+    sumber: xlsx v3/v5 change log; PER-16/PJ/2016
+  - id: PX-R04
+    nama: Penghasilan tidak teratur tidak menambah biaya jabatan bulanan
+    maka: "biaya_jabatan_bulanan dihitung dari bruto_teratur saja"
+    sumber: xlsx baris 19
+    status: perlu_verifikasi   # lihat konflik K-04
+
+resolusi_konflik:
+  # Jika aturan perusahaan bertentangan dengan aturan regulasi yang bersifat memaksa
+  # (kategori_pajak, tarif, PTKP, batas), regulasi menang dan sistem memberi peringatan.
+  strategi_default: regulasi_menang_untuk_aturan_wajib
+  boleh_ditimpa_perusahaan: [rumus_komponen, tipe_prorata, metode_pajak, jadwal_pembayaran]
+  tidak_boleh_ditimpa: [tarif_ter, tarif_pasal17, ptkp, biaya_jabatan, kategori_objek_pajak]

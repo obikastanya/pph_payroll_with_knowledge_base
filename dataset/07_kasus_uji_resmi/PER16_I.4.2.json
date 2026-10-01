@@ -1,0 +1,182 @@
+{
+  "id": "PER16-I.4.2",
+  "sumber": {
+    "regulasi": "PER-16/PJ/2016",
+    "bagian": "Lampiran, Bagian Kedua, I.4.2 (bonus), Shanaya Aqeela (karyawati)",
+    "halaman_pdf": [
+      35,
+      36
+    ],
+    "halaman_dokumen": "-16-, -17-",
+    "catatan": "PDF hasil pindai; angka dibaca dari citra halaman (bukan hanya teks OCR)."
+  },
+  "rezim": "PER16_2023",
+  "dalam_lingkup": true,
+  "catatan_lingkup": "Contoh PER-16 bertahun 2016 dan memakai lapisan tarif Pasal 17 UU 36/2008 (5% s.d. Rp50 juta; 15% >50-250 juta; 25% >250-500 juta; 30% >500 juta). Rezim 'PER16_2023' = metode (disetahunkan, PPh sebulan = PPh setahun / 12); untuk tahun pajak 2023 berlaku lapisan UU HPP (5% s.d. Rp60 juta). Lihat kunci 'relevansi_tarif_2023'.",
+  "skenario": [
+    "metode_PER16_bulanan",
+    "bonus",
+    "metode_selisih_tidak_teratur",
+    "premi_JKK_JKM",
+    "iuran_JHT",
+    "iuran_pensiun",
+    "pegawai_wanita"
+  ],
+  "uraian": "Karyawati Shanaya Aqeela (tidak kawin, TK/0) gaji 5 juta; JKK 1%, JKM 0,3% (objek), JHT pemberi kerja 3,7% (bukan objek); JHT pegawai 2%, iuran pensiun 50 ribu; bonus April 2016 6 juta.",
+  "input": {
+    "tahun_pajak": 2016,
+    "tarif_pasal17_dokumen": "UU 36/2008 (pra-HPP)",
+    "status_ptkp": "TK/0",
+    "jenis_kelamin": "P",
+    "metode": "gross",
+    "masa": [
+      {
+        "bulan": 4,
+        "komponen": {
+          "gaji": 5000000,
+          "bonus": 6000000,
+          "premi_jkk": 50000,
+          "premi_jkm": 15000,
+          "iuran_jht_pegawai": 100000,
+          "iuran_pensiun_pegawai": 50000
+        }
+      }
+    ]
+  },
+  "expected": {
+    "a_gaji_dan_bonus_setahun": {
+      "bruto_setahun": 66780000,
+      "biaya_jabatan": 3339000,
+      "iuran_pensiun": 600000,
+      "iuran_jht": 1200000,
+      "total_pengurang": 5139000,
+      "neto_setahun": 61641000,
+      "ptkp": 54000000,
+      "pkp": 7641000,
+      "pph21_setahun": 382050
+    },
+    "b_gaji_setahun": {
+      "bruto_setahun": 60780000,
+      "biaya_jabatan": 3039000,
+      "iuran_pensiun": 600000,
+      "iuran_jht": 1200000,
+      "total_pengurang": 4839000,
+      "neto_setahun": 55941000,
+      "ptkp": 54000000,
+      "pkp": 1941000,
+      "pph21_setahun": 97050
+    },
+    "pph21_atas_bonus": 285000
+  },
+  "langkah_resmi": [
+    "a. Gaji 12 X 5.000.000 = 60.000.000; Bonus 6.000.000; JKK 12 X 50.000 = 600.000; JKM 12 X 15.000 = 180.000; bruto 66.780.000",
+    "a. Biaya Jabatan 3.339.000; Iuran Pensiun 12 X 50.000 = 600.000; JHT 12 X 100.000 = 1.200.000; neto 61.641.000; PKP 7.641.000; 5% = 382.050",
+    "b. bruto 60.780.000; Biaya Jabatan 3.039.000; pengurang 4.839.000; neto 55.941.000; PKP 1.941.000; 5% = 97.050",
+    "c. PPh atas Bonus = 382.050 - 97.050 = 285.000"
+  ],
+  "catatan_transkripsi": "Gaji ditulis '5.000.000,00' tanpa 'Rp' di narasi (sic). Tidak ada inkonsistensi angka.",
+  "cek_aritmetika": [
+    {
+      "item": "a. bruto",
+      "dokumen": 66780000,
+      "hitung_ulang": 66780000,
+      "status": "cocok"
+    },
+    {
+      "item": "a. biaya jabatan",
+      "dokumen": 3339000,
+      "hitung_ulang": 3339000,
+      "status": "cocok"
+    },
+    {
+      "item": "a. neto",
+      "dokumen": 61641000,
+      "hitung_ulang": 61641000,
+      "status": "cocok"
+    },
+    {
+      "item": "a. PKP",
+      "dokumen": 7641000,
+      "hitung_ulang": 7641000,
+      "status": "cocok"
+    },
+    {
+      "item": "b. bruto",
+      "dokumen": 60780000,
+      "hitung_ulang": 60780000,
+      "status": "cocok"
+    },
+    {
+      "item": "b. biaya jabatan",
+      "dokumen": 3039000,
+      "hitung_ulang": 3039000,
+      "status": "cocok"
+    },
+    {
+      "item": "b. neto",
+      "dokumen": 55941000,
+      "hitung_ulang": 55941000,
+      "status": "cocok"
+    },
+    {
+      "item": "b. PKP",
+      "dokumen": 1941000,
+      "hitung_ulang": 1941000,
+      "status": "cocok"
+    },
+    {
+      "item": "c. PPh bonus",
+      "dokumen": 285000,
+      "hitung_ulang": 285000,
+      "status": "cocok"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "PTKP setahun TK/0",
+      "dokumen": 54000000,
+      "tabel": 54000000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU 36/2008 (pra-HPP)) atas PKP 7.641.000",
+      "dokumen": 382050,
+      "tabel": 382050,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU 36/2008 (pra-HPP)) atas PKP 1.941.000",
+      "dokumen": 97050,
+      "tabel": 97050,
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 9,
+    "aritmetika_tidak_cocok": 0,
+    "tabel_cocok": 3,
+    "tabel_tidak_cocok": 0
+  },
+  "relevansi_tarif_2023": {
+    "keterangan": "Hitung ulang PPh setahun atas PKP dokumen dengan dua lapisan tarif (bukan nilai expected). Jika 'hasil_sama_di_kedua_tarif' = true, angka contoh juga berlaku untuk lapisan tarif 2023 (dengan asumsi PTKP sama - PTKP PMK 101/2016 masih berlaku 2023).",
+    "rincian": [
+      {
+        "pkp": 7641000,
+        "pph_dokumen": 382050,
+        "pph_tarif_UU36_2008": 382050,
+        "pph_tarif_UU_HPP": 382050,
+        "hasil_sama_di_kedua_tarif": true
+      },
+      {
+        "pkp": 1941000,
+        "pph_dokumen": 97050,
+        "pph_tarif_UU36_2008": 97050,
+        "pph_tarif_UU_HPP": 97050,
+        "hasil_sama_di_kedua_tarif": true
+      }
+    ]
+  },
+  "dugaan_erratum": null,
+  "verifikasi_pass2": "cocok"
+}

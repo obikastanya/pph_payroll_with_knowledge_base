@@ -1,0 +1,158 @@
+{
+  "id": "PER16-I.7",
+  "sumber": {
+    "regulasi": "PER-16/PJ/2016",
+    "bagian": "Lampiran, Bagian Kedua, I.7 (mata uang asing), Neill Mc Leary",
+    "halaman_pdf": [
+      45
+    ],
+    "halaman_dokumen": "-26-",
+    "catatan": "PDF hasil pindai; angka dibaca dari citra halaman (bukan hanya teks OCR)."
+  },
+  "rezim": "PER16_2023",
+  "dalam_lingkup": true,
+  "catatan_lingkup": "Contoh PER-16 bertahun 2016 dan memakai lapisan tarif Pasal 17 UU 36/2008 (5% s.d. Rp50 juta; 15% >50-250 juta; 25% >250-500 juta; 30% >500 juta). Rezim 'PER16_2023' = metode (disetahunkan, PPh sebulan = PPh setahun / 12); untuk tahun pajak 2023 berlaku lapisan UU HPP (5% s.d. Rp60 juta). Lihat kunci 'relevansi_tarif_2023'.",
+  "skenario": [
+    "metode_PER16_bulanan",
+    "mata_uang_asing",
+    "plafon_biaya_jabatan"
+  ],
+  "uraian": "Neill Mc Leary (menikah 1 anak, K/1) gaji Januari 2016 US$2.000, kurs KMK Rp13.766.",
+  "input": {
+    "tahun_pajak": 2016,
+    "tarif_pasal17_dokumen": "UU 36/2008 (pra-HPP)",
+    "status_ptkp": "K/1",
+    "jenis_kelamin": "tidak_disebutkan",
+    "metode": "gross",
+    "kurs_menteri_keuangan": {
+      "USD": 13766
+    },
+    "masa": [
+      {
+        "bulan": 1,
+        "komponen": {
+          "gaji_valas_usd": 2000
+        }
+      }
+    ]
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 1,
+        "bruto": 27532000,
+        "biaya_jabatan_5persen": 1376600,
+        "biaya_jabatan": 500000,
+        "neto_sebulan": 27032000,
+        "neto_setahun": 324384000,
+        "ptkp": 63000000,
+        "pkp": 261384000,
+        "pph21_lapisan": [
+          {
+            "tarif": 0.05,
+            "dasar": 50000000,
+            "pph": 2500000
+          },
+          {
+            "tarif": 0.15,
+            "dasar": 200000000,
+            "pph": 30000000
+          },
+          {
+            "tarif": 0.25,
+            "dasar": 11384000,
+            "pph": 2846000
+          }
+        ],
+        "pph21_setahun": 35346000,
+        "pph21": 2945500
+      }
+    ]
+  },
+  "langkah_resmi": [
+    "US$2,000 X Rp 13.766,00 = 27.532.000; BJ 5% = 1.376.600 maks 500.000; neto 27.032.000; 12 X = 324.384.000",
+    "PTKP 54.000.000 + 4.500.000 + 4.500.000 = 63.000.000; PKP 261.384.000",
+    "5% X 50.000.000 = 2.500.000; 15% X 200.000.000 = 30.000.000; 25% X 11.384.000 = 2.846.000; jumlah 35.346.000; : 12 = 2.945.500"
+  ],
+  "catatan_transkripsi": "Tidak ada inkonsistensi.",
+  "cek_aritmetika": [
+    {
+      "item": "bruto",
+      "dokumen": 27532000,
+      "hitung_ulang": 27532000,
+      "status": "cocok"
+    },
+    {
+      "item": "Jan: biaya jabatan = min(5% x bruto. 500.000)",
+      "dokumen": 500000,
+      "hitung_ulang": 500000,
+      "status": "cocok"
+    },
+    {
+      "item": "Jan: jumlah pengurang",
+      "dokumen": 500000,
+      "hitung_ulang": 500000,
+      "status": "cocok"
+    },
+    {
+      "item": "Jan: neto sebulan = bruto - pengurang",
+      "dokumen": 27032000,
+      "hitung_ulang": 27032000,
+      "status": "cocok"
+    },
+    {
+      "item": "Jan: neto setahun = 12 x neto",
+      "dokumen": 324384000,
+      "hitung_ulang": 324384000,
+      "status": "cocok"
+    },
+    {
+      "item": "Jan: PKP (dibulatkan ribuan ke bawah)",
+      "dokumen": 261384000,
+      "hitung_ulang": 261384000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Januari = 35.346.000 / 12",
+      "dokumen": 2945500,
+      "hitung_ulang": 2945500,
+      "status": "cocok",
+      "pembulatan_teramati": "tepat"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "PTKP setahun K/1",
+      "dokumen": 63000000,
+      "tabel": 63000000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU 36/2008 (pra-HPP)) atas PKP 261.384.000",
+      "dokumen": 35346000,
+      "tabel": 35346000,
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 7,
+    "aritmetika_tidak_cocok": 0,
+    "tabel_cocok": 2,
+    "tabel_tidak_cocok": 0
+  },
+  "relevansi_tarif_2023": {
+    "keterangan": "Hitung ulang PPh setahun atas PKP dokumen dengan dua lapisan tarif (bukan nilai expected). Jika 'hasil_sama_di_kedua_tarif' = true, angka contoh juga berlaku untuk lapisan tarif 2023 (dengan asumsi PTKP sama - PTKP PMK 101/2016 masih berlaku 2023).",
+    "rincian": [
+      {
+        "pkp": 261384000,
+        "pph_dokumen": 35346000,
+        "pph_tarif_UU36_2008": 35346000,
+        "pph_tarif_UU_HPP": 34346000,
+        "hasil_sama_di_kedua_tarif": false
+      }
+    ]
+  },
+  "dugaan_erratum": null,
+  "verifikasi_pass2": "cocok"
+}

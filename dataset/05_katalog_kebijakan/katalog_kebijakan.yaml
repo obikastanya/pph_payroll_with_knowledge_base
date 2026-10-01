@@ -1,0 +1,89 @@
+# Katalog Variasi Kebijakan Penggajian (uji ekspresivitas, research_plan.md §8.4)
+# Setiap entri = satu kebijakan nyata yang lazim di Indonesia.
+# fitur_kb: fitur engine/DSL yang dibutuhkan agar kebijakan dapat dinyatakan TANPA kode baru.
+#   T = temporal (versi berlaku)       O = override/prioritas lapisan
+#   C = definisi melingkar (titik tetap) K = deteksi konflik regulasi-perusahaan
+#   A = agregasi lintas bulan          F = rumus/ekspresi aritmetika
+# sumber: dasar regulasi atau praktik; "xlsx" = studi kasus Perusahaan X.
+
+kebijakan:
+  - id: KP-01
+    nama: Metode gross (pajak ditanggung pegawai)
+    fitur_kb: [F]
+    sumber: PMK 168/2023
+  - id: KP-02
+    nama: Metode gross-up (tunjangan pajak = PPh 21 terutang)
+    fitur_kb: [C, F]
+    sumber: PMK 168/2023
+  - id: KP-03
+    nama: Campuran — gaji gross-up, bonus/THR gross
+    fitur_kb: [C, O, F]
+    sumber: praktik perusahaan; dokumentasi vendor payroll
+  - id: KP-04
+    nama: Gross-up dengan plafon tunjangan pajak (maks Rp X/bulan)
+    fitur_kb: [C, F]
+    sumber: praktik perusahaan
+  - id: KP-05
+    nama: "Nett / take-home pay tetap" (ekuivalen gross-up atas seluruh komponen)
+    fitur_kb: [C, F]
+    sumber: PMK 66/2023 jo. PMK 168/2023 (pajak ditanggung = tunjangan)
+  - id: KP-06
+    nama: THR prorata per bulan masa kerja (masa_kerja/12 × upah)
+    fitur_kb: [F, T]
+    sumber: Permenaker 6/2016
+  - id: KP-07
+    nama: THR prorata per hari (Perusahaan X)
+    fitur_kb: [F]
+    sumber: xlsx baris 34
+  - id: KP-08
+    nama: Bonus tahunan dibayar sekali (bulan tertentu)
+    fitur_kb: [F, A]
+    sumber: PMK 168/2023 (penghasilan tidak teratur dalam TER)
+  - id: KP-09
+    nama: Lembur per jam 1/173 × upah sebulan dengan pengali bertingkat
+    fitur_kb: [F]
+    sumber: PP 35/2021 (pengganti Kepmenaker 102/2004)
+  - id: KP-10
+    nama: Lembur/komisi diklasifikasikan perusahaan sebagai penghasilan tidak teratur
+    fitur_kb: [K, O]
+    sumber: xlsx change log v5 (konflik K-02)
+  - id: KP-11
+    nama: Dasar upah BPJS = gaji pokok + tunjangan tetap (bukan gaji pokok saja)
+    fitur_kb: [F, O]
+    sumber: PP 44/2015, PP 45/2015, PP 46/2015
+  - id: KP-12
+    nama: Prorata hari kalender (÷30) alih-alih hari kerja
+    fitur_kb: [F, O]
+    sumber: praktik perusahaan
+  - id: KP-13
+    nama: Kenaikan gaji di tengah bulan dipecah per hari kerja
+    fitur_kb: [T, F]
+    sumber: xlsx PX-R01
+  - id: KP-14
+    nama: Natura makan bersama untuk seluruh pegawai (dikecualikan dari objek)
+    fitur_kb: [K, F]
+    sumber: PMK 66/2023
+  - id: KP-15
+    nama: Fasilitas kendaraan/rumah dinas (natura objek pajak, dinilai sesuai PMK 66/2023)
+    fitur_kb: [F, K]
+    sumber: PMK 66/2023
+  - id: KP-16
+    nama: Zakat/sumbangan keagamaan wajib melalui pemberi kerja sebagai pengurang
+    fitur_kb: [F]
+    sumber: UU PPh Pasal 9(1)(g); PP 60/2010
+  - id: KP-17
+    nama: Iuran DPLK/pensiun pegawai sebagai pengurang
+    fitur_kb: [F]
+    sumber: UU PPh; PMK 168/2023
+  - id: KP-18
+    nama: Pegawai keluar tengah tahun — masa pajak terakhir di bulan keluar
+    fitur_kb: [T, A]
+    sumber: PMK 168/2023
+  - id: KP-19
+    nama: Rapel kenaikan gaji (retroaktif) dibayar bulan berikutnya
+    fitur_kb: [T, A, F]
+    sumber: praktik perusahaan; perlakuan pajak harus ditelusuri
+  - id: KP-20
+    nama: Pemanfaatan PPh 21 DTP untuk pegawai yang memenuhi syarat
+    fitur_kb: [T, K, O]
+    sumber: PMK 10/2025 dan penggantinya (lihat dataset/01_regulasi)

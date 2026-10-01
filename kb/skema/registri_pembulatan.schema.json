@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Registri pembulatan (research_plan.md §6.9.2)",
+  "type": "object",
+  "required": ["pembulatan"],
+  "additionalProperties": false,
+  "properties": {
+    "pembulatan": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "titik", "satuan", "mode", "urutan", "status", "dasar"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[A-Z]+(-[A-Z0-9]+)+$"},
+          "titik": {"type": "string", "minLength": 1},
+          "satuan": {"type": "integer", "minimum": 1},
+          "mode": {"enum": ["bawah", "atas", "menuju_nol", "setengah_atas", "setengah_menjauhi_nol", "setengah_genap"]},
+          "urutan": {"type": "string", "minLength": 1},
+          "status": {"enum": ["wajib", "tafsir", "kebijakan"]},
+          "alternatif": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"enum": ["bawah", "atas", "menuju_nol", "setengah_atas", "setengah_menjauhi_nol", "setengah_genap"]}
+          },
+          "dasar": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

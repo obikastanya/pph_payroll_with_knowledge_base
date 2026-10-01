@@ -1,0 +1,90 @@
+{
+  "id": "PMK168-B-I.3",
+  "sumber": {
+    "regulasi": "PMK 168/2023",
+    "bagian": "Lampiran huruf B, Bagian Kedua, I.3 (penghasilan dalam mata uang asing), Tuan F",
+    "halaman_pdf": [
+      44
+    ]
+  },
+  "rezim": "TER_2024",
+  "dalam_lingkup": true,
+  "skenario": [
+    "TER_bulanan",
+    "mata_uang_asing",
+    "kategori_C"
+  ],
+  "uraian": "Tuan F (K/3) menerima gaji US$2.000 Januari 2024, kurs Menteri Keuangan Rp15.000; bruto Rp30 juta; TER kategori C 11%.",
+  "input": {
+    "tahun_pajak": 2024,
+    "status_ptkp": "K/3",
+    "jenis_kelamin": "L",
+    "metode": "gross",
+    "masa": [
+      {
+        "bulan": 1,
+        "komponen": {
+          "gaji_valas_usd": 2000
+        }
+      }
+    ],
+    "kurs_menteri_keuangan": {
+      "USD": 15000
+    },
+    "jenis_kelamin_catatan": "disimpulkan dari sapaan 'Tuan' di dokumen"
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 1,
+        "bruto": 30000000,
+        "kategori_ter": "C",
+        "tarif_ter": 0.11,
+        "pph21": 3300000
+      }
+    ]
+  },
+  "langkah_resmi": [
+    "US$2.000 x Rp15.000,00 = Rp30.000.000,00",
+    "tarif efektif bulanan kategori C ... 11% (sebelas persen)",
+    "11% x Rp30.000.000,00= Rp3.300.000,00"
+  ],
+  "catatan_transkripsi": "Hanya satu masa (Januari); dokumen tidak menghitung masa pajak terakhir.",
+  "cek_aritmetika": [
+    {
+      "item": "bruto = 2.000 x 15.000",
+      "dokumen": 30000000,
+      "hitung_ulang": 30000000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh bulan 1 = 0.11 x 30000000",
+      "dokumen": 3300000,
+      "hitung_ulang": 3300000,
+      "status": "cocok"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "tarif TER C utk bruto 30.000.000 (bulan 1)",
+      "dokumen": 0.11,
+      "tabel": 0.11,
+      "status": "cocok"
+    },
+    {
+      "item": "kategori TER utk status K/3 (PP 58/2023 Ps. 2 ayat (4))",
+      "dokumen": "C",
+      "tabel": "C",
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 2,
+    "aritmetika_tidak_cocok": 0,
+    "tabel_cocok": 2,
+    "tabel_tidak_cocok": 0
+  },
+  "dugaan_erratum": null,
+  "verifikasi_pass2": "cocok"
+}

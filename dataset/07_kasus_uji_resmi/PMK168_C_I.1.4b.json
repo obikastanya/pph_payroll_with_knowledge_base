@@ -1,0 +1,206 @@
+{
+  "id": "PMK168-C-I.1.4b",
+  "sumber": {
+    "regulasi": "PMK 168/2023",
+    "bagian": "Lampiran huruf C, Bagian Kedua, I.4, bagian uang pensiun Juni-Desember (pembayar uang pensiun berkala memperhitungkan neto PNS Jan-Mei)",
+    "halaman_pdf": [
+      67,
+      68,
+      69
+    ]
+  },
+  "rezim": "TER_2024",
+  "dalam_lingkup": false,
+  "catatan_lingkup": "Subjek pensiunan + penggabungan dengan penghasilan dari pemberi kerja sebelumnya - di luar lingkup.",
+  "skenario": [
+    "pensiunan",
+    "multi_pemberi_kerja",
+    "masa_terakhir_desember"
+  ],
+  "uraian": "Tuan D (K/1) menerima uang pensiun Juni-Desember 2024; pembayar uang pensiun menggabungkan neto PNS Jan-Mei.",
+  "input": {
+    "tahun_pajak": 2024,
+    "status_ptkp": "K/1",
+    "jenis_kelamin": "L",
+    "metode": "gross",
+    "masa": [
+      {
+        "bulan": 6,
+        "komponen": {
+          "uang_pensiun": 3000000
+        }
+      },
+      {
+        "bulan": 7,
+        "komponen": {
+          "uang_pensiun": 3000000
+        }
+      },
+      {
+        "bulan": 8,
+        "komponen": {
+          "uang_pensiun": 3000000
+        }
+      },
+      {
+        "bulan": 9,
+        "komponen": {
+          "uang_pensiun": 3000000
+        }
+      },
+      {
+        "bulan": 10,
+        "komponen": {
+          "uang_pensiun": 3000000
+        }
+      },
+      {
+        "bulan": 11,
+        "komponen": {
+          "uang_pensiun": 3000000
+        }
+      },
+      {
+        "bulan": 12,
+        "komponen": {
+          "uang_pensiun": 3000000
+        }
+      }
+    ],
+    "data_pemberi_kerja_lain": {
+      "neto_jan_mei_KPP_A": 48905000,
+      "pph21_terutang_jan_mei": 0
+    },
+    "jenis_kelamin_catatan": "disimpulkan dari sapaan 'Tuan' di dokumen"
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 6,
+        "bruto": 3000000,
+        "kategori_ter": "B",
+        "tarif_ter": 0.0,
+        "pph21": 0
+      },
+      {
+        "bulan": 7,
+        "bruto": 3000000,
+        "kategori_ter": "B",
+        "tarif_ter": 0.0,
+        "pph21": 0
+      },
+      {
+        "bulan": 8,
+        "bruto": 3000000,
+        "kategori_ter": "B",
+        "tarif_ter": 0.0,
+        "pph21": 0
+      },
+      {
+        "bulan": 9,
+        "bruto": 3000000,
+        "kategori_ter": "B",
+        "tarif_ter": 0.0,
+        "pph21": 0
+      },
+      {
+        "bulan": 10,
+        "bruto": 3000000,
+        "kategori_ter": "B",
+        "tarif_ter": 0.0,
+        "pph21": 0
+      },
+      {
+        "bulan": 11,
+        "bruto": 3000000,
+        "kategori_ter": "B",
+        "tarif_ter": 0.0,
+        "pph21": 0
+      },
+      {
+        "bulan": 12,
+        "bruto": 3000000,
+        "pph21": 292750,
+        "keterangan": "Masa Pajak Terakhir (Pasal 17)"
+      }
+    ],
+    "tahunan": {
+      "bruto_setahun": 21000000,
+      "biaya_pensiun": 1050000,
+      "neto_pemberi_kerja_ini": 19950000,
+      "neto_pemberi_kerja_lain": 48905000,
+      "neto_setahun": 68855000,
+      "ptkp": 63000000,
+      "pkp": 5855000,
+      "pph21_setahun": 292750,
+      "pph21_dipotong_sebelumnya": 0,
+      "pph21_masa_terakhir": 292750
+    },
+    "kredit_pajak_spt": {
+      "KPP_A_jan_mei": 0,
+      "pembayar_pensiun_jun_des": 292750,
+      "total": 292750
+    }
+  },
+  "langkah_resmi": [
+    "Biaya Pensiun (maksimal 7 x Rp200.000,00) 5% X Rp21.000.000,00 Rp 1.050.000,00",
+    "neto Juni-Des 19.950.000 + neto Jan-Mei KPP A 48.905.000 = 68.855.000; PTKP 63.000.000; PKP 5.855.000",
+    "5% X Rp5.855.000,00 = Rp 292.750,00; Desember Rp 292.750,00"
+  ],
+  "catatan_transkripsi": "DUGAAN ERRATUM: narasi menyebut uang pensiun 'sebesar Rp2.500.000,00 (dua juta lima ratus ribu rupiah) per bulan', tetapi tabel dan seluruh perhitungan memakai Rp3.000.000 per bulan (bruto 21.000.000). Transkripsi mengikuti tabel/perhitungan. Diverifikasi pada citra hlm. 67-69.",
+  "cek_aritmetika": [
+    {
+      "item": "bruto 7 x 3.000.000",
+      "dokumen": 21000000,
+      "hitung_ulang": 21000000,
+      "status": "cocok"
+    },
+    {
+      "item": "bruto menurut narasi 7 x 2.500.000",
+      "dokumen": 21000000,
+      "hitung_ulang": 17500000,
+      "status": "TIDAK COCOK"
+    },
+    {
+      "item": "biaya pensiun = min(5%, 7 x 200.000)",
+      "dokumen": 1050000,
+      "hitung_ulang": 1050000,
+      "status": "cocok"
+    },
+    {
+      "item": "neto gabungan",
+      "dokumen": 68855000,
+      "hitung_ulang": 68855000,
+      "status": "cocok"
+    },
+    {
+      "item": "PKP",
+      "dokumen": 5855000,
+      "hitung_ulang": 5855000,
+      "status": "cocok"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "PTKP setahun K/1",
+      "dokumen": 63000000,
+      "tabel": 63000000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU HPP) atas PKP 5.855.000",
+      "dokumen": 292750,
+      "tabel": 292750,
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 4,
+    "aritmetika_tidak_cocok": 1,
+    "tabel_cocok": 2,
+    "tabel_tidak_cocok": 0
+  },
+  "dugaan_erratum": "Narasi uang pensiun Rp2.500.000/bulan, tabel & perhitungan Rp3.000.000/bulan.",
+  "verifikasi_pass2": "cocok setelah perbaikan metadata: ditambah expected.kredit_pajak_spt (292.750, hlm. 69) dan input.metode"
+}

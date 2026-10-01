@@ -1,0 +1,87 @@
+# Registri Pembulatan — Lapisan Regulasi (research_plan.md §6.9.2)
+# Setiap aturan ber-tipe_hasil rupiah WAJIB merujuk salah satu id di sini.
+# status: wajib (diatur regulasi, tanpa alternatif) | tafsir (tidak diatur; >= 1 alternatif)
+# Mode default untuk entri `tafsir` bersifat SEMENTARA sampai dikalibrasi di E10
+# (dibandingkan dengan kalkulator resmi DJP). Jangan ubah tanpa mencatat bukti di sini.
+# Semantik mode (termasuk untuk nilai negatif) ada di engine/pembulatan.py.
+
+pembulatan:
+  - id: BULAT-PKP-01
+    titik: "PKP setahun = neto setahun - PTKP"
+    satuan: 1000
+    mode: bawah
+    urutan: "sekali, setelah PTKP dikurangkan (yang dibulatkan PKP, bukan neto)"
+    status: wajib
+    dasar: "PMK 168/2023 Pasal 8 ayat (4) (PDF hlm. 10); PER-16/PJ/2016 Pasal 14 ayat (8). Bukti V1: PER16-I.2.2 PKP 4.249.200 -> 4.249.000"
+
+  - id: BULAT-TER-01
+    titik: "PPh masa = tarif TER x bruto masa"
+    satuan: 1
+    mode: bawah
+    urutan: "sekali, setelah perkalian"
+    status: tafsir
+    alternatif: [setengah_menjauhi_nol]
+    dasar: "Tidak diatur PP 58/2023 maupun PMK 168/2023 (tables/pembulatan_dan_lainnya.csv). Bukti V1 satu-satunya: PMK168-B-I.4 13.777.062,39 -> 13.777.062 (konsisten dengan kedua mode). Default sementara; kalibrasi E10"
+
+  - id: BULAT-BRUTO-01
+    titik: "bruto masa yang mengandung pecahan, sebelum lookup lapisan TER"
+    satuan: 1
+    mode: bawah
+    urutan: "setelah seluruh komponen bruto dijumlahkan, sebelum lookup"
+    status: tafsir
+    alternatif: [setengah_menjauhi_nol]
+    dasar: "Tidak diatur. Pecahan berasal dari prorata/premi. Library muhroyhan gagal di titik ini (dataset/03_pembanding/README.md §6.3). Kalibrasi E10"
+
+  - id: BULAT-P17-01
+    titik: "PPh Pasal 17 setahun = tarif progresif x PKP"
+    satuan: 1
+    mode: bawah
+    urutan: "sekali, setelah penjumlahan seluruh lapisan"
+    status: tafsir
+    alternatif: [setengah_menjauhi_nol]
+    dasar: "Tidak diatur, tetapi tidak berpengaruh: PKP kelipatan Rp1.000 x tarif 5/15/25/30/35% selalu bulat (diuji di tests/test_interval.py; Z3 di WP2). Lebar rentang tafsir harus 0"
+
+  - id: BULAT-PROPORSI-01
+    titik: "PPh setahun untuk bagian tahun pajak = PPh atas neto disetahunkan x n/12"
+    satuan: 1
+    mode: bawah
+    urutan: "sekali, setelah perkalian proporsi (neto disetahunkan tetap eksak sampai PKP dibulatkan BULAT-PKP-01)"
+    status: tafsir
+    alternatif: [setengah_menjauhi_nol]
+    dasar: "PMK 168/2023 Pasal 15 ayat (3); cara pembulatan hasil proporsi tidak diatur. Bukti V1 (PMK168-B-I.2.1.2: 4/12 x 11.505.000 = 3.835.000; B-I.2.2.3: 8/12 x 16.500.000 = 11.000.000) kebetulan bulat, sehingga belum menguji mode. Kalibrasi E10"
+
+  - id: BULAT-BJ-01
+    titik: "biaya jabatan = 5% x bruto (sebelum plafon)"
+    satuan: 1
+    mode: bawah
+    urutan: "sebelum dibandingkan dengan plafon"
+    status: tafsir
+    alternatif: [setengah_menjauhi_nol]
+    dasar: "Tidak diatur. Kalibrasi E10"
+
+  - id: BULAT-BPJS-01
+    titik: "premi/iuran BPJS per program = tarif x dasar upah"
+    satuan: 1
+    mode: setengah_menjauhi_nol
+    urutan: "per program, per pihak (pemberi kerja/pekerja)"
+    status: tafsir
+    alternatif: [bawah]
+    dasar: "Harus sama dengan tagihan BPJS; praktik pembulatan BPJS belum diketahui. Default mengikuti Excel ROUND (xlsx B0) secara sementara. Kalibrasi E10"
+
+  - id: BULAT-P16-01
+    titik: "PPh bulanan rezim 2023 = PPh setahun / jumlah bulan"
+    satuan: 1
+    mode: setengah_menjauhi_nol
+    urutan: "sekali, setelah pembagian"
+    status: tafsir
+    alternatif: [bawah, setengah_genap]
+    dasar: "Contoh PER-16 tidak konsisten: I.1.2 126.287,5 -> 126.288 tetapi I.1.4 103.087,5 -> 103.087; tidak ada satu mode yang menjelaskan keduanya (tests/test_pembulatan.py). Kalibrasi E10 (Ortax mode pra-2024)"
+
+  - id: BULAT-GU-01
+    titik: "tunjangan pajak (gross-up) = PPh_int(B + T)"
+    satuan: 1
+    mode: bawah
+    urutan: "mewarisi pembulatan PPh yang dipakai; kandidat solusi diverifikasi integer (§6.9.7)"
+    status: tafsir
+    alternatif: [setengah_menjauhi_nol]
+    dasar: "Tidak diatur. Bukti V1 satu-satunya untuk gross-up: PMK168-B-I.4"

@@ -1,0 +1,56 @@
+# Manifest tabel parameter lapisan regulasi (research_plan.md §9.6).
+# Loader (engine/muat.py) MENOLAK tabel yang hash-nya tidak cocok.
+# status_verifikasi: ekstraksi_1 = satu jalur ekstraksi (belum double-entry WP1c).
+# Mengubah tabel = mengubah hash di sini SECARA SADAR + mencatat alasan di riwayat.
+
+tanggal_kebaruan_kb: "2026-10-01"
+
+tabel:
+  - nama: ter_bulanan
+    path: ../../dataset/01_regulasi/tables/ter_bulanan.csv
+    sha256: 7890968b851996351460fe4b67bf3844a8ea42645dd173d6aeb1d60fd7fe5507
+    status_verifikasi: ekstraksi_1
+    kolom_rupiah: [batas_bawah, batas_atas]
+    kolom_tarif: [tarif_desimal]
+    boleh_kosong: [batas_atas]
+  - nama: ter_harian
+    path: ../../dataset/01_regulasi/tables/ter_harian.csv
+    sha256: c90d68965dc288dcbb195afb6e9ed60c8c9b685967e4af8bae32695054982944
+    status_verifikasi: ekstraksi_1
+    kolom_rupiah: [batas_bawah, batas_atas]
+    kolom_tarif: [tarif_desimal]
+    boleh_kosong: [batas_atas, tarif_desimal]
+    catatan: "baris 3 (> Rp2.500.000/hari) sengaja tanpa tarif: DPP 50% x tarif Pasal 17, bukan TER (PMK 168 Ps. 12(2)b). Di luar lingkup (pegawai tidak tetap)"
+  - nama: tarif_pasal17
+    path: ../../dataset/01_regulasi/tables/tarif_pasal17.csv
+    sha256: 03ff5d14f3c9ffd820c3f0ce9dd4ab3234470bb7eaa12c47562a3fc9526db907
+    status_verifikasi: ekstraksi_1
+    kolom_rupiah: [pkp_batas_bawah, pkp_batas_atas]
+    kolom_persen: [tarif_persen]
+    boleh_kosong: [pkp_batas_atas]
+  - nama: ptkp
+    path: ../../dataset/01_regulasi/tables/ptkp.csv
+    sha256: 743f281ef9b18976fd664d7279eb2d5f140dc93a66a12cb97fb391205aa2890d
+    status_verifikasi: ekstraksi_1
+    kolom_rupiah: [ptkp_diri, ptkp_kawin, ptkp_istri_digabung, ptkp_tanggungan, ptkp_setahun, ptkp_sebulan]
+  - nama: biaya_jabatan
+    path: ../../dataset/01_regulasi/tables/biaya_jabatan.csv
+    sha256: d0ba0edb4f8979abcc72c0e75e1476a03157b9acac5a49df95e0b83147a7fc9b
+    status_verifikasi: ekstraksi_1
+    kolom_rupiah: [maks_bulanan, maks_tahunan]
+    kolom_persen: [persen]
+  - nama: bpjs
+    path: ../../dataset/01_regulasi/tables/bpjs.csv
+    sha256: 2a6397d179e33be464dbf8518fda79e6333a799f16bd8600520085ef5c7fa868
+    status_verifikasi: ekstraksi_1
+    kolom_persen: [tarif_pemberi_kerja_persen, tarif_pekerja_persen]
+    catatan: "kolom batas_upah_bulanan berisi teks 'tidak ada' untuk program tanpa batas -> belum dikonversi; normalisasi di WP1c"
+  - nama: pembulatan_dan_lainnya
+    path: ../../dataset/01_regulasi/tables/pembulatan_dan_lainnya.csv
+    sha256: f33cce7a7313f526d0dd6654b3d74d6feb55dc1b6d168776acc88a8ebbbf2412
+    status_verifikasi: ekstraksi_1
+    catatan: "tabel naratif (bukan parameter numerik); dipakai sebagai rujukan dasar aturan"
+
+riwayat:
+  - tanggal: "2026-10-01"
+    perubahan: "manifest awal; hash dari hasil ekstraksi agen regulasi (dataset/01_regulasi/README.md)"

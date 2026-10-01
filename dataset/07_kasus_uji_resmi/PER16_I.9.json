@@ -1,0 +1,141 @@
+{
+  "id": "PER16-I.9",
+  "sumber": {
+    "regulasi": "PER-16/PJ/2016",
+    "bagian": "Lampiran, Bagian Kedua, I.9 (tunjangan pajak), Edward Simatupang",
+    "halaman_pdf": [
+      47
+    ],
+    "halaman_dokumen": "-28-",
+    "catatan": "PDF hasil pindai; angka dibaca dari citra halaman (bukan hanya teks OCR)."
+  },
+  "rezim": "PER16_2023",
+  "dalam_lingkup": true,
+  "catatan_lingkup": "Contoh PER-16 bertahun 2016 dan memakai lapisan tarif Pasal 17 UU 36/2008 (5% s.d. Rp50 juta; 15% >50-250 juta; 25% >250-500 juta; 30% >500 juta). Rezim 'PER16_2023' = metode (disetahunkan, PPh sebulan = PPh setahun / 12); untuk tahun pajak 2023 berlaku lapisan UU HPP (5% s.d. Rp60 juta). Lihat kunci 'relevansi_tarif_2023'.",
+  "skenario": [
+    "metode_PER16_bulanan",
+    "tunjangan_pajak",
+    "iuran_pensiun"
+  ],
+  "uraian": "Edward Simatupang (belum menikah, TK/0) gaji 5,5 juta + tunjangan pajak 150 ribu, iuran pensiun 100 ribu; September 2016.",
+  "input": {
+    "tahun_pajak": 2016,
+    "tarif_pasal17_dokumen": "UU 36/2008 (pra-HPP)",
+    "status_ptkp": "TK/0",
+    "jenis_kelamin": "tidak_disebutkan",
+    "metode": "gross",
+    "masa": [
+      {
+        "bulan": 9,
+        "komponen": {
+          "gaji": 5500000,
+          "tunjangan_pajak": 150000,
+          "iuran_pensiun_pegawai": 100000
+        }
+      }
+    ]
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 9,
+        "bruto": 5650000,
+        "biaya_jabatan": 282500,
+        "iuran_pensiun": 100000,
+        "total_pengurang": 382500,
+        "neto_sebulan": 5267500,
+        "neto_setahun": 63210000,
+        "ptkp": 54000000,
+        "pkp": 9210000,
+        "pph21_setahun": 460500,
+        "pph21": 38375
+      }
+    ]
+  },
+  "langkah_resmi": [
+    "Gaji 5.500.000 + Tunjangan pajak 150.000 = 5.650.000; BJ 282.500; Iuran Pensiun 100.000; neto 5.267.500",
+    "12 X = 63.210.000; PTKP 54.000.000; PKP 9.210.000; 5% = 460.500; PPh Pasal 21 bulan Juli [sic] 460.500 : 12 = 38.375"
+  ],
+  "catatan_transkripsi": "Label 'bulan Juli' padahal narasi 'PPh Pasal 21 bulan September 2016'. Tunjangan pajak (150.000) tidak sama dengan PPh (38.375) - dokumen tidak mensyaratkan.",
+  "cek_aritmetika": [
+    {
+      "item": "bruto",
+      "dokumen": 5650000,
+      "hitung_ulang": 5650000,
+      "status": "cocok"
+    },
+    {
+      "item": "Sep: biaya jabatan = min(5% x bruto. 500.000)",
+      "dokumen": 282500,
+      "hitung_ulang": 282500,
+      "status": "cocok"
+    },
+    {
+      "item": "Sep: jumlah pengurang",
+      "dokumen": 382500,
+      "hitung_ulang": 382500,
+      "status": "cocok"
+    },
+    {
+      "item": "Sep: neto sebulan = bruto - pengurang",
+      "dokumen": 5267500,
+      "hitung_ulang": 5267500,
+      "status": "cocok"
+    },
+    {
+      "item": "Sep: neto setahun = 12 x neto",
+      "dokumen": 63210000,
+      "hitung_ulang": 63210000,
+      "status": "cocok"
+    },
+    {
+      "item": "Sep: PKP (dibulatkan ribuan ke bawah)",
+      "dokumen": 9210000,
+      "hitung_ulang": 9210000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh September = 460.500 / 12",
+      "dokumen": 38375,
+      "hitung_ulang": 38375,
+      "status": "cocok",
+      "pembulatan_teramati": "tepat"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "PTKP setahun TK/0",
+      "dokumen": 54000000,
+      "tabel": 54000000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU 36/2008 (pra-HPP)) atas PKP 9.210.000",
+      "dokumen": 460500,
+      "tabel": 460500,
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 7,
+    "aritmetika_tidak_cocok": 0,
+    "tabel_cocok": 2,
+    "tabel_tidak_cocok": 0
+  },
+  "relevansi_tarif_2023": {
+    "keterangan": "Hitung ulang PPh setahun atas PKP dokumen dengan dua lapisan tarif (bukan nilai expected). Jika 'hasil_sama_di_kedua_tarif' = true, angka contoh juga berlaku untuk lapisan tarif 2023 (dengan asumsi PTKP sama - PTKP PMK 101/2016 masih berlaku 2023).",
+    "rincian": [
+      {
+        "pkp": 9210000,
+        "pph_dokumen": 460500,
+        "pph_tarif_UU36_2008": 460500,
+        "pph_tarif_UU_HPP": 460500,
+        "hasil_sama_di_kedua_tarif": true
+      }
+    ]
+  },
+  "dugaan_erratum": null,
+  "catatan_minor": "label 'bulan Juli' utk September",
+  "verifikasi_pass2": "cocok"
+}

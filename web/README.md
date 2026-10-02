@@ -52,7 +52,7 @@ Cek koneksi ke engine di menu **Mesin**: halaman itu menampilkan versi engine, c
 | `PAYROLL_PYTHON` | `<root>\env\Scripts\python.exe` (Windows), `<root>/env/bin/python` | Interpreter venv induk |
 | `PAYROLL_TIMEOUT` | `300` | Batas waktu satu panggilan engine, dalam detik |
 | `PAYROLL_KLU` | kosong | KLU pemberi kerja. Menentukan fasilitas PPh 21 DTP 2025–2026; kosong = tidak diterapkan |
-| `PAYROLL_LLM_MODEL` | `gpt-5.6` | Model yang membaca PDF. Penyedia mengikuti namanya: `gpt-...` = OpenAI, `claude-...` = Anthropic |
+| `PAYROLL_LLM_MODEL` | `gpt-5.6-sol` | Model yang membaca PDF. Penyedia mengikuti namanya: `gpt-...` = OpenAI, `claude-...` = Anthropic. Tulis nama lengkap yang diizinkan untuk proyek API Anda: alias `gpt-5.6` bisa ditolak (403) walau `gpt-5.6-sol` diizinkan. `gpt-5.6-terra` dan `gpt-5.6-luna` lebih murah |
 | `OPENAI_API_KEY` | kosong | Kunci API untuk model OpenAI (bawaan). Tanpa kunci, unggahan PDF gagal dengan pesan jelas; fitur lain tetap berjalan |
 | `ANTHROPIC_API_KEY` | kosong | Hanya bila `PAYROLL_LLM_MODEL` diisi model `claude-...` |
 | `PAYROLL_LLM_TIMEOUT` | `900` | Batas waktu membaca satu dokumen, dalam detik |

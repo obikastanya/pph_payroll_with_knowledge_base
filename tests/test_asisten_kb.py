@@ -58,7 +58,9 @@ class KlienTiruan:
             output=[SimpleNamespace(type="reasoning"), SimpleNamespace(type="message", content=[isi])],
             usage=SimpleNamespace(input_tokens=1000, output_tokens=200,
                                   input_tokens_details=SimpleNamespace(cached_tokens=800, cache_write_tokens=0)))
-        return _Konteks(SimpleNamespace(get_final_response=lambda: r))
+        # aliran event seperti SDK: delta, lalu satu event terminal (completed / incomplete / failed) yang membawa respons
+        return _Konteks([SimpleNamespace(type="response.output_text.delta", delta=teks[:5]),
+                         SimpleNamespace(type=f"response.{self.status}", response=r)])
 
     def _claude(self, **kw):
         self.permintaan = kw
@@ -144,10 +146,10 @@ def test_usulkan_lewat_jembatan_dengan_klien_tiruan(pdf):
     klien = KlienTiruan(USULAN)
     jawab = J.jalankan({"perintah": "usulkan", "pdf": str(pdf), "lapisan": "perusahaan", "catatan": "berlaku Juli"}, klien)
     assert jawab["ok"] and jawab["validasi"]["ok"], jawab
-    assert jawab["yaml"].startswith("# Rancangan berkas KB") and "(gpt-5.6)" in jawab["yaml"]
-    assert jawab["info"] == {"model": "gpt-5.6", "token_masuk": 1000, "token_keluar": 200, "token_cache_baca": 800, "token_cache_tulis": 0}
+    assert jawab["yaml"].startswith("# Rancangan berkas KB") and "(gpt-5.6-sol)" in jawab["yaml"]
+    assert jawab["info"] == {"model": "gpt-5.6-sol", "token_masuk": 1000, "token_keluar": 200, "token_cache_baca": 800, "token_cache_tulis": 0}
     kw = klien.permintaan   # bawaan: OpenAI Responses API
-    assert kw["model"] == "gpt-5.6" and kw["reasoning"] == {"effort": "high"} and kw["store"] is False
+    assert kw["model"] == "gpt-5.6-sol" and kw["reasoning"] == {"effort": "high"} and kw["store"] is False
     assert kw["text"]["format"] == {"type": "json_schema", "name": "usulan_kb", "strict": True, "schema": SKEMA_USULAN}
     assert "komponen('teratur')" in kw["instructions"]
     dok, teks = kw["input"][0]["content"]
@@ -181,6 +183,10 @@ def test_penolakan_model_dan_kunci_api_kosong(pdf, monkeypatch):
     assert J.jalankan({"perintah": "usulkan", "pdf": str(pdf), "model": "claude-opus-5-5"}, KlienTiruan(USULAN, stop_reason="refusal")) == menolak
     terpotong = J.jalankan({"perintah": "usulkan", "pdf": str(pdf)}, KlienTiruan(USULAN, status="incomplete", alasan="max_output_tokens"))
     assert terpotong["jenis"] == "gagal_llm" and "terpotong" in terpotong["pesan"]
+    gagal = J.jalankan({"perintah": "usulkan", "pdf": str(pdf)}, KlienTiruan(USULAN, status="failed"))
+    assert gagal["jenis"] == "gagal_llm" and "status failed" in gagal["pesan"]
+    putus = SimpleNamespace(responses=SimpleNamespace(stream=lambda **kw: _Konteks([SimpleNamespace(type="response.created")])))
+    assert "terputus" in J.jalankan({"perintah": "usulkan", "pdf": str(pdf)}, putus)["pesan"]
 
     for kunci in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY"):
         monkeypatch.delenv(kunci, raising=False)
@@ -206,13 +212,13 @@ def test_galat_sdk_dipetakan_ke_pesan_pengguna(pdf, monkeypatch):
         e.__dict__.update(atribut)
         return e
 
-    kasus = [(openai.AuthenticationError, {}, "gpt-5.6", r"kunci API tidak valid atau belum diatur \(OPENAI_API_KEY\)"),
+    kasus = [(openai.AuthenticationError, {}, "gpt-5.6-sol", r"kunci API tidak valid atau belum diatur \(OPENAI_API_KEY\)"),
              (anthropic.AuthenticationError, {}, "claude-opus-5-5", r"\(ANTHROPIC_API_KEY\)"),
-             (openai.NotFoundError, {}, "gpt-5.6", "model 'gpt-5.6' tidak ditemukan"),
-             (openai.RateLimitError, {}, "gpt-5.6", "kuota"),
-             (openai.BadRequestError, {"message": "file terlalu besar"}, "gpt-5.6", "permintaan ditolak API: file terlalu besar"),
-             (openai.InternalServerError, {"status_code": 503}, "gpt-5.6", r"galat server API \(503\)"),
-             (openai.APIConnectionError, {}, "gpt-5.6", "tidak dapat terhubung")]
+             (openai.NotFoundError, {}, "gpt-5.6-sol", "model 'gpt-5.6-sol' tidak ditemukan"),
+             (openai.RateLimitError, {}, "gpt-5.6-sol", "kuota"),
+             (openai.BadRequestError, {"message": "file terlalu besar"}, "gpt-5.6-sol", "permintaan ditolak API: file terlalu besar"),
+             (openai.InternalServerError, {"status_code": 503}, "gpt-5.6-sol", r"galat server API \(503\)"),
+             (openai.APIConnectionError, {}, "gpt-5.6-sol", "tidak dapat terhubung")]
     for kelas, atribut, model, pesan in kasus:
         sdk = anthropic if model.startswith("claude") else openai
         assert re.search(pesan, str(_galat_api(sdk, galat(kelas, **atribut), model))), kelas.__name__

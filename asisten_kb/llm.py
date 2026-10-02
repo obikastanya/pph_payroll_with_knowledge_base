@@ -8,7 +8,7 @@ import json
 
 from .skema import SKEMA_USULAN
 
-MODEL_BAWAAN = "gpt-5.6"
+MODEL_BAWAAN = "gpt-5.6-sol"
 BATAS_PDF = 30 * 1024 * 1024   # batas permintaan API 32 MB (base64 menambah ~33%)
 BATAS_KELUARAN = 64000         # token keluaran, termasuk penalaran
 KUNCI_API = {"openai": "OPENAI_API_KEY", "anthropic": "ANTHROPIC_API_KEY"}   # variabel lingkungan per penyedia
@@ -75,9 +75,18 @@ def _lewat_openai(pdf_b64, sistem, instruksi, model, klien):
             max_output_tokens=BATAS_KELUARAN,
             store=False,   # dokumen peraturan perusahaan tidak disimpan di sisi penyedia
         ) as stream:
-            r = stream.get_final_response()
+            # baca event terminal sendiri: stream.get_final_response() hanya menerima response.completed dan melempar
+            # RuntimeError untuk jawaban terpotong/gagal, padahal keduanya perlu pesan yang jelas bagi pengguna
+            r = None
+            for ev in stream:
+                if ev.type in ("response.completed", "response.incomplete", "response.failed"):
+                    r = ev.response
+                elif ev.type == "error":
+                    raise GagalLLM(f"API mengirim galat di tengah jawaban: {getattr(ev, 'message', '')}")
     except openai.OpenAIError as e:
         raise _galat_api(openai, e, model) from None
+    if r is None:
+        raise GagalLLM("aliran jawaban terputus sebelum selesai; coba lagi")
 
     alasan = getattr(r.incomplete_details, "reason", None)
     if r.status == "incomplete" and alasan == "max_output_tokens":

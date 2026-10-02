@@ -8,7 +8,7 @@ Permintaan:
     {"perintah": "info"}       versi engine, versi KB, hash tabel
     {"perintah": "masukan", "berkas_tambahan": [...]}
                                isian tambahan yang diminta KB aktif + metadata komponen gaji perusahaan
-    {"perintah": "usulkan", "pdf": "<path>", "lapisan": "perusahaan", "catatan": "", "model": "gpt-5.6", "berkas_tambahan": [...]}
+    {"perintah": "usulkan", "pdf": "<path>", "lapisan": "perusahaan", "catatan": "", "model": "gpt-5.6-sol", "berkas_tambahan": [...]}
                                PDF peraturan -> rancangan berkas KB lewat LLM, lalu divalidasi. Butuh OPENAI_API_KEY
                                (model gpt-..., bawaan) atau ANTHROPIC_API_KEY (model claude-...)
     {"perintah": "validasi", "yaml": "<isi berkas>", "nama": "x.yaml", "berkas_tambahan": [...]}

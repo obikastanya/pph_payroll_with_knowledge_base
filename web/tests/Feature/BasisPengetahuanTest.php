@@ -34,9 +34,9 @@ class BasisPengetahuanTest extends TestCase
         Queue::fake();
         Storage::fake('local');
 
-        config(['payroll.llm_model' => 'gpt-5.6', 'payroll.llm_kunci_env' => 'OPENAI_API_KEY', 'payroll.llm_kunci' => null]);
+        config(['payroll.llm_model' => 'gpt-5.6-sol', 'payroll.llm_kunci_env' => 'OPENAI_API_KEY', 'payroll.llm_kunci' => null]);
         $this->get('/kb')->assertOk()->assertSee('Unggah peraturan')->assertSee('Belum ada berkas tambahan')
-            ->assertSee('Kunci API LLM belum diatur')->assertSee('OPENAI_API_KEY')->assertSee('gpt-5.6');
+            ->assertSee('Kunci API LLM belum diatur')->assertSee('OPENAI_API_KEY')->assertSee('gpt-5.6-sol');
         config(['payroll.llm_kunci' => 'sk-uji']);
         $this->get('/kb')->assertOk()->assertDontSee('Kunci API LLM belum diatur');
         $this->post('/kb', ['judul' => 'PP 2026', 'lapisan' => 'perusahaan', 'pdf' => UploadedFile::fake()->create('pp.txt', 10, 'text/plain')])
@@ -63,7 +63,7 @@ class BasisPengetahuanTest extends TestCase
     {
         Storage::fake('local');
         Storage::disk('local')->put('kb_usulan/pp.pdf', '%PDF-1.4');
-        config(['payroll.llm_model' => 'gpt-5.6', 'payroll.llm_kunci_env' => 'OPENAI_API_KEY', 'payroll.llm_kunci' => 'sk-uji',
+        config(['payroll.llm_model' => 'gpt-5.6-sol', 'payroll.llm_kunci_env' => 'OPENAI_API_KEY', 'payroll.llm_kunci' => 'sk-uji',
             'payroll.llm_timeout' => 600]);
         $u = $this->usulan(['status' => 'antre', 'usulan' => null, 'yaml' => null, 'validasi' => null, 'valid' => null, 'info_llm' => null,
             'catatan' => 'berlaku Juli']);
@@ -75,13 +75,13 @@ class BasisPengetahuanTest extends TestCase
         $this->assertSame('siap_tinjau', $u->status);
         $this->assertTrue($u->valid);
         $this->assertSame(self::YAML, $u->yaml);
-        $this->assertSame('gpt-5.6', $u->info_llm['model']);
+        $this->assertSame('gpt-5.6-sol', $u->info_llm['model']);
         $this->assertFalse($u->aktif, 'rancangan LLM tidak pernah langsung berlaku');
         Process::assertRan(function (PendingProcess $p) use ($u) {
             $permintaan = json_decode($p->input, true);
 
             return $permintaan['perintah'] === 'usulkan' && $permintaan['lapisan'] === 'perusahaan' && $permintaan['catatan'] === 'berlaku Juli'
-                && $permintaan['pdf'] === Storage::disk('local')->path($u->path_pdf) && $permintaan['model'] === 'gpt-5.6'
+                && $permintaan['pdf'] === Storage::disk('local')->path($u->path_pdf) && $permintaan['model'] === 'gpt-5.6-sol'
                 && $p->environment['OPENAI_API_KEY'] === 'sk-uji' && ! isset($p->environment['ANTHROPIC_API_KEY']) && $p->timeout === 600;
         });
         $this->assertSame(660, (new ProsesUsulanKb($u->id))->timeout);

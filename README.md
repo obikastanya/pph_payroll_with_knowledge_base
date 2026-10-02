@@ -196,7 +196,7 @@ Peraturan baru (pemerintah atau perusahaan) masuk sebagai **berkas KB tambahan**
 
 Tabel terverifikasi (TER, tarif Pasal 17, PTKP, KLU DTP) **tidak** dapat diubah lewat berkas tambahan; jalurnya tetap double-entry + `tabel_manifest.yaml`.
 
-`asisten_kb/` menyusun **rancangan** berkas itu dari PDF peraturan dengan LLM (keluaran terstruktur). Model bawaannya `gpt-5.6` lewat OpenAI Responses API (`OPENAI_API_KEY`); model `claude-...` memakai Anthropic (`ANTHROPIC_API_KEY`). Paket ini sengaja di luar `engine/`: engine tetap bebas LLM (research_plan §4.3), dan LLM tidak pernah menghitung pajak. Rancangan baru berlaku setelah dua gerbang:
+`asisten_kb/` menyusun **rancangan** berkas itu dari PDF peraturan dengan LLM (keluaran terstruktur). Model bawaannya `gpt-5.6-sol` lewat OpenAI Responses API (`OPENAI_API_KEY`); model `claude-...` memakai Anthropic (`ANTHROPIC_API_KEY`). Paket ini sengaja di luar `engine/`: engine tetap bebas LLM (research_plan §4.3), dan LLM tidak pernah menghitung pajak. Rancangan baru berlaku setelah dua gerbang:
 
 1. **Validasi engine** (`asisten_kb/rancangan.py`): skema, verifikasi statis KB (sintaks DSL, tipe, lingkup, pembulatan terdaftar, id unik, konflik parameter), kewajiban mendeklarasikan setiap isian baru, dan simulasi pada pegawai contoh sebelum/sesudah.
 2. **Persetujuan manusia** di aplikasi web (menu Basis pengetahuan), dengan kutipan dan halaman PDF untuk tiap aturan.
@@ -204,7 +204,7 @@ Tabel terverifikasi (TER, tarif Pasal 17, PTKP, KLU DTP) **tidak** dapat diubah 
 ```powershell
 # validasi rancangan tanpa LLM; berkas_tambahan = berkas yang sudah aktif (harus di bawah kb/)
 '{"perintah": "validasi", "yaml": "...", "berkas_tambahan": []}' | python -m jembatan
-# PDF -> rancangan (butuh OPENAI_API_KEY; "model" opsional, bawaan gpt-5.6)
+# PDF -> rancangan (butuh OPENAI_API_KEY; "model" opsional, bawaan gpt-5.6-sol)
 '{"perintah": "usulkan", "pdf": "C:\\dok\\peraturan.pdf", "lapisan": "perusahaan"}' | python -m jembatan
 ```
 

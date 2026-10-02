@@ -57,7 +57,7 @@ python -m pip install -r requirements.txt
 
 | Berkas | Isi | Kapan dipakai |
 |---|---|---|
-| `requirements.txt` | Dependensi langsung, versinya dipin: PyYAML, jsonschema, pytest, hypothesis, streamlit, plotly, pandas, openpyxl, anthropic (hanya untuk asisten KB, §2.6) | **Default**, cukup untuk menjalankan kalkulator, UI, tes, dan eksperimen |
+| `requirements.txt` | Dependensi langsung, versinya dipin: PyYAML, jsonschema, pytest, hypothesis, streamlit, plotly, pandas, openpyxl, openai dan anthropic (hanya untuk asisten KB, §2.6) | **Default**, cukup untuk menjalankan kalkulator, UI, tes, dan eksperimen |
 | `requirements-lock.txt` | Versi persis seluruh paket, termasuk dependensi turunan, dari lingkungan yang sudah diuji | Bila ingin lingkungan yang identik byte-per-byte |
 | `requirements-ekstraksi.txt` | pdfplumber, pypdf, pypdfium2 | Opsional; hanya untuk mengekstraksi ulang teks/tabel dari PDF regulasi. Hasil ekstraksinya sudah tersimpan di `dataset/` |
 
@@ -196,7 +196,7 @@ Peraturan baru (pemerintah atau perusahaan) masuk sebagai **berkas KB tambahan**
 
 Tabel terverifikasi (TER, tarif Pasal 17, PTKP, KLU DTP) **tidak** dapat diubah lewat berkas tambahan; jalurnya tetap double-entry + `tabel_manifest.yaml`.
 
-`asisten_kb/` menyusun **rancangan** berkas itu dari PDF peraturan dengan LLM (Claude, keluaran terstruktur). Paket ini sengaja di luar `engine/`: engine tetap bebas LLM (research_plan §4.3), dan LLM tidak pernah menghitung pajak. Rancangan baru berlaku setelah dua gerbang:
+`asisten_kb/` menyusun **rancangan** berkas itu dari PDF peraturan dengan LLM (keluaran terstruktur). Model bawaannya `gpt-5.6` lewat OpenAI Responses API (`OPENAI_API_KEY`); model `claude-...` memakai Anthropic (`ANTHROPIC_API_KEY`). Paket ini sengaja di luar `engine/`: engine tetap bebas LLM (research_plan §4.3), dan LLM tidak pernah menghitung pajak. Rancangan baru berlaku setelah dua gerbang:
 
 1. **Validasi engine** (`asisten_kb/rancangan.py`): skema, verifikasi statis KB (sintaks DSL, tipe, lingkup, pembulatan terdaftar, id unik, konflik parameter), kewajiban mendeklarasikan setiap isian baru, dan simulasi pada pegawai contoh sebelum/sesudah.
 2. **Persetujuan manusia** di aplikasi web (menu Basis pengetahuan), dengan kutipan dan halaman PDF untuk tiap aturan.
@@ -204,7 +204,7 @@ Tabel terverifikasi (TER, tarif Pasal 17, PTKP, KLU DTP) **tidak** dapat diubah 
 ```powershell
 # validasi rancangan tanpa LLM; berkas_tambahan = berkas yang sudah aktif (harus di bawah kb/)
 '{"perintah": "validasi", "yaml": "...", "berkas_tambahan": []}' | python -m jembatan
-# PDF -> rancangan (butuh ANTHROPIC_API_KEY)
+# PDF -> rancangan (butuh OPENAI_API_KEY; "model" opsional, bawaan gpt-5.6)
 '{"perintah": "usulkan", "pdf": "C:\\dok\\peraturan.pdf", "lapisan": "perusahaan"}' | python -m jembatan
 ```
 
@@ -239,7 +239,7 @@ Contoh lengkap ada di `dataset/07_kasus_uji_resmi/kanonik/*.json` (komponen suda
 | `kb/regulasi/` | `aturan_{umum,ter,per16,dtp}.yaml`, `klasifikasi.yaml`, `parameter.yaml`, `pembulatan.yaml`, `pencatatan.yaml`, `tabel_manifest.yaml` (hash SHA-256), `KODIFIKASI.md` |
 | `kb/perusahaan/` | `perusahaan_x.yaml` (studi kasus), `katalog/` (kebijakan KP-xx) |
 | `kb/tambahan/` | Berkas KB tambahan yang diterapkan lewat aplikasi web (data runtime, tidak ikut git; lihat §2.6) |
-| `asisten_kb/` | PDF peraturan → rancangan berkas KB lewat LLM: `konteks.py` (prompt + inventaris KB), `skema.py` (keluaran terstruktur), `llm.py` (klien Claude), `rancangan.py` (YAML + validasi + simulasi). Engine tidak mengimpor paket ini |
+| `asisten_kb/` | PDF peraturan → rancangan berkas KB lewat LLM: `konteks.py` (prompt + inventaris KB), `skema.py` (keluaran terstruktur), `llm.py` (klien LLM: OpenAI bawaan, Anthropic opsional), `rancangan.py` (YAML + validasi + simulasi). Engine tidak mengimpor paket ini |
 | `baselines/b1_hardcoded/` | Baseline B1: pajak hard-coded, independen dari KB (tag git `b1-frozen`) |
 | `baselines/b2_payroll_hardcoded/` | Kalkulator payroll tanpa KB: kebijakan Perusahaan X di kode + B1 untuk pajak |
 | `dataset/` | `01_regulasi` (PDF + tabel double-entry), `02_studi_kasus` (Perusahaan X), `03_pembanding`, `04_data_publik` (BPS, Kemnaker), `05_katalog_kebijakan`, `06_kasus_uji_sintetis`, `07_kasus_uji_resmi` (kanonik), `08_pegawai_sintetis` |

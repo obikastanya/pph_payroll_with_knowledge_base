@@ -8,8 +8,9 @@ Permintaan:
     {"perintah": "info"}       versi engine, versi KB, hash tabel
     {"perintah": "masukan", "berkas_tambahan": [...]}
                                isian tambahan yang diminta KB aktif + metadata komponen gaji perusahaan
-    {"perintah": "usulkan", "pdf": "<path>", "lapisan": "perusahaan", "catatan": "", "berkas_tambahan": [...]}
-                               PDF peraturan -> rancangan berkas KB lewat LLM (butuh ANTHROPIC_API_KEY), lalu divalidasi
+    {"perintah": "usulkan", "pdf": "<path>", "lapisan": "perusahaan", "catatan": "", "model": "gpt-5.6", "berkas_tambahan": [...]}
+                               PDF peraturan -> rancangan berkas KB lewat LLM, lalu divalidasi. Butuh OPENAI_API_KEY
+                               (model gpt-..., bawaan) atau ANTHROPIC_API_KEY (model claude-...)
     {"perintah": "validasi", "yaml": "<isi berkas>", "nama": "x.yaml", "berkas_tambahan": [...]}
                                validasi rancangan (skema, verifikasi statis, simulasi dampak) tanpa LLM
 
@@ -124,7 +125,7 @@ def masukan(tambahan):
 
 def usulkan(permintaan, tambahan, klien=None):
     from asisten_kb.konteks import instruksi, prompt_sistem
-    from asisten_kb.llm import MODEL_BAWAAN, minta_usulan
+    from asisten_kb.llm import KUNCI_API, MODEL_BAWAAN, minta_usulan, penyedia
     from asisten_kb.rancangan import ke_berkas, ke_yaml, validasi
 
     pdf = Path(permintaan.get("pdf") or "")
@@ -133,12 +134,14 @@ def usulkan(permintaan, tambahan, klien=None):
     lapisan = permintaan.get("lapisan") or "perusahaan"
     if lapisan not in ("regulasi", "perusahaan"):
         raise PermintaanTidakValid(f"lapisan tidak dikenal: {lapisan!r}")
-    if klien is None and not os.environ.get("ANTHROPIC_API_KEY"):
-        raise PermintaanTidakValid("ANTHROPIC_API_KEY belum diatur di .env aplikasi")
+    model = permintaan.get("model") or MODEL_BAWAAN
+    kunci = KUNCI_API[penyedia(model)]
+    if klien is None and not os.environ.get(kunci):
+        raise PermintaanTidakValid(f"{kunci} belum diatur di .env aplikasi (model {model})")
 
     kb = kb_aktif([*BERKAS_PX, *tambahan])
     usulan, info = minta_usulan(pdf.read_bytes(), prompt_sistem(kb), instruksi(lapisan, permintaan.get("catatan") or ""),
-                                model=permintaan.get("model") or MODEL_BAWAAN, klien=klien)
+                                model=model, klien=klien)
     jawab = {"usulan": usulan, "info": info, "yaml": "", "validasi": None}
     if usulan.get("dapat_dikodifikasi") and (usulan.get("aturan") or usulan.get("parameter") or usulan.get("klasifikasi_wajib")):
         jawab["yaml"] = ke_yaml(ke_berkas(usulan), usulan.get("keterangan") or "", info["model"])

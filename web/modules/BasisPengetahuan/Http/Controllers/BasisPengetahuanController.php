@@ -44,7 +44,7 @@ class BasisPengetahuanController extends Controller
             'menuItems' => $this->menuItems,
             'aktif' => $this->usulan->aktif(),
             'sidik' => $kb->sidik(),
-            'llmSiap' => (bool) config('payroll.anthropic_key'),
+            'llmSiap' => (bool) config('payroll.llm_kunci'),
         ]);
     }
 

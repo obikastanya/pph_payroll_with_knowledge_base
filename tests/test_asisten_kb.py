@@ -4,6 +4,7 @@ Tidak ada panggilan API sungguhan: klien Claude diganti tiruan yang mengembalika
 """
 import copy
 import json
+import re
 from types import SimpleNamespace
 
 import pytest
@@ -38,27 +39,42 @@ def _usulan(**ubah):
 
 
 class KlienTiruan:
-    """Meniru anthropic.Anthropic().beta.messages.stream(...).get_final_message()."""
+    """Meniru kedua SDK: openai.OpenAI().responses.stream(...).get_final_response() dan
+    anthropic.Anthropic().beta.messages.stream(...).get_final_message()."""
 
-    def __init__(self, usulan, stop_reason="end_turn"):
-        self.usulan, self.stop_reason, self.permintaan = usulan, stop_reason, None
-        self.beta = SimpleNamespace(messages=SimpleNamespace(stream=self._stream))
+    def __init__(self, usulan, status="completed", alasan=None, menolak=False, stop_reason="end_turn"):
+        self.usulan, self.status, self.alasan, self.menolak, self.stop_reason = usulan, status, alasan, menolak, stop_reason
+        self.permintaan = None
+        self.responses = SimpleNamespace(stream=self._openai)
+        self.beta = SimpleNamespace(messages=SimpleNamespace(stream=self._claude))
 
-    def _stream(self, **kw):
+    def _openai(self, **kw):
+        self.permintaan = kw
+        teks = json.dumps(self.usulan)
+        isi = SimpleNamespace(type="refusal", refusal="tidak bisa") if self.menolak else SimpleNamespace(type="output_text", text=teks)
+        r = SimpleNamespace(
+            status=self.status, incomplete_details=SimpleNamespace(reason=self.alasan) if self.alasan else None, error=None,
+            model=kw["model"], output_text="" if self.menolak else teks,
+            output=[SimpleNamespace(type="reasoning"), SimpleNamespace(type="message", content=[isi])],
+            usage=SimpleNamespace(input_tokens=1000, output_tokens=200,
+                                  input_tokens_details=SimpleNamespace(cached_tokens=800, cache_write_tokens=0)))
+        return _Konteks(SimpleNamespace(get_final_response=lambda: r))
+
+    def _claude(self, **kw):
         self.permintaan = kw
         pesan = SimpleNamespace(
             stop_reason=self.stop_reason, model=kw["model"],
             content=[SimpleNamespace(type="thinking", thinking=""), SimpleNamespace(type="text", text=json.dumps(self.usulan))],
             usage=SimpleNamespace(input_tokens=1000, output_tokens=200, cache_read_input_tokens=0, cache_creation_input_tokens=900))
-        return _Konteks(pesan)
+        return _Konteks(SimpleNamespace(get_final_message=lambda: pesan))
 
 
 class _Konteks:
-    def __init__(self, pesan):
-        self.pesan = pesan
+    def __init__(self, stream):
+        self.stream = stream
 
     def __enter__(self):
-        return SimpleNamespace(get_final_message=lambda: self.pesan)
+        return self.stream
 
     def __exit__(self, *a):
         return False
@@ -128,14 +144,27 @@ def test_usulkan_lewat_jembatan_dengan_klien_tiruan(pdf):
     klien = KlienTiruan(USULAN)
     jawab = J.jalankan({"perintah": "usulkan", "pdf": str(pdf), "lapisan": "perusahaan", "catatan": "berlaku Juli"}, klien)
     assert jawab["ok"] and jawab["validasi"]["ok"], jawab
-    assert jawab["yaml"].startswith("# Rancangan berkas KB") and jawab["info"]["token_cache_tulis"] == 900
+    assert jawab["yaml"].startswith("# Rancangan berkas KB") and "(gpt-5.6)" in jawab["yaml"]
+    assert jawab["info"] == {"model": "gpt-5.6", "token_masuk": 1000, "token_keluar": 200, "token_cache_baca": 800, "token_cache_tulis": 0}
+    kw = klien.permintaan   # bawaan: OpenAI Responses API
+    assert kw["model"] == "gpt-5.6" and kw["reasoning"] == {"effort": "high"} and kw["store"] is False
+    assert kw["text"]["format"] == {"type": "json_schema", "name": "usulan_kb", "strict": True, "schema": SKEMA_USULAN}
+    assert "komponen('teratur')" in kw["instructions"]
+    dok, teks = kw["input"][0]["content"]
+    assert dok["type"] == "input_file" and dok["file_data"].startswith("data:application/pdf;base64,JVBERi0xLjQ")
+    assert teks["type"] == "input_text" and "perusahaan" in teks["text"] and "berlaku Juli" in teks["text"]
+
+
+def test_model_claude_memakai_api_anthropic(pdf):
+    klien = KlienTiruan(USULAN)
+    jawab = J.jalankan({"perintah": "usulkan", "pdf": str(pdf), "model": "claude-opus-5-5"}, klien)
+    assert jawab["ok"] and jawab["validasi"]["ok"] and jawab["info"]["token_cache_tulis"] == 900
     kw = klien.permintaan
     assert kw["model"] == "claude-opus-5-5" and kw["thinking"] == {"type": "adaptive"}
     assert kw["output_config"]["format"] == {"type": "json_schema", "schema": SKEMA_USULAN}
     assert kw["system"][0]["cache_control"] == {"type": "ephemeral"}
-    dok, teks = kw["messages"][0]["content"]
+    dok, _ = kw["messages"][0]["content"]
     assert dok["type"] == "document" and dok["source"]["media_type"] == "application/pdf"
-    assert "perusahaan" in teks["text"] and "berlaku Juli" in teks["text"]
 
 
 def test_dokumen_tidak_dapat_dikodifikasi_tidak_menghasilkan_yaml(pdf):
@@ -146,11 +175,50 @@ def test_dokumen_tidak_dapat_dikodifikasi_tidak_menghasilkan_yaml(pdf):
 
 
 def test_penolakan_model_dan_kunci_api_kosong(pdf, monkeypatch):
-    jawab = J.jalankan({"perintah": "usulkan", "pdf": str(pdf)}, KlienTiruan(USULAN, stop_reason="refusal"))
-    assert jawab == {"ok": False, "jenis": "gagal_llm", "pesan": "model menolak memproses dokumen ini"}
-    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    menolak = {"ok": False, "jenis": "gagal_llm", "pesan": "model menolak memproses dokumen ini"}
+    assert J.jalankan({"perintah": "usulkan", "pdf": str(pdf)}, KlienTiruan(USULAN, menolak=True)) == menolak
+    assert J.jalankan({"perintah": "usulkan", "pdf": str(pdf)}, KlienTiruan(USULAN, status="incomplete", alasan="content_filter")) == menolak
+    assert J.jalankan({"perintah": "usulkan", "pdf": str(pdf), "model": "claude-opus-5-5"}, KlienTiruan(USULAN, stop_reason="refusal")) == menolak
+    terpotong = J.jalankan({"perintah": "usulkan", "pdf": str(pdf)}, KlienTiruan(USULAN, status="incomplete", alasan="max_output_tokens"))
+    assert terpotong["jenis"] == "gagal_llm" and "terpotong" in terpotong["pesan"]
+
+    for kunci in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY"):
+        monkeypatch.delenv(kunci, raising=False)
     jawab = J.jalankan({"perintah": "usulkan", "pdf": str(pdf)})
+    assert jawab["jenis"] == "permintaan_tidak_valid" and "OPENAI_API_KEY" in jawab["pesan"]
+    jawab = J.jalankan({"perintah": "usulkan", "pdf": str(pdf), "model": "claude-opus-5-5"})
     assert jawab["jenis"] == "permintaan_tidak_valid" and "ANTHROPIC_API_KEY" in jawab["pesan"]
+
+
+def test_galat_sdk_dipetakan_ke_pesan_pengguna(pdf, monkeypatch):
+    import anthropic
+    import openai
+
+    from asisten_kb.llm import GagalLLM, _galat_api, minta_usulan
+
+    nama = ("AuthenticationError", "PermissionDeniedError", "NotFoundError", "RateLimitError", "BadRequestError", "APIStatusError",
+            "APIConnectionError")
+    for sdk in (openai, anthropic):   # kedua SDK harus punya kelas galat yang dipetakan
+        assert all(isinstance(getattr(sdk, n), type) for n in nama)
+
+    def galat(kelas, **atribut):   # instans tanpa HTTP sungguhan: yang diuji pemetaannya, bukan SDK
+        e = kelas.__new__(kelas)
+        e.__dict__.update(atribut)
+        return e
+
+    kasus = [(openai.AuthenticationError, {}, "gpt-5.6", r"kunci API tidak valid atau belum diatur \(OPENAI_API_KEY\)"),
+             (anthropic.AuthenticationError, {}, "claude-opus-5-5", r"\(ANTHROPIC_API_KEY\)"),
+             (openai.NotFoundError, {}, "gpt-5.6", "model 'gpt-5.6' tidak ditemukan"),
+             (openai.RateLimitError, {}, "gpt-5.6", "kuota"),
+             (openai.BadRequestError, {"message": "file terlalu besar"}, "gpt-5.6", "permintaan ditolak API: file terlalu besar"),
+             (openai.InternalServerError, {"status_code": 503}, "gpt-5.6", r"galat server API \(503\)"),
+             (openai.APIConnectionError, {}, "gpt-5.6", "tidak dapat terhubung")]
+    for kelas, atribut, model, pesan in kasus:
+        sdk = anthropic if model.startswith("claude") else openai
+        assert re.search(pesan, str(_galat_api(sdk, galat(kelas, **atribut), model))), kelas.__name__
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    with pytest.raises(GagalLLM, match="klien LLM gagal"):   # klien asli tanpa kunci: galat SDK, bukan traceback
+        minta_usulan(pdf.read_bytes(), "sistem", "instruksi")
 
 
 def test_berkas_tambahan_di_luar_kb_ditolak(tmp_path):

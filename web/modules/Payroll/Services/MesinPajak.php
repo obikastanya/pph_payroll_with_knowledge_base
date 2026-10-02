@@ -60,11 +60,11 @@ class MesinPajak
      */
     public function usulkan(string $pathPdf, string $lapisan, ?string $catatan): array
     {
-        $kunci = config('payroll.anthropic_key');
+        $kunci = config('payroll.llm_kunci');
         $jawab = $this->panggil([
             'perintah' => 'usulkan', 'pdf' => $pathPdf, 'lapisan' => $lapisan, 'catatan' => (string) $catatan,
             'model' => config('payroll.llm_model'), 'berkas_tambahan' => $this->kb->berkasAktif(),
-        ], config('payroll.llm_timeout'), $kunci ? ['ANTHROPIC_API_KEY' => $kunci] : []);
+        ], config('payroll.llm_timeout'), $kunci ? [config('payroll.llm_kunci_env') => $kunci] : []);
 
         return ['usulan' => $jawab['usulan'], 'info' => $jawab['info'], 'yaml' => $jawab['yaml'], 'validasi' => $jawab['validasi']];
     }

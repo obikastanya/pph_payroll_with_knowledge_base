@@ -6,6 +6,9 @@
 */
 
 $root = env('PAYROLL_ROOT') ?: dirname(base_path());
+$modelLlm = env('PAYROLL_LLM_MODEL') ?: 'gpt-5.6';
+// penyedia mengikuti nama model (asisten_kb/llm.py): claude-... = Anthropic, selain itu OpenAI
+$kunciLlm = str_starts_with($modelLlm, 'claude') ? 'ANTHROPIC_API_KEY' : 'OPENAI_API_KEY';
 
 return [
     // folder repositori induk (berisi engine/, kb/, jembatan/)
@@ -30,9 +33,10 @@ return [
     // berkas KB tambahan yang sudah disetujui di menu Basis pengetahuan (relatif terhadap root; harus di bawah kb/)
     'kb_tambahan_dir' => 'kb/tambahan',
 
-    // asisten KB: PDF peraturan -> rancangan berkas KB lewat Claude. Rancangan selalu divalidasi engine dan
-    // ditinjau admin sebelum berlaku; tanpa kunci API, menu Basis pengetahuan tetap bisa dipakai untuk meninjau.
-    'anthropic_key' => env('ANTHROPIC_API_KEY'),
-    'llm_model' => env('PAYROLL_LLM_MODEL') ?: 'claude-opus-5-5',
+    // asisten KB: PDF peraturan -> rancangan berkas KB lewat LLM (bawaan gpt-5.6). Rancangan selalu divalidasi
+    // engine dan ditinjau admin sebelum berlaku; tanpa kunci API, menu Basis pengetahuan tetap bisa untuk meninjau.
+    'llm_model' => $modelLlm,
+    'llm_kunci_env' => $kunciLlm,       // nama variabel .env yang dibutuhkan model ini
+    'llm_kunci' => env($kunciLlm),
     'llm_timeout' => (int) env('PAYROLL_LLM_TIMEOUT', 900),
 ];

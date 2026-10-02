@@ -83,7 +83,7 @@ trait KbUji
                 'rujukan' => [['bagian' => 'PPT-TRANSPORT-01', 'halaman' => 3, 'kutipan' => 'uang transport dibayarkan untuk setiap hari hadir']],
                 'catatan_peninjau' => ['Nominal per hari tidak disebut di dokumen; dijadikan isian.'],
             ],
-            'info' => ['model' => 'claude-opus-5-5', 'token_masuk' => 21_000, 'token_keluar' => 1_800, 'token_cache_baca' => 0, 'token_cache_tulis' => 20_000],
+            'info' => ['model' => 'gpt-5.6', 'token_masuk' => 21_000, 'token_keluar' => 1_800, 'token_cache_baca' => 20_000, 'token_cache_tulis' => 0],
             'yaml' => self::YAML,
             'validasi' => self::validasiLolos(),
         ];

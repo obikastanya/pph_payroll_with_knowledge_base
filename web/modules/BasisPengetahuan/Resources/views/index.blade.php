@@ -22,7 +22,8 @@
             <div class="col-12">
                 <div class="alert alert-warning mb-0" role="status">
                     <div class="d-flex gap-2"><i class="ti ti-key-off fs-2"></i>
-                        <div><strong>Kunci API LLM belum diatur.</strong> Isi <code>ANTHROPIC_API_KEY</code> di <code>web/.env</code> agar dokumen dapat dibaca.
+                        <div><strong>Kunci API LLM belum diatur.</strong> Isi <code>{{ config('payroll.llm_kunci_env') }}</code> di <code>web/.env</code>
+                            (model <code>{{ config('payroll.llm_model') }}</code>) agar dokumen dapat dibaca.
                             Berkas KB yang sudah diterapkan tetap berlaku.</div>
                     </div>
                 </div>

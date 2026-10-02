@@ -48,8 +48,8 @@ class MesinController extends Controller
                 'Lapisan kebijakan perusahaan' => config('payroll.nama_perusahaan').' (kb/perusahaan/perusahaan_x.yaml)',
                 'Berkas KB tambahan aktif (menu Basis pengetahuan)' => $tambahan === [] ? '— tidak ada'
                     : implode(', ', $tambahan).' · sidik '.$kb->sidik($tambahan),
-                'Asisten KB / LLM (ANTHROPIC_API_KEY, PAYROLL_LLM_MODEL)' => config('payroll.llm_model')
-                    .(config('payroll.anthropic_key') ? ' · kunci API terpasang' : ' · kunci API belum diatur'),
+                'Asisten KB / LLM (PAYROLL_LLM_MODEL, '.config('payroll.llm_kunci_env').')' => config('payroll.llm_model')
+                    .(config('payroll.llm_kunci') ? ' · kunci API terpasang' : ' · kunci API belum diatur'),
                 'Tahun pajak yang dibuka' => config('payroll.tahun_min').'–'.config('payroll.tahun_max'),
             ],
         ]);

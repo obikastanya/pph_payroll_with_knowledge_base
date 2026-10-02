@@ -4,7 +4,7 @@ Satu KB = kumpulan berkas aturan YAML (lapisan regulasi + opsional lapisan perus
 registri pembulatan, parameter berversi, dan tabel bertingkat (lewat manifest berhash).
 """
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, timedelta
 from fractions import Fraction
 from pathlib import Path
 
@@ -125,6 +125,69 @@ class KomponenPerusahaan:
     jenis: str
     kategori: str
     berkas: str
+    label: object = None
+
+
+TIPE_MASUKAN = ("rupiah", "bilangan", "persen", "desimal", "tanggal", "pilihan", "ya_tidak")
+
+
+@dataclass(frozen=True)
+class Masukan:
+    """Data input yang diminta aturan dari pengguna (dibaca lewat hr('kunci') / hr_masa('kunci')).
+
+    Nilai di data_hr: rupiah/bilangan = int; persen = teks desimal angka persen ("10" = 10%, baca dengan
+    persen(hr(...))); desimal = teks desimal ("0.24", baca dengan desimal(hr(...))); tanggal = teks ISO
+    (baca dengan tanggal(hr(...))); pilihan = salah satu teks di `pilihan`; ya_tidak = bool.
+    """
+    kunci: str
+    label: str
+    tipe: str
+    lingkup: str          # tahun -> hr('kunci'); bulan -> hr_masa('kunci')
+    wajib: bool
+    bawaan: object
+    pilihan: tuple
+    keterangan: str
+    sumber: str
+    berkas: str
+
+
+def nilai_masukan(m, v, tempat):
+    """Validasi & normalisasi satu nilai masukan sesuai tipenya (tanpa float). None tetap None."""
+    if v is None:
+        return None
+    try:
+        if m.tipe in ("rupiah", "bilangan"):
+            if isinstance(v, bool) or not isinstance(v, int):
+                raise ValueError("harus bilangan bulat")
+            return rupiah(v) if m.tipe == "rupiah" else v
+        if m.tipe in ("persen", "desimal"):
+            if not isinstance(v, str):
+                raise ValueError("harus teks desimal, mis. '10' atau '0.24'")
+            tarif(v)
+            return v
+        if m.tipe == "tanggal":
+            return date.fromisoformat(str(v)).isoformat()
+        if m.tipe == "pilihan":
+            if v not in m.pilihan:
+                raise ValueError(f"harus salah satu dari {list(m.pilihan)}")
+            return v
+        if m.tipe == "ya_tidak":
+            if not isinstance(v, bool):
+                raise ValueError("harus true/false")
+            return v
+    except (ValueError, PelanggaranPresisi) as e:
+        raise KesalahanKB(f"{tempat}: masukan '{m.kunci}' ({m.tipe}) tidak valid: {v!r} ({e})") from None
+    raise KesalahanKB(f"{tempat}: tipe masukan tidak dikenal {m.tipe!r}")
+
+
+def _bangun_masukan(d, berkas):
+    m = Masukan(kunci=d["kunci"], label=d["label"], tipe=d["tipe"], lingkup=d["lingkup"], wajib=d.get("wajib", True),
+                bawaan=None, pilihan=tuple(d.get("pilihan") or ()), keterangan=d.get("keterangan", ""),
+                sumber=d.get("sumber", ""), berkas=berkas)
+    if m.tipe == "pilihan" and not m.pilihan:
+        raise KesalahanKB(f"{berkas}: masukan {m.kunci} bertipe pilihan wajib punya daftar 'pilihan'")
+    bawaan = nilai_masukan(m, d.get("bawaan"), berkas)
+    return Masukan(**{**m.__dict__, "bawaan": bawaan})
 
 
 @dataclass(frozen=True)
@@ -146,22 +209,62 @@ class KnowledgeBase:
     komponen: list = field(default_factory=list)
     klasifikasi: list = field(default_factory=list)
     pencatatan: dict = field(default_factory=dict)
+    masukan: dict = field(default_factory=dict)
 
     def aturan_untuk(self, fakta):
         return [a for a in self.aturan if a.menghasilkan == fakta]
+
+
+def _nilai_parameter(nilai):
+    return tarif(nilai) if isinstance(nilai, str) else rupiah(nilai)
 
 
 def _muat_parameter(path):
     data = muat_yaml(path)
     hasil = {}
     for p in data["parameter"]:
-        nilai = p["nilai"]
-        if isinstance(nilai, str):
-            nilai = tarif(nilai)
-        else:
-            nilai = rupiah(nilai)
         hasil.setdefault(p["nama"], []).append((_tanggal(p["berlaku"]["mulai"]), _tanggal(p["berlaku"].get("sampai")),
-                                                 nilai, p["sumber"]))
+                                                 _nilai_parameter(p["nilai"]), p["sumber"]))
+    return hasil
+
+
+def _amandemen_parameter(param, entri, lapisan, berkas):
+    """Parameter dari berkas tambahan. Versi baru yang mulai berlaku pada tanggal M menutup versi lama yang masih
+    berlaku pada M (sampai = M - 1 hari); versi lama yang mulai pada/sesudah M berarti bentrok. Lapisan perusahaan
+    hanya boleh menambah parameter baru, bukan mengubah parameter regulasi (lex superior)."""
+    for p in entri:
+        nama, mulai, sampai = p["nama"], _tanggal(p["berlaku"]["mulai"]), _tanggal(p["berlaku"].get("sampai"))
+        lama = param.get(nama, [])
+        if lama and lapisan != "regulasi":
+            raise KesalahanKB(f"{berkas}: parameter {nama} sudah ada; lapisan perusahaan tidak boleh mengubahnya")
+        try:
+            nilai = _nilai_parameter(p["nilai"])
+        except (ValueError, PelanggaranPresisi) as e:
+            raise KesalahanKB(f"{berkas}: parameter {nama}: {e}") from None
+        baru = []
+        for m, s, v, src in lama:
+            if m >= mulai:
+                raise KesalahanKB(f"{berkas}: parameter {nama} mulai {mulai} bentrok dengan versi yang berlaku mulai {m}")
+            if s is None or s >= mulai:
+                s = mulai - timedelta(days=1)
+            baru.append((m, s, v, src))
+        baru.append((mulai, sampai, nilai, f"{p['sumber']} [{berkas}]"))
+        param[nama] = baru
+
+
+def rujukan_masukan(kb):
+    """{kunci: {'lingkup': 'tahun'|'bulan', 'aturan': [id...], 'bawaan_di_aturan': bool}} dari hr()/hr_masa() di aturan."""
+    hasil = {}
+    for a in kb.aturan:
+        for ek in [a.maka, a.jika, a.batas_bawah, a.batas_atas]:
+            if ek is None:
+                continue
+            for fn, kunci, n_arg in ek.panggilan_literal({"hr", "hr_masa"}):
+                r = hasil.setdefault(kunci, {"lingkup": set(), "aturan": [], "bawaan_di_aturan": True})
+                r["lingkup"].add("tahun" if fn == "hr" else "bulan")
+                if a.id not in r["aturan"]:
+                    r["aturan"].append(a.id)
+                r["bawaan_di_aturan"] = r["bawaan_di_aturan"] and fn == "hr_masa" and n_arg > 1
     return hasil
 
 
@@ -180,8 +283,9 @@ def muat_kb(berkas_tambahan=(), berkas_regulasi=None, dir_regulasi=None):
     """dir_regulasi: direktori lapisan regulasi alternatif (dipakai mutation testing E4)."""
     dreg = Path(dir_regulasi or DIR_REGULASI)
     berkas = [dreg / b for b in (berkas_regulasi or BERKAS_ATURAN_REGULASI)] + [Path(b) for b in berkas_tambahan]
-    aturan, komponen, klasifikasi, pencatatan = [], [], [], {}
+    aturan, komponen, klasifikasi, pencatatan, masukan = [], [], [], {}, {}
     registri = muat_registri_pembulatan(dreg / "pembulatan.yaml")
+    parameter = _muat_parameter(dreg / "parameter.yaml")
     for p in berkas:
         data = _iso(muat_yaml(p))
         validasi_skema(data, "aturan.schema.json")
@@ -191,7 +295,16 @@ def muat_kb(berkas_tambahan=(), berkas_regulasi=None, dir_regulasi=None):
         if data.get("komponen"):
             if lapisan != "perusahaan":
                 raise KesalahanKB(f"{p.name}: pemetaan komponen hanya boleh di lapisan perusahaan")
-            komponen += [KomponenPerusahaan(k["fakta"], k["jenis"], k["kategori"], p.name) for k in data["komponen"]]
+            komponen += [KomponenPerusahaan(k["fakta"], k["jenis"], k["kategori"], p.name, k.get("label"))
+                         for k in data["komponen"]]
+        for d in data.get("masukan") or []:
+            m = _bangun_masukan(d, p.name)
+            ada = masukan.get(m.kunci)
+            if ada is not None and (ada.tipe, ada.lingkup) != (m.tipe, m.lingkup):
+                raise KesalahanKB(f"{p.name}: masukan {m.kunci} sudah dideklarasikan {ada.berkas} dengan tipe/lingkup berbeda")
+            masukan.setdefault(m.kunci, m)
+        if data.get("parameter"):
+            _amandemen_parameter(parameter, data["parameter"], lapisan, p.name)
         if data.get("klasifikasi_wajib"):
             if lapisan != "regulasi":
                 raise KesalahanKB(f"{p.name}: klasifikasi wajib hanya boleh di lapisan regulasi")
@@ -202,10 +315,9 @@ def muat_kb(berkas_tambahan=(), berkas_regulasi=None, dir_regulasi=None):
         for c in data.get("pencatatan") or []:
             pencatatan[c["regulasi"]] = _tanggal(c["dicatat"])
     tabel = {n: muat_tabel(n, dreg / "tabel_manifest.yaml") for n in ("ter_bulanan", "tarif_pasal17", "ptkp", "klu_dtp")}
-    kb = KnowledgeBase(aturan=aturan, registri=registri,
-                       parameter=_muat_parameter(dreg / "parameter.yaml"), tabel=tabel,
+    kb = KnowledgeBase(aturan=aturan, registri=registri, parameter=parameter, tabel=tabel,
                        berkas=[p.name for p in berkas], komponen=komponen, klasifikasi=klasifikasi,
-                       pencatatan=pencatatan)
+                       pencatatan=pencatatan, masukan=masukan)
     verifikasi_statis(kb)
     return kb
 
@@ -258,6 +370,11 @@ def verifikasi_statis(kb):
             raise KesalahanKB(f"fakta {fakta} dihasilkan dengan tipe berbeda: {tipe}")
         if fakta in FAKTA_DASAR_TAHUN | FAKTA_DASAR_MASA:
             raise KesalahanKB(f"fakta dasar {fakta} tidak boleh dihasilkan aturan")
+    for kunci, r in rujukan_masukan(kb).items():
+        m = kb.masukan.get(kunci)
+        if m is not None and r["lingkup"] != {m.lingkup}:
+            cara = "hr()" if m.lingkup == "tahun" else "hr_masa()"
+            raise KesalahanKB(f"masukan {kunci} berlingkup {m.lingkup} wajib dibaca dengan {cara} (aturan {r['aturan']})")
     grup = {}
     for a in kb.aturan:
         if a.tafsir:

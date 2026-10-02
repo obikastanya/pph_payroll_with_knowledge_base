@@ -183,6 +183,10 @@
           },
           "catatan": {
             "type": "string"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
           }
         }
       }
@@ -250,6 +254,118 @@
           },
           "sumber": {
             "type": "string"
+          }
+        }
+      }
+    },
+    "masukan": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "kunci",
+          "label",
+          "tipe",
+          "lingkup"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "kunci": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tipe": {
+            "enum": [
+              "rupiah",
+              "bilangan",
+              "persen",
+              "desimal",
+              "tanggal",
+              "pilihan",
+              "ya_tidak"
+            ]
+          },
+          "lingkup": {
+            "enum": [
+              "tahun",
+              "bulan"
+            ]
+          },
+          "wajib": {
+            "type": "boolean"
+          },
+          "bawaan": {
+            "type": [
+              "string",
+              "integer",
+              "boolean",
+              "null"
+            ]
+          },
+          "pilihan": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "keterangan": {
+            "type": "string"
+          },
+          "sumber": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "parameter": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "nama",
+          "nilai",
+          "berlaku",
+          "sumber"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "nama": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "nilai": {
+            "type": [
+              "string",
+              "integer"
+            ]
+          },
+          "berlaku": {
+            "type": "object",
+            "required": [
+              "mulai"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "mulai": {
+                "type": "string",
+                "format": "date"
+              },
+              "sampai": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "sumber": {
+            "type": "string",
+            "minLength": 1
           }
         }
       }

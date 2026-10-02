@@ -15,7 +15,7 @@ from datetime import date
 from fractions import Fraction
 
 from .angka import PelanggaranPresisi
-from .kb import FAKTA_DASAR_MASA, FAKTA_DASAR_TAHUN, FUNGSI, FUNGSI_KOMPONEN, KesalahanKB, parameter_pada
+from .kb import FAKTA_DASAR_MASA, FAKTA_DASAR_TAHUN, FUNGSI, FUNGSI_KOMPONEN, KesalahanKB, nilai_masukan, parameter_pada
 from .pembulatan import bulatkan as _bulatkan
 
 BATAS_ITERASI = 10_000
@@ -583,17 +583,26 @@ def _komponen(ev, b, fn, args):
 
 
 def _hr(ev, b, fn, args):
+    """Data HR mentah. Bila tidak diisi: nilai bawaan di aturan (hr_masa('x', 0)), lalu bawaan deklarasi `masukan`
+    di KB; selain itu DATA_KURANG dengan label masukan agar pengguna tahu isian mana yang kurang."""
     data = ev.kasus.get("data_hr") or {}
+    m = ev.kb.masukan.get(args[0])
     if fn == "hr":
-        if args[0] not in data:
-            raise KesalahanKB(f"data_hr.{args[0]} tidak tersedia (DATA_KURANG)")
-        return data[args[0]]
+        if args[0] in data:
+            return nilai_masukan(m, data[args[0]], "data_hr") if m else data[args[0]]
+        if m is not None and m.bawaan is not None:
+            return m.bawaan
+        label = f" ({m.label})" if m else ""
+        raise KesalahanKB(f"data_hr.{args[0]}{label} tidak tersedia (DATA_KURANG)")
     per = (data.get("per_masa") or {}).get(str(b)) or {}
     if args[0] not in per:
         if len(args) > 1:
             return args[1]
-        raise KesalahanKB(f"data_hr.per_masa[{b}].{args[0]} tidak tersedia (DATA_KURANG)")
-    return per[args[0]]
+        if m is not None and m.bawaan is not None:
+            return m.bawaan
+        label = f" ({m.label})" if m else ""
+        raise KesalahanKB(f"data_hr.per_masa[{b}].{args[0]}{label} tidak tersedia (DATA_KURANG)")
+    return nilai_masukan(m, per[args[0]], f"data_hr.per_masa[{b}]") if m else per[args[0]]
 
 
 def _fungsi_tanggal(ev, b, fn, args):

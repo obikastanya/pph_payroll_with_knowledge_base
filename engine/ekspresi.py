@@ -97,6 +97,16 @@ class Ekspresi:
         """Nama fakta yang dibutuhkan (langsung + lewat argumen fungsi agregasi)."""
         return {n for n in self.nama} | self.argumen_fakta
 
+    def panggilan_literal(self, nama_fungsi):
+        """[(fungsi, kunci, jumlah_argumen)] untuk pemanggilan nama_fungsi('kunci', ...) dengan kunci literal string.
+        Dipakai untuk mengetahui data input apa yang diminta aturan (mis. hr('gaji_pokok'))."""
+        hasil = []
+        for n in ast.walk(self.pohon):
+            if (isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id in nama_fungsi and n.args
+                    and isinstance(n.args[0], ast.Constant) and isinstance(n.args[0].value, str)):
+                hasil.append((n.func.id, n.args[0].value, len(n.args)))
+        return hasil
+
     def evaluasi(self, konteks):
         return _eval(self.pohon.body, konteks)
 

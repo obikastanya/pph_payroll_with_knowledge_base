@@ -258,9 +258,9 @@ aturan:
     berlaku: {mulai: 2016-01-01}
     lingkup: masa
     menghasilkan: px_penghasilan_tunai
-    maka: "px_gaji + px_tunjangan + atau('px_thr', 0) + px_kompensasi + px_ota + px_lembur + px_komisi"
+    maka: "komponen('teratur') + komponen('tidak_teratur')"
     tipe_hasil: rupiah
-    sumber: "slip gaji: komponen yang dibayar tunai ke pegawai (premi BPJS perusahaan tidak dibayar ke pegawai)"
+    sumber: "slip gaji: komponen yang dibayar tunai ke pegawai = semua komponen penghasilan teratur & tidak teratur (premi BPJS perusahaan, natura, dan iuran tidak dibayar tunai); terbuka untuk komponen dari berkas KB tambahan"
   - id: PX-THP-GU0
     sifat: opsional
     berlaku: {mulai: 2016-01-01, sampai: 2023-12-31}
@@ -307,15 +307,15 @@ aturan:
     lingkup: masa
     menghasilkan: px_thp
     jika: "metode != 'ditanggung_pemberi_kerja'"
-    maka: "px_penghasilan_tunai + px_tunjangan_pajak_tunai - px_iuran_jht_pg - px_iuran_jp_pg - px_iuran_kes_pg - pph21 + px_dtp_tunai"
+    maka: "px_penghasilan_tunai + px_tunjangan_pajak_tunai - komponen('iuran_pengurang') - komponen('zakat') - px_iuran_kes_pg - pph21 + px_dtp_tunai"
     tipe_hasil: rupiah
-    sumber: "slip gaji: tunai - iuran pegawai - PPh 21 dipotong (lebih bayar masa terakhir dikembalikan, PMK 168/2023 Ps. 17); PPh 21 DTP dibayarkan tunai ke pegawai (PMK 10/2025 Ps. 5(3))"
+    sumber: "slip gaji: tunai - iuran pegawai (semua komponen iuran pengurang & zakat, termasuk dari berkas KB tambahan) - PPh 21 dipotong (lebih bayar masa terakhir dikembalikan, PMK 168/2023 Ps. 17); PPh 21 DTP dibayarkan tunai ke pegawai (PMK 10/2025 Ps. 5(3))"
   - id: PX-THP-02
     sifat: opsional
     berlaku: {mulai: 2016-01-01}
     lingkup: masa
     menghasilkan: px_thp
     jika: "metode == 'ditanggung_pemberi_kerja'"
-    maka: "px_penghasilan_tunai - px_iuran_jht_pg - px_iuran_jp_pg - px_iuran_kes_pg"
+    maka: "px_penghasilan_tunai - komponen('iuran_pengurang') - komponen('zakat') - px_iuran_kes_pg"
     tipe_hasil: rupiah
     sumber: "slip gaji: PPh 21 ditanggung pemberi kerja tidak dipotong dari pegawai"

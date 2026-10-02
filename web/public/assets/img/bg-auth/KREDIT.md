@@ -10,4 +10,4 @@ Semua foto berlisensi **CC0 1.0 (domain publik)**: boleh dipakai, diubah, dan di
 | `auth-4.jpg` | Woman writing on a notepad | rawpixel | [rawpixel](https://www.rawpixel.com/image/5916855/woman-writing-notepad) |
 | `auth-bg.jpg` | Calculator Numbers | Negative Space | [StockSnap](https://stocksnap.io/photo/calculator-numbers-Y2GUBQIPXD) |
 
-Lisensi: <https://creativecommons.org/publicdomain/zero/1.0/>. Berkas `*-thumb.jpg` adalah potongan kecil dari foto yang sama untuk indikator carousel.
+Lisensi: <https://creativecommons.org/publicdomain/zero/1.0/>.

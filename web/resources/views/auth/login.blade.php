@@ -15,13 +15,14 @@
                     <div class="card rounded-4 text-black" style="box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.55); border-radius: 20px; overflow: hidden;">
                         <div class="row g-0">
                             <div class="col-lg-7 d-none d-lg-flex align-items-stretch">
-                                <div id="carousel-indicators-thumb" class="carousel slide carousel-fade carousel-login w-100" data-bs-ride="carousel"
-                                    data-bs-interval="5000">
-                                    <div class="carousel-indicators carousel-indicators-thumb">
+                                {{-- Indikator garis: garis aktif terisi selama slide tampil (interval 5 detik), lalu pindah ke slide berikutnya --}}
+                                <div id="carouselLogin" class="carousel slide carousel-fade carousel-login w-100"
+                                    data-bs-interval="5000" data-bs-pause="false" style="--durasi-slide: 5s">
+                                    <div class="carousel-indicators indikator-garis">
                                         @foreach ($slide as $i => [$gambar, $judul])
-                                            <button type="button" data-bs-target="#carousel-indicators-thumb" data-bs-slide-to="{{ $i }}"
-                                                class="ratio ratio-4x3 {{ $i === 0 ? 'active' : '' }}" @if ($i === 0) aria-current="true" @endif
-                                                aria-label="{{ $judul }}" style="background-image: url({{ asset("assets/img/bg-auth/{$gambar}-thumb.jpg") }})"></button>
+                                            <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="{{ $i }}"
+                                                class="{{ $i === 0 ? 'active' : '' }}" @if ($i === 0) aria-current="true" @endif
+                                                aria-label="{{ $judul }}"></button>
                                         @endforeach
                                     </div>
                                     <div class="carousel-inner h-100">
@@ -161,6 +162,32 @@
 @endsection
 
 @push('javascript')
+    <script>
+        // Carousel dimulai saat garis indikator pertama mulai terisi (animationstart), bukan lewat data-bs-ride,
+        // agar garis penuh tepat ketika slide berganti. Tanpa animasi (reduced motion), carousel langsung berputar.
+        document.addEventListener('DOMContentLoaded', () => {
+            const el = document.getElementById('carouselLogin');
+            if (!el || !window.bootstrap) return;
+            const carousel = bootstrap.Carousel.getOrCreateInstance(el, {
+                interval: 5000,
+                pause: false,
+                ride: false
+            });
+            let mulai = false;
+            const putar = () => {
+                if (!mulai) {
+                    mulai = true;
+                    carousel.cycle();
+                }
+            };
+            el.addEventListener('animationstart', putar, {
+                once: true
+            });
+            el.classList.add('berjalan');
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches) putar();
+            setTimeout(putar, 1500); // cadangan bila event animasi tidak muncul
+        });
+    </script>
     @if ($errors->any())
         <script>
             Swal.fire({

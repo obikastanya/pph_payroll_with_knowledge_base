@@ -58,25 +58,66 @@
         left: 0;
         right: 0;
         bottom: 0;
-        padding: 3.5rem 2rem 6.5rem;
+        padding: 4rem 2.5rem 4rem;
         text-align: left;
         background: linear-gradient(to top, rgba(15, 23, 42, .85), rgba(15, 23, 42, 0));
     }
 
-    .carousel-login .carousel-indicators-thumb {
-        margin-bottom: 1.25rem;
+    /* Indikator garis: rata kiri sejajar keterangan; garis aktif lebih panjang dan terisi selama slide tampil */
+    .carousel-login .indikator-garis {
+        justify-content: flex-start;
+        margin: 0 2.5rem 2rem;
+        gap: .5rem;
     }
 
-    .carousel-login .carousel-indicators-thumb [data-bs-target] {
-        width: 3.25rem;
-        border-radius: .375rem;
-        background-size: cover;
-        background-position: center;
-        border: 2px solid rgba(255, 255, 255, .6);
+    .carousel-login .indikator-garis [data-bs-target] {
+        position: relative;
+        flex: 0 0 auto;
+        width: 1.75rem;
+        height: 4px;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 999px;
+        background-color: rgba(255, 255, 255, .35);
+        opacity: 1;
+        overflow: hidden;
+        transition: width .4s ease, background-color .2s ease;
     }
 
-    .carousel-login .carousel-indicators-thumb .active {
-        border-color: #fff;
+    .carousel-login .indikator-garis [data-bs-target]:hover {
+        background-color: rgba(255, 255, 255, .6);
+    }
+
+    .carousel-login .indikator-garis .active {
+        width: 3.5rem;
+    }
+
+    .carousel-login.berjalan .indikator-garis .active::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background-color: #fff;
+        transform-origin: left center;
+        animation: isi-garis var(--durasi-slide, 5s) linear forwards;
+    }
+
+    @keyframes isi-garis {
+        from {
+            transform: scaleX(0);
+        }
+
+        to {
+            transform: scaleX(1);
+        }
+    }
+
+    /* Tanpa animasi (preferensi pengguna): garis aktif langsung penuh */
+    @media (prefers-reduced-motion: reduce) {
+        .carousel-login.berjalan .indikator-garis .active::after {
+            animation: none;
+        }
     }
 </style>
 @stack('style')

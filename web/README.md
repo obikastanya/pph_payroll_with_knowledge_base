@@ -26,7 +26,7 @@ php artisan key:generate
 php artisan migrate --seed      # admin demo + 9 pegawai contoh dari dataset (lewat engine)
 npm install
 npm run build
-php artisan serve               # http://localhost:8000
+php artisan serve               # http://localhost:8100 (SERVER_PORT di .env)
 ```
 
 Masuk dengan `admin@example.com` / `password`, lalu ganti kata sandinya:
@@ -41,6 +41,7 @@ Cek koneksi ke engine di menu **Mesin**: halaman itu menampilkan versi engine, c
 
 | Variabel | Bawaan | Isi |
 |---|---|---|
+| `SERVER_PORT` | `8100` | Port `php artisan serve`; samakan dengan `APP_URL`. Port 8000 sengaja dihindari karena sering dipakai aplikasi lain |
 | `PAYROLL_ROOT` | folder induk `web/` | Repositori induk (berisi `engine/`, `kb/`, `jembatan/`) |
 | `PAYROLL_PYTHON` | `<root>\env\Scripts\python.exe` (Windows), `<root>/env/bin/python` | Interpreter venv induk |
 | `PAYROLL_TIMEOUT` | `300` | Batas waktu satu panggilan engine, dalam detik |

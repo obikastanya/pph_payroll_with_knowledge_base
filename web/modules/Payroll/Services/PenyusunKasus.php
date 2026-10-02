@@ -11,9 +11,15 @@ use App\Models\Payroll\PayrollTahun;
  *
  * Padanan ui/kalkulator.py::form_hr di induk: hanya menyalin dan menata data, tanpa aturan pajak. Hasilnya untuk
  * pegawai contoh harus identik dengan kasus di dataset (diuji di tests/Feature/IntegrasiMesinTest.php).
+ *
+ * Isian tambahan (tabel payroll_masukan) ikut dikirim untuk kunci yang diminta KB aktif (SkemaMasukan): tahunan ke
+ * data_hr.{kunci}, bulanan ke data_hr.per_masa.{bulan}.{kunci}. Isian kosong tidak dikirim; engine memakai
+ * nilai bawaan deklarasinya atau menolak dengan pesan DATA_KURANG berlabel.
  */
 final class PenyusunKasus
 {
+    public function __construct(private SkemaMasukan $skema) {}
+
     public function susun(PayrollTahun $pt): array
     {
         $pegawai = $pt->pegawai;
@@ -60,6 +66,7 @@ final class PenyusunKasus
     {
         $masuk = $pt->pegawai->tanggal_masuk;
         $perBulan = $pt->bulan->keyBy('bulan');
+        [$tambahanTahun, $tambahanBulan] = $this->tambahan($pt);
         $perMasa = [];
         foreach ($bulanKerja as $b) {
             $m = $perBulan->get($b);
@@ -79,9 +86,10 @@ final class PenyusunKasus
                     $isi[$f] = $m->{$f};
                 }
             }
-            $perMasa[(string) $b] = $isi;
+            $perMasa[(string) $b] = $isi + ($tambahanBulan[$b] ?? []);
         }
 
+        // isian inti selalu menang bila kuncinya sama dengan isian tambahan
         return [
             'gaji_pokok' => $pt->gaji_pokok,
             'kenaikan_tanggal' => $pt->kenaikan_tanggal->toDateString(),
@@ -102,6 +110,27 @@ final class PenyusunKasus
             'bpjs_kes_mulai_bulan' => $pt->bpjs_kes_mulai_bulan,
             'kelas_jkk_persen' => $pt->kelas_jkk_persen,
             'per_masa' => $perMasa === [] ? new \stdClass : $perMasa,
-        ];
+        ] + $tambahanTahun;
+    }
+
+    /** @return array{0: array<string, mixed>, 1: array<int, array<string, mixed>>} isian tambahan [tahunan, per bulan] */
+    private function tambahan(PayrollTahun $pt): array
+    {
+        $lingkup = array_column($this->skema->semua()['masukan'], 'lingkup', 'kunci');
+        if ($lingkup === []) {
+            return [[], []];
+        }
+        $tahun = [];
+        $bulan = [];
+        foreach ($pt->masukan->sortBy(['kunci', 'bulan']) as $m) {
+            if (($lingkup[$m->kunci] ?? null) === 'tahun' && $m->bulan === 0) {
+                $tahun[$m->kunci] = $m->nilai;
+            } elseif (($lingkup[$m->kunci] ?? null) === 'bulan' && $m->bulan >= 1) {
+                $bulan[$m->bulan][$m->kunci] = $m->nilai;
+            }
+        }
+        ksort($tahun);
+
+        return [$tahun, $bulan];
     }
 }

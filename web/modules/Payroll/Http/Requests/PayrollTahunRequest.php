@@ -11,14 +11,23 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 use Modules\Payroll\Services\Label;
+use Modules\Payroll\Services\MesinTidakTersedia;
+use Modules\Payroll\Services\SkemaMasukan;
 
 /**
  * Isian data HR satu tahun pajak. Selain aturan per kolom, ada pemeriksaan konsistensi yang mencegah angka nol
  * diam-diam: bulan dalam masa kerja wajib berisi hari kerja & hadir, dan kenaikan gaji di tengah bulan wajib
  * dipecah ke hari sebelum/sesudah yang jumlahnya sama dengan hari bulan itu.
+ *
+ * Isian tambahan dari KB (`masukan[kunci]`, `masukan_bulan[bulan][kunci]`) divalidasi menurut tipe yang
+ * dideklarasikan berkas KB (SkemaMasukan), jadi aturan baru yang meminta input baru tidak perlu mengubah kode ini.
  */
 class PayrollTahunRequest extends FormRequest
 {
+    private ?array $skema = null;
+
+    private ?string $galatSkema = null;
+
     public const RUPIAH = ['gaji_pokok', 'kenaikan_nominal', 'tunjangan_tetap_lama', 'tunjangan_prorata_lama',
         'tunjangan_tetap_baru', 'tunjangan_prorata_baru'];
 
@@ -56,13 +65,50 @@ class PayrollTahunRequest extends FormRequest
             $aturan['tahun'] = ['required', 'integer', 'between:'.config('payroll.tahun_min').','.config('payroll.tahun_max'),
                 Rule::unique('payroll_tahun')->where('pegawai_id', $this->pegawai()->id)];
         }
+        foreach ($this->skemaMasukan() as $m) {
+            if ($m['lingkup'] === 'tahun') {
+                $aturan["masukan.{$m['kunci']}"] = [$m['wajib'] ? 'required' : 'nullable', ...self::aturanTipe($m)];
+            } else {
+                $aturan["masukan_bulan.*.{$m['kunci']}"] = ['nullable', ...self::aturanTipe($m)];
+            }
+        }
 
         return $aturan;
+    }
+
+    /** Isian tambahan dari KB yang dipakai aturan berlaku di tahun pajak ini (kosong bila tidak ada berkas KB tambahan). */
+    public function skemaMasukan(): array
+    {
+        if ($this->skema === null) {
+            try {
+                $this->skema = app(SkemaMasukan::class)->untukTahun($this->tahun());
+            } catch (MesinTidakTersedia $e) {
+                $this->skema = [];
+                $this->galatSkema = $e->getMessage();
+            }
+        }
+
+        return $this->skema;
+    }
+
+    private static function aturanTipe(array $m): array
+    {
+        return match ($m['tipe']) {
+            'rupiah', 'bilangan' => ['integer'],
+            'persen', 'desimal' => ['regex:'.self::DESIMAL],
+            'tanggal' => ['date_format:Y-m-d'],
+            'pilihan' => [Rule::in($m['pilihan'])],
+            'ya_tidak' => ['in:0,1'],
+            default => ['string'],
+        };
     }
 
     public function after(): array
     {
         return [function (Validator $v) {
+            if ($this->galatSkema !== null) {
+                $v->errors()->add('masukan', 'Isian tambahan dari knowledge base tidak dapat dimuat engine: '.$this->galatSkema);
+            }
             if ($v->errors()->isNotEmpty()) {
                 return;
             }
@@ -88,6 +134,12 @@ class PayrollTahunRequest extends FormRequest
                 if (Desimal::digitDesimal(Desimal::normal($bulan[$b]['kompensasi_persen'] ?? null) ?? '0') > 6) {
                     $v->errors()->add("bulan.{$b}.kompensasi_persen", "Kompensasi bulan {$nama}: paling banyak 6 digit desimal.");
                 }
+                foreach ($this->skemaMasukan() as $m) {
+                    if ($m['lingkup'] === 'bulan' && $m['wajib'] && SkemaMasukan::berlakuBulan($m, $tahun, $b)
+                        && in_array($this->input("masukan_bulan.{$b}.{$m['kunci']}"), [null, ''], true)) {
+                        $v->errors()->add("masukan_bulan.{$b}.{$m['kunci']}", "{$m['label']} bulan {$nama} wajib diisi (diminta aturan KB).");
+                    }
+                }
             }
             $naik = CarbonImmutable::parse($this->input('kenaikan_tanggal'));
             if ($naik->year === $tahun && $naik->day > 1 && $v->errors()->isEmpty()) {
@@ -109,7 +161,12 @@ class PayrollTahunRequest extends FormRequest
 
     public function attributes(): array
     {
-        return [
+        $tambahan = [];
+        foreach ($this->skemaMasukan() as $m) {
+            $tambahan[$m['lingkup'] === 'tahun' ? "masukan.{$m['kunci']}" : "masukan_bulan.*.{$m['kunci']}"] = $m['label'];
+        }
+
+        return $tambahan + [
             'status_ptkp' => 'status PTKP', 'gaji_pokok' => 'gaji pokok', 'kenaikan_nominal' => 'kenaikan gaji',
             'kenaikan_tanggal' => 'tanggal berlaku kenaikan', 'tanggal_lebaran' => 'tanggal Hari Raya',
             'tanggal_thr_bayar' => 'tanggal bayar THR', 'kelas_jkk_persen' => 'tarif JKK',
@@ -142,7 +199,7 @@ class PayrollTahunRequest extends FormRequest
     /** Kolom tabel payroll_tahun (angka kosong -> 0, persen dinormalkan). */
     public function dataTahun(): array
     {
-        $d = $this->safe()->except(['bulan', 'tahun']);
+        $d = $this->safe()->except(['bulan', 'tahun', 'masukan', 'masukan_bulan']);
         foreach ([...self::RUPIAH, ...self::HARI] as $f) {
             $d[$f] = (int) ($d[$f] ?? 0);
         }
@@ -170,6 +227,47 @@ class PayrollTahunRequest extends FormRequest
         }
 
         return $hasil;
+    }
+
+    /**
+     * Isian tambahan dari KB: [{kunci, bulan (0 = tahunan), nilai}] untuk setiap isian yang tampil di form; nilai null =
+     * dikosongkan (baris dihapus, engine memakai nilai bawaan deklarasi). Nilai sudah bertipe sesuai deklarasi.
+     */
+    public function dataMasukan(): array
+    {
+        $tahun = $this->tahun();
+        $rentang = $this->pegawai()->rentangBulan($tahun);
+        $baris = [];
+        foreach ($this->skemaMasukan() as $m) {
+            if ($m['lingkup'] === 'tahun') {
+                $baris[] = ['kunci' => $m['kunci'], 'bulan' => 0, 'nilai' => self::nilaiMasukan($m, $this->input("masukan.{$m['kunci']}"))];
+
+                continue;
+            }
+            foreach ($rentang ? range($rentang[0], $rentang[1]) : [] as $b) {
+                if (SkemaMasukan::berlakuBulan($m, $tahun, $b)) {
+                    $baris[] = ['kunci' => $m['kunci'], 'bulan' => $b,
+                        'nilai' => self::nilaiMasukan($m, $this->input("masukan_bulan.{$b}.{$m['kunci']}"))];
+                }
+            }
+        }
+
+        return $baris;
+    }
+
+    /** Teks isian form -> nilai bertipe untuk data_hr (rupiah/bilangan int, persen/desimal teks titik, ya/tidak bool). */
+    public static function nilaiMasukan(array $m, mixed $v): mixed
+    {
+        if ($v === null || $v === '') {
+            return null;
+        }
+
+        return match ($m['tipe']) {
+            'rupiah', 'bilangan' => (int) $v,
+            'persen', 'desimal' => Desimal::normal((string) $v),
+            'ya_tidak' => (bool) (int) $v,
+            default => (string) $v,
+        };
     }
 
     private static function int(mixed $v): ?int

@@ -12,11 +12,24 @@ final class TampilanHasil
 {
     private array $jejakIndeks = [];
 
+    private array $labelKomponen = [];
+
     public function __construct(public readonly array $h, public readonly array $kasus)
     {
         foreach ($h['jejak'] ?? [] as $j) {
             $this->jejakIndeks[$j['fakta'].'|'.($j['bulan'] ?? '-')] ??= $j;
         }
+        foreach ($h['komponen'] ?? [] as $k) {
+            if ($k['label'] ?? null) {
+                $this->labelKomponen[$k['fakta']] = $k['label'];
+            }
+        }
+    }
+
+    /** Label fakta: daftar tetap aplikasi, lalu label komponen yang dideklarasikan berkas KB, lalu nama faktanya. */
+    public function label(string $fakta): string
+    {
+        return Label::FAKTA[$fakta] ?? $this->labelKomponen[$fakta] ?? $fakta;
     }
 
     public function bulan(): array
@@ -79,11 +92,12 @@ final class TampilanHasil
                 'dasar' => $fakta ? $this->dasar($fakta, $b) : null, 'judul' => false, 'tebal' => $tebal];
         };
 
+        $tambahan = $this->komponenTambahan();
         $judul('Penghasilan');
         $hadir = ($hr['hk_aktual'] ?? null) !== ($hr['hk_penuh'] ?? null) ? " ({$hr['hk_aktual']}/{$hr['hk_penuh']} hari kerja)" : '';
         $baris("Gaji{$hadir}", 'px_gaji');
         foreach (['px_tunjangan' => 'Tunjangan', 'px_thr' => 'THR', 'px_kompensasi' => 'Kompensasi', 'px_ota' => 'Insentif OTA',
-            'px_lembur' => 'Lembur', 'px_komisi' => 'Komisi', 'tunjangan_pajak' => 'Tunjangan pajak (gross-up)'] as $f => $lbl) {
+            'px_lembur' => 'Lembur', 'px_komisi' => 'Komisi'] + ($tambahan['penghasilan'] ?? []) + ['tunjangan_pajak' => 'Tunjangan pajak (gross-up)'] as $f => $lbl) {
             if (! empty($m[$f])) {
                 $baris($lbl, $f);
             }
@@ -92,11 +106,21 @@ final class TampilanHasil
         foreach (['px_premi_jkk' => 'Premi JKK', 'px_premi_jkm' => 'Premi JKM', 'px_premi_kes' => 'Premi BPJS Kesehatan'] as $f => $lbl) {
             $baris($lbl, $f);
         }
+        foreach ($tambahan['ditanggung'] ?? [] as $f => $lbl) {
+            if (! empty($m[$f])) {
+                $baris($lbl, $f);
+            }
+        }
         $baris('Penghasilan bruto (dasar pajak)', array_key_exists('bruto_total_masa', $m) ? 'bruto_total_masa' : 'bruto', '', true);
         $judul('Potongan');
         foreach (['px_iuran_jht_pg' => 'Iuran JHT pegawai', 'px_iuran_jp_pg' => 'Iuran JP pegawai',
             'px_iuran_kes_pg' => 'Iuran BPJS Kesehatan pegawai'] as $f => $lbl) {
             $baris($lbl, $f, '-');
+        }
+        foreach ($tambahan['potongan'] ?? [] as $f => $lbl) {
+            if (! empty($m[$f])) {
+                $baris($lbl, $f, '-');
+            }
         }
         $baris($this->keteranganPph($m, $b), 'pph21', ($m['pph21'] ?? 0) >= 0 ? '-' : '');
         if (! empty($m['pph21_dtp'])) {
@@ -105,6 +129,26 @@ final class TampilanHasil
         $baris('Take home pay', 'px_thp', '', true);
 
         return $rows;
+    }
+
+    /**
+     * Komponen gaji dari berkas KB tambahan (keluaran engine `komponen`), dikelompokkan untuk slip sesuai rumus take
+     * home pay di KB: penghasilan tunai (teratur/tidak teratur), ditanggung perusahaan (premi/natura), atau potongan
+     * (iuran pengurang/zakat). Label dari deklarasi KB.
+     */
+    private function komponenTambahan(): array
+    {
+        $kelompok = ['teratur' => 'penghasilan', 'tidak_teratur' => 'penghasilan', 'premi_objek' => 'ditanggung', 'natura' => 'ditanggung',
+            'iuran_pengurang' => 'potongan', 'zakat' => 'potongan'];
+        $hasil = [];
+        foreach ($this->h['komponen'] ?? [] as $k) {
+            if (array_key_exists($k['fakta'], Label::FAKTA) || ! isset($kelompok[$k['kategori']])) {
+                continue;
+            }
+            $hasil[$kelompok[$k['kategori']]][$k['fakta']] = $this->label($k['fakta']);
+        }
+
+        return $hasil;
     }
 
     private function keteranganPph(array $m, int $b): string
@@ -203,13 +247,13 @@ final class TampilanHasil
         foreach ($this->h['peringatan'] ?? [] as $p) {
             $kode = $p['kode'] ?? '';
             if ($kode === 'KLASIFIKASI_TIDAK_DIATUR') {
-                $tidakDiatur[] = Label::fakta($p['fakta']).' ('.str_replace('_', ' ', $p['kategori_perusahaan']).')';
+                $tidakDiatur[] = $this->label($p['fakta']).' ('.str_replace('_', ' ', $p['kategori_perusahaan']).')';
 
                 continue;
             }
             $hasil[] = match ($kode) {
                 'KONFLIK_WAJIB' => ['jenis' => 'warning', 'judul' => 'Konflik kebijakan perusahaan dengan aturan wajib',
-                    'teks' => 'Komponen '.Label::fakta($p['fakta']).' dikategorikan perusahaan sebagai penghasilan '
+                    'teks' => 'Komponen '.$this->label($p['fakta']).' dikategorikan perusahaan sebagai penghasilan '
                         .str_replace('_', ' ', $p['kategori_perusahaan']).', padahal regulasi menetapkan '
                         .str_replace('_', ' ', $p['kategori_wajib']).' ('.($p['sumber'] ?? '').'). Kalkulator memakai aturan regulasi.'],
                 'GROSSUP_GANDA' => ['jenis' => 'info', 'judul' => 'Gross-up punya dua jawaban sah',

@@ -26,4 +26,13 @@ return [
     // tahun pajak yang dibuka untuk data HR: rentang yang sudah diuji E12 (README induk §5)
     'tahun_min' => 2023,
     'tahun_max' => 2026,
+
+    // berkas KB tambahan yang sudah disetujui di menu Basis pengetahuan (relatif terhadap root; harus di bawah kb/)
+    'kb_tambahan_dir' => 'kb/tambahan',
+
+    // asisten KB: PDF peraturan -> rancangan berkas KB lewat Claude. Rancangan selalu divalidasi engine dan
+    // ditinjau admin sebelum berlaku; tanpa kunci API, menu Basis pengetahuan tetap bisa dipakai untuk meninjau.
+    'anthropic_key' => env('ANTHROPIC_API_KEY'),
+    'llm_model' => env('PAYROLL_LLM_MODEL') ?: 'claude-opus-5-5',
+    'llm_timeout' => (int) env('PAYROLL_LLM_TIMEOUT', 900),
 ];

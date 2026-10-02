@@ -67,9 +67,23 @@ class PayrollRepository implements PayrollInterface
         return $bulan;
     }
 
-    public function simpan(Pegawai $pegawai, array $dataTahun, array $dataBulan, ?PayrollTahun $payroll = null): PayrollTahun
+    public function isianMasukan(?PayrollTahun $payroll): array
     {
-        return DB::transaction(function () use ($pegawai, $dataTahun, $dataBulan, $payroll) {
+        $isian = ['tahun' => [], 'bulan' => []];
+        foreach ($payroll?->masukan ?? [] as $m) {
+            if ($m->bulan === 0) {
+                $isian['tahun'][$m->kunci] = $m->nilai;
+            } else {
+                $isian['bulan'][$m->bulan][$m->kunci] = $m->nilai;
+            }
+        }
+
+        return $isian;
+    }
+
+    public function simpan(Pegawai $pegawai, array $dataTahun, array $dataBulan, ?PayrollTahun $payroll = null, array $dataMasukan = []): PayrollTahun
+    {
+        return DB::transaction(function () use ($pegawai, $dataTahun, $dataBulan, $payroll, $dataMasukan) {
             if ($payroll) {
                 $payroll->update($dataTahun);
             } else {
@@ -78,6 +92,14 @@ class PayrollRepository implements PayrollInterface
             $payroll->bulan()->whereNotIn('bulan', array_keys($dataBulan))->delete();
             foreach ($dataBulan as $b => $isi) {
                 $payroll->bulan()->updateOrCreate(['bulan' => $b], $isi);
+            }
+            foreach ($dataMasukan as $m) {
+                $kunci = ['kunci' => $m['kunci'], 'bulan' => $m['bulan']];
+                if ($m['nilai'] === null) {
+                    $payroll->masukan()->where($kunci)->delete();
+                } else {
+                    $payroll->masukan()->updateOrCreate($kunci, ['nilai' => $m['nilai']]);
+                }
             }
 
             return $payroll;

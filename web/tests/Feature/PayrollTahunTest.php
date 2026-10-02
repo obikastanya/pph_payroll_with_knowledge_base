@@ -28,7 +28,7 @@ class PayrollTahunTest extends TestCase
 
         $pt = PayrollTahun::firstOrFail();
         $this->assertSame('0.24', $pt->kelas_jkk_persen);
-        $kasus = (new PenyusunKasus)->susun($pt);
+        $kasus = app(PenyusunKasus::class)->susun($pt);
         $this->assertSame(2025, $kasus['tahun_pajak']);
         $this->assertSame('K/1', $kasus['pegawai']['status_ptkp']);
         $this->assertNull($kasus['pegawai']['bulan_masuk']);
@@ -51,7 +51,7 @@ class PayrollTahunTest extends TestCase
         unset($isian['bulan'][1], $isian['bulan'][2]);
         $this->post("/pegawai/{$p->id}/payroll", $isian)->assertSessionHasNoErrors();
 
-        $kasus = (new PenyusunKasus)->susun(PayrollTahun::firstOrFail());
+        $kasus = app(PenyusunKasus::class)->susun(PayrollTahun::firstOrFail());
         $this->assertSame(3, $kasus['pegawai']['bulan_masuk']);
         // berhenti Desember tetap resign sungguhan (BPJS Kes tidak dibayar di bulan resign), bukan sekadar akhir tahun
         $this->assertSame(12, $kasus['pegawai']['bulan_terakhir_bekerja']);
@@ -116,7 +116,7 @@ class PayrollTahunTest extends TestCase
         $pt = $this->payroll(2024);
         $pt->bulan()->where('bulan', 8)->delete();
         $this->expectException(DataTidakLengkap::class);
-        (new PenyusunKasus)->susun($pt->fresh(['pegawai', 'bulan']));
+        app(PenyusunKasus::class)->susun($pt->fresh(['pegawai', 'bulan']));
     }
 
     public function test_form_tambah_melanjutkan_tahun_sebelumnya(): void

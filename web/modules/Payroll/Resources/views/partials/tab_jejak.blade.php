@@ -39,7 +39,7 @@
             <tbody>
                 @foreach ($tampil->jejak() as $j)
                     <tr>
-                        <td>{{ Label::fakta($j['fakta']) }}</td>
+                        <td>{{ $tampil->label($j['fakta']) }}</td>
                         <td class="text-nowrap">{{ Format::bulan($j['bulan']) }}</td>
                         <td class="angka">{{ Format::nilai($j['nilai']) }}</td>
                         <td class="text-nowrap">

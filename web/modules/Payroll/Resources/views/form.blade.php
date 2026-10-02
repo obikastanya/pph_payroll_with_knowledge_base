@@ -201,6 +201,8 @@
                         </div>
                     </div>
 
+                    @include('Payroll::partials.masukan_kb')
+
                     <div class="col-12 d-flex justify-content-end gap-2">
                         <x-global.btn-detail label="Batal" color="secondary" outline="true"
                             href="{{ $payroll->exists ? route('payroll.show', $payroll) : route('pegawai.detail', $pegawai) }}">

@@ -6,6 +6,7 @@
         'sah_titik_tetap_ganda' => ['blue', 'beda, keduanya sah'],
         'berbeda' => ['red', 'BERBEDA'],
         'galat' => ['gray', 'tidak dapat dicek'],
+        'dilewati' => ['gray', 'dilewati (KB tambahan)'],
         default => [null, null],
     };
 @endphp

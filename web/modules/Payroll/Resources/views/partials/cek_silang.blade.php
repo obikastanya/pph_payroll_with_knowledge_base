@@ -34,6 +34,15 @@
         </div>
     @break
 
+    @case('dilewati')
+        <div class="alert alert-secondary mb-0">
+            <div class="d-flex gap-2"><i class="ti ti-books fs-2"></i>
+                <div><strong>Cek silang dilewati:</strong> perhitungan ini memakai berkas KB tambahan, sedangkan kalkulator pembanding tanpa KB
+                    (rumus tertanam di kode) tidak mengenal aturan baru itu. Angka tetap dapat ditelusuri di tab <em>Cara mesin menghitung</em>.</div>
+            </div>
+        </div>
+    @break
+
     @case('galat')
         <div class="alert alert-secondary mb-0">
             <strong>Cek silang tidak dapat dijalankan</strong> untuk isian ini; hasil engine KB tetap ditampilkan.

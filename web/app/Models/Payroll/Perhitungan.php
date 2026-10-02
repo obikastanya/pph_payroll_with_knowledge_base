@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Table('perhitungan')]
 #[Fillable([
     'user_id', 'berhasil', 'jenis_galat', 'pesan', 'kasus', 'hasil', 'cek_silang', 'cek_silang_rinci', 'versi_engine', 'versi_kb',
-    'bruto_setahun', 'pph21_setahun', 'thp_setahun',
+    'sidik_kb', 'bruto_setahun', 'pph21_setahun', 'thp_setahun',
 ])]
 class Perhitungan extends Model
 {

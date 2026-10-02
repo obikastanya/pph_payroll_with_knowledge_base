@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
  */
 class Penghitung
 {
-    public function __construct(private MesinPajak $mesin, private PenyusunKasus $penyusun) {}
+    public function __construct(private MesinPajak $mesin, private PenyusunKasus $penyusun, private KbTambahan $kb) {}
 
     /**
      * @param  iterable<PayrollTahun>  $daftar
@@ -23,10 +23,12 @@ class Penghitung
      */
     public function hitung(iterable $daftar, ?User $user = null): array
     {
+        $berkas = $this->kb->berkasAktif();
+        $sidik = $this->kb->sidik($berkas);
         $siap = [];
         $catatan = [];
         foreach ($daftar as $pt) {
-            $pt->loadMissing('pegawai', 'bulan');
+            $pt->loadMissing('pegawai', 'bulan', 'masukan');
             try {
                 $kasus = $this->penyusun->susun($pt);
                 $siap[] = [$pt, $kasus];
@@ -34,23 +36,24 @@ class Penghitung
                 $catatan[] = [$pt, null, ['ok' => false, 'jenis' => 'data_tidak_lengkap', 'pesan' => 'Data belum lengkap: '.$e->getMessage()]];
             }
         }
-        $jawaban = $this->mesin->hitung(array_column($siap, 1));
+        $jawaban = $this->mesin->hitung(array_column($siap, 1), true, $berkas);
         foreach ($siap as $i => [$pt, $kasus]) {
             $catatan[] = [$pt, $kasus, $jawaban[$i]];
         }
 
         return DB::transaction(fn () => array_map(
-            fn ($c) => $this->catat($c[0], $c[1], $c[2], $user),
+            fn ($c) => $this->catat($c[0], $c[1], $c[2], $user, $sidik),
             $catatan,
         ));
     }
 
-    private function catat(PayrollTahun $pt, ?array $kasus, array $jawab, ?User $user): Perhitungan
+    private function catat(PayrollTahun $pt, ?array $kasus, array $jawab, ?User $user, string $sidik): Perhitungan
     {
         $data = [
             'user_id' => $user?->id,
             'berhasil' => (bool) $jawab['ok'],
             'kasus' => $kasus === null ? 'null' : PenyusunKasus::json($kasus),
+            'sidik_kb' => $sidik,
         ];
         if (! $jawab['ok']) {
             return $pt->perhitungan()->create($data + ['jenis_galat' => $jawab['jenis'] ?? 'galat', 'pesan' => $jawab['pesan'] ?? null]);
@@ -74,16 +77,29 @@ class Penghitung
         ]);
     }
 
-    /** True bila data HR sudah berubah sejak perhitungan terakhir (kasus yang akan dikirim tidak sama lagi). */
+    /** True bila hasil terakhir tidak lagi mengikuti data HR atau aturan KB yang berlaku sekarang. */
     public function kedaluwarsa(PayrollTahun $pt, ?Perhitungan $p): bool
     {
+        return $this->alasanKedaluwarsa($pt, $p) !== null;
+    }
+
+    /** 'kb' = berkas KB tambahan berubah sejak dihitung; 'data' = data HR berubah; null = masih berlaku. */
+    public function alasanKedaluwarsa(PayrollTahun $pt, ?Perhitungan $p): ?string
+    {
         if ($p === null) {
-            return false;
+            return null;
+        }
+        if (($p->sidik_kb ?? '') !== $this->kb->sidik()) {
+            return 'kb';
         }
         try {
-            return PenyusunKasus::json($this->penyusun->susun($pt)) !== $p->kasus;
+            $berubah = PenyusunKasus::json($this->penyusun->susun($pt)) !== $p->kasus;
         } catch (DataTidakLengkap) {
-            return $p->kasus !== 'null';
+            $berubah = $p->kasus !== 'null';
+        } catch (MesinTidakTersedia) {
+            return null;   // isian tambahan tidak dapat dibaca: jangan menuduh data berubah
         }
+
+        return $berubah ? 'data' : null;
     }
 }

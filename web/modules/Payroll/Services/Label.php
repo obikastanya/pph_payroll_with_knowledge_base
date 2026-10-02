@@ -38,6 +38,7 @@ final class Label
         'sah_titik_tetap_ganda' => 'beda, keduanya sah',
         'berbeda' => 'BERBEDA',
         'galat' => 'tidak dapat dicek',
+        'dilewati' => 'dilewati (KB tambahan)',
     ];
 
     public static function fakta(string $fakta): string

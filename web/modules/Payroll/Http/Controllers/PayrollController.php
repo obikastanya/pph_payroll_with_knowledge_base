@@ -13,6 +13,7 @@ use Modules\Payroll\Http\Requests\PayrollTahunRequest;
 use Modules\Payroll\Repositories\PayrollInterface;
 use Modules\Payroll\Services\MesinTidakTersedia;
 use Modules\Payroll\Services\Penghitung;
+use Modules\Payroll\Services\SkemaMasukan;
 use Modules\Payroll\Services\TampilanHasil;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -46,11 +47,22 @@ class PayrollController extends Controller
         ]));
     }
 
+    /** Isian tambahan yang diminta KB untuk tahun ini: [daftar masukan, pesan galat bila KB tidak dapat dimuat]. */
+    private function skemaMasukan(int $tahun): array
+    {
+        try {
+            return [app(SkemaMasukan::class)->untukTahun($tahun), null];
+        } catch (MesinTidakTersedia $e) {
+            return [[], $e->getMessage()];
+        }
+    }
+
     public function create(Request $request, Pegawai $pegawai): View
     {
         $tahunOpsi = $this->payroll->tahunBelumDiisi($pegawai);
         $tahun = (int) $request->query('tahun', $tahunOpsi[0] ?? config('payroll.tahun_max'));
         [$payroll, $bulan] = $this->payroll->isianBaru($pegawai, $tahun);
+        [$masukan, $galatMasukan] = $this->skemaMasukan($tahun);
 
         return view('Payroll::form', [
             'pageTitle' => $this->pageTitle,
@@ -60,12 +72,16 @@ class PayrollController extends Controller
             'bulan' => $bulan,
             'rentang' => $pegawai->rentangBulan($tahun),
             'tahunOpsi' => $tahunOpsi,
+            'masukan' => $masukan,
+            'galatMasukan' => $galatMasukan,
+            'isianMasukan' => $this->payroll->isianMasukan(null),
         ]);
     }
 
     public function store(PayrollTahunRequest $request, Pegawai $pegawai): RedirectResponse
     {
-        $payroll = $this->payroll->simpan($pegawai, ['tahun' => $request->tahun()] + $request->dataTahun(), $request->dataBulan());
+        $payroll = $this->payroll->simpan($pegawai, ['tahun' => $request->tahun()] + $request->dataTahun(), $request->dataBulan(), null,
+            $request->dataMasukan());
 
         return redirect()->route('payroll.show', $payroll)
             ->with('success', "Data HR {$payroll->tahun} disimpan. Tekan Hitung untuk menghitung payroll.");
@@ -89,7 +105,7 @@ class PayrollController extends Controller
             'payroll' => $payroll,
             'terakhir' => $terakhir,
             'tampil' => $tampil,
-            'kedaluwarsa' => $penghitung->kedaluwarsa($payroll, $terakhir),
+            'kedaluwarsa' => $penghitung->alasanKedaluwarsa($payroll, $terakhir),
             'tab' => $tab,
             'bulanSlip' => $bulanSlip,
             'riwayat' => $payroll->perhitungan()->with('user')->limit(20)->get(),
@@ -99,6 +115,7 @@ class PayrollController extends Controller
     public function edit(PayrollTahun $payroll): View
     {
         $pegawai = $payroll->pegawai;
+        [$masukan, $galatMasukan] = $this->skemaMasukan($payroll->tahun);
 
         return view('Payroll::form', [
             'pageTitle' => $this->pageTitle,
@@ -108,12 +125,15 @@ class PayrollController extends Controller
             'bulan' => $this->payroll->isianBulan($payroll),
             'rentang' => $pegawai->rentangBulan($payroll->tahun),
             'tahunOpsi' => [],
+            'masukan' => $masukan,
+            'galatMasukan' => $galatMasukan,
+            'isianMasukan' => $this->payroll->isianMasukan($payroll),
         ]);
     }
 
     public function update(PayrollTahunRequest $request, PayrollTahun $payroll): RedirectResponse
     {
-        $this->payroll->simpan($payroll->pegawai, $request->dataTahun(), $request->dataBulan(), $payroll);
+        $this->payroll->simpan($payroll->pegawai, $request->dataTahun(), $request->dataBulan(), $payroll, $request->dataMasukan());
 
         return redirect()->route('payroll.show', $payroll)->with('success', 'Data HR disimpan. Hitung ulang agar hasil mengikuti data terbaru.');
     }
@@ -154,14 +174,17 @@ class PayrollController extends Controller
         $p = $payroll->perhitunganTerakhir;
         abort_unless($p?->berhasil, 404, 'Belum ada perhitungan yang berhasil.');
         $h = $p->hasilEngine();
+        // komponen gaji dari berkas KB tambahan ikut menjadi kolom (sebelum kolom pajak)
+        $tambahan = array_values(array_diff(array_column($h['komponen'] ?? [], 'fakta'), self::KOLOM_CSV));
+        $kolom = [...array_slice(self::KOLOM_CSV, 0, 7), ...$tambahan, ...array_slice(self::KOLOM_CSV, 7)];
 
-        return response()->streamDownload(function () use ($h) {
+        return response()->streamDownload(function () use ($h, $kolom) {
             $out = fopen('php://output', 'w');
-            fputcsv($out, ['bulan', ...self::KOLOM_CSV]);
+            fputcsv($out, ['bulan', ...$kolom]);
             $bulan = array_keys($h['per_masa']);
             sort($bulan);
             foreach ($bulan as $b) {
-                fputcsv($out, [$b, ...array_map(fn ($k) => $h['per_masa'][$b][$k] ?? '', self::KOLOM_CSV)]);
+                fputcsv($out, [$b, ...array_map(fn ($k) => $h['per_masa'][$b][$k] ?? '', $kolom)]);
             }
             fclose($out);
         }, "payroll_{$payroll->pegawai->nomor_induk}_{$payroll->tahun}.csv", ['Content-Type' => 'text/csv; charset=UTF-8']);

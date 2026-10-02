@@ -2,7 +2,9 @@
 
 Aplikasi multi-pengguna untuk admin finance: data pegawai, data HR per tahun pajak, proses payroll, slip gaji, dan rekap PPh 21.
 
-**Aplikasi ini tidak menghitung pajak sendiri.** Setiap angka dihitung oleh engine knowledge base di repositori induk (`engine/` + `kb/`), dipanggil lewat jembatan JSON (`jembatan/`). Karena engine dan KB tidak diubah, angka yang tampil di aplikasi ini mewarisi bukti verifikasi engine (V1–V3, E3–E12; lihat README induk §5).
+**Aplikasi ini tidak menghitung pajak sendiri.** Setiap angka dihitung oleh engine knowledge base di repositori induk (`engine/` + `kb/`), dipanggil lewat jembatan JSON (`jembatan/`). Karena tidak ada rumus yang disalin ke PHP, angka yang tampil di aplikasi ini mewarisi bukti verifikasi engine (V1–V3, E3–E12; lihat README induk §5).
+
+**Aturan baru tidak mengubah kode.** Di menu **Basis pengetahuan**, admin mengunggah PDF peraturan, LLM menyusun rancangan berkas KB, engine memvalidasi dan menyimulasikannya, lalu admin meninjau dan menerapkannya. Bila aturan baru membutuhkan data baru, isiannya muncul otomatis di form data HR.
 
 ```text
 Laravel (web/)                                   repositori induk
@@ -11,7 +13,11 @@ Laravel (web/)                                   repositori induk
  │                                               │   └─ engine.kalkulator.hitung + lapisan Perusahaan X
  │                                               │   └─ cek silang: kalkulator tanpa KB (B2 + B1), E12
  ├─ Perhitungan: hasil engine apa adanya ◄───────┘
- └─ slip gaji, perhitungan setahun (1721-A1), rekap, CSV
+ ├─ slip gaji, perhitungan setahun (1721-A1), rekap, CSV
+ │
+ └─ Basis pengetahuan: PDF peraturan ──(antrean)──► python -m jembatan  {"perintah": "usulkan"}
+      rancangan + validasi + simulasi ◄──────────────    └─ asisten_kb: LLM menyusun rancangan, engine memvalidasi
+      admin meninjau -> Terapkan ─────────────────────► kb/tambahan/NNNN_nama.yaml (ikut dimuat di setiap hitung)
 ```
 
 ## Setup
@@ -46,6 +52,17 @@ Cek koneksi ke engine di menu **Mesin**: halaman itu menampilkan versi engine, c
 | `PAYROLL_PYTHON` | `<root>\env\Scripts\python.exe` (Windows), `<root>/env/bin/python` | Interpreter venv induk |
 | `PAYROLL_TIMEOUT` | `300` | Batas waktu satu panggilan engine, dalam detik |
 | `PAYROLL_KLU` | kosong | KLU pemberi kerja. Menentukan fasilitas PPh 21 DTP 2025–2026; kosong = tidak diterapkan |
+| `ANTHROPIC_API_KEY` | kosong | Kunci API untuk asisten KB. Tanpa kunci, unggahan PDF gagal dengan pesan jelas; fitur lain tetap berjalan |
+| `PAYROLL_LLM_MODEL` | `claude-opus-5-5` | Model yang membaca PDF |
+| `PAYROLL_LLM_TIMEOUT` | `900` | Batas waktu membaca satu dokumen, dalam detik |
+
+Membaca PDF berjalan di antrean Laravel (`QUEUE_CONNECTION=database`). Jalankan pekerjanya di terminal terpisah:
+
+```powershell
+php artisan queue:work --timeout=960
+```
+
+Kunci API tidak pernah ditulis ke repositori: `.env` ada di `.gitignore`, dan kunci hanya diteruskan ke proses Python saat perintah `usulkan`.
 
 ## Alur kerja
 
@@ -61,7 +78,23 @@ Cek koneksi ke engine di menu **Mesin**: halaman itu menampilkan versi engine, c
    - cek silang dengan kalkulator tanpa KB;
    - cetak slip dan unduh CSV.
 
-Setiap perhitungan disimpan sebagai riwayat baru, tanpa menimpa yang lama. Yang tersimpan adalah kasus yang dikirim, keluaran engine, versi KB, dan siapa yang menghitung. Bila data HR diubah sesudah dihitung, aplikasi menandainya *data berubah, hitung ulang*.
+Setiap perhitungan disimpan sebagai riwayat baru, tanpa menimpa yang lama. Yang tersimpan adalah kasus yang dikirim, keluaran engine, versi KB, sidik berkas KB tambahan, dan siapa yang menghitung. Bila data HR atau berkas KB tambahan berubah sesudah dihitung, aplikasi menandainya *data / aturan berubah, hitung ulang*.
+
+### Aturan baru (menu Basis pengetahuan)
+
+1. **Unggah** PDF peraturan (maks. 30 MB), pilih jenisnya (peraturan perusahaan atau pemerintah), dan beri catatan bila perlu.
+2. **LLM menyusun rancangan** berkas KB di antrean. Halaman usulan diperbarui otomatis.
+3. **Tinjau**. Halaman usulan menampilkan:
+   - ringkasan dokumen dan hal yang menurut LLM perlu diperiksa;
+   - hasil validasi engine (skema, verifikasi statis KB, simulasi);
+   - isian baru yang akan diminta di form data HR;
+   - setiap aturan dengan rumus, pasal, kutipan, dan halaman PDF-nya;
+   - simulasi dampak pada pegawai contoh (bruto, PPh 21, take home pay sebelum/sesudah);
+   - berkas YAML yang boleh diubah; setiap simpan divalidasi ulang.
+4. **Terapkan** (hanya bila lolos validasi), **Tolak**, atau **Baca ulang**. Berkas yang diterapkan ditulis ke `kb/tambahan/` dan dapat dinonaktifkan kapan saja; sebelum menonaktifkan, engine memeriksa bahwa KB sisanya masih dapat dimuat.
+5. **Isi data baru**. Bila berkas mendeklarasikan `masukan`, form data HR menampilkan bagian *Isian tambahan dari knowledge base*: isian tahunan dan isian per bulan, hanya untuk tahun dan bulan saat aturannya berlaku. Tipenya rupiah, bilangan, persen, desimal, tanggal, pilihan, atau ya/tidak. Komponen gaji baru tampil di slip dan CSV dengan label dari berkas KB.
+
+LLM hanya mengusulkan. Ia tidak menghitung pajak, tidak dapat mengubah tabel TER/PTKP/Pasal 17, dan rancangannya tidak pernah berlaku tanpa persetujuan admin. Validasi engine memeriksa bentuk dan konsistensi, **bukan** kesesuaian dengan isi dokumen; mencocokkan aturan dengan kutipan PDF adalah tugas peninjau.
 
 ## Validasi isian
 
@@ -71,6 +104,7 @@ Validasinya mencegah angka salah yang lolos diam-diam:
 - Persen disimpan sebagai teks desimal, lalu dikonversi eksak (`app/Helpers/Desimal.php`).
 - Setiap bulan dalam masa kerja wajib berisi hari kerja dan hadir, dan hadir tidak boleh melebihi hari kerja.
 - Kenaikan gaji di tengah bulan wajib dipecah ke hari sebelum/sesudah, dengan jumlah yang sama dengan hari bulan itu. Tanpa aturan ini, gaji bulan tersebut akan menjadi 0 diam-diam.
+- Isian tambahan dari KB divalidasi menurut tipe di deklarasinya. Isian wajib tanpa nilai bawaan harus diisi; engine juga menolak nilai bertipe salah dengan pesan yang menyebut label isiannya.
 
 ## Tes
 
@@ -80,6 +114,14 @@ php vendor/bin/phpunit --group mesin   # hanya integrasi nyata dengan engine Pyt
 ```
 
 `tests/Feature/IntegrasiMesinTest.php` memeriksa jaminan utama aplikasi ini. Untuk kesembilan pegawai contoh, kasus yang disusun dari database **identik** dengan kasus di dataset. Hasil hitung lewat web juga sama persis dengan engine yang dipanggil langsung (Karyawan A 2023: PPh 21 setahun Rp7.341.750, cek silang identik). Tes lainnya memakai engine palsu (`Process::fake`). Di sisi Python, protokol jembatan diuji di `tests/test_jembatan.py` induk.
+
+Fitur aturan baru diuji di tiga tempat:
+
+- `IntegrasiMesinTest` (engine sungguhan, tanpa LLM): rancangan salah ditolak; rancangan benar diterapkan; isian baru muncul di form; hasilnya masuk bruto, PPh 21, dan take home pay; setelah dinonaktifkan angka kembali ke Rp7.341.750 dan cek silang kembali identik.
+- `BasisPengetahuanTest`: unggah, antrean, status, tinjau, terapkan/tolak/nonaktifkan/hapus.
+- `MasukanKbTest`: form dinamis, validasi per tipe, isian per bulan, sidik KB, dan penanda hasil usang.
+
+Panggilan LLM sungguhan tidak ada di tes; klien LLM tiruan diuji di `tests/test_asisten_kb.py` induk.
 
 ## Struktur
 
@@ -105,18 +147,22 @@ php artisan make:module Laporan    # kerangka lengkap + route laporan.index; tam
 | `Dashboard` | Rekap payroll per tahun: kartu ringkasan, tabel AJAX, hitung semua (satu panggilan engine), ekspor CSV |
 | `Pegawai` | Daftar pegawai (tabel AJAX: cari, filter, urut, paginasi), tambah/ubah lewat modal, halaman detail per tahun pajak |
 | `Payroll` | Form data HR tahunan, hasil (slip, 1721-A1, 12 bulan + grafik, jejak aturan), cetak slip, riwayat. `Services/` berisi klien engine |
-| `Mesin` | Status engine: konfigurasi jembatan, versi engine, commit KB, verifikasi tabel parameter |
+| `BasisPengetahuan` | Unggah PDF peraturan, antrean LLM (`Jobs/ProsesUsulanKb`), halaman tinjau, terapkan/tolak/nonaktifkan (`Services/PenerapanKb`) |
+| `Mesin` | Status engine: konfigurasi jembatan, versi engine, commit KB, verifikasi tabel parameter, berkas KB tambahan aktif |
 
 | Lokasi | Isi |
 |---|---|
-| `modules/Payroll/Services/MesinPajak.php` | Klien jembatan: menjalankan `python -m jembatan` di repositori induk |
-| `modules/Payroll/Services/PenyusunKasus.php` | Database → kasus kanonik `data_hr` (padanan `ui/kalkulator.py::form_hr`) |
-| `modules/Payroll/Services/Penghitung.php` | Hitung satu/banyak pegawai dalam satu panggilan, catat riwayat, deteksi data berubah |
-| `modules/Payroll/Services/TampilanHasil.php` | Menata keluaran engine untuk slip / 1721-A1 / jejak (padanan `ui/hasil.py`) |
+| `modules/Payroll/Services/MesinPajak.php` | Klien jembatan: menjalankan `python -m jembatan` di repositori induk (`hitung`, `masukan`, `usulkan`, `validasi`, ...) |
+| `modules/Payroll/Services/KbTambahan.php` | Berkas KB tambahan yang aktif, sidik isinya, tulis/hapus berkas di `kb/tambahan/` |
+| `modules/Payroll/Services/SkemaMasukan.php` | Isian tambahan yang diminta KB aktif (dari engine, di-cache per sidik) untuk form data HR |
+| `modules/Payroll/Services/PenyusunKasus.php` | Database → kasus kanonik `data_hr` (padanan `ui/kalkulator.py::form_hr`), termasuk isian tambahan |
+| `modules/Payroll/Services/Penghitung.php` | Hitung satu/banyak pegawai dalam satu panggilan, catat riwayat, deteksi data atau KB berubah |
+| `modules/Payroll/Services/TampilanHasil.php` | Menata keluaran engine untuk slip / 1721-A1 / jejak (padanan `ui/hasil.py`); komponen baru dari KB tampil dengan labelnya |
 | `modules/Payroll/Services/ImporContoh.php` | Kasus kanonik → database (pegawai contoh dari dataset) |
-| `app/Models/Payroll/` | `Pegawai`, `PayrollTahun`, `PayrollBulan`, `Perhitungan` |
+| `app/Models/Payroll/` | `Pegawai`, `PayrollTahun`, `PayrollBulan`, `PayrollMasukan`, `Perhitungan` |
+| `app/Models/Kb/` | `UsulanKb` (dokumen, rancangan, hasil validasi, status) |
 | `app/Helpers/` | `Desimal` (persen eksak tanpa float), `Format` (rupiah, tarif, bulan) |
-| `database/migrations/` | `pegawai`, `payroll_tahun`, `payroll_bulan`, `perhitungan` |
+| `database/migrations/` | `pegawai`, `payroll_tahun`, `payroll_bulan`, `perhitungan`, `payroll_masukan`, `kb_usulan` |
 
 ### Tampilan
 
@@ -141,7 +187,10 @@ Logo, foto, dan nama Merdeka sengaja **tidak** disalin karena repositori ini pub
 
 ## Batasan
 
-- Lapisan perusahaan tetap **Perusahaan X** (`kb/perusahaan/perusahaan_x.yaml`), karena isian data HR mengikuti struktur kebijakan itu. Perusahaan lain perlu berkas KB sendiri, dan formnya perlu disesuaikan.
+- Lapisan perusahaan dasar tetap **Perusahaan X** (`kb/perusahaan/perusahaan_x.yaml`), dan isian inti form data HR mengikuti struktur kebijakan itu. Berkas KB tambahan menambah atau mengganti aturan di atasnya; mengganti kebijakan dasar seluruhnya masih perlu berkas KB sendiri dan penyesuaian isian inti.
+- **Mutu rancangan LLM terhadap dokumen nyata belum dievaluasi.** Yang diuji adalah alur dan validasinya (dengan klien LLM tiruan dan engine sungguhan). Anggap setiap rancangan sebagai draf yang wajib dicocokkan dengan dokumen.
+- Perhitungan yang memakai berkas KB tambahan tidak punya cek silang: kalkulator pembanding tanpa KB tidak mengenal aturan baru, jadi statusnya *dilewati*.
+- Take home pay otomatis mengikuti komponen baru berkategori teratur, tidak teratur, iuran pengurang, dan zakat. Potongan non-pajak baru (mis. cicilan koperasi) perlu aturan `px_thp` pengganti di berkas KB-nya.
 - Tahun pajak yang dibuka adalah 2023–2026, rentang yang sudah diuji E12. Gross-up 2023 (rezim PER-16) di luar model engine dan akan ditolak dengan pesan jelas.
 - Mode "komponen gaji sudah jadi" (contoh resmi regulasi) tetap ada di demo Streamlit induk, tidak di aplikasi ini.
 - Perhitungan berjalan sinkron di request. Untuk ratusan pegawai, pindahkan "Hitung semua" ke queue Laravel.

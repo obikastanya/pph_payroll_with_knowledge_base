@@ -50,6 +50,12 @@ class PayrollTahun extends Model
         return $this->hasMany(PayrollBulan::class)->orderBy('bulan');
     }
 
+    /** Isian tambahan yang diminta berkas KB tambahan (lihat SkemaMasukan). */
+    public function masukan(): HasMany
+    {
+        return $this->hasMany(PayrollMasukan::class);
+    }
+
     public function perhitungan(): HasMany
     {
         return $this->hasMany(Perhitungan::class)->orderByDesc('id');

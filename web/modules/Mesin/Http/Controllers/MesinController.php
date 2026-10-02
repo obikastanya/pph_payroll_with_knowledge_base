@@ -4,6 +4,7 @@ namespace Modules\Mesin\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\View\View;
+use Modules\Payroll\Services\KbTambahan;
 use Modules\Payroll\Services\MesinPajak;
 use Modules\Payroll\Services\MesinTidakTersedia;
 
@@ -23,8 +24,9 @@ class MesinController extends Controller
         ];
     }
 
-    public function index(MesinPajak $mesin): View
+    public function index(MesinPajak $mesin, KbTambahan $kb): View
     {
+        $tambahan = $kb->berkasAktif();
         try {
             $info = $mesin->info();
             $galat = null;
@@ -44,6 +46,10 @@ class MesinController extends Controller
                 'Batas waktu (detik)' => config('payroll.timeout'),
                 'KLU pemberi kerja (PAYROLL_KLU)' => config('payroll.klu') ?? '— tidak diketahui (fasilitas DTP tidak diterapkan)',
                 'Lapisan kebijakan perusahaan' => config('payroll.nama_perusahaan').' (kb/perusahaan/perusahaan_x.yaml)',
+                'Berkas KB tambahan aktif (menu Basis pengetahuan)' => $tambahan === [] ? '— tidak ada'
+                    : implode(', ', $tambahan).' · sidik '.$kb->sidik($tambahan),
+                'Asisten KB / LLM (ANTHROPIC_API_KEY, PAYROLL_LLM_MODEL)' => config('payroll.llm_model')
+                    .(config('payroll.anthropic_key') ? ' · kunci API terpasang' : ' · kunci API belum diatur'),
                 'Tahun pajak yang dibuka' => config('payroll.tahun_min').'–'.config('payroll.tahun_max'),
             ],
         ]);

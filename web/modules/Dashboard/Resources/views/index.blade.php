@@ -111,7 +111,8 @@
             identik: ['green', 'identik'],
             sah_titik_tetap_ganda: ['blue', 'beda, keduanya sah'],
             berbeda: ['red', 'BERBEDA'],
-            galat: ['gray', 'tidak dapat dicek']
+            galat: ['gray', 'tidak dapat dicek'],
+            dilewati: ['gray', 'dilewati (KB tambahan)']
         };
 
         let currentPage = 1;
@@ -157,7 +158,7 @@
                 key: 'status',
                 render: item => ({
                     belum: '<span class="status status-gray">belum dihitung</span>',
-                    kedaluwarsa: '<span class="status status-yellow">data berubah, hitung ulang</span>',
+                    kedaluwarsa: '<span class="status status-yellow">data / aturan berubah, hitung ulang</span>',
                     galat: `<span class="status status-red">galat</span><div class="mdka-text-red-600 small text-wrap" style="max-width: 260px">${escapeHtml(item.pesan)}</div>`,
                     berhasil: `<span class="text-muted">${escapeHtml(item.dihitung)}</span>`,
                 })[item.status]

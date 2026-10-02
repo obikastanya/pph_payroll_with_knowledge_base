@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\PayrollTahun;
-use App\Models\Pegawai;
-use App\Payroll\DataTidakLengkap;
-use App\Payroll\PenyusunKasus;
+use App\Models\Payroll\PayrollTahun;
+use App\Models\Payroll\Pegawai;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Modules\Payroll\Services\DataTidakLengkap;
+use Modules\Payroll\Services\PenyusunKasus;
 use Tests\TestCase;
 
 class PayrollTahunTest extends TestCase

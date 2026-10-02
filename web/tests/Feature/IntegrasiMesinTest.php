@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\Pegawai;
-use App\Models\Perhitungan;
-use App\Payroll\ImporContoh;
-use App\Payroll\MesinPajak;
-use App\Payroll\PenyusunKasus;
+use App\Models\Payroll\Pegawai;
+use App\Models\Payroll\Perhitungan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Modules\Payroll\Services\ImporContoh;
+use Modules\Payroll\Services\MesinPajak;
+use Modules\Payroll\Services\PenyusunKasus;
 use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
@@ -63,7 +63,7 @@ class IntegrasiMesinTest extends TestCase
         $this->masuk();
         app(ImporContoh::class)->jalankan();
 
-        $this->post('/rekap/hitung', ['tahun' => 2023])->assertSessionHas('sukses');
+        $this->post('/dashboard/hitung', ['tahun' => 2023])->assertSessionHas('success');
         $karA = Pegawai::firstWhere('nomor_induk', 'KAR-A')->payrollTahun->sole()->perhitunganTerakhir;
         // README induk: E8/E12 Karyawan A 2023; cek silang dengan kalkulator tanpa KB harus identik
         $this->assertSame(7_341_750, $karA->pph21_setahun);
@@ -75,7 +75,7 @@ class IntegrasiMesinTest extends TestCase
         $this->assertSame(json_encode($langsung['hasil']['per_masa']), json_encode($dariWeb['per_masa']));
         $this->assertSame(json_encode($langsung['hasil']['tahunan']), json_encode($dariWeb['tahunan']));
 
-        $this->post('/rekap/hitung', ['tahun' => 2026])->assertSessionHas('sukses');
+        $this->post('/dashboard/hitung', ['tahun' => 2026])->assertSessionHas('success');
         $this->assertSame(0, Perhitungan::where('berhasil', false)->count());
         $this->assertSame(['identik'], Perhitungan::distinct()->pluck('cek_silang')->all());
         $this->get('/mesin')->assertOk()->assertSee('Engine siap');

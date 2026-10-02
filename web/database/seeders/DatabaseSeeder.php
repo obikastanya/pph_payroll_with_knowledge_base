@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Payroll\ImporContoh;
-use App\Payroll\MesinTidakTersedia;
 use Illuminate\Database\Seeder;
+use Modules\Payroll\Services\ImporContoh;
+use Modules\Payroll\Services\MesinTidakTersedia;
 
 /** Data demo lokal: satu admin + pegawai contoh dari dataset induk. Jangan dipakai di server produksi. */
 class DatabaseSeeder extends Seeder

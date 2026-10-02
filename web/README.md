@@ -16,7 +16,7 @@ Laravel (web/)                                   repositori induk
 
 ## Setup
 
-Prasyarat: PHP ≥ 8.3 (ekstensi `pdo_sqlite`, `mbstring`, `openssl`, `fileinfo`), Composer, Node.js ≥ 20, dan **venv Python repositori induk sudah terpasang** (README induk §1).
+Prasyarat: PHP ≥ 8.3 (ekstensi `pdo_sqlite`, `mbstring`, `openssl`, `fileinfo`), Composer, dan **venv Python repositori induk sudah terpasang** (README induk §1). Node.js tidak diperlukan: aset tampilan sudah jadi di `public/assets/`.
 
 ```powershell
 cd web
@@ -24,10 +24,10 @@ composer install
 copy .env.example .env          # macOS/Linux: cp .env.example .env
 php artisan key:generate
 php artisan migrate --seed      # admin demo + 9 pegawai contoh dari dataset (lewat engine)
-npm install
-npm run build
 php artisan serve               # http://localhost:8100 (SERVER_PORT di .env)
 ```
+
+Ikon memakai Tabler Icons dari CDN jsDelivr, sama seperti Base-Apps-Merdeka, jadi butuh internet. Hal lain berjalan lokal.
 
 Masuk dengan `admin@example.com` / `password`, lalu ganti kata sandinya:
 
@@ -51,7 +51,7 @@ Cek koneksi ke engine di menu **Mesin**: halaman itu menampilkan versi engine, c
 
 1. **Pegawai**: tambah pegawai (tanggal masuk dan berhenti menentukan bulan yang dihitung).
 2. **Tambah tahun**: isi data HR satu tahun pajak. Isinya status PTKP, metode (gross / gross-up / ditanggung), gaji dan kenaikan, tunjangan tetap/prorata, THR, BPJS, serta kehadiran dan penghasilan variabel per bulan. Isian awal dilanjutkan dari tahun sebelumnya.
-3. **Hitung** (per pegawai) atau **Hitung semua** di halaman Rekap. Satu tahun dikirim ke engine dalam satu panggilan, sehingga KB cukup dimuat sekali.
+3. **Hitung** (per pegawai) atau **Hitung semua** di halaman Dashboard. Satu tahun dikirim ke engine dalam satu panggilan, sehingga KB cukup dimuat sekali.
 4. **Hasil**:
    - slip gaji per bulan; setiap angka menunjuk aturan KB dan pasalnya;
    - perhitungan setahun gaya 1721-A1 dengan rincian Pasal 17;
@@ -68,7 +68,7 @@ Setiap perhitungan disimpan sebagai riwayat baru, tanpa menimpa yang lama. Yang 
 Validasinya mencegah angka salah yang lolos diam-diam:
 
 - Nominal wajib rupiah bulat; float dan sen ditolak.
-- Persen disimpan sebagai teks desimal, lalu dikonversi eksak (`app/Support/Desimal.php`).
+- Persen disimpan sebagai teks desimal, lalu dikonversi eksak (`app/Helpers/Desimal.php`).
 - Setiap bulan dalam masa kerja wajib berisi hari kerja dan hadir, dan hadir tidak boleh melebihi hari kerja.
 - Kenaikan gaji di tengah bulan wajib dipecah ke hari sebelum/sesudah, dengan jumlah yang sama dengan hari bulan itu. Tanpa aturan ini, gaji bulan tersebut akan menjadi 0 diam-diam.
 
@@ -83,15 +83,52 @@ php vendor/bin/phpunit --group mesin   # hanya integrasi nyata dengan engine Pyt
 
 ## Struktur
 
+Struktur dan gaya tampilan mengikuti **Base-Apps-Merdeka**.
+
+### Module
+
+Setiap fitur adalah module di `modules/{Nama}/`. Isinya:
+
+- `Http/Controllers` dan `Http/Requests`;
+- `Repositories/{Nama}Interface.php` + `{Nama}Repository.php`, di-bind otomatis;
+- `Providers/{Nama}ServiceProvider.php`, yang memuat routes dan views dengan namespace `{Nama}::`;
+- `Resources/views` dan `Routes/web`.
+
+`App\Providers\ModuleServiceProvider` mendaftarkan semua provider module secara otomatis. Module baru dibuat dengan:
+
+```powershell
+php artisan make:module Laporan    # kerangka lengkap + route laporan.index; tambahkan ke config/menu.php
+```
+
+| Module | Isi |
+|---|---|
+| `Dashboard` | Rekap payroll per tahun: kartu ringkasan, tabel AJAX, hitung semua (satu panggilan engine), ekspor CSV |
+| `Pegawai` | Daftar pegawai (tabel AJAX: cari, filter, urut, paginasi), tambah/ubah lewat modal, halaman detail per tahun pajak |
+| `Payroll` | Form data HR tahunan, hasil (slip, 1721-A1, 12 bulan + grafik, jejak aturan), cetak slip, riwayat. `Services/` berisi klien engine |
+| `Mesin` | Status engine: konfigurasi jembatan, versi engine, commit KB, verifikasi tabel parameter |
+
 | Lokasi | Isi |
 |---|---|
-| `app/Payroll/MesinPajak.php` | Klien jembatan: menjalankan `python -m jembatan` di repositori induk |
-| `app/Payroll/PenyusunKasus.php` | Database → kasus kanonik `data_hr` (padanan `ui/kalkulator.py::form_hr`) |
-| `app/Payroll/Penghitung.php` | Hitung satu/banyak pegawai dalam satu panggilan, catat riwayat, deteksi data berubah |
-| `app/Payroll/TampilanHasil.php` | Menata keluaran engine untuk slip / 1721-A1 / jejak (padanan `ui/hasil.py`) |
-| `app/Payroll/ImporContoh.php` | Kasus kanonik → database (pegawai contoh dari dataset) |
-| `app/Http/Requests/PayrollTahunRequest.php` | Validasi data HR tahunan |
+| `modules/Payroll/Services/MesinPajak.php` | Klien jembatan: menjalankan `python -m jembatan` di repositori induk |
+| `modules/Payroll/Services/PenyusunKasus.php` | Database → kasus kanonik `data_hr` (padanan `ui/kalkulator.py::form_hr`) |
+| `modules/Payroll/Services/Penghitung.php` | Hitung satu/banyak pegawai dalam satu panggilan, catat riwayat, deteksi data berubah |
+| `modules/Payroll/Services/TampilanHasil.php` | Menata keluaran engine untuk slip / 1721-A1 / jejak (padanan `ui/hasil.py`) |
+| `modules/Payroll/Services/ImporContoh.php` | Kasus kanonik → database (pegawai contoh dari dataset) |
+| `app/Models/Payroll/` | `Pegawai`, `PayrollTahun`, `PayrollBulan`, `Perhitungan` |
+| `app/Helpers/` | `Desimal` (persen eksak tanpa float), `Format` (rupiah, tarif, bulan) |
 | `database/migrations/` | `pegawai`, `payroll_tahun`, `payroll_bulan`, `perhitungan` |
+
+### Tampilan
+
+| Lokasi | Isi |
+|---|---|
+| `resources/views/main/` | Layout `main.index`: sidebar vertikal yang bisa diciutkan, navbar dengan `@section('page-title')`, breadcrumb dari `$menuItems`, footer, notifikasi SweetAlert dari session `success`/`error`/`warning` |
+| `resources/views/main/components/js/` | jQuery, `renderTableWithFeatures` (tabel AJAX + paginasi + urut, dengan escaping HTML), `showError`, konfirmasi form `data-konfirmasi` |
+| `resources/views/components/global/` | `x-global.btn-detail`, `x-global.summary-card`, `x-global.cek-silang` |
+| `config/menu.php` | Item sidebar (section, title, ikon Tabler, route). Base-Apps-Merdeka menyimpan menu di tabel `menu` dengan role; di sini cukup satu peran |
+| `public/assets/` | Tabler 1.0.0-beta19 (MIT), `custom.css`/`constant.css` (token `mdka-*`, disalin dari Base-Apps-Merdeka), font Inter (OFL), jQuery, ApexCharts, SweetAlert2 |
+
+Logo, foto, dan nama Merdeka sengaja **tidak** disalin karena repositori ini publik. Merek aplikasi memakai ikon Tabler. Di `custom.css` ada satu perbaikan dibanding aslinya: baris `/////!SECTION` (komentar `//` tidak sah di CSS) membuat aturan `.mdka-nav-btn` dibuang browser. Baris itu kini menjadi `/* !SECTION */`.
 
 ## Batasan
 

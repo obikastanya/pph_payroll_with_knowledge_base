@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Support\Desimal;
-use App\Support\Format;
+use App\Helpers\Desimal;
+use App\Helpers\Format;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

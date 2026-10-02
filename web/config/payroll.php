@@ -17,6 +17,9 @@ return [
     // batas waktu satu panggilan engine (detik); satu panggilan bisa berisi banyak pegawai
     'timeout' => (int) env('PAYROLL_TIMEOUT', 300),
 
+    // nama lapisan kebijakan perusahaan (kb/perusahaan/perusahaan_x.yaml), ditampilkan di navbar
+    'nama_perusahaan' => env('PAYROLL_NAMA_PERUSAHAAN', 'Perusahaan X'),
+
     // KLU pemberi kerja (menentukan fasilitas PPh 21 DTP 2025-2026); kosong = tidak diketahui
     'klu' => env('PAYROLL_KLU') ?: null,
 

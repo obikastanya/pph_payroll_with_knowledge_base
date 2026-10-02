@@ -1,10 +1,10 @@
 <?php
 
 use App\Models\User;
-use App\Payroll\ImporContoh;
-use App\Payroll\MesinTidakTersedia;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
+use Modules\Payroll\Services\ImporContoh;
+use Modules\Payroll\Services\MesinTidakTersedia;
 
 Artisan::command('payroll:impor-contoh', function (ImporContoh $impor) {
     try {

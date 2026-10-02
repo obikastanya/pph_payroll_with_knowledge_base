@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Perhitungan;
+use App\Models\Payroll\Perhitungan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Process\PendingProcess;
 use Illuminate\Support\Facades\Process;
@@ -41,7 +41,7 @@ class HitungTest extends TestCase
         $pt = $this->payroll(2024);
         $this->palsukanEngine([['ok' => true, 'hasil' => self::hasilPalsu(), 'cek_silang' => ['status' => 'identik', 'selisih' => []]]]);
 
-        $this->post("/payroll/{$pt->id}/hitung")->assertSessionHas('sukses');
+        $this->post("/payroll/{$pt->id}/hitung")->assertSessionHas('success');
 
         $p = Perhitungan::sole();
         $this->assertTrue($p->berhasil);
@@ -76,7 +76,7 @@ class HitungTest extends TestCase
 
         $pt->update(['gaji_pokok' => 11_000_000]);
         $this->get("/payroll/{$pt->id}")->assertSee('Data HR berubah sejak');
-        $this->get('/?tahun=2024')->assertSee('data berubah, hitung ulang');
+        $this->getJson('/dashboard/list?tahun=2024')->assertJsonPath('data.0.status', 'kedaluwarsa');
     }
 
     public function test_galat_per_pegawai_dicatat(): void
@@ -85,7 +85,7 @@ class HitungTest extends TestCase
         $pt = $this->payroll(2023, ['metode' => 'gross_up']);
         $this->palsukanEngine([['ok' => false, 'jenis' => 'di_luar_cakupan', 'pesan' => 'Kasus di luar cakupan kalkulator: gross-up PER-16']]);
 
-        $this->post("/payroll/{$pt->id}/hitung")->assertSessionHas('galat', 'Kasus di luar cakupan kalkulator: gross-up PER-16');
+        $this->post("/payroll/{$pt->id}/hitung")->assertSessionHas('error', 'Kasus di luar cakupan kalkulator: gross-up PER-16');
         $p = Perhitungan::sole();
         $this->assertFalse($p->berhasil);
         $this->assertSame('di_luar_cakupan', $p->jenis_galat);
@@ -98,9 +98,9 @@ class HitungTest extends TestCase
         $pt = $this->payroll(2024);
         Process::fake(['*' => Process::result(output: '', errorOutput: 'ModuleNotFoundError: No module named jembatan', exitCode: 1)]);
 
-        $this->post("/payroll/{$pt->id}/hitung")->assertSessionHas('galat');
+        $this->post("/payroll/{$pt->id}/hitung")->assertSessionHas('error');
         $this->assertSame(0, Perhitungan::count());
-        $this->assertStringContainsString('ModuleNotFoundError', session('galat'));
+        $this->assertStringContainsString('ModuleNotFoundError', session('error'));
     }
 
     public function test_hitung_semua_satu_panggilan_dan_data_tidak_lengkap(): void
@@ -112,7 +112,7 @@ class HitungTest extends TestCase
         $c->bulan()->where('bulan', 4)->delete();
         $this->palsukanEngine([['ok' => true, 'hasil' => self::hasilPalsu(100)], ['ok' => true, 'hasil' => self::hasilPalsu(200)]]);
 
-        $this->post('/rekap/hitung', ['tahun' => 2025])->assertSessionHas('galat');
+        $this->post('/dashboard/hitung', ['tahun' => 2025])->assertSessionHas('warning');
         Process::assertRanTimes(fn () => true, 1);
         $this->assertSame(3, Perhitungan::count());
         $this->assertEqualsCanonicalizing([100, 200], Perhitungan::where('berhasil', true)->pluck('pph21_setahun')->all());
@@ -120,11 +120,12 @@ class HitungTest extends TestCase
         $this->assertSame($c->id, $gagal->payroll_tahun_id);
         $this->assertSame('data_tidak_lengkap', $gagal->jenis_galat);
 
-        $this->get('/?tahun=2025')->assertOk()->assertSee('Rp300')->assertSee('hari kerja bulan April belum diisi');
-        $this->get('/rekap/ekspor?tahun=2025')->assertOk()->assertDownload('rekap_payroll_2025.csv');
+        $this->get('/dashboard?tahun=2025')->assertOk()->assertSee('Rp300')->assertSee('Pegawai dengan data HR 2025');
+        $this->getJson('/dashboard/list?tahun=2025')->assertOk()->assertJsonPath('meta.total', 3)->assertSee('hari kerja bulan April belum diisi');
+        $this->get('/dashboard/ekspor?tahun=2025')->assertOk()->assertDownload('rekap_payroll_2025.csv');
 
         $a->pegawai->update(['nama' => '=HYPERLINK("http://contoh")']);
-        $csv = $this->get('/rekap/ekspor?tahun=2025')->streamedContent();
+        $csv = $this->get('/dashboard/ekspor?tahun=2025')->streamedContent();
         $this->assertStringContainsString("'=HYPERLINK", $csv);
     }
 

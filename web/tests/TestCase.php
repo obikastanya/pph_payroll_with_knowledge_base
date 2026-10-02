@@ -2,8 +2,8 @@
 
 namespace Tests;
 
-use App\Models\PayrollTahun;
-use App\Models\Pegawai;
+use App\Models\Payroll\PayrollTahun;
+use App\Models\Payroll\Pegawai;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 

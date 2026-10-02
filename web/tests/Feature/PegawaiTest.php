@@ -19,7 +19,8 @@ class PegawaiTest extends TestCase
         foreach (['/', '/dashboard', '/pegawai', '/pegawai/list', '/mesin'] as $url) {
             $this->get($url)->assertRedirect('/login');
         }
-        $this->get('/login')->assertOk()->assertSee('Masuk dengan akun admin finance');
+        $this->get('/login')->assertOk()->assertSee('Masuk dengan akun admin finance')
+            ->assertSee('assets/img/bg-auth/auth-1.jpg', false)->assertSee('accessLoginGuide', false);
     }
 
     public function test_login_dan_kredensial_salah(): void
@@ -29,7 +30,7 @@ class PegawaiTest extends TestCase
         $this->post('/login', ['email' => $user->email, 'password' => 'rahasia123'])->assertRedirect('/dashboard');
         $this->assertAuthenticatedAs($user);
         $this->get('/')->assertRedirect('/dashboard');
-        $this->post('/logout')->assertRedirect('/login');
+        $this->post('/logout')->assertRedirect('/login')->assertSessionHas('success', 'Anda telah keluar.');
         $this->assertGuest();
     }
 

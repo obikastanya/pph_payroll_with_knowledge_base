@@ -128,6 +128,15 @@ php artisan make:module Laporan    # kerangka lengkap + route laporan.index; tam
 | `config/menu.php` | Item sidebar (section, title, ikon Tabler, route). Base-Apps-Merdeka menyimpan menu di tabel `menu` dengan role; di sini cukup satu peran |
 | `public/assets/` | Tabler 1.0.0-beta19 (MIT), `custom.css`/`constant.css` (token `mdka-*`, disalin dari Base-Apps-Merdeka), font Inter (OFL), jQuery, ApexCharts, SweetAlert2 |
 
+Halaman login (`resources/views/auth/`) mengikuti template login Base-Apps-Merdeka:
+
+- latar foto yang digelapkan;
+- kartu dengan carousel foto ber-thumbnail di kiri;
+- panel kanan berisi merek, form, dan tombol "Panduan masuk" yang membuka modal;
+- galat login dan notifikasi keluar lewat SweetAlert.
+
+Bagian SSO Google/Microsoft tidak ditiru karena aplikasi ini tidak memakai SSO. Foto login berlisensi **CC0** dari StockSnap/rawpixel (dicari lewat Openverse); kreditnya ada di `public/assets/img/bg-auth/KREDIT.md`.
+
 Logo, foto, dan nama Merdeka sengaja **tidak** disalin karena repositori ini publik. Merek aplikasi memakai ikon Tabler. Di `custom.css` ada satu perbaikan dibanding aslinya: baris `/////!SECTION` (komentar `//` tidak sah di CSS) membuat aturan `.mdka-nav-btn` dibuang browser. Baris itu kini menjadi `/* !SECTION */`.
 
 ## Batasan

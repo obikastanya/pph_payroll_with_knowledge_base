@@ -15,7 +15,7 @@ class UsulanKbRepository implements UsulanKbInterface
 
         return UsulanKb::query()
             ->with('user')
-            ->when($cari !== '', fn ($q) => $q->where(fn ($w) => $w->where('judul', 'like', "%{$cari}%")->orWhere('nama_pdf', 'like', "%{$cari}%")))
+            ->when($cari !== '', fn ($q) => $q->where(fn ($w) => $w->whereLike('judul', "%{$cari}%")->orWhereLike('nama_pdf', "%{$cari}%")))
             ->when(array_key_exists($opsi['status'] ?? '', UsulanKb::STATUS), fn ($q) => $q->where('status', $opsi['status']))
             ->when(array_key_exists($opsi['lapisan'] ?? '', UsulanKb::LAPISAN), fn ($q) => $q->where('lapisan', $opsi['lapisan']))
             ->orderByDesc('id')

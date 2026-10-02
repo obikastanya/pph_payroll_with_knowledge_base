@@ -17,7 +17,7 @@ class PayrollRepository implements PayrollInterface
         return PayrollTahun::query()
             ->where('tahun', $tahun)
             ->when($cari, fn ($q) => $q->whereHas('pegawai', fn ($p) => $p->where(
-                fn ($w) => $w->where('nama', 'like', "%{$cari}%")->orWhere('nomor_induk', 'like', "%{$cari}%")
+                fn ($w) => $w->whereLike('nama', "%{$cari}%")->orWhereLike('nomor_induk', "%{$cari}%")
             )))
             ->with(['pegawai', 'bulan', 'perhitunganTerakhir'])
             ->get()

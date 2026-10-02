@@ -43,6 +43,25 @@ php artisan payroll:pengguna admin@example.com "Admin Finance"   # buat pengguna
 
 Cek koneksi ke engine di menu **Mesin**: halaman itu menampilkan versi engine, commit KB, dan status verifikasi tabel parameter.
 
+### Database
+
+Bawaannya SQLite (`database/database.sqlite`), tanpa pengaturan apa pun. Untuk **PostgreSQL**, aktifkan ekstensi PHP `pdo_pgsql`, buat databasenya, lalu isi `web/.env`:
+
+```ini
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=its_pph21
+DB_USERNAME=postgres
+DB_PASSWORD="..."        # apit dengan tanda kutip bila berisi simbol
+```
+
+```powershell
+php artisan migrate --seed      # tabel + admin demo + 9 pegawai contoh
+```
+
+Kode aplikasi tidak bergantung pada salah satu database: seluruh tes (`php artisan test`) lolos di SQLite maupun PostgreSQL 18, dan pencarian tidak peka huruf besar/kecil di keduanya. Tes sendiri selalu memakai SQLite dalam memori (`phpunit.xml`), jadi tidak menyentuh database aplikasi.
+
 ### Konfigurasi (`web/.env`)
 
 | Variabel | Bawaan | Isi |

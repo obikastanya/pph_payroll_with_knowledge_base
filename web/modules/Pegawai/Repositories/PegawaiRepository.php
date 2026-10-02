@@ -19,8 +19,8 @@ class PegawaiRepository implements PegawaiInterface
 
         return Pegawai::query()
             ->with('payrollTerakhir')
-            // Pencarian: nama atau nomor induk
-            ->when($cari !== '', fn ($q) => $q->where(fn ($w) => $w->where('nama', 'like', "%{$cari}%")->orWhere('nomor_induk', 'like', "%{$cari}%")))
+            // Pencarian: nama atau nomor induk (whereLike: tidak peka huruf besar/kecil di SQLite maupun PostgreSQL)
+            ->when($cari !== '', fn ($q) => $q->where(fn ($w) => $w->whereLike('nama', "%{$cari}%")->orWhereLike('nomor_induk', "%{$cari}%")))
             // Filter: status kerja hari ini
             ->when(($opsi['status'] ?? null) === 'aktif', fn ($q) => $q->where(fn ($w) => $w->whereNull('tanggal_berhenti')->orWhere('tanggal_berhenti', '>=', today())))
             ->when(($opsi['status'] ?? null) === 'berhenti', fn ($q) => $q->where('tanggal_berhenti', '<', today()))

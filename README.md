@@ -5,6 +5,7 @@ Kalkulator gaji, BPJS, THR, dan PPh 21 untuk pegawai tetap. Cakupan tahun pajakn
 - **Pengetahuan ada di knowledge base.** Semua aturan pajak pemerintah dan kebijakan perusahaan disimpan di berkas YAML/CSV di `kb/` dan `dataset/01_regulasi/tables/`. Kodenya hanya **mesin inferensi** generik.
 - **Dua lapisan.** Kebijakan perusahaan berada di lapisan terpisah. Konflik dengan aturan wajib terdeteksi otomatis, dan aturan pemerintah yang menang (*lex superior*).
 - **Pembanding tanpa KB.** Tersedia kalkulator payroll "biasa" yang aturannya ditanam di kode (`baselines/`), dan hasilnya harus identik dengan versi KB.
+- **Dua antarmuka.** Ada demo Streamlit (`ui/`) untuk riset dan presentasi, serta aplikasi web Laravel (`web/`) untuk admin finance. Keduanya memakai engine yang sama.
 - **Rancangan riset** ada di [research_plan.md](research_plan.md), dan riwayat pengerjaan bersama AI di [journal.md](journal.md).
 
 ---
@@ -168,6 +169,18 @@ Keluaran (`dict`):
 | `python -m eksperimen.mutasi` | E4: mutation testing (±15 menit) |
 | `python dataset\08_pegawai_sintetis\bangkitkan.py` | Bangkitkan ulang data pegawai sintetis dari data publik |
 
+### 2.5 Aplikasi web (Laravel)
+
+`web/` berisi aplikasi Laravel multi-pengguna untuk admin finance. Isinya data pegawai, data HR per tahun pajak, proses payroll (per pegawai atau satu tahun sekaligus), slip gaji, perhitungan setahun gaya 1721-A1, rekap, dan riwayat perhitungan.
+
+Aplikasi ini **tidak menghitung pajak sendiri**. Ia menyusun kasus kanonik dari database, lalu memanggil engine lewat jembatan JSON:
+
+```powershell
+'{"perintah": "info"}' | python -m jembatan      # satu permintaan JSON di stdin, satu jawaban JSON di stdout
+```
+
+`engine/` dan `kb/` tidak berubah, jadi angka di aplikasi web mewarisi bukti verifikasi di §5. Untuk 9 pegawai contoh, kasus yang disusun dari database identik dengan dataset, dan cek silang E12 identik. Setup dan cara pakai ada di [web/README.md](web/README.md).
+
 ---
 
 ## 3. Format input (kasus kanonik)
@@ -201,7 +214,9 @@ Contoh lengkap ada di `dataset/07_kasus_uji_resmi/kanonik/*.json` (komponen suda
 | `dataset/` | `01_regulasi` (PDF + tabel double-entry), `02_studi_kasus` (Perusahaan X), `03_pembanding`, `04_data_publik` (BPS, Kemnaker), `05_katalog_kebijakan`, `06_kasus_uji_sintetis`, `07_kasus_uji_resmi` (kanonik), `08_pegawai_sintetis` |
 | `ui/` | Demo Streamlit: `app.py`, `kalkulator.py` (isian), `hasil.py` (slip & perhitungan setahun), `mesin.py` (adapter KB / tanpa KB), `tab_kb.py`, `data.py` (dataset, konversi isian, format eksak) |
 | `eksperimen/` | `v1.py`, `v2.py`, `ablasi.py`, `mutasi.py`, `grossup.py`, `konflik.py`, `perubahan.py`, `ekspresivitas.py`, `e8_perusahaan_x.py`, `e12_tanpa_kb.py`, `adjudikasi.md`, `hasil/` |
-| `tests/` | Kontrak presisi, V1, V2, V3 metamorfik, double-entry, E3–E8, E12, UI |
+| `tests/` | Kontrak presisi, V1, V2, V3 metamorfik, double-entry, E3–E8, E12, UI, jembatan |
+| `jembatan/` | Protokol JSON stdin/stdout ke engine untuk aplikasi web (`python -m jembatan`); tanpa pengetahuan pajak |
+| `web/` | Aplikasi web Laravel (admin finance): pegawai, data HR, proses payroll, slip, rekap. Lihat [web/README.md](web/README.md) |
 
 ## 5. Status verifikasi (2026-10-01)
 

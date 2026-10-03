@@ -48,7 +48,7 @@
     </table>
     <p class="kaki">
         Dihitung {{ $perhitungan->created_at->format('d/m/Y H:i') }} oleh engine knowledge base {{ $perhitungan->versi_engine }}
-        (KB {{ \Illuminate\Support\Str::limit($perhitungan->versi_kb, 12, '') }}@if ($perhitungan->sidik_kb) + berkas KB tambahan {{ $perhitungan->sidik_kb }}@endif). Kolom kanan menunjukkan aturan KB yang menghasilkan angka.
+        (KB {{ $perhitungan->versiKbRingkas() }}@if ($perhitungan->sidik_kb) + berkas KB tambahan {{ $perhitungan->sidik_kb }}@endif). Kolom kanan menunjukkan aturan KB yang menghasilkan angka.
     </p>
 </body>
 </html>

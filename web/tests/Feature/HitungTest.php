@@ -5,8 +5,10 @@ namespace Tests\Feature;
 use App\Models\Payroll\Perhitungan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Process\PendingProcess;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Modules\Payroll\Http\Controllers\PayrollController;
+use Modules\Payroll\Repositories\PayrollInterface;
 use Modules\Payroll\Services\TampilanHasil;
 use Tests\TestCase;
 
@@ -213,6 +215,53 @@ class HitungTest extends TestCase
         $this->assertStringContainsString('ModuleNotFoundError', session('error'));
     }
 
+    public function test_galat_engine_untuk_pengguna_satu_baris_jejak_lengkap_di_log(): void
+    {
+        $this->masuk();
+        $pt = $this->payroll(2024);
+        Log::spy();
+        $jejak = "Traceback (most recent call last):\n  File \"jembatan/__main__.py\", line 3, in <module>\n    import yaml\n"
+            ."ModuleNotFoundError: No module named 'yaml'\r\n\n";
+        config(['payroll.python' => PHP_BINARY]);   // interpreter ada: tanpa petunjuk PAYROLL_PYTHON
+        Process::fake(['*' => Process::result(output: '', errorOutput: $jejak, exitCode: 1)]);
+
+        $this->post("/payroll/{$pt->id}/hitung")->assertSessionHas('error',
+            "Engine tidak dapat dipanggil: engine tidak memberi jawaban yang valid (kode keluar 1). ModuleNotFoundError: No module named 'yaml'");
+        Log::shouldHaveReceived('warning')->withArgs(fn (string $m, array $c) => $c['sebab'] === 'jawaban bukan JSON'
+            && str_starts_with($c['stderr'], 'Traceback (most recent call last):') && str_contains($c['stderr'], 'import yaml'));
+
+        // baris terakhir yang panjang dipotong 200 karakter; interpreter tidak ada -> petunjuk PAYROLL_PYTHON
+        $python = base_path('tidak-ada/python.exe');
+        config(['payroll.python' => $python]);
+        Process::fake(['*' => Process::result(output: '', errorOutput: "baris awal\nGalat: ".str_repeat('x', 1000)."\n", exitCode: 1)]);
+        $this->post("/payroll/{$pt->id}/hitung");
+        $pesan = session('error');
+        $this->assertStringContainsString("Python tidak ditemukan di '{$python}' (atur PAYROLL_PYTHON di .env). Galat: ", $pesan);
+        $this->assertStringEndsWith('Galat: '.str_repeat('x', 193), $pesan);
+        $this->assertStringNotContainsString('baris awal', $pesan);
+        $this->assertStringNotContainsString("\n", $pesan);
+    }
+
+    public function test_versi_kb_ringkas_mempertahankan_penanda(): void
+    {
+        $hash = 'abcdef012345'.str_repeat('9', 28);   // commit git 40 hex
+        $ringkas = fn (?string $v) => (new Perhitungan(['versi_kb' => $v]))->versiKbRingkas();
+        $this->assertSame('abcdef012345', $ringkas($hash));
+        $this->assertSame('abcdef012345+belum-dikomit', $ringkas($hash.'+belum-dikomit'));
+        $this->assertSame('tidak-diketahui', $ringkas('tidak-diketahui'));
+        $this->assertSame('belum-dikomit', $ringkas('belum-dikomit'));   // nilai lama saat git tidak tersedia
+        $this->assertNull($ringkas(null));
+
+        $this->masuk();
+        $pt = $this->payroll(2024);
+        $h = self::hasilPalsu();
+        $h['audit']['versi_kb'] = $hash.'+belum-dikomit';
+        $this->palsukanEngine([['ok' => true, 'hasil' => $h]]);
+        $this->post("/payroll/{$pt->id}/hitung");
+        $this->get("/payroll/{$pt->id}")->assertOk()->assertSee('<code title="'.$hash.'+belum-dikomit">abcdef012345+belum-dikomit</code>', false);
+        $this->get("/payroll/{$pt->id}/slip/3")->assertOk()->assertSee('(KB abcdef012345+belum-dikomit)');
+    }
+
     public function test_hitung_semua_satu_panggilan_dan_data_tidak_lengkap(): void
     {
         $this->masuk();
@@ -241,6 +290,20 @@ class HitungTest extends TestCase
         $a->pegawai->update(['nama' => '=HYPERLINK("http://contoh")']);
         $csv = $this->get('/dashboard/ekspor?tahun=2025')->streamedContent();
         $this->assertStringContainsString("'=HYPERLINK", $csv);
+    }
+
+    public function test_daftar_tahunan_tidak_memuat_hasil_lengkap_engine(): void
+    {
+        $pt = $this->payroll(2025);
+        $pt->perhitungan()->create(['berhasil' => true, 'kasus' => 'null', 'hasil' => '{"lama":1}', 'bruto_setahun' => 1]);
+        $baru = $pt->perhitungan()->create(['berhasil' => true, 'kasus' => 'null', 'hasil' => '{"baru":1}', 'bruto_setahun' => 2,
+            'sidik_kb' => '']);
+
+        [$dimuat] = app(PayrollInterface::class)->daftarTahun(2025)->all();
+        $p = $dimuat->perhitunganTerakhir;
+        $this->assertSame([$baru->id, 2, ''], [$p->id, $p->bruto_setahun, $p->sidik_kb]);   // tetap baris terakhir
+        $this->assertArrayHasKey('kasus', $p->getAttributes());                             // status usang membandingkannya
+        $this->assertArrayNotHasKey('hasil', $p->getAttributes());                          // ±150 KB per pegawai
     }
 
     public function test_halaman_mesin_menampilkan_galat_engine(): void

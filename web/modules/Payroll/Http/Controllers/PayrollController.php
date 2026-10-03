@@ -61,7 +61,11 @@ class PayrollController extends Controller
     public function create(Request $request, Pegawai $pegawai): View
     {
         $tahunOpsi = $this->payroll->tahunBelumDiisi($pegawai);
-        $tahun = (int) $request->query('tahun', $tahunOpsi[0] ?? config('payroll.tahun_max'));
+        // ?tahun yang bukan pilihan (bukan angka, di luar rentang/masa kerja, atau sudah diisi) -> pilihan pertama
+        $tahun = filter_var($request->query('tahun'), FILTER_VALIDATE_INT);
+        if (! in_array($tahun, $tahunOpsi, true)) {
+            $tahun = $tahunOpsi[0] ?? config('payroll.tahun_max');
+        }
         [$masukan, $galatMasukan] = $this->skemaMasukan($tahun);
         $kunciTahunan = array_column(array_filter($masukan, fn (array $m) => $m['lingkup'] === 'tahun'), 'kunci');
         [$payroll, $bulan, $isianMasukan] = $this->payroll->isianBaru($pegawai, $tahun, $kunciTahunan);
@@ -152,7 +156,7 @@ class PayrollController extends Controller
     {
         try {
             [$p] = $penghitung->hitung([$payroll], $request->user());
-        } catch (MesinTidakTersedia $e) {
+        } catch (MesinTidakTersedia $e) {   // termasuk HitungTerhenti dan batas waktu engine
             return back()->with('error', 'Engine tidak dapat dipanggil: '.$e->getMessage());
         }
 

@@ -93,7 +93,8 @@
                         <div class="col-12">
                             <p class="text-muted small mb-0 px-1">
                                 <i class="ti ti-arrows-exchange me-1"></i>Cek silang membandingkan setiap hasil dengan kalkulator independen tanpa
-                                knowledge base (eksperimen E12). <strong>Hitung semua</strong> mengirim seluruh pegawai tahun ini ke engine dalam satu panggilan.
+                                knowledge base (eksperimen E12). <strong>Hitung semua</strong> mengirim pegawai tahun ini ke engine per batch
+                                ({{ $ukuranBatch }} pegawai per panggilan); hasil setiap batch langsung tersimpan.
                             </p>
                         </div>
                     </div>

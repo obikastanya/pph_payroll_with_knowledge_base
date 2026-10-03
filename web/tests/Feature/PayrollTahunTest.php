@@ -77,6 +77,29 @@ class PayrollTahunTest extends TestCase
         $this->post("/pegawai/{$p->id}/payroll", $isian)->assertSessionHasErrors(['gaji_pokok', 'kelas_jkk_persen', 'bulan.2.kompensasi_persen']);
     }
 
+    public function test_batas_kolom_database_menjadi_pesan_validasi(): void
+    {
+        $this->masuk();
+        $p = $this->pegawai();
+        $isian = $this->isianPayroll(2024, ['kelas_jkk_persen' => str_repeat('1', 17), 'gaji_pokok' => 1_000_000_000_000,
+            'bulan' => [3 => ['kompensasi_persen' => '0,'.str_repeat('5', 15), 'lembur' => 1_000_000_000_000]]]);
+        $this->post("/pegawai/{$p->id}/payroll", $isian)->assertSessionHasErrors([
+            'kelas_jkk_persen' => 'Tarif JKK tidak boleh lebih dari 16 karakter.',
+            'gaji_pokok' => 'Gaji pokok tidak boleh lebih dari 999999999999.',
+            'bulan.3.kompensasi_persen' => 'Kompensasi tidak boleh lebih dari 16 karakter.',
+            'bulan.3.lembur' => 'Lembur tidak boleh lebih dari 999999999999.',
+        ]);
+        // bail: tahun yang bukan angka berhenti di aturan pertama yang gagal, tidak sampai ke query unique
+        $this->post("/pegawai/{$p->id}/payroll", $this->isianPayroll(2024, ['tahun' => 'abc']))->assertSessionHasErrors('tahun');
+        $this->assertCount(1, session('errors')->get('tahun'));
+        $this->assertSame(0, PayrollTahun::count());
+
+        $isian = $this->isianPayroll(2024, ['kelas_jkk_persen' => '0,'.str_repeat('1', 14), 'gaji_pokok' => 999_999_999_999,
+            'bulan' => [3 => ['komisi' => 999_999_999_999]]]);
+        $this->post("/pegawai/{$p->id}/payroll", $isian)->assertSessionHasNoErrors();
+        $this->assertSame([999_999_999_999, '0.11111111111111'], [PayrollTahun::sole()->gaji_pokok, PayrollTahun::sole()->kelas_jkk_persen]);
+    }
+
     public function test_kenaikan_tengah_bulan_wajib_dipecah(): void
     {
         $this->masuk();

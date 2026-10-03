@@ -59,6 +59,7 @@ class MesinController extends Controller
                 'Folder engine (PAYROLL_ROOT)' => config('payroll.root'),
                 'Python (PAYROLL_PYTHON)' => config('payroll.python'),
                 'Batas waktu (detik)' => config('payroll.timeout'),
+                'Pegawai per panggilan saat Hitung semua (PAYROLL_UKURAN_BATCH)' => config('payroll.ukuran_batch'),
                 'KLU pemberi kerja (PAYROLL_KLU)' => config('payroll.klu') ?? '— tidak diketahui (fasilitas DTP tidak diterapkan)',
                 'Lapisan kebijakan perusahaan' => config('payroll.nama_perusahaan').' (kb/perusahaan/perusahaan_x.yaml)',
                 'Berkas KB tambahan aktif (menu Basis pengetahuan)' => $tambahan === [] ? '— tidak ada'

@@ -8,10 +8,15 @@ use App\Models\Payroll\Pegawai;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\LazyCollection;
 
 class PayrollRepository implements PayrollInterface
 {
     private const KOLOM_BULAN = ['hk_penuh', 'hk_aktual', 'kompensasi_persen', 'ota', 'lembur', 'komisi'];
+
+    /** Kolom perhitungan terakhir untuk daftar tahunan: `kasus` tetap dimuat (status usang membandingkannya). */
+    private const KOLOM_PERHITUNGAN_RINGKAS = ['id', 'payroll_tahun_id', 'user_id', 'berhasil', 'jenis_galat', 'pesan', 'kasus',
+        'cek_silang', 'versi_engine', 'versi_kb', 'sidik_kb', 'bruto_setahun', 'pph21_setahun', 'thp_setahun', 'created_at', 'updated_at'];
 
     public function daftarTahun(int $tahun, ?string $cari = null): Collection
     {
@@ -20,10 +25,23 @@ class PayrollRepository implements PayrollInterface
             ->when($cari, fn ($q) => $q->whereHas('pegawai', fn ($p) => $p->where(
                 fn ($w) => $w->whereLike('nama', "%{$cari}%")->orWhereLike('nomor_induk', "%{$cari}%")
             )))
-            ->with(['pegawai', 'bulan', 'perhitunganTerakhir'])
+            // tanpa hasil lengkap engine (±150 KB per pegawai) dan rincian cek silang: daftar/rekap tidak membacanya
+            ->with(['pegawai', 'bulan', 'perhitunganTerakhir' => fn ($q) => $q->select(
+                array_map(fn (string $k) => "perhitungan.{$k}", self::KOLOM_PERHITUNGAN_RINGKAS)
+            )])
             ->get()
             ->sortBy(fn ($pt) => $pt->pegawai->nomor_induk)
             ->values();
+    }
+
+    public function daftarHitung(int $tahun, int $ukuran): LazyCollection
+    {
+        return PayrollTahun::query()->where('tahun', $tahun)->with(['pegawai', 'bulan', 'masukan'])->lazyById($ukuran);
+    }
+
+    public function jumlahTahun(int $tahun): int
+    {
+        return PayrollTahun::query()->where('tahun', $tahun)->count();
     }
 
     public function tahunAda(): array

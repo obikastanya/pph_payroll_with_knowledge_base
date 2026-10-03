@@ -240,6 +240,27 @@ class MasukanKbTest extends TestCase
         $this->assertSame(-5, $pt->masukan()->where('kunci', 'selisih_hari')->sole()->nilai);
     }
 
+    public function test_batas_nominal_isian_tambahan_rupiah_dan_bilangan(): void
+    {
+        $this->masuk();
+        $this->kbAktif();
+        $this->palsukanJembatan(['masukan' => self::skema(
+            self::masukanTransport(['mulai' => '2026-01-01']),
+            self::masukanTransport(['kunci' => 'selisih_hari', 'label' => 'Selisih hari', 'tipe' => 'bilangan', 'mulai' => '2026-01-01']),
+        )]);
+        $pt = $this->payroll(2026);
+
+        $this->put("/payroll/{$pt->id}", $this->isianPayroll(2026, ['masukan' => ['uang_transport_per_hari' => '1000000000000',
+            'selisih_hari' => '-1000000000000']]))->assertSessionHasErrors([
+                'masukan.uang_transport_per_hari' => 'Uang transport per hari hadir tidak boleh lebih dari 999999999999.',
+                'masukan.selisih_hari' => 'Selisih hari harus antara -999999999999 dan 999999999999.',
+            ]);
+        $this->put("/payroll/{$pt->id}", $this->isianPayroll(2026, ['masukan' => ['uang_transport_per_hari' => '999999999999',
+            'selisih_hari' => '-999999999999']]))->assertSessionHasNoErrors();
+        $this->assertSame([999_999_999_999, -999_999_999_999], [$pt->masukan()->where('kunci', 'uang_transport_per_hari')->sole()->nilai,
+            $pt->masukan()->where('kunci', 'selisih_hari')->sole()->nilai]);
+    }
+
     public function test_cache_skema_ikut_berubah_saat_kb_dasar_berubah(): void
     {
         $root = $this->rootSementara();

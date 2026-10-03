@@ -13,7 +13,7 @@ Route::middleware(['web', 'auth'])->group(function () {
         Route::put('/', 'update')->name('update');
         Route::delete('/', 'destroy')->name('destroy');
         Route::post('hitung', 'hitung')->name('hitung');
-        Route::get('slip/{bulan}', 'slip')->whereNumber('bulan')->name('slip');
+        Route::get('slip/{bulan}', 'slip')->where('bulan', '[0-9]{1,2}')->name('slip');
         Route::get('ekspor', 'ekspor')->name('ekspor');
     });
 });

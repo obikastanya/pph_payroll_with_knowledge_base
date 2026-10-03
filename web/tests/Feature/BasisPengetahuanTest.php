@@ -455,7 +455,7 @@ class BasisPengetahuanTest extends TestCase
     {
         Log::spy();
         Process::fake(['*' => Process::result(output: json_encode(['ok' => false, 'jenis' => 'kesalahan_kb', 'pesan' => 'aturan duplikat']),
-            errorOutput: str_repeat('x', 2000).'jejak akhir', exitCode: 2)]);
+            errorOutput: str_repeat('x', 9000).'jejak akhir', exitCode: 2)]);
         try {
             app(MesinPajak::class)->validasi("lapisan: perusahaan\n# isi-rahasia-dokumen\n", 'x.yaml', []);
             $this->fail('validasi yang ditolak engine harus melempar MesinTidakTersedia');
@@ -464,7 +464,7 @@ class BasisPengetahuanTest extends TestCase
         }
         Log::shouldHaveReceived('warning')->once();
         Log::shouldHaveReceived('warning')->withArgs(fn (string $m, array $c) => $c['perintah'] === 'validasi' && $c['kode_keluar'] === 2
-            && $c['sebab'] === 'kesalahan_kb' && is_int($c['durasi_ms']) && mb_strlen($c['stderr']) === 1500
+            && $c['sebab'] === 'kesalahan_kb' && is_int($c['durasi_ms']) && mb_strlen($c['stderr']) === 8000
             && str_contains($c['stderr'], 'jejak akhir') && ! str_contains(json_encode($c), 'isi-rahasia-dokumen'));
     }
 

@@ -10,7 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Modules\Payroll\Repositories\PayrollInterface;
-use Modules\Payroll\Services\MesinTidakTersedia;
+use Modules\Payroll\Services\HitungTerhenti;
 use Modules\Payroll\Services\Penghitung;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -34,11 +34,20 @@ class DashboardController extends Controller
         ];
     }
 
+    /** ?tahun yang tidak sah jatuh ke tahun terbaru yang punya data HR (angka liar tidak pernah sampai ke query). */
     private function tahun(Request $request): int
     {
-        $ada = $this->payroll->tahunAda();
+        return self::tahunSah($request->query('tahun', $request->input('tahun')))
+            ?? $this->payroll->tahunAda()[0] ?? config('payroll.tahun_max');
+    }
 
-        return (int) $request->query('tahun', $request->input('tahun', $ada[0] ?? config('payroll.tahun_max')));
+    /** Bilangan bulat di rentang tahun pajak yang dibuka (payroll.tahun_min..tahun_max), selain itu null. */
+    private static function tahunSah(mixed $tahun): ?int
+    {
+        $t = filter_var($tahun, FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => config('payroll.tahun_min'), 'max_range' => config('payroll.tahun_max')]]);
+
+        return $t === false ? null : $t;
     }
 
     /**
@@ -79,6 +88,7 @@ class DashboardController extends Controller
                 // hasil usang ikut dihitung: angkanya tidak lagi mengikuti data HR / aturan KB sekarang
                 'belumDihitung' => $status->filter(fn (string $s) => $s !== 'berhasil')->count(),
                 'usang' => $status->filter(fn (string $s) => str_starts_with($s, 'usang_'))->count(),
+                'ukuranBatch' => $penghitung->ukuranBatch(),
                 'total' => [
                     'bruto' => $berhasil->sum('bruto_setahun'),
                     'pph21' => $berhasil->sum('pph21_setahun'),
@@ -137,23 +147,30 @@ class DashboardController extends Controller
         ]);
     }
 
+    /**
+     * Hitung semua per batch (Penghitung::hitungSemua). Bila engine gagal di tengah jalan, batch yang sudah selesai tetap
+     * tercatat dan pesannya menyebut berapa pegawai yang sudah dihitung.
+     */
     public function hitung(Request $request, Penghitung $penghitung): RedirectResponse
     {
-        $tahun = (int) $request->input('tahun');
-        $daftar = $this->payroll->daftarTahun($tahun);
-        if ($daftar->isEmpty()) {
+        $tahun = self::tahunSah($request->input('tahun'));
+        if ($tahun === null) {
+            return back()->with('error', 'Tahun pajak tidak valid (pilih '.config('payroll.tahun_min').'–'.config('payroll.tahun_max').').');
+        }
+        $jumlah = $this->payroll->jumlahTahun($tahun);
+        if ($jumlah === 0) {
             return back()->with('warning', "Belum ada data HR untuk tahun {$tahun}.");
         }
         try {
-            $hasil = $penghitung->hitung($daftar, $request->user());
-        } catch (MesinTidakTersedia $e) {
-            return back()->with('error', 'Engine tidak dapat dipanggil: '.$e->getMessage());
+            $hasil = $penghitung->hitungSemua($this->payroll->daftarHitung($tahun, $penghitung->ukuranBatch()), $request->user());
+        } catch (HitungTerhenti $e) {
+            return back()->with('error', ($e->dicatat > 0 ? "Engine gagal setelah {$e->dicatat} dari {$jumlah} pegawai dihitung: "
+                : 'Engine tidak dapat dipanggil: ').$e->getMessage());
         }
-        $gagal = array_filter($hasil, fn ($p) => ! $p->berhasil);
-        $pesan = count($hasil).' pegawai dihitung dalam satu panggilan engine.';
+        $pesan = "{$hasil['dihitung']} pegawai dihitung.";
 
-        return $gagal
-            ? back()->with('warning', $pesan.' '.count($gagal).' gagal; lihat kolom status.')
+        return $hasil['gagal']
+            ? back()->with('warning', $pesan.' '.$hasil['gagal'].' gagal; lihat kolom status.')
             : back()->with('success', $pesan.' Semua berhasil.');
     }
 

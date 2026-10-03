@@ -71,7 +71,8 @@ Database adalah sumber kebenaran berkas KB tambahan: setiap kali daftar berkas a
 | `SERVER_PORT` | `8100` | Port `php artisan serve`; samakan dengan `APP_URL`. Port 8000 sengaja dihindari karena sering dipakai aplikasi lain |
 | `PAYROLL_ROOT` | folder induk `web/` | Repositori induk (berisi `engine/`, `kb/`, `jembatan/`) |
 | `PAYROLL_PYTHON` | `<root>\env\Scripts\python.exe` (Windows), `<root>/env/bin/python` | Interpreter venv induk |
-| `PAYROLL_TIMEOUT` | `300` | Batas waktu satu panggilan engine, dalam detik |
+| `PAYROLL_TIMEOUT` | `300` | Batas waktu satu panggilan engine (satu batch pegawai), dalam detik |
+| `PAYROLL_UKURAN_BATCH` | `50` | Pegawai per panggilan engine saat **Hitung semua** (minimal 1). Hasil setiap batch dicatat dalam transaksinya sendiri; bila engine gagal atau batas waktu habis di tengah jalan, batch sebelumnya tetap tersimpan dan pesannya menyebut berapa pegawai yang sudah dihitung. Perkecil bila batas waktu habis |
 | `PAYROLL_KLU` | kosong | KLU pemberi kerja. Menentukan fasilitas PPh 21 DTP 2025–2026; kosong = tidak diterapkan |
 | `PAYROLL_LLM_MODEL` | `gpt-5.6-sol` | Model yang membaca PDF. Penyedia mengikuti namanya: `gpt-...` = OpenAI, `claude-...` = Anthropic. Tulis nama lengkap yang diizinkan untuk proyek API Anda: alias `gpt-5.6` bisa ditolak (403) walau `gpt-5.6-sol` diizinkan. `gpt-5.6-terra` dan `gpt-5.6-luna` lebih murah |
 | `OPENAI_API_KEY` | kosong | Kunci API untuk model OpenAI (bawaan). Tanpa kunci, unggahan PDF gagal dengan pesan jelas; fitur lain tetap berjalan |
@@ -87,13 +88,13 @@ php artisan queue:listen --timeout=960
 
 Di Windows, pakai `queue:listen`: batas waktu `queue:work` bergantung pada ekstensi `pcntl` yang tidak ada di Windows, sedangkan `queue:listen` menjalankan setiap job sebagai proses terpisah dengan batas waktu. Di macOS/Linux `queue:work --timeout=960` juga dapat dipakai. Setelah mengubah `.env`, hentikan pekerja (Ctrl + C) lalu jalankan lagi.
 
-Kunci API tidak pernah ditulis ke repositori (`.env` ada di `.gitignore`). Proses Python jembatan tidak mewarisi `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `DB_PASSWORD`, `DB_URL`, `APP_KEY`, `MAIL_PASSWORD`, `REDIS_PASSWORD`, dan `AWS_SECRET_ACCESS_KEY`; hanya perintah `usulkan` yang menerima satu kunci LLM sesuai model terpilih. Kegagalan jembatan dicatat di log (perintah, kode keluar, durasi, akhir stderr) tanpa isi permintaan.
+Kunci API tidak pernah ditulis ke repositori (`.env` ada di `.gitignore`). Proses Python jembatan tidak mewarisi `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `DB_PASSWORD`, `DB_URL`, `APP_KEY`, `MAIL_PASSWORD`, `REDIS_PASSWORD`, dan `AWS_SECRET_ACCESS_KEY`; hanya perintah `usulkan` yang menerima satu kunci LLM sesuai model terpilih. Kegagalan jembatan dicatat di log (perintah, kode keluar, durasi, akhir stderr) tanpa isi permintaan. Pesan di layar hanya memuat baris terakhir stderr (mis. `ModuleNotFoundError: No module named 'yaml'`); jejak lengkapnya ada di log.
 
 ## Alur kerja
 
 1. **Pegawai**: tambah pegawai (tanggal masuk dan berhenti menentukan bulan yang dihitung).
 2. **Tambah tahun**: isi data HR satu tahun pajak. Isinya status PTKP, metode (gross / gross-up / ditanggung), gaji dan kenaikan, tunjangan tetap/prorata, THR, BPJS, serta kehadiran dan penghasilan variabel per bulan. Isian awal dilanjutkan dari tahun sebelumnya; isian tambahan tahunan dari KB diisi dari tahun terakhir pegawai yang memilikinya (hanya kunci yang masih diminta KB aktif), isian tambahan per bulan tidak dibawa.
-3. **Hitung** (per pegawai) atau **Hitung semua** di halaman Dashboard. Satu tahun dikirim ke engine dalam satu panggilan, sehingga KB cukup dimuat sekali.
+3. **Hitung** (per pegawai) atau **Hitung semua** di halaman Dashboard. Hitung semua mengirim pegawai satu tahun per batch (`PAYROLL_UKURAN_BATCH`, bawaan 50 pegawai per panggilan engine) dan mencatat hasil setiap batch begitu selesai, sehingga ratusan pegawai tidak melampaui batas waktu engine maupun memori PHP. Setiap batch juga memperbarui batas waktu PHP (`max_execution_time`) agar request yang panjang tidak dihentikan di tengah jalan.
 4. **Hasil**:
    - slip gaji per bulan; setiap angka menunjuk aturan KB dan pasalnya;
    - perhitungan setahun gaya 1721-A1 dengan rincian Pasal 17;
@@ -131,6 +132,7 @@ LLM hanya mengusulkan. Ia tidak menghitung pajak, tidak dapat mengubah tabel TER
 Validasinya mencegah angka salah yang lolos diam-diam:
 
 - Nominal wajib rupiah bulat; float dan sen ditolak.
+- Batas kolom database menjadi pesan validasi, bukan galat 500 di PostgreSQL: nominal rupiah (termasuk isian tambahan bertipe rupiah) paling besar 999.999.999.999, isian tambahan bertipe bilangan di antara -999.999.999.999 dan 999.999.999.999, persen paling panjang 16 karakter. Byte NUL dan UTF-8 tidak sah dibuang dari setiap isian teks; id di URL yang bukan angka (atau lebih dari 18 digit) menjadi 404, dan `?tahun` yang tidak sah memakai tahun bawaan.
 - Persen disimpan sebagai teks desimal, lalu dikonversi eksak (`app/Helpers/Desimal.php`).
 - Setiap bulan dalam masa kerja wajib berisi hari kerja dan hadir, dan hadir tidak boleh melebihi hari kerja.
 - Kenaikan gaji di tengah bulan wajib dipecah ke hari sebelum/sesudah, dengan jumlah yang sama dengan hari bulan itu. Tanpa aturan ini, gaji bulan tersebut akan menjadi 0 diam-diam.
@@ -145,7 +147,7 @@ php vendor/bin/phpunit --group mesin   # hanya integrasi nyata dengan engine Pyt
 
 Tes tidak pernah menyentuh database aplikasi. `phpunit.xml` memaksa (`force="true"`) SQLite `:memory:` beserta cache, sesi, antrean, mail, dan broadcast palsu, sehingga nilai dari `.env` atau shell tidak dapat mengalihkannya. Selain itu `TestCase` menghentikan setiap tes sebelum migrasi bila koneksinya bukan SQLite `:memory:` (mis. karena konfigurasi ter-cache; jalankan `php artisan config:clear`). Uji opsional di PostgreSQL memakai database **terpisah**: buat `its_pph21_uji`, lalu jalankan `php artisan test --configuration=phpunit.pgsql.xml` (nama pengguna dan sandi diambil dari `.env`). Pengaman hanya mengizinkan database berakhiran `_uji` dengan `PAYROLL_UJI_PGSQL=1`, yang diset oleh berkas konfigurasi itu.
 
-`tests/Feature/IntegrasiMesinTest.php` memeriksa jaminan utama aplikasi ini. Untuk kesembilan pegawai contoh, kasus yang disusun dari database **identik** dengan kasus di dataset. Hasil hitung lewat web juga sama persis dengan engine yang dipanggil langsung (Karyawan A 2023: PPh 21 setahun Rp7.341.750, cek silang identik). Tes lainnya memakai engine palsu (`Process::fake`). Di sisi Python, protokol jembatan diuji di `tests/test_jembatan.py` induk.
+`tests/Feature/IntegrasiMesinTest.php` memeriksa jaminan utama aplikasi ini. Untuk kesembilan pegawai contoh, kasus yang disusun dari database **identik** dengan kasus di dataset. Hasil hitung lewat web juga sama persis dengan engine yang dipanggil langsung (Karyawan A 2023: PPh 21 setahun Rp7.341.750, cek silang identik). Tes lainnya memakai engine palsu (`Process::fake`). Di sisi Python, protokol jembatan diuji di `tests/test_jembatan.py` induk. `HitungBertahapTest` menguji Hitung semua per batch (sidik KB per batch, engine gagal atau batas waktu habis di tengah jalan, angka di luar batas bigint); `IsianTidakSahTest` menguji id di URL, `?tahun`, serta byte NUL dan UTF-8 tidak sah.
 
 Fitur aturan baru diuji di tiga tempat:
 
@@ -176,7 +178,7 @@ php artisan make:module Laporan    # kerangka lengkap + route laporan.index; tam
 
 | Module | Isi |
 |---|---|
-| `Dashboard` | Rekap payroll per tahun: kartu ringkasan, tabel AJAX, hitung semua (satu panggilan engine), ekspor CSV |
+| `Dashboard` | Rekap payroll per tahun: kartu ringkasan, tabel AJAX, hitung semua (per batch), ekspor CSV |
 | `Pegawai` | Daftar pegawai (tabel AJAX: cari, filter, urut, paginasi), tambah/ubah lewat modal, halaman detail per tahun pajak |
 | `Payroll` | Form data HR tahunan, hasil (slip, 1721-A1, 12 bulan + grafik, jejak aturan), cetak slip, riwayat. `Services/` berisi klien engine |
 | `BasisPengetahuan` | Unggah PDF peraturan, antrean LLM (`Jobs/ProsesUsulanKb`), halaman tinjau, terapkan/tolak/nonaktifkan (`Services/PenerapanKb`) |
@@ -188,7 +190,7 @@ php artisan make:module Laporan    # kerangka lengkap + route laporan.index; tam
 | `modules/Payroll/Services/KbTambahan.php` | Berkas KB tambahan yang aktif, sidik isinya, tulis/hapus berkas di `kb/tambahan/`, tulis ulang berkas aktif yang hilang/berbeda dari database |
 | `modules/Payroll/Services/SkemaMasukan.php` | Isian tambahan yang diminta KB aktif untuk form data HR (dari engine, di-cache per sidik berkas tambahan **dan** sidik KB dasar: `kb/regulasi`, `kb/perusahaan`, `jembatan/kontrak.py`, `asisten_kb/rancangan.py`; perubahan di sana terbaca tanpa `cache:clear`) |
 | `modules/Payroll/Services/PenyusunKasus.php` | Database → kasus kanonik `data_hr` (padanan `ui/kalkulator.py::form_hr`), termasuk isian tambahan |
-| `modules/Payroll/Services/Penghitung.php` | Hitung satu/banyak pegawai dalam satu panggilan, catat riwayat, deteksi data atau KB berubah |
+| `modules/Payroll/Services/Penghitung.php` | Hitung pegawai per batch (satu panggilan engine dan satu transaksi per batch, sidik KB dari jawaban engine), catat riwayat, deteksi data atau KB berubah. Angka yang tidak muat di kolom bigint atau hasil yang tidak dapat disimpan menjadi galat pegawai itu saja |
 | `modules/Payroll/Services/TampilanHasil.php` | Menata keluaran engine untuk slip / 1721-A1 / jejak (padanan `ui/hasil.py`); komponen baru dari KB tampil dengan labelnya |
 | `modules/Payroll/Services/ImporContoh.php` | Kasus kanonik → database (pegawai contoh dari dataset) |
 | `app/Models/Payroll/` | `Pegawai`, `PayrollTahun`, `PayrollBulan`, `PayrollMasukan`, `Perhitungan` |
@@ -225,5 +227,5 @@ Logo, foto, dan nama Merdeka sengaja **tidak** disalin karena repositori ini pub
 - Take home pay otomatis mengikuti komponen baru berkategori teratur, tidak teratur, iuran pengurang, zakat, dan `tidak_diperhitungkan` (potongan non-pajak, mis. cicilan koperasi). Berkas tambahan tidak dapat mendeklarasikan ulang komponen Perusahaan X (`px_*`); pakai fakta baru, atau ubah perlakuan pajaknya lewat `klasifikasi_wajib` di berkas regulasi.
 - Tahun pajak yang dibuka adalah 2023–2026, rentang yang sudah diuji E12. Gross-up 2023 (rezim PER-16) di luar model engine dan akan ditolak dengan pesan jelas.
 - Mode "komponen gaji sudah jadi" (contoh resmi regulasi) tetap ada di demo Streamlit induk, tidak di aplikasi ini.
-- Perhitungan berjalan sinkron di request. Untuk ratusan pegawai, pindahkan "Hitung semua" ke queue Laravel.
+- Perhitungan berjalan sinkron di request (Hitung semua per batch). Untuk ribuan pegawai, pindahkan "Hitung semua" ke queue Laravel.
 - Prototipe penelitian, bukan alat konsultasi pajak resmi. Default tafsir belum dikalibrasi ke kalkulator DJP (README induk §6).

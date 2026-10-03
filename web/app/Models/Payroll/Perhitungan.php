@@ -45,6 +45,17 @@ class Perhitungan extends Model
         return $this->hasil === null ? null : json_decode($this->hasil, true, 512, JSON_THROW_ON_ERROR);
     }
 
+    /**
+     * versi_kb ringkas untuk tampilan: 12 karakter pertama hash commit beserta penandanya bila ada ("+belum-dikomit" =
+     * KB/engine berubah tanpa di-commit); nilai lain (mis. "tidak-diketahui") utuh.
+     */
+    public function versiKbRingkas(): ?string
+    {
+        return preg_match('/^([0-9a-f]{40,64})(\+.+)?$/', (string) $this->versi_kb, $m)
+            ? substr($m[1], 0, 12).($m[2] ?? '')
+            : $this->versi_kb;
+    }
+
     /** Selisih terhadap kalkulator tanpa KB (E12): [{bulan, fakta, kb, tanpa_kb}]. */
     public function selisihCekSilang(): array
     {

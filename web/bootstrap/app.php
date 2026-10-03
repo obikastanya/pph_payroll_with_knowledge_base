@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\BersihkanTeks;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Application;
@@ -24,11 +25,13 @@ return Application::configure(basePath: dirname(__DIR__))
         // ukuran dipindah dari middleware global ke grup web sesudah StartSession dan sebelum pemeriksaan CSRF, agar
         // galatnya dapat dikembalikan sebagai pesan flash (sesi tersimpan) dan bukan halaman 413/419.
         $middleware->remove(ValidatePostSize::class);
+        // BersihkanTeks: byte NUL dan UTF-8 tidak sah dibuang dari isian teks sebelum validasi (PostgreSQL menolaknya: galat 500).
         $middleware->group('web', [
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
             StartSession::class,
             ValidatePostSize::class,
+            BersihkanTeks::class,
             ShareErrorsFromSession::class,
             PreventRequestForgery::class,
             SubstituteBindings::class,

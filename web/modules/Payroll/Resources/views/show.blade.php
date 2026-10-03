@@ -139,7 +139,7 @@
 
             <div class="col-12 d-flex flex-wrap justify-content-between gap-2 text-muted small px-1">
                 <span><i class="ti ti-clock me-1"></i>Dihitung {{ $terakhir->created_at->format('d/m/Y H:i') }} oleh {{ $terakhir->user?->name ?? 'sistem' }}</span>
-                <span><i class="ti ti-git-commit me-1"></i>Engine {{ $terakhir->versi_engine }} · KB <code>{{ \Illuminate\Support\Str::limit($terakhir->versi_kb, 12, '') }}</code>
+                <span><i class="ti ti-git-commit me-1"></i>Engine {{ $terakhir->versi_engine }} · KB <code title="{{ $terakhir->versi_kb }}">{{ $terakhir->versiKbRingkas() }}</code>
                     ({{ $tampil->h['audit']['tanggal_kebaruan_kb'] ?? '-' }})@if ($terakhir->sidik_kb) + berkas KB tambahan <code>{{ $terakhir->sidik_kb }}</code>@endif</span>
             </div>
         @endif
@@ -179,7 +179,7 @@
                                             <td class="angka">{{ $r->berhasil ? Format::rp($r->pph21_setahun, false) : '' }}</td>
                                             <td class="angka">{{ $r->berhasil ? Format::rp($r->thp_setahun, false) : '' }}</td>
                                             <td><x-global.cek-silang :status="$r->cek_silang" /></td>
-                                            <td><code>{{ \Illuminate\Support\Str::limit($r->versi_kb, 12, '') }}</code>@if ($r->sidik_kb) <span class="text-muted">+ <code>{{ $r->sidik_kb }}</code></span>@endif</td>
+                                            <td><code title="{{ $r->versi_kb }}">{{ $r->versiKbRingkas() }}</code>@if ($r->sidik_kb) <span class="text-muted">+ <code>{{ $r->sidik_kb }}</code></span>@endif</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

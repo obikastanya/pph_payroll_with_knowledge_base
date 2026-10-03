@@ -30,16 +30,28 @@ class MesinPajak
      */
     public function hitung(array $daftarKasus, bool $cekSilang = true, ?array $berkasTambahan = null): array
     {
+        return $this->hitungDenganSidik($daftarKasus, $cekSilang, $berkasTambahan)['hasil'];
+    }
+
+    /**
+     * Seperti hitung(), ditambah sidik berkas KB tambahan yang benar-benar dimuat engine pada panggilan ini.
+     *
+     * @return array{hasil: list<array>, sidik_kb: ?string} sidik_kb null bila jawaban tidak memuat sidik yang sah
+     */
+    public function hitungDenganSidik(array $daftarKasus, bool $cekSilang = true, ?array $berkasTambahan = null): array
+    {
         if ($daftarKasus === []) {
-            return [];
+            return ['hasil' => [], 'sidik_kb' => null];
         }
         $jawab = $this->panggil(['perintah' => 'hitung', 'kasus' => array_values($daftarKasus), 'cek_silang' => $cekSilang,
             'berkas_tambahan' => $berkasTambahan ?? $this->kb->berkasAktif()]);
         if (! is_array($jawab['hasil'] ?? null) || count($jawab['hasil']) !== count($daftarKasus)) {
             throw new MesinTidakTersedia('jawaban engine tidak lengkap: jumlah hasil tidak sama dengan jumlah kasus');
         }
+        // sama dengan KbTambahan::sidik: 16 hex, atau '' tanpa berkas tambahan (kolom sidik_kb varchar(16))
+        $sidik = $jawab['sidik_kb'] ?? null;
 
-        return $jawab['hasil'];
+        return ['hasil' => $jawab['hasil'], 'sidik_kb' => is_string($sidik) && preg_match('/^(?:[0-9a-f]{16})?$/', $sidik) ? $sidik : null];
     }
 
     /** Pegawai contoh dari dataset induk: [{id, label, kasus}]. */
@@ -117,7 +129,13 @@ class MesinPajak
                 ->run([$python, '-m', 'jembatan']);
         } catch (ProcessTimedOutException $e) {
             self::catatGagal($perintah, null, $mulai, $e->result->errorOutput(), 'batas waktu habis');
-            throw $e;
+            if ($perintah === 'usulkan') {
+                throw $e;   // job ProsesUsulanKb memetakan batas waktu LLM ke pesannya sendiri
+            }
+            // perintah lain diperlakukan seperti engine yang tidak menjawab: setiap pemanggil yang menangani
+            // MesinTidakTersedia menampilkan pesan, bukan galat 500
+            throw new MesinTidakTersedia('engine melebihi batas waktu ('.($timeout ?? config('payroll.timeout')).' detik). Naikkan '
+                .'PAYROLL_TIMEOUT'.($perintah === 'hitung' ? ', atau perkecil PAYROLL_UKURAN_BATCH untuk Hitung semua.' : '.'), 0, $e);
         }
 
         try {
@@ -125,9 +143,10 @@ class MesinPajak
         } catch (JsonException) {
             self::catatGagal($perintah, $hasil->exitCode(), $mulai, $hasil->errorOutput(), 'jawaban bukan JSON');
             $petunjuk = is_file($python) ? '' : " Python tidak ditemukan di '{$python}' (atur PAYROLL_PYTHON di .env).";
-            $stderr = trim(mb_substr($hasil->errorOutput(), -1500));
+            // pesan untuk pengguna cukup satu baris; jejak (traceback) lengkap hanya di log
+            $akhir = self::barisTerakhir($hasil->errorOutput());
             throw new MesinTidakTersedia("engine tidak memberi jawaban yang valid (kode keluar {$hasil->exitCode()}).{$petunjuk}"
-                .($stderr !== '' ? "\n{$stderr}" : ''));
+                .($akhir !== '' ? " {$akhir}" : ''));
         }
         if (! ($jawab['ok'] ?? false)) {
             self::catatGagal($perintah, $hasil->exitCode(), $mulai, $hasil->errorOutput(), (string) ($jawab['jenis'] ?? 'galat'));
@@ -142,7 +161,15 @@ class MesinPajak
     {
         Log::warning("Panggilan engine gagal: {$perintah}", [
             'perintah' => $perintah, 'sebab' => $sebab, 'kode_keluar' => $kodeKeluar,
-            'durasi_ms' => intdiv(hrtime(true) - $mulai, 1_000_000), 'stderr' => mb_substr($stderr, -1500),
+            'durasi_ms' => intdiv(hrtime(true) - $mulai, 1_000_000), 'stderr' => mb_substr($stderr, -8000),
         ]);
+    }
+
+    /** Baris stderr terakhir yang berisi (biasanya galat Python, mis. "ModuleNotFoundError: ..."), paling banyak 200 karakter. */
+    private static function barisTerakhir(string $stderr): string
+    {
+        $baris = preg_split('/\R/u', trim(mb_scrub($stderr, 'UTF-8'))) ?: [''];
+
+        return mb_substr(trim(end($baris)), 0, 200);
     }
 }

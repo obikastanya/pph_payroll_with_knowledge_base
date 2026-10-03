@@ -17,8 +17,11 @@ return [
     // interpreter Python dari venv repositori induk
     'python' => env('PAYROLL_PYTHON') ?: $root.(PHP_OS_FAMILY === 'Windows' ? '\\env\\Scripts\\python.exe' : '/env/bin/python'),
 
-    // batas waktu satu panggilan engine (detik); satu panggilan bisa berisi banyak pegawai
+    // batas waktu satu panggilan engine (detik); satu panggilan berisi paling banyak `ukuran_batch` pegawai
     'timeout' => (int) env('PAYROLL_TIMEOUT', 300),
+
+    // pegawai per panggilan engine saat Hitung semua; hasil setiap batch dicatat dalam transaksinya sendiri
+    'ukuran_batch' => max(1, (int) env('PAYROLL_UKURAN_BATCH', 50)),
 
     // nama lapisan kebijakan perusahaan (kb/perusahaan/perusahaan_x.yaml), ditampilkan di navbar
     'nama_perusahaan' => env('PAYROLL_NAMA_PERUSAHAAN', 'Perusahaan X'),

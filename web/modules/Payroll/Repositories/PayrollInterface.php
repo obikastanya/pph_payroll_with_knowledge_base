@@ -5,11 +5,21 @@ namespace Modules\Payroll\Repositories;
 use App\Models\Payroll\PayrollTahun;
 use App\Models\Payroll\Pegawai;
 use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 
 interface PayrollInterface
 {
     /** Data HR satu tahun pajak (dengan pegawai, bulan, perhitungan terakhir), urut nomor induk. */
     public function daftarTahun(int $tahun, ?string $cari = null): Collection;
+
+    /**
+     * Data HR satu tahun pajak untuk Hitung semua, dimuat bertahap per $ukuran baris (dengan pegawai, bulan, isian
+     * tambahan; tanpa hasil perhitungan lama) agar memori tidak tumbuh dengan jumlah pegawai.
+     */
+    public function daftarHitung(int $tahun, int $ukuran): LazyCollection;
+
+    /** Jumlah pegawai yang punya data HR di tahun pajak ini. */
+    public function jumlahTahun(int $tahun): int;
 
     /** Tahun pajak yang sudah punya data HR, terbaru dulu. */
     public function tahunAda(): array;

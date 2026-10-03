@@ -35,9 +35,14 @@ class PayrollTahunRequest extends FormRequest
 
     private const DESIMAL = '/^\d+([.,]\d+)?$/';
 
+    /** Batas nominal rupiah (dan bilangan isian tambahan): jauh di bawah kolom bigint; di atasnya hampir pasti salah ketik. */
+    public const MAKS_RUPIAH = 999_999_999_999;
+
     public function rules(): array
     {
         $payroll = $this->route('payroll');
+        $nominal = ['integer', 'min:0', 'max:'.self::MAKS_RUPIAH];
+        // persen (kelas_jkk_persen, kompensasi_persen) disimpan di kolom varchar(16)
         $aturan = [
             'status_ptkp' => ['required', Rule::in(Label::STATUS_PTKP)],
             'metode' => ['required', Rule::in(array_keys(Label::METODE))],
@@ -46,23 +51,24 @@ class PayrollTahunRequest extends FormRequest
             'tanggal_thr_bayar' => ['required', 'date'],
             'bpjs_tk_mulai_bulan' => ['required', 'integer', 'between:1,12'],
             'bpjs_kes_mulai_bulan' => ['required', 'integer', 'between:1,12'],
-            'kelas_jkk_persen' => ['required', 'regex:'.self::DESIMAL],
+            'kelas_jkk_persen' => ['required', 'regex:'.self::DESIMAL, 'max:16'],
             'bulan' => ['array'],
             'bulan.*.hk_penuh' => ['nullable', 'integer', 'between:1,31'],
             'bulan.*.hk_aktual' => ['nullable', 'integer', 'between:0,31'],
-            'bulan.*.kompensasi_persen' => ['nullable', 'regex:'.self::DESIMAL],
-            'bulan.*.ota' => ['nullable', 'integer', 'min:0'],
-            'bulan.*.lembur' => ['nullable', 'integer', 'min:0'],
-            'bulan.*.komisi' => ['nullable', 'integer', 'min:0'],
+            'bulan.*.kompensasi_persen' => ['nullable', 'regex:'.self::DESIMAL, 'max:16'],
+            'bulan.*.ota' => ['nullable', ...$nominal],
+            'bulan.*.lembur' => ['nullable', ...$nominal],
+            'bulan.*.komisi' => ['nullable', ...$nominal],
         ];
         foreach (self::RUPIAH as $f) {
-            $aturan[$f] = [$f === 'gaji_pokok' ? 'required' : 'nullable', 'integer', 'min:0'];
+            $aturan[$f] = [$f === 'gaji_pokok' ? 'required' : 'nullable', ...$nominal];
         }
         foreach (self::HARI as $f) {
             $aturan[$f] = ['nullable', 'integer', 'between:0,31'];
         }
         if (! $payroll instanceof PayrollTahun) {
-            $aturan['tahun'] = ['required', 'integer', 'between:'.config('payroll.tahun_min').','.config('payroll.tahun_max'),
+            // bail: tahun yang bukan angka/di luar rentang tidak sampai ke query unique (PostgreSQL menolaknya sebagai smallint)
+            $aturan['tahun'] = ['bail', 'required', 'integer', 'between:'.config('payroll.tahun_min').','.config('payroll.tahun_max'),
                 Rule::unique('payroll_tahun')->where('pegawai_id', $this->pegawai()->id)];
         }
         foreach ($this->skemaMasukan() as $m) {
@@ -95,8 +101,8 @@ class PayrollTahunRequest extends FormRequest
     {
         return match ($m['tipe']) {
             // engine menolak rupiah negatif (nilai_masukan); bilangan boleh negatif
-            'rupiah' => ['integer', 'min:0'],
-            'bilangan' => ['integer'],
+            'rupiah' => ['integer', 'min:0', 'max:'.self::MAKS_RUPIAH],
+            'bilangan' => ['integer', 'between:-'.self::MAKS_RUPIAH.','.self::MAKS_RUPIAH],
             'persen', 'desimal' => ['regex:'.self::DESIMAL],
             'tanggal' => ['date_format:Y-m-d'],
             'pilihan' => [Rule::in($m['pilihan'])],

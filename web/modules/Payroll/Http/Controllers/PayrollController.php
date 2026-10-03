@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Modules\Payroll\Http\Requests\PayrollTahunRequest;
 use Modules\Payroll\Repositories\PayrollInterface;
+use Modules\Payroll\Services\Label;
 use Modules\Payroll\Services\MesinTidakTersedia;
 use Modules\Payroll\Services\Penghitung;
 use Modules\Payroll\Services\SkemaMasukan;
@@ -61,8 +62,9 @@ class PayrollController extends Controller
     {
         $tahunOpsi = $this->payroll->tahunBelumDiisi($pegawai);
         $tahun = (int) $request->query('tahun', $tahunOpsi[0] ?? config('payroll.tahun_max'));
-        [$payroll, $bulan] = $this->payroll->isianBaru($pegawai, $tahun);
         [$masukan, $galatMasukan] = $this->skemaMasukan($tahun);
+        $kunciTahunan = array_column(array_filter($masukan, fn (array $m) => $m['lingkup'] === 'tahun'), 'kunci');
+        [$payroll, $bulan, $isianMasukan] = $this->payroll->isianBaru($pegawai, $tahun, $kunciTahunan);
 
         return view('Payroll::form', [
             'pageTitle' => $this->pageTitle,
@@ -74,7 +76,7 @@ class PayrollController extends Controller
             'tahunOpsi' => $tahunOpsi,
             'masukan' => $masukan,
             'galatMasukan' => $galatMasukan,
-            'isianMasukan' => $this->payroll->isianMasukan(null),
+            'isianMasukan' => $isianMasukan,
         ]);
     }
 
@@ -159,14 +161,15 @@ class PayrollController extends Controller
             : back()->with('error', $p->pesan);
     }
 
-    public function slip(PayrollTahun $payroll, int $bulan): View
+    public function slip(PayrollTahun $payroll, int $bulan, Penghitung $penghitung): View
     {
         $p = $payroll->perhitunganTerakhir;
         abort_unless($p?->berhasil, 404, 'Belum ada perhitungan yang berhasil.');
         $tampil = new TampilanHasil($p->hasilEngine(), json_decode($p->kasus, true));
         abort_unless(in_array($bulan, $tampil->bulan(), true), 404, 'Bulan di luar masa kerja.');
 
-        return view('Payroll::cetak', ['payroll' => $payroll->load('pegawai'), 'perhitungan' => $p, 'tampil' => $tampil, 'bulan' => $bulan]);
+        return view('Payroll::cetak', ['payroll' => $payroll->load('pegawai'), 'perhitungan' => $p, 'tampil' => $tampil, 'bulan' => $bulan,
+            'kedaluwarsa' => $penghitung->alasanKedaluwarsa($payroll, $p)]);
     }
 
     public function ekspor(PayrollTahun $payroll): StreamedResponse
@@ -174,9 +177,7 @@ class PayrollController extends Controller
         $p = $payroll->perhitunganTerakhir;
         abort_unless($p?->berhasil, 404, 'Belum ada perhitungan yang berhasil.');
         $h = $p->hasilEngine();
-        // komponen gaji dari berkas KB tambahan ikut menjadi kolom (sebelum kolom pajak)
-        $tambahan = array_values(array_diff(array_column($h['komponen'] ?? [], 'fakta'), self::KOLOM_CSV));
-        $kolom = [...array_slice(self::KOLOM_CSV, 0, 7), ...$tambahan, ...array_slice(self::KOLOM_CSV, 7)];
+        $kolom = self::kolomCsv($h);
 
         return response()->streamDownload(function () use ($h, $kolom) {
             $out = fopen('php://output', 'w');
@@ -187,6 +188,31 @@ class PayrollController extends Controller
                 fputcsv($out, [$b, ...array_map(fn ($k) => $h['per_masa'][$b][$k] ?? '', $kolom)]);
             }
             fclose($out);
-        }, "payroll_{$payroll->pegawai->nomor_induk}_{$payroll->tahun}.csv", ['Content-Type' => 'text/csv; charset=UTF-8']);
+        }, self::namaBerkas("payroll_{$payroll->pegawai->nomor_induk}_{$payroll->tahun}.csv"), ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    /**
+     * Kolom CSV: KOLOM_CSV tetap di posisinya agar impor spreadsheet lama tidak bergeser; komponen dari berkas KB
+     * tambahan (bukan perusahaan_x.yaml) menyusul di AKHIR sesuai urutan deklarasi.
+     */
+    public static function kolomCsv(array $h): array
+    {
+        $tambahan = [];
+        foreach ($h['komponen'] ?? [] as $k) {
+            $fakta = $k['fakta'] ?? null;
+            // Label::FAKTA menjaga hasil tanpa `berkas`; berkas tambahan tidak boleh mendeklarasikan ulang komponen dasar
+            $dasar = ($k['berkas'] ?? '') === 'perusahaan_x.yaml' || array_key_exists($fakta ?? '', Label::FAKTA);
+            if ($fakta !== null && ! $dasar && ! in_array($fakta, self::KOLOM_CSV, true)) {
+                $tambahan[$fakta] = true;
+            }
+        }
+
+        return [...self::KOLOM_CSV, ...array_keys($tambahan)];
+    }
+
+    /** Nama berkas unduhan aman: nomor induk seperti 001/HR/2023 membuat header Content-Disposition ditolak. */
+    public static function namaBerkas(string $nama): string
+    {
+        return preg_replace('/[^A-Za-z0-9._-]/', '-', $nama);
     }
 }

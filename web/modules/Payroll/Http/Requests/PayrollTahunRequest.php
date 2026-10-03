@@ -94,7 +94,9 @@ class PayrollTahunRequest extends FormRequest
     private static function aturanTipe(array $m): array
     {
         return match ($m['tipe']) {
-            'rupiah', 'bilangan' => ['integer'],
+            // engine menolak rupiah negatif (nilai_masukan); bilangan boleh negatif
+            'rupiah' => ['integer', 'min:0'],
+            'bilangan' => ['integer'],
             'persen', 'desimal' => ['regex:'.self::DESIMAL],
             'tanggal' => ['date_format:Y-m-d'],
             'pilihan' => [Rule::in($m['pilihan'])],

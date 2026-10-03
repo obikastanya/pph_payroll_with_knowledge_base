@@ -18,14 +18,18 @@
         </include>
     </source>
     <php>
-        <!-- force="true": nilai dari .env atau lingkungan shell tidak boleh mengalihkan uji ke database aplikasi -->
+        <!-- Uji terhadap PostgreSQL di database TERPISAH its_pph21_uji (bukan its_pph21: RefreshDatabase mengosongkannya).
+             Jalankan: php artisan test --configuration=phpunit.pgsql.xml. DB_USERNAME/DB_PASSWORD diambil dari .env. -->
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null" force="true"/>
         <env name="CACHE_STORE" value="array" force="true"/>
-        <env name="DB_CONNECTION" value="sqlite" force="true"/>
-        <env name="DB_DATABASE" value=":memory:" force="true"/>
+        <env name="DB_CONNECTION" value="pgsql" force="true"/>
+        <env name="DB_HOST" value="127.0.0.1" force="true"/>
+        <env name="DB_PORT" value="5432" force="true"/>
+        <env name="DB_DATABASE" value="its_pph21_uji" force="true"/>
+        <env name="PAYROLL_UJI_PGSQL" value="1" force="true"/>
         <env name="DB_URL" value="" force="true"/>
         <env name="MAIL_MAILER" value="array" force="true"/>
         <env name="QUEUE_CONNECTION" value="sync" force="true"/>

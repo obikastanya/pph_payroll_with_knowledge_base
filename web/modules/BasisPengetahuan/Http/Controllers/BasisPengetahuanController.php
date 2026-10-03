@@ -45,6 +45,7 @@ class BasisPengetahuanController extends Controller
             'aktif' => $this->usulan->aktif(),
             'sidik' => $kb->sidik(),
             'llmSiap' => (bool) config('payroll.llm_kunci'),
+            'batasUnggah' => UnggahPeraturanRequest::batasEfektif(),
         ]);
     }
 
@@ -65,8 +66,8 @@ class BasisPengetahuanController extends Controller
                     'warna' => $warna,
                     'diproses' => $u->sedangDiproses(),
                     'valid' => $u->valid,
-                    'aturan' => $u->validasi['ringkasan']['aturan'] ?? null,
-                    'masukan' => count($u->validasi['masukan'] ?? []),
+                    'aturan' => is_int($u->validasi['ringkasan']['aturan'] ?? null) ? $u->validasi['ringkasan']['aturan'] : null,
+                    'masukan' => is_array($u->validasi['masukan'] ?? null) ? count($u->validasi['masukan']) : 0,
                     'dibuat' => $u->created_at->format('d/m/Y H:i'),
                     'oleh' => $u->user?->name ?? '-',
                     'url' => route('kb.show', $u),
@@ -103,6 +104,7 @@ class BasisPengetahuanController extends Controller
 
     public function show(UsulanKb $usulan): View
     {
+        $usulan->tandaiBilaMacet();
         $usulan->load('user', 'penerap');
 
         return view('BasisPengetahuan::show', [
@@ -111,16 +113,19 @@ class BasisPengetahuanController extends Controller
                 ['url' => '#', 'label' => $usulan->judul, 'active' => true]],
             'u' => $usulan,
             'namaBerkas' => $this->penerapan->namaBerkas($usulan),
-            'rujukan' => collect($usulan->usulan['rujukan'] ?? [])->groupBy('bagian')->all(),
+            'rujukan' => collect(is_array($usulan->usulan['rujukan'] ?? null) ? $usulan->usulan['rujukan'] : [])
+                ->filter(fn ($r) => is_array($r) && is_scalar($r['bagian'] ?? null))->groupBy('bagian')->all(),
         ]);
     }
 
     public function status(UsulanKb $usulan): JsonResponse
     {
+        $usulan->tandaiBilaMacet();
         [$label, $warna] = $usulan->labelStatus();
 
         return response()->json(['status' => $usulan->status, 'label' => $label, 'warna' => $warna, 'selesai' => ! $usulan->sedangDiproses(),
-            'menunggu_detik' => $usulan->status === 'antre' ? (int) $usulan->updated_at->diffInSeconds(now()) : 0]);
+            'menunggu_detik' => $usulan->status === 'antre' ? $usulan->detikSejakBerubah() : 0,
+            'berjalan_detik' => $usulan->status === 'diproses' ? $usulan->detikSejakBerubah() : 0]);
     }
 
     public function simpanYaml(Request $request, UsulanKb $usulan): RedirectResponse
@@ -200,10 +205,15 @@ class BasisPengetahuanController extends Controller
 
     public function destroy(UsulanKb $usulan): RedirectResponse
     {
-        abort_if($usulan->aktif || $usulan->sedangDiproses(), 409, 'Nonaktifkan berkas atau tunggu proses selesai sebelum menghapus.');
-        $this->penerapan->hapus($usulan);
+        // usulan antre boleh dibatalkan: job berhenti sendiri bila barisnya sudah tidak ada
+        abort_if($usulan->aktif || $usulan->status === 'diproses', 409, 'Nonaktifkan berkas atau tunggu proses selesai sebelum menghapus.');
+        $antre = $usulan->status === 'antre';
+        if (! $this->penerapan->hapus($usulan)) {
+            return back()->with('error', 'Usulan baru saja mulai dibaca LLM; tunggu sampai selesai sebelum menghapus.');
+        }
 
-        return redirect()->route('kb.index')->with('success', "Usulan \"{$usulan->judul}\" dihapus.");
+        return redirect()->route('kb.index')->with('success', $antre ? "Unggahan \"{$usulan->judul}\" dibatalkan sebelum dibaca LLM."
+            : "Usulan \"{$usulan->judul}\" dihapus.");
     }
 
     public static function bolehUbah(UsulanKb $u): bool

@@ -1,5 +1,7 @@
 @extends('main.index')
 @use('App\Models\Kb\UsulanKb')
+@use('Modules\BasisPengetahuan\Http\Controllers\BasisPengetahuanController')
+@use('Modules\BasisPengetahuan\Http\Requests\UnggahPeraturanRequest')
 
 @section('page-title', 'Basis pengetahuan')
 
@@ -65,7 +67,8 @@
                         <div class="col-md-6">
                             <label for="pdf" class="form-label required">Berkas PDF</label>
                             <input id="pdf" name="pdf" type="file" accept="application/pdf,.pdf" required class="form-control @error('pdf') is-invalid @enderror">
-                            <small class="form-hint">Paling besar 30 MB.</small>
+                            <small class="form-hint">Paling besar {{ BasisPengetahuanController::ukuran($batasUnggah) }}@if ($batasUnggah < UnggahPeraturanRequest::BATAS_KB * 1024)
+                                    (dibatasi <code>upload_max_filesize</code>/<code>post_max_size</code> di php.ini)@endif.</small>
                         </div>
                         <div class="col-12">
                             <label for="catatan" class="form-label">Catatan untuk LLM</label>

@@ -17,6 +17,10 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 /** Rekap payroll satu tahun pajak: ringkasan, tabel pegawai (AJAX), hitung semua, ekspor CSV. */
 class DashboardController extends Controller
 {
+    /** Kolom status rekap CSV. */
+    public const STATUS_CSV = ['berhasil' => 'berhasil', 'usang_data' => 'usang (data)', 'usang_kb' => 'usang (aturan KB)',
+        'galat' => 'galat', 'belum' => 'belum'];
+
     protected $pageTitle;
 
     protected $menuItems;
@@ -37,11 +41,33 @@ class DashboardController extends Controller
         return (int) $request->query('tahun', $request->input('tahun', $ada[0] ?? config('payroll.tahun_max')));
     }
 
-    public function index(Request $request): View
+    /**
+     * Status hasil terakhir satu baris: belum | galat | berhasil | usang_data | usang_kb. alasanKedaluwarsa menyusun
+     * ulang kasus (mahal), jadi dipanggil sekali per baris.
+     */
+    private static function status(PayrollTahun $pt, Penghitung $penghitung): string
+    {
+        $p = $pt->perhitunganTerakhir;
+        if ($p === null) {
+            return 'belum';
+        }
+        if (! $p->berhasil) {
+            return 'galat';
+        }
+
+        return match ($penghitung->alasanKedaluwarsa($pt, $p)) {
+            'data' => 'usang_data',
+            'kb' => 'usang_kb',
+            default => 'berhasil',
+        };
+    }
+
+    public function index(Request $request, Penghitung $penghitung): View
     {
         $tahun = $this->tahun($request);
         $daftar = $this->payroll->daftarTahun($tahun);
         $berhasil = $daftar->map->perhitunganTerakhir->filter(fn ($p) => $p?->berhasil);
+        $status = $daftar->map(fn (PayrollTahun $pt) => self::status($pt, $penghitung));
 
         try {
             return view('Dashboard::index', [
@@ -50,7 +76,9 @@ class DashboardController extends Controller
                 'tahun' => $tahun,
                 'tahunAda' => collect($this->payroll->tahunAda())->push($tahun)->unique()->sortDesc()->values()->all(),
                 'jumlah' => $daftar->count(),
-                'belumDihitung' => $daftar->filter(fn ($pt) => ! $pt->perhitunganTerakhir?->berhasil)->count(),
+                // hasil usang ikut dihitung: angkanya tidak lagi mengikuti data HR / aturan KB sekarang
+                'belumDihitung' => $status->filter(fn (string $s) => $s !== 'berhasil')->count(),
+                'usang' => $status->filter(fn (string $s) => str_starts_with($s, 'usang_'))->count(),
                 'total' => [
                     'bruto' => $berhasil->sum('bruto_setahun'),
                     'pph21' => $berhasil->sum('pph21_setahun'),
@@ -72,6 +100,7 @@ class DashboardController extends Controller
 
         $data = $potong->map(function (PayrollTahun $pt) use ($penghitung) {
             $p = $pt->perhitunganTerakhir;
+            $status = self::status($pt, $penghitung);
 
             return [
                 'id' => $pt->id,
@@ -83,7 +112,12 @@ class DashboardController extends Controller
                 'pph21_setahun' => $p?->berhasil ? $p->pph21_setahun : null,
                 'thp_setahun' => $p?->berhasil ? $p->thp_setahun : null,
                 'cek_silang' => $p?->cek_silang,
-                'status' => $p === null ? 'belum' : ($p->berhasil ? ($penghitung->kedaluwarsa($pt, $p) ? 'kedaluwarsa' : 'berhasil') : 'galat'),
+                'status' => str_starts_with($status, 'usang_') ? 'kedaluwarsa' : $status,
+                'alasan' => match ($status) {
+                    'usang_data' => 'data',
+                    'usang_kb' => 'kb',
+                    default => null,
+                },
                 'pesan' => $p?->berhasil === false ? $p->pesan : null,
                 'dihitung' => $p?->created_at?->format('d/m/Y H:i'),
                 'url' => route('payroll.show', $pt),
@@ -123,21 +157,24 @@ class DashboardController extends Controller
             : back()->with('success', $pesan.' Semua berhasil.');
     }
 
-    public function ekspor(Request $request): StreamedResponse
+    public function ekspor(Request $request, Penghitung $penghitung): StreamedResponse
     {
         $tahun = $this->tahun($request);
         $daftar = $this->payroll->daftarTahun($tahun);
+        // status dihitung sebelum streaming: galat engine/DB tidak boleh terjadi di tengah unduhan
+        $status = $daftar->map(fn (PayrollTahun $pt) => self::status($pt, $penghitung))->all();
 
-        return response()->streamDownload(function () use ($daftar) {
+        return response()->streamDownload(function () use ($daftar, $status) {
             $out = fopen('php://output', 'w');
+            // kolom lama tetap di posisinya; sidik_kb & pesan ditambahkan di akhir
             fputcsv($out, ['nomor_induk', 'nama', 'tahun', 'status_ptkp', 'metode', 'bruto_setahun', 'pph21_setahun', 'thp_setahun',
-                'cek_silang', 'versi_kb', 'dihitung_pada', 'status']);
-            foreach ($daftar as $pt) {
+                'cek_silang', 'versi_kb', 'dihitung_pada', 'status', 'sidik_kb', 'pesan']);
+            foreach ($daftar as $i => $pt) {
                 $p = $pt->perhitunganTerakhir;
                 fputcsv($out, [self::teks($pt->pegawai->nomor_induk), self::teks($pt->pegawai->nama), $pt->tahun, $pt->status_ptkp,
                     $pt->metode, $p?->bruto_setahun, $p?->pph21_setahun, $p?->thp_setahun, $p?->cek_silang, $p?->versi_kb,
-                    $p?->created_at?->toDateTimeString(),
-                    $p === null ? 'belum dihitung' : ($p->berhasil ? 'berhasil' : self::teks('galat: '.$p->pesan))]);
+                    $p?->created_at?->toDateTimeString(), self::STATUS_CSV[$status[$i]], $p?->sidik_kb,
+                    $p?->berhasil === false ? self::teks((string) $p->pesan) : null]);
             }
             fclose($out);
         }, "rekap_payroll_{$tahun}.csv", ['Content-Type' => 'text/csv; charset=UTF-8']);

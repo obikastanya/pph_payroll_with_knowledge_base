@@ -17,6 +17,7 @@
         tr.tebal td { font-weight: 700; }
         .kaki { margin-top: 18px; color: #666; font-size: 11px; }
         .aksi { margin-bottom: 16px; }
+        .usang { border: 2px solid #b45309; background: #fef3c7; color: #78350f; padding: 8px 10px; margin-bottom: 14px; font-weight: 600; }
         @media print { .aksi { display: none; } body { margin: 0 auto; } }
     </style>
 </head>
@@ -26,6 +27,12 @@
     <div class="meta">
         {{ $payroll->pegawai->nama }} ({{ $payroll->pegawai->nomor_induk }}) · PTKP {{ $payroll->status_ptkp }}
     </div>
+    {{-- banner ikut tercetak: slip dari hasil usang tidak boleh terlihat seperti slip final --}}
+    @if (($kedaluwarsa ?? null) === 'data')
+        <div class="usang" role="status">Hasil usang: data HR berubah sejak perhitungan ini. Hitung ulang sebelum slip dipakai.</div>
+    @elseif (($kedaluwarsa ?? null) === 'kb')
+        <div class="usang" role="status">Hasil usang: aturan knowledge base berubah sejak perhitungan ini. Hitung ulang sebelum slip dipakai.</div>
+    @endif
     <table>
         @foreach ($tampil->slip($bulan) as $r)
             @if ($r['judul'])
@@ -41,7 +48,7 @@
     </table>
     <p class="kaki">
         Dihitung {{ $perhitungan->created_at->format('d/m/Y H:i') }} oleh engine knowledge base {{ $perhitungan->versi_engine }}
-        (KB {{ \Illuminate\Support\Str::limit($perhitungan->versi_kb, 12, '') }}). Kolom kanan menunjukkan aturan KB yang menghasilkan angka.
+        (KB {{ \Illuminate\Support\Str::limit($perhitungan->versi_kb, 12, '') }}@if ($perhitungan->sidik_kb) + berkas KB tambahan {{ $perhitungan->sidik_kb }}@endif). Kolom kanan menunjukkan aturan KB yang menghasilkan angka.
     </p>
 </body>
 </html>

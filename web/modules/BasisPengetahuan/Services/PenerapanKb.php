@@ -19,11 +19,14 @@ final class PenerapanKb
 {
     public function __construct(private MesinPajak $mesin, private KbTambahan $kb) {}
 
-    /** Validasi $yaml (atau rancangan tersimpan) terhadap berkas aktif selain usulan ini; hasil disimpan ke usulan. */
+    /**
+     * Validasi $yaml (atau rancangan tersimpan) terhadap berkas aktif selain usulan ini; hasil disimpan ke usulan.
+     * Lapisan pilihan unggah ikut dikirim agar engine dapat membandingkannya dengan lapisan yang tertulis di berkas.
+     */
     public function validasi(UsulanKb $u, ?string $yaml = null): array
     {
         $yaml = KbTambahan::normal($yaml ?? (string) $u->yaml);
-        $v = $this->mesin->validasi($yaml, $this->namaBerkas($u), $this->berkasLain($u));
+        $v = $this->mesin->validasi($yaml, $this->namaBerkas($u), $this->berkasLain($u), $u->lapisan);
         $u->update(['yaml' => $yaml, 'validasi' => $v, 'valid' => (bool) $v['ok']]);
 
         return $v;
@@ -55,23 +58,41 @@ final class PenerapanKb
         return $v;
     }
 
-    /** @throws MesinTidakTersedia bila KB tanpa berkas ini tidak dapat dimuat (berkas lain bergantung padanya) */
+    /**
+     * Engine memuat dan menghitung KB tanpa berkas ini dulu (perintah periksa); berkas lain mungkin bergantung padanya.
+     *
+     * @throws MesinTidakTersedia bila KB tanpa berkas ini tidak dapat dimuat atau dihitung (pesan = galat engine)
+     */
     public function nonaktifkan(UsulanKb $u): void
     {
-        $this->mesin->masukan($this->berkasLain($u));
+        $p = $this->mesin->periksa($this->berkasLain($u));
+        if (! ($p['ok'] ?? false)) {
+            $galat = array_filter(is_array($p['galat'] ?? null) ? $p['galat'] : [], 'is_scalar');
+            throw new MesinTidakTersedia($galat === [] ? 'engine menolak KB sisanya tanpa keterangan' : implode("\n", $galat));
+        }
         $u->update(['aktif' => false]);
     }
 
-    public function hapus(UsulanKb $u): void
+    /**
+     * Hapus usulan yang tidak aktif. Baris dihapus lebih dulu secara bersyarat: usulan antre yang baru saja diambil
+     * job (status diproses) tidak kehilangan PDF-nya di tengah jalan.
+     *
+     * @return bool false bila usulan sedang dibaca LLM (tidak dihapus)
+     */
+    public function hapus(UsulanKb $u): bool
     {
         if ($u->aktif) {
             throw new \LogicException('berkas KB yang aktif tidak boleh dihapus; nonaktifkan dulu');
+        }
+        if (UsulanKb::whereKey($u->id)->where('status', '!=', 'diproses')->where('aktif', false)->delete() === 0) {
+            return false;
         }
         if ($u->nama_berkas) {
             $this->kb->hapus($u->nama_berkas);
         }
         Storage::disk('local')->delete($u->path_pdf);
-        $u->delete();
+
+        return true;
     }
 
     public function namaBerkas(UsulanKb $u): string
@@ -79,7 +100,8 @@ final class PenerapanKb
         if ($u->nama_berkas) {
             return $u->nama_berkas;
         }
-        $dasar = Str::slug($u->usulan['id_berkas'] ?? '', '_') ?: Str::slug($u->judul, '_') ?: 'rancangan';
+        $id = is_array($u->usulan) ? ($u->usulan['id_berkas'] ?? '') : '';
+        $dasar = Str::slug(is_string($id) ? $id : '', '_') ?: Str::slug($u->judul, '_') ?: 'rancangan';
 
         return sprintf('%04d_%s.yaml', $u->id, Str::limit($dasar, 50, ''));
     }

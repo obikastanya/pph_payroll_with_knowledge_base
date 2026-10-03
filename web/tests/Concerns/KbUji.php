@@ -70,7 +70,15 @@ trait KbUji
                 'sebelum' => ['bruto_setahun' => 151_968_866, 'pph21_setahun' => 7_341_750, 'thp_setahun' => 136_021_637],
                 'sesudah' => ['bruto_setahun' => 164_568_866, 'pph21_setahun' => 9_231_750, 'thp_setahun' => 146_731_637],
                 'fakta_baru' => ['px_transport' => 12_600_000]]],
+            'perubahan' => [],
+            'belum_teruji' => [],
         ];
+    }
+
+    /** Jawaban perintah periksa (KB bawaan + berkas tambahan dapat dimuat & dihitung?). */
+    protected static function jawabPeriksa(bool $ok = true, array $galat = []): array
+    {
+        return ['ok' => true, 'periksa' => ['ok' => $ok, 'galat' => $galat, 'tahun' => $ok ? [2023, 2024, 2025, 2026] : []]];
     }
 
     protected static function jawabUsulkan(array $timpa = []): array

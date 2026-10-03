@@ -14,6 +14,9 @@ final class TampilanHasil
 
     private array $labelKomponen = [];
 
+    /** fakta -> kategori wajib regulasi yang dipakai engine (peringatan KONFLIK_WAJIB tingkat klasifikasi). */
+    private array $kategoriWajib = [];
+
     public function __construct(public readonly array $h, public readonly array $kasus)
     {
         foreach ($h['jejak'] ?? [] as $j) {
@@ -22,6 +25,11 @@ final class TampilanHasil
         foreach ($h['komponen'] ?? [] as $k) {
             if ($k['label'] ?? null) {
                 $this->labelKomponen[$k['fakta']] = $k['label'];
+            }
+        }
+        foreach ($h['peringatan'] ?? [] as $p) {
+            if (($p['kode'] ?? '') === 'KONFLIK_WAJIB' && isset($p['fakta'], $p['kategori_wajib'])) {
+                $this->kategoriWajib[$p['fakta']] ??= $p['kategori_wajib'];
             }
         }
     }
@@ -67,7 +75,7 @@ final class TampilanHasil
         $jumlah = fn (string $f) => array_sum(array_map(fn ($m) => $m[$f] ?? 0, $pm));
         $kartu = [
             ['PPh 21 setahun', Format::rp($t['pph21_setahun'] ?? $jumlah('pph21')), 'PPh 21 terutang satu tahun pajak'],
-            ['Take home pay setahun', Format::rp($jumlah('px_thp')), 'Penghasilan tunai - iuran pegawai - PPh 21 dipotong'],
+            ['Take home pay setahun', Format::rp($jumlah('px_thp')), 'Penghasilan tunai - iuran & potongan pegawai - PPh 21 dipotong'],
             ['Penghasilan bruto', Format::rp($t['bruto_setahun'] ?? null), 'Dasar pengenaan pajak, termasuk premi BPJS yang dibayar perusahaan'],
             ['Tarif efektif', Format::rasio($t['pph21_setahun'] ?? null, $t['bruto_setahun'] ?? null), 'PPh 21 setahun / penghasilan bruto'],
         ];
@@ -127,25 +135,39 @@ final class TampilanHasil
             $baris('PPh 21 ditanggung pemerintah (dibayar tunai)', 'pph21_dtp', '+');
         }
         $baris('Take home pay', 'px_thp', '', true);
+        // bukan objek pajak (mis. iuran pemberi kerja dari berkas tambahan): informasi saja, tidak masuk bruto maupun THP
+        $lainnya = array_filter($tambahan['lainnya'] ?? [], fn ($f) => ! empty($m[$f]), ARRAY_FILTER_USE_KEY);
+        if ($lainnya) {
+            $judul('Lainnya (bukan objek pajak, tidak dibayar tunai)');
+            foreach ($lainnya as $f => $lbl) {
+                $baris($lbl, $f);
+            }
+        }
 
         return $rows;
     }
 
     /**
      * Komponen gaji dari berkas KB tambahan (keluaran engine `komponen`), dikelompokkan untuk slip sesuai rumus take
-     * home pay di KB: penghasilan tunai (teratur/tidak teratur), ditanggung perusahaan (premi/natura), atau potongan
-     * (iuran pengurang/zakat). Label dari deklarasi KB.
+     * home pay di KB: penghasilan tunai (teratur/tidak teratur), ditanggung perusahaan (premi/natura), potongan
+     * (iuran pengurang/zakat/tidak diperhitungkan, yang semuanya mengurangi THP), atau lainnya (bukan objek). Yang
+     * dipakai kategori efektif: bila regulasi mewajibkan kategori lain (KONFLIK_WAJIB), engine menghitung dengan
+     * kategori wajib itu. Label dari deklarasi KB. Komponen dasar Perusahaan X punya baris tetap di slip().
      */
     private function komponenTambahan(): array
     {
         $kelompok = ['teratur' => 'penghasilan', 'tidak_teratur' => 'penghasilan', 'premi_objek' => 'ditanggung', 'natura' => 'ditanggung',
-            'iuran_pengurang' => 'potongan', 'zakat' => 'potongan'];
+            'iuran_pengurang' => 'potongan', 'zakat' => 'potongan', 'tidak_diperhitungkan' => 'potongan', 'bukan_objek' => 'lainnya'];
         $hasil = [];
         foreach ($this->h['komponen'] ?? [] as $k) {
-            if (array_key_exists($k['fakta'], Label::FAKTA) || ! isset($kelompok[$k['kategori']])) {
+            $fakta = $k['fakta'] ?? null;
+            if ($fakta === null || array_key_exists($fakta, Label::FAKTA)) {
                 continue;
             }
-            $hasil[$kelompok[$k['kategori']]][$k['fakta']] = $this->label($k['fakta']);
+            $kategori = $this->kategoriWajib[$fakta] ?? $k['kategori'] ?? null;
+            if (isset($kelompok[$kategori])) {
+                $hasil[$kelompok[$kategori]][$fakta] = $this->label($fakta);
+            }
         }
 
         return $hasil;
@@ -247,18 +269,16 @@ final class TampilanHasil
         foreach ($this->h['peringatan'] ?? [] as $p) {
             $kode = $p['kode'] ?? '';
             if ($kode === 'KLASIFIKASI_TIDAK_DIATUR') {
-                $tidakDiatur[] = $this->label($p['fakta']).' ('.str_replace('_', ' ', $p['kategori_perusahaan']).')';
+                $tidakDiatur[] = $this->label($p['fakta'] ?? '?').' ('.self::kategori($p['kategori_perusahaan'] ?? null).')';
 
                 continue;
             }
             $hasil[] = match ($kode) {
                 'KONFLIK_WAJIB' => ['jenis' => 'warning', 'judul' => 'Konflik kebijakan perusahaan dengan aturan wajib',
-                    'teks' => 'Komponen '.$this->label($p['fakta']).' dikategorikan perusahaan sebagai penghasilan '
-                        .str_replace('_', ' ', $p['kategori_perusahaan']).', padahal regulasi menetapkan '
-                        .str_replace('_', ' ', $p['kategori_wajib']).' ('.($p['sumber'] ?? '').'). Kalkulator memakai aturan regulasi.'],
+                    'teks' => $this->teksKonflik($p)],
                 'GROSSUP_GANDA' => ['jenis' => 'info', 'judul' => 'Gross-up punya dua jawaban sah',
-                    'teks' => Format::bulan($p['bulan'] ?? null, true).': tunjangan pajak '.Format::rp($p['terkecil']).' atau '
-                        .Format::rp($p['terbesar']).'; dipakai yang '.($p['dipilih'] ?? 'terkecil').'.'],
+                    'teks' => Format::bulan($p['bulan'] ?? null, true).': tunjangan pajak '.Format::rp($p['terkecil'] ?? null).' atau '
+                        .Format::rp($p['terbesar'] ?? null).'; dipakai yang '.($p['dipilih'] ?? 'terkecil').'.'],
                 'TRANSAKSI_TAHUN_LAIN' => ['jenis' => 'info', 'judul' => 'Transaksi masuk tahun pajak lain',
                     'teks' => json_encode($p, JSON_UNESCAPED_UNICODE)],
                 default => ['jenis' => 'info', 'judul' => $kode, 'teks' => json_encode($p, JSON_UNESCAPED_UNICODE)],
@@ -271,6 +291,34 @@ final class TampilanHasil
         }
 
         return $hasil;
+    }
+
+    /**
+     * KONFLIK_WAJIB punya dua bentuk: tingkat klasifikasi (kategori_perusahaan/kategori_wajib, dari kategori_efektif)
+     * dan tingkat aturan (ditolak/pemenang, dari resolusi lex superior di inferensi). Bentuk aturan sengaja tanpa
+     * bulan agar peringatan yang sama untuk banyak masa tampil sekali.
+     */
+    private function teksKonflik(array $p): string
+    {
+        $label = $this->label($p['fakta'] ?? '?');
+        if (array_key_exists('kategori_wajib', $p) || array_key_exists('kategori_perusahaan', $p)) {
+            return 'Komponen '.$label.' dikategorikan perusahaan sebagai penghasilan '.self::kategori($p['kategori_perusahaan'] ?? null)
+                .', padahal regulasi menetapkan '.self::kategori($p['kategori_wajib'] ?? null)
+                .(($p['sumber'] ?? '') !== '' ? ' ('.$p['sumber'].')' : '').'. Kalkulator memakai aturan regulasi.';
+        }
+
+        return 'Aturan '.self::daftar($p['ditolak'] ?? null).' untuk '.$label.' tidak dipakai karena aturan wajib '
+            .self::daftar($p['pemenang'] ?? null).' berlaku.';
+    }
+
+    private static function kategori(?string $k): string
+    {
+        return str_replace('_', ' ', $k ?? '?');
+    }
+
+    private static function daftar(mixed $x): string
+    {
+        return is_array($x) ? implode(', ', $x) : (string) ($x ?? '?');
     }
 
     /** Jejak inferensi tanpa fakta antara (berawalan "_"). */

@@ -15,6 +15,32 @@ abstract class TestCase extends BaseTestCase
         $this->withoutVite();
     }
 
+    /**
+     * Dijalankan sebelum trait (RefreshDatabase) sempat mengosongkan database. Dengan konfigurasi ter-cache
+     * (php artisan config:cache) nilai env dari phpunit.xml diabaikan, sehingga uji akan menghapus database aplikasi.
+     */
+    protected function setUpTraits()
+    {
+        $this->pastikanDatabaseUji();
+
+        return parent::setUpTraits();
+    }
+
+    protected function pastikanDatabaseUji(): void
+    {
+        $nama = config('database.default');
+        $koneksi = config("database.connections.{$nama}", []);
+        $driver = $koneksi['driver'] ?? '?';
+        $database = (string) ($koneksi['database'] ?? '');
+        $sqliteMemori = $driver === 'sqlite' && $database === ':memory:';
+        $pgsqlUji = (string) env('PAYROLL_UJI_PGSQL') === '1' && str_ends_with($database, '_uji');
+        if (! $sqliteMemori && ! $pgsqlUji) {
+            $this->fail("Uji dihentikan: koneksi database uji adalah {$driver} '{$database}', bukan SQLite :memory:. Menjalankan uji "
+                .'di sini akan mengosongkan database aplikasi. Hapus konfigurasi ter-cache (php artisan config:clear) lalu ulangi; '
+                .'untuk uji PostgreSQL pakai phpunit.pgsql.xml (database berakhiran _uji).');
+        }
+    }
+
     protected function masuk(): User
     {
         $user = User::factory()->create();

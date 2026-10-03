@@ -25,6 +25,7 @@ return [
     'required' => ':Attribute wajib diisi.',
     'string' => ':Attribute harus berupa teks.',
     'unique' => ':Attribute sudah dipakai.',
+    'uploaded' => ':Attribute gagal diunggah (mungkin melebihi batas ukuran unggahan server).',
 
     'attributes' => [
         'tahun' => 'tahun pajak',

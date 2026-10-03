@@ -30,6 +30,8 @@ class UsulanKb extends Model
         'ditolak' => ['ditolak', 'red'],
     ];
 
+    public const PESAN_MACET = 'Proses tidak selesai (pekerja antrean berhenti di tengah jalan). Tekan Baca ulang.';
+
     public const LAPISAN = [
         'perusahaan' => 'Peraturan perusahaan',
         'regulasi' => 'Peraturan pemerintah',
@@ -67,6 +69,29 @@ class UsulanKb extends Model
     public function sedangDiproses(): bool
     {
         return in_array($this->status, ['antre', 'diproses'], true);
+    }
+
+    /** Detik sejak status terakhir berubah (untuk antre/diproses: lama menunggu atau lama dibaca). */
+    public function detikSejakBerubah(): int
+    {
+        return $this->updated_at ? max(0, (int) $this->updated_at->diffInSeconds(now())) : 0;
+    }
+
+    /**
+     * Status diproses yang jauh melewati batas waktu LLM berarti pekerja antrean mati di tengah jalan (failed() tidak
+     * sempat dipanggil). Tandai gagal agar admin dapat membaca ulang; bersyarat agar hasil job yang baru selesai menang.
+     */
+    public function tandaiBilaMacet(): bool
+    {
+        $batas = config('payroll.llm_timeout') + 120;
+        if ($this->status !== 'diproses' || $this->detikSejakBerubah() <= $batas) {
+            return false;
+        }
+        $n = static::whereKey($this->id)->where('status', 'diproses')->where('updated_at', '<', now()->subSeconds($batas))
+            ->update(['status' => 'gagal', 'pesan_galat' => self::PESAN_MACET]);
+        $this->refresh();
+
+        return $n > 0;
     }
 
     public function labelStatus(): array

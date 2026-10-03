@@ -76,16 +76,27 @@
         }).then(result => {
             if (result.isConfirmed) {
                 form.dataset.terkonfirmasi = '1';
-                $(form).find('button[type="submit"]').prop('disabled', true);
+                // form.submit() tidak memicu event submit, jadi pemuat data-proses dipasang di sini
+                if (form.dataset.proses) {
+                    kunciTombolProses(form);
+                } else {
+                    $(form).find('button[type="submit"]').prop('disabled', true);
+                }
                 form.submit();
             }
         });
     });
 
+    function kunciTombolProses(form) {
+        $(form).find('button[type="submit"]').prop('disabled', true)
+            .html('<span class="spinner-border spinner-border-sm me-2"></span>' + escapeHtml(form.dataset.proses));
+    }
+
     /** Tombol proses panjang (memanggil engine): kunci tombol & tampilkan memuat. */
     $(document).on('submit', 'form[data-proses]', function() {
-        $(this).find('button[type="submit"]').prop('disabled', true)
-            .html('<span class="spinner-border spinner-border-sm me-2"></span>' + escapeHtml(this.dataset.proses));
+        // form yang juga meminta konfirmasi: tunggu jawaban dialog; bila dibatalkan tombol tidak boleh terkunci
+        if (this.dataset.konfirmasi !== undefined && !this.dataset.terkonfirmasi) return;
+        kunciTombolProses(this);
     });
 </script>
 

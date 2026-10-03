@@ -8,7 +8,7 @@
         {{-- Ringkasan --}}
         <div class="col-sm-6 col-xl-3">
             <x-global.summary-card title="Pegawai dengan data HR {{ $tahun }}" :value="$jumlah" color="blue"
-                keterangan="{{ $belumDihitung }} belum dihitung / perlu dihitung ulang">
+                keterangan="{{ $belumDihitung }} belum dihitung / perlu dihitung ulang{{ $usang ? ' (termasuk '.$usang.' hasil usang)' : '' }}">
                 <x-slot:icon><i class="ti ti-users"></i></x-slot:icon>
             </x-global.summary-card>
         </div>
@@ -158,7 +158,7 @@
                 key: 'status',
                 render: item => ({
                     belum: '<span class="status status-gray">belum dihitung</span>',
-                    kedaluwarsa: '<span class="status status-yellow">data / aturan berubah, hitung ulang</span>',
+                    kedaluwarsa: `<span class="status status-yellow">${item.alasan === 'kb' ? 'aturan KB berubah' : 'data HR berubah'}, hitung ulang</span>`,
                     galat: `<span class="status status-red">galat</span><div class="mdka-text-red-600 small text-wrap" style="max-width: 260px">${escapeHtml(item.pesan)}</div>`,
                     berhasil: `<span class="text-muted">${escapeHtml(item.dihitung)}</span>`,
                 })[item.status]

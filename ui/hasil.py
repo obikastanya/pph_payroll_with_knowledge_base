@@ -291,32 +291,59 @@ def grafik(h, mesin):
 
 # ---------------------------------------------------------------------------- peringatan & mekanisme
 
+def _kategori(k):
+    return (k or "?").replace("_", " ")
+
+
+def _daftar(x):
+    return ", ".join(x) if isinstance(x, (list, tuple)) else str(x or "?")
+
+
+def teks_peringatan(p):
+    """Satu peringatan engine -> (teks markdown, jenis: konflik|grossup|info), atau None bila diringkas terpisah.
+
+    KONFLIK_WAJIB punya dua bentuk: tingkat klasifikasi (kategori_perusahaan/kategori_wajib, dari kategori_efektif)
+    dan tingkat aturan (ditolak/pemenang, dari resolusi lex superior); kunci opsional dibaca aman."""
+    kode = p.get("kode")
+    if kode == "KONFLIK_WAJIB":
+        if "kategori_wajib" in p or "kategori_perusahaan" in p:
+            teks = (f"**Konflik kebijakan perusahaan dengan aturan wajib:** komponen `{p.get('fakta')}` ({p.get('jenis') or '-'}) "
+                    f"dikategorikan perusahaan sebagai *{_kategori(p.get('kategori_perusahaan'))}*, padahal regulasi menetapkan "
+                    f"*{_kategori(p.get('kategori_wajib'))}* ({p.get('sumber') or ''}). Kalkulator memakai aturan regulasi.")
+        else:
+            teks = (f"**Konflik kebijakan perusahaan dengan aturan wajib:** aturan {_daftar(p.get('ditolak'))} untuk "
+                    f"{D.label(p.get('fakta') or '?')} tidak dipakai karena aturan wajib {_daftar(p.get('pemenang'))} berlaku.")
+        return teks, "konflik"
+    if kode == "GROSSUP_GANDA":
+        terkecil, terbesar = p.get("terkecil"), p.get("terbesar")
+        teks = (f"**Gross-up punya dua jawaban sah** ({D.NAMA_BULAN.get(p.get('bulan'), 'masa terakhir')}): tunjangan pajak "
+                f"{D.rp(terkecil) if terkecil is not None else '-'} atau {D.rp(terbesar) if terbesar is not None else '-'}; "
+                f"dipakai yang {p.get('dipilih') or 'terkecil'}.")
+        return teks, "grossup"
+    if kode == "KLASIFIKASI_TIDAK_DIATUR":
+        return None
+    return f"**{kode}**: {p}", "info"
+
+
 def peringatan(mesin, h):
     if mesin == M.TANPA_KB:
         st.caption(":material/info: Kalkulator tanpa KB tidak memeriksa konflik kebijakan: aturan langsung ditulis di kode, "
                    "jadi kesalahan kebijakan hanya bisa ditemukan dengan membaca kode.")
         return
     tampil = set()
-    for p in h["peringatan"]:
-        kode = p.get("kode")
-        if kode == "KONFLIK_WAJIB":
-            teks = (f"**Konflik kebijakan perusahaan dengan aturan wajib:** komponen `{p['fakta']}` ({p.get('jenis')}) dikategorikan "
-                    f"perusahaan sebagai *{p['kategori_perusahaan']}*, padahal regulasi menetapkan *{p['kategori_wajib']}* "
-                    f"({p.get('sumber', '')}). Kalkulator memakai aturan regulasi.")
-            ikon, fn = ":material/gavel:", st.warning
-        elif kode == "GROSSUP_GANDA":
-            teks = (f"**Gross-up punya dua jawaban sah** ({D.NAMA_BULAN.get(p['bulan'], 'masa terakhir')}): tunjangan pajak "
-                    f"{D.rp(p['terkecil'])} atau {D.rp(p['terbesar'])}; dipakai yang {p['dipilih']}.")
-            ikon, fn = ":material/call_split:", st.info
-        elif kode == "KLASIFIKASI_TIDAK_DIATUR":
+    for p in h.get("peringatan") or []:
+        hasil = teks_peringatan(p)
+        if hasil is None:
             continue
-        else:
-            teks, ikon, fn = f"**{kode}**: {p}", ":material/info:", st.info
+        teks, jenis = hasil
         if teks not in tampil:
             tampil.add(teks)
-            fn(teks, icon=ikon)
-    tidak_diatur = sorted({f"{D.label(p['fakta'])} ({p['kategori_perusahaan'].replace('_', ' ')})" for p in h["peringatan"]
-                           if p.get("kode") == "KLASIFIKASI_TIDAK_DIATUR"})
+            if jenis == "konflik":
+                st.warning(teks, icon=":material/gavel:")
+            else:
+                st.info(teks, icon=":material/call_split:" if jenis == "grossup" else ":material/info:")
+    tidak_diatur = sorted({f"{D.label(p.get('fakta') or '?')} ({_kategori(p.get('kategori_perusahaan'))})"
+                           for p in h.get("peringatan") or [] if p.get("kode") == "KLASIFIKASI_TIDAK_DIATUR"})
     if tidak_diatur:
         st.info("**Klasifikasi mengikuti kebijakan perusahaan** karena regulasi tidak mengaturnya secara tegas: " + ", ".join(tidak_diatur),
                 icon=":material/info:")

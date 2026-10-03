@@ -34,12 +34,27 @@ class MesinController extends Controller
             $info = null;
             $galat = $e->getMessage();
         }
+        // `info` tidak memuat berkas tambahan; status KB yang benar-benar dipakai perhitungan berasal dari `periksa`
+        $periksa = null;
+        if ($galat === null && $tambahan !== []) {
+            try {
+                $periksa = $mesin->periksa($tambahan);
+            } catch (MesinTidakTersedia $e) {
+                $periksa = ['ok' => false, 'galat' => [$e->getMessage()], 'tahun' => []];
+            }
+            $periksa = [
+                'ok' => (bool) ($periksa['ok'] ?? false),
+                'galat' => array_values(array_filter(is_array($periksa['galat'] ?? null) ? $periksa['galat'] : [], 'is_scalar')),
+                'tahun' => array_values(array_filter(is_array($periksa['tahun'] ?? null) ? $periksa['tahun'] : [], 'is_int')),
+            ];
+        }
 
         return view('Mesin::index', [
             'pageTitle' => $this->pageTitle,
             'menuItems' => $this->menuItems,
             'info' => $info,
             'galat' => $galat,
+            'periksa' => $periksa,
             'konfigurasi' => [
                 'Folder engine (PAYROLL_ROOT)' => config('payroll.root'),
                 'Python (PAYROLL_PYTHON)' => config('payroll.python'),

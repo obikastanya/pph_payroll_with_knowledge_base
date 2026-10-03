@@ -40,7 +40,8 @@ return [
             'connection' => env('DB_QUEUE_CONNECTION'),
             'table' => env('DB_QUEUE_TABLE', 'jobs'),
             'queue' => env('DB_QUEUE', 'default'),
-            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 90),
+            // harus lebih besar dari batas waktu job asisten KB (PAYROLL_LLM_TIMEOUT + 60), agar job yang masih berjalan tidak diambil ulang
+            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 1080),
             'after_commit' => false,
         ],
 

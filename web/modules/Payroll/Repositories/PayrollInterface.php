@@ -17,8 +17,11 @@ interface PayrollInterface
     /** Tahun yang belum punya data HR dan termasuk masa kerja pegawai, terbaru dulu. */
     public function tahunBelumDiisi(Pegawai $pegawai): array;
 
-    /** Isian awal form tambah: [PayrollTahun belum disimpan, baris 12 bulan]. */
-    public function isianBaru(Pegawai $pegawai, int $tahun): array;
+    /**
+     * Isian awal form tambah: [PayrollTahun belum disimpan, baris 12 bulan, isian tambahan KB (bentuk isianMasukan)].
+     * Isian tambahan tahunan untuk $kunciTahunan dilanjutkan dari tahun terbaru pegawai yang memilikinya.
+     */
+    public function isianBaru(Pegawai $pegawai, int $tahun, array $kunciTahunan = []): array;
 
     /** Isian form ubah: baris 12 bulan dari database. */
     public function isianBulan(PayrollTahun $payroll): array;

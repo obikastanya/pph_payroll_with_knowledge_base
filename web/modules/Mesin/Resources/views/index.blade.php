@@ -13,11 +13,31 @@
                         </div>
                     </div>
                 </div>
+            @elseif ($periksa && ! $periksa['ok'])
+                <div class="alert alert-danger mb-0" role="alert">
+                    <div class="d-flex gap-2"><i class="ti ti-database-x fs-2"></i>
+                        <div><strong>Engine berjalan, tetapi KB dengan berkas tambahan yang aktif tidak dapat dimuat atau dihitung.</strong>
+                            Perhitungan payroll akan gagal sampai berkas yang bermasalah dinonaktifkan atau diperbaiki di menu
+                            <a href="{{ route('kb.index') }}">Basis pengetahuan</a>.
+                            <ul class="mb-0 mt-1 ps-3">
+                                @forelse ($periksa['galat'] as $g)
+                                    <li class="text-break" style="white-space: pre-line">{{ $g }}</li>
+                                @empty
+                                    <li>engine tidak memberi keterangan</li>
+                                @endforelse
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             @else
                 <div class="alert alert-success mb-0">
                     <div class="d-flex gap-2"><i class="ti ti-plug-connected fs-2"></i>
                         <div><strong>Engine siap.</strong> Aplikasi ini tidak menghitung pajak sendiri: setiap angka dihitung oleh engine knowledge base
-                            (Python) di repositori induk lewat jembatan JSON. Aturan pajak dan kebijakan perusahaan berada di berkas KB, bukan di kode aplikasi.</div>
+                            (Python) di repositori induk lewat jembatan JSON. Aturan pajak dan kebijakan perusahaan berada di berkas KB, bukan di kode aplikasi.
+                            @if ($periksa)
+                                <div class="small mt-1">KB beserta berkas tambahan yang aktif berhasil dimuat dan dihitung engine{{ $periksa['tahun'] ? ' untuk tahun '.implode(', ', $periksa['tahun']) : '' }}.</div>
+                            @endif
+                        </div>
                     </div>
                 </div>
             @endif

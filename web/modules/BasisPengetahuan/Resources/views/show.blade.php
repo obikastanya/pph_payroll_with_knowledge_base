@@ -4,12 +4,40 @@
 @use('Modules\BasisPengetahuan\Http\Controllers\BasisPengetahuanController')
 
 @php
+    // usulan (keluaran LLM) dan validasi (jawaban engine atas YAML yang bisa ditulis admin) bisa berbentuk apa saja:
+    // setiap akses bersarang dijaga agar halaman tinjau tidak pernah HTTP 500
     [$labelStatus, $warnaStatus] = $u->labelStatus();
-    $usulan = $u->usulan ?? [];
-    $v = $u->validasi ?? [];
-    $isi = $v['isi'] ?? [];
+    $teks = fn ($x, string $bawaan = '') => is_scalar($x) ? (is_bool($x) ? ($x ? 'ya' : 'tidak') : (string) $x) : $bawaan;
+    $daftar = fn ($x) => is_array($x) ? array_values(array_filter($x, 'is_array')) : [];
+    $daftarTeks = fn ($x) => is_array($x) ? array_values(array_map($teks, array_filter($x, 'is_scalar'))) : [];
+    $nilai = fn ($x, bool $awalan = false) => $x === null || is_scalar($x) ? Format::rp($x, $awalan) : '?';
+    $berlaku = fn ($b = null) => is_array($b) ? $teks($b['mulai'] ?? null, '?').' – '.$teks($b['sampai'] ?? null, 'seterusnya') : '?';
+    $usulan = is_array($u->usulan) ? $u->usulan : [];
+    $v = is_array($u->validasi) ? $u->validasi : [];
+    $lolos = ($v['ok'] ?? false) === true;
+    // tabel isi berkas hanya dari validasi yang lolos: isi berkas yang gagal dimuat bisa berbentuk apa pun ({} di kontrak)
+    $isi = $lolos && is_array($v['isi'] ?? null) ? $v['isi'] : [];
+    $ringkasan = is_array($v['ringkasan'] ?? null) ? $v['ringkasan'] : [];
+    $galat = $daftarTeks($v['galat'] ?? []);
+    $peringatan = $daftarTeks($v['peringatan'] ?? []);
+    $perubahan = $daftar($v['perubahan'] ?? []);
+    $belumTeruji = $daftar($v['belum_teruji'] ?? []);
+    $masukan = $daftar($v['masukan'] ?? []);
+    $dampak = $daftar($v['dampak'] ?? []);
+    $perluDiperiksa = count($peringatan) + count($belumTeruji);
+    $lapisanBerkas = $teks($ringkasan['lapisan'] ?? null);
+    $lapisanBeda = $lapisanBerkas !== '' && $lapisanBerkas !== $u->lapisan;
+    $jenisUbah = ['aturan' => 'aturan', 'parameter' => 'parameter', 'klasifikasi' => 'klasifikasi wajib'];
+    $ringkasUbah = collect($perubahan)->countBy(fn ($p) => $teks($p['jenis'] ?? null, 'lainnya'))
+        ->map(fn ($n, $j) => $n.' '.($jenisUbah[$j] ?? $j))->values()->implode(', ');
+    $aturanIsi = $daftar($isi['aturan'] ?? []);
+    $komponenIsi = $daftar($isi['komponen'] ?? []);
+    $parameterIsi = $daftar($isi['parameter'] ?? []);
+    $klasifikasiIsi = $daftar($isi['klasifikasi_wajib'] ?? []);
+    $pembulatanIsi = $daftar($isi['pembulatan'] ?? []);
+    $infoLlm = is_array($u->info_llm) ? $u->info_llm : [];
     $bolehUbah = BasisPengetahuanController::bolehUbah($u);
-    $berlaku = fn (array $b) => ($b['mulai'] ?? '?').' – '.($b['sampai'] ?? 'seterusnya');
+    $berjalan = $u->sedangDiproses() ? $u->detikSejakBerubah() : 0;
     $tipe = ['rupiah' => 'rupiah', 'bilangan' => 'bilangan bulat', 'persen' => 'persen', 'desimal' => 'desimal', 'tanggal' => 'tanggal',
         'pilihan' => 'pilihan', 'ya_tidak' => 'ya / tidak'];
 @endphp
@@ -29,6 +57,11 @@
                             <div class="d-flex flex-wrap align-items-center gap-2">
                                 <span class="status status-{{ $warnaStatus }}" id="statusUsulan">{{ $labelStatus }}</span>
                                 <span class="badge mdka-bg-gray-100 mdka-text-gray-700">{{ UsulanKb::LAPISAN[$u->lapisan] ?? $u->lapisan }}</span>
+                                @if ($lapisanBeda)
+                                    <span class="badge mdka-bg-orange-100 mdka-text-orange-600" data-bs-toggle="tooltip"
+                                        data-bs-title="Engine memuat berkas menurut lapisan yang tertulis di dalamnya, bukan menurut pilihan saat unggah.">
+                                        <i class="ti ti-alert-triangle me-1"></i>Lapisan di berkas: {{ $lapisanBerkas }} (berbeda dari pilihan unggah)</span>
+                                @endif
                                 <a href="{{ route('kb.pdf', $u) }}" class="small"><i class="ti ti-file-type-pdf me-1"></i>{{ $u->nama_pdf }}
                                     ({{ BasisPengetahuanController::ukuran($u->ukuran_pdf) }})</a>
                                 <span class="text-muted small">diunggah {{ $u->created_at->format('d/m/Y H:i') }} oleh {{ $u->user?->name ?? '-' }}</span>
@@ -38,7 +71,7 @@
                     <div class="d-flex flex-wrap gap-2">
                         @if ($u->status === 'siap_tinjau')
                             <form method="POST" action="{{ route('kb.terapkan', $u) }}" data-konfirmasi="Terapkan aturan ini ke knowledge base?"
-                                data-konfirmasi-teks="Engine akan memakainya pada perhitungan berikutnya. Pastikan rancangan sudah Anda cocokkan dengan dokumen."
+                                data-konfirmasi-teks="{{ $perubahan ? 'Rancangan ini mengubah '.count($perubahan).' hal yang sudah ada di KB ('.$ringkasUbah.'). ' : '' }}Engine akan memakainya pada perhitungan berikutnya. Pastikan rancangan sudah Anda cocokkan dengan dokumen."
                                 data-konfirmasi-tombol="Terapkan">
                                 @csrf
                                 <x-global.btn-detail label="Terapkan ke KB" color="green" type="submit" :disabled="! $u->valid">
@@ -72,6 +105,16 @@
                                 </x-global.btn-detail>
                             </form>
                         @endif
+                        @if ($u->status === 'antre')
+                            <form method="POST" action="{{ route('kb.destroy', $u) }}" data-konfirmasi="Batalkan unggahan ini?"
+                                data-konfirmasi-teks="Dokumen belum dibaca LLM. PDF dan usulannya dihapus." data-konfirmasi-ikon="warning" data-konfirmasi-tombol="Batalkan">
+                                @csrf
+                                @method('DELETE')
+                                <x-global.btn-detail label="Batalkan" color="red" outline="true" type="submit">
+                                    <x-slot:icon><i class="ti ti-x"></i></x-slot:icon>
+                                </x-global.btn-detail>
+                            </form>
+                        @endif
                         @if (! $u->aktif && ! $u->sedangDiproses())
                             <form method="POST" action="{{ route('kb.destroy', $u) }}" data-konfirmasi="Hapus usulan ini?"
                                 data-konfirmasi-teks="PDF dan rancangannya dihapus permanen." data-konfirmasi-ikon="warning" data-konfirmasi-tombol="Hapus">
@@ -98,8 +141,13 @@
                         <div class="empty-icon"><span class="spinner-border mdka-text-blue-500" role="status"></span></div>
                         <p class="empty-title">LLM sedang membaca dokumen…</p>
                         <p class="empty-subtitle text-muted mb-0">Biasanya 1–5 menit, tergantung panjang dokumen. Halaman ini diperbarui otomatis; Anda boleh meninggalkannya.</p>
-                        <p class="text-warning small mt-3 mb-0 d-none" id="petunjukAntrean"><i class="ti ti-alert-triangle me-1"></i>Masih menunggu antrean.
-                            Pastikan pekerja antrean berjalan: <code>php artisan queue:work --timeout=960</code></p>
+                        <p class="text-warning small mt-3 mb-0 {{ $u->status === 'antre' && $berjalan >= 45 ? '' : 'd-none' }}" id="petunjukAntrean">
+                            <i class="ti ti-alert-triangle me-1"></i>Masih menunggu antrean. Pastikan pekerja antrean berjalan:
+                            <code>php artisan queue:listen --timeout=960</code></p>
+                        <p class="text-warning small mt-3 mb-0 {{ $u->status === 'diproses' && $berjalan > 120 ? '' : 'd-none' }}" id="petunjukLama">
+                            <i class="ti ti-alert-triangle me-1"></i>Sudah lebih dari 2 menit. Pastikan pekerja antrean masih berjalan
+                            (<code>php artisan queue:listen --timeout=960</code>); bila pekerja berhenti, proses ini ditandai gagal setelah batas waktu
+                            dan dapat dibaca ulang.</p>
                     </div>
                 </div>
             </div>
@@ -118,6 +166,9 @@
         @endif
 
         @if ($usulan)
+            @php($dapat = ($usulan['dapat_dikodifikasi'] ?? true) !== false)
+            @php($alasan = $teks($usulan['alasan'] ?? null))
+            @php($catatanPeninjau = $daftarTeks($usulan['catatan_peninjau'] ?? []))
             {{-- Ringkasan LLM --}}
             <div class="col-lg-7">
                 <div class="card h-100">
@@ -125,25 +176,25 @@
                         <h4 class="card-title mb-0"><i class="ti ti-sparkles me-2 mdka-text-purple-600"></i>Yang dibaca LLM dari dokumen</h4>
                     </div>
                     <div class="card-body p-3">
-                        <p class="mb-2">{{ $usulan['ringkasan'] ?? '' }}</p>
-                        @if (! ($usulan['dapat_dikodifikasi'] ?? true) || ($usulan['alasan'] ?? '') !== '')
-                            <div class="alert {{ ($usulan['dapat_dikodifikasi'] ?? true) ? 'alert-info' : 'alert-warning' }} mb-2">
-                                <strong>{{ ($usulan['dapat_dikodifikasi'] ?? true) ? 'Catatan:' : 'Tidak dapat dijadikan aturan KB:' }}</strong> {{ $usulan['alasan'] ?? '' }}
+                        <p class="mb-2">{{ $teks($usulan['ringkasan'] ?? null) }}</p>
+                        @if (! $dapat || $alasan !== '')
+                            <div class="alert {{ $dapat ? 'alert-info' : 'alert-warning' }} mb-2">
+                                <strong>{{ $dapat ? 'Catatan:' : 'Tidak dapat dijadikan aturan KB:' }}</strong> {{ $alasan }}
                             </div>
                         @endif
-                        @if (! empty($usulan['catatan_peninjau']))
+                        @if ($catatanPeninjau)
                             <div class="fw-medium mb-1"><i class="ti ti-flag me-1 mdka-text-orange-600"></i>Perlu Anda periksa</div>
                             <ul class="mb-0 ps-3">
-                                @foreach ($usulan['catatan_peninjau'] as $c)
+                                @foreach ($catatanPeninjau as $c)
                                     <li>{{ $c }}</li>
                                 @endforeach
                             </ul>
                         @endif
                     </div>
-                    @if ($u->info_llm)
+                    @if ($infoLlm)
                         <div class="card-footer p-3 text-muted small">
-                            Model <code>{{ $u->info_llm['model'] ?? '-' }}</code> · {{ Format::rp($u->info_llm['token_masuk'] ?? 0, false) }} token masuk
-                            ({{ Format::rp($u->info_llm['token_cache_baca'] ?? 0, false) }} dari cache) · {{ Format::rp($u->info_llm['token_keluar'] ?? 0, false) }} token keluar
+                            Model <code>{{ $teks($infoLlm['model'] ?? null, '-') }}</code> · {{ $nilai($infoLlm['token_masuk'] ?? 0) }} token masuk
+                            ({{ $nilai($infoLlm['token_cache_baca'] ?? 0) }} dari cache) · {{ $nilai($infoLlm['token_keluar'] ?? 0) }} token keluar
                         </div>
                     @endif
                 </div>
@@ -158,27 +209,35 @@
                     <div class="card-body p-3">
                         @if (! $v)
                             <p class="text-muted mb-0">Tidak ada rancangan untuk divalidasi.</p>
-                        @elseif ($v['ok'])
+                        @elseif ($lolos && $perluDiperiksa === 0)
                             <div class="alert alert-success mb-2"><i class="ti ti-checks me-1"></i><strong>Lolos.</strong> Skema, verifikasi statis KB, dan simulasi pegawai contoh berhasil.</div>
+                        @elseif ($lolos)
+                            <div class="alert alert-warning mb-2"><i class="ti ti-alert-triangle me-1"></i><strong>Lolos pemeriksaan bentuk, tetapi ada
+                                    {{ $perluDiperiksa }} hal yang perlu diperiksa sebelum menerapkan.</strong></div>
                         @else
                             <div class="alert alert-danger mb-2" role="alert"><strong>Belum lolos — tidak dapat diterapkan.</strong>
                                 <ul class="mb-0 ps-3">
-                                    @foreach ($v['galat'] as $g)
+                                    @forelse ($galat as $g)
                                         <li class="text-break">{{ $g }}</li>
-                                    @endforeach
+                                    @empty
+                                        <li>engine tidak memberi keterangan</li>
+                                    @endforelse
                                 </ul>
                             </div>
                         @endif
-                        @foreach ($v['peringatan'] ?? [] as $p)
+                        @foreach ($peringatan as $p)
                             <div class="alert alert-warning mb-2 text-break"><i class="ti ti-alert-triangle me-1"></i>{{ $p }}</div>
                         @endforeach
                         @if ($v)
                             <div class="d-flex flex-wrap gap-1">
                                 @foreach (['aturan' => 'aturan', 'komponen' => 'komponen gaji', 'masukan' => 'isian baru', 'parameter' => 'parameter', 'pembulatan' => 'pembulatan'] as $k => $lbl)
-                                    @if ($v['ringkasan'][$k] ?? 0)
-                                        <span class="badge mdka-bg-gray-100 mdka-text-gray-700">{{ $v['ringkasan'][$k] }} {{ $lbl }}</span>
+                                    @if (is_int($ringkasan[$k] ?? null) && $ringkasan[$k] > 0)
+                                        <span class="badge mdka-bg-gray-100 mdka-text-gray-700">{{ $ringkasan[$k] }} {{ $lbl }}</span>
                                     @endif
                                 @endforeach
+                                @if ($lapisanBerkas !== '')
+                                    <span class="badge {{ $lapisanBeda ? 'mdka-bg-orange-100 mdka-text-orange-600' : 'mdka-bg-gray-100 mdka-text-gray-700' }}">lapisan {{ $lapisanBerkas }}</span>
+                                @endif
                             </div>
                             <p class="text-muted small mt-2 mb-0">Validasi memeriksa bentuk dan konsistensi, bukan kebenaran isi terhadap dokumen. Cocokkan tiap aturan dengan kutipan dan halaman PDF-nya.</p>
                         @endif
@@ -187,8 +246,44 @@
             </div>
         @endif
 
+        {{-- Yang diubah rancangan ini --}}
+        @if ($perubahan || $belumTeruji)
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header p-3 d-block">
+                        <h4 class="card-title mb-1"><i class="ti ti-arrows-diff me-2 mdka-text-orange-600"></i>Yang diubah rancangan ini</h4>
+                        <div class="text-muted small">Aturan, parameter, atau klasifikasi yang sudah ada di KB dan berubah bila rancangan ini diterapkan.</div>
+                    </div>
+                    <div class="card-body p-3">
+                        @if ($perubahan)
+                            <ul class="list-unstyled mb-0">
+                                @foreach ($perubahan as $p)
+                                    @php($jenisP = $teks($p['jenis'] ?? null, 'lainnya'))
+                                    <li class="d-flex gap-2 align-items-start mb-1">
+                                        <span class="badge mdka-bg-orange-100 mdka-text-orange-600 text-nowrap">{{ $jenisUbah[$jenisP] ?? $jenisP }}</span>
+                                        <span class="text-break">{{ $teks($p['teks'] ?? null, '-') }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p class="text-muted mb-0">Tidak ada aturan, parameter, atau klasifikasi yang sudah ada yang diubah.</p>
+                        @endif
+                        @if ($belumTeruji)
+                            <div class="fw-medium mt-3 mb-1"><i class="ti ti-flask-off me-1 mdka-text-orange-600"></i>Aturan belum teruji</div>
+                            <div class="text-muted small mb-1">Simulasi pegawai contoh tidak menjalankan aturan berikut; periksa rumusnya secara manual.</div>
+                            <ul class="mb-0 ps-3">
+                                @foreach ($belumTeruji as $b)
+                                    <li><span class="font-monospace fw-medium">{{ $teks($b['aturan'] ?? null, '?') }}</span>: {{ $teks($b['alasan'] ?? null, '-') }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @endif
+
         {{-- Isian baru --}}
-        @if (! empty($v['masukan']))
+        @if ($masukan)
             <div class="col-12">
                 <div class="card">
                     <div class="card-header p-3 d-block">
@@ -204,23 +299,26 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($v['masukan'] as $m)
+                                @foreach ($masukan as $m)
+                                    @php($tipeM = $teks($m['tipe'] ?? null))
+                                    @php($pilihan = $daftarTeks($m['pilihan'] ?? []))
+                                    @php($keterangan = $teks($m['keterangan'] ?? null))
                                     <tr>
-                                        <td><span class="fw-medium">{{ $m['label'] }}</span>
-                                            <div class="text-muted small font-monospace">{{ $m['kunci'] }}</div>
-                                            @if ($m['keterangan'])
-                                                <div class="text-muted small">{{ $m['keterangan'] }}</div>
+                                        <td><span class="fw-medium">{{ $teks($m['label'] ?? null) }}</span>
+                                            <div class="text-muted small font-monospace">{{ $teks($m['kunci'] ?? null, '?') }}</div>
+                                            @if ($keterangan !== '')
+                                                <div class="text-muted small">{{ $keterangan }}</div>
                                             @endif
-                                            @unless ($m['dideklarasikan'])
+                                            @if (($m['dideklarasikan'] ?? true) === false)
                                                 <span class="status status-red">belum dideklarasikan</span>
-                                            @endunless
+                                            @endif
                                         </td>
-                                        <td class="text-nowrap">{{ $tipe[$m['tipe']] ?? $m['tipe'] }}@if ($m['pilihan']): {{ implode(', ', $m['pilihan']) }}@endif</td>
-                                        <td class="text-nowrap">{{ $m['lingkup'] === 'tahun' ? 'sekali setahun' : 'tiap bulan' }}</td>
-                                        <td>{{ $m['wajib'] ? 'ya' : 'tidak' }}</td>
-                                        <td class="tabular-nums">{{ $m['bawaan'] === null ? '-' : (is_bool($m['bawaan']) ? ($m['bawaan'] ? 'ya' : 'tidak') : (is_int($m['bawaan']) ? Format::rp($m['bawaan'], false) : $m['bawaan'])) }}</td>
-                                        <td class="font-monospace small">{{ implode(', ', $m['aturan']) }}</td>
-                                        <td class="small text-muted">{{ $m['sumber'] ?: '-' }}</td>
+                                        <td class="text-nowrap">{{ $tipe[$tipeM] ?? $tipeM }}@if ($pilihan): {{ implode(', ', $pilihan) }}@endif</td>
+                                        <td class="text-nowrap">{{ ($m['lingkup'] ?? null) === 'tahun' ? 'sekali setahun' : 'tiap bulan' }}</td>
+                                        <td>{{ ($m['wajib'] ?? false) === true ? 'ya' : 'tidak' }}</td>
+                                        <td class="tabular-nums">{{ $nilai($m['bawaan'] ?? null) }}</td>
+                                        <td class="font-monospace small">{{ implode(', ', $daftarTeks($m['aturan'] ?? [])) }}</td>
+                                        <td class="small text-muted">{{ $teks($m['sumber'] ?? null) ?: '-' }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -231,11 +329,11 @@
         @endif
 
         {{-- Aturan --}}
-        @if (! empty($isi['aturan']))
+        @if ($aturanIsi)
             <div class="col-12">
                 <div class="card">
                     <div class="card-header p-3">
-                        <h4 class="card-title mb-0"><i class="ti ti-gavel me-2 mdka-text-blue-500"></i>Aturan yang diusulkan ({{ count($isi['aturan']) }})</h4>
+                        <h4 class="card-title mb-0"><i class="ti ti-gavel me-2 mdka-text-blue-500"></i>Aturan yang diusulkan ({{ count($aturanIsi) }})</h4>
                     </div>
                     <div class="card-body table-responsive p-0">
                         <table class="table table-vcenter mb-0">
@@ -245,31 +343,35 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($isi['aturan'] as $a)
+                                @foreach ($aturanIsi as $a)
+                                    @php($idAturan = $teks($a['id'] ?? null, '?'))
+                                    @php($jika = $teks($a['jika'] ?? null))
+                                    @php($pembulatanA = $teks($a['pembulatan'] ?? null))
+                                    @php($catatanA = $teks($a['catatan'] ?? null))
                                     <tr>
                                         <td class="text-nowrap align-top">
-                                            <span class="font-monospace fw-medium">{{ $a['id'] ?? '?' }}</span>
-                                            <div class="text-muted small">{{ $a['sifat'] ?? '' }} · {{ $berlaku($a['berlaku'] ?? []) }}</div>
+                                            <span class="font-monospace fw-medium">{{ $idAturan }}</span>
+                                            <div class="text-muted small">{{ $teks($a['sifat'] ?? null) }} · {{ $berlaku($a['berlaku'] ?? null) }}</div>
                                         </td>
-                                        <td class="text-nowrap align-top"><span class="font-monospace">{{ $a['menghasilkan'] ?? '?' }}</span>
-                                            <div class="text-muted small">per {{ ($a['lingkup'] ?? '') === 'masa' ? 'bulan' : 'tahun' }} · {{ $a['tipe_hasil'] ?? '' }}{{ isset($a['pembulatan']) ? ' · '.$a['pembulatan'] : '' }}</div>
+                                        <td class="text-nowrap align-top"><span class="font-monospace">{{ $teks($a['menghasilkan'] ?? null, '?') }}</span>
+                                            <div class="text-muted small">per {{ ($a['lingkup'] ?? '') === 'masa' ? 'bulan' : 'tahun' }} · {{ $teks($a['tipe_hasil'] ?? null) }}{{ $pembulatanA !== '' ? ' · '.$pembulatanA : '' }}</div>
                                         </td>
                                         <td class="align-top">
-                                            @isset($a['jika'])
+                                            @if ($jika !== '')
                                                 <div class="small text-muted">jika</div>
-                                                <code class="d-block text-wrap text-break mb-1">{{ $a['jika'] }}</code>
+                                                <code class="d-block text-wrap text-break mb-1">{{ $jika }}</code>
                                                 <div class="small text-muted">maka</div>
-                                            @endisset
-                                            <code class="d-block text-wrap text-break">{{ $a['maka'] ?? '' }}</code>
+                                            @endif
+                                            <code class="d-block text-wrap text-break">{{ $teks($a['maka'] ?? null) }}</code>
                                         </td>
                                         <td class="align-top small" style="min-width: 260px">
-                                            {{ $a['sumber'] ?? '' }}
-                                            @foreach ($rujukan[$a['id'] ?? ''] ?? [] as $r)
-                                                <blockquote class="border-start ps-2 my-1 text-muted">“{{ $r['kutipan'] }}” <span class="text-nowrap">— hlm. {{ $r['halaman'] }}</span></blockquote>
+                                            {{ $teks($a['sumber'] ?? null) }}
+                                            @foreach ($rujukan[$idAturan] ?? [] as $r)
+                                                <blockquote class="border-start ps-2 my-1 text-muted">“{{ $teks($r['kutipan'] ?? null) }}” <span class="text-nowrap">— hlm. {{ $teks($r['halaman'] ?? null, '?') }}</span></blockquote>
                                             @endforeach
-                                            @isset($a['catatan'])
-                                                <div class="text-muted">{{ $a['catatan'] }}</div>
-                                            @endisset
+                                            @if ($catatanA !== '')
+                                                <div class="text-muted">{{ $catatanA }}</div>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -281,7 +383,7 @@
         @endif
 
         {{-- Komponen, parameter, klasifikasi --}}
-        @if (! empty($isi['komponen']) || ! empty($isi['parameter']) || ! empty($isi['klasifikasi_wajib']) || ! empty($isi['pembulatan']))
+        @if ($komponenIsi || $parameterIsi || $klasifikasiIsi || $pembulatanIsi)
             <div class="col-12">
                 <div class="card">
                     <div class="card-header p-3">
@@ -293,40 +395,42 @@
                                 <tr class="mdka-bg-gray-50"><th class="py-3">Jenis</th><th class="py-3">Nama</th><th class="py-3">Isi</th><th class="py-3">Dasar</th></tr>
                             </thead>
                             <tbody>
-                                @foreach ($isi['komponen'] ?? [] as $k)
+                                @foreach ($komponenIsi as $k)
                                     <tr>
                                         <td>Komponen gaji</td>
-                                        <td><span class="fw-medium">{{ $k['label'] ?? $k['fakta'] }}</span> <span class="font-monospace text-muted small">{{ $k['fakta'] }}</span></td>
-                                        <td>kategori pajak: {{ str_replace('_', ' ', $k['kategori']) }} · jenis {{ $k['jenis'] }}</td>
+                                        <td><span class="fw-medium">{{ $teks($k['label'] ?? null) ?: $teks($k['fakta'] ?? null, '?') }}</span>
+                                            <span class="font-monospace text-muted small">{{ $teks($k['fakta'] ?? null) }}</span></td>
+                                        <td>kategori pajak: {{ str_replace('_', ' ', $teks($k['kategori'] ?? null, '?')) }} · jenis {{ $teks($k['jenis'] ?? null, '?') }}</td>
                                         <td class="small text-muted">-</td>
                                     </tr>
                                 @endforeach
-                                @foreach ($isi['parameter'] ?? [] as $p)
+                                @foreach ($parameterIsi as $p)
+                                    @php($namaP = $teks($p['nama'] ?? null, '?'))
                                     <tr>
                                         <td>Parameter</td>
-                                        <td class="font-monospace">{{ $p['nama'] }}</td>
-                                        <td class="tabular-nums">{{ is_int($p['nilai']) ? Format::rp($p['nilai']) : $p['nilai'] }} · {{ $berlaku($p['berlaku'] ?? []) }}</td>
-                                        <td class="small">{{ $p['sumber'] ?? '' }}
-                                            @foreach ($rujukan[$p['nama']] ?? [] as $r)
-                                                <blockquote class="border-start ps-2 my-1 text-muted">“{{ $r['kutipan'] }}” — hlm. {{ $r['halaman'] }}</blockquote>
+                                        <td class="font-monospace">{{ $namaP }}</td>
+                                        <td class="tabular-nums">{{ $nilai($p['nilai'] ?? null, true) }} · {{ $berlaku($p['berlaku'] ?? null) }}</td>
+                                        <td class="small">{{ $teks($p['sumber'] ?? null) }}
+                                            @foreach ($rujukan[$namaP] ?? [] as $r)
+                                                <blockquote class="border-start ps-2 my-1 text-muted">“{{ $teks($r['kutipan'] ?? null) }}” — hlm. {{ $teks($r['halaman'] ?? null, '?') }}</blockquote>
                                             @endforeach
                                         </td>
                                     </tr>
                                 @endforeach
-                                @foreach ($isi['klasifikasi_wajib'] ?? [] as $k)
+                                @foreach ($klasifikasiIsi as $k)
                                     <tr>
                                         <td>Klasifikasi wajib</td>
-                                        <td class="font-monospace">{{ $k['jenis'] }}</td>
-                                        <td>{{ str_replace('_', ' ', $k['kategori']) }} · {{ $berlaku($k['berlaku'] ?? []) }}</td>
-                                        <td class="small">{{ $k['sumber'] ?? '' }}</td>
+                                        <td class="font-monospace">{{ $teks($k['jenis'] ?? null, '?') }}</td>
+                                        <td>{{ str_replace('_', ' ', $teks($k['kategori'] ?? null, '?')) }} · {{ $berlaku($k['berlaku'] ?? null) }}</td>
+                                        <td class="small">{{ $teks($k['sumber'] ?? null) }}</td>
                                     </tr>
                                 @endforeach
-                                @foreach ($isi['pembulatan'] ?? [] as $p)
+                                @foreach ($pembulatanIsi as $p)
                                     <tr>
                                         <td>Pembulatan</td>
-                                        <td class="font-monospace">{{ $p['id'] }}</td>
-                                        <td>{{ $p['titik'] ?? '' }} · {{ str_replace('_', ' ', $p['mode'] ?? '') }} ke {{ Format::rp($p['satuan'] ?? 1) }}</td>
-                                        <td class="small">{{ $p['dasar'] ?? '' }}</td>
+                                        <td class="font-monospace">{{ $teks($p['id'] ?? null, '?') }}</td>
+                                        <td>{{ $teks($p['titik'] ?? null) }} · {{ str_replace('_', ' ', $teks($p['mode'] ?? null)) }} ke {{ $nilai($p['satuan'] ?? 1, true) }}</td>
+                                        <td class="small">{{ $teks($p['dasar'] ?? null) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -337,7 +441,7 @@
         @endif
 
         {{-- Simulasi dampak --}}
-        @if (! empty($v['dampak']))
+        @if ($dampak)
             <div class="col-12">
                 <div class="card">
                     <div class="card-header p-3 d-block">
@@ -353,27 +457,31 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($v['dampak'] as $d)
+                                @foreach ($dampak as $d)
+                                    @php($sebelum = is_array($d['sebelum'] ?? null) ? $d['sebelum'] : [])
+                                    @php($sesudah = is_array($d['sesudah'] ?? null) ? $d['sesudah'] : [])
                                     <tr>
-                                        <td class="fw-medium">{{ $d['tahun'] }}</td>
+                                        <td class="fw-medium">{{ $teks($d['tahun'] ?? null, '?') }}</td>
                                         <td class="small">
-                                            @forelse ($d['nilai_contoh'] as $k => $n)
-                                                <div><span class="font-monospace">{{ $k }}</span> = {{ is_int($n) ? Format::rp($n, false) : (is_bool($n) ? ($n ? 'ya' : 'tidak') : $n) }}</div>
+                                            @forelse (is_array($d['nilai_contoh'] ?? null) ? $d['nilai_contoh'] : [] as $k => $n)
+                                                <div><span class="font-monospace">{{ $k }}</span> = {{ $nilai($n) }}</div>
                                             @empty
                                                 -
                                             @endforelse
                                         </td>
                                         <td class="small">
-                                            @foreach ($d['fakta_baru'] as $f => $n)
-                                                <div><span class="font-monospace">{{ $f }}</span> = {{ is_int($n) ? Format::rp($n) : ($n ?? '-') }}</div>
+                                            @foreach (is_array($d['fakta_baru'] ?? null) ? $d['fakta_baru'] : [] as $f => $n)
+                                                <div><span class="font-monospace">{{ $f }}</span> = {{ $nilai($n, true) }}</div>
                                             @endforeach
                                         </td>
                                         @foreach (['bruto_setahun', 'pph21_setahun', 'thp_setahun'] as $f)
-                                            @php($selisih = ($d['sesudah'][$f] ?? 0) - ($d['sebelum'][$f] ?? 0))
+                                            @php($selisih = is_int($sesudah[$f] ?? null) && is_int($sebelum[$f] ?? null) ? $sesudah[$f] - $sebelum[$f] : null)
                                             <td class="angka">
-                                                {{ Format::rp($d['sesudah'][$f] ?? null, false) }}
-                                                <div class="small {{ $selisih === 0 ? 'text-muted' : ($selisih > 0 ? 'text-success' : 'text-danger') }}">
-                                                    {{ $selisih === 0 ? 'tetap' : ($selisih > 0 ? '+' : '').Format::rp($selisih, false) }}</div>
+                                                {{ $nilai($sesudah[$f] ?? null) }}
+                                                @if ($selisih !== null)
+                                                    <div class="small {{ $selisih === 0 ? 'text-muted' : ($selisih > 0 ? 'text-success' : 'text-danger') }}">
+                                                        {{ $selisih === 0 ? 'tetap' : ($selisih > 0 ? '+' : '').Format::rp($selisih, false) }}</div>
+                                                @endif
                                             </td>
                                         @endforeach
                                     </tr>
@@ -445,7 +553,8 @@
                     .done(res => {
                         if (res.selesai) return location.reload();
                         $('#statusUsulan').text(res.label).attr('class', `status status-${res.warna}`);
-                        $('#petunjukAntrean').toggleClass('d-none', res.menunggu_detik < 45);
+                        $('#petunjukAntrean').toggleClass('d-none', res.status !== 'antre' || res.menunggu_detik < 45);
+                        $('#petunjukLama').toggleClass('d-none', res.status !== 'diproses' || res.berjalan_detik <= 120);
                     })
                     .always(() => setTimeout(pantau, 5000));
             })();

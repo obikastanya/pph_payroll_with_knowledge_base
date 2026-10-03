@@ -2,6 +2,7 @@
 
 namespace Modules\Payroll\Repositories;
 
+use App\Models\Payroll\PayrollMasukan;
 use App\Models\Payroll\PayrollTahun;
 use App\Models\Payroll\Pegawai;
 use Carbon\CarbonImmutable;
@@ -40,7 +41,7 @@ class PayrollRepository implements PayrollInterface
         ));
     }
 
-    public function isianBaru(Pegawai $pegawai, int $tahun): array
+    public function isianBaru(Pegawai $pegawai, int $tahun, array $kunciTahunan = []): array
     {
         $payroll = new PayrollTahun($this->bawaan($pegawai, $pegawai->payrollTerakhir, $tahun));
         $payroll->tahun = $tahun;
@@ -52,7 +53,33 @@ class PayrollRepository implements PayrollInterface
             $bulan[$b] = ['hk_penuh' => $hk, 'hk_aktual' => $hk] + array_fill_keys(['kompensasi_persen', 'ota', 'lembur', 'komisi'], null);
         }
 
-        return [$payroll, $bulan];
+        return [$payroll, $bulan, ['tahun' => $this->masukanTahunanTerakhir($pegawai, $kunciTahunan), 'bulan' => []]];
+    }
+
+    /**
+     * Isian tambahan tahunan (bulan 0) dari tahun data HR terbaru pegawai yang memilikinya, per kunci, hanya untuk
+     * kunci yang masih diminta skema sekarang. Isian bulanan tidak dilanjutkan (berbeda tiap masa).
+     */
+    private function masukanTahunanTerakhir(Pegawai $pegawai, array $kunci): array
+    {
+        if ($kunci === []) {
+            return [];
+        }
+        $baris = PayrollMasukan::query()
+            ->join('payroll_tahun', 'payroll_tahun.id', '=', 'payroll_masukan.payroll_tahun_id')
+            ->where('payroll_tahun.pegawai_id', $pegawai->id)
+            ->where('payroll_masukan.bulan', 0)
+            ->whereIn('payroll_masukan.kunci', $kunci)
+            ->orderByDesc('payroll_tahun.tahun')
+            ->get(['payroll_masukan.kunci', 'payroll_masukan.nilai']);
+        $isian = [];
+        foreach ($baris as $m) {
+            if (! array_key_exists($m->kunci, $isian) && $m->nilai !== null) {
+                $isian[$m->kunci] = $m->nilai;
+            }
+        }
+
+        return $isian;
     }
 
     public function isianBulan(PayrollTahun $payroll): array

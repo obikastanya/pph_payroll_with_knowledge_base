@@ -188,27 +188,48 @@ Peraturan baru (pemerintah atau perusahaan) masuk sebagai **berkas KB tambahan**
 
 | Bagian | Fungsi |
 |---|---|
-| `aturan` | Aturan baru, atau pengganti aturan lama untuk fakta yang sama (lex posterior lewat `berlaku.mulai`) |
-| `komponen` | Komponen gaji baru beserta kategori pajak dan labelnya. Bruto, PPh 21, dan take home pay menjumlahkan komponen per kategori, sehingga komponen baru langsung ikut dihitung |
+| `aturan` | Aturan baru, atau pengganti aturan lama untuk fakta yang sama (lihat *Mengganti aturan* di bawah) |
+| `komponen` | Komponen gaji baru beserta kategori pajak dan labelnya (hanya lapisan perusahaan). Bruto, PPh 21, dan take home pay menjumlahkan komponen per kategori, sehingga komponen baru langsung ikut dihitung |
 | `masukan` | **Isian baru yang diminta dari pengguna** (kunci, label, tipe, lingkup tahun/bulan, wajib, bawaan). Dibaca aturan lewat `hr('kunci')` / `hr_masa('kunci')`; aplikasi web membangun form-nya dari deklarasi ini |
-| `parameter` | Amandemen nilai berversi (mis. batas upah JP): versi baru menutup versi lama sehari sebelum `mulai`. Lapisan perusahaan hanya boleh menambah parameter baru |
-| `pembulatan`, `klasifikasi_wajib` | Entri registri pembulatan dan klasifikasi wajib (regulasi) |
+| `parameter` | Amandemen nilai berversi (mis. batas upah JP): versi baru menutup versi lama sehari sebelum `mulai`; amandemen sementara (`sampai` terisi) mengembalikan nilai lama mulai `sampai` + 1 hari |
+| `klasifikasi_wajib` | Kategori wajib suatu jenis komponen (hanya lapisan regulasi), berversi dengan semantik yang sama seperti `parameter` |
+| `pembulatan` | Entri registri pembulatan |
+
+Kategori komponen: `teratur`, `tidak_teratur`, `premi_objek`, `natura`, `iuran_pengurang`, `zakat`, `bukan_objek`, `tidak_diperhitungkan`. Take home pay Perusahaan X (`px_thp`) = penghasilan tunai (teratur + tidak teratur) + tunjangan pajak − iuran pengurang − zakat − **semua komponen `tidak_diperhitungkan`** − PPh 21 + PPh 21 DTP. Jadi `tidak_diperhitungkan` berarti potongan dari pegawai tanpa efek pajak (iuran BPJS Kesehatan pegawai, cicilan koperasi, ...): mengurangi take home pay tanpa mengubah bruto atau PPh 21.
+
+**Mengganti aturan.** Bila beberapa aturan untuk fakta yang sama menyala bersamaan, urutannya: aturan regulasi `wajib` mengalahkan perusahaan (lex superior); aturan perusahaan mengalahkan regulasi `default`/`opsional`; lalu **lex specialis** (lebih banyak konjungsi `and` di `jika` menang) **sebelum** lex posterior (`mulai` lebih baru menang); terakhir `prioritas`. Aturan pengganti karena itu perlu `mulai` lebih baru **dan** `jika` dengan konjungsi paling sedikit sama banyak dengan aturan lama; aturan tanpa `jika` tidak dapat mengganti aturan ber-`jika`.
+
+**Yang ditolak saat memuat** (`KesalahanKB`, di jembatan jenis `kesalahan_kb`):
+
+- Komponen (`fakta`) yang sudah dideklarasikan, di KB dasar maupun berkas lain (mis. `px_lembur`). Kategori komponen yang ada tidak dapat diubah lewat deklarasi ulang; perlakuan pajaknya diubah lewat `klasifikasi_wajib` di berkas lapisan regulasi. Id aturan ganda juga ditolak; pesannya menyebut kedua berkas.
+- Deklarasi ulang `masukan` yang `tipe`, `lingkup`, `wajib`, `bawaan`, atau `pilihan`-nya berbeda (yang identik boleh; deklarasi pertama dipakai). `kunci` paling panjang 64 karakter. Nilai bertipe `rupiah` tidak boleh negatif (bawaan maupun data HR); `bilangan` boleh.
+- Aturan berlingkup `tahun` yang memanggil `hr_masa()`: pakai `hr('kunci')`, atau hitung fakta berlingkup masa lalu jumlahkan dengan `jumlah_masa()`.
+- Amandemen `parameter`: `sampai` sebelum `mulai`; jenis nilai berbeda dari versi yang ada (rupiah ditulis bilangan bulat tanpa pemisah ribuan, mis. `11500000`; tarif sebagai teks desimal, mis. `"0.3"`); versi yang ada mulai di dalam rentang [`mulai`, `sampai`] (*bentrok*). Lapisan perusahaan boleh mengamandemen parameter buatan lapisan perusahaan, tetapi tidak pernah parameter regulasi.
+- `klasifikasi_wajib`: entri yang ada untuk jenis yang sama mulai di dalam rentang entri baru (*bentrok*); `kategori` di luar delapan kategori di atas.
+- DSL: kategori literal tak dikenal di `komponen()`/`komponen_kode()`/`komponen_valas()` (sah: delapan kategori + `rapel`), `parameter('x')` yang tidak ada di KB, `bulatkan('ID', ...)` yang tidak terdaftar, jumlah argumen fungsi yang salah, dan ekspresi yang terlalu panjang atau terlalu dalam.
+- Anchor/alias YAML (`&nama` / `*nama`) di berkas KB mana pun.
+
+Saat menghitung, aritmetika (`+ - * /`, minus tunggal) hanya menerima angka: masukan bertipe persen, desimal, atau tanggal wajib dikonversi dulu dengan `persen()`, `desimal()`, atau `tanggal()`; selain itu `PelanggaranPresisi` (di jembatan `data_tidak_sesuai`).
 
 Tabel terverifikasi (TER, tarif Pasal 17, PTKP, KLU DTP) **tidak** dapat diubah lewat berkas tambahan; jalurnya tetap double-entry + `tabel_manifest.yaml`.
 
-`asisten_kb/` menyusun **rancangan** berkas itu dari PDF peraturan dengan LLM (keluaran terstruktur). Model bawaannya `gpt-5.6-sol` lewat OpenAI Responses API (`OPENAI_API_KEY`); model `claude-...` memakai Anthropic (`ANTHROPIC_API_KEY`). Paket ini sengaja di luar `engine/`: engine tetap bebas LLM (research_plan §4.3), dan LLM tidak pernah menghitung pajak. Rancangan baru berlaku setelah dua gerbang:
+`asisten_kb/` menyusun **rancangan** berkas itu dari PDF peraturan (maks. 20 MB) dengan LLM (keluaran terstruktur). Model bawaannya `gpt-5.6-sol` lewat OpenAI Responses API (`OPENAI_API_KEY`); model `claude-...` memakai Anthropic (`ANTHROPIC_API_KEY`). Paket ini sengaja di luar `engine/`: engine tetap bebas LLM (research_plan §4.3), dan LLM tidak pernah menghitung pajak. Lapisan berkas selalu mengikuti pilihan unggah; bila LLM menilai lain, pilihannya disimpan di `usulan.lapisan_llm` dan dicatat di `catatan_peninjau`. Rupiah berpemisah ribuan di rancangan (`500.000`, `1,500,000`) diubah menjadi bilangan bulat; bentuk lain dibiarkan agar ditolak engine. Rancangan baru berlaku setelah dua gerbang:
 
-1. **Validasi engine** (`asisten_kb/rancangan.py`): skema, verifikasi statis KB (sintaks DSL, tipe, lingkup, pembulatan terdaftar, id unik, konflik parameter), kewajiban mendeklarasikan setiap isian baru, dan simulasi pada pegawai contoh sebelum/sesudah.
+1. **Validasi engine** (`asisten_kb/rancangan.py`, tidak pernah melempar galat; galat Python tak terduga muncul sebagai `galat` beserta jenis dan id aturannya): skema, verifikasi statis KB, kewajiban mendeklarasikan setiap isian baru, dan simulasi sebelum/sesudah pada dua pegawai contoh (Karyawan A setahun penuh dan pegawai masuk 1 Juli). Tahun simulasi diturunkan dari rancangan: tiap entri dari max(2023, tahun mulai) s.d. min(2030, max(2026, tahun mulai + 1)) dalam masa berlakunya, ditambah tahun sesudah `sampai` (s.d. 2031), paling banyak 8 tahun. Hasilnya juga memuat `perubahan` (aturan, parameter, dan klasifikasi yang sudah ada yang diubah rancangan) dan `belum_teruji` (aturan rancangan yang tidak pernah terpilih di simulasi, beserta alasannya). Flag `wajib` isian adalah perilaku engine yang efektif: isian tanpa `bawaan` dan tanpa nilai bawaan di aturan (`hr_masa('k', 0)`) tetap wajib walau dideklarasikan `wajib: false`.
 2. **Persetujuan manusia** di aplikasi web (menu Basis pengetahuan), dengan kutipan dan halaman PDF untuk tiap aturan.
 
 ```powershell
-# validasi rancangan tanpa LLM; berkas_tambahan = berkas yang sudah aktif (harus di bawah kb/)
-'{"perintah": "validasi", "yaml": "...", "berkas_tambahan": []}' | python -m jembatan
+# validasi rancangan tanpa LLM; berkas_tambahan = berkas yang sudah aktif (harus di bawah kb/); "lapisan" opsional
+'{"perintah": "validasi", "yaml": "...", "lapisan": "perusahaan", "berkas_tambahan": []}' | python -m jembatan
 # PDF -> rancangan (butuh OPENAI_API_KEY; "model" opsional, bawaan gpt-5.6-sol)
 '{"perintah": "usulkan", "pdf": "C:\\dok\\peraturan.pdf", "lapisan": "perusahaan"}' | python -m jembatan
+# KB dasar + berkas tambahan dapat dimuat dan menghitung Karyawan A 2023-2027? -> {"periksa": {"ok", "galat", "tahun"}}
+'{"perintah": "periksa", "berkas_tambahan": ["kb/tambahan/0001_x.yaml"]}' | python -m jembatan
 ```
 
-Yang sudah diuji: konversi dan validasi rancangan, isian baru, amandemen parameter, serta alur web dari ujung ke ujung dengan engine sungguhan (`tests/test_asisten_kb.py`, `tests/test_masukan_kb.py`, `web/tests/`). Tes memakai klien LLM tiruan. **Mutu ekstraksi LLM terhadap dokumen nyata belum dievaluasi**, jadi tinjauan manusia adalah bagian wajib dari alur, bukan formalitas.
+`periksa` mengisi nilai contoh untuk setiap isian tambahan; aplikasi web memakainya sebelum menonaktifkan berkas dan di halaman Mesin.
+
+Yang sudah diuji: konversi dan validasi rancangan, isian baru, amandemen parameter, aturan penolakan di atas (`tests/test_kb_tambahan.py`), serta alur web dari ujung ke ujung dengan engine sungguhan (`tests/test_asisten_kb.py`, `tests/test_masukan_kb.py`, `web/tests/`). Tes memakai klien LLM tiruan. **Mutu ekstraksi LLM terhadap dokumen nyata belum dievaluasi**, jadi tinjauan manusia adalah bagian wajib dari alur, bukan formalitas.
 
 ---
 
@@ -238,7 +259,7 @@ Contoh lengkap ada di `dataset/07_kasus_uji_resmi/kanonik/*.json` (komponen suda
 | `engine/` | `ekspresi.py` (DSL aman), `kb.py` (pemuat + verifikasi statis), `inferensi.py` (graf, SCC, titik tetap Tarski, resolusi konflik, bitemporal), `kalkulator.py`, `cli.py`, kontrak presisi (`angka.py`, `pembulatan.py`, `interval.py`, `waktu.py`, `muat.py`, `audit.py`) |
 | `kb/regulasi/` | `aturan_{umum,ter,per16,dtp}.yaml`, `klasifikasi.yaml`, `parameter.yaml`, `pembulatan.yaml`, `pencatatan.yaml`, `tabel_manifest.yaml` (hash SHA-256), `KODIFIKASI.md` |
 | `kb/perusahaan/` | `perusahaan_x.yaml` (studi kasus), `katalog/` (kebijakan KP-xx) |
-| `kb/tambahan/` | Berkas KB tambahan yang diterapkan lewat aplikasi web (data runtime, tidak ikut git; lihat §2.6) |
+| `kb/tambahan/` | Berkas KB tambahan yang diterapkan lewat aplikasi web (data runtime, tidak ikut git; database aplikasi adalah sumber kebenarannya dan berkas aktif ditulis ulang dari sana; lihat §2.6) |
 | `asisten_kb/` | PDF peraturan → rancangan berkas KB lewat LLM: `konteks.py` (prompt + inventaris KB), `skema.py` (keluaran terstruktur), `llm.py` (klien LLM: OpenAI bawaan, Anthropic opsional), `rancangan.py` (YAML + validasi + simulasi). Engine tidak mengimpor paket ini |
 | `baselines/b1_hardcoded/` | Baseline B1: pajak hard-coded, independen dari KB (tag git `b1-frozen`) |
 | `baselines/b2_payroll_hardcoded/` | Kalkulator payroll tanpa KB: kebijakan Perusahaan X di kode + B1 untuk pajak |
@@ -246,7 +267,7 @@ Contoh lengkap ada di `dataset/07_kasus_uji_resmi/kanonik/*.json` (komponen suda
 | `ui/` | Demo Streamlit: `app.py`, `kalkulator.py` (isian), `hasil.py` (slip & perhitungan setahun), `mesin.py` (adapter KB / tanpa KB), `tab_kb.py`, `data.py` (dataset, konversi isian, format eksak) |
 | `eksperimen/` | `v1.py`, `v2.py`, `ablasi.py`, `mutasi.py`, `grossup.py`, `konflik.py`, `perubahan.py`, `ekspresivitas.py`, `e8_perusahaan_x.py`, `e12_tanpa_kb.py`, `adjudikasi.md`, `hasil/` |
 | `tests/` | Kontrak presisi, V1, V2, V3 metamorfik, double-entry, E3–E8, E12, UI, jembatan |
-| `jembatan/` | Protokol JSON stdin/stdout ke engine untuk aplikasi web (`python -m jembatan`): `hitung`, `contoh`, `info`, `masukan`, `usulkan`, `validasi`; tanpa pengetahuan pajak |
+| `jembatan/` | Protokol JSON stdin/stdout ke engine untuk aplikasi web (`python -m jembatan`): `hitung`, `contoh`, `info`, `masukan`, `usulkan`, `validasi`, `periksa`; tanpa pengetahuan pajak |
 | `web/` | Aplikasi web Laravel (admin finance): pegawai, data HR, proses payroll, slip, rekap, basis pengetahuan. Lihat [web/README.md](web/README.md) |
 
 ## 5. Status verifikasi (2026-10-01)
@@ -276,7 +297,7 @@ Contoh lengkap ada di `dataset/07_kasus_uji_resmi/kanonik/*.json` (komponen suda
   - pegawai tidak tetap, bukan pegawai, dan pensiunan;
   - penilaian natura PMK 66 (nilainya diinput);
   - gross-up per komponen (KP-03) dan gross-up berplafon (KP-04).
-- **Asisten KB (LLM) berada di luar inti terverifikasi.** Validasi engine memeriksa bentuk dan konsistensi rancangan, bukan kesesuaiannya dengan isi dokumen; itu tugas peninjau. Cek silang E12 dilewati untuk perhitungan yang memakai berkas KB tambahan, karena kalkulator pembanding tanpa KB tidak mengenal aturan baru. Take home pay hanya otomatis untuk komponen berkategori teratur, tidak teratur, iuran pengurang, dan zakat; potongan non-pajak baru masih perlu aturan `px_thp` sendiri.
+- **Asisten KB (LLM) berada di luar inti terverifikasi.** Validasi engine memeriksa bentuk dan konsistensi rancangan, bukan kesesuaiannya dengan isi dokumen; itu tugas peninjau. Cek silang E12 dilewati untuk perhitungan yang memakai berkas KB tambahan, karena kalkulator pembanding tanpa KB tidak mengenal aturan baru. Simulasi validasi hanya memakai dua pegawai contoh turunan Karyawan A, jadi aturan yang tidak pernah terpilih di sana dilaporkan sebagai `belum_teruji`, bukan dibuktikan benar.
 - **KLU DTP** berasal dari lapisan teks (status `ekstraksi_1`). Kode 96129 hanya ada di PMK 105 dan perlu dicek ke gambar halaman.
 - **KLU Perusahaan X tidak diketahui** karena datanya dianonimkan. Akibatnya fasilitas DTP hanya terlihat pada contoh resmi PMK 10/72/105.
 

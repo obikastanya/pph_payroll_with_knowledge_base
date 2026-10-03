@@ -91,8 +91,8 @@ def pdf(tmp_path):
 
 @pytest.fixture
 def dir_kb(tmp_path, monkeypatch):
-    """Berkas KB tambahan di direktori sementara (jembatan hanya menerima berkas di bawah DIR_KB)."""
-    monkeypatch.setattr(J, "DIR_KB", tmp_path.resolve())
+    """Berkas KB tambahan di direktori sementara (jembatan hanya menerima berkas di bawah DIR_TAMBAHAN)."""
+    monkeypatch.setattr(J, "DIR_TAMBAHAN", tmp_path.resolve())
     return tmp_path
 
 
@@ -237,9 +237,24 @@ def test_galat_sdk_dipetakan_ke_pesan_pengguna(pdf, monkeypatch):
 def test_berkas_tambahan_di_luar_kb_ditolak(tmp_path):
     luar = tmp_path / "x.yaml"
     luar.write_text("lapisan: perusahaan\n", encoding="utf-8")
-    for b in (str(luar), "../engine/kb.py", "kb/perusahaan/../../README.md"):
+    # KB dasar (kb/regulasi, kb/perusahaan) juga ditolak: dimuat dua kali bila dikirim sebagai berkas tambahan
+    for b in (str(luar), "../engine/kb.py", "kb/perusahaan/../../README.md", "kb/regulasi/aturan_umum.yaml",
+              "kb/perusahaan/perusahaan_x.yaml", "kb/tambahan/../regulasi/parameter.yaml"):
         jawab = J.jalankan({"perintah": "hitung", "kasus": [], "berkas_tambahan": [b]})
         assert jawab["jenis"] == "permintaan_tidak_valid", b
+    for daftar in ("kb/tambahan/x.yaml", [5], {"b": "kb/tambahan/x.yaml"}):
+        jawab = J.jalankan({"perintah": "masukan", "berkas_tambahan": daftar})
+        assert jawab == {"ok": False, "jenis": "permintaan_tidak_valid",
+                         "pesan": "berkas_tambahan harus daftar path berkas (teks)"}, daftar
+
+
+def test_path_unc_ditolak_tanpa_menyentuh_jaringan(monkeypatch):
+    def jangan(*_):
+        raise AssertionError("resolve() atas path UNC menghubungi server berbagi berkas")
+    monkeypatch.setattr(J.Path, "resolve", jangan)
+    for b in ("\\\\server\\berbagi\\x.yaml", "//server/berbagi/x.yaml", "\\/server/berbagi/x.yaml"):
+        jawab = J.jalankan({"perintah": "hitung", "kasus": [], "berkas_tambahan": [b]})
+        assert jawab["jenis"] == "permintaan_tidak_valid" and "kb/tambahan/" in jawab["pesan"], b
 
 
 def test_hitung_dan_masukan_dengan_berkas_tambahan(dir_kb):

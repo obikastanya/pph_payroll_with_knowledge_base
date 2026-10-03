@@ -49,6 +49,20 @@ def test_permintaan_tidak_valid():
     kode, jawab = _panggil("bukan json")
     assert kode == 2 and jawab == {"ok": False, "jenis": "permintaan_tidak_valid", "pesan": jawab["pesan"]}
     assert jalankan({"perintah": "hapus"})["jenis"] == "perintah_tidak_dikenal"
+    # JSON sah tetapi bukan objek: tetap dijawab JSON, bukan traceback
+    kode, jawab = _panggil("[1, 2]")
+    assert kode == 2 and jawab == {"ok": False, "jenis": "permintaan_tidak_valid", "pesan": "permintaan harus objek JSON"}
+    for permintaan in ('"hitung"', "null", "3"):
+        assert jalankan(json.loads(permintaan))["jenis"] == "permintaan_tidak_valid", permintaan
+    assert jalankan({"perintah": "hitung", "kasus": {"a": 1}}) == {"ok": False, "jenis": "permintaan_tidak_valid",
+                                                                   "pesan": "kasus harus daftar"}
+
+
+def test_kasus_bukan_objek_hanya_menggagalkan_kasus_itu():
+    gagal, berhasil = jalankan({"perintah": "hitung", "kasus": ["teks", kasus_kar_a(2024)]})["hasil"]
+    assert gagal == {"ok": False, "jenis": "data_tidak_sesuai",
+                     "pesan": "Data belum lengkap atau tidak sesuai format: kasus harus objek JSON"}
+    assert berhasil["ok"]
 
 
 def test_contoh_dan_info():
@@ -93,7 +107,7 @@ aturan:
 
 def _berkas_kb(tmp_path, monkeypatch, **isi):
     import jembatan.__main__ as J
-    monkeypatch.setattr(J, "DIR_KB", tmp_path.resolve())
+    monkeypatch.setattr(J, "DIR_TAMBAHAN", tmp_path.resolve())
     hasil = {}
     for nama, teks in isi.items():
         p = tmp_path / f"{nama}.yaml"

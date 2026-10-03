@@ -19,7 +19,7 @@ Kalkulator gaji, BPJS, THR, dan PPh 21 untuk pegawai tetap. Cakupan tahun pajakn
 |---|---|
 | **Python 3.12** | Diuji dengan Python 3.12.4. Cek dengan `python --version`; di Windows bisa juga `py -3.12 --version` |
 | Koneksi internet | Hanya saat instalasi paket pertama kali (±500 MB, terutama Streamlit, pandas, pyarrow) |
-| Git | Opsional. Dipakai untuk mencatat versi KB (commit) di metadata audit; tanpa git, versi KB tertulis `belum-dikomit` |
+| Git | Opsional. Dipakai untuk mencatat versi KB (commit) di metadata audit; tanpa git, versi KB tertulis `tidak-diketahui` (akhiran `+belum-dikomit` = ada perubahan di `kb/` atau `engine/` yang belum di-commit) |
 | Sistem operasi | Diuji di Windows 11 (PowerShell). Perintah untuk macOS/Linux disertakan |
 
 ### Langkah instalasi (Windows PowerShell)
@@ -219,7 +219,7 @@ Tabel terverifikasi (TER, tarif Pasal 17, PTKP, KLU DTP) **tidak** dapat diubah 
 2. **Persetujuan manusia** di aplikasi web (menu Basis pengetahuan), dengan kutipan dan halaman PDF untuk tiap aturan.
 
 ```powershell
-# validasi rancangan tanpa LLM; berkas_tambahan = berkas yang sudah aktif (harus di bawah kb/); "lapisan" opsional
+# validasi rancangan tanpa LLM; berkas_tambahan = berkas yang sudah aktif (harus di bawah kb/tambahan/); "lapisan" opsional
 '{"perintah": "validasi", "yaml": "...", "lapisan": "perusahaan", "berkas_tambahan": []}' | python -m jembatan
 # PDF -> rancangan (butuh OPENAI_API_KEY; "model" opsional, bawaan gpt-5.6-sol)
 '{"perintah": "usulkan", "pdf": "C:\\dok\\peraturan.pdf", "lapisan": "perusahaan"}' | python -m jembatan

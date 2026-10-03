@@ -281,7 +281,9 @@ def tampilkan():
             st.caption("Tekan tombol untuk mencocokkan kalkulator dengan semua contoh resmi (beberapa detik).")
     with t_tek:
         meta = metadata_audit(asumsi=[])
-        st.caption(f"Versi KB (commit) {meta['versi_kb'][:7]} · kebaruan {meta['tanggal_kebaruan_kb']} · {len(aktif)} aturan aktif {tahun}")
+        commit, _, tanda = meta["versi_kb"].partition("+")   # hash + "belum-dikomit", atau "tidak-diketahui" tanpa git
+        versi = (commit[:7] if all(c in "0123456789abcdef" for c in commit) else commit) + (f"+{tanda}" if tanda else "")
+        st.caption(f"Versi KB (commit) {versi} · kebaruan {meta['tanggal_kebaruan_kb']} · {len(aktif)} aturan aktif {tahun}")
         st.dataframe(pd.DataFrame([{"ID": a.id, "Lapisan": a.lapisan, "Sifat": a.sifat, "Menghasilkan": a.menghasilkan, "Lingkup": a.lingkup,
                                     "Jika": a.jika.teks if a.jika else "", "Maka": a.maka.teks,
                                     "Berlaku": f"{a.mulai} s.d. {a.sampai or 'sekarang'}", "Sumber": a.sumber, "Berkas": a.berkas}

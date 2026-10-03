@@ -19,7 +19,7 @@ Permintaan:
                                KB dasar + berkas tambahan dapat dimuat dan menghitung Karyawan A 2023-2027?
                                -> {"periksa": {"ok", "galat": [...], "tahun": [...]}}
 
-`berkas_tambahan` = berkas KB yang sudah disetujui, relatif terhadap akar repo dan harus berada di bawah kb/.
+`berkas_tambahan` = berkas KB yang sudah disetujui, relatif terhadap akar repo dan harus berada di bawah kb/tambahan/.
 Jawaban selalu {"ok": true, ...} atau {"ok": false, "jenis": ..., "pesan": ...}. Untuk "hitung", setiap kasus
 dijawab sendiri-sendiri, sehingga satu kasus yang galat tidak menggagalkan kasus lain dalam satu batch.
 Keluaran ASCII murni (ensure_ascii) agar tidak bergantung pada code page konsol Windows.
@@ -47,7 +47,7 @@ GALAT = (
     (KesalahanKB, "kesalahan_kb", "Data belum lengkap atau tidak sesuai"),
     ((KeyError, TypeError, ValueError), "data_tidak_sesuai", "Data belum lengkap atau tidak sesuai format"),
 )
-DIR_KB = (ROOT / "kb").resolve()
+DIR_TAMBAHAN = (ROOT / "kb" / "tambahan").resolve()
 
 
 class PermintaanTidakValid(ValueError):
@@ -55,12 +55,20 @@ class PermintaanTidakValid(ValueError):
 
 
 def berkas_tambahan(permintaan):
-    """Daftar berkas KB tambahan dari permintaan; hanya *.yaml di bawah kb/ (jembatan tidak membaca berkas lain)."""
+    """Daftar berkas KB tambahan dari permintaan: hanya *.yaml di bawah kb/tambahan/ (berkas yang diterapkan lewat
+    aplikasi web). KB dasar di kb/regulasi/ dan kb/perusahaan/ selalu dimuat engine sendiri; jembatan tidak membaca
+    berkas lain."""
+    daftar = permintaan.get("berkas_tambahan") or []
+    if not isinstance(daftar, list) or not all(isinstance(b, str) for b in daftar):
+        raise PermintaanTidakValid("berkas_tambahan harus daftar path berkas (teks)")
     hasil = []
-    for b in permintaan.get("berkas_tambahan") or []:
+    for b in daftar:
+        # path UNC (\\server\berbagi\...) ditolak sebelum resolve(): resolve() akan menghubungi server berbagi berkas
+        if len(b) > 1 and b[0] in "\\/" and b[1] in "\\/":
+            raise PermintaanTidakValid(f"berkas KB tambahan harus *.yaml di bawah kb/tambahan/: {b}")
         p = (ROOT / b).resolve()
-        if p.suffix != ".yaml" or not p.is_relative_to(DIR_KB):
-            raise PermintaanTidakValid(f"berkas KB tambahan harus *.yaml di bawah kb/: {b}")
+        if p.suffix != ".yaml" or not p.is_relative_to(DIR_TAMBAHAN):
+            raise PermintaanTidakValid(f"berkas KB tambahan harus *.yaml di bawah kb/tambahan/: {b}")
         if not p.is_file():
             raise PermintaanTidakValid(f"berkas KB tambahan tidak ditemukan: {b}")
         hasil.append(p)
@@ -100,6 +108,9 @@ def _komponen(kb):
 
 
 def hitung_satu(kasus, cek_silang=False, tambahan=()):
+    if not isinstance(kasus, dict):
+        return {"ok": False, "jenis": "data_tidak_sesuai", "pesan": "Data belum lengkap atau tidak sesuai format: "
+                                                                     "kasus harus objek JSON"}
     berkas = [*BERKAS_PX, *tambahan] if kasus.get("data_hr") else list(tambahan)
     try:
         h = hitung_kb(kasus, berkas_perusahaan=berkas, audit=True)
@@ -189,13 +200,17 @@ def _nama_berkas(id_berkas):
 
 
 def jalankan(permintaan, klien=None):
+    if not isinstance(permintaan, dict):
+        return {"ok": False, "jenis": "permintaan_tidak_valid", "pesan": "permintaan harus objek JSON"}
     perintah = permintaan.get("perintah")
     try:
         if perintah == "hitung":
             tambahan = berkas_tambahan(permintaan)
+            kasus = permintaan.get("kasus") or []
+            if not isinstance(kasus, list):
+                raise PermintaanTidakValid("kasus harus daftar")
             cek = bool(permintaan.get("cek_silang"))
-            return {"ok": True, "sidik_kb": sidik_kb(tambahan),
-                    "hasil": [hitung_satu(k, cek, tambahan) for k in permintaan.get("kasus", [])]}
+            return {"ok": True, "sidik_kb": sidik_kb(tambahan), "hasil": [hitung_satu(k, cek, tambahan) for k in kasus]}
         if perintah == "contoh":
             return {"ok": True, "contoh": contoh()}
         if perintah == "info":

@@ -1,9 +1,10 @@
 """MR11 (keluaran tanpa float/pecahan) dan metadata audit (research_plan.md §6.9.8)."""
+import subprocess
 from fractions import Fraction
 
 import pytest
 
-from engine import VERSI_ENGINE
+from engine import VERSI_ENGINE, audit
 from engine.angka import PelanggaranPresisi
 from engine.audit import metadata_audit, periksa_keluaran
 from engine.muat import muat_tabel
@@ -26,6 +27,28 @@ def test_tabel_dimuat_tanpa_float(nama):
     for baris in muat_tabel(nama):
         for k, v in baris.items():
             assert not isinstance(v, float), (nama, k, v)
+
+
+def test_versi_kb_dihitung_sekali_per_proses_dan_tanpa_git_tidak_diketahui(monkeypatch):
+    panggilan = []
+
+    def git_palsu(perintah, **_):
+        panggilan.append(perintah)
+        return subprocess.CompletedProcess(perintah, 0, stdout="abc123\n" if "rev-parse" in perintah else "")
+
+    audit.versi_kb.cache_clear()
+    monkeypatch.setattr(audit.subprocess, "run", git_palsu)
+    try:
+        assert [audit.versi_kb() for _ in range(3)] == ["abc123"] * 3
+        assert len(panggilan) == 2          # rev-parse + status, sekali saja (jembatan: per batch, bukan per kasus)
+
+        def tanpa_git(*_, **__):
+            raise FileNotFoundError("git")
+        audit.versi_kb.cache_clear()
+        monkeypatch.setattr(audit.subprocess, "run", tanpa_git)
+        assert audit.versi_kb() == "tidak-diketahui"   # bukan "belum-dikomit": versinya memang tidak diketahui
+    finally:
+        audit.versi_kb.cache_clear()
 
 
 def test_metadata_audit_lengkap():

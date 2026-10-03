@@ -1,4 +1,5 @@
 """Pemeriksaan keluaran (MR11) dan metadata audit (research_plan.md §6.9.8)."""
+import functools
 import subprocess
 from fractions import Fraction
 from pathlib import Path
@@ -26,16 +27,22 @@ def periksa_keluaran(obj, jalur="keluaran"):
     return obj
 
 
+@functools.lru_cache(maxsize=1)
 def versi_kb():
-    """Commit git saat ini (+ penanda bila ada perubahan belum di-commit)."""
+    """Commit git saat ini (+ penanda bila kb/ atau engine/ berubah tanpa di-commit); 'tidak-diketahui' bila git atau
+    repositorinya tidak tersedia.
+
+    Dihitung sekali per proses, sejalan dengan KB yang juga dimuat sekali per proses (engine.kalkulator): jembatan
+    (satu proses per permintaan) memanggilnya untuk setiap kasus dalam satu batch, dan setiap panggilan = dua proses git.
+    """
     try:
         commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True,
                                 text=True, check=True).stdout.strip()
         kotor = subprocess.run(["git", "status", "--porcelain", "--", "kb", "engine"], cwd=ROOT,
                                capture_output=True, text=True, check=True).stdout.strip()
-        return commit + ("+belum-dikomit" if kotor else "")
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return "belum-dikomit"
+    except (subprocess.CalledProcessError, OSError):
+        return "tidak-diketahui"
+    return commit + ("+belum-dikomit" if kotor else "")
 
 
 def metadata_audit(manifest_path=None, asumsi=()):

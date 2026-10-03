@@ -3,6 +3,7 @@
 > **Status:** rencana final v1 (2026-10-01) untuk tugas mata kuliah Knowledge-Based System (S2 Informatika).
 > **Dokumen induk:** [proposal_kb_pph21_kebijakan_perusahaan_payroll_v1.md](proposal_kb_pph21_kebijakan_perusahaan_payroll_v1.md). Rencana ini **menggantikan** bagian metode, evaluasi, dan novelty pada proposal. Fokus novelty bergeser: inti sekarang KB dua lapis berversi waktu dengan resolusi konflik, sedangkan analisis gross-up di bawah TER menjadi sub-temuan.
 > **Lokasi aset:** semua data ada di [dataset/](dataset/), dengan manifest di setiap subfolder (§8).
+> **Adendum:** [Adendum A (2026-10-04)](#adendum-a--pengembangan-sesudah-rencana-dikunci-2026-10-04) mencatat yang ditambahkan sesudah rencana ini dikunci (aplikasi web, berkas KB tambahan, asisten KB berbasis LLM) dan penyimpangan implementasi dari teks rencana. Isi rencana di bawah tidak diubah selain penunjuk ke adendum itu.
 
 ---
 
@@ -30,6 +31,7 @@
 - [Lampiran B — Skenario Perubahan](#lampiran-b--skenario-perubahan)
 - [Lampiran C — Contoh I/O](#lampiran-c--contoh-io)
 - [Lampiran D — Temuan Audit xlsx Perusahaan X](#lampiran-d--temuan-audit-xlsx-perusahaan-x)
+- [Adendum A — Pengembangan sesudah rencana dikunci (2026-10-04)](#adendum-a--pengembangan-sesudah-rencana-dikunci-2026-10-04)
 
 ---
 
@@ -110,6 +112,8 @@ Studi ablasi membuktikan kontribusi setiap fitur KB.
 | D9 | Kalkulator eksisting | Tidak dipercaya; berstatus *system under test* | §9, §10 |
 | D10 | Presisi | Selisih Rp1 = bug. Aritmetika eksak, registri pembulatan, tiga tanggal, rentang tafsir | §6.9; kriteria penerimaan §11.1 |
 
+> *Catatan 2026-10-04.* D6 tetap berlaku untuk kalkulator, baseline, dan evaluasi. Sesudah rencana dikunci, repositori mendapat asisten KB berbasis LLM di luar engine; lihat [Adendum A](#adendum-a--pengembangan-sesudah-rencana-dikunci-2026-10-04), bagian A.2.
+
 ---
 
 ## 2. Masalah, Bukti Awal, dan Motivasi
@@ -185,6 +189,8 @@ Membangun **kalkulator PPh 21 berbasis knowledge base** yang:
 ### 4.3 Di luar ruang lingkup
 
 Pegawai tidak tetap, bukan pegawai, dan pensiunan; PPh selain Pasal 21; penghasilan dari lebih dari satu pemberi kerja; P3B dan WNA; pesangon (PPh 21 final); pelaporan e-Bupot/Coretax; LLM dalam bentuk apa pun; serta data pribadi riil.
+
+> *Catatan 2026-10-04.* "LLM dalam bentuk apa pun" tidak lagi menggambarkan seluruh repositori; batas yang tetap berlaku dijelaskan di [Adendum A](#adendum-a--pengembangan-sesudah-rencana-dikunci-2026-10-04), bagian A.2.
 
 Catatan: beberapa contoh resmi melibatkan WNA atau PNS. Kasus-kasus ini tetap disimpan dengan tanda (`WNA`, `PNS`) karena mekanisme TER dan masa pajak terakhirnya identik. Kasus tersebut dipakai untuk memvalidasi mekanisme, tetapi dilaporkan terpisah dari metrik utama.
 
@@ -311,6 +317,8 @@ Untuk atribut turunan *a* pada waktu *t* bagi pegawai *e* di perusahaan *c*, kan
 5. **Prioritas eksplisit.** Dipakai bila langkah 1–4 belum memutus. Jika masih seri, terjadi `AMBIGU` yang ditolak saat verifikasi statis (§6.6), bukan saat runtime.
 
 Semua langkah tercatat di jejak penjelasan.
+
+> *Catatan 2026-10-04.* Urutan dan ukuran spesifisitas di engine berbeda dari teks di atas; lihat [Adendum A](#adendum-a--pengembangan-sesudah-rencana-dikunci-2026-10-04), bagian A.5.
 
 ### 6.4 Versi waktu (bitemporal)
 
@@ -849,6 +857,8 @@ kb_payroll/
 └── app/                           # Streamlit: kalkulator, editor kebijakan, jejak
 ```
 
+> *Catatan 2026-10-04.* Struktur repositori yang sebenarnya berbeda (antara lain `ui/`, `web/`, `jembatan/`, `asisten_kb/`, `kb/tambahan/`); lihat [Adendum A](#adendum-a--pengembangan-sesudah-rencana-dikunci-2026-10-04), bagian A.1 dan A.5.
+
 ### 14.2 Paket kerja (tanpa jadwal; urutan = ketergantungan)
 
 Urutan wajib: **WP1a (kontrak presisi) → WP1b + WP1c → WP6 (B1, lalu dibekukan) → WP2 → WP3 → …**. B1 harus selesai dan dibekukan sebelum KB regulasi ditulis, agar independensinya dapat dibuktikan.
@@ -1089,3 +1099,78 @@ Objek audit: sheet *Calculator PPh21 v8*, karyawan dummy KAR-A (TK/0, masuk 2022
 | K-12 | Pembulatan memakai `ROUND` Excel (setengah-atas) per komponen di setiap baris, sehingga hasil bergantung pada urutan pembulatan | — | Pembulatan tidak terdokumentasi | Potensial Rp1 per komponen; diukur di E8 |
 
 Implikasi: K-02, K-04, dan (bila tanggal transfernya benar) K-11 adalah **ketidaksesuaian nyata** yang akan direproduksi dan dijelaskan oleh KB di E8 melalui peringatan `KONFLIK_WAJIB` dan jejak. Ini sekaligus demonstrasi mengapa kalkulator eksisting tidak boleh dijadikan oracle.
+
+---
+
+## Adendum A — Pengembangan sesudah rencana dikunci (2026-10-04)
+
+> **Cara membaca.** Rencana v1 di atas dikunci pada 1 Oktober 2026, dan hasil yang dilaporkan di README §5 diperoleh di bawah rencana itu. Adendum ini mencatat apa yang ditambahkan ke repositori sesudahnya (2–4 Oktober 2026) dan di mana implementasi menyimpang dari teks rencana. Adendum ini **tidak** menambah pertanyaan penelitian, hipotesis, maupun klaim novelty. Riwayat pengerjaannya ada di `journal.md` (kronologi lanjutan).
+
+### A.1 Yang ditambahkan
+
+| Tambahan | Lokasi | Commit | Status terhadap evaluasi RQ1–RQ5 |
+|---|---|---|---|
+| Aplikasi web untuk admin finance (Laravel) dan jembatan JSON ke engine | `web/`, `jembatan/` | `4b8d87a` s.d. `9cf61fb` | Di luar evaluasi. Aplikasi tidak menghitung pajak; setiap angka berasal dari engine |
+| Berkas KB tambahan yang diterapkan saat aplikasi berjalan, dengan perluasan DSL: `masukan` (isian baru yang diminta dari pengguna), amandemen `parameter` berversi, `klasifikasi_wajib` berversi | `kb/tambahan/`, `engine/kb.py`, `engine/inferensi.py`, `kb/skema/aturan.schema.json` | `f377592`, `fe63736`, `b3e6986` | Perluasan untuk RQ3 yang **belum dievaluasi** (A.3) |
+| Asisten KB: PDF peraturan → LLM → rancangan berkas KB → validasi engine → persetujuan manusia | `asisten_kb/` | `f377592`, `49e2b9a`, `e40b97d`, `6265699`, `7f208b2` | Di luar evaluasi. Mutu ekstraksi **belum dievaluasi** (A.2) |
+| Database PostgreSQL untuk aplikasi web | `web/` | `adc016c` | Di luar evaluasi |
+
+### A.2 Hubungan dengan D6 dan §4.3 (LLM)
+
+D6 ("LLM tidak dipakai sama sekali") dan §4.3 ("LLM dalam bentuk apa pun" di luar ruang lingkup) ditulis sebelum asisten KB ada. Asisten KB bertentangan dengan bunyi kedua kalimat itu, sehingga sejak 2 Oktober 2026 keduanya tidak lagi menggambarkan seluruh repositori.
+
+- **Yang tetap berlaku: kalkulator, baseline, dan evaluasi.** `engine/` tidak mengimpor paket LLM dan tidak pernah memanggilnya. LLM tidak menghitung pajak, dan tidak dipakai sebagai oracle maupun baseline. Hasil yang dilaporkan di README §5 tidak melibatkan LLM.
+- **Yang berubah.** `asisten_kb/` memakai LLM untuk menyusun *rancangan* berkas KB dari PDF peraturan. Model bawaannya `gpt-5.6-sol` lewat API OpenAI; model `claude-…` lewat API Anthropic juga didukung, dan versi pertama (`f377592`) memakainya sebagai bawaan. Rancangan baru berlaku setelah dua gerbang: validasi engine (skema, verifikasi statis, simulasi pada pegawai contoh) dan persetujuan manusia di aplikasi web.
+- **Batas klaim.** Asisten diuji fungsinya dengan klien LLM tiruan. Mutu ekstraksinya terhadap dokumen nyata belum dievaluasi. Menurut `journal.md` (tidak dapat diperiksa dari repositori), yang pernah dijalankan terhadap API sungguhan hanya beberapa panggilan kecil untuk memeriksa kunci dan akses model, dan satu kali alur penuh dengan PDF sintetis satu halaman (2 Oktober 2026), tanpa artefak tersimpan. Itu uji asap (*smoke test*: memastikan alurnya hidup), bukan evaluasi. Tidak ada angka akurasi, presisi, atau F1 yang boleh dikutip untuk asisten.
+- **Asal keputusan.** D6 ditulis di rencana pada sesi 1 Oktober (commit atas akun git `obikast`). Keputusan pengguna yang tercatat (`journal.md` no. 7) menolak LLM sebagai baseline; rumusan "tidak dipakai sama sekali" adalah rumusan rencana. Asisten KB diminta pada sesi 2 Oktober (commit atas akun git `mahathirmuh`; `journal.md`, kronologi lanjutan dan keputusan no. 16–17). Riwayat git tidak menunjukkan apakah kedua akun milik orang yang sama.
+
+### A.3 Berkas KB tambahan dan RQ3
+
+Tujuan §4.1 butir 4 ("disesuaikan … hanya dengan mengubah KB") kini punya jalur operasional: peraturan baru masuk sebagai berkas di `kb/tambahan/`, termasuk isian baru yang dimintanya dari pengguna. Statusnya:
+
+- Mekanisme ini memerlukan perubahan engine (`f377592`, `fe63736`, `b3e6986`). Peraturan yang dapat dinyatakan dengan DSL yang ada masuk tanpa perubahan kode. Perubahan tabel terverifikasi dan pencabutan aturan tidak tercakup (A.6), dan cakupan jalur ini belum diukur.
+- Jalur ini diuji secara fungsional (`tests/test_kb_tambahan.py`, `tests/test_urutan_amandemen.py`, `tests/test_masukan_kb.py`, `tests/test_asisten_kb.py`). Jalur ini **belum** dievaluasi dengan protokol §11.2 (S\*, impact precision/recall/F1, regresi, ukuran perubahan terhadap pembanding). E3 yang dilaporkan tetap E3 semula, yang menyunting salinan KB dasar (`eksperimen/perubahan.py`).
+- Karena itu jalur berkas KB tambahan ditulis sebagai **perluasan yang belum dievaluasi**, bukan sebagai bukti RQ3. Bila klaimnya akan dilaporkan, E3 perlu diperluas ke skenario Lampiran B yang diterapkan sebagai berkas KB tambahan, dengan S\* ditetapkan sebelum hasilnya dilihat.
+
+### A.4 Perubahan engine dan KB dasar, dan pemeriksaan bahwa hasil tidak berubah
+
+Engine dan KB dasar berubah sesudah 1 Oktober di `f377592`, `fe63736`, `c835cce` (hanya `engine/audit.py`), dan `b3e6986`. Rumus take home pay Perusahaan X di `kb/perusahaan/perusahaan_x.yaml` digeneralkan di `f377592` dan `fe63736`. §6.9.8 menuntut setiap perubahan yang menggeser hasil acuan dijelaskan. Pemeriksaannya:
+
+- Dua belas kali jalan dari sepuluh modul eksperimen (`v1 kb`, `v1 b1`, `v2`, `e12_tanpa_kb`, `e8_perusahaan_x` untuk 2023 dan 2024, `perubahan`, `ablasi`, `grossup`, `konflik`, `ekspresivitas`, `mutasi`) dilakukan pada tiga keadaan kode: commit `5630897` (keadaan 1 Oktober), commit `f28f7f3` (3 Oktober), dan pohon kerja yang kemudian menjadi `47af9a8` (4 Oktober). Keluaran ketiganya **identik byte demi byte**, begitu juga berkas `eksperimen/hasil/*.json` yang dihasilkan tiap jalan.
+- Keluaran itu tidak disimpan di repositori. Cara mengulanginya: ekspor tiap commit dengan `git archive`, jalankan kedua belas perintah di README §2.4, lalu bandingkan keluarannya.
+- Satu berkas hasil yang tersimpan berbeda dari keluaran itu: label satu mutan di `eksperimen/hasil/mutasi.json` tertinggal dari skripnya sejak 1 Oktober (operator `EKSPR`, di skrip `TAFSIR`). Berkas itu dibuat ulang pada 4 Oktober; status mutan dan skor tidak berubah.
+- Tes pada pohon kerja yang sama (4 Oktober): 583 lulus dan 8 dilewati (`pytest`), 99 lulus (`php artisan test` di `web/`).
+- Tidak diulang: pengukuran kinerja E9.
+
+### A.5 Penyimpangan implementasi dari teks rencana
+
+Perilaku engine pada butir-butir ini sudah ada sejak 1 Oktober. Dicatat di sini agar rencana dan engine dapat dibandingkan; engine tidak diubah untuk menyamakannya.
+
+| Bagian rencana | Teks rencana | Implementasi |
+|---|---|---|
+| §6.3, urutan resolusi | superior → specialis → posterior → override sah → prioritas | Engine memilih kelompok lebih dulu: aturan regulasi `wajib`/`tafsir`, lalu aturan perusahaan (mengalahkan regulasi `default`/`opsional`), lalu aturan regulasi lainnya. Di dalam kelompok terpilih berlaku specialis → posterior → prioritas (`engine/inferensi.py`, `_seleksi`). Aturan regulasi `default`/`opsional` yang tersingkir oleh regulasi `wajib`/`tafsir` tidak dicatat sebagai `ditolak` di jejak. Lex superior atas kategori komponen dijalankan terpisah oleh `kategori_efektif` lewat `klasifikasi_wajib` |
+| §6.3 butir 2, lex specialis | himpunan kondisi yang merupakan superset | Jumlah konjungsi `and` tingkat atas pada `jika` (`engine/ekspresi.py`, `jumlah_konjungsi`). Ini ukuran sintaksis: tidak memeriksa superset, dan dapat diakali dengan konjungsi konstan seperti `True and True` |
+| §6.3 butir 3, lex posterior | di antara versi aturan yang sama | `mulai` paling baru di antara semua aturan yang tersisa untuk fakta itu |
+| §6.3 butir 5, `AMBIGU` | ditolak saat verifikasi statis (§6.6) | Dilempar saat menghitung, ketika aturan yang seri memberi nilai berbeda. Bila nilainya sama, aturan pertama menurut urutan muat dipakai tanpa peringatan. Verifikasi statis tidak memeriksa ambiguitas |
+| §9.4 V4 dan §14.1 `verifikasi/` | verifikasi formal Z3 | Tidak ada di repositori; `z3-solver` hanya tercantum di `requirements-lock.txt` |
+| §14.1 `app/` | Streamlit dengan editor kebijakan | `ui/`: demo Streamlit tanpa editor kebijakan. Demo dinyatakan dibekukan pada 4 Oktober (README §2.1) |
+| §10 B2 dan §14.1 `baselines/adapters/` | adapter library OSS | `baselines/b2_payroll_hardcoded/`: kalkulator payroll tanpa KB untuk E12 |
+
+### A.6 Perluasan semantik KB sesudah 1 Oktober
+
+- Amandemen `parameter` dan `klasifikasi_wajib` dari berkas KB tambahan diterapkan per nama menurut `berlaku.mulai`, tidak menurut urutan berkas diterapkan (`b3e6986`). Ini mengikuti §6.4: valid time yang menentukan. Untuk kedua jenis entri itu, himpunan berkas yang sama selalu memberi versi yang sama, atau selalu ditolak (`tests/test_urutan_amandemen.py`). Urutan berkas masih menentukan `sidik_kb`, label isian yang dideklarasikan ulang, dan aturan mana yang tercatat di jejak bila dua aturan seri memberi nilai sama.
+- Batas iterasi titik tetap diambil dari aturan yang menang resolusi konflik, bukan dari aturan pertama menurut urutan muat (`b3e6986`). KB dasar tidak terpengaruh, karena tiap fakta titik tetap hanya punya satu aturan.
+- Komponen berkategori `tidak_diperhitungkan` ikut mengurangi take home pay Perusahaan X (`fe63736`); angka KB dasar identik (A.4).
+
+Celah yang diketahui:
+
+1. Knowledge time (§6.4) hanya menyaring aturan yang mengisi `dicatat` dan tabel KLU DTP. Parameter (dasar maupun amandemen), `klasifikasi_wajib`, dan aturan berkas KB tambahan tanpa `dicatat` tidak disaring oleh pertanyaan "dihitung dengan KB per tanggal X".
+2. `versi_kb` (commit git) tidak mencakup berkas `kb/tambahan/*.yaml`, yang diabaikan git. Aplikasi web mencatat `sidik_kb` (sidik isi berkas KB tambahan) pada setiap perhitungan, tetapi isi berkas per sidik belum diarsipkan. Determinisme §6.9.8 untuk hasil yang memakai berkas KB tambahan karena itu hanya berlaku selama berkasnya tidak diubah atau dihapus.
+3. Aturan baru hanya dapat mengalahkan aturan lama lewat resolusi konflik. Berkas KB tambahan belum dapat mencabut aturan, yaitu padanan "tutup berlaku" pada skenario C01 Lampiran B.
+
+### A.7 Rencana lanjutan (belum dikerjakan per 4 Oktober 2026)
+
+1. Pencabutan tegas lewat field `menggantikan: [ID]` pada aturan baru (menutup celah 3).
+2. Arsip isi berkas KB per `sidik_kb` dan log peristiwa terapkan, nonaktif, dan hapus (menutup celah 2).
+3. Perluasan E3 ke jalur berkas KB tambahan (A.3), bila klaimnya akan dilaporkan.
+4. Evaluasi mutu ekstraksi asisten pada dokumen nyata. Sampai itu dilakukan, tinjauan manusia adalah bagian wajib alur, bukan formalitas.

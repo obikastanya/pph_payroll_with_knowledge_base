@@ -18,8 +18,9 @@ ditulis ke sini sebagai satu berkas YAML, lalu ikut dimuat engine (`berkas_tamba
   ditawarkan ke LLM.
 - Sebelum berkas dinonaktifkan, engine menjalankan `periksa` pada berkas yang tersisa; penonaktifan ditolak bila KB
   sisanya tidak dapat dimuat atau menghitung Karyawan A 2023–2027 (metode gross, dan gross-up mulai 2024).
-- Urutan penerapan berkas tidak menentukan hasil: himpunan berkas yang sama selalu memberi KB yang sama, atau selalu
-  ditolak. Urutan hanya masih menentukan `sidik_kb`.
+- Urutan penerapan berkas tidak menentukan amandemen `parameter` dan `klasifikasi_wajib`: himpunan berkas yang sama
+  selalu memberi versi yang sama, atau selalu ditolak. Urutan masih menentukan `sidik_kb`, label isian yang
+  dideklarasikan ulang, dan aturan mana yang tercatat di jejak bila dua aturan seri memberi nilai sama.
 
 ## Aturan isi berkas
 

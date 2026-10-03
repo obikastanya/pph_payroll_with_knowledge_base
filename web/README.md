@@ -2,9 +2,9 @@
 
 Aplikasi multi-pengguna untuk admin finance: data pegawai, data HR per tahun pajak, proses payroll, slip gaji, dan rekap PPh 21.
 
-**Aplikasi ini tidak menghitung pajak sendiri.** Setiap angka dihitung oleh engine knowledge base di repositori induk (`engine/` + `kb/`), dipanggil lewat jembatan JSON (`jembatan/`). Karena tidak ada rumus yang disalin ke PHP, angka yang tampil di aplikasi ini mewarisi bukti verifikasi engine (V1–V3, E3–E12; lihat README induk §5).
+**Aplikasi ini tidak menghitung pajak sendiri.** Setiap angka dihitung oleh engine knowledge base di repositori induk (`engine/` + `kb/`), dipanggil lewat jembatan JSON (`jembatan/`). Karena tidak ada rumus yang disalin ke PHP, angka yang tampil di aplikasi ini mewarisi bukti verifikasi engine (V1–V3, E3–E12; lihat README induk §5). Bukti itu berlaku untuk KB dasar; perhitungan yang memakai berkas KB tambahan berada di luarnya.
 
-**Aturan baru tidak mengubah kode.** Di menu **Basis pengetahuan**, admin mengunggah PDF peraturan, LLM menyusun rancangan berkas KB, engine memvalidasi dan menyimulasikannya, lalu admin meninjau dan menerapkannya. Bila aturan baru membutuhkan data baru, isiannya muncul otomatis di form data HR.
+**Aturan baru tidak mengubah kode.** Di menu **Basis pengetahuan**, admin mengunggah PDF peraturan, LLM menyusun rancangan berkas KB, engine memvalidasi dan menyimulasikannya, lalu admin meninjau dan menerapkannya. Bila aturan baru membutuhkan data baru, isiannya muncul otomatis di form data HR. Jalur ini diuji fungsinya, tetapi belum dievaluasi sebagai hasil penelitian, dan mutu bacaan LLM belum dievaluasi pada dokumen nyata (research_plan Adendum A.2–A.3).
 
 ```text
 Laravel (web/)                                   repositori induk

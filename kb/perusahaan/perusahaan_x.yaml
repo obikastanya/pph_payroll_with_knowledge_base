@@ -307,15 +307,15 @@ aturan:
     lingkup: masa
     menghasilkan: px_thp
     jika: "metode != 'ditanggung_pemberi_kerja'"
-    maka: "px_penghasilan_tunai + px_tunjangan_pajak_tunai - komponen('iuran_pengurang') - komponen('zakat') - px_iuran_kes_pg - pph21 + px_dtp_tunai"
+    maka: "px_penghasilan_tunai + px_tunjangan_pajak_tunai - komponen('iuran_pengurang') - komponen('zakat') - komponen('tidak_diperhitungkan') - pph21 + px_dtp_tunai"
     tipe_hasil: rupiah
-    sumber: "slip gaji: tunai - iuran pegawai (semua komponen iuran pengurang & zakat, termasuk dari berkas KB tambahan) - PPh 21 dipotong (lebih bayar masa terakhir dikembalikan, PMK 168/2023 Ps. 17); PPh 21 DTP dibayarkan tunai ke pegawai (PMK 10/2025 Ps. 5(3))"
+    sumber: "slip gaji: tunai - iuran pegawai (semua komponen iuran pengurang & zakat, termasuk dari berkas KB tambahan) - potongan pegawai tanpa efek pajak (kategori tidak_diperhitungkan: iuran BPJS Kesehatan pegawai, cicilan koperasi, dst.) - PPh 21 dipotong (lebih bayar masa terakhir dikembalikan, PMK 168/2023 Ps. 17); PPh 21 DTP dibayarkan tunai ke pegawai (PMK 10/2025 Ps. 5(3))"
   - id: PX-THP-02
     sifat: opsional
     berlaku: {mulai: 2016-01-01}
     lingkup: masa
     menghasilkan: px_thp
     jika: "metode == 'ditanggung_pemberi_kerja'"
-    maka: "px_penghasilan_tunai - komponen('iuran_pengurang') - komponen('zakat') - px_iuran_kes_pg"
+    maka: "px_penghasilan_tunai - komponen('iuran_pengurang') - komponen('zakat') - komponen('tidak_diperhitungkan')"
     tipe_hasil: rupiah
-    sumber: "slip gaji: PPh 21 ditanggung pemberi kerja tidak dipotong dari pegawai"
+    sumber: "slip gaji: tunai - iuran pegawai (iuran pengurang & zakat) - potongan pegawai tanpa efek pajak (kategori tidak_diperhitungkan: iuran BPJS Kesehatan pegawai, cicilan koperasi, dst.); PPh 21 ditanggung pemberi kerja tidak dipotong dari pegawai"

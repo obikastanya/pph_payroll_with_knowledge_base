@@ -3,7 +3,7 @@
 Satu KB = kumpulan berkas aturan YAML (lapisan regulasi + opsional lapisan perusahaan),
 registri pembulatan, parameter berversi, dan tabel bertingkat (lewat manifest berhash).
 """
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import date, timedelta
 from fractions import Fraction
 from pathlib import Path
@@ -20,27 +20,40 @@ BERKAS_ATURAN_REGULASI = ["aturan_umum.yaml", "aturan_ter.yaml", "aturan_per16.y
 @dataclass(frozen=True)
 class MetaFungsi:
     argumen_fakta: bool = False   # argumen pertama (string) adalah nama fakta -> dependensi
+    arg_min: int = 0              # jumlah argumen diperiksa saat parse, bukan baru gagal saat menghitung
+    arg_maks: object = None       # None = tidak dibatasi
 
 
-# Fungsi yang boleh dipakai di DSL. Implementasinya ada di engine/inferensi.py.
+def _ar(n_min, n_maks="sama", fakta=False):
+    return MetaFungsi(argumen_fakta=fakta, arg_min=n_min, arg_maks=n_min if n_maks == "sama" else n_maks)
+
+
+# Fungsi yang boleh dipakai di DSL beserta jumlah argumennya. Implementasinya ada di engine/inferensi.py.
 FUNGSI = {
-    "min": MetaFungsi(), "max": MetaFungsi(), "abs": MetaFungsi(),
-    "persen": MetaFungsi(), "parameter": MetaFungsi(), "bulatkan": MetaFungsi(),
-    "ptkp": MetaFungsi(), "kategori_ter": MetaFungsi(), "kawin": MetaFungsi(),
-    "tarif_ter": MetaFungsi(), "pasal17": MetaFungsi(),
-    "komponen": MetaFungsi(), "komponen_kode": MetaFungsi(), "komponen_valas": MetaFungsi(),
-    "dtp_sektor_tahun": MetaFungsi(), "dtp_masa_fasilitas": MetaFungsi(),
-    "atau": MetaFungsi(argumen_fakta=True), "nilai_masa": MetaFungsi(argumen_fakta=True),
-    "jumlah_masa": MetaFungsi(argumen_fakta=True),
-    "jumlah_masa_selain_terakhir": MetaFungsi(argumen_fakta=True),
-    "tolak": MetaFungsi(),
+    "min": _ar(1, None), "max": _ar(1, None), "abs": _ar(1),
+    "persen": _ar(1), "parameter": _ar(1), "bulatkan": _ar(2),
+    "ptkp": _ar(1), "kategori_ter": _ar(1), "kawin": _ar(1),
+    "tarif_ter": _ar(2), "pasal17": _ar(1),
+    # komponen(kategori[, satuan_periode]); komponen_kode(kategori, potongan_kode); komponen_valas(kategori)
+    "komponen": _ar(1, 2), "komponen_kode": _ar(2), "komponen_valas": _ar(1),
+    "dtp_sektor_tahun": _ar(2), "dtp_masa_fasilitas": _ar(3),
+    "atau": _ar(2, fakta=True), "nilai_masa": _ar(2, fakta=True),
+    "jumlah_masa": _ar(1, fakta=True),
+    "jumlah_masa_selain_terakhir": _ar(1, fakta=True),
+    "tolak": _ar(1),
     # data HR mentah (lapisan perusahaan) & tanggal
-    "hr": MetaFungsi(), "hr_masa": MetaFungsi(), "desimal": MetaFungsi(),
-    "tanggal": MetaFungsi(), "tanggal_masa": MetaFungsi(), "tambah_hari": MetaFungsi(), "geser_bulan": MetaFungsi(),
-    "selisih_hari": MetaFungsi(), "selisih_bulan": MetaFungsi(), "bulan_dari": MetaFungsi(), "hari_dari": MetaFungsi(),
-    "tahun_dari": MetaFungsi(),
+    "hr": _ar(1), "hr_masa": _ar(1, 2), "desimal": _ar(1),
+    "tanggal": _ar(1), "tanggal_masa": _ar(0), "tambah_hari": _ar(2), "geser_bulan": _ar(2),
+    "selisih_hari": _ar(2), "selisih_bulan": _ar(2), "bulan_dari": _ar(1), "hari_dari": _ar(1),
+    "tahun_dari": _ar(1),
 }
 FUNGSI_KOMPONEN = {"komponen", "komponen_kode", "komponen_valas"}
+
+# Kategori pajak komponen (sama dengan enum `kategori` di kb/skema/aturan.schema.json). 'rapel' hanya ada pada
+# komponen input kasus, tetapi sah sebagai argumen pertama komponen().
+KATEGORI_KOMPONEN = ("teratur", "tidak_teratur", "premi_objek", "natura", "iuran_pengurang", "zakat", "bukan_objek",
+                     "tidak_diperhitungkan")
+KATEGORI_INPUT = ("rapel",)
 
 # Fakta dasar yang disediakan engine dari input kasus (bukan hasil aturan).
 FAKTA_DASAR_TAHUN = {
@@ -159,6 +172,8 @@ def nilai_masukan(m, v, tempat):
         if m.tipe in ("rupiah", "bilangan"):
             if isinstance(v, bool) or not isinstance(v, int):
                 raise ValueError("harus bilangan bulat")
+            if m.tipe == "rupiah" and v < 0:
+                raise ValueError("tidak boleh negatif")
             return rupiah(v) if m.tipe == "rupiah" else v
         if m.tipe in ("persen", "desimal"):
             if not isinstance(v, str):
@@ -188,6 +203,24 @@ def _bangun_masukan(d, berkas):
         raise KesalahanKB(f"{berkas}: masukan {m.kunci} bertipe pilihan wajib punya daftar 'pilihan'")
     bawaan = nilai_masukan(m, d.get("bawaan"), berkas)
     return Masukan(**{**m.__dict__, "bawaan": bawaan})
+
+
+# Atribut yang menentukan arti nilai masukan; deklarasi ulang hanya sah bila semuanya sama (label, keterangan, sumber
+# boleh berbeda karena hanya teks tampilan).
+KONTRAK_MASUKAN = ("tipe", "lingkup", "wajib", "bawaan", "pilihan")
+
+
+def _tambah_masukan(masukan, m):
+    ada = masukan.get(m.kunci)
+    if ada is None:
+        masukan[m.kunci] = m
+        return
+    beda = [f"{a} ({getattr(ada, a)!r} vs {getattr(m, a)!r})" for a in KONTRAK_MASUKAN
+            if getattr(ada, a) != getattr(m, a) or type(getattr(ada, a)) is not type(getattr(m, a))]
+    if beda:
+        raise KesalahanKB(f"{m.berkas}: masukan {m.kunci} sudah dideklarasikan di {ada.berkas} dengan atribut berbeda: "
+                          f"{'; '.join(beda)}; deklarasi ulang hanya boleh bila tipe, lingkup, wajib, bawaan dan pilihan sama")
+    # deklarasi identik: deklarasi pertama dipertahankan
 
 
 @dataclass(frozen=True)
@@ -228,28 +261,75 @@ def _muat_parameter(path):
     return hasil
 
 
-def _amandemen_parameter(param, entri, lapisan, berkas):
-    """Parameter dari berkas tambahan. Versi baru yang mulai berlaku pada tanggal M menutup versi lama yang masih
-    berlaku pada M (sampai = M - 1 hari); versi lama yang mulai pada/sesudah M berarti bentrok. Lapisan perusahaan
-    hanya boleh menambah parameter baru, bukan mengubah parameter regulasi (lex superior)."""
+def _sisipkan_versi(lama, mulai, sampai, apa, berkas):
+    """Semantik amandemen berversi waktu (parameter & klasifikasi wajib). lama: [(mulai, sampai, isi)].
+
+    Versi baru [M, S] menutup versi lama yang masih berlaku pada M (sampai = M - 1 hari); versi lama yang mulai di
+    dalam [M, S] berarti bentrok. Amandemen sementara (S terisi) tidak memotong versi lama selamanya: bila versi lama
+    semula berlaku melewati S, ia berlaku lagi mulai S + 1 hari sampai tanggal akhirnya semula.
+    Hasil: [(mulai, sampai, isi, lanjutan)], lanjutan=True untuk potongan yang berlaku lagi setelah S."""
+    if sampai is not None and sampai < mulai:
+        raise KesalahanKB(f"{berkas}: {apa}: masa berlaku terbalik (sampai {sampai} sebelum mulai {mulai})")
+    hasil = []
+    for m, s, isi in lama:
+        if m >= mulai and (sampai is None or m <= sampai):
+            raise KesalahanKB(f"{berkas}: {apa} mulai {mulai} bentrok dengan versi yang berlaku mulai {m}")
+        if m > mulai or (s is not None and s < mulai):   # tidak beririsan dengan versi baru
+            hasil.append((m, s, isi, False))
+            continue
+        hasil.append((m, mulai - timedelta(days=1), isi, False))
+        if sampai is not None and (s is None or s > sampai):
+            hasil.append((sampai + timedelta(days=1), s, isi, True))
+    return hasil
+
+
+def _jenis_nilai(v):
+    return "rupiah (bilangan bulat)" if isinstance(v, int) else "tarif (teks desimal)"
+
+
+def _amandemen_parameter(param, entri, lapisan, berkas, asal=None):
+    """Parameter dari berkas tambahan, dengan semantik versi _sisipkan_versi. Lapisan perusahaan tidak boleh mengubah
+    parameter regulasi (lex superior), tetapi boleh mengamandemen parameter yang dibuat lapisan perusahaan.
+    asal: {nama: lapisan pembuat}; parameter tanpa catatan asal dianggap milik regulasi."""
+    asal = {} if asal is None else asal
     for p in entri:
         nama, mulai, sampai = p["nama"], _tanggal(p["berlaku"]["mulai"]), _tanggal(p["berlaku"].get("sampai"))
         lama = param.get(nama, [])
-        if lama and lapisan != "regulasi":
+        if lama and lapisan != "regulasi" and asal.get(nama, "regulasi") != lapisan:
             raise KesalahanKB(f"{berkas}: parameter {nama} sudah ada; lapisan perusahaan tidak boleh mengubahnya")
         try:
             nilai = _nilai_parameter(p["nilai"])
         except (ValueError, PelanggaranPresisi) as e:
             raise KesalahanKB(f"{berkas}: parameter {nama}: {e}") from None
+        if lama and type(lama[0][2]) is not type(nilai):
+            # mis. "11.500" (maksudnya 11.500.000) terbaca sebagai tarif 23/2 untuk parameter rupiah jp_batas_upah
+            raise KesalahanKB(
+                f"{berkas}: parameter {nama}: nilai {p['nilai']!r} terbaca sebagai {_jenis_nilai(nilai)}, padahal versi "
+                f"yang ada bernilai {_jenis_nilai(lama[0][2])}. Rupiah ditulis sebagai bilangan bulat tanpa pemisah ribuan "
+                f"(mis. 11500000); tarif/persen ditulis sebagai teks desimal (mis. \"0.3\")")
         baru = []
-        for m, s, v, src in lama:
-            if m >= mulai:
-                raise KesalahanKB(f"{berkas}: parameter {nama} mulai {mulai} bentrok dengan versi yang berlaku mulai {m}")
-            if s is None or s >= mulai:
-                s = mulai - timedelta(days=1)
-            baru.append((m, s, v, src))
+        for m, s, (v, src), lanjutan in _sisipkan_versi([(m, s, (v, src)) for m, s, v, src in lama], mulai, sampai,
+                                                        f"parameter {nama}", berkas):
+            baru.append((m, s, v, f"{src} (berlaku lagi setelah {sampai})" if lanjutan else src))
         baru.append((mulai, sampai, nilai, f"{p['sumber']} [{berkas}]"))
-        param[nama] = baru
+        param[nama] = sorted(baru, key=lambda x: x[0])
+        if not lama or lapisan == "regulasi":
+            asal[nama] = lapisan
+
+
+def _amandemen_klasifikasi(klasifikasi, entri, berkas):
+    """Klasifikasi wajib berversi waktu, semantik sama dengan parameter: entri baru untuk jenis J menutup entri J yang
+    masih berlaku pada tanggal mulainya (tanpa ini entri baru tidak pernah terpakai karena kalah urutan)."""
+    for k in entri:
+        baru = KlasifikasiWajib(k["jenis"], k["kategori"], _tanggal(k["berlaku"]["mulai"]),
+                                _tanggal(k["berlaku"].get("sampai")), k["sumber"])
+        lain = [w for w in klasifikasi if w.jenis != baru.jenis]
+        potong = _sisipkan_versi([(w.mulai, w.sampai, w) for w in klasifikasi if w.jenis == baru.jenis], baru.mulai,
+                                 baru.sampai, f"klasifikasi wajib {baru.jenis}", berkas)
+        sama = [replace(w, mulai=m, sampai=s,
+                        sumber=f"{w.sumber} (berlaku lagi setelah {baru.sampai})" if lanjutan else w.sumber)
+                for m, s, w, lanjutan in potong]
+        klasifikasi[:] = lain + sorted(sama + [baru], key=lambda w: w.mulai)
 
 
 def rujukan_masukan(kb):
@@ -286,30 +366,37 @@ def muat_kb(berkas_tambahan=(), berkas_regulasi=None, dir_regulasi=None):
     aturan, komponen, klasifikasi, pencatatan, masukan = [], [], [], {}, {}
     registri = muat_registri_pembulatan(dreg / "pembulatan.yaml")
     parameter = _muat_parameter(dreg / "parameter.yaml")
+    asal_parameter = {n: "regulasi" for n in parameter}   # lapisan pembuat tiap parameter
+    asal_komponen = {}                                    # fakta -> berkas yang mendeklarasikannya
     for p in berkas:
         data = _iso(muat_yaml(p))
         validasi_skema(data, "aturan.schema.json")
         lapisan = data["lapisan"]
         for d in data["aturan"]:
-            aturan.append(_bangun_aturan(d, lapisan, p.name))
+            a = _bangun_aturan(d, lapisan, p.name)
+            ganda = next((x for x in aturan if x.id == a.id), None)
+            if ganda is not None:   # diperiksa per berkas agar pesan menyebut kedua berkas
+                raise KesalahanKB(f"{p.name}: id aturan duplikat: {a.id} sudah ada di {ganda.berkas}")
+            aturan.append(a)
         if data.get("komponen"):
             if lapisan != "perusahaan":
                 raise KesalahanKB(f"{p.name}: pemetaan komponen hanya boleh di lapisan perusahaan")
-            komponen += [KomponenPerusahaan(k["fakta"], k["jenis"], k["kategori"], p.name, k.get("label"))
-                         for k in data["komponen"]]
+            for k in data["komponen"]:
+                # _komponen() menjumlah per entri: deklarasi ganda = komponen terhitung dua kali di bruto, PPh & THP
+                if k["fakta"] in asal_komponen:
+                    raise KesalahanKB(f"{p.name}: komponen {k['fakta']} sudah dideklarasikan di {asal_komponen[k['fakta']]}; "
+                                      "deklarasi ulang tidak diizinkan (kategori komponen yang sudah ada tidak dapat diubah "
+                                      "lewat berkas tambahan)")
+                asal_komponen[k["fakta"]] = p.name
+                komponen.append(KomponenPerusahaan(k["fakta"], k["jenis"], k["kategori"], p.name, k.get("label")))
         for d in data.get("masukan") or []:
-            m = _bangun_masukan(d, p.name)
-            ada = masukan.get(m.kunci)
-            if ada is not None and (ada.tipe, ada.lingkup) != (m.tipe, m.lingkup):
-                raise KesalahanKB(f"{p.name}: masukan {m.kunci} sudah dideklarasikan {ada.berkas} dengan tipe/lingkup berbeda")
-            masukan.setdefault(m.kunci, m)
+            _tambah_masukan(masukan, _bangun_masukan(d, p.name))
         if data.get("parameter"):
-            _amandemen_parameter(parameter, data["parameter"], lapisan, p.name)
+            _amandemen_parameter(parameter, data["parameter"], lapisan, p.name, asal_parameter)
         if data.get("klasifikasi_wajib"):
             if lapisan != "regulasi":
                 raise KesalahanKB(f"{p.name}: klasifikasi wajib hanya boleh di lapisan regulasi")
-            klasifikasi += [KlasifikasiWajib(k["jenis"], k["kategori"], _tanggal(k["berlaku"]["mulai"]),
-                                             _tanggal(k["berlaku"].get("sampai")), k["sumber"]) for k in data["klasifikasi_wajib"]]
+            _amandemen_klasifikasi(klasifikasi, data["klasifikasi_wajib"], p.name)
         if data.get("pembulatan"):
             registri.tambah(data["pembulatan"], lapisan)
         for c in data.get("pencatatan") or []:
@@ -336,6 +423,21 @@ def _verifikasi_versi_tabel(kb):
         versi = [r for r in kb.tabel["ter_bulanan"] if r["berlaku_mulai"] == mulai]
         for k in sorted({r["kategori"] for r in versi}):
             tabel_ter(versi, k)   # melempar bila celah / tumpang tindih / tidak berakhir di tak hingga
+
+
+def _verifikasi_argumen_literal(kb, a, ekspresi):
+    """Argumen literal yang pasti salah ditolak saat muat, bukan saat menghitung (untuk komponen(): kategori salah
+    ketik diam-diam menjumlah 0). Hanya argumen pertama, yang maknanya pasti, yang diperiksa."""
+    kategori = KATEGORI_KOMPONEN + KATEGORI_INPUT
+    for e in ekspresi:
+        for fn, arg, _ in e.panggilan_literal(FUNGSI_KOMPONEN | {"parameter", "bulatkan"}):
+            if fn in FUNGSI_KOMPONEN and arg not in kategori:
+                raise KesalahanKB(f"{a.id}: {fn}('{arg}'): kategori komponen tidak dikenal (pilihan: {', '.join(kategori)})")
+            if fn == "parameter" and arg not in kb.parameter:
+                raise KesalahanKB(f"{a.id}: parameter('{arg}') tidak dikenal (tidak ada di kb/regulasi/parameter.yaml "
+                                  "maupun berkas tambahan)")
+            if fn == "bulatkan" and arg not in kb.registri:
+                raise KesalahanKB(f"{a.id}: bulatkan('{arg}', ...): entri pembulatan tidak terdaftar di registri")
 
 
 def verifikasi_statis(kb):
@@ -370,6 +472,13 @@ def verifikasi_statis(kb):
             raise KesalahanKB(f"fakta {fakta} dihasilkan dengan tipe berbeda: {tipe}")
         if fakta in FAKTA_DASAR_TAHUN | FAKTA_DASAR_MASA:
             raise KesalahanKB(f"fakta dasar {fakta} tidak boleh dihasilkan aturan")
+    for a in kb.aturan:
+        ekspresi = [e for e in (a.maka, a.jika, a.batas_bawah, a.batas_atas) if e is not None]
+        if a.lingkup == "tahun" and any("hr_masa" in e.fungsi for e in ekspresi):
+            raise KesalahanKB(f"{a.id}: aturan berlingkup tahun tidak boleh memanggil hr_masa() (tidak ada masa yang "
+                              "dibaca, sehingga nilainya selalu bawaan); pakai hr('kunci') untuk masukan tahunan, atau "
+                              "hitung fakta berlingkup masa lalu jumlahkan dengan jumlah_masa()")
+        _verifikasi_argumen_literal(kb, a, ekspresi)
     for kunci, r in rujukan_masukan(kb).items():
         m = kb.masukan.get(kunci)
         if m is not None and r["lingkup"] != {m.lingkup}:

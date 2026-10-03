@@ -27,15 +27,18 @@ class Ekspresi:
         if not isinstance(teks, str):
             raise KesalahanEkspresi(f"ekspresi wajib string: {teks!r}")
         self.teks = teks
-        try:
-            self.pohon = ast.parse(teks.strip(), mode="eval")
-        except SyntaxError as e:
-            raise KesalahanEkspresi(f"sintaks tidak valid: {teks!r} ({e.msg})") from None
         self.nama = set()
         self.fungsi = set()
         self.argumen_fakta = set()   # nama fakta yang dirujuk lewat argumen string (mis. jumlah_masa('pph21'))
         self._fungsi_dikenal = fungsi_dikenal
-        self._validasi(self.pohon.body)
+        try:
+            self.pohon = ast.parse(teks.strip(), mode="eval")
+            self._validasi(self.pohon.body)
+        except SyntaxError as e:
+            raise KesalahanEkspresi(f"sintaks tidak valid: {teks!r} ({e.msg})") from None
+        except (RecursionError, MemoryError):
+            # parser CPython melempar RecursionError/MemoryError ("stack overflow") untuk sarang yang sangat dalam
+            raise KesalahanEkspresi(f"ekspresi terlalu panjang atau terlalu dalam: {teks[:80]!r}...") from None
 
     def _validasi(self, n):
         if isinstance(n, ast.Constant):
@@ -88,6 +91,11 @@ class Ekspresi:
             for a in n.args:
                 self._validasi(a)
             meta = self._fungsi_dikenal[n.func.id]
+            arg_min, arg_maks = getattr(meta, "arg_min", 0), getattr(meta, "arg_maks", None)
+            if len(n.args) < arg_min or (arg_maks is not None and len(n.args) > arg_maks):
+                jumlah = str(arg_min) if arg_min == arg_maks else (f"{arg_min}..{arg_maks}" if arg_maks is not None
+                                                                   else f"minimal {arg_min}")
+                raise KesalahanEkspresi(f"{n.func.id}() menerima {jumlah} argumen, diberi {len(n.args)} di {self.teks!r}")
             if getattr(meta, "argumen_fakta", False) and n.args and isinstance(n.args[0], ast.Constant):
                 self.argumen_fakta.add(n.args[0].value)
         else:
@@ -108,7 +116,22 @@ class Ekspresi:
         return hasil
 
     def evaluasi(self, konteks):
-        return _eval(self.pohon.body, konteks)
+        try:
+            return _eval(self.pohon.body, konteks)
+        except RecursionError:
+            raise KesalahanEkspresi(f"ekspresi terlalu panjang atau terlalu dalam: {self.teks[:80]!r}...") from None
+
+
+def _operand(v):
+    """Aritmetika hanya untuk int & Fraction. Teks/tuple/tanggal ditolak: '10' * 3 di Python = '101010' (diam-diam
+    absurd), dan masukan bertipe persen/desimal/tanggal memang berupa teks yang wajib dikonversi lebih dulu."""
+    if isinstance(v, (float, bool)) or v is None:
+        raise PelanggaranPresisi(f"operand aritmetika tidak valid: {v!r}")
+    if not isinstance(v, (int, Fraction)):
+        saran = ("; teks angka wajib dikonversi dulu dengan persen(...), desimal(...) atau tanggal(...)"
+                 if isinstance(v, str) else "")
+        raise PelanggaranPresisi(f"operand aritmetika tidak valid: {v!r} ({type(v).__name__}){saran}")
+    return v
 
 
 def _eval(n, k):
@@ -124,10 +147,7 @@ def _eval(n, k):
         jalur.append(n.id)
         return k.input(".".join(reversed(jalur)))
     if isinstance(n, ast.BinOp):
-        a, b = _eval(n.left, k), _eval(n.right, k)
-        for v in (a, b):
-            if isinstance(v, (float, bool)) or v is None:
-                raise PelanggaranPresisi(f"operand aritmetika tidak valid: {v!r}")
+        a, b = _operand(_eval(n.left, k)), _operand(_eval(n.right, k))
         if isinstance(n.op, ast.Add):
             return a + b
         if isinstance(n.op, ast.Sub):
@@ -139,7 +159,7 @@ def _eval(n, k):
         return Fraction(a) / Fraction(b)
     if isinstance(n, ast.UnaryOp):
         v = _eval(n.operand, k)
-        return (not v) if isinstance(n.op, ast.Not) else -v
+        return (not v) if isinstance(n.op, ast.Not) else -_operand(v)
     if isinstance(n, ast.BoolOp):
         if isinstance(n.op, ast.And):
             hasil = True

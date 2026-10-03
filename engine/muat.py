@@ -24,7 +24,15 @@ class KesalahanKB(ValueError):
 
 
 class LoaderKetat(yaml.SafeLoader):
-    """SafeLoader yang menolak float dan kunci duplikat."""
+    """SafeLoader yang menolak float, kunci duplikat, serta anchor/alias."""
+
+    def compose_node(self, parent, index):
+        # alias membuat berkas kecil mengembang menjadi struktur raksasa ("billion laughs"); tidak ada berkas KB
+        # yang memakainya, jadi anchor maupun alias ditolak sejak tahap komposisi.
+        ev = self.peek_event()
+        if isinstance(ev, yaml.AliasEvent) or getattr(ev, "anchor", None) is not None:
+            raise KesalahanKB(f"alias/anchor YAML tidak diizinkan (baris {ev.start_mark.line + 1})")
+        return super().compose_node(parent, index)
 
 
 def _tolak_float(loader, node):

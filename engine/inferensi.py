@@ -537,6 +537,8 @@ def kategori_efektif(ev, kp, b):
         return kp.kategori
     tgl = ev._tanggal(b)
     wajib = [w for w in ev.kb.klasifikasi if w.jenis == kp.jenis and w.mulai <= tgl and (w.sampai is None or tgl <= w.sampai)]
+    # muat_kb sudah memotong versi lama; bila tetap ada beberapa entri berlaku, yang mulai terakhir menang (lex posterior)
+    wajib = sorted(wajib, key=lambda w: w.mulai, reverse=True)
     if wajib and wajib[0].kategori != kp.kategori:
         kunci = ("KONFLIK_WAJIB", kp.fakta)
         if kunci not in ev._konflik:

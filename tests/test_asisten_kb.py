@@ -104,11 +104,18 @@ def test_rancangan_menjadi_berkas_kb_yang_lolos_validasi_dan_simulasi():
     assert v["isi"]["aturan"][0]["berlaku"] == {"mulai": "2026-07-01"} and v["ringkasan"]["aturan"] == 1
     [m] = v["masukan"]
     assert (m["kunci"], m["tipe"], m["lingkup"], m["wajib"], m["dideklarasikan"]) == ("uang_transport_per_hari", "rupiah", "tahun", False, True)
-    [d] = v["dampak"]  # hanya tahun yang tersentuh rancangan
-    assert d["tahun"] == 2026 and d["nilai_contoh"] == {"uang_transport_per_hari": 100_000}
-    assert d["fakta_baru"]["px_transport"] > 0
-    assert d["sesudah"]["bruto_setahun"] - d["sebelum"]["bruto_setahun"] == d["fakta_baru"]["px_transport"]
-    assert d["sesudah"]["thp_setahun"] > d["sebelum"]["thp_setahun"]
+    # mulai Juli 2026: tahun mulai + tahun penuh pertamanya, untuk Karyawan A dan pegawai yang masuk Juli
+    assert [(d["pegawai"], d["tahun"]) for d in v["dampak"]] == [
+        ("Karyawan A (contoh)", 2026), ("Pegawai masuk Juli (contoh)", 2026),
+        ("Karyawan A (contoh)", 2027), ("Pegawai masuk Juli (contoh)", 2027)]
+    for d in v["dampak"]:
+        assert d["nilai_contoh"] == {"uang_transport_per_hari": 100_000}
+        assert d["fakta_baru"]["px_transport"] > 0
+        assert d["sesudah"]["bruto_setahun"] - d["sebelum"]["bruto_setahun"] == d["fakta_baru"]["px_transport"]
+        assert d["sesudah"]["thp_setahun"] > d["sebelum"]["thp_setahun"]
+    a26, _, a27, _ = v["dampak"]
+    assert a27["fakta_baru"]["px_transport"] > a26["fakta_baru"]["px_transport"]   # 2026 hanya Juli-Desember
+    assert v["perubahan"] == [] and v["belum_teruji"] == [] and v["peringatan"] == []
 
 
 def test_masukan_baru_tanpa_deklarasi_ditolak():
@@ -273,3 +280,463 @@ def test_validasi_lewat_jembatan_mempertimbangkan_berkas_aktif(dir_kb):
                         "berkas_tambahan": [str(berkas)]})
     assert jawab["ok"] and not jawab["validasi"]["ok"]
     assert any("duplikat" in g for g in jawab["validasi"]["galat"])
+
+
+# ------------------------------------------------------------------------------------------- R1: validasi tidak melempar
+
+def _tulis(direktori, nama, isi):
+    p = direktori / nama
+    p.write_text(isi, encoding="utf-8")
+    return p
+
+
+TGL = """
+lapisan: perusahaan
+id: uji_tgl
+masukan:
+  - {kunci: tanggal_sk, label: Tanggal SK, tipe: tanggal, lingkup: tahun, wajib: true}
+aturan:
+  - id: PPU-TGL-01
+    sifat: opsional
+    berlaku: {mulai: 2026-01-01}
+    lingkup: tahun
+    menghasilkan: px_bulan_sk
+    maka: "bulan_dari(hr('tanggal_sk'))"
+    tipe_hasil: bilangan
+    sumber: uji
+"""
+OVERFLOW = (TGL.replace("bulan_dari(hr('tanggal_sk'))", "tahun_dari(tambah_hari(tanggal_masa(), 100000000))")
+            .replace("lingkup: tahun\n    menghasilkan", "lingkup: masa\n    menghasilkan"))
+
+
+@pytest.mark.parametrize("teks, pesan, termuat", [
+    (TGL, "simulasi Karyawan A 2026 gagal (aturan PPU-TGL-01): AttributeError", True),   # tanggal() terlupa
+    (OVERFLOW, "simulasi Karyawan A 2026 gagal (aturan PPU-TGL-01): OverflowError", True),
+    (TGL.replace("mulai: 2026-01-01", "mulai: 2026-02-30"), "YAML tidak dapat dibaca: ValueError", False),
+    ("lapisan: perusahaan\naturan: 5\n", "ditolak verifikasi KB", False),
+    ("lapisan: perusahaan\naturan:\n  - 5\n", "ditolak verifikasi KB", False),
+])
+def test_galat_tak_terduga_menjadi_galat_validasi(teks, pesan, termuat):
+    v = validasi(teks)
+    assert not v["ok"] and any(pesan in g for g in v["galat"]), v["galat"]
+    # KB tidak termuat -> isi kosong, agar halaman tinjau tidak menyusun tabel dari struktur rusak
+    assert bool(v["isi"]) == termuat
+
+
+def test_isi_hanya_terisi_bila_kb_termuat():
+    v = validasi("lapisan: perusahaan\naturan: 5\n")
+    assert v["isi"] == {} and v["ringkasan"]["aturan"] == 0 and v["ringkasan"]["lapisan"] == "perusahaan"
+    assert validasi(TGL)["isi"]["aturan"][0]["id"] == "PPU-TGL-01"
+
+
+def test_galat_internal_tidak_melempar(monkeypatch):
+    import asisten_kb.rancangan as R
+
+    def rusak(*a, **k):
+        raise IndexError("list index out of range")
+    monkeypatch.setattr(R, "muat_kb", rusak)
+    v = validasi(ke_yaml(ke_berkas(USULAN)))
+    assert not v["ok"] and v["isi"] == {} and "IndexError" in v["galat"][0]
+    monkeypatch.undo()
+    monkeypatch.setattr(R, "_simulasi", rusak)
+    v = validasi(ke_yaml(ke_berkas(USULAN)))
+    assert not v["ok"] and v["galat"] == ["galat internal validasi: IndexError: list index out of range"]
+
+
+def test_usulkan_tetap_mengembalikan_usulan_bila_validasi_gagal(pdf):
+    u = _usulan(aturan=[dict(ATURAN, maka="hr('uang_transport_per_hari') * 'a'")])
+    jawab = J.jalankan({"perintah": "usulkan", "pdf": str(pdf)}, KlienTiruan(u))
+    assert jawab["ok"] and not jawab["validasi"]["ok"] and jawab["yaml"] and jawab["usulan"]["id_berkas"] == "transport_2026"
+    assert jawab["info"]["model"] == "gpt-5.6-sol"
+    assert any("PelanggaranPresisi" in g and "PPT-TRANSPORT-01" in g for g in jawab["validasi"]["galat"])
+
+    rusak = _usulan(aturan=[{k: v for k, v in ATURAN.items() if k != "maka"}])   # di luar skema keluaran
+    jawab = J.jalankan({"perintah": "usulkan", "pdf": str(pdf)}, KlienTiruan(rusak))
+    assert jawab["ok"] and jawab["yaml"] == "" and jawab["usulan"]["aturan"] and jawab["info"]
+    assert "usulan tidak dapat diubah menjadi berkas KB: KeyError" in jawab["validasi"]["galat"][0]
+    assert jawab["validasi"]["perubahan"] == [] and jawab["validasi"]["belum_teruji"] == []
+
+
+# ------------------------------------------------------------------------------------------- R2: nilai contoh semua masukan
+
+KINERJA = """
+lapisan: perusahaan
+id: kinerja
+komponen:
+  - {fakta: px_bonus_kinerja, jenis: bonus_kinerja, kategori: tidak_teratur, label: Bonus kinerja}
+masukan:
+  - {kunci: kinerja_sangat_baik, label: Kinerja sangat baik, tipe: ya_tidak, lingkup: tahun, wajib: true}
+aturan:
+  - id: PPK-KINERJA-01
+    sifat: opsional
+    berlaku: {mulai: 2024-01-01}
+    lingkup: masa
+    menghasilkan: px_bonus_kinerja
+    jika: "bulan == 12"
+    maka: "hr('gaji_pokok') if hr('kinerja_sangat_baik') else 0"
+    tipe_hasil: rupiah
+    sumber: uji
+"""
+TRANSPORT_WAJIB = _usulan(masukan=[dict(USULAN["masukan"][0], wajib=True, bawaan="")])
+MAKAN = """
+lapisan: perusahaan
+id: makan
+komponen:
+  - {fakta: px_makan, jenis: tunjangan_makan, kategori: teratur, label: Uang makan}
+aturan:
+  - id: PPM-MAKAN-01
+    sifat: opsional
+    berlaku: {mulai: 2026-01-01}
+    lingkup: masa
+    menghasilkan: px_makan
+    maka: "hr('uang_transport_per_hari') + 1000"
+    tipe_hasil: rupiah
+    sumber: uji
+"""
+
+
+def test_masukan_wajib_berkas_aktif_diberi_nilai_contoh(tmp_path):
+    from asisten_kb.rancangan import periksa_kb
+    kinerja = _tulis(tmp_path, "kinerja.yaml", KINERJA)
+    transport = _tulis(tmp_path, "transport.yaml", ke_yaml(ke_berkas(TRANSPORT_WAJIB)))
+    # dua berkas dengan masukan wajib tanpa bawaan dapat aktif bersama
+    assert periksa_kb([kinerja, transport]) == {"ok": True, "galat": [], "tahun": [2023, 2024, 2025, 2026, 2027]}
+    v = validasi(MAKAN, [kinerja, transport], "makan.yaml")
+    assert v["ok"], v["galat"]
+    assert v["dampak"]
+    for d in v["dampak"]:
+        # nilai contoh hanya masukan baru milik rancangan; nilai bersama identik sebelum & sesudah -> selisih = komponen baru
+        assert d["nilai_contoh"] == {}
+        assert d["sesudah"]["bruto_setahun"] - d["sebelum"]["bruto_setahun"] == d["fakta_baru"]["px_makan"] > 0
+
+
+def test_kb_aktif_yang_tidak_dapat_dihitung_bukan_galat_rancangan(tmp_path):
+    v = validasi(ke_yaml(ke_berkas(USULAN)), [_tulis(tmp_path, "tgl.yaml", TGL)], "transport.yaml")
+    assert not v["ok"] and v["galat"]
+    assert all(g.startswith("KB aktif tidak dapat dihitung: ") for g in v["galat"]), v["galat"]
+    assert "PPU-TGL-01" in v["galat"][0]
+
+
+# ------------------------------------------------------------------------------------------- R3: tahun & cakupan simulasi
+
+@pytest.mark.parametrize("berlaku, tahun", [
+    ({"mulai": "2016-01-01"}, [2023, 2024, 2025, 2026]),
+    ({"mulai": "2024-03-01"}, [2024, 2025, 2026]),
+    ({"mulai": "2026-07-01"}, [2026, 2027]),
+    ({"mulai": "2027-01-01"}, [2027, 2028]),
+    ({"mulai": "2030-01-01"}, [2030]),
+    ({"mulai": "2027-01-01", "sampai": "2027-06-30"}, [2027, 2028]),
+    ({"mulai": "2016-01-01", "sampai": "2023-12-31"}, [2023, 2024]),
+    ({"mulai": "2030-01-01", "sampai": "2030-12-31"}, [2030, 2031]),
+    ({"mulai": "2035-01-01"}, []),
+])
+def test_tahun_simulasi_mengikuti_masa_berlaku(berlaku, tahun):
+    from asisten_kb.rancangan import tahun_simulasi
+    assert tahun_simulasi({"aturan": [{"berlaku": berlaku}]}) == tahun
+
+
+def test_tahun_simulasi_dibatasi_delapan_dengan_tahun_awal_didahulukan():
+    from asisten_kb.rancangan import tahun_simulasi
+    data = {"aturan": [{"berlaku": {"mulai": "2016-01-01"}}, {"berlaku": {"mulai": "2028-01-01", "sampai": "2028-12-31"}}],
+            "parameter": [{"berlaku": {"mulai": "2030-01-01", "sampai": "2030-06-30"}}],
+            "klasifikasi_wajib": [{"berlaku": {"mulai": "2027-01-01"}}]}
+    # 2026 (tahun lanjutan aturan lama) yang dikorbankan, bukan tahun pertama atau tahun sesudah `sampai`
+    assert tahun_simulasi(data) == [2023, 2024, 2025, 2027, 2028, 2029, 2030, 2031]
+
+
+@pytest.mark.parametrize("maka, pesan", [
+    ("hr('uang_transport_per_hari') * 'a'", "simulasi Karyawan A 2027 gagal (aturan PPT-TRANSPORT-01): PelanggaranPresisi"),
+    ("hr('uang_transport_per_hari') * faktor_tidak_ada", "faktor_tidak_ada' tidak dihasilkan aturan mana pun di tahun 2027"),
+])
+def test_rancangan_mulai_2027_disimulasikan_di_2027(maka, pesan):
+    v = validasi(ke_yaml(ke_berkas(_usulan(aturan=[dict(ATURAN, mulai="2027-01-01", maka=maka)]))))
+    assert not v["ok"] and any(pesan in g for g in v["galat"]), v["galat"]
+
+
+def test_rancangan_di_luar_jangkauan_simulasi():
+    v = validasi(ke_yaml(ke_berkas(_usulan(aturan=[dict(ATURAN, mulai="2035-01-01")]))))
+    assert v["ok"] and v["dampak"] == []
+    assert v["belum_teruji"] == [{"aturan": "PPT-TRANSPORT-01", "alasan": "masa berlaku di luar jangkauan simulasi"}]
+    assert any("di luar jangkauan simulasi (2023-2031)" in p for p in v["peringatan"])
+
+
+def test_pegawai_masuk_juli_dapat_dihitung_setiap_tahun():
+    from asisten_kb.rancangan import kasus_masuk_juli
+    from engine.kalkulator import hitung
+    kb = muat_kb(BERKAS_PX)
+    for tahun in range(2023, 2032):
+        h = hitung(kasus_masuk_juli(tahun), kb=kb)
+        assert list(h["per_masa"]) == [7, 8, 9, 10, 11, 12] and h["tahunan"]["bruto_setahun"] > 0
+        assert all("px_thr" not in m for m in h["per_masa"].values())   # THR (April) jatuh sebelum masuk
+
+
+BRUTO = """
+lapisan: perusahaan
+id: bruto
+aturan:
+  - id: PPB-BRUTO-01
+    sifat: opsional
+    berlaku: {mulai: 2026-01-01}
+    lingkup: masa
+    menghasilkan: bruto
+    maka: "0"
+    tipe_hasil: rupiah
+    sumber: uji
+  - id: PPB-NOL-01
+    sifat: opsional
+    berlaku: {mulai: 2026-01-01}
+    lingkup: masa
+    menghasilkan: px_tidak_pernah
+    jika: "bulan == 13"
+    maka: "1"
+    tipe_hasil: bilangan
+    sumber: uji
+  - id: PPB-JULI-01
+    sifat: opsional
+    berlaku: {mulai: 2026-01-01}
+    lingkup: masa
+    menghasilkan: px_pegawai_baru
+    jika: "bulan_masuk == 7"
+    maka: "1"
+    tipe_hasil: bilangan
+    sumber: uji
+"""
+
+
+def test_aturan_yang_tidak_pernah_terpilih_dilaporkan_belum_teruji():
+    v = validasi(BRUTO)
+    assert v["ok"], v["galat"]   # belum teruji = peringatan, bukan galat
+    [kalah, mati] = v["belum_teruji"]   # PPB-JULI-01 hanya menyala untuk pegawai yang masuk Juli -> teruji
+    assert kalah["aturan"] == "PPB-BRUTO-01" and kalah["alasan"].startswith("kalah dari R24-03") and "(lex_superior)" in kalah["alasan"]
+    assert mati == {"aturan": "PPB-NOL-01", "alasan": "tidak pernah menyala pada simulasi (syarat atau masa berlaku tidak terpenuhi)"}
+    assert any(p.startswith("aturan PPB-NOL-01 belum teruji: tidak pernah menyala") for p in v["peringatan"])
+    juli = {d["pegawai"]: d["fakta_baru"]["px_pegawai_baru"] for d in v["dampak"] if d["tahun"] == 2026}
+    assert juli == {"Karyawan A (contoh)": None, "Pegawai masuk Juli (contoh)": 6}
+    # R4: perusahaan menulis fakta yang hanya dihasilkan regulasi
+    assert any("PPB-BRUTO-01 menulis fakta 'bruto'" in p and "lex superior" in p for p in v["peringatan"])
+    [ubah] = v["perubahan"]
+    assert ubah["jenis"] == "aturan" and "R24-03b (regulasi/wajib)" in ubah["teks"]
+    assert "dipakai di 0 masa, kalah di 36 masa" in ubah["teks"]   # 2026-2027 x (12 + 6 masa)
+
+
+LEMBUR_DESEMBER = """
+lapisan: perusahaan
+id: lembur_desember
+aturan:
+  - id: PPL-LEMBUR-12
+    sifat: opsional
+    berlaku: {mulai: 2026-01-01}
+    lingkup: masa
+    menghasilkan: px_lembur
+    jika: "bulan == 12"
+    maka: "500000"
+    tipe_hasil: rupiah
+    sumber: uji
+"""
+
+
+def test_fakta_baru_hanya_nilai_dari_aturan_rancangan():
+    v = validasi(LEMBUR_DESEMBER)
+    assert v["ok"], v["galat"]
+    assert all(d["fakta_baru"] == {"px_lembur": 500_000} for d in v["dampak"])   # bukan lembur setahun dari PX-LEMBUR-01
+    assert v["perubahan"] == [{"jenis": "aturan", "teks": (
+        "PPL-LEMBUR-12 menghasilkan 'px_lembur' yang sudah dihasilkan PX-LEMBUR-01 (perusahaan/opsional); "
+        "pada simulasi dipakai di 4 masa, kalah di 0 masa")}]
+
+
+# ------------------------------------------------------------------------------------------- R4: perubahan
+
+JP_SEMENTARA = """
+lapisan: regulasi
+id: jp_2027
+aturan: []
+parameter:
+  - {nama: jp_batas_upah, nilai: 11500000, berlaku: {mulai: 2027-01-01, sampai: 2027-06-30}, sumber: uji}
+klasifikasi_wajib:
+  - {jenis: lembur, kategori: tidak_teratur, berlaku: {mulai: 2027-01-01}, sumber: uji}
+  - {jenis: insentif_ota, kategori: teratur, berlaku: {mulai: 2027-01-01}, sumber: uji}
+"""
+
+
+def test_perubahan_parameter_dan_klasifikasi():
+    v = validasi(JP_SEMENTARA)
+    assert v["ok"], v["galat"]
+    assert sorted({d["tahun"] for d in v["dampak"]}) == [2027, 2028]
+    assert v["perubahan"] == [
+        {"jenis": "parameter", "teks": "parameter jp_batas_upah: 11.086.300 -> 11.500.000 mulai 2027-01-01 sampai "
+                                       "2027-06-30; setelah 2027-06-30 kembali 11.086.300"},
+        {"jenis": "klasifikasi", "teks": "klasifikasi wajib lembur: teratur -> tidak_teratur mulai 2027-01-01 (tanpa batas akhir)"},
+        {"jenis": "klasifikasi", "teks": "klasifikasi wajib baru insentif_ota -> teratur mulai 2027-01-01 (tanpa batas "
+                                         "akhir); komponen perusahaan yang terkena: px_ota (tidak_teratur)"}]
+
+
+def test_regulasi_rancangan_yang_mengalahkan_aturan_perusahaan_diperingatkan():
+    teks = (LEMBUR_DESEMBER.replace("lapisan: perusahaan", "lapisan: regulasi").replace("sifat: opsional", "sifat: wajib")
+            .replace('jika: "bulan == 12"\n    ', "").replace('maka: "500000"', "maka: \"hr_masa('lembur', 0)\""))
+    v = validasi(teks)
+    assert v["ok"], v["galat"]
+    assert any("aturan regulasi rancangan PPL-LEMBUR-12 mengalahkan aturan perusahaan PX-LEMBUR-01 pada 'px_lembur'" in p
+               for p in v["peringatan"]), v["peringatan"]
+    assert "dipakai di 36 masa, kalah di 0 masa" in v["perubahan"][0]["teks"]
+
+
+# ------------------------------------------------------------------------------------------- R5: lapisan pilihan unggah
+
+def test_lapisan_unggah_dipaksakan_dan_pilihan_llm_disimpan(pdf):
+    jawab = J.jalankan({"perintah": "usulkan", "pdf": str(pdf), "lapisan": "regulasi"}, KlienTiruan(USULAN))
+    u = jawab["usulan"]
+    assert (u["lapisan"], u["lapisan_llm"]) == ("regulasi", "perusahaan")
+    assert u["catatan_peninjau"][-1] == ("LLM menilai dokumen ini lapisan perusahaan; berkas dibuat sebagai lapisan regulasi "
+                                         "sesuai pilihan unggahan")
+    assert "lapisan: regulasi" in jawab["yaml"] and jawab["validasi"]["ringkasan"]["lapisan"] == "regulasi"
+    assert any("komponen hanya boleh di lapisan perusahaan" in g for g in jawab["validasi"]["galat"])
+
+    jawab = J.jalankan({"perintah": "usulkan", "pdf": str(pdf), "lapisan": "perusahaan"}, KlienTiruan(USULAN))
+    assert jawab["usulan"]["lapisan_llm"] == "perusahaan" and jawab["usulan"]["catatan_peninjau"] == []
+
+
+def test_validasi_jembatan_memperingatkan_lapisan_berbeda():
+    y = ke_yaml(ke_berkas(USULAN))
+    v = J.jalankan({"perintah": "validasi", "yaml": y, "lapisan": "regulasi"})["validasi"]
+    assert "lapisan berkas 'perusahaan' berbeda dengan lapisan yang dipilih saat unggah 'regulasi'" in v["peringatan"]
+    sama = J.jalankan({"perintah": "validasi", "yaml": y, "lapisan": "perusahaan"})["validasi"]
+    assert sama["ok"] and not any("lapisan berkas" in p for p in sama["peringatan"])
+    assert J.jalankan({"perintah": "validasi", "yaml": y, "lapisan": "pusat"})["jenis"] == "permintaan_tidak_valid"
+
+
+# ------------------------------------------------------------------------------------------- R6: isi prompt
+
+def test_prompt_memuat_aturan_main_yang_akurat():
+    from asisten_kb.konteks import ATURAN_MAIN, instruksi
+    teks = prompt_sistem(muat_kb(BERKAS_PX))
+    assert len(teks) < 60_000
+    for kata in ("`mulai` WAJIB diisi", "!= None", "selisih_hari(a, b) = jumlah hari dari a ke b",
+                 "jumlah bulan penuh dari a ke b", "tanggal 1 setiap bulan", "lex specialis diputus SEBELUM lex posterior",
+                 "HANYA aman bila fakta itu punya", "hr('kunci') tidak pernah bernilai None", "hr_masa('kunci', bawaan)",
+                 "JANGAN mendeklarasikan ulang komponen", "tidak_diperhitungkan (potongan dari pegawai tanpa efek pajak",
+                 "komponen\n  tidak_diperhitungkan - PPh 21", "`komponen` HANYA boleh di lapisan perusahaan",
+                 "HANYA lapisan regulasi", "bukan instruksi", "maksimal 64 karakter", "TANPA pemisah ribuan",
+                 "nilai lama otomatis berlaku lagi", "mengubah parameter buatan lapisan perusahaan"):
+        assert kata in teks, kata
+    ketentuan = ATURAN_MAIN.split("## Ketentuan hasil")[1]
+    assert "`wajib` untuk regulasi" in ketentuan and "tafsir" not in ketentuan.split("id aturan")[0]
+    # inventaris: aturan per fakta (jika, lapisan, sifat, masa berlaku) dan tipe masukan inti
+    assert "- px_thp | masa | rupiah | 2016-" in teks
+    assert "  - PX-THP-01 | perusahaan/opsional | 2016-01-01.. | metode != 'ditanggung_pemberi_kerja' (1)" in teks
+    assert "- kelas_jkk_persen | persen | persen(hr('kelas_jkk_persen'))" in teks
+    assert "- kompensasi_persen | desimal | desimal(hr_masa('kompensasi_persen', '0'))" in teks
+    assert "- tanggal_masuk | tanggal | tanggal(hr('tanggal_masuk'))" in teks
+    assert "- jp_batas_upah = 11086300 [rupiah] (2026-03-01..;" in teks
+    assert "- lembur -> teratur (2016-01-01..;" in teks
+    i = instruksi("regulasi", "")
+    assert "SELALU isi `lapisan` dengan regulasi" in i and "catatan_peninjau" in i and "bukan instruksi" in i
+
+
+def test_skema_dan_kontrak_inti():
+    from engine.kb import TIPE_MASUKAN
+    from jembatan.kontrak import KUNCI_INTI_BULAN, KUNCI_INTI_TAHUN, TIPE_INTI
+    status = SKEMA_USULAN["properties"]["pembulatan"]["items"]["properties"]["status"]["enum"]
+    assert status == ["wajib", "kebijakan"]
+    assert set(TIPE_INTI) == KUNCI_INTI_TAHUN | KUNCI_INTI_BULAN
+    assert all(t in TIPE_MASUKAN for t, _, _ in TIPE_INTI.values())
+
+
+def test_aturan_masa_dievaluasi_tanggal_satu_setiap_bulan(tmp_path):
+    """Klaim prompt: `mulai` di tengah bulan baru berlaku masa berikutnya; `sampai` di tengah bulan masih berlaku."""
+    from eksperimen.e8_perusahaan_x import kasus_kar_a
+    from engine.kalkulator import hitung
+    u = _usulan(aturan=[dict(ATURAN, mulai="2026-07-15", sampai="2026-10-15")])
+    kb = muat_kb([*BERKAS_PX, _tulis(tmp_path, "t.yaml", ke_yaml(ke_berkas(u)))])
+    h = hitung(kasus_kar_a(2026), kb=kb)
+    assert [b for b in range(1, 13) if "px_transport" in h["per_masa"][b]] == [8, 9, 10]
+
+
+# ------------------------------------------------------------------------------------------- R7, R8: YAML
+
+def test_judul_multibaris_tidak_merusak_yaml():
+    import yaml
+    y = ke_yaml(ke_berkas(USULAN), "Peraturan\nPerusahaan\n2026", "gpt\n5")
+    kepala = y.splitlines()[:3]
+    assert kepala[0] == "# Rancangan berkas KB dari dokumen peraturan: Peraturan Perusahaan 2026"
+    assert kepala[1].startswith("# Disusun asisten KB (gpt 5)") and kepala[2] == "lapisan: perusahaan"
+    assert yaml.safe_load(y)["aturan"][0]["id"] == "PPT-TRANSPORT-01"
+
+
+@pytest.mark.parametrize("nilai, hasil", [
+    ("12000000", 12_000_000), ("500.000", 500_000), ("12.000.000", 12_000_000), ("1,500,000", 1_500_000),
+    ("-1.000", -1000), (" 750000 ", 750_000),
+    ("11.5", "11.5"), ("0.300", "0.300"), ("1.500,50", "1.500,50"), ("12.00.000", "12.00.000"), ("Rp 5.000", "Rp 5.000"),
+])
+def test_nilai_rupiah_dengan_pemisah_ribuan(nilai, hasil):
+    u = _usulan(parameter=[{"nama": "px_uang_saku", "nilai": nilai, "jenis_nilai": "rupiah", "mulai": "2026-01-01",
+                            "sampai": "", "sumber": "uji"}],
+                masukan=[dict(USULAN["masukan"][0], bawaan=nilai)])
+    b = ke_berkas(u)
+    assert b["parameter"][0]["nilai"] == hasil and type(b["parameter"][0]["nilai"]) is type(hasil)
+    assert b["masukan"][0]["bawaan"] == (hasil.strip() if isinstance(hasil, str) else hasil)
+
+
+def test_rupiah_yang_bukan_bilangan_bulat_ditolak_engine():
+    u = _usulan(parameter=[{"nama": "jp_batas_upah", "nilai": "11.5", "jenis_nilai": "rupiah", "mulai": "2027-01-01",
+                            "sampai": "", "sumber": "uji"}], lapisan="regulasi", komponen=[], masukan=[], aturan=[])
+    v = validasi(ke_yaml(ke_berkas(u)))
+    assert not v["ok"] and any("terbaca sebagai tarif" in g for g in v["galat"]), v["galat"]
+
+
+# ------------------------------------------------------------------------------------------- R10: wajib efektif
+
+WAJIB = """
+lapisan: perusahaan
+id: wajib
+masukan:
+  - {kunci: tanpa_bawaan, label: A, tipe: rupiah, lingkup: tahun, wajib: false}
+  - {kunci: dengan_bawaan, label: B, tipe: rupiah, lingkup: tahun, wajib: true, bawaan: 0}
+  - {kunci: bawaan_di_aturan, label: C, tipe: rupiah, lingkup: bulan, wajib: true}
+  - {kunci: tidak_dibaca, label: D, tipe: rupiah, lingkup: tahun, wajib: false}
+komponen:
+  - {fakta: px_wajib, jenis: tunjangan_uji, kategori: teratur, label: Uji}
+aturan:
+  - id: PPW-WAJIB-01
+    sifat: opsional
+    berlaku: {mulai: 2026-01-01}
+    lingkup: masa
+    menghasilkan: px_wajib
+    maka: "hr('tanpa_bawaan') + hr('dengan_bawaan') + hr_masa('bawaan_di_aturan', 0)"
+    tipe_hasil: rupiah
+    sumber: uji
+"""
+
+
+def test_wajib_mengikuti_perilaku_engine(tmp_path):
+    from asisten_kb.rancangan import masukan_tambahan
+    kb = muat_kb([*BERKAS_PX, _tulis(tmp_path, "wajib.yaml", WAJIB)])
+    wajib = {m["kunci"]: m["wajib"] for m in masukan_tambahan(kb)}
+    assert wajib == {"tanpa_bawaan": True, "dengan_bawaan": False, "bawaan_di_aturan": False, "tidak_dibaca": False}
+    v = validasi(WAJIB)
+    assert v["ok"], v["galat"]
+    [p] = [p for p in v["peringatan"] if "wajib: false" in p]
+    assert p.startswith("masukan 'tanpa_bawaan' dideklarasikan wajib: false tetapi tanpa bawaan")
+
+
+# ------------------------------------------------------------------------------------------- R11: LLM
+
+def test_batas_pdf_413_dan_runtimeerror_stream(pdf):
+    import anthropic
+    import openai
+
+    from asisten_kb.llm import BATAS_PDF, GagalLLM, _galat_api, minta_usulan
+
+    assert BATAS_PDF == 20 * 1024 * 1024
+    with pytest.raises(GagalLLM, match="maksimal 20 MB"):
+        minta_usulan(b"%" * (BATAS_PDF + 1), "s", "i", klien=KlienTiruan(USULAN))
+    for sdk, model in ((openai, "gpt-5.6-sol"), (anthropic, "claude-opus-5-5")):
+        e = sdk.APIStatusError.__new__(sdk.APIStatusError)
+        e.__dict__.update(status_code=413, message="request too large")
+        assert str(_galat_api(sdk, e, model)) == "PDF terlalu besar untuk API; pecah dokumen menjadi bagian yang lebih kecil"
+
+    class AliranRusak:
+        def __iter__(self):
+            raise RuntimeError("Expected to have received `response.created` before `response.output_text.delta`")
+    klien = SimpleNamespace(responses=SimpleNamespace(stream=lambda **kw: _Konteks(AliranRusak())))
+    jawab = J.jalankan({"perintah": "usulkan", "pdf": str(pdf)}, klien)
+    assert jawab["jenis"] == "gagal_llm" and jawab["pesan"].startswith("aliran jawaban API gagal: Expected")

@@ -23,7 +23,8 @@ SKEMA_USULAN = _obj({
     "komponen": {"type": "array", "items": _obj({
         "fakta": _S, "jenis": _S, "kategori": {"type": "string", "enum": KATEGORI_KOMPONEN}, "label": _S})},
     "masukan": {"type": "array", "items": _obj({
-        "kunci": _S, "label": _S,
+        # batas 64 karakter dari skema KB dinyatakan lewat deskripsi: maxLength tidak didukung semua penyedia
+        "kunci": {"type": "string", "description": "snake_case, maksimal 64 karakter"}, "label": _S,
         "tipe": {"type": "string", "enum": ["rupiah", "bilangan", "persen", "desimal", "tanggal", "pilihan", "ya_tidak"]},
         "lingkup": {"type": "string", "enum": ["tahun", "bulan"]},
         "wajib": {"type": "boolean"}, "bawaan": _S, "pilihan": _DAFTAR_S, "keterangan": _S, "sumber": _S})},
@@ -33,7 +34,8 @@ SKEMA_USULAN = _obj({
     "pembulatan": {"type": "array", "items": _obj({
         "id": _S, "titik": _S, "satuan": {"type": "integer"}, "mode": {"type": "string", "enum": MODE_PEMBULATAN},
         "urutan": {"type": "string", "enum": ["per_komponen", "sekali"]},
-        "status": {"type": "string", "enum": ["wajib", "tafsir", "kebijakan"]}, "dasar": _S})},
+        # tanpa "tafsir": engine mewajibkan daftar `alternatif` untuk status itu, yang tidak ada di skema ini
+        "status": {"type": "string", "enum": ["wajib", "kebijakan"]}, "dasar": _S})},
     "aturan": {"type": "array", "items": _obj({
         "id": _S, "sifat": {"type": "string", "enum": ["wajib", "default", "opsional"]},
         "mulai": _S, "sampai": _S, "lingkup": {"type": "string", "enum": ["masa", "tahun"]},

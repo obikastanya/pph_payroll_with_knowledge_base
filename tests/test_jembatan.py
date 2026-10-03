@@ -57,3 +57,71 @@ def test_contoh_dan_info():
     assert all(x["kasus"].get("data_hr") for x in c)
     info = jalankan({"perintah": "info"})["audit"]
     assert {"versi_engine", "versi_kb", "hash_tabel"} <= set(info)
+
+
+TRANSPORT = """
+lapisan: perusahaan
+id: transport
+komponen:
+  - {fakta: px_transport, jenis: tunjangan_transport, kategori: teratur, label: Uang transport}
+masukan:
+  - {kunci: uang_transport_per_hari, label: Uang transport per hari, tipe: rupiah, lingkup: tahun, wajib: true}
+aturan:
+  - id: PJT-TRANSPORT-01
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_transport
+    maka: "hr('uang_transport_per_hari') * hr_masa('hk_aktual')"
+    tipe_hasil: rupiah
+    sumber: uji
+"""
+GANDA = """
+lapisan: perusahaan
+id: ganda
+aturan:
+  - id: PJG-GANDA-01
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_transport_ganda
+    maka: "atau('px_transport', 0) * 2"
+    tipe_hasil: rupiah
+    sumber: uji
+"""
+
+
+def _berkas_kb(tmp_path, monkeypatch, **isi):
+    import jembatan.__main__ as J
+    monkeypatch.setattr(J, "DIR_KB", tmp_path.resolve())
+    hasil = {}
+    for nama, teks in isi.items():
+        p = tmp_path / f"{nama}.yaml"
+        p.write_text(teks, encoding="utf-8")
+        hasil[nama] = str(p)
+    return hasil
+
+
+def test_periksa_kb_dasar():
+    kode, jawab = _panggil(json.dumps({"perintah": "periksa"}))
+    assert kode == 0 and jawab == {"ok": True, "periksa": {"ok": True, "galat": [], "tahun": [2023, 2024, 2025, 2026, 2027]}}
+
+
+def test_periksa_mendeteksi_fakta_yang_hilang_setelah_berkas_dinonaktifkan(tmp_path, monkeypatch):
+    b = _berkas_kb(tmp_path, monkeypatch, transport=TRANSPORT, ganda=GANDA, rusak="lapisan: [")
+    # masukan wajib tanpa bawaan (uang_transport_per_hari) diberi nilai contoh, sehingga KB lengkap lolos
+    assert jalankan({"perintah": "periksa", "berkas_tambahan": [b["transport"], b["ganda"]]})["periksa"]["ok"]
+    # memuat saja lolos; fakta px_transport yang hilang baru ketahuan saat menghitung
+    p = jalankan({"perintah": "periksa", "berkas_tambahan": [b["ganda"]]})["periksa"]
+    assert not p["ok"] and len(p["galat"]) == 5
+    assert p["galat"][0].startswith("Karyawan A 2023 tidak dapat dihitung: KesalahanKB: PJG-GANDA-01: fakta 'px_transport'")
+    p = jalankan({"perintah": "periksa", "berkas_tambahan": [b["rusak"]]})["periksa"]
+    assert not p["ok"] and p["galat"][0].startswith("KB tidak dapat dimuat: ")
+    assert jalankan({"perintah": "periksa", "berkas_tambahan": ["kb/tidak_ada.yaml"]})["jenis"] == "permintaan_tidak_valid"
+
+
+def test_masukan_wajib_efektif_lewat_jembatan(tmp_path, monkeypatch):
+    longgar = TRANSPORT.replace("wajib: true", "wajib: false")   # wajib: false tanpa bawaan tetap wajib bagi engine
+    b = _berkas_kb(tmp_path, monkeypatch, transport=longgar)
+    [m] = jalankan({"perintah": "masukan", "berkas_tambahan": [b["transport"]]})["masukan"]
+    assert m["kunci"] == "uang_transport_per_hari" and m["wajib"] is True

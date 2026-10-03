@@ -10,9 +10,14 @@ Permintaan:
                                isian tambahan yang diminta KB aktif + metadata komponen gaji perusahaan
     {"perintah": "usulkan", "pdf": "<path>", "lapisan": "perusahaan", "catatan": "", "model": "gpt-5.6-sol", "berkas_tambahan": [...]}
                                PDF peraturan -> rancangan berkas KB lewat LLM, lalu divalidasi. Butuh OPENAI_API_KEY
-                               (model gpt-..., bawaan) atau ANTHROPIC_API_KEY (model claude-...)
-    {"perintah": "validasi", "yaml": "<isi berkas>", "nama": "x.yaml", "berkas_tambahan": [...]}
-                               validasi rancangan (skema, verifikasi statis, simulasi dampak) tanpa LLM
+                               (model gpt-..., bawaan) atau ANTHROPIC_API_KEY (model claude-...). Lapisan berkas selalu
+                               = `lapisan` permintaan; pilihan LLM disimpan di usulan.lapisan_llm
+    {"perintah": "validasi", "yaml": "<isi berkas>", "nama": "x.yaml", "lapisan": "perusahaan", "berkas_tambahan": [...]}
+                               validasi rancangan (skema, verifikasi statis, simulasi dampak) tanpa LLM; `lapisan`
+                               (opsional) = lapisan pilihan unggah, peringatan bila YAML berbeda
+    {"perintah": "periksa", "berkas_tambahan": [...]}
+                               KB dasar + berkas tambahan dapat dimuat dan menghitung Karyawan A 2023-2027?
+                               -> {"periksa": {"ok", "galat": [...], "tahun": [...]}}
 
 `berkas_tambahan` = berkas KB yang sudah disetujui, relatif terhadap akar repo dan harus berada di bawah kb/.
 Jawaban selalu {"ok": true, ...} atau {"ok": false, "jenis": ..., "pesan": ...}. Untuk "hitung", setiap kasus
@@ -123,17 +128,36 @@ def masukan(tambahan):
     return {"masukan": masukan_tambahan(kb), "komponen": _komponen(kb)}
 
 
+def _lapisan(permintaan, bawaan=None):
+    lapisan = permintaan.get("lapisan") or bawaan
+    if lapisan not in (None, "regulasi", "perusahaan"):
+        raise PermintaanTidakValid(f"lapisan tidak dikenal: {lapisan!r}")
+    return lapisan
+
+
+def _paksa_lapisan(usulan, lapisan):
+    """Lapisan pilihan unggah yang berlaku, bukan pilihan LLM (instruksi hanya kalimat; LLM bisa memilih lain).
+    Pilihan LLM disimpan agar peninjau melihat ketidaksepakatannya."""
+    usulan["lapisan_llm"] = usulan.get("lapisan")
+    usulan["lapisan"] = lapisan
+    if usulan["lapisan_llm"] != lapisan:
+        catatan = usulan.get("catatan_peninjau")
+        catatan = list(catatan) if isinstance(catatan, list) else ([str(catatan)] if catatan else [])
+        catatan.append(f"LLM menilai dokumen ini lapisan {usulan['lapisan_llm']}; berkas dibuat sebagai lapisan {lapisan} "
+                       "sesuai pilihan unggahan")
+        usulan["catatan_peninjau"] = catatan
+    return usulan
+
+
 def usulkan(permintaan, tambahan, klien=None):
     from asisten_kb.konteks import instruksi, prompt_sistem
-    from asisten_kb.llm import KUNCI_API, MODEL_BAWAAN, minta_usulan, penyedia
+    from asisten_kb.llm import KUNCI_API, MODEL_BAWAAN, GagalLLM, minta_usulan, penyedia
     from asisten_kb.rancangan import ke_berkas, ke_yaml, validasi
 
     pdf = Path(permintaan.get("pdf") or "")
     if pdf.suffix.lower() != ".pdf" or not pdf.is_file():
         raise PermintaanTidakValid(f"berkas PDF tidak ditemukan: {pdf}")
-    lapisan = permintaan.get("lapisan") or "perusahaan"
-    if lapisan not in ("regulasi", "perusahaan"):
-        raise PermintaanTidakValid(f"lapisan tidak dikenal: {lapisan!r}")
+    lapisan = _lapisan(permintaan, "perusahaan")
     model = permintaan.get("model") or MODEL_BAWAAN
     kunci = KUNCI_API[penyedia(model)]
     if klien is None and not os.environ.get(kunci):
@@ -142,10 +166,20 @@ def usulkan(permintaan, tambahan, klien=None):
     kb = kb_aktif([*BERKAS_PX, *tambahan])
     usulan, info = minta_usulan(pdf.read_bytes(), prompt_sistem(kb), instruksi(lapisan, permintaan.get("catatan") or ""),
                                 model=model, klien=klien)
+    if not isinstance(usulan, dict):
+        raise GagalLLM("keluaran model bukan objek JSON")
+    usulan = _paksa_lapisan(usulan, lapisan)
     jawab = {"usulan": usulan, "info": info, "yaml": "", "validasi": None}
     if usulan.get("dapat_dikodifikasi") and (usulan.get("aturan") or usulan.get("parameter") or usulan.get("klasifikasi_wajib")):
-        jawab["yaml"] = ke_yaml(ke_berkas(usulan), usulan.get("keterangan") or "", info["model"])
-        jawab["validasi"] = validasi(jawab["yaml"], tambahan, _nama_berkas(usulan.get("id_berkas")))
+        # usulan sudah dibayar: galat apa pun setelah ini menjadi galat validasi, usulan & info tetap dikembalikan
+        try:
+            jawab["yaml"] = ke_yaml(ke_berkas(usulan), usulan.get("keterangan") or "", info.get("model") or model)
+        except Exception as e:  # noqa: BLE001 - struktur usulan di luar skema
+            jawab["validasi"] = {"ok": False, "galat": [f"usulan tidak dapat diubah menjadi berkas KB: {type(e).__name__}: {e}"],
+                                 "peringatan": [], "ringkasan": {}, "isi": {}, "masukan": [], "dampak": [],
+                                 "perubahan": [], "belum_teruji": []}
+            return jawab
+        jawab["validasi"] = validasi(jawab["yaml"], tambahan, _nama_berkas(usulan.get("id_berkas")), lapisan)
     return jawab
 
 
@@ -174,7 +208,11 @@ def jalankan(permintaan, klien=None):
         if perintah == "validasi":
             from asisten_kb.rancangan import validasi
             return {"ok": True, "validasi": validasi(str(permintaan.get("yaml") or ""), berkas_tambahan(permintaan),
-                                                     _nama_berkas(Path(permintaan.get("nama") or "").stem))}
+                                                     _nama_berkas(Path(str(permintaan.get("nama") or "")).stem),
+                                                     _lapisan(permintaan))}
+        if perintah == "periksa":
+            from asisten_kb.rancangan import periksa_kb
+            return {"ok": True, "periksa": periksa_kb(berkas_tambahan(permintaan))}
     except PermintaanTidakValid as e:
         return {"ok": False, "jenis": "permintaan_tidak_valid", "pesan": str(e)}
     except Exception as e:  # noqa: BLE001 - galat LLM / KB aktif yang rusak tetap dijawab sebagai JSON

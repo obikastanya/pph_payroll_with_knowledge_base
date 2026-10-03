@@ -9,13 +9,16 @@ import json
 from .skema import SKEMA_USULAN
 
 MODEL_BAWAAN = "gpt-5.6-sol"
-BATAS_PDF = 30 * 1024 * 1024   # batas permintaan API 32 MB (base64 menambah ~33%)
+BATAS_PDF = 20 * 1024 * 1024   # base64 menambah sepertiga; batas permintaan penyedia sekitar 32 MB
 BATAS_KELUARAN = 64000         # token keluaran, termasuk penalaran
 KUNCI_API = {"openai": "OPENAI_API_KEY", "anthropic": "ANTHROPIC_API_KEY"}   # variabel lingkungan per penyedia
 
 
 class GagalLLM(RuntimeError):
     """LLM tidak menghasilkan rancangan yang dapat dipakai (kredensial, jaringan, penolakan, keluaran terpotong)."""
+
+
+PDF_TERLALU_BESAR = "PDF terlalu besar untuk API; pecah dokumen menjadi bagian yang lebih kecil"
 
 
 def penyedia(model):
@@ -25,7 +28,7 @@ def penyedia(model):
 def minta_usulan(pdf, sistem, instruksi, model=MODEL_BAWAAN, klien=None):
     """-> (usulan: dict sesuai SKEMA_USULAN, info: dict model/pemakaian token). `klien` dapat diganti (tes)."""
     if len(pdf) > BATAS_PDF:
-        raise GagalLLM(f"PDF terlalu besar ({len(pdf) // (1024 * 1024)} MB; maksimal 30 MB)")
+        raise GagalLLM(f"PDF terlalu besar ({len(pdf) // (1024 * 1024)} MB; maksimal {BATAS_PDF // (1024 * 1024)} MB)")
     panggil = _lewat_claude if penyedia(model) == "anthropic" else _lewat_openai
     teks, info = panggil(base64.standard_b64encode(pdf).decode("ascii"), sistem, instruksi, model, klien)
     if not teks:
@@ -40,6 +43,8 @@ def minta_usulan(pdf, sistem, instruksi, model=MODEL_BAWAAN, klien=None):
 def _galat_api(modul, e, model):
     """Galat SDK (openai / anthropic punya hierarki kelas yang sama) -> GagalLLM berbahasa pengguna."""
     kunci = KUNCI_API[penyedia(model)]
+    if isinstance(e, modul.APIStatusError) and getattr(e, "status_code", None) == 413:
+        return GagalLLM(PDF_TERLALU_BESAR)
     if isinstance(e, modul.AuthenticationError):
         return GagalLLM(f"kunci API tidak valid atau belum diatur ({kunci})")
     if isinstance(e, modul.PermissionDeniedError):
@@ -83,8 +88,12 @@ def _lewat_openai(pdf_b64, sistem, instruksi, model, klien):
                     r = ev.response
                 elif ev.type == "error":
                     raise GagalLLM(f"API mengirim galat di tengah jawaban: {getattr(ev, 'message', '')}")
+    except GagalLLM:
+        raise
     except openai.OpenAIError as e:
         raise _galat_api(openai, e, model) from None
+    except RuntimeError as e:   # helper stream SDK melempar RuntimeError biasa (mis. event di luar urutan)
+        raise GagalLLM(f"aliran jawaban API gagal: {e}") from None
     if r is None:
         raise GagalLLM("aliran jawaban terputus sebelum selesai; coba lagi")
 
@@ -125,8 +134,12 @@ def _lewat_claude(pdf_b64, sistem, instruksi, model, klien):
             ]}],
         ) as stream:
             pesan = stream.get_final_message()
+    except GagalLLM:
+        raise
     except anthropic.AnthropicError as e:
         raise _galat_api(anthropic, e, model) from None
+    except RuntimeError as e:   # helper stream SDK melempar RuntimeError biasa
+        raise GagalLLM(f"aliran jawaban API gagal: {e}") from None
 
     if pesan.stop_reason == "refusal":
         raise GagalLLM("model menolak memproses dokumen ini")

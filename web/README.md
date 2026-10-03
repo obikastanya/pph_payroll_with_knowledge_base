@@ -69,6 +69,7 @@ Database adalah sumber kebenaran berkas KB tambahan: setiap kali daftar berkas a
 | Variabel | Bawaan | Isi |
 |---|---|---|
 | `SERVER_PORT` | `8100` | Port `php artisan serve`; samakan dengan `APP_URL`. Port 8000 sengaja dihindari karena sering dipakai aplikasi lain |
+| `APP_TIMEZONE` | `UTC` | Zona waktu semua jam yang ditampilkan dan diekspor ("Dihitung dd/mm/yyyy HH:ii", kolom `dihitung_pada` di CSV, halaman Basis pengetahuan): `Asia/Jakarta` (WIB), `Asia/Makassar` (WITA), `Asia/Jayapura` (WIT). Isi dengan nama IANA-nya, bukan singkatannya (`WITA`), dan jangan dikosongkan: nilai yang tidak dikenal PHP membuat aplikasi memakai UTC. Zona yang benar-benar aktif tampil di halaman **Mesin perhitungan**, dengan tanda bila isi `APP_TIMEZONE` ditolak. Baca catatan di bawah tabel sebelum menggantinya |
 | `PAYROLL_ROOT` | folder induk `web/` | Repositori induk (berisi `engine/`, `kb/`, `jembatan/`) |
 | `PAYROLL_PYTHON` | `<root>\env\Scripts\python.exe` (Windows), `<root>/env/bin/python` | Interpreter venv induk |
 | `PAYROLL_TIMEOUT` | `300` | Batas waktu satu panggilan engine (satu batch pegawai), dalam detik |
@@ -79,6 +80,8 @@ Database adalah sumber kebenaran berkas KB tambahan: setiap kali daftar berkas a
 | `ANTHROPIC_API_KEY` | kosong | Hanya bila `PAYROLL_LLM_MODEL` diisi model `claude-...` |
 | `PAYROLL_LLM_TIMEOUT` | `900` | Batas waktu membaca satu dokumen, dalam detik |
 | `DB_QUEUE_RETRY_AFTER` | `1080` | Detik sebelum job antrean yang belum selesai dianggap hilang dan diambil ulang. Wajib lebih besar dari `PAYROLL_LLM_TIMEOUT` + 60; bila lebih kecil, pekerja lain mengambil ulang job LLM yang masih berjalan dan menandainya gagal |
+
+**Mengganti `APP_TIMEZONE`.** Kolom waktu di database tidak menyimpan zona (timestamp tanpa zona), dan baris yang sudah ada tidak digeser. Baris yang tercatat sebelum penggantian direkam dalam UTC, jadi jamnya tetap tampil seperti semula (7–9 jam lebih awal dari waktu setempat); hanya baris baru yang memakai zona baru. Ganti saat tidak ada usulan KB berstatus *antre* atau *diproses*, lalu jalankan ulang server dan pekerja antrean.
 
 Membaca PDF berjalan di antrean Laravel (`QUEUE_CONNECTION=database`). Jalankan pekerjanya di terminal terpisah:
 
@@ -95,6 +98,9 @@ Kunci API tidak pernah ditulis ke repositori (`.env` ada di `.gitignore`). Prose
 1. **Pegawai**: tambah pegawai (tanggal masuk dan berhenti menentukan bulan yang dihitung).
 2. **Tambah tahun**: isi data HR satu tahun pajak. Isinya status PTKP, metode (gross / gross-up / ditanggung), gaji dan kenaikan, tunjangan tetap/prorata, THR, BPJS, serta kehadiran dan penghasilan variabel per bulan. Isian awal dilanjutkan dari tahun sebelumnya; isian tambahan tahunan dari KB diisi dari tahun terakhir pegawai yang memilikinya (hanya kunci yang masih diminta KB aktif), isian tambahan per bulan tidak dibawa.
 3. **Hitung** (per pegawai) atau **Hitung semua** di halaman Dashboard. Hitung semua mengirim pegawai satu tahun per batch (`PAYROLL_UKURAN_BATCH`, bawaan 50 pegawai per panggilan engine) dan mencatat hasil setiap batch begitu selesai, sehingga ratusan pegawai tidak melampaui batas waktu engine maupun memori PHP. Setiap batch juga memperbarui batas waktu PHP (`max_execution_time`) agar request yang panjang tidak dihentikan di tengah jalan.
+   - **Satu proses per tahun pajak.** Hitung semua memegang kunci per tahun pajak di cache (`hitung-semua:{tahun}`). Permintaan kedua untuk tahun yang sama (admin lain, tab lain, atau `payroll:hitung`) ditolak dengan peringatan tanpa memanggil engine, sehingga riwayat tidak tercatat ganda. Kunci diperpanjang sebelum setiap batch dan dilepas begitu selesai atau gagal. Bila PHP berhenti tanpa sempat melepasnya (galat fatal, batas waktu), kunci lepas sendiri paling lama `PAYROLL_TIMEOUT` + 120 detik. Hitung per pegawai tidak memakai kunci.
+   - **Dari terminal:** `php artisan payroll:hitung 2025` menjalankan Hitung semua yang sama (kunci dan batch yang sama), mencetak kemajuan per batch dan ringkasan (dihitung, gagal). Kode keluarnya bukan nol bila tahun tidak valid atau belum punya data HR, kunci sedang dipegang, atau engine berhenti di tengah jalan (pesannya menyebut berapa pegawai yang sudah tercatat). Baris riwayatnya tercatat tanpa pengguna.
+   - **Ukuran yang terukur (batas bawah).** Engine saja butuh sekitar 1,3 detik per batch 50 pegawai, atau sekitar 52 detik untuk 1.300 pegawai; waktu di sisi PHP (menyusun kasus, mencatat hasil) belum termasuk. Setiap Hitung semua menambah sekitar 100 KB per pegawai di database, karena riwayat tidak pernah ditimpa.
 4. **Hasil**:
    - slip gaji per bulan; setiap angka menunjuk aturan KB dan pasalnya;
    - perhitungan setahun gaya 1721-A1 dengan rincian Pasal 17;
@@ -145,9 +151,9 @@ php artisan test                       # semua tes (integrasi engine dilewati bi
 php vendor/bin/phpunit --group mesin   # hanya integrasi nyata dengan engine Python
 ```
 
-Tes tidak pernah menyentuh database aplikasi. `phpunit.xml` memaksa (`force="true"`) SQLite `:memory:` beserta cache, sesi, antrean, mail, dan broadcast palsu, sehingga nilai dari `.env` atau shell tidak dapat mengalihkannya. Selain itu `TestCase` menghentikan setiap tes sebelum migrasi bila koneksinya bukan SQLite `:memory:` (mis. karena konfigurasi ter-cache; jalankan `php artisan config:clear`). Uji opsional di PostgreSQL memakai database **terpisah**: buat `its_pph21_uji`, lalu jalankan `php artisan test --configuration=phpunit.pgsql.xml` (nama pengguna dan sandi diambil dari `.env`). Pengaman hanya mengizinkan database berakhiran `_uji` dengan `PAYROLL_UJI_PGSQL=1`, yang diset oleh berkas konfigurasi itu.
+Tes tidak pernah menyentuh database aplikasi. `phpunit.xml` memaksa (`force="true"`) SQLite `:memory:` dan zona waktu UTC beserta cache, sesi, antrean, mail, dan broadcast palsu, sehingga nilai dari `.env` atau shell tidak dapat mengalihkannya. Selain itu `TestCase` menghentikan setiap tes sebelum migrasi bila koneksinya bukan SQLite `:memory:` (mis. karena konfigurasi ter-cache; jalankan `php artisan config:clear`). Uji opsional di PostgreSQL memakai database **terpisah**: buat `its_pph21_uji`, lalu jalankan `php artisan test --configuration=phpunit.pgsql.xml` (nama pengguna dan sandi diambil dari `.env`). Pengaman hanya mengizinkan database berakhiran `_uji` dengan `PAYROLL_UJI_PGSQL=1`, yang diset oleh berkas konfigurasi itu.
 
-`tests/Feature/IntegrasiMesinTest.php` memeriksa jaminan utama aplikasi ini. Untuk kesembilan pegawai contoh, kasus yang disusun dari database **identik** dengan kasus di dataset. Hasil hitung lewat web juga sama persis dengan engine yang dipanggil langsung (Karyawan A 2023: PPh 21 setahun Rp7.341.750, cek silang identik). Tes lainnya memakai engine palsu (`Process::fake`). Di sisi Python, protokol jembatan diuji di `tests/test_jembatan.py` induk. `HitungBertahapTest` menguji Hitung semua per batch (sidik KB per batch, engine gagal atau batas waktu habis di tengah jalan, angka di luar batas bigint); `IsianTidakSahTest` menguji id di URL, `?tahun`, serta byte NUL dan UTF-8 tidak sah.
+`tests/Feature/IntegrasiMesinTest.php` memeriksa jaminan utama aplikasi ini. Untuk kesembilan pegawai contoh, kasus yang disusun dari database **identik** dengan kasus di dataset. Hasil hitung lewat web juga sama persis dengan engine yang dipanggil langsung (Karyawan A 2023: PPh 21 setahun Rp7.341.750, cek silang identik). Tes lainnya memakai engine palsu (`Process::fake`). Di sisi Python, protokol jembatan diuji di `tests/test_jembatan.py` induk. `HitungBertahapTest` menguji Hitung semua per batch (sidik KB per batch, engine gagal atau batas waktu habis di tengah jalan, angka di luar batas bigint); `KunciHitungSemuaTest` menguji kunci per tahun pajak dan perintah `payroll:hitung`; `ZonaWaktuTest` memastikan tes berjalan di UTC dan zona aktif tampil di halaman Mesin; `IsianTidakSahTest` menguji id di URL, `?tahun`, serta byte NUL dan UTF-8 tidak sah.
 
 Fitur aturan baru diuji di tiga tempat:
 
@@ -191,6 +197,7 @@ php artisan make:module Laporan    # kerangka lengkap + route laporan.index; tam
 | `modules/Payroll/Services/SkemaMasukan.php` | Isian tambahan yang diminta KB aktif untuk form data HR (dari engine, di-cache per sidik berkas tambahan **dan** sidik KB dasar: `kb/regulasi`, `kb/perusahaan`, `jembatan/kontrak.py`, `asisten_kb/rancangan.py`; perubahan di sana terbaca tanpa `cache:clear`) |
 | `modules/Payroll/Services/PenyusunKasus.php` | Database → kasus kanonik `data_hr` (padanan `ui/kalkulator.py::form_hr`), termasuk isian tambahan |
 | `modules/Payroll/Services/Penghitung.php` | Hitung pegawai per batch (satu panggilan engine dan satu transaksi per batch, sidik KB dari jawaban engine), catat riwayat, deteksi data atau KB berubah. Angka yang tidak muat di kolom bigint atau hasil yang tidak dapat disimpan menjadi galat pegawai itu saja |
+| `modules/Payroll/Services/KunciHitungSemua.php` | Kunci Hitung semua per tahun pajak di cache (ambil, perpanjang per batch, lepas bila masih milik sendiri); dipakai Dashboard dan `payroll:hitung` |
 | `modules/Payroll/Services/TampilanHasil.php` | Menata keluaran engine untuk slip / 1721-A1 / jejak (padanan `ui/hasil.py`); komponen baru dari KB tampil dengan labelnya |
 | `modules/Payroll/Services/ImporContoh.php` | Kasus kanonik → database (pegawai contoh dari dataset) |
 | `app/Models/Payroll/` | `Pegawai`, `PayrollTahun`, `PayrollBulan`, `PayrollMasukan`, `Perhitungan` |
@@ -227,5 +234,5 @@ Logo, foto, dan nama Merdeka sengaja **tidak** disalin karena repositori ini pub
 - Take home pay otomatis mengikuti komponen baru berkategori teratur, tidak teratur, iuran pengurang, zakat, dan `tidak_diperhitungkan` (potongan non-pajak, mis. cicilan koperasi). Berkas tambahan tidak dapat mendeklarasikan ulang komponen Perusahaan X (`px_*`); pakai fakta baru, atau ubah perlakuan pajaknya lewat `klasifikasi_wajib` di berkas regulasi.
 - Tahun pajak yang dibuka adalah 2023–2026, rentang yang sudah diuji E12. Gross-up 2023 (rezim PER-16) di luar model engine dan akan ditolak dengan pesan jelas.
 - Mode "komponen gaji sudah jadi" (contoh resmi regulasi) tetap ada di demo Streamlit induk, tidak di aplikasi ini.
-- Perhitungan berjalan sinkron di request (Hitung semua per batch). Untuk ribuan pegawai, pindahkan "Hitung semua" ke queue Laravel.
+- Perhitungan berjalan sinkron (Hitung semua per batch, satu proses per tahun pajak) dan belum memakai antrean Laravel. Untuk jumlah pegawai yang besar, jalankan dari terminal: `php artisan payroll:hitung {tahun}`.
 - Prototipe penelitian, bukan alat konsultasi pajak resmi. Default tafsir belum dikalibrasi ke kalkulator DJP (README induk §6).

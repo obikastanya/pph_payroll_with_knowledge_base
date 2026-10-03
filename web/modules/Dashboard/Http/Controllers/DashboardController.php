@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Modules\Payroll\Repositories\PayrollInterface;
 use Modules\Payroll\Services\HitungTerhenti;
+use Modules\Payroll\Services\KunciHitungSemua;
 use Modules\Payroll\Services\Penghitung;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -149,7 +150,8 @@ class DashboardController extends Controller
 
     /**
      * Hitung semua per batch (Penghitung::hitungSemua). Bila engine gagal di tengah jalan, batch yang sudah selesai tetap
-     * tercatat dan pesannya menyebut berapa pegawai yang sudah dihitung.
+     * tercatat dan pesannya menyebut berapa pegawai yang sudah dihitung. Satu tahun pajak hanya dihitung oleh satu proses
+     * pada satu waktu (KunciHitungSemua); permintaan kedua ditolak tanpa memanggil engine.
      */
     public function hitung(Request $request, Penghitung $penghitung): RedirectResponse
     {
@@ -161,11 +163,18 @@ class DashboardController extends Controller
         if ($jumlah === 0) {
             return back()->with('warning', "Belum ada data HR untuk tahun {$tahun}.");
         }
+        $kunci = KunciHitungSemua::ambil($tahun);
+        if ($kunci === null) {
+            return back()->with('warning', KunciHitungSemua::pesanTerkunci($tahun));
+        }
         try {
-            $hasil = $penghitung->hitungSemua($this->payroll->daftarHitung($tahun, $penghitung->ukuranBatch()), $request->user());
+            $hasil = $penghitung->hitungSemua($this->payroll->daftarHitung($tahun, $penghitung->ukuranBatch()), $request->user(),
+                fn () => $kunci->perpanjang());
         } catch (HitungTerhenti $e) {
             return back()->with('error', ($e->dicatat > 0 ? "Engine gagal setelah {$e->dicatat} dari {$jumlah} pegawai dihitung: "
                 : 'Engine tidak dapat dipanggil: ').$e->getMessage());
+        } finally {
+            $kunci->lepas();
         }
         $pesan = "{$hasil['dihitung']} pegawai dihitung.";
 

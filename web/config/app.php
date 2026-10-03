@@ -65,7 +65,12 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    // Hanya nama IANA yang dikenal PHP (mis. Asia/Makassar). Singkatan (WITA) atau nilai kosong ditolak PHP dengan
+    // peringatan saja lalu diam-diam memakai UTC, jadi di sini langsung dijatuhkan ke UTC; nilai aslinya disimpan di
+    // `timezone_diminta` agar halaman Mesin dapat menandainya.
+    'timezone' => in_array(env('APP_TIMEZONE', 'UTC'), timezone_identifiers_list(), true) ? env('APP_TIMEZONE', 'UTC') : 'UTC',
+
+    'timezone_diminta' => env('APP_TIMEZONE', 'UTC'),
 
     /*
     |--------------------------------------------------------------------------

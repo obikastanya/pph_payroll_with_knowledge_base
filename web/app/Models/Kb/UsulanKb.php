@@ -60,7 +60,11 @@ class UsulanKb extends Model
         return $this->belongsTo(User::class, 'diterapkan_oleh');
     }
 
-    /** Berkas yang sedang dimuat engine, urut waktu diterapkan (urutan berpengaruh pada amandemen parameter). */
+    /**
+     * Berkas yang sedang dimuat engine, urut waktu diterapkan. Urutan ini tidak lagi memengaruhi amandemen parameter
+     * (engine mengurutkannya menurut tanggal mulai), tetapi tetap menentukan sidik_kb: sidik meng-hash berkas dalam
+     * urutan ini.
+     */
     public function scopeAktif(Builder $q): Builder
     {
         return $q->where('status', 'diterapkan')->where('aktif', true)->orderBy('diterapkan_pada')->orderBy('id');

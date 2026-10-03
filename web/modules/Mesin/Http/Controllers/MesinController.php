@@ -66,8 +66,24 @@ class MesinController extends Controller
                     : implode(', ', $tambahan).' · sidik '.$kb->sidik($tambahan),
                 'Asisten KB / LLM (PAYROLL_LLM_MODEL, '.config('payroll.llm_kunci_env').')' => config('payroll.llm_model')
                     .(config('payroll.llm_kunci') ? ' · kunci API terpasang' : ' · kunci API belum diatur'),
+                'Zona waktu aplikasi (APP_TIMEZONE)' => $this->zonaWaktu(),
                 'Tahun pajak yang dibuka' => config('payroll.tahun_min').'–'.config('payroll.tahun_max'),
             ],
         ]);
+    }
+
+    /** Zona yang benar-benar aktif (bukan sekadar isi APP_TIMEZONE) beserta jam sekarang; nilai yang ditolak ditandai. */
+    private function zonaWaktu(): string
+    {
+        $aktif = date_default_timezone_get();
+        $diminta = config('app.timezone_diminta');
+        $teks = $aktif.' · sekarang '.now()->format('d/m/Y H:i');
+        if ($diminta === $aktif) {
+            return $teks;
+        }
+        $diminta = is_string($diminta) ? $diminta : json_encode($diminta);
+        $diminta = $diminta === '' ? '(kosong)' : $diminta;
+
+        return $teks.' · APP_TIMEZONE='.$diminta.' tidak sah (harus nama IANA, mis. Asia/Makassar; bukan singkatan dan tidak boleh kosong), dipakai '.$aktif;
     }
 }

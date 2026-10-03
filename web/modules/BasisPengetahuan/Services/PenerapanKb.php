@@ -46,7 +46,10 @@ final class PenerapanKb
         return $v;
     }
 
-    /** Aktif kembali = diterapkan ulang di urutan paling akhir (urutan berpengaruh pada amandemen parameter). */
+    /**
+     * Aktif kembali = diterapkan ulang di urutan paling akhir. Urutan tidak lagi memengaruhi amandemen parameter (engine
+     * mengurutkannya menurut tanggal mulai), tetapi tetap menentukan sidik_kb: sidik meng-hash berkas dalam urutan ini.
+     */
     public function aktifkan(UsulanKb $u, User $oleh): array
     {
         $v = $this->validasi($u);

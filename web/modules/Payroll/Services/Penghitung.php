@@ -30,7 +30,7 @@ class Penghitung
     public function hitung(iterable $daftar, ?User $user = null): array
     {
         $tercatat = [];
-        $this->proses($daftar, $user, function (Perhitungan $p) use (&$tercatat) {
+        $this->proses($daftar, $user, null, function (Perhitungan $p) use (&$tercatat) {
             $tercatat[] = $p;
         });
 
@@ -39,17 +39,19 @@ class Penghitung
 
     /**
      * Hitung semua (Dashboard): hanya jumlahnya yang dikembalikan. Hasil setiap batch dilepas setelah dicatat, jadi
-     * memori tidak tumbuh dengan jumlah pegawai bila $daftar dimuat bertahap (LazyCollection).
+     * memori tidak tumbuh dengan jumlah pegawai bila $daftar dimuat bertahap (LazyCollection). $sebelumBatch dipanggil
+     * sebelum setiap batch dengan jumlah baris yang sudah tercatat (perpanjang kunci, laporan kemajuan).
      *
      * @param  iterable<PayrollTahun>  $daftar
+     * @param  null|callable(int): void  $sebelumBatch
      * @return array{dihitung: int, gagal: int}
      *
      * @throws HitungTerhenti bila engine gagal di tengah jalan ($e->dicatat pegawai sudah tercatat)
      */
-    public function hitungSemua(iterable $daftar, ?User $user = null): array
+    public function hitungSemua(iterable $daftar, ?User $user = null, ?callable $sebelumBatch = null): array
     {
         $gagal = 0;
-        $dihitung = $this->proses($daftar, $user, function (Perhitungan $p) use (&$gagal) {
+        $dihitung = $this->proses($daftar, $user, $sebelumBatch, function (Perhitungan $p) use (&$gagal) {
             $gagal += $p->berhasil ? 0 : 1;
         });
 
@@ -63,15 +65,18 @@ class Penghitung
     }
 
     /**
-     * Per batch: susun kasus, satu panggilan engine, catat dalam satu transaksi, serahkan setiap baris ke $tiapBaris,
-     * lalu lepaskan sebelum batch berikutnya. Mengembalikan jumlah baris yang tercatat.
+     * Per batch: panggil $sebelumBatch (bila ada), susun kasus, satu panggilan engine, catat dalam satu transaksi, serahkan
+     * setiap baris ke $tiapBaris, lalu lepaskan sebelum batch berikutnya. Mengembalikan jumlah baris yang tercatat.
      */
-    private function proses(iterable $daftar, ?User $user, callable $tiapBaris): int
+    private function proses(iterable $daftar, ?User $user, ?callable $sebelumBatch, callable $tiapBaris): int
     {
         $berkas = $this->kb->berkasAktif();
         $sidik = $this->kb->sidik($berkas);
         $dicatat = 0;
         foreach (LazyCollection::make($daftar)->chunk($this->ukuranBatch()) as $batch) {
+            if ($sebelumBatch !== null) {
+                $sebelumBatch($dicatat);
+            }
             self::perpanjangBatasWaktu();
             try {
                 $catatan = $this->hitungBatch($batch, $berkas, $sidik);

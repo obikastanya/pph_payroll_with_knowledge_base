@@ -115,7 +115,9 @@ def test_rancangan_menjadi_berkas_kb_yang_lolos_validasi_dan_simulasi():
         assert d["sesudah"]["thp_setahun"] > d["sebelum"]["thp_setahun"]
     a26, _, a27, _ = v["dampak"]
     assert a27["fakta_baru"]["px_transport"] > a26["fakta_baru"]["px_transport"]   # 2026 hanya Juli-Desember
-    assert v["perubahan"] == [] and v["belum_teruji"] == [] and v["peringatan"] == []
+    assert v["perubahan"] == [] and v["belum_teruji"] == []
+    [p] = v["peringatan"]   # satu-satunya peringatan: masukan dengan bawaan 0 (A2); px_transport komponen -> bukan A1
+    assert p.startswith("masukan 'uang_transport_per_hari' punya bawaan 0:")
 
 
 def test_masukan_baru_tanpa_deklarasi_ditolak():
@@ -729,8 +731,209 @@ def test_wajib_mengikuti_perilaku_engine(tmp_path):
     assert wajib == {"tanpa_bawaan": True, "dengan_bawaan": False, "bawaan_di_aturan": False, "tidak_dibaca": False}
     v = validasi(WAJIB)
     assert v["ok"], v["galat"]
-    [p] = [p for p in v["peringatan"] if "wajib: false" in p]
+    [p] = [p for p in v["peringatan"] if "dideklarasikan wajib: false" in p]
     assert p.startswith("masukan 'tanpa_bawaan' dideklarasikan wajib: false tetapi tanpa bawaan")
+
+
+# ------------------------------------------------------------------------------------------- A1: fakta tanpa efek
+
+TAPERA = """
+lapisan: regulasi
+id: tapera
+aturan:
+  - id: R-TAPERA-01
+    sifat: wajib
+    berlaku: {mulai: 2026-01-01}
+    lingkup: masa
+    menghasilkan: iuran_tapera_pegawai
+    maka: "250000"
+    tipe_hasil: rupiah
+    sumber: uji
+"""
+ATURAN_TAPERA = """  - id: R-TAPERA-02
+    sifat: wajib
+    berlaku: {mulai: 2026-01-01}
+    lingkup: LINGKUP
+    menghasilkan: FAKTA
+    maka: "MAKA"
+    tipe_hasil: TIPE
+    sumber: uji
+"""
+
+
+def _tanpa_efek(v):
+    return [p for p in v["peringatan"] if "tidak ikut bruto, PPh 21, maupun take home pay" in p]
+
+
+def _tapera_dengan(fakta, maka, lingkup="masa", tipe="rupiah"):
+    return TAPERA + (ATURAN_TAPERA.replace("LINGKUP", lingkup).replace("FAKTA", fakta).replace("MAKA", maka)
+                     .replace("TIPE", tipe))
+
+
+def test_fakta_rupiah_baru_tanpa_efek_diperingatkan():
+    v = validasi(TAPERA)
+    assert v["ok"], v["galat"]   # peringatan, bukan galat
+    assert _tanpa_efek(v) == [
+        "aturan R-TAPERA-01 menghasilkan fakta baru 'iuran_tapera_pegawai' yang bukan komponen dan tidak dibaca aturan "
+        "mana pun, sehingga tidak ikut bruto, PPh 21, maupun take home pay; tulis tarif dan klasifikasi_wajib di berkas "
+        "lapisan regulasi, lalu komponen dan aturannya di berkas perusahaan terpisah"]
+    for d in v["dampak"]:   # lubang yang diperingatkan: fakta muncul, angka lain identik
+        assert d["fakta_baru"]["iuran_tapera_pegawai"] > 0 and d["sesudah"] == d["sebelum"]
+
+    # lapisan perusahaan: dua aturan untuk satu fakta -> satu peringatan, jalan keluarnya mendaftarkan komponen
+    teks = (_tapera_dengan("px_tapera", "100000").replace("menghasilkan: iuran_tapera_pegawai", "menghasilkan: px_tapera")
+            .replace("lapisan: regulasi", "lapisan: perusahaan").replace("sifat: wajib", "sifat: opsional"))
+    [p] = _tanpa_efek(validasi(teks))
+    assert p.startswith("aturan R-TAPERA-01, R-TAPERA-02 menghasilkan fakta baru 'px_tapera'")
+    assert p.endswith("; daftarkan di komponen berkas ini")
+
+
+@pytest.mark.parametrize("teks", [
+    ke_yaml(ke_berkas(USULAN)),                                                  # dideklarasikan sebagai komponen
+    TAPERA.replace("iuran_tapera_pegawai", "_bantu_tapera"),                      # fakta bantu
+    TAPERA.replace("lingkup: masa", "lingkup: tahun"),                            # fakta tahunan
+    TAPERA.replace("tipe_hasil: rupiah", "tipe_hasil: bilangan"),                 # bukan rupiah
+    _tapera_dengan("_dasar_tapera", "iuran_tapera_pegawai * 2"),                  # dibaca aturan lain lewat nama
+    _tapera_dengan("_tapera_setahun", "jumlah_masa('iuran_tapera_pegawai')", "tahun"),   # ... lewat argumen fungsi
+    _tapera_dengan("_tapera_aman", "atau('iuran_tapera_pegawai', 0)"),
+    LEMBUR_DESEMBER,                                                             # fakta yang sudah ada di KB aktif
+])
+def test_fakta_tanpa_efek_tidak_salah_tuduh(teks):
+    v = validasi(teks)
+    assert v["ok"], v["galat"]
+    assert _tanpa_efek(v) == []
+
+
+# ------------------------------------------------------------------------------------------- A2: masukan dengan bawaan
+
+def test_masukan_dengan_bawaan_diperingatkan():
+    v = validasi(WAJIB)
+    assert v["ok"], v["galat"]
+    bawaan = [p for p in v["peringatan"] if "bawaan 0" in p]
+    assert bawaan == [
+        "masukan 'dengan_bawaan' dideklarasikan wajib: true tetapi punya bawaan 0; keduanya bertentangan: engine memakai "
+        "bawaan bila nilainya kosong, sehingga pegawai yang belum diisi dihitung dengan 0 tanpa galat; hapus 'bawaan' "
+        "bila nilainya memang wajib diisi, atau tulis wajib: false"]
+    # masukan tanpa bawaan (wajib atau tidak) tidak diperingatkan soal bawaan
+    assert not any("punya bawaan" in p for p in validasi(ke_yaml(ke_berkas(TRANSPORT_WAJIB)))["peringatan"])
+
+    # wajib tidak ditulis (bawaan skema) atau wajib: false -> peringatan nilai diam-diam + saran parameter perusahaan
+    for wajib in ("", ", wajib: false"):
+        teks = WAJIB.replace(", wajib: true, bawaan: 0", wajib + ", bawaan: 25000")
+        [p] = [p for p in validasi(teks)["peringatan"] if "punya bawaan" in p]
+        assert p == ("masukan 'dengan_bawaan' punya bawaan 25.000: pegawai yang nilainya kosong dihitung dengan 25.000 "
+                     "tanpa tanda apa pun; nilai yang sama untuk seluruh perusahaan lebih tepat menjadi parameter "
+                     "perusahaan (parameter px_... di berkas lapisan perusahaan, dibaca dengan parameter('...')), bukan "
+                     "masukan per pegawai")
+
+
+def test_bawaan_deklarasi_yang_kalah_oleh_bawaan_di_aturan():
+    # engine/inferensi.py _hr: hr_masa('k', 0) mengembalikan 0 sebelum melihat bawaan deklarasi
+    teks = WAJIB.replace("lingkup: bulan, wajib: true}", "lingkup: bulan, bawaan: 5000}")
+    v = validasi(teks)
+    assert v["ok"], v["galat"]
+    [p] = [p for p in v["peringatan"] if "'bawaan_di_aturan'" in p]
+    assert p == ("masukan 'bawaan_di_aturan' punya bawaan 5.000, tetapi bawaan itu tidak pernah dipakai: aturan yang "
+                 "membacanya (PPW-WAJIB-01) memberi bawaan sendiri lewat hr_masa('bawaan_di_aturan', ...), dan engine "
+                 "mendahulukan bawaan di aturan; pegawai yang nilainya kosong dihitung dengan bawaan di aturan tanpa "
+                 "tanda apa pun; hapus 'bawaan' di deklarasi, atau hapus bawaan di aturan bila 5.000 yang dimaksud")
+    assert "dihitung dengan 5.000" not in p
+    # wajib: true yang ditulis tidak mengubahnya: angka deklarasi tetap bukan angka yang dipakai engine
+    [p] = [p for p in validasi(teks.replace("bulan, bawaan: 5000}", "bulan, wajib: true, bawaan: 5000}"))["peringatan"]
+           if "'bawaan_di_aturan'" in p]
+    assert "tidak pernah dipakai" in p and "dihitung dengan 5.000" not in p
+    # satu pembaca tanpa bawaan di aturan -> bawaan deklarasi dipakai di sana: peringatan biasa
+    [p] = [p for p in validasi(teks.replace("hr_masa('bawaan_di_aturan', 0)", "hr_masa('bawaan_di_aturan')"))["peringatan"]
+           if "'bawaan_di_aturan'" in p]
+    assert p.startswith("masukan 'bawaan_di_aturan' punya bawaan 5.000: pegawai yang nilainya kosong dihitung dengan 5.000")
+
+
+def test_bawaan_bilangan_ditulis_tanpa_pemisah_ribuan():
+    teks = WAJIB.replace("{kunci: tidak_dibaca, label: D, tipe: rupiah, lingkup: tahun, wajib: false}",
+                         "{kunci: tidak_dibaca, label: D, tipe: bilangan, lingkup: tahun, wajib: false, bawaan: 2026}")
+    [p] = [p for p in validasi(teks)["peringatan"] if "'tidak_dibaca'" in p]
+    assert p.startswith("masukan 'tidak_dibaca' punya bawaan 2026: ")   # dulu "2.026", seperti nominal rupiah
+
+
+# ------------------------------------------------------------------------------------------- simulasi metode gross-up
+
+GANTI_TUNJANGAN = """
+lapisan: regulasi
+id: ganti_tunjangan
+aturan:
+  - id: PPG-GANTI-01
+    sifat: wajib
+    berlaku: {mulai: 2026-01-01}
+    lingkup: masa
+    menghasilkan: tunjangan_pajak_berjalan
+    jika: "gross_up and not masa_terakhir"
+    maka: "pph21_berjalan"
+    tipe_hasil: rupiah
+    sumber: uji
+"""
+GANTI_TUNJANGAN_SAH = GANTI_TUNJANGAN.replace(
+    '    tipe_hasil: rupiah\n', '    tipe_hasil: rupiah\n    titik_tetap: true\n'
+                                '    batas_titik_tetap: {bawah: "0", atas: "_bruto_dasar"}\n')
+
+
+def test_simulasi_gross_up_menangkap_pengganti_aturan_titik_tetap_tanpa_tanda():
+    # pegawai contoh bermetode gross: tanpa simulasi gross-up rancangan ini lolos, lalu setiap pegawai gross-up gagal
+    v = validasi(GANTI_TUNJANGAN)
+    assert not v["ok"]
+    assert v["galat"] == [
+        f"simulasi Karyawan A {t} metode gross-up gagal: KesalahanKB: PPG-GANTI-01 menggantikan R24-05a pada fakta titik "
+        "tetap tunjangan_pajak_berjalan[1] tetapi tidak bertanda titik_tetap/batas_titik_tetap; tambahkan keduanya pada "
+        "PPG-GANTI-01" for t in (2026, 2027)]
+    # simulasi metode gross tetap berjalan; gross-up tidak menambah baris tabel dampak
+    assert [(d["pegawai"], d["tahun"]) for d in v["dampak"]] == [
+        ("Karyawan A (contoh)", 2026), ("Pegawai masuk Juli (contoh)", 2026),
+        ("Karyawan A (contoh)", 2027), ("Pegawai masuk Juli (contoh)", 2027)]
+
+
+def test_pengganti_aturan_titik_tetap_teruji_lewat_simulasi_gross_up():
+    v = validasi(GANTI_TUNJANGAN_SAH)
+    assert v["ok"], v["galat"]
+    assert v["belum_teruji"] == []   # dulu "tidak pernah menyala": hanya metode gross yang disimulasikan
+    assert v["perubahan"] == [{"jenis": "aturan", "teks": (
+        "PPG-GANTI-01 menghasilkan 'tunjangan_pajak_berjalan' yang sudah dihasilkan R24-05a (regulasi/wajib); pada "
+        "simulasi metode gross-up dipakai di 22 masa, kalah di 0 masa")}]
+
+
+def test_periksa_kb_ikut_memeriksa_metode_gross_up(tmp_path):
+    from asisten_kb.rancangan import periksa_kb
+
+    assert periksa_kb([_tulis(tmp_path, "sah.yaml", GANTI_TUNJANGAN_SAH)]) == {"ok": True, "galat": [],
+                                                                               "tahun": [2023, 2024, 2025, 2026, 2027]}
+    p = periksa_kb([_tulis(tmp_path, "rusak.yaml", GANTI_TUNJANGAN)])
+    assert not p["ok"]
+    assert [g.split(":")[0] for g in p["galat"]] == ["Karyawan A 2026 metode gross-up tidak dapat dihitung",
+                                                       "Karyawan A 2027 metode gross-up tidak dapat dihitung"]
+    assert all("PPG-GANTI-01 menggantikan R24-05a" in g for g in p["galat"])
+
+
+JKM_BERVERSI = """
+lapisan: regulasi
+id: jkm
+aturan: []
+parameter:
+  - {nama: jkm_pk_persen, nilai: "0.2", berlaku: {mulai: 2026-01-01}, sumber: uji}
+"""
+
+
+def test_perubahan_menyebut_akhir_efektif_amandemen_berlaku_surut(tmp_path):
+    # amandemen berlaku surut kini termuat: versi aktif yang mulai lebih baru menutupnya, dan peninjau harus tahu
+    aktif = _tulis(tmp_path, "jkm_2026.yaml", JKM_BERVERSI)
+    surut = JKM_BERVERSI.replace('"0.2"', '"0.1"').replace("2026-01-01", "2025-01-01")
+    v = validasi(surut, [aktif], "jkm_2025.yaml")
+    assert v["ok"], v["galat"]
+    assert v["perubahan"] == [{"jenis": "parameter", "teks": (
+        "parameter jkm_pk_persen: 0.3 -> 0.1 mulai 2025-01-01 (tanpa batas akhir); efektif hanya sampai 2025-12-31: versi "
+        "yang mulai 2026-01-01 sudah ada (0.2)")}]
+    # amandemen sementara yang langsung disusul versi aktif: sesudahnya bukan "kembali" ke nilai lama
+    sementara = surut.replace("{mulai: 2025-01-01}", "{mulai: 2025-01-01, sampai: 2025-12-31}")
+    [ubah] = validasi(sementara, [aktif], "jkm_2025.yaml")["perubahan"]
+    assert ubah["teks"] == ("parameter jkm_pk_persen: 0.3 -> 0.1 mulai 2025-01-01 sampai 2025-12-31; setelah 2025-12-31 "
+                            "berlaku 0.2 (versi lain yang sudah ada)")
 
 
 # ------------------------------------------------------------------------------------------- R11: LLM

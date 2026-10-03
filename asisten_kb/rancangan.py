@@ -5,6 +5,7 @@ setiap kunci hr()/hr_masa() baru wajib dideklarasikan sebagai `masukan` agar apl
 Validasi tidak pernah melempar: setiap galat (termasuk galat tak terduga) menjadi entri `galat`, karena di jembatan
 keluaran LLM yang sudah dibayar dan di aplikasi web suntingan admin harus tetap kembali utuh.
 """
+import functools
 import re
 import tempfile
 from datetime import date, timedelta
@@ -16,7 +17,7 @@ import yaml
 from eksperimen.e12_tanpa_kb import BERKAS_PX
 from eksperimen.e8_perusahaan_x import kasus_kar_a
 from engine.inferensi import Konteks
-from engine.kalkulator import hitung
+from engine.kalkulator import hitung, kb_aktif
 from engine.kb import _iso, muat_kb, rujukan_masukan
 from engine.muat import muat_yaml
 from jembatan.kontrak import KUNCI_INTI_BULAN, KUNCI_INTI_TAHUN
@@ -191,6 +192,23 @@ def kasus_masuk_juli(tahun):
 PROFIL = (("Karyawan A", kasus_kar_a), ("Pegawai masuk Juli", kasus_masuk_juli))
 
 
+def _gross_up(kasus):
+    """Pegawai contoh memakai metode gross; aturan titik tetap (tunjangan pajak) baru menyala pada metode gross-up."""
+    kasus["metode"] = "gross_up"
+    return kasus
+
+
+@functools.lru_cache(maxsize=None)
+def _dasar_bisa_gross_up(tahun):
+    """KB dasar sendiri dapat menghitung Karyawan A dengan metode gross-up di tahun ini? (2023: rezim PER-16 di luar
+    model.) Hanya tahun seperti itu yang diperiksa gross-up-nya, agar yang dilaporkan memang akibat berkas tambahan."""
+    try:
+        hitung(_gross_up(kasus_kar_a(tahun)), kb=kb_aktif(BERKAS_PX))
+    except Exception:  # noqa: BLE001
+        return False
+    return True
+
+
 def _nilai_contoh(m, tahun):
     """Nilai contoh untuk simulasi: bawaan bila bermakna, selain itu nilai rekaan agar dampak aturan terlihat."""
     if m["bawaan"] not in (None, 0, "0", "", False):
@@ -317,9 +335,27 @@ def _rentang(mulai, sampai):
     return f"mulai {mulai}" + (f" sampai {sampai}" if sampai else " (tanpa batas akhir)")
 
 
-def _perubahan(d, kb_dasar, kb, jejak):
+def _sesudah(sampai, akhir, versi, lama_teks, teks):
+    """Lanjutan kalimat perubahan: apa yang berlaku sesudah amandemen ini berakhir. `sampai` = akhir yang ditulis
+    rancangan, `akhir` = akhir efektif di KB. Keduanya berbeda bila versi lain yang mulai lebih baru sudah ada (amandemen
+    berlaku surut): tanpa keterangan ini peninjau mengira amandemen berlaku tanpa batas. lama_teks None = tidak perlu
+    menyebut nilai sesudah amandemen sementara."""
+    if akhir is not None and (not sampai or _ke_tanggal(sampai) != akhir):
+        lanjut = _versi_pada(versi, akhir + timedelta(days=1))
+        return (f"; efektif hanya sampai {akhir}: versi yang mulai {akhir + timedelta(days=1)} sudah ada"
+                + (f" ({teks(lanjut)})" if lanjut else ""))
+    if not sampai or lama_teks is None:
+        return ""
+    lanjut = _versi_pada(versi, _ke_tanggal(sampai) + timedelta(days=1))
+    if lanjut is None or teks(lanjut) == lama_teks:
+        return f"; setelah {sampai} kembali {lama_teks}"
+    return f"; setelah {sampai} berlaku {teks(lanjut)} (versi lain yang sudah ada)"
+
+
+def _perubahan(d, kb_dasar, kb, jejak, jejak_gross_up=()):
     """Apa yang diganti rancangan pada KB aktif: aturan untuk fakta yang sudah ada, amandemen parameter, dan
-    klasifikasi wajib. Satu-satunya sinyal bagi peninjau bahwa ketentuan pajak yang ada sedang diganti."""
+    klasifikasi wajib. Satu-satunya sinyal bagi peninjau bahwa ketentuan pajak yang ada sedang diganti.
+    jejak_gross_up: jejak simulasi metode gross-up, dipakai untuk aturan yang tidak pernah menyala pada metode gross."""
     hasil = []
     per_fakta = {}
     for a in kb_dasar.aturan:
@@ -331,11 +367,17 @@ def _perubahan(d, kb_dasar, kb, jejak):
         satuan = "masa" if a["lingkup"] == "masa" else "tahun"
         menang = sum(1 for j in jejak if j["aturan"] == a["id"])
         kalah = [j for j in jejak if a["id"] in (j["ditolak"] or [])]
+        simulasi = "simulasi"
+        if not menang and not kalah:   # mis. pengganti aturan tunjangan pajak: hanya menyala pada metode gross-up
+            menang_gu = sum(1 for j in jejak_gross_up if j["aturan"] == a["id"])
+            kalah_gu = [j for j in jejak_gross_up if a["id"] in (j["ditolak"] or [])]
+            if menang_gu or kalah_gu:
+                menang, kalah, simulasi = menang_gu, kalah_gu, "simulasi metode gross-up"
         pemenang = sorted({j["aturan"] for j in kalah})
         hasil.append({"jenis": "aturan", "teks": (
             f"{a['id']} menghasilkan '{a['menghasilkan']}' yang sudah dihasilkan "
             + ", ".join(f"{x.id} ({x.lapisan}/{x.sifat})" for x in lama)
-            + f"; pada simulasi dipakai di {menang} {satuan}, kalah di {len(kalah)} {satuan}"
+            + f"; pada {simulasi} dipakai di {menang} {satuan}, kalah di {len(kalah)} {satuan}"
             + (f" (dikalahkan {', '.join(pemenang)})" if pemenang else ""))})
     for p in d.get("parameter") or []:
         versi_lama = kb_dasar.parameter.get(p["nama"])
@@ -348,7 +390,9 @@ def _perubahan(d, kb_dasar, kb, jejak):
         lama_teks = _teks_rupiah_atau_tarif(sebelum[2]) if sebelum else "(belum ada)"
         hasil.append({"jenis": "parameter", "teks": (
             f"parameter {p['nama']}: {lama_teks} -> {_teks_rupiah_atau_tarif(baru[2]) if baru else p['nilai']} "
-            f"{_rentang(mulai, sampai)}" + (f"; setelah {sampai} kembali {lama_teks}" if sampai and sebelum else ""))})
+            f"{_rentang(mulai, sampai)}"
+            + _sesudah(sampai, baru[1] if baru else None, kb.parameter[p["nama"]], lama_teks if sebelum else None,
+                       lambda v: _teks_rupiah_atau_tarif(v[2])))})
     for k in d.get("klasifikasi_wajib") or []:
         mulai = _ke_tanggal(k["berlaku"]["mulai"])
         sampai = k["berlaku"].get("sampai")
@@ -356,8 +400,11 @@ def _perubahan(d, kb_dasar, kb, jejak):
         if ada:
             sebelum = _versi_pada(ada, mulai - timedelta(days=1))
             lama_teks = sebelum[2].kategori if sebelum else "(belum diatur)"
+            kini = [(w.mulai, w.sampai, w) for w in kb.klasifikasi if w.jenis == k["jenis"]]
+            baru = _versi_pada(kini, mulai)
             hasil.append({"jenis": "klasifikasi", "teks": (
-                f"klasifikasi wajib {k['jenis']}: {lama_teks} -> {k['kategori']} {_rentang(mulai, sampai)}")})
+                f"klasifikasi wajib {k['jenis']}: {lama_teks} -> {k['kategori']} {_rentang(mulai, sampai)}"
+                + _sesudah(sampai, baru[1] if baru else None, kini, None, lambda v: v[2].kategori))})
             continue
         # jenis baru tetap mengubah perlakuan pajak komponen perusahaan yang jenisnya sama
         kena = [f"{x.fakta} ({x.kategori})" for x in kb_dasar.komponen if x.jenis == k["jenis"]]
@@ -386,6 +433,64 @@ def _belum_teruji(ids, jejak):
 def _tambah(daftar, teks):
     if teks not in daftar:
         daftar.append(teks)
+
+
+def _teks_bawaan(v, tipe):
+    if isinstance(v, bool):
+        return "true" if v else "false"
+    return _teks_rupiah_atau_tarif(v) if tipe == "rupiah" and _bulat(v) else str(v)   # bilangan 2026 bukan "2.026"
+
+
+def _peringatan_bawaan(hasil, e, rujuk):
+    """Masukan rancangan yang punya `bawaan`: engine memakai bawaan setiap kali nilainya kosong dan tidak pernah
+    melihat `wajib` (engine/inferensi.py _hr), sehingga pegawai yang belum diisi dihitung diam-diam. `e` = entri
+    mentah berkas, agar `wajib: true` yang ditulis dapat dibedakan dari bawaan skema. `rujuk` = rujukan_masukan(kb)."""
+    if e.get("bawaan") is None:
+        return
+    b = _teks_bawaan(e["bawaan"], e.get("tipe"))
+    r = rujuk.get(e["kunci"])
+    if r and r["bawaan_di_aturan"]:
+        # engine mendahulukan bawaan di aturan: angka di deklarasi bukan angka yang dipakai, jadi tidak disebut "dihitung"
+        hasil["peringatan"].append(
+            f"masukan '{e['kunci']}' punya bawaan {b}, tetapi bawaan itu tidak pernah dipakai: aturan yang membacanya "
+            f"({', '.join(r['aturan'])}) memberi bawaan sendiri lewat hr_masa('{e['kunci']}', ...), dan engine "
+            f"mendahulukan bawaan di aturan; pegawai yang nilainya kosong dihitung dengan bawaan di aturan tanpa tanda "
+            f"apa pun; hapus 'bawaan' di deklarasi, atau hapus bawaan di aturan bila {b} yang dimaksud")
+    elif e.get("wajib") is True:
+        hasil["peringatan"].append(
+            f"masukan '{e['kunci']}' dideklarasikan wajib: true tetapi punya bawaan {b}; keduanya bertentangan: engine "
+            f"memakai bawaan bila nilainya kosong, sehingga pegawai yang belum diisi dihitung dengan {b} tanpa galat; "
+            f"hapus 'bawaan' bila nilainya memang wajib diisi, atau tulis wajib: false")
+    else:
+        hasil["peringatan"].append(
+            f"masukan '{e['kunci']}' punya bawaan {b}: pegawai yang nilainya kosong dihitung dengan {b} tanpa tanda apa "
+            f"pun; nilai yang sama untuk seluruh perusahaan lebih tepat menjadi parameter perusahaan (parameter px_... "
+            f"di berkas lapisan perusahaan, dibaca dengan parameter('...')), bukan masukan per pegawai")
+
+
+def _peringatan_tanpa_efek(hasil, d, kb, per_fakta):
+    """Fakta rupiah per masa yang baru, bukan komponen, dan tidak dibaca aturan mana pun: muncul di hasil tetapi
+    tidak mengubah satu angka pun. Lazim terjadi bila peraturan pemerintah yang memperkenalkan komponen gaji baru
+    diunggah sebagai lapisan regulasi (komponen hanya boleh dideklarasikan lapisan perusahaan)."""
+    komponen = {k.fakta for k in kb.komponen}
+    dibaca = set()
+    for a in kb.aturan:   # sama dengan graf dependensi engine: jika/maka/batas + nama fakta di argumen fungsi
+        dibaca |= set(a.dependensi()) - {a.menghasilkan}
+    penghasil = {}
+    for a in d.get("aturan") or []:
+        if a["lingkup"] == "masa" and a["tipe_hasil"] == "rupiah":
+            penghasil.setdefault(a["menghasilkan"], []).append(a["id"])
+    if d.get("lapisan") == "perusahaan":
+        jalan = "daftarkan di komponen berkas ini"
+    else:
+        jalan = ("tulis tarif dan klasifikasi_wajib di berkas lapisan regulasi, lalu komponen dan aturannya di berkas "
+                 "perusahaan terpisah")
+    for f, ids in penghasil.items():
+        if f in per_fakta or f.startswith("_") or f in komponen or f in dibaca:
+            continue
+        hasil["peringatan"].append(
+            f"aturan {', '.join(ids)} menghasilkan fakta baru '{f}' yang bukan komponen dan tidak dibaca aturan mana pun, "
+            f"sehingga tidak ikut bruto, PPh 21, maupun take home pay; {jalan}")
 
 
 def validasi(teks_yaml, berkas_aktif=(), nama_berkas="rancangan.yaml", lapisan=None):
@@ -449,12 +554,14 @@ def _validasi(hasil, p, berkas_aktif, lapisan):
         if not m["dideklarasikan"]:
             hasil["galat"].append(f"hr('{m['kunci']}') dipakai aturan {m['aturan']} tetapi belum dideklarasikan di 'masukan'")
     efektif = {m["kunci"]: m for m in semua}
+    rujuk = rujukan_masukan(kb)
     for e in d.get("masukan") or []:
         m = kb.masukan.get(e["kunci"])
         if m is not None and m.berkas == p.name and not m.wajib and efektif.get(e["kunci"], {}).get("wajib"):
             hasil["peringatan"].append(
                 f"masukan '{e['kunci']}' dideklarasikan wajib: false tetapi tanpa bawaan, sehingga bila dikosongkan setiap "
                 f"perhitungan gagal (DATA_KURANG); isi 'bawaan' atau ubah menjadi wajib: true")
+        _peringatan_bawaan(hasil, e, rujuk)
 
     aturan_rancangan = d.get("aturan") or []
     ids = [a["id"] for a in aturan_rancangan]
@@ -475,6 +582,8 @@ def _validasi(hasil, p, berkas_aktif, lapisan):
                     f"aturan perusahaan {a['id']} menulis fakta '{a['menghasilkan']}' yang di KB aktif hanya dihasilkan "
                     f"aturan regulasi ({', '.join(x.id for x in lama)}); {akibat}")
 
+    _peringatan_tanpa_efek(hasil, d, kb, per_fakta)
+
     _simulasi(hasil, d, p, kb_dasar, kb, semua_dasar, semua, masukan, ids, fakta)
 
 
@@ -485,10 +594,11 @@ def _simulasi(hasil, d, p, kb_dasar, kb, semua_dasar, semua, masukan, ids, fakta
     if not daftar_tahun:
         hasil["peringatan"].append(f"masa berlaku rancangan di luar jangkauan simulasi ({TAHUN_AWAL}-{TAHUN_LEWAT}); "
                                    "tidak ada simulasi yang dijalankan")
-    jejak, berhasil = [], 0
+    jejak, jejak_gross_up, berhasil = [], [], 0
     for tahun in daftar_tahun:
         contoh = nilai_contoh(semua, tahun)
         contoh_dasar = nilai_contoh(semua_dasar, tahun, contoh)
+        jejak_gross_up += _simulasi_gross_up(hasil, tahun, kb_dasar, kb, semua_dasar, contoh_dasar, semua, contoh)
         for nama, buat in PROFIL:
             try:
                 sebelum = hitung(isi_contoh(buat(tahun), semua_dasar, contoh_dasar), kb=kb_dasar)
@@ -519,18 +629,38 @@ def _simulasi(hasil, d, p, kb_dasar, kb, semua_dasar, semua, masukan, ids, fakta
 
     if berhasil or not daftar_tahun:
         alasan_luar = "masa berlaku di luar jangkauan simulasi"
-        hasil["belum_teruji"] = (_belum_teruji(ids, jejak) if berhasil else [{"aturan": i, "alasan": alasan_luar} for i in ids])
+        hasil["belum_teruji"] = (_belum_teruji(ids, jejak + jejak_gross_up) if berhasil
+                                 else [{"aturan": i, "alasan": alasan_luar} for i in ids])
         for b in hasil["belum_teruji"]:
             hasil["peringatan"].append(f"aturan {b['aturan']} belum teruji: {b['alasan']}")
-    hasil["perubahan"] = _perubahan(d, kb_dasar, kb, jejak)
+    hasil["perubahan"] = _perubahan(d, kb_dasar, kb, jejak, jejak_gross_up)
+
+
+def _simulasi_gross_up(hasil, tahun, kb_dasar, kb, semua_dasar, contoh_dasar, semua, contoh):
+    """Karyawan A dengan metode gross-up. Aturan titik tetap (tunjangan pajak) tidak pernah menyala pada pegawai
+    contoh yang bermetode gross, sehingga rancangan yang merusaknya lolos simulasi lalu menggagalkan setiap pegawai
+    gross-up. Hasilnya tidak masuk tabel dampak; jejaknya dipakai untuk cakupan uji. -> jejak ([] bila dilewati/gagal)."""
+    if not _dasar_bisa_gross_up(tahun):
+        return []
+    try:
+        hitung(_gross_up(isi_contoh(kasus_kar_a(tahun), semua_dasar, contoh_dasar)), kb=kb_dasar)
+    except Exception as e:  # noqa: BLE001 - KB aktif rusak: bukan kesalahan rancangan
+        hasil["galat"].append(f"KB aktif tidak dapat dihitung: Karyawan A {tahun} metode gross-up{_galat_hitung(e)}")
+        return []
+    try:
+        return hitung(_gross_up(isi_contoh(kasus_kar_a(tahun), semua, contoh)), kb=kb)["jejak"]
+    except Exception as e:  # noqa: BLE001
+        hasil["galat"].append(f"simulasi Karyawan A {tahun} metode gross-up gagal{_galat_hitung(e)}")
+        return []
 
 
 # ------------------------------------------------------------------------------------------- periksa KB aktif
 
 def periksa_kb(berkas_tambahan=(), tahun=TAHUN_PERIKSA):
     """KB dasar + berkas tambahan dapat dimuat DAN menghitung Karyawan A (nilai contoh untuk setiap masukan
-    tambahan)? Memuat saja tidak cukup: fakta yang hilang karena berkas lain dinonaktifkan baru ketahuan saat
-    graf per tahun dibangun. -> {ok, galat[], tahun[]}; tidak pernah melempar."""
+    tambahan), dengan metode gross dan, di tahun yang didukung KB dasar, gross-up? Memuat saja tidak cukup: fakta
+    yang hilang karena berkas lain dinonaktifkan baru ketahuan saat graf per tahun dibangun.
+    -> {ok, galat[], tahun[]}; tidak pernah melempar."""
     hasil = {"ok": False, "galat": [], "tahun": list(tahun)}
     try:
         try:
@@ -544,6 +674,13 @@ def periksa_kb(berkas_tambahan=(), tahun=TAHUN_PERIKSA):
                 hitung(isi_contoh(kasus_kar_a(t), semua, nilai_contoh(semua, t)), kb=kb)
             except Exception as e:  # noqa: BLE001
                 hasil["galat"].append(f"Karyawan A {t} tidak dapat dihitung{_galat_hitung(e)}")
+                continue
+            if not _dasar_bisa_gross_up(t):
+                continue
+            try:   # aturan titik tetap hanya menyala pada metode gross-up
+                hitung(_gross_up(isi_contoh(kasus_kar_a(t), semua, nilai_contoh(semua, t))), kb=kb)
+            except Exception as e:  # noqa: BLE001
+                hasil["galat"].append(f"Karyawan A {t} metode gross-up tidak dapat dihitung{_galat_hitung(e)}")
     except Exception as e:  # noqa: BLE001
         hasil["galat"].append(f"galat internal pemeriksaan: {_teks_galat(e)}")
     finally:

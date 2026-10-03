@@ -1,8 +1,9 @@
 """Kontrak berkas KB tambahan: penolakan deklarasi berbahaya dan semantik amandemen berversi waktu.
 
 E1 komponen ganda, E2 kontrak masukan, E3 amandemen parameter, E4 klasifikasi wajib & take home pay,
-E5 pengerasan ekspresi, E6 alias YAML. Setiap tes menulis berkas tambahan ke tmp_path, persis seperti
-aplikasi web menyimpan berkas yang disetujui di kb/tambahan/.
+E5 pengerasan ekspresi, E6 alias YAML, E7 batas titik tetap, E8 parameter perusahaan. Setiap tes menulis berkas
+tambahan ke tmp_path, persis seperti aplikasi web menyimpan berkas yang disetujui di kb/tambahan/.
+Ketidakbergantungan amandemen pada urutan berkas dimuat diuji di tests/test_urutan_amandemen.py.
 """
 import json
 import sys
@@ -15,6 +16,7 @@ from eksperimen.e12_tanpa_kb import BERKAS_PX
 from eksperimen.e8_perusahaan_x import kasus_kar_a
 from engine.angka import PelanggaranPresisi
 from engine.ekspresi import Ekspresi, KesalahanEkspresi
+from engine.inferensi import Evaluasi
 from engine.kalkulator import hitung
 from engine.kb import FUNGSI, KATEGORI_KOMPONEN, KlasifikasiWajib, muat_kb, nilai_masukan, parameter_pada
 from engine.muat import ROOT, KesalahanKB, muat_yaml
@@ -83,6 +85,17 @@ def test_kb_dasar_tetap_termuat_tanpa_komponen_ganda():
     kb = muat_kb(BERKAS_PX)
     fakta = [k.fakta for k in kb.komponen]
     assert len(fakta) == len(set(fakta)) == 15
+
+
+def test_komponen_di_berkas_regulasi_ditolak_dengan_jalan_keluar(tmp_path):
+    # peraturan pemerintah yang memperkenalkan komponen gaji baru: pesan menunjukkan cara memecah berkasnya
+    isi = _komponen_baru("px_transport", "teratur", "tunjangan_transport", "transport", "UJI-TRA-01").replace(
+        "lapisan: perusahaan", "lapisan: regulasi")
+    with pytest.raises(KesalahanKB) as galat:
+        muat_kb([*BERKAS_PX, _tulis(tmp_path, "pp.yaml", isi)])
+    assert str(galat.value) == (
+        "pp.yaml: pemetaan komponen hanya boleh di lapisan perusahaan; untuk peraturan pemerintah, tulis tarif dan "
+        "klasifikasi_wajib di berkas lapisan regulasi, lalu komponen dan aturannya di berkas perusahaan terpisah")
 
 
 # ------------------------------------------------------------------------------------------- E2 kontrak masukan
@@ -435,3 +448,166 @@ def test_berkas_tambahan_dengan_alias_ditolak_saat_muat_kb(tmp_path):
         "berlaku: {mulai: 2016-01-01}", "berlaku: &b {mulai: 2016-01-01}")
     with pytest.raises(KesalahanKB, match="alias/anchor YAML tidak diizinkan"):
         muat_kb([*BERKAS_PX, _tulis(tmp_path, "t.yaml", isi)])
+
+
+# ------------------------------------------------------------------------------------------- E7 batas titik tetap
+
+TITIK_TETAP_2026 = """
+lapisan: regulasi
+aturan:
+  - id: UJI-TT-01
+    sifat: wajib
+    berlaku: {mulai: 2026-01-01}
+    lingkup: masa
+    menghasilkan: tunjangan_pajak_berjalan
+    jika: "gross_up and not masa_terakhir"
+    maka: "tunjangan_pajak_berjalan"
+    tipe_hasil: rupiah
+    titik_tetap: true
+    batas_titik_tetap: {bawah: "1000", atas: "2000"}
+    sumber: "uji batas titik tetap"
+"""
+
+
+def _kasus_gross_up(tahun):
+    kasus = kasus_kar_a(tahun)
+    kasus["metode"] = "gross_up"
+    return kasus
+
+
+def test_batas_titik_tetap_diambil_dari_aturan_pemenang(tmp_path):
+    # UJI-TT-01 mengalahkan R24-05a mulai 2026 (jika sama, mulai lebih baru: lex posterior). maka-nya mengembalikan fakta
+    # itu sendiri, jadi setiap nilai adalah titik tetap: solusi terkecil & terbesar = batas yang dipakai iterasi.
+    # Dulu batasnya tetap milik R24-05a (0 .. _bruto_dasar) walaupun nilainya dihitung UJI-TT-01.
+    kb = muat_kb([*BERKAS_PX, _tulis(tmp_path, "tt.yaml", TITIK_TETAP_2026)])
+    h = hitung(_kasus_gross_up(2026), kb=kb)
+    ganda = {p["bulan"]: (p["terkecil"], p["terbesar"]) for p in h["peringatan"]
+             if p["kode"] == "GROSSUP_GANDA" and p["fakta"] == "tunjangan_pajak_berjalan"}
+    assert ganda == {b: (1000, 2000) for b in range(1, 12)}
+    assert [h["per_masa"][b]["tunjangan_pajak_berjalan"] for b in range(1, 12)] == [1000] * 11
+    assert {j["aturan"] for j in h["jejak"] if j["fakta"] == "tunjangan_pajak_berjalan"} == {"UJI-TT-01"}
+    # sebelum aturan baru berlaku, hasilnya sama persis dengan KB dasar
+    assert hitung(_kasus_gross_up(2025), kb=kb) == hitung(_kasus_gross_up(2025), berkas_perusahaan=BERKAS_PX)
+
+
+def test_pemilik_batas_titik_tetap_ditentukan_tanpa_efek_samping(tmp_path, monkeypatch):
+    # aturan perusahaan untuk fakta gross-up kalah lex superior; peringatan KONFLIK_WAJIB-nya ditulis saat nilai
+    # dihitung, bukan saat pemilik batas ditentukan (yang juga tidak boleh mengevaluasi `maka`)
+    isi = """
+lapisan: perusahaan
+aturan:
+  - {id: UJI-TT-PRSH, sifat: opsional, berlaku: {mulai: 2016-01-01}, lingkup: masa, menghasilkan: tunjangan_pajak_berjalan,
+     maka: "0", tipe_hasil: rupiah, sumber: "uji"}
+"""
+    kb = muat_kb([*BERKAS_PX, _tulis(tmp_path, "prsh.yaml", isi)])
+    ev = Evaluasi(kb, _kasus_gross_up(2026)).jalankan()
+    assert any(p["kode"] == "KONFLIK_WAJIB" and p.get("ditolak") == ["UJI-TT-PRSH"] for p in ev.peringatan)
+    n_peringatan = len(ev.peringatan)
+    monkeypatch.setattr(ev, "_nilai_aturan", lambda a, b: pytest.fail(f"maka {a.id} dievaluasi"))
+    assert ev._aturan_titik("tunjangan_pajak_berjalan", 1).id == "R24-05a"
+    assert ev._aturan_titik("tunjangan_pajak_berjalan", 12) is None   # hanya aturan perusahaan (bukan titik_tetap) menyala
+    assert len(ev.peringatan) == n_peringatan
+    # ablasi A3: perusahaan selalu menang, sama seperti saat nilai dihitung -> pemenang bukan titik_tetap, tanpa batas
+    a3 = Evaluasi(kb, _kasus_gross_up(2026), ablasi=("A3_tanpa_resolusi_konflik",)).jalankan()
+    assert a3._aturan_titik("tunjangan_pajak_berjalan", 1) is None
+    assert a3.hasil()["per_masa"][1]["tunjangan_pajak_berjalan"] == 0
+
+
+@pytest.mark.parametrize("lapisan, sifat", [("perusahaan", "opsional"), ("regulasi", "wajib")])
+def test_jika_yang_membaca_anggota_siklus_tidak_dinilai_saat_menentukan_batas(tmp_path, lapisan, sifat):
+    # pph21_berjalan ada di dalam siklus gross-up dan belum bernilai (None) sebelum iterasi dimulai; `jika` ini dulu
+    # ikut dinilai saat pemilik batas ditentukan -> TypeError. Aturannya tidak pernah menyala, jadi hasil = KB dasar.
+    isi = f"""
+lapisan: {lapisan}
+aturan:
+  - id: UJI-BATAS
+    sifat: {sifat}
+    berlaku: {{mulai: 2024-01-01}}
+    lingkup: masa
+    menghasilkan: tunjangan_pajak_berjalan
+    jika: "gross_up and not masa_terakhir and pph21_berjalan > 100000000"
+    maka: "100000000"
+    tipe_hasil: rupiah
+    sumber: "uji batas tunjangan pajak"
+"""
+    kb = muat_kb([*BERKAS_PX, _tulis(tmp_path, "batas.yaml", isi)])
+    for tahun in (2024, 2026):
+        assert hitung(_kasus_gross_up(tahun), kb=kb) == hitung(_kasus_gross_up(tahun), berkas_perusahaan=BERKAS_PX)
+
+
+def test_pengganti_aturan_titik_tetap_tanpa_tanda_titik_tetap_ditolak_dengan_pesan_jelas(tmp_path):
+    # UJI-GANTI menang atas R24-05a (lex posterior) dan maka-nya tetap bersiklus, tetapi tanpa titik_tetap tidak ada
+    # batas iterasi. Dulu pesannya "tidak monoton", padahal fungsinya monoton: yang kurang adalah tanda dan batasnya.
+    isi = """
+lapisan: regulasi
+aturan:
+  - id: UJI-GANTI
+    sifat: wajib
+    berlaku: {mulai: 2026-01-01}
+    lingkup: masa
+    menghasilkan: tunjangan_pajak_berjalan
+    jika: "gross_up and not masa_terakhir"
+    maka: "pph21_berjalan"
+    tipe_hasil: rupiah
+    sumber: "uji pengganti R24-05a tanpa titik_tetap"
+"""
+    kb = muat_kb([*BERKAS_PX, _tulis(tmp_path, "ganti.yaml", isi)])
+    with pytest.raises(KesalahanKB, match=r"UJI-GANTI menggantikan R24-05a pada fakta titik tetap tunjangan_pajak_berjalan\[1\]"
+                                          r" tetapi tidak bertanda titik_tetap/batas_titik_tetap"):
+        hitung(_kasus_gross_up(2026), kb=kb)
+    # sebelum aturan pengganti berlaku, dan untuk metode selain gross-up, tidak ada yang berubah
+    assert hitung(_kasus_gross_up(2025), kb=kb) == hitung(_kasus_gross_up(2025), berkas_perusahaan=BERKAS_PX)
+    assert hitung(kasus_kar_a(2026), kb=kb) == hitung(kasus_kar_a(2026), berkas_perusahaan=BERKAS_PX)
+
+
+# ------------------------------------------------------------------------------------------- E8 parameter perusahaan
+
+TRANSPORT_PARAMETER = """
+lapisan: perusahaan
+komponen:
+  - {fakta: px_transport, jenis: tunjangan_transport, kategori: teratur}
+parameter:
+  - {nama: px_transport_per_hari, nilai: 50000, berlaku: {mulai: 2016-01-01}, sumber: "Peraturan Perusahaan Ps. 12"}
+aturan:
+  - id: UJI-TRA-01
+    sifat: opsional
+    berlaku: {mulai: 2016-01-01}
+    lingkup: masa
+    menghasilkan: px_transport
+    maka: "parameter('px_transport_per_hari') * hr_masa('hk_aktual')"
+    tipe_hasil: rupiah
+    sumber: "uji parameter perusahaan"
+"""
+
+
+def _hadir(kasus, bulan):
+    return kasus["data_hr"]["per_masa"][str(bulan)]["hk_aktual"]
+
+
+def test_parameter_perusahaan_dipakai_aturan_komponen(tmp_path):
+    # nilai yang sama untuk seluruh perusahaan = parameter perusahaan, bukan masukan per pegawai
+    kasus = kasus_kar_a(2024)
+    h = hitung(kasus, kb=muat_kb([*BERKAS_PX, _tulis(tmp_path, "transport.yaml", TRANSPORT_PARAMETER)]))
+    for b in range(1, 13):
+        assert h["per_masa"][b]["px_transport"] == 50_000 * _hadir(kasus, b) > 0
+
+
+def test_amandemen_parameter_perusahaan_berlaku_mulai_tanggalnya_di_kedua_urutan_muat(tmp_path):
+    a = _tulis(tmp_path, "transport.yaml", TRANSPORT_PARAMETER)
+    b = _tulis(tmp_path, "transport_juli.yaml", _parameter("perusahaan", "px_transport_per_hari", 60000, "2024-07-01"))
+    kasus = kasus_kar_a(2024)
+    for urutan in ([a, b], [b, a]):
+        h = hitung(kasus, kb=muat_kb([*BERKAS_PX, *urutan]))
+        for bulan in range(1, 13):
+            per_hari = 50_000 if bulan < 7 else 60_000
+            assert h["per_masa"][bulan]["px_transport"] == per_hari * _hadir(kasus, bulan)
+
+
+def test_berkas_yang_hanya_berisi_parameter_tetap_menulis_aturan_kosong(tmp_path):
+    isi = _parameter("perusahaan", "px_transport_per_hari", 50000, "2016-01-01")
+    kb = muat_kb([*BERKAS_PX, _tulis(tmp_path, "p.yaml", isi)])
+    assert parameter_pada(kb, "px_transport_per_hari", date(2024, 1, 1)) == 50_000
+    # skema mewajibkan kunci `aturan` walaupun berkas tidak membawa aturan
+    assert "aturan: []\n" in isi
+    with pytest.raises(KesalahanKB, match="'aturan' is a required property"):
+        muat_kb([*BERKAS_PX, _tulis(tmp_path, "tanpa_aturan.yaml", isi.replace("aturan: []\n", ""))])

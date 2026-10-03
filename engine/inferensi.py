@@ -205,7 +205,7 @@ class Evaluasi:
         instance = [(f, b) for f in titik for b in self._instance(f)]
         batas = {}
         for f, b in instance:
-            a = self._aturan_titik(f, b)
+            a = self._aturan_titik(f, b, anggota)
             if a is None:
                 batas[(f, b)] = None
                 continue
@@ -231,11 +231,25 @@ class Evaluasi:
                                         "dipilih": pilih})
         self._iterasi_kleene(anggota, titik, urut, solusi[pilih], naik=None)
 
-    def _aturan_titik(self, f, b):
-        tgl = self._tanggal(b)
-        for a in self.per_fakta[f]:
-            if a.titik_tetap and a.berlaku_pada(tgl) and (a.jika is None or a.jika.evaluasi(Konteks(self, b, a))):
-                return a
+    def _aturan_titik(self, f, b, anggota=()):
+        """Aturan pemilik batas titik tetap (f, b): pemenang resolusi konflik di antara aturan yang menyala, yaitu aturan
+        yang juga menghitung nilainya. None bila tidak ada yang menyala atau pemenangnya bukan aturan titik_tetap.
+
+        Aturan yang `jika`-nya membaca anggota siklus tidak ikut dinilai di sini: fakta itu belum bernilai sebelum
+        iterasi dimulai (aturan itu tetap dinilai seperti biasa di tiap putaran iterasi)."""
+        tgl, siklus = self._tanggal(b), set(anggota)
+        menyala = [a for a in self.per_fakta[f]
+                   if a.berlaku_pada(tgl) and (a.jika is None or not (a.jika.dependensi() & siklus)
+                                               and a.jika.evaluasi(Konteks(self, b, a)))]
+        if not menyala:
+            return None
+        pemenang = self._seleksi(menyala)[0][0]
+        if pemenang.titik_tetap:
+            return pemenang
+        tergeser = [a.id for a in menyala if a.titik_tetap]
+        if tergeser and pemenang.maka.dependensi() & siklus:   # tanpa batas, iterasi dari atas tidak punya titik awal
+            raise KesalahanKB(f"{pemenang.id} menggantikan {', '.join(tergeser)} pada fakta titik tetap {f}[{b}] tetapi tidak"
+                              f" bertanda titik_tetap/batas_titik_tetap; tambahkan keduanya pada {pemenang.id}")
         return None
 
     def _iterasi_kleene(self, anggota, titik, urut, awal, naik):
@@ -288,18 +302,20 @@ class Evaluasi:
                 raise PelanggaranPresisi(f"{a.id}: hasil rupiah bukan int ({v!r}); tambahkan pembulatan dari registri")
         return v
 
-    def _resolusi(self, fakta, b, menyala):
+    def _seleksi(self, menyala):
+        """Seleksi murni resolusi konflik: (grup pemenang, ditolak, alasan, konflik_wajib). Tidak menulis peringatan dan
+        tidak mengevaluasi `maka`, sehingga dapat dipakai di luar evaluasi nilai (batas titik tetap).
+        konflik_wajib: isi peringatan KONFLIK_WAJIB bila lex superior menolak aturan perusahaan, selain itu None."""
         reg_wajib = [a for a in menyala if a.lapisan == "regulasi" and a.sifat in ("wajib", "tafsir")]
         prsh = [a for a in menyala if a.lapisan == "perusahaan"]
         reg_lain = [a for a in menyala if a.lapisan == "regulasi" and a.sifat not in ("wajib", "tafsir")]
-        ditolak, alasan = [], []
+        ditolak, alasan, konflik_wajib = [], [], None
         if "A3_tanpa_resolusi_konflik" in self.ablasi and prsh:
             grup = prsh
         elif reg_wajib and prsh:
             ditolak += [a.id for a in prsh]
             alasan.append("lex_superior")
-            self.peringatan.append({"kode": "KONFLIK_WAJIB", "fakta": fakta, "bulan": b,
-                                    "ditolak": [a.id for a in prsh], "pemenang": [a.id for a in reg_wajib]})
+            konflik_wajib = {"ditolak": [a.id for a in prsh], "pemenang": [a.id for a in reg_wajib]}
             grup = reg_wajib
         elif reg_wajib:
             grup = reg_wajib
@@ -320,6 +336,12 @@ class Evaluasi:
                 ditolak += [a.id for a in kalah]
                 alasan.append(nama)
                 grup = [a for a in grup if kunci(a) == terbaik]
+        return grup, ditolak, alasan, konflik_wajib
+
+    def _resolusi(self, fakta, b, menyala):
+        grup, ditolak, alasan, konflik_wajib = self._seleksi(menyala)
+        if konflik_wajib is not None:
+            self.peringatan.append({"kode": "KONFLIK_WAJIB", "fakta": fakta, "bulan": b, **konflik_wajib})
         if len(grup) > 1:
             nilai = {repr(self._nilai_aturan(a, b)) for a in grup}
             if len(nilai) > 1:

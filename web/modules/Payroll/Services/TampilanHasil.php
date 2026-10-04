@@ -327,6 +327,26 @@ final class TampilanHasil
         return array_values(array_filter($this->h['jejak'] ?? [], fn ($j) => ! str_starts_with($j['fakta'], '_')));
     }
 
+    /**
+     * Aturan yang dicabut eksplisit (menggantikan) pada satu entri jejak, dikelompokkan per aturan pencabut:
+     * [pencabut => [id, ...]]; pencabut '' bila engine tidak menyebutnya. Kunci "digantikan" opsional, dan entri yang
+     * bentuknya tidak dikenal dilewati agar hasil lama atau rusak tidak membuat halaman gagal.
+     */
+    public static function dicabut(array $j): array
+    {
+        $kelompok = [];
+        foreach (is_array($j['digantikan'] ?? null) ? $j['digantikan'] : [] as $d) {
+            $aturan = is_array($d) ? ($d['aturan'] ?? null) : null;
+            if (! is_string($aturan) || $aturan === '') {
+                continue;
+            }
+            $oleh = $d['oleh'] ?? null;
+            $kelompok[is_string($oleh) ? $oleh : ''][] = $aturan;
+        }
+
+        return $kelompok;
+    }
+
     /** Jumlah aturan berbeda yang dipakai, per lapisan. */
     public function jumlahAturan(): array
     {

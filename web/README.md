@@ -105,7 +105,7 @@ Kunci API tidak pernah ditulis ke repositori (`.env` ada di `.gitignore`). Prose
    - slip gaji per bulan; setiap angka menunjuk aturan KB dan pasalnya;
    - perhitungan setahun gaya 1721-A1 dengan rincian Pasal 17;
    - tabel 12 bulan;
-   - jejak inferensi lengkap;
+   - jejak inferensi lengkap. Kolom terakhirnya memuat aturan yang ditolak dan, bila ada aturan ber-`menggantikan`, aturan lama yang dicabut beserta pencabutnya (`Dicabut: PX-THP-01 (oleh PX-THP-03)`);
    - peringatan konflik kebijakan;
    - cek silang dengan kalkulator tanpa KB;
    - cetak slip dan unduh CSV.

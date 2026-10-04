@@ -92,6 +92,50 @@ class HitungTest extends TestCase
         $this->get("/payroll/{$pt->id}/slip/1")->assertOk();
     }
 
+    /** Kunci opsional "digantikan" di jejak (aturan ber-menggantikan) tampil di kolom terakhir tab jejak. */
+    public function test_tab_jejak_menampilkan_aturan_yang_dicabut(): void
+    {
+        $this->masuk();
+        $pt = $this->payroll(2024);
+        $h = self::hasilPalsu();
+        $h['jejak'][] = ['fakta' => 'px_thp', 'bulan' => 1, 'nilai' => 9_500_000, 'aturan' => 'PX-THP-03', 'lapisan' => 'perusahaan',
+            'sifat' => 'opsional', 'sumber' => 'SK 12/2024', 'ditolak' => ['R-THP-00'], 'alasan' => ['override_sah'],
+            'digantikan' => [['aturan' => 'PX-THP-01', 'oleh' => 'PX-THP-03'], ['aturan' => 'PX-THP-02', 'oleh' => 'PX-THP-03']]];
+        $this->palsukanEngine([['ok' => true, 'hasil' => $h]]);
+        $this->post("/payroll/{$pt->id}/hitung");
+
+        $html = $this->get("/payroll/{$pt->id}?tab=jejak")->assertOk()
+            ->assertSee('Dicabut: PX-THP-01, PX-THP-02 (oleh PX-THP-03)')
+            ->assertSee('R-THP-00 (override_sah)')
+            ->getContent();
+        // entri tanpa kunci "digantikan" tidak mendapat baris "Dicabut"
+        $this->assertSame(1, substr_count($html, 'Dicabut:'));
+    }
+
+    public function test_tab_jejak_tahan_terhadap_digantikan_yang_rusak(): void
+    {
+        $this->masuk();
+        $pt = $this->payroll(2024);
+        $h = self::hasilPalsu();
+        $dasar = $h['jejak'][0];
+        $h['jejak'][0]['digantikan'] = 'PX-GAJI-01';
+        $h['jejak'][] = ['fakta' => 'bruto', 'digantikan' => null] + $dasar;
+        $h['jejak'][] = ['fakta' => 'px_thp', 'digantikan' => ['PX-THP-00', ['oleh' => 'PX-THP-09'], ['aturan' => ['x']],
+            ['aturan' => 'PX-THP-01', 'oleh' => ['y']], ['aturan' => 'PX-THP-02']]] + $dasar;
+        $this->palsukanEngine([['ok' => true, 'hasil' => $h]]);
+        $this->post("/payroll/{$pt->id}/hitung");
+
+        $html = $this->get("/payroll/{$pt->id}?tab=jejak")->assertOk()
+            ->assertSee('Dicabut: PX-THP-01, PX-THP-02')
+            ->assertDontSee('PX-THP-00')->assertDontSee('PX-THP-09')->assertDontSee('(oleh')
+            ->getContent();
+        $this->assertSame(1, substr_count($html, 'Dicabut:'));
+
+        $this->assertSame([], TampilanHasil::dicabut([]));
+        $this->assertSame(['PX-B' => ['PX-A'], '' => ['PX-C']], TampilanHasil::dicabut(['digantikan' => [
+            ['aturan' => 'PX-A', 'oleh' => 'PX-B'], ['aturan' => ''], ['aturan' => 'PX-C']]]));
+    }
+
     public function test_nama_berkas_ekspor_disaring(): void
     {
         $this->masuk();

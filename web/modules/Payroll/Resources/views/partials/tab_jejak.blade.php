@@ -21,7 +21,8 @@
 <div class="alert alert-info">
     Mesin inferensi membaca aturan dari berkas knowledge base (YAML), menyusun urutan hitung dari ketergantungan antar-angka, lalu
     mengevaluasinya (<em>forward chaining</em>). Bila kebijakan perusahaan bertentangan dengan aturan wajib, aturan regulasi yang dipakai
-    (<em>lex superior</em>) dan aturan yang ditolak tercatat di kolom terakhir.
+    (<em>lex superior</em>) dan aturan yang ditolak tercatat di kolom terakhir, begitu pula aturan lama yang dicabut oleh aturan
+    pengganti (<code>menggantikan</code>).
 </div>
 <div class="card overflow-hidden mdka-border-gray-200">
     <div class="card-body table-responsive p-0" style="max-height: 36rem">
@@ -50,6 +51,9 @@
                             @if ($j['ditolak'])
                                 {{ implode(', ', $j['ditolak']) }} ({{ implode(', ', $j['alasan']) }})
                             @endif
+                            @foreach ($tampil::dicabut($j) as $oleh => $dicabut)
+                                <div class="text-muted">Dicabut: {{ implode(', ', $dicabut) }}{{ $oleh !== '' ? ' (oleh '.$oleh.')' : '' }}</div>
+                            @endforeach
                         </td>
                     </tr>
                 @endforeach

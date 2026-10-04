@@ -17,7 +17,8 @@ from eksperimen.e12_tanpa_kb import BERKAS_PX
 from engine.kb import muat_kb
 
 ATURAN = {"id": "PPT-TRANSPORT-01", "sifat": "opsional", "mulai": "2026-07-01", "sampai": "", "lingkup": "masa",
-          "menghasilkan": "px_transport", "jika": "", "maka": "hr('uang_transport_per_hari') * hr_masa('hk_aktual')",
+          "menghasilkan": "px_transport", "menggantikan": [], "jika": "",
+          "maka": "hr('uang_transport_per_hari') * hr_masa('hk_aktual')",
           "tipe_hasil": "rupiah", "pembulatan": "", "sumber": "Peraturan Perusahaan 2026 Ps. 12 ayat (1)", "catatan": ""}
 USULAN = {
     "ringkasan": "Uang transport per hari hadir mulai Juli 2026.", "dapat_dikodifikasi": True, "alasan": "",
@@ -628,13 +629,31 @@ def test_prompt_memuat_aturan_main_yang_akurat():
     teks = prompt_sistem(muat_kb(BERKAS_PX))
     assert len(teks) < 60_000
     for kata in ("`mulai` WAJIB diisi", "!= None", "selisih_hari(a, b) = jumlah hari dari a ke b",
-                 "jumlah bulan penuh dari a ke b", "tanggal 1 setiap bulan", "lex specialis diputus SEBELUM lex posterior",
+                 "jumlah bulan penuh dari a ke b", "tanggal 1 setiap bulan", "(3) lex specialis: lebih banyak konjungsi",
+                 # mengganti aturan: pencabutan eksplisit, bukan lagi dengan memenangkan lex specialis
+                 "`menggantikan` berisi id aturan yang diganti", "tidak dipakai sama sekali, SEBELUM urutan",
+                 "aturan baru tanpa `jika` boleh mengganti aturan lama yang ber-`jika`",
+                 # janji validasi sebatas pegawai contoh: di luar itu pengganti ber-`jika` tidak teruji
+                 "Validasi menolak rancangan bila itu terjadi pada\n  pegawai contoh simulasi, tetapi kasus lain tidak teruji",
+                 "tulis aturan pengganti TANPA `jika` kecuali",
+                 "TIDAK diatur dengan `menggantikan`", "JANGAN menambah syarat konstan pada `jika`",
+                 "Sebut di `menggantikan` hanya aturan yang masih berlaku",
+                 # peraturan pemerintah dengan komponen baru: tarif + klasifikasi di regulasi, komponen di perusahaan
+                 "di rancangan lapisan regulasi tulis HANYA", "menghasilkan fakta komponen itu di lapisan regulasi",
+                 "diunggah lagi sebagai peraturan perusahaan",
+                 # konstanta perusahaan = parameter; masukan tidak diberi bawaan agar boleh kosong
+                 "baca dengan parameter('px_...')", "JANGAN memberi `bawaan` hanya agar masukan boleh dikosongkan",
+                 "masukan `wajib: true` TIDAK boleh punya `bawaan`", "parameter('px_transport_per_hari') * hr_masa('hk_aktual')",
                  "HANYA aman bila fakta itu punya", "hr('kunci') tidak pernah bernilai None", "hr_masa('kunci', bawaan)",
                  "JANGAN mendeklarasikan ulang komponen", "tidak_diperhitungkan (potongan dari pegawai tanpa efek pajak",
                  "komponen\n  tidak_diperhitungkan - PPh 21", "`komponen` HANYA boleh di lapisan perusahaan",
                  "HANYA lapisan regulasi", "bukan instruksi", "maksimal 64 karakter", "TANPA pemisah ribuan",
                  "nilai lama otomatis berlaku lagi", "mengubah parameter buatan lapisan perusahaan"):
         assert kata in teks, kata
+    for kata in ("belum dapat dinyatakan penuh", "tidak dapat mengganti aturan lama", 'bawaan: "0"', "WAJIB punya `bawaan`",
+                 "faktanya hilang, dan validasi menolak rancangan",   # janji lama: seolah setiap kasus teruji
+                 "| menggantikan PX"):   # KB dasar tidak memakai `menggantikan`: inventarisnya tidak menyebutnya
+        assert kata not in teks, kata
     ketentuan = ATURAN_MAIN.split("## Ketentuan hasil")[1]
     assert "`wajib` untuk regulasi" in ketentuan and "tafsir" not in ketentuan.split("id aturan")[0]
     # inventaris: aturan per fakta (jika, lapisan, sifat, masa berlaku) dan tipe masukan inti
@@ -958,3 +977,263 @@ def test_batas_pdf_413_dan_runtimeerror_stream(pdf):
     klien = SimpleNamespace(responses=SimpleNamespace(stream=lambda **kw: _Konteks(AliranRusak())))
     jawab = J.jalankan({"perintah": "usulkan", "pdf": str(pdf)}, klien)
     assert jawab["jenis"] == "gagal_llm" and jawab["pesan"].startswith("aliran jawaban API gagal: Expected")
+
+
+# ------------------------------------------------------------------------------------------- menggantikan (pencabutan eksplisit)
+
+THP_BARU = """
+lapisan: perusahaan
+id: thp_baru
+aturan:
+  - id: UJI-THP-BARU
+    sifat: opsional
+    berlaku: {mulai: 2026-01-01}
+    lingkup: masa
+    menghasilkan: px_thp
+    menggantikan: [PX-THP-01, PX-THP-02]
+    maka: "px_penghasilan_tunai - pph21"
+    tipe_hasil: rupiah
+    sumber: uji
+"""
+THP_TANPA_FIELD = THP_BARU.replace("    menggantikan: [PX-THP-01, PX-THP-02]\n", "")
+
+
+def _dengan_jika(teks, jika):
+    return teks.replace("    maka:", f'    jika: "{jika}"\n    maka:')
+
+
+def test_skema_usulan_dan_konversi_menggantikan(pdf):
+    properti = SKEMA_USULAN["properties"]["aturan"]["items"]
+    assert properti["properties"]["menggantikan"]["type"] == "array"
+    assert properti["properties"]["menggantikan"]["items"] == {"type": "string"}
+    assert "menggantikan" in properti["required"] and set(properti["required"]) == set(ATURAN)   # skema ketat: semua wajib
+    # daftar kosong (atau field tidak ada) tidak ditulis: skema KB menolak `menggantikan: []`
+    assert "menggantikan" not in ke_berkas(USULAN)["aturan"][0]
+    assert "menggantikan" not in ke_berkas(_usulan(aturan=[{k: v for k, v in ATURAN.items() if k != "menggantikan"}]))["aturan"][0]
+    assert "menggantikan" not in ke_berkas(_usulan(aturan=[dict(ATURAN, menggantikan=["", " "])]))["aturan"][0]
+    thp = dict(ATURAN, id="UJI-THP-BARU", mulai="2026-01-01", menghasilkan="px_thp", maka="px_penghasilan_tunai - pph21",
+               menggantikan=["PX-THP-01", " PX-THP-02 ", "PX-THP-01"])
+    u = _usulan(aturan=[thp], komponen=[], masukan=[])
+    e = ke_berkas(u)["aturan"][0]
+    assert e["menggantikan"] == ["PX-THP-01", "PX-THP-02"]
+    assert list(e)[:6] == ["id", "sifat", "berlaku", "lingkup", "menghasilkan", "menggantikan"]
+    # dari keluaran LLM (tiruan) sampai berkas KB yang lolos validasi engine
+    jawab = J.jalankan({"perintah": "usulkan", "pdf": str(pdf), "lapisan": "perusahaan"}, KlienTiruan(u))
+    assert jawab["ok"] and jawab["validasi"]["ok"], jawab["validasi"]["galat"]
+    assert "  menggantikan:\n  - PX-THP-01\n  - PX-THP-02\n" in jawab["yaml"]
+    assert jawab["validasi"]["isi"]["aturan"][0]["menggantikan"] == ["PX-THP-01", "PX-THP-02"]
+
+
+@pytest.mark.parametrize("berlaku, teks", [
+    ("{mulai: 2026-01-01}", "mulai 2026-01-01; pada simulasi dipakai di 36 masa"),   # 2026-2027 x (12 + 6 masa)
+    ("{mulai: 2026-03-01, sampai: 2026-08-31}",
+     "mulai 2026-03-01 sampai 2026-08-31; sesudahnya aturan lama berlaku lagi; pada simulasi dipakai di 8 masa"),
+])
+def test_perubahan_menyebut_aturan_yang_digantikan(berlaku, teks):
+    v = validasi(THP_BARU.replace("{mulai: 2026-01-01}", berlaku))
+    assert v["ok"], v["galat"]
+    # satu entri saja: aturan yang digantikan bukan pesaing lagi, jadi tidak dilaporkan ulang sebagai "sudah dihasilkan"
+    assert v["perubahan"] == [{"jenis": "aturan", "teks": f"UJI-THP-BARU menggantikan PX-THP-01, PX-THP-02 (fakta 'px_thp') {teks}"}]
+    assert v["peringatan"] == [] and v["belum_teruji"] == []   # aturan tanpa `jika` mengganti dua aturan ber-`jika`
+    assert v["dampak"][0]["fakta_baru"]["px_thp"] > 0
+    assert all(d["sesudah"]["pph21_setahun"] == d["sebelum"]["pph21_setahun"] for d in v["dampak"])   # hanya THP yang berubah
+
+
+def test_penggantian_sebagian_melaporkan_pesaing_yang_tersisa():
+    v = validasi(THP_BARU.replace("[PX-THP-01, PX-THP-02]", "[PX-THP-02]"))
+    assert v["ok"], v["galat"]
+    assert [u["teks"] for u in v["perubahan"]] == [
+        "UJI-THP-BARU menggantikan PX-THP-02 (fakta 'px_thp') mulai 2026-01-01; pada simulasi dipakai di 0 masa",
+        "UJI-THP-BARU menghasilkan 'px_thp' yang sudah dihasilkan PX-THP-01 (perusahaan/opsional); pada simulasi dipakai di "
+        "0 masa, kalah di 36 masa (dikalahkan PX-THP-01)"]
+    assert ("aturan UJI-THP-BARU kalah di 36 masa dari PX-THP-01 (lex_specialis); bila UJI-THP-BARU dimaksudkan mengganti "
+            "PX-THP-01, tulis menggantikan: [PX-THP-01]") in v["peringatan"]
+
+
+def test_fakta_yang_hilang_karena_pengganti_lebih_sempit_adalah_galat():
+    v = validasi(_dengan_jika(THP_BARU, "bulan != 12"))
+    assert not v["ok"]
+    assert v["galat"] == [
+        "aturan UJI-THP-BARU menggantikan PX-THP-01, PX-THP-02 tetapi tidak mencakup semua kasusnya: fakta 'px_thp' yang "
+        "sebelumnya bernilai tidak lagi dihasilkan di 6 masa simulasi, mis. Karyawan A 2026 bulan 12; perluas atau hapus "
+        "`jika` UJI-THP-BARU, atau tambahkan aturan untuk kasus yang tidak tercakup"]
+    # pengganti sementara: masa di luar rentangnya dilayani aturan lama lagi, bukan fakta yang hilang
+    sementara = _dengan_jika(THP_BARU, "bulan != 12").replace("{mulai: 2026-01-01}", "{mulai: 2026-03-01, sampai: 2026-08-31}")
+    assert validasi(sementara)["galat"] == []
+    # pengganti sementara yang sempit DI DALAM rentangnya: hanya masa di dalam rentang (Juni-Agustus) yang dihitung hilang
+    sempit = _dengan_jika(THP_BARU, "bulan < 6").replace("{mulai: 2026-01-01}", "{mulai: 2026-03-01, sampai: 2026-08-31}")
+    assert validasi(sempit)["galat"] == [
+        "aturan UJI-THP-BARU menggantikan PX-THP-01, PX-THP-02 tetapi tidak mencakup semua kasusnya: fakta 'px_thp' yang "
+        "sebelumnya bernilai tidak lagi dihasilkan di 8 masa simulasi, mis. Karyawan A 2026 bulan 6; perluas atau hapus "
+        "`jika` UJI-THP-BARU, atau tambahkan aturan untuk kasus yang tidak tercakup"]
+
+
+def test_pengganti_ber_jika_yang_lolos_simulasi_tetap_diperingatkan(tmp_path):
+    # pegawai contoh bermetode gross dan gross-up: pegawai bermetode ditanggung pemberi kerja kehilangan px_thp tanpa terlihat
+    v = validasi(_dengan_jika(THP_BARU, "metode != 'ditanggung_pemberi_kerja'"))
+    assert v["ok"], v["galat"]
+    assert v["peringatan"] == [
+        "aturan UJI-THP-BARU menggantikan PX-THP-01, PX-THP-02 tetapi ber-`jika`: pada kasus di luar `jika` itu fakta "
+        "'px_thp' tidak lagi dihasilkan. Simulasi hanya menguji pegawai contoh (metode gross dan gross-up), jadi kasus lain "
+        "yang dicakup PX-THP-01, PX-THP-02 (mis. metode pajak atau status pegawai lain) tidak teruji; pastikan `jika` "
+        "UJI-THP-BARU mencakup semuanya, atau hapus `jika` itu"]
+    from eksperimen.e8_perusahaan_x import kasus_kar_a
+    from engine.kalkulator import hitung
+    dtp = dict(kasus_kar_a(2026), metode="ditanggung_pemberi_kerja")   # bukti bahwa peringatan itu bukan dugaan kosong
+    sempit = _tulis(tmp_path, "thp_sempit.yaml", _dengan_jika(THP_BARU, "metode != 'ditanggung_pemberi_kerja'"))
+    assert "px_thp" in hitung(copy.deepcopy(dtp), kb=muat_kb(BERKAS_PX))["per_masa"][1]
+    assert "px_thp" not in hitung(copy.deepcopy(dtp), kb=muat_kb([*BERKAS_PX, sempit]))["per_masa"][1]
+    # sudah menjadi galat (terlihat pada pegawai contoh): tidak diperingatkan dua kali
+    assert validasi(_dengan_jika(THP_BARU, "bulan != 12"))["peringatan"] == []
+    # ada aturan tanpa `jika` yang tidak dicabut untuk fakta yang sama: faktanya tidak dapat hilang
+    aman = _dengan_jika(THP_BARU, "bulan != 12") + ATURAN_SISA
+    v = validasi(aman)
+    assert v["ok"], v["galat"]
+    assert not any("ber-`jika`" in p for p in v["peringatan"])
+
+
+ATURAN_SISA = """  - id: UJI-THP-SISA
+    sifat: opsional
+    berlaku: {mulai: 2026-01-01}
+    lingkup: masa
+    menghasilkan: px_thp
+    maka: "px_penghasilan_tunai"
+    tipe_hasil: rupiah
+    sumber: uji
+"""
+
+
+def test_rantai_pengganti_galat_hanya_pada_pengganti_yang_menyempit():
+    # E (tanpa `jika`) mencabut aturan KB aktif, Z (ber-`jika`) mencabut E: Desember 2027 hilang karena Z, bukan E
+    rantai = THP_BARU.replace("UJI-THP-BARU", "E-THP-01") + _dengan_jika(
+        ATURAN_SISA.replace("UJI-THP-SISA", "Z-THP-01").replace("2026-01-01", "2027-01-01")
+        .replace("    maka:", "    menggantikan: [E-THP-01]\n    maka:"), "bulan != 12")
+    v = validasi(rantai)
+    assert v["galat"] == [
+        "aturan Z-THP-01 menggantikan E-THP-01 tetapi tidak mencakup semua kasusnya: fakta 'px_thp' yang sebelumnya "
+        "bernilai tidak lagi dihasilkan di 6 masa simulasi, mis. Karyawan A 2027 bulan 12; perluas atau hapus `jika` "
+        "Z-THP-01, atau tambahkan aturan untuk kasus yang tidak tercakup"]
+    assert not any("E-THP-01 menggantikan" in t for t in v["galat"] + v["peringatan"])
+
+
+def test_pengganti_lebih_sempit_atas_aturan_rancangan_sendiri_adalah_galat():
+    # px_uji_isian belum ada di KB aktif: pembandingnya rancangan yang sama tanpa pencabutan di dalamnya
+    sempit = ISIAN_DIGANTI.replace("    menggantikan: [UJI-ISIAN-01]\n", '    menggantikan: [UJI-ISIAN-01]\n    jika: "bulan != 12"\n')
+    v = validasi(sempit)
+    assert v["galat"] == [
+        "aturan UJI-ISIAN-02 menggantikan UJI-ISIAN-01 tetapi tidak mencakup semua kasusnya: fakta 'px_uji_isian' yang "
+        "dihasilkan aturan yang digantikannya (dari rancangan ini juga) tidak lagi dihasilkan di 4 masa simulasi, mis. "
+        "Karyawan A 2027 bulan 12; perluas atau hapus `jika` UJI-ISIAN-02, atau tambahkan aturan untuk kasus yang tidak "
+        "tercakup"]
+    v = validasi(ISIAN_DIGANTI)   # pengganti tanpa `jika`: tidak ada yang hilang
+    assert v["ok"] and v["peringatan"] == [], v
+
+
+def test_fakta_hilang_yang_dibaca_aturan_lain_diberi_keterangan():
+    # px_penghasilan_tunai dibaca PX-THP-01/02: simulasi gagal lebih dulu, dan pesan engine tidak menyebut aturan pengganti
+    teks = _dengan_jika(THP_BARU.replace("px_thp", "px_penghasilan_tunai").replace("[PX-THP-01, PX-THP-02]", "[PX-THP-00]")
+                        .replace("px_penghasilan_tunai - pph21", "komponen('teratur')"), "bulan != 12")
+    v = validasi(teks)
+    assert not v["ok"] and all(g.startswith("simulasi ") for g in v["galat"])
+    [p] = [p for p in v["peringatan"] if p.startswith("kemungkinan penyebab simulasi gagal")]
+    assert "aturan UJI-THP-BARU menggantikan PX-THP-00 tetapi ber-`jika`" in p
+    assert "fakta 'px_penghasilan_tunai' tidak lagi dihasilkan, padahal dibaca PX-THP-01, PX-THP-02" in p
+
+
+def test_aturan_yang_kalah_tanpa_menggantikan_diperingatkan():
+    v = validasi(THP_TANPA_FIELD)
+    assert v["ok"], v["galat"]
+    assert [p for p in v["peringatan"] if "tulis menggantikan" in p] == [
+        "aturan UJI-THP-BARU kalah di 36 masa dari PX-THP-01 (lex_specialis); bila UJI-THP-BARU dimaksudkan mengganti "
+        "PX-THP-01, tulis menggantikan: [PX-THP-01]"]
+    assert "(dikalahkan PX-THP-01)" in v["perubahan"][0]["teks"] and len(v["perubahan"]) == 1
+    # kalah antar-lapisan (lex superior) tidak dapat diatasi dengan `menggantikan`: tidak disarankan
+    assert not any("tulis menggantikan" in p for p in validasi(BRUTO)["peringatan"])
+
+
+def test_syarat_konstan_di_jika_diperingatkan():
+    # dua konjungsi mengalahkan PX-THP-01 (satu konjungsi) tanpa menguji apa pun lebih banyak
+    v = validasi(_dengan_jika(THP_TANPA_FIELD, "metode != 'ditanggung_pemberi_kerja' and True and 1 == 1"))
+    assert v["ok"], v["galat"]
+    assert v["peringatan"] == [
+        "aturan UJI-THP-BARU: `jika` memuat syarat konstan (True, 1 == 1) yang tidak menguji apa pun; jumlah konjungsi `and` "
+        "menentukan lex specialis, sehingga syarat itu hanya menaikkan peringkat aturan; hapus syarat itu, dan bila "
+        "UJI-THP-BARU dimaksudkan mengganti aturan lain tulis menggantikan: [id aturan itu]"]
+    assert "dipakai di 36 masa, kalah di 0 masa" in v["perubahan"][0]["teks"]
+    # syarat sungguhan (nama fakta, pemanggilan fungsi) dan konstanta di dalam `or` bukan konjungsi konstan
+    for jika in ("bulan != 12 and metode != 'x'", "hr_masa('hk_aktual') > 0 and (bulan == 1 or True)"):
+        assert not any("syarat konstan" in p for p in validasi(_dengan_jika(THP_TANPA_FIELD, jika))["peringatan"]), jika
+    # konstanta yang selalu salah bukan soal peringkat: aturannya tidak pernah menyala
+    [p] = [p for p in validasi(_dengan_jika(THP_TANPA_FIELD, "False and bulan > 0"))["peringatan"] if "syarat konstan" in p]
+    assert p == ("aturan UJI-THP-BARU: `jika` memuat syarat konstan (False) yang selalu salah, sehingga aturan ini tidak "
+                 "akan pernah menyala; hapus syarat itu")
+
+
+ISIAN_DIGANTI = """
+lapisan: perusahaan
+id: isian_diganti
+komponen:
+  - {fakta: px_uji_isian, jenis: tunjangan_uji, kategori: teratur, label: Uji}
+masukan:
+  - {kunci: uang_lama, label: Uang lama, tipe: rupiah, lingkup: tahun, wajib: true}
+  - {kunci: uang_baru, label: Uang baru, tipe: rupiah, lingkup: tahun, wajib: true}
+aturan:
+  - id: UJI-ISIAN-01
+    sifat: opsional
+    berlaku: {mulai: 2026-01-01}
+    lingkup: masa
+    menghasilkan: px_uji_isian
+    jika: "bulan >= 1"
+    maka: "hr('uang_lama')"
+    tipe_hasil: rupiah
+    sumber: uji
+  - id: UJI-ISIAN-02
+    sifat: opsional
+    berlaku: {mulai: 2027-01-01}
+    lingkup: masa
+    menghasilkan: px_uji_isian
+    menggantikan: [UJI-ISIAN-01]
+    maka: "hr('uang_baru')"
+    tipe_hasil: rupiah
+    sumber: uji
+"""
+
+
+def test_isian_aturan_yang_dicabut_permanen_tidak_lagi_diminta(tmp_path):
+    from asisten_kb.rancangan import masukan_tambahan
+
+    def rentang(teks, nama):
+        kb = muat_kb([*BERKAS_PX, _tulis(tmp_path, nama, teks)])
+        return {m["kunci"]: (m["mulai"], m["sampai"]) for m in masukan_tambahan(kb)}
+
+    assert rentang(ISIAN_DIGANTI, "permanen.yaml") == {"uang_lama": ("2026-01-01", "2026-12-31"),
+                                                       "uang_baru": ("2027-01-01", None)}
+    # pengganti sementara: aturan lama berlaku lagi sesudahnya, jadi isiannya tetap diminta tanpa batas akhir
+    sementara = ISIAN_DIGANTI.replace("{mulai: 2027-01-01}", "{mulai: 2027-01-01, sampai: 2027-06-30}")
+    assert rentang(sementara, "sementara.yaml") == {"uang_lama": ("2026-01-01", None),
+                                                    "uang_baru": ("2027-01-01", "2027-06-30")}
+    # tanpa field: rentang = masa berlaku aturan itu sendiri, seperti sebelumnya
+    tanpa = ISIAN_DIGANTI.replace("    menggantikan: [UJI-ISIAN-01]\n", "")
+    assert rentang(tanpa, "tanpa.yaml") == {"uang_lama": ("2026-01-01", None), "uang_baru": ("2027-01-01", None)}
+    v = validasi(ISIAN_DIGANTI)   # 2027: uang_lama tidak dibaca lagi, aturan baru dipakai di setiap masa
+    assert v["ok"], v["galat"]
+    assert {m["kunci"]: m["sampai"] for m in v["masukan"]} == {"uang_lama": "2026-12-31", "uang_baru": None}
+
+
+def test_inventaris_prompt_menyebut_aturan_yang_digantikan(tmp_path):
+    teks = prompt_sistem(muat_kb([*BERKAS_PX, _tulis(tmp_path, "thp_baru.yaml", THP_BARU)]))
+    assert "  - UJI-THP-BARU | perusahaan/opsional | 2026-01-01.. | - (0) | menggantikan PX-THP-01, PX-THP-02" in teks
+    assert "  - PX-THP-01 | perusahaan/opsional | 2016-01-01.. | metode != 'ditanggung_pemberi_kerja' (1)\n" in teks
+
+
+def test_contoh_di_prompt_lolos_validasi_tanpa_peringatan():
+    """Contoh rancangan di prompt (konstanta perusahaan sebagai parameter, tanpa masukan ber-bawaan) memang sah."""
+    from asisten_kb.konteks import CONTOH
+    assert "parameter: [{nama: px_transport_per_hari" in CONTOH and "masukan: []" in CONTOH
+    u = _usulan(masukan=[], aturan=[dict(ATURAN, maka="parameter('px_transport_per_hari') * hr_masa('hk_aktual')")],
+                parameter=[{"nama": "px_transport_per_hari", "nilai": "25000", "jenis_nilai": "rupiah", "mulai": "2026-07-01",
+                            "sampai": "", "sumber": "Peraturan Perusahaan 2026 Ps. 12 ayat (1)"}])
+    v = validasi(ke_yaml(ke_berkas(u)))
+    assert v["ok"], v["galat"]
+    assert v["peringatan"] == [] and v["masukan"] == []
+    assert all(d["fakta_baru"]["px_transport"] > 0 for d in v["dampak"])

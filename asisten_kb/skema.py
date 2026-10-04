@@ -39,7 +39,11 @@ SKEMA_USULAN = _obj({
     "aturan": {"type": "array", "items": _obj({
         "id": _S, "sifat": {"type": "string", "enum": ["wajib", "default", "opsional"]},
         "mulai": _S, "sampai": _S, "lingkup": {"type": "string", "enum": ["masa", "tahun"]},
-        "menghasilkan": _S, "jika": _S, "maka": _S,
+        "menghasilkan": _S,
+        # pencabutan eksplisit: id aturan yang tidak dipakai lagi selama aturan ini berlaku ([] = tidak mengganti apa pun)
+        "menggantikan": {"type": "array", "items": {"type": "string"},
+                         "description": "id aturan yang diganti/dicabut aturan ini; [] bila tidak ada"},
+        "jika": _S, "maka": _S,
         "tipe_hasil": {"type": "string", "enum": ["rupiah", "tarif", "kategori", "bool", "bilangan", "eksak"]},
         "pembulatan": _S, "sumber": _S, "catatan": _S})},
     "klasifikasi_wajib": {"type": "array", "items": _obj({

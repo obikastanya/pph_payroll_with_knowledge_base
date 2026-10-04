@@ -5,9 +5,11 @@ setiap kunci hr()/hr_masa() baru wajib dideklarasikan sebagai `masukan` agar apl
 Validasi tidak pernah melempar: setiap galat (termasuk galat tak terduga) menjadi entri `galat`, karena di jembatan
 keluaran LLM yang sudah dibayar dan di aplikasi web suntingan admin harus tetap kembali utuh.
 """
+import ast
 import functools
 import re
 import tempfile
+from dataclasses import replace
 from datetime import date, timedelta
 from fractions import Fraction
 from pathlib import Path
@@ -18,7 +20,7 @@ from eksperimen.e12_tanpa_kb import BERKAS_PX
 from eksperimen.e8_perusahaan_x import kasus_kar_a
 from engine.inferensi import Konteks
 from engine.kalkulator import hitung, kb_aktif
-from engine.kb import _iso, muat_kb, rujukan_masukan
+from engine.kb import _iso, masa_berlaku_efektif, muat_kb, rujukan_masukan
 from engine.muat import muat_yaml
 from jembatan.kontrak import KUNCI_INTI_BULAN, KUNCI_INTI_TAHUN
 
@@ -104,6 +106,9 @@ def ke_berkas(u):
     for a in u.get("aturan") or []:
         e = {"id": a["id"], "sifat": a["sifat"], "berlaku": _berlaku(a["mulai"], a.get("sampai")), "lingkup": a["lingkup"],
              "menghasilkan": a["menghasilkan"]}
+        diganti = list(dict.fromkeys(i.strip() for i in a.get("menggantikan") or [] if i.strip()))
+        if diganti:   # field hanya ditulis bila ada yang diganti (skema KB menolak daftar kosong)
+            e["menggantikan"] = diganti
         if (a.get("jika") or "").strip():
             e["jika"] = a["jika"].strip()
         e["maka"] = a["maka"].strip()
@@ -140,7 +145,7 @@ def masukan_tambahan(kb, hanya_berkas=None):
     di aturan (hr_masa('k', 0)) membuat setiap perhitungan gagal (DATA_KURANG) bila dikosongkan."""
     rujuk = rujukan_masukan(kb)
     asal_aturan = {a.id: a.berkas for a in kb.aturan}
-    aturan = {a.id: a for a in kb.aturan}
+    efektif = masa_berlaku_efektif(kb)   # aturan yang dicabut permanen (`menggantikan`) berhenti meminta isiannya
     hasil = []
     for kunci in sorted(set(kb.masukan) | set(rujuk)):
         r = rujuk.get(kunci, {"lingkup": set(), "aturan": [], "bawaan_di_aturan": False})
@@ -165,9 +170,9 @@ def masukan_tambahan(kb, hanya_berkas=None):
         e["berkas"] = sorted(berkas)
         e["aturan"] = r["aturan"]
         # rentang berlaku aturan yang membacanya: aplikasi hanya meminta isian ini untuk masa di dalam rentang
-        ats = [aturan[i] for i in r["aturan"]]
-        e["mulai"] = min(a.mulai for a in ats).isoformat() if ats else None
-        e["sampai"] = (None if not ats or any(a.sampai is None for a in ats) else max(a.sampai for a in ats).isoformat())
+        masa = [efektif[i] for i in r["aturan"]]
+        e["mulai"] = min(m for m, _ in masa).isoformat() if masa else None
+        e["sampai"] = (None if not masa or any(s is None for _, s in masa) else max(s for _, s in masa).isoformat())
         hasil.append(e)
     return hasil
 
@@ -352,27 +357,48 @@ def _sesudah(sampai, akhir, versi, lama_teks, teks):
     return f"; setelah {sampai} berlaku {teks(lanjut)} (versi lain yang sudah ada)"
 
 
+def _pemakaian(id_aturan, jejak, jejak_gross_up=()):
+    """(jumlah instance yang dimenangkan aturan, [entri jejak tempat ia kalah], nama simulasinya). jejak_gross_up: jejak
+    simulasi metode gross-up, dipakai untuk aturan yang tidak pernah menyala pada metode gross."""
+    menang = sum(1 for j in jejak if j["aturan"] == id_aturan)
+    kalah = [j for j in jejak if id_aturan in (j["ditolak"] or [])]
+    if not menang and not kalah:   # mis. pengganti aturan tunjangan pajak: hanya menyala pada metode gross-up
+        menang_gu = sum(1 for j in jejak_gross_up if j["aturan"] == id_aturan)
+        kalah_gu = [j for j in jejak_gross_up if id_aturan in (j["ditolak"] or [])]
+        if menang_gu or kalah_gu:
+            return menang_gu, kalah_gu, "simulasi metode gross-up"
+    return menang, kalah, "simulasi"
+
+
+def _satuan(a):
+    return "masa" if a["lingkup"] == "masa" else "tahun"
+
+
 def _perubahan(d, kb_dasar, kb, jejak, jejak_gross_up=()):
-    """Apa yang diganti rancangan pada KB aktif: aturan untuk fakta yang sudah ada, amandemen parameter, dan
-    klasifikasi wajib. Satu-satunya sinyal bagi peninjau bahwa ketentuan pajak yang ada sedang diganti.
-    jejak_gross_up: jejak simulasi metode gross-up, dipakai untuk aturan yang tidak pernah menyala pada metode gross."""
+    """Apa yang diganti rancangan pada KB aktif: aturan yang dicabut eksplisit (`menggantikan`), aturan untuk fakta yang
+    sudah ada, amandemen parameter, dan klasifikasi wajib. Satu-satunya sinyal bagi peninjau bahwa ketentuan pajak yang
+    ada sedang diganti."""
     hasil = []
     per_fakta = {}
     for a in kb_dasar.aturan:
         per_fakta.setdefault(a.menghasilkan, []).append(a)
+    efektif = masa_berlaku_efektif(kb)
     for a in d.get("aturan") or []:
-        lama = per_fakta.get(a["menghasilkan"])
+        satuan = _satuan(a)
+        menang, kalah, simulasi = _pemakaian(a["id"], jejak, jejak_gross_up)
+        diganti = a.get("menggantikan") or []
+        if diganti:
+            sampai = a["berlaku"].get("sampai")
+            hasil.append({"jenis": "aturan", "teks": (
+                f"{a['id']} menggantikan {', '.join(diganti)} (fakta '{a['menghasilkan']}') mulai {a['berlaku']['mulai']}"
+                + (f" sampai {sampai}; sesudahnya aturan lama berlaku lagi" if sampai else "")
+                + f"; pada {simulasi} dipakai di {menang} {satuan}")})
+        # aturan yang dicabut (oleh aturan ini, atau permanen sebelum aturan ini mulai) bukan pesaing lagi
+        mulai = _ke_tanggal(a["berlaku"]["mulai"])
+        lama = [x for x in per_fakta.get(a["menghasilkan"]) or []
+                if x.id not in diganti and not (efektif[x.id][1] != x.sampai and efektif[x.id][1] < mulai)]
         if not lama:
             continue
-        satuan = "masa" if a["lingkup"] == "masa" else "tahun"
-        menang = sum(1 for j in jejak if j["aturan"] == a["id"])
-        kalah = [j for j in jejak if a["id"] in (j["ditolak"] or [])]
-        simulasi = "simulasi"
-        if not menang and not kalah:   # mis. pengganti aturan tunjangan pajak: hanya menyala pada metode gross-up
-            menang_gu = sum(1 for j in jejak_gross_up if j["aturan"] == a["id"])
-            kalah_gu = [j for j in jejak_gross_up if a["id"] in (j["ditolak"] or [])]
-            if menang_gu or kalah_gu:
-                menang, kalah, simulasi = menang_gu, kalah_gu, "simulasi metode gross-up"
         pemenang = sorted({j["aturan"] for j in kalah})
         hasil.append({"jenis": "aturan", "teks": (
             f"{a['id']} menghasilkan '{a['menghasilkan']}' yang sudah dihasilkan "
@@ -493,6 +519,142 @@ def _peringatan_tanpa_efek(hasil, d, kb, per_fakta):
             f"sehingga tidak ikut bruto, PPh 21, maupun take home pay; {jalan}")
 
 
+def _konstan_salah(teks):
+    """Ekspresi tanpa nama, atribut, dan pemanggilan fungsi (jadi aman dinilai) yang bernilai salah."""
+    try:
+        return not eval(compile(teks, "<syarat konstan>", "eval"), {"__builtins__": {}})   # noqa: S307
+    except Exception:  # noqa: BLE001 - mis. 1 / 0: bukan urusan peringatan ini
+        return False
+
+
+def _peringatan_syarat_konstan(hasil, d, kb):
+    """Operand `and` tingkat atas di `jika` yang konstan (True, 1 == 1, 'x'): tidak menguji apa pun, tetapi ikut
+    dihitung sebagai konjungsi (engine/ekspresi.py jumlah_konjungsi), jadi hanya menaikkan peringkat lex specialis."""
+    per_id = {a.id: a for a in kb.aturan}
+    for a in d.get("aturan") or []:
+        x = per_id.get(a["id"])
+        if x is None or x.jika is None:
+            continue
+        b = x.jika.pohon.body
+        operan = b.values if isinstance(b, ast.BoolOp) and isinstance(b.op, ast.And) else [b]
+        konstan = [ast.unparse(n) for n in operan
+                   if not any(isinstance(t, (ast.Name, ast.Attribute, ast.Call)) for t in ast.walk(n))]
+        salah = [k for k in konstan if _konstan_salah(k)]
+        if salah:   # `False and ...`: bukan soal peringkat, aturannya mati
+            hasil["peringatan"].append(
+                f"aturan {a['id']}: `jika` memuat syarat konstan ({', '.join(salah)}) yang selalu salah, sehingga aturan ini "
+                f"tidak akan pernah menyala; hapus syarat itu")
+        elif konstan:
+            hasil["peringatan"].append(
+                f"aturan {a['id']}: `jika` memuat syarat konstan ({', '.join(konstan)}) yang tidak menguji apa pun; jumlah "
+                f"konjungsi `and` menentukan lex specialis, sehingga syarat itu hanya menaikkan peringkat aturan; hapus "
+                f"syarat itu, dan bila {a['id']} dimaksudkan mengganti aturan lain tulis menggantikan: [id aturan itu]")
+
+
+def _peringatan_kalah(hasil, d, kb_dasar, jejak, jejak_gross_up):
+    """Penggantian sebagian tanpa `menggantikan`: aturan rancangan yang pada sebagian instance simulasi kalah dari aturan
+    KB aktif yang tidak disebutnya. Hanya untuk pemenang yang memang dapat dicabut lewat `menggantikan` (lapisan sama,
+    bukan tafsir, mulai lebih awal); kalah antar-lapisan sudah dilaporkan sebagai lex superior / override sah."""
+    lama = {x.id: x for x in kb_dasar.aturan}
+    for a in d.get("aturan") or []:
+        if a["sifat"] == "tafsir" or a.get("tafsir"):
+            continue
+        per_pemenang = {}
+        for j in _pemakaian(a["id"], jejak, jejak_gross_up)[1]:
+            per_pemenang.setdefault(j["aturan"], []).append(j)
+        for id_y in sorted(per_pemenang):
+            y = lama.get(id_y)
+            if (y is None or id_y in (a.get("menggantikan") or []) or y.lapisan != d.get("lapisan") or y.sifat == "tafsir"
+                    or y.tafsir or y.mulai >= _ke_tanggal(a["berlaku"]["mulai"])):
+                continue
+            alasan = list(dict.fromkeys(s for j in per_pemenang[id_y] for s in j["alasan"] or []))
+            hasil["peringatan"].append(
+                f"aturan {a['id']} kalah di {len(per_pemenang[id_y])} {_satuan(a)} dari {id_y} "
+                f"({', '.join(alasan) or 'resolusi konflik'}); bila {a['id']} dimaksudkan mengganti {id_y}, tulis "
+                f"menggantikan: [{id_y}]")
+
+
+def _catat_hilang(hilang, kb, pengganti, nama, tahun, sebelum, sesudah):
+    """Fakta yang punya nilai di `sebelum` dan tidak lagi dihasilkan di `sesudah`, di tempat yang sama, selama aturan
+    pengganti berlaku: `jika` aturan pengganti lebih sempit daripada aturan yang dicabutnya. Engine tidak menebak nilai
+    untuk kasus yang tidak tercakup. Pada rantai (Z mencabut X, X mencabut Y) yang dicatat hanya pengganti yang pada
+    tanggal itu tidak sedang dicabut: X yang dicabut Z tidak ikut menentukan nilai, jadi bukan penyebabnya.
+    hilang: {id pengganti: [(pegawai, tahun, bulan | None untuk fakta tahunan)]}."""
+    akhir = max(sebelum["per_masa"])   # fakta tahunan dinilai pada tanggal 1 masa terakhir
+    for f in sorted({x.menghasilkan for x in pengganti}):
+        calon = [x for x in pengganti if x.menghasilkan == f]
+        if calon[0].lingkup == "masa":
+            tempat = [b for b, m in sebelum["per_masa"].items() if f in m and f not in sesudah["per_masa"].get(b, {})]
+        else:
+            tempat = [None] if f in sebelum["tahunan"] and f not in sesudah["tahunan"] else []
+        for b in tempat:
+            tgl = date(tahun, b or akhir, 1)
+            berlaku = [x for x in calon if x.berlaku_pada(tgl)]
+            teratas = [x for x in berlaku if not any(z.berlaku_pada(tgl) and x.id in z.menggantikan for z in kb.aturan)]
+            for x in teratas or berlaku:
+                if (nama, tahun, b) not in hilang.setdefault(x.id, []):
+                    hilang[x.id].append((nama, tahun, b))
+
+
+def _tanpa_cabut_sendiri(kb, ids):
+    """KB pembanding untuk aturan rancangan yang mencabut aturan dari rancangan yang sama: fakta aturan lama itu belum
+    ada di KB aktif, jadi simulasi-sebelum tidak dapat menunjukkan bahwa ia hilang. Di KB ini pencabutan di dalam
+    rancangan ditiadakan (aturan lamanya tetap berlaku); pencabutan aturan KB aktif tidak diubah. None bila tidak ada."""
+    ids = set(ids)
+    if not any(a.id in ids and set(a.menggantikan) & ids for a in kb.aturan):
+        return None
+    return replace(kb, aturan=[replace(a, menggantikan=tuple(i for i in a.menggantikan if i not in ids)) if a.id in ids
+                               else a for a in kb.aturan])
+
+
+def _selalu_dihasilkan(kb, x):
+    """Ada aturan lain tanpa `jika` untuk fakta yang sama, yang tidak dicabut aturan mana pun dan berlaku sepanjang masa
+    berlaku x? Maka faktanya tetap dihasilkan pada kasus di luar `jika` x."""
+    dicabut = {i for a in kb.aturan for i in a.menggantikan}
+    return any(c.id != x.id and c.jika is None and not c.tafsir and c.id not in dicabut and c.mulai <= x.mulai
+               and (c.sampai is None or (x.sampai is not None and c.sampai >= x.sampai))
+               for c in kb.aturan_untuk(x.menghasilkan))
+
+
+def _galat_hilang(hasil, kb, pengganti, hilang, hilang_gross_up, hilang_rancangan):
+    """Galat untuk setiap aturan pengganti yang membuat faktanya hilang; contohnya pegawai contoh biasa lebih dulu.
+    Bila fakta itu dibaca aturan lain, simulasinya gagal sebelum hasilnya dapat dibandingkan: galat simulasi itu diberi
+    keterangan kemungkinan penyebabnya (peringatan), karena pesan engine tidak menyebut aturan pengganti.
+    Simulasi hanya mencakup pegawai contoh: pengganti ber-`jika` yang lolos tetap diberi peringatan, karena pada kasus
+    yang tidak disimulasikan (mis. metode pajak lain) faktanya dapat hilang tanpa terlihat di sini."""
+    gagal = any(g.startswith("simulasi ") for g in hasil["galat"])
+    for x in pengganti:
+        lama = hilang.get(x.id, []) + hilang_gross_up.get(x.id, [])
+        tempat = lama + [t for t in hilang_rancangan.get(x.id, []) if t not in lama]
+        nama_lama = ", ".join(x.menggantikan)
+        jalan = ((f"perluas atau hapus `jika` {x.id}, atau " if x.jika is not None else "")
+                 + "tambahkan aturan untuk kasus yang tidak tercakup")
+        if not tempat:
+            if x.jika is None:
+                continue
+            pembaca = sorted(a.id for a in kb.aturan if x.menghasilkan in a.dependensi() and a.menghasilkan != x.menghasilkan)
+            if gagal and pembaca:
+                hasil["peringatan"].append(
+                    f"kemungkinan penyebab simulasi gagal: aturan {x.id} menggantikan {nama_lama} tetapi "
+                    f"ber-`jika`, sehingga pada kasus di luar `jika` itu fakta '{x.menghasilkan}' tidak lagi dihasilkan, "
+                    f"padahal dibaca {', '.join(pembaca)}; {jalan}")
+            elif not _selalu_dihasilkan(kb, x):
+                hasil["peringatan"].append(
+                    f"aturan {x.id} menggantikan {nama_lama} tetapi ber-`jika`: pada kasus di luar `jika` itu fakta "
+                    f"'{x.menghasilkan}' tidak lagi dihasilkan. Simulasi hanya menguji pegawai contoh (metode gross dan "
+                    f"gross-up), jadi kasus lain yang dicakup {nama_lama} (mis. metode pajak atau status pegawai lain) "
+                    f"tidak teruji; pastikan `jika` {x.id} mencakup semuanya, atau hapus `jika` itu")
+            continue
+        nama, tahun, bulan = tempat[0]
+        contoh = f"{nama} {tahun}" + (f" bulan {bulan}" if bulan else "")
+        satuan = "masa" if x.lingkup == "masa" else "tahun"
+        asal = "sebelumnya bernilai" if lama else "dihasilkan aturan yang digantikannya (dari rancangan ini juga)"
+        hasil["galat"].append(
+            f"aturan {x.id} menggantikan {nama_lama} tetapi tidak mencakup semua kasusnya: fakta "
+            f"'{x.menghasilkan}' yang {asal} tidak lagi dihasilkan di {len(tempat)} {satuan} simulasi, mis. "
+            f"{contoh}; {jalan}")
+
+
 def validasi(teks_yaml, berkas_aktif=(), nama_berkas="rancangan.yaml", lapisan=None):
     """-> {ok, galat[], peringatan[], ringkasan{}, isi{}, masukan[], dampak[], perubahan[], belum_teruji[]}.
 
@@ -583,6 +745,7 @@ def _validasi(hasil, p, berkas_aktif, lapisan):
                     f"aturan regulasi ({', '.join(x.id for x in lama)}); {akibat}")
 
     _peringatan_tanpa_efek(hasil, d, kb, per_fakta)
+    _peringatan_syarat_konstan(hasil, d, kb)
 
     _simulasi(hasil, d, p, kb_dasar, kb, semua_dasar, semua, masukan, ids, fakta)
 
@@ -595,10 +758,16 @@ def _simulasi(hasil, d, p, kb_dasar, kb, semua_dasar, semua, masukan, ids, fakta
         hasil["peringatan"].append(f"masa berlaku rancangan di luar jangkauan simulasi ({TAHUN_AWAL}-{TAHUN_LEWAT}); "
                                    "tidak ada simulasi yang dijalankan")
     jejak, jejak_gross_up, berhasil = [], [], 0
+    pengganti = [a for a in kb.aturan if a.menggantikan and a.id in set(ids)]
+    kb_tanpa = _tanpa_cabut_sendiri(kb, ids)   # pembanding kedua, hanya bila rancangan mencabut aturannya sendiri
+    hilang, hilang_gross_up, hilang_rancangan = {}, {}, {}
     for tahun in daftar_tahun:
         contoh = nilai_contoh(semua, tahun)
         contoh_dasar = nilai_contoh(semua_dasar, tahun, contoh)
-        jejak_gross_up += _simulasi_gross_up(hasil, tahun, kb_dasar, kb, semua_dasar, contoh_dasar, semua, contoh)
+        gross_up = _simulasi_gross_up(hasil, tahun, kb_dasar, kb, semua_dasar, contoh_dasar, semua, contoh)
+        if gross_up is not None:
+            jejak_gross_up += gross_up[1]["jejak"]
+            _catat_hilang(hilang_gross_up, kb, pengganti, "Karyawan A metode gross-up", tahun, *gross_up)
         for nama, buat in PROFIL:
             try:
                 sebelum = hitung(isi_contoh(buat(tahun), semua_dasar, contoh_dasar), kb=kb_dasar)
@@ -612,6 +781,14 @@ def _simulasi(hasil, d, p, kb_dasar, kb, semua_dasar, semua, masukan, ids, fakta
                 continue
             berhasil += 1
             jejak += h["jejak"]
+            _catat_hilang(hilang, kb, pengganti, nama, tahun, sebelum, h)
+            if kb_tanpa is not None:
+                try:
+                    tanpa = hitung(isi_contoh(buat(tahun), semua, contoh), kb=kb_tanpa)
+                except Exception:  # noqa: BLE001 - pembanding saja: tanpa pencabutan itu rancangan boleh jadi tidak terhitung
+                    tanpa = None
+                if tanpa is not None:
+                    _catat_hilang(hilang_rancangan, kb, pengganti, nama, tahun, tanpa, h)
             hasil["dampak"].append({"pegawai": f"{nama} (contoh)", "tahun": tahun,
                                     "nilai_contoh": {k: v for k, v in contoh.items() if k in sendiri},
                                     "sebelum": _ringkas(sebelum), "sesudah": _ringkas(h),
@@ -633,25 +810,29 @@ def _simulasi(hasil, d, p, kb_dasar, kb, semua_dasar, semua, masukan, ids, fakta
                                  else [{"aturan": i, "alasan": alasan_luar} for i in ids])
         for b in hasil["belum_teruji"]:
             hasil["peringatan"].append(f"aturan {b['aturan']} belum teruji: {b['alasan']}")
+    _galat_hilang(hasil, kb, pengganti, hilang, hilang_gross_up, hilang_rancangan)
+    if berhasil:
+        _peringatan_kalah(hasil, d, kb_dasar, jejak, jejak_gross_up)
     hasil["perubahan"] = _perubahan(d, kb_dasar, kb, jejak, jejak_gross_up)
 
 
 def _simulasi_gross_up(hasil, tahun, kb_dasar, kb, semua_dasar, contoh_dasar, semua, contoh):
     """Karyawan A dengan metode gross-up. Aturan titik tetap (tunjangan pajak) tidak pernah menyala pada pegawai
     contoh yang bermetode gross, sehingga rancangan yang merusaknya lolos simulasi lalu menggagalkan setiap pegawai
-    gross-up. Hasilnya tidak masuk tabel dampak; jejaknya dipakai untuk cakupan uji. -> jejak ([] bila dilewati/gagal)."""
+    gross-up. Hasilnya tidak masuk tabel dampak; jejaknya dipakai untuk cakupan uji dan hasilnya untuk memeriksa fakta
+    yang hilang. -> (hasil sebelum, hasil sesudah); None bila dilewati/gagal."""
     if not _dasar_bisa_gross_up(tahun):
-        return []
+        return None
     try:
-        hitung(_gross_up(isi_contoh(kasus_kar_a(tahun), semua_dasar, contoh_dasar)), kb=kb_dasar)
+        sebelum = hitung(_gross_up(isi_contoh(kasus_kar_a(tahun), semua_dasar, contoh_dasar)), kb=kb_dasar)
     except Exception as e:  # noqa: BLE001 - KB aktif rusak: bukan kesalahan rancangan
         hasil["galat"].append(f"KB aktif tidak dapat dihitung: Karyawan A {tahun} metode gross-up{_galat_hitung(e)}")
-        return []
+        return None
     try:
-        return hitung(_gross_up(isi_contoh(kasus_kar_a(tahun), semua, contoh)), kb=kb)["jejak"]
+        return sebelum, hitung(_gross_up(isi_contoh(kasus_kar_a(tahun), semua, contoh)), kb=kb)
     except Exception as e:  # noqa: BLE001
         hasil["galat"].append(f"simulasi Karyawan A {tahun} metode gross-up gagal{_galat_hitung(e)}")
-        return []
+        return None
 
 
 # ------------------------------------------------------------------------------------------- periksa KB aktif

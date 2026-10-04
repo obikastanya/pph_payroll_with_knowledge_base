@@ -1104,15 +1104,15 @@ Implikasi: K-02, K-04, dan (bila tanggal transfernya benar) K-11 adalah **ketida
 
 ## Adendum A — Pengembangan sesudah rencana dikunci (2026-10-04)
 
-> **Cara membaca.** Rencana v1 di atas dikunci pada 1 Oktober 2026, dan hasil yang dilaporkan di README §5 diperoleh di bawah rencana itu. Adendum ini mencatat apa yang ditambahkan ke repositori sesudahnya (2–4 Oktober 2026) dan di mana implementasi menyimpang dari teks rencana. Adendum ini **tidak** menambah pertanyaan penelitian, hipotesis, maupun klaim novelty. Riwayat pengerjaannya ada di `journal.md` (kronologi lanjutan).
+> **Cara membaca.** Rencana v1 di atas dikunci pada 1 Oktober 2026, dan hasil yang dilaporkan di README §5 diperoleh di bawah rencana itu. Adendum ini mencatat apa yang ditambahkan ke repositori sesudahnya (2–4 Oktober 2026) dan di mana implementasi menyimpang dari teks rencana. Adendum ini **tidak** menambah pertanyaan penelitian, hipotesis, maupun klaim novelty. Riwayat pengerjaannya ada di `journal.md` (kronologi lanjutan). Pembaruan terakhir adendum ini: 4 Oktober 2026, sesudah field `menggantikan` (A.6).
 
 ### A.1 Yang ditambahkan
 
 | Tambahan | Lokasi | Commit | Status terhadap evaluasi RQ1–RQ5 |
 |---|---|---|---|
-| Aplikasi web untuk admin finance (Laravel) dan jembatan JSON ke engine | `web/`, `jembatan/` | `4b8d87a` s.d. `9cf61fb` | Di luar evaluasi. Aplikasi tidak menghitung pajak; setiap angka berasal dari engine |
-| Berkas KB tambahan yang diterapkan saat aplikasi berjalan, dengan perluasan DSL: `masukan` (isian baru yang diminta dari pengguna), amandemen `parameter` berversi, `klasifikasi_wajib` berversi | `kb/tambahan/`, `engine/kb.py`, `engine/inferensi.py`, `kb/skema/aturan.schema.json` | `f377592`, `fe63736`, `b3e6986` | Perluasan untuk RQ3 yang **belum dievaluasi** (A.3) |
-| Asisten KB: PDF peraturan → LLM → rancangan berkas KB → validasi engine → persetujuan manusia | `asisten_kb/` | `f377592`, `49e2b9a`, `e40b97d`, `6265699`, `7f208b2` | Di luar evaluasi. Mutu ekstraksi **belum dievaluasi** (A.2) |
+| Aplikasi web untuk admin finance (Laravel) dan jembatan JSON ke engine | `web/`, `jembatan/` | `4b8d87a` s.d. `56bb943` | Di luar evaluasi. Aplikasi tidak menghitung pajak; setiap angka berasal dari engine |
+| Berkas KB tambahan yang diterapkan saat aplikasi berjalan, dengan perluasan DSL: `masukan` (isian baru yang diminta dari pengguna), amandemen `parameter` berversi, `klasifikasi_wajib` berversi, pencabutan aturan lewat `menggantikan` | `kb/tambahan/`, `engine/kb.py`, `engine/inferensi.py`, `kb/skema/aturan.schema.json` | `f377592`, `fe63736`, `b3e6986`, `0d0bb3b` | Perluasan untuk RQ3 yang **belum dievaluasi** (A.3) |
+| Asisten KB: PDF peraturan → LLM → rancangan berkas KB → validasi engine → persetujuan manusia | `asisten_kb/` | `f377592`, `49e2b9a`, `e40b97d`, `6265699`, `7f208b2`, `b5739a5` | Di luar evaluasi. Mutu ekstraksi **belum dievaluasi** (A.2) |
 | Database PostgreSQL untuk aplikasi web | `web/` | `adc016c` | Di luar evaluasi |
 
 ### A.2 Hubungan dengan D6 dan §4.3 (LLM)
@@ -1128,18 +1128,19 @@ D6 ("LLM tidak dipakai sama sekali") dan §4.3 ("LLM dalam bentuk apa pun" di lu
 
 Tujuan §4.1 butir 4 ("disesuaikan … hanya dengan mengubah KB") kini punya jalur operasional: peraturan baru masuk sebagai berkas di `kb/tambahan/`, termasuk isian baru yang dimintanya dari pengguna. Statusnya:
 
-- Mekanisme ini memerlukan perubahan engine (`f377592`, `fe63736`, `b3e6986`). Peraturan yang dapat dinyatakan dengan DSL yang ada masuk tanpa perubahan kode. Perubahan tabel terverifikasi dan pencabutan aturan tidak tercakup (A.6), dan cakupan jalur ini belum diukur.
+- Mekanisme ini memerlukan perubahan engine (`f377592`, `fe63736`, `b3e6986`, `0d0bb3b`). Peraturan yang dapat dinyatakan dengan DSL yang ada masuk tanpa perubahan kode. Perubahan tabel terverifikasi tidak tercakup, dan cakupan jalur ini belum diukur.
 - Jalur ini diuji secara fungsional (`tests/test_kb_tambahan.py`, `tests/test_urutan_amandemen.py`, `tests/test_masukan_kb.py`, `tests/test_asisten_kb.py`). Jalur ini **belum** dievaluasi dengan protokol §11.2 (S\*, impact precision/recall/F1, regresi, ukuran perubahan terhadap pembanding). E3 yang dilaporkan tetap E3 semula, yang menyunting salinan KB dasar (`eksperimen/perubahan.py`).
 - Karena itu jalur berkas KB tambahan ditulis sebagai **perluasan yang belum dievaluasi**, bukan sebagai bukti RQ3. Bila klaimnya akan dilaporkan, E3 perlu diperluas ke skenario Lampiran B yang diterapkan sebagai berkas KB tambahan, dengan S\* ditetapkan sebelum hasilnya dilihat.
 
 ### A.4 Perubahan engine dan KB dasar, dan pemeriksaan bahwa hasil tidak berubah
 
-Engine dan KB dasar berubah sesudah 1 Oktober di `f377592`, `fe63736`, `c835cce` (hanya `engine/audit.py`), dan `b3e6986`. Rumus take home pay Perusahaan X di `kb/perusahaan/perusahaan_x.yaml` digeneralkan di `f377592` dan `fe63736`. §6.9.8 menuntut setiap perubahan yang menggeser hasil acuan dijelaskan. Pemeriksaannya:
+Engine dan KB dasar berubah sesudah 1 Oktober di `f377592`, `fe63736`, `c835cce` (hanya `engine/audit.py`), `b3e6986`, dan `0d0bb3b`. Rumus take home pay Perusahaan X di `kb/perusahaan/perusahaan_x.yaml` digeneralkan di `f377592` dan `fe63736`. §6.9.8 menuntut setiap perubahan yang menggeser hasil acuan dijelaskan. Pemeriksaannya:
 
 - Dua belas kali jalan dari sepuluh modul eksperimen (`v1 kb`, `v1 b1`, `v2`, `e12_tanpa_kb`, `e8_perusahaan_x` untuk 2023 dan 2024, `perubahan`, `ablasi`, `grossup`, `konflik`, `ekspresivitas`, `mutasi`) dilakukan pada tiga keadaan kode: commit `5630897` (keadaan 1 Oktober), commit `f28f7f3` (3 Oktober), dan pohon kerja yang kemudian menjadi `47af9a8` (4 Oktober). Keluaran ketiganya **identik byte demi byte**, begitu juga berkas `eksperimen/hasil/*.json` yang dihasilkan tiap jalan.
 - Keluaran itu tidak disimpan di repositori. Cara mengulanginya: ekspor tiap commit dengan `git archive`, jalankan kedua belas perintah di README §2.4, lalu bandingkan keluarannya.
 - Satu berkas hasil yang tersimpan berbeda dari keluaran itu: label satu mutan di `eksperimen/hasil/mutasi.json` tertinggal dari skripnya sejak 1 Oktober (operator `EKSPR`, di skrip `TAFSIR`). Berkas itu dibuat ulang pada 4 Oktober; status mutan dan skor tidak berubah.
 - Tes pada pohon kerja yang sama (4 Oktober): 583 lulus dan 8 dilewati (`pytest`), 99 lulus (`php artisan test` di `web/`).
+- Sesudah field `menggantikan` (`0d0bb3b`, `b5739a5`, `56bb943`, 4 Oktober): kedua belas jalan diulang dan keluarannya tetap identik; tes: 668 lulus dan 8 dilewati (`pytest`), 101 lulus (`php artisan test`).
 - Tidak diulang: pengukuran kinerja E9.
 
 ### A.5 Penyimpangan implementasi dari teks rencana
@@ -1161,16 +1162,17 @@ Perilaku engine pada butir-butir ini sudah ada sejak 1 Oktober. Dicatat di sini 
 - Amandemen `parameter` dan `klasifikasi_wajib` dari berkas KB tambahan diterapkan per nama menurut `berlaku.mulai`, tidak menurut urutan berkas diterapkan (`b3e6986`). Ini mengikuti §6.4: valid time yang menentukan. Untuk kedua jenis entri itu, himpunan berkas yang sama selalu memberi versi yang sama, atau selalu ditolak (`tests/test_urutan_amandemen.py`). Urutan berkas masih menentukan `sidik_kb`, label isian yang dideklarasikan ulang, dan aturan mana yang tercatat di jejak bila dua aturan seri memberi nilai sama.
 - Batas iterasi titik tetap diambil dari aturan yang menang resolusi konflik, bukan dari aturan pertama menurut urutan muat (`b3e6986`). KB dasar tidak terpengaruh, karena tiap fakta titik tetap hanya punya satu aturan.
 - Komponen berkategori `tidak_diperhitungkan` ikut mengurangi take home pay Perusahaan X (`fe63736`); angka KB dasar identik (A.4).
+- Pencabutan tegas (`0d0bb3b`): aturan baru dapat menyebut `menggantikan: [ID, ...]`. Selama aturan baru berlaku menurut tanggalnya, aturan yang disebut keluar dari himpunan kandidat R(a, t) sebelum resolusi konflik; urutan asas di §6.3 tidak berubah. Ini padanan menutup `berlaku.sampai` aturan lama (cara KB dasar berganti rezim, dan "tutup berlaku" pada skenario C01 Lampiran B), tetapi diputus saat evaluasi, sehingga knowledge time (§6.4) tetap berlaku: pengganti yang belum dicatat belum mencabut apa pun. Hanya di dalam satu lapisan; urutan antar-lapisan tetap urusan lex superior dan override sah. KB dasar tidak memakai field ini.
 
 Celah yang diketahui:
 
 1. Knowledge time (§6.4) hanya menyaring aturan yang mengisi `dicatat` dan tabel KLU DTP. Parameter (dasar maupun amandemen), `klasifikasi_wajib`, dan aturan berkas KB tambahan tanpa `dicatat` tidak disaring oleh pertanyaan "dihitung dengan KB per tanggal X".
 2. `versi_kb` (commit git) tidak mencakup berkas `kb/tambahan/*.yaml`, yang diabaikan git. Aplikasi web mencatat `sidik_kb` (sidik isi berkas KB tambahan) pada setiap perhitungan, tetapi isi berkas per sidik belum diarsipkan. Determinisme §6.9.8 untuk hasil yang memakai berkas KB tambahan karena itu hanya berlaku selama berkasnya tidak diubah atau dihapus.
-3. Aturan baru hanya dapat mengalahkan aturan lama lewat resolusi konflik. Berkas KB tambahan belum dapat mencabut aturan, yaitu padanan "tutup berlaku" pada skenario C01 Lampiran B.
+3. Ditutup pada `0d0bb3b`: sebelumnya aturan baru hanya dapat mengalahkan aturan lama lewat resolusi konflik, dan berkas KB tambahan tidak dapat mencabut aturan. Batas yang tersisa: aturan pengganti yang `jika`-nya lebih sempit membuat fakta tidak dihasilkan di luar `jika` itu. Validasi asisten menolaknya hanya bila terlihat pada pegawai contoh (metode gross dan gross-up); di luar itu pengganti ber-`jika` hanya diberi peringatan.
 
 ### A.7 Rencana lanjutan (belum dikerjakan per 4 Oktober 2026)
 
-1. Pencabutan tegas lewat field `menggantikan: [ID]` pada aturan baru (menutup celah 3).
+1. Pencabutan tegas lewat field `menggantikan: [ID]` pada aturan baru (menutup celah 3). **Selesai** pada `0d0bb3b`, `b5739a5`, dan `56bb943` (4 Oktober 2026); lihat A.6.
 2. Arsip isi berkas KB per `sidik_kb` dan log peristiwa terapkan, nonaktif, dan hapus (menutup celah 2).
 3. Perluasan E3 ke jalur berkas KB tambahan (A.3), bila klaimnya akan dilaporkan.
-4. Evaluasi mutu ekstraksi asisten pada dokumen nyata. Sampai itu dilakukan, tinjauan manusia adalah bagian wajib alur, bukan formalitas.
+4. Evaluasi mutu ekstraksi asisten pada dokumen nyata. Sampai itu dilakukan, tinjauan manusia adalah bagian wajib alur, bukan formalitas. Prompt asisten berubah pada `b5739a5` dan sejak itu belum dijalankan terhadap LLM sungguhan.

@@ -383,6 +383,26 @@ Paket 1 dikerjakan workflow 9 agen: tiga pelaksana dengan berkas terpisah, tiga 
 
 Sesudah itu AI menulis entri jurnal ini dan Adendum A di `research_plan.md` (Paket 2). Sebelum di-commit, drafnya diperiksa tiga agen terhadap repositori dan riwayat git; temuan mereka (antara lain daftar commit yang tidak lengkap, asal keputusan D6 yang ditulis terlalu kuat, dan klaim "tanpa perubahan kode" yang berlebihan) diperbaiki lebih dulu.
 
+### 4 Oktober — Paket 3, bagian pertama: field `menggantikan`
+
+Sesuai keputusan no. 20, AI mengerjakan pencabutan tegas aturan: aturan baru menyebut `menggantikan: [ID]`, dan selama ia berlaku menurut tanggalnya aturan yang disebut keluar dari kandidat sebelum resolusi konflik. Dikerjakan workflow 7 agen: pelaksana engine dan pelaksana tampilan web sejajar; lalu peninjau engine sejajar dengan pelaksana asisten; lalu perbaikan engine, peninjau asisten dan web, dan perbaikan asisten.
+
+| Waktu | Commit | Isi |
+|---|---|---|
+| 4 Okt 10.44 | `0d0bb3b` | Engine dan skema: field `menggantikan`, pemeriksaan saat muat, penyaringan saat evaluasi, kunci jejak `digantikan` |
+| 4 Okt 10.44 | `b5739a5` | Asisten: skema usulan, galat fakta yang hilang, peringatan, prompt |
+| 4 Okt 10.44 | `56bb943` | Web: tab jejak menampilkan aturan yang dicabut |
+
+Agen peninjau menemukan lima cacat sebelum commit, dan semuanya diperbaiki:
+
+- Engine: aturan titik tetap yang dicabut aturan lain dianggap tergeser oleh pemenang mana pun, sehingga KB yang sah ditolak dengan pesan yang menuduh aturan yang salah.
+- Engine: penanda titik tetap aturan yang dicabut setahun penuh masih mengesahkan siklus, tidak setara dengan menutup `sampai`.
+- Validasi: pengganti ber-`jika` yang menyempit di luar pegawai contoh lolos tanpa tanda. Kini diberi peringatan; galat tetap hanya bila terlihat pada pegawai contoh.
+- Validasi: pengganti yang lebih sempit atas aturan dari rancangan yang sama tidak terdeteksi.
+- Validasi: pada rantai pencabutan, galat dituduhkan ke aturan yang salah.
+
+Sesudah perubahan ini keluaran dua belas jalan eksperimen tetap identik dengan sebelumnya; tes: 668 lulus dan 8 dilewati (Python), 101 lulus (web). Prompt asisten ikut berubah (cara mengganti aturan, peraturan pemerintah yang memperkenalkan komponen, nilai seperusahaan sebagai parameter) dan **belum dijalankan terhadap LLM sungguhan**: itu butuh izin pengguna untuk satu panggilan berbayar. Bagian kedua Paket 3 (arsip isi berkas KB per sidik dan log peristiwa) menunggu jawaban pengguna tentang status data di database.
+
 ---
 
 ## Keputusan pengguna
@@ -462,6 +482,7 @@ Kesalahan berikut dibuat atau ditemukan selama sesi. Semuanya sudah diperbaiki d
 | Batas iterasi titik tetap diambil dari aturan pertama menurut urutan muat, bukan aturan pemenang | Engine sejak 1 Oktober; baru berdampak dengan berkas KB tambahan | Diambil dari pemenang resolusi konflik |
 | Perbaikan batas titik tetap menimbulkan dua regresi (galat pada gross-up; pesan menyesatkan) | Kode AI (4 Okt) | Ditemukan agen peninjau dan diperbaiki sebelum commit |
 | Simulasi validasi hanya memakai metode gross, sehingga rancangan yang merusak gross-up lolos | Kode AI (2 Okt; `periksa` 3 Okt) | Simulasi dan `periksa` ikut menghitung gross-up |
+| Versi pertama field `menggantikan` punya lima cacat (dua di engine, tiga di validasi asisten) | Kode AI (4 Okt) | Ditemukan agen peninjau dan diperbaiki sebelum commit |
 | README dan docstring `asisten_kb/__init__.py` mengutip §4.3 sebagai dasar "engine tetap bebas LLM", padahal §4.3 menaruh LLM dalam bentuk apa pun di luar lingkup | Tulisan AI (2 Okt) | Diluruskan 4 Oktober; lihat Adendum A.2 |
 | `eksperimen/hasil/mutasi.json` yang tersimpan tertinggal dari skripnya (label satu mutan) | Sejak 1 Oktober | Dibuat ulang 4 Oktober; status mutan dan skor tidak berubah |
 | Urutan resolusi konflik, ukuran spesifisitas, dan saat `AMBIGU` muncul di engine berbeda dari §6.3 rencana | Sejak 1 Oktober | Belum diubah; dicatat di Adendum A.5 |
@@ -492,6 +513,7 @@ Kesalahan berikut dibuat atau ditemukan selama sesi. Semuanya sudah diperbaiki d
 | Tes Python | 583 lulus, 8 dilewati (383 pada 1 Oktober; 200 tes baru berasal dari sesi 2–4 Oktober) |
 | Tes aplikasi web (PHP, SQLite in-memory) | 99 lulus |
 | E9: kinerja | Tidak diulang |
+| Sesudah field `menggantikan` (`0d0bb3b`, `b5739a5`, `56bb943`) | Keluaran kedua belas jalan eksperimen tetap identik; tes Python 668 lulus dan 8 dilewati; tes web 101 lulus |
 
 ## Belum diverifikasi manusia
 
@@ -507,6 +529,7 @@ Butir-butir ini sengaja tidak diselesaikan oleh AI dan memerlukan tindakan pengg
 8. **Perilaku di PostgreSQL yang tidak tercakup tes.** Tes memakai SQLite in-memory dan cache array. Kunci Hitung semua dan perilaku transaksi di PostgreSQL hanya dapat diperiksa lewat uji manual.
 9. **Keputusan yang masih terbuka:** zona waktu aplikasi, dan status data di database (uji atau bukan).
 10. **Dua akun git.** Sesi 1 Oktober tercatat atas nama `obikast`, sesi 2–4 Oktober atas nama `mahathirmuh`. Jurnal ini tidak mengetahui apakah kedua akun milik orang yang sama. Asisten KB berbasis LLM (keputusan no. 16–17) bertentangan dengan bunyi D6 dan §4.3 rencana yang dikunci pada sesi pertama. Batasnya dicatat di Adendum A, dan perlu diketahui semua pihak yang terlibat dalam tugas ini.
+11. **Prompt asisten sesudah 4 Oktober.** Prompt berubah bersama field `menggantikan` dan belum dijalankan terhadap LLM sungguhan; tesnya memakai klien tiruan.
 
 ### Lanjutan — Membersihkan kode lama, setup, dan requirements
 

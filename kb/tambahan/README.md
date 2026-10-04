@@ -44,11 +44,21 @@ ditulis ke sini sebagai satu berkas YAML, lalu ikut dimuat engine (`berkas_tamba
 - **Lingkup**: aturan berlingkup `tahun` tidak boleh memanggil `hr_masa()`. Pakai `hr('kunci')` untuk isian tahunan,
   atau hitung fakta berlingkup `masa` lalu jumlahkan dengan `jumlah_masa()`. Aturan masa dievaluasi pada tanggal 1 tiap
   bulan: aturan yang mulai 15 Juli baru berlaku (dan meminta isian bulanannya) mulai Agustus.
-- **Mengganti aturan**: lex specialis (konjungsi `and` terbanyak di `jika`) diputus **sebelum** lex posterior
-  (`mulai` terbaru). Aturan pengganti perlu `mulai` lebih baru dan `jika` dengan konjungsi paling sedikit sama banyak
-  dengan aturan lama; aturan tanpa `jika` tidak dapat mengganti aturan ber-`jika`. Aturan regulasi `wajib` selalu
-  mengalahkan perusahaan. Pengganti aturan titik tetap gross-up (`tunjangan_pajak_berjalan`, `tunjangan_pajak_akhir`)
-  wajib bertanda `titik_tetap: true` dengan `batas_titik_tetap`; batas iterasi diambil dari aturan pemenang.
+- **Mengganti aturan**: tulis aturan baru dengan `menggantikan: [ID, ...]`. Selama aturan baru berlaku menurut
+  tanggalnya (terlepas dari `jika`-nya), aturan yang disebut keluar dari kandidat sebelum resolusi konflik dan tidak
+  dinilai sama sekali; bila aturan baru punya `sampai`, aturan lama berlaku lagi sesudahnya. Syarat (diperiksa saat
+  muat, tidak bergantung urutan berkas): aturan yang disebut ada; lapisan, `menghasilkan`, dan `lingkup`-nya sama;
+  keduanya bukan aturan `tafsir`; `mulai` aturan baru lebih akhir; aturan lama masih berlaku pada `mulai` itu.
+  Aturan baru harus mencakup semua kasus aturan lama: bila `jika`-nya lebih sempit, fakta tidak dihasilkan pada kasus
+  di luarnya. Validasi menolak rancangan seperti itu bila terlihat pada pegawai contoh, dan memberi peringatan untuk
+  setiap pengganti ber-`jika`. Jejak perhitungan mencatat aturan yang dicabut di kunci `digantikan`.
+- **Antar-lapisan dan tanpa `menggantikan`**: aturan regulasi `wajib` selalu mengalahkan perusahaan, dan aturan
+  perusahaan mengalahkan regulasi `default`/`opsional`; itu tidak diatur lewat `menggantikan`. Aturan baru tanpa field
+  itu hanya menang lewat resolusi konflik: lex specialis (konjungsi `and` terbanyak di `jika`) diputus **sebelum** lex
+  posterior (`mulai` terbaru). Jangan menambah syarat konstan (`True and ...`) untuk menaikkan peringkat; validasi
+  memperingatkannya.
+- **Titik tetap**: pengganti aturan titik tetap gross-up (`tunjangan_pajak_berjalan`, `tunjangan_pajak_akhir`) wajib
+  bertanda `titik_tetap: true` dengan `batas_titik_tetap`; batas iterasi diambil dari aturan pemenang.
 - **Parameter**: rupiah ditulis sebagai bilangan bulat tanpa pemisah ribuan (`11500000`, bukan `"11.500"`), tarif
   sebagai teks desimal (`"0.3"`); semua versi satu parameter harus sejenis. `sampai` tidak boleh sebelum `mulai`.
   Amandemen dari semua berkas diterapkan per parameter menurut tanggal `mulai`, bukan menurut urutan berkas diterapkan

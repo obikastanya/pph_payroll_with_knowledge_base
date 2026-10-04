@@ -5,7 +5,8 @@ Evaluasi data-driven (forward chaining terstratifikasi):
   2. graf dependensi antar-fakta dibangun dari ekspresi `jika`/`maka`;
   3. komponen terhubung kuat (SCC) diurutkan topologis; SCC bersiklus WAJIB memuat aturan
      `titik_tetap: true` -> diselesaikan dengan iterasi Kleene dari 0 (titik tetap terkecil);
-  4. setiap instance fakta (per masa atau per tahun) dipilih aturannya lewat resolusi konflik:
+  4. setiap instance fakta (per masa atau per tahun) dipilih aturannya lewat resolusi konflik (aturan yang dicabut
+     aturan lain lewat `menggantikan` sudah keluar dari kandidat sebelumnya):
      lex superior (regulasi wajib > perusahaan) -> override sah (perusahaan > regulasi default)
      -> lex specialis (konjungsi terbanyak) -> lex posterior (mulai berlaku terakhir)
      -> prioritas eksplisit; sisa seri dengan nilai berbeda = AMBIGU (galat);
@@ -120,12 +121,15 @@ class Evaluasi:
             per_fakta.setdefault(a.menghasilkan, []).append(a)
         self.per_fakta = per_fakta
         self.lingkup = {f: ats[0].lingkup for f, ats in per_fakta.items()}
+        dicabut_setahun = self._pencabutan()
         dasar = FAKTA_DASAR_TAHUN | FAKTA_DASAR_MASA
         komp_prsh = {k.fakta for k in self.kb.komponen if k.fakta in per_fakta}
         tepi = {}
         for f, ats in per_fakta.items():
             dep = set()
             for a in ats:
+                if a.id in dicabut_setahun:   # tidak pernah dinilai di tahun ini: bukan dependensi faktanya
+                    continue
                 deps = set(a.dependensi())
                 if a.maka.fungsi & FUNGSI_KOMPONEN or (a.jika is not None and a.jika.fungsi & FUNGSI_KOMPONEN):
                     deps |= komp_prsh - {f}
@@ -142,13 +146,69 @@ class Evaluasi:
         for komponen in scc:  # Tarjan menghasilkan urutan topologis terbalik dari dependensi -> sudah benar
             bersiklus = len(komponen) > 1 or any(f in tepi[f] for f in komponen)
             if bersiklus:
-                titik = [f for f in komponen if any(a.titik_tetap for a in per_fakta[f])]
+                # penanda titik_tetap aturan yang dicabut sepanjang tahun tidak mengesahkan siklus (setara `sampai`)
+                titik = [f for f in komponen if any(a.titik_tetap and a.id not in dicabut_setahun for a in per_fakta[f])]
+                tercabut = [a for f in sorted(komponen) if f not in titik
+                            for a in per_fakta[f] if a.titik_tetap and a.id in dicabut_setahun]
+                if tercabut and not (titik and self._terurut(komponen, tepi, titik)):
+                    a, x = tercabut[0], self._pengganti_setahun(tercabut[0].id)
+                    raise KesalahanKB(f"{x.id} menggantikan {a.id} pada fakta titik tetap {a.menghasilkan} tetapi tidak"
+                                      f" bertanda titik_tetap/batas_titik_tetap, sehingga siklus {sorted(komponen)} tidak"
+                                      f" punya titik tetap di tahun {self.tahun}; tambahkan keduanya pada {x.id}")
                 if not titik:
                     raise KesalahanKB(f"siklus tanpa titik_tetap: {sorted(komponen)}")
                 urutan.append(("scc", sorted(komponen), titik))
             else:
                 urutan.append(("fakta", komponen[0]))
         return urutan
+
+    def _pencabutan(self):
+        """Pencabutan eksplisit (`menggantikan`) di antara aturan yang dipakai evaluasi ini. self.aturan sudah tersaring
+        knowledge time dan varian tafsir, jadi aturan pengganti yang belum dicatat pada per_tanggal_kb belum mencabut apa
+        pun. self._pengganti: {id aturan lama: [aturan penggantinya, yang mulai paling akhir lebih dulu]}; kosong bila
+        tidak ada aturan ber-`menggantikan` dan pada ablasi A1 (tanpa logika tanggal).
+
+        Hasil: id aturan yang dicabut pengganti permanen sejak awal tahun pajak. Aturan itu tidak menjadi kandidat pada
+        instance mana pun di tahun ini (tetap ada di per_fakta agar tercatat di jejak sebagai "digantikan"); untuk graf
+        tahun ini ia diperlakukan seperti aturan yang `sampai`-nya sudah lewat: tidak menyumbang dependensi dan penanda
+        titik_tetap-nya tidak mengesahkan siklus. Pencabutan yang mulai di tengah tahun atau oleh pengganti sementara
+        tidak mengubah graf tahun itu."""
+        self._pengganti = {}
+        if "A1_tanpa_versi_waktu" in self.ablasi:
+            return set()
+        for x in sorted((a for a in self.aturan if a.menggantikan), key=lambda a: (-a.mulai.toordinal(), a.id)):
+            for id_lama in x.menggantikan:
+                self._pengganti.setdefault(id_lama, []).append(x)
+        return {i for i in self._pengganti if self._pengganti_setahun(i) is not None}
+
+    def _pengganti_setahun(self, id_lama):
+        """Pengganti permanen id_lama yang sudah berlaku sejak awal tahun pajak (yang mulai paling akhir), atau None."""
+        awal = date(self.tahun, 1, 1)
+        return next((x for x in self._pengganti.get(id_lama, ()) if x.sampai is None and x.mulai <= awal), None)
+
+    @staticmethod
+    def _terurut(komponen, tepi, titik):
+        """Apakah siklus terputus seluruhnya oleh fakta titik tetap yang tersisa."""
+        try:
+            _urut_dalam_scc(komponen, tepi, set(titik))
+        except KesalahanKB:
+            return False
+        return True
+
+    def _tanpa_digantikan(self, kandidat, tgl):
+        """Pencabutan eksplisit, diputus SEBELUM resolusi konflik: aturan yang disebut `menggantikan` oleh aturan yang
+        berlaku pada tgl (menurut tanggal saja, terlepas dari `jika` aturan pengganti itu) keluar dari kandidat dan tidak
+        dinilai sama sekali, baik `jika` maupun `maka`-nya. Berantai (Z -> X -> Y): aturan yang disebut tetap keluar
+        walaupun penggantinya sendiri digantikan. Sesudah pengganti sementara berakhir, aturan lama menjadi kandidat lagi.
+        Hasil: (kandidat tersisa, [{"aturan": id yang digantikan, "oleh": id pengganti}] urut id yang digantikan)."""
+        if not self._pengganti:
+            return kandidat, []
+        oleh = {}
+        for a in kandidat:
+            x = next((x for x in self._pengganti.get(a.id, ()) if x.berlaku_pada(tgl)), None)
+            if x is not None:
+                oleh[a.id] = x.id
+        return [a for a in kandidat if a.id not in oleh], [{"aturan": i, "oleh": oleh[i]} for i in sorted(oleh)]
 
     # ------------------------------------------------------------------ akses nilai
     def nilai_fakta(self, nama, bulan):
@@ -236,17 +296,23 @@ class Evaluasi:
         yang juga menghitung nilainya. None bila tidak ada yang menyala atau pemenangnya bukan aturan titik_tetap.
 
         Aturan yang `jika`-nya membaca anggota siklus tidak ikut dinilai di sini: fakta itu belum bernilai sebelum
-        iterasi dimulai (aturan itu tetap dinilai seperti biasa di tiap putaran iterasi)."""
+        iterasi dimulai (aturan itu tetap dinilai seperti biasa di tiap putaran iterasi). Aturan yang digantikan
+        (`menggantikan`) bukan kandidat, sama seperti saat nilainya dihitung."""
         tgl, siklus = self._tanggal(b), set(anggota)
-        menyala = [a for a in self.per_fakta[f]
-                   if a.berlaku_pada(tgl) and (a.jika is None or not (a.jika.dependensi() & siklus)
-                                               and a.jika.evaluasi(Konteks(self, b, a)))]
+        berlaku = [a for a in self.per_fakta[f] if a.berlaku_pada(tgl)]
+        kandidat, digantikan = self._tanpa_digantikan(berlaku, tgl)
+        menyala = [a for a in kandidat
+                   if a.jika is None or not (a.jika.dependensi() & siklus) and a.jika.evaluasi(Konteks(self, b, a))]
         if not menyala:
             return None
         pemenang = self._seleksi(menyala)[0][0]
         if pemenang.titik_tetap:
             return pemenang
         tergeser = [a.id for a in menyala if a.titik_tetap]
+        # aturan titik tetap yang dicabut pemenang sendiri juga tergeser olehnya; yang dicabut aturan lain tidak dihitung
+        # (tidak dinilai, jadi tidak diketahui apakah ia akan menyala di instance ini)
+        dicabut = {d["aturan"] for d in digantikan} & set(pemenang.menggantikan)
+        tergeser += [a.id for a in berlaku if a.titik_tetap and a.id in dicabut]
         if tergeser and pemenang.maka.dependensi() & siklus:   # tanpa batas, iterasi dari atas tidak punya titik awal
             raise KesalahanKB(f"{pemenang.id} menggantikan {', '.join(tergeser)} pada fakta titik tetap {f}[{b}] tetapi tidak"
                               f" bertanda titik_tetap/batas_titik_tetap; tambahkan keduanya pada {pemenang.id}")
@@ -278,6 +344,7 @@ class Evaluasi:
     def _evaluasi_instance(self, fakta, b):
         tgl = self._tanggal(b)
         kandidat = [a for a in self.per_fakta[fakta] if "A1_tanpa_versi_waktu" in self.ablasi or a.berlaku_pada(tgl)]
+        kandidat, digantikan = self._tanpa_digantikan(kandidat, tgl)
         menyala = []
         for a in kandidat:
             if a.jika is None or a.jika.evaluasi(Konteks(self, b, a)):
@@ -288,6 +355,8 @@ class Evaluasi:
         nilai = self._nilai_aturan(pilihan, b)
         catatan = {"fakta": fakta, "bulan": b, "nilai": nilai, "aturan": pilihan.id, "lapisan": pilihan.lapisan,
                    "sifat": pilihan.sifat, "sumber": pilihan.sumber, "ditolak": ditolak, "alasan": alasan}
+        if digantikan:   # kunci ini hanya ada bila memang ada aturan yang digantikan pada instance ini
+            catatan["digantikan"] = digantikan
         return nilai, catatan
 
     def _nilai_aturan(self, a, b):

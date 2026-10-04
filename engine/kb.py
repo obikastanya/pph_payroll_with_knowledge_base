@@ -95,6 +95,7 @@ class Aturan:
     sumbu_waktu: str = "masa_pajak"
     berkas: str = ""
     dicatat: object = None   # knowledge time (None = sejak awal KB)
+    menggantikan: tuple = ()   # id aturan yang dicabut selama aturan ini berlaku menurut tanggal (pencabutan eksplisit)
 
     @property
     def spesifisitas(self):
@@ -127,7 +128,8 @@ def _bangun_aturan(d, lapisan, berkas):
             titik_tetap=d.get("titik_tetap", False), prioritas=d.get("prioritas", 0),
             batas_bawah=Ekspresi(d["batas_titik_tetap"]["bawah"], FUNGSI) if d.get("batas_titik_tetap") else None,
             batas_atas=Ekspresi(d["batas_titik_tetap"]["atas"], FUNGSI) if d.get("batas_titik_tetap") else None,
-            sumbu_waktu=d.get("sumbu_waktu", "masa_pajak"), berkas=berkas, dicatat=_tanggal(d.get("dicatat")))
+            sumbu_waktu=d.get("sumbu_waktu", "masa_pajak"), berkas=berkas, dicatat=_tanggal(d.get("dicatat")),
+            menggantikan=tuple(d.get("menggantikan") or ()))
     except (KesalahanKB, PelanggaranPresisi, ValueError) as e:
         raise KesalahanKB(f"{berkas}: aturan {d.get('id')}: {e}") from None
 
@@ -486,6 +488,42 @@ def _verifikasi_argumen_literal(kb, a, ekspresi):
                 raise KesalahanKB(f"{a.id}: bulatkan('{arg}', ...): entri pembulatan tidak terdaftar di registri")
 
 
+def _verifikasi_menggantikan(kb):
+    """`menggantikan: [ID, ...]` = pencabutan eksplisit: selama aturan pengganti berlaku menurut tanggal, aturan yang
+    disebutnya keluar dari kandidat faktanya sebelum resolusi konflik (engine/inferensi.py). Itulah yang dicapai KB
+    dasar dengan mengisi `sampai` pada aturan lama; berkas tambahan tidak dapat mengubah aturan yang sudah ada.
+
+    Diperiksa setelah SEMUA berkas termuat dan menurut id aturan, sehingga hasil maupun pesannya tidak bergantung urutan
+    berkas. Pengganti wajib mulai sesudah aturan yang digantikannya, jadi tidak mungkin ada siklus."""
+    per_id = {a.id: a for a in kb.aturan}
+    for x in sorted((a for a in kb.aturan if a.menggantikan), key=lambda a: a.id):
+        for id_lama in x.menggantikan:
+            if id_lama == x.id:
+                raise KesalahanKB(f"{x.berkas}: aturan {x.id} tidak boleh menggantikan dirinya sendiri")
+            t = per_id.get(id_lama)
+            if t is None:
+                raise KesalahanKB(f"{x.berkas}: aturan {x.id} menggantikan {id_lama}, tetapi tidak ada aturan ber-id {id_lama} "
+                                  "di KB dasar maupun di berkas tambahan yang dimuat")
+            awal = f"{x.berkas}: aturan {x.id} tidak dapat menggantikan {t.id} ({t.berkas}): "
+            if x.menghasilkan != t.menghasilkan:
+                raise KesalahanKB(f"{awal}keduanya menghasilkan fakta berbeda ({x.menghasilkan} vs {t.menghasilkan})")
+            if x.lingkup != t.lingkup:
+                raise KesalahanKB(f"{awal}lingkupnya berbeda ({x.lingkup} vs {t.lingkup})")
+            if x.lapisan != t.lapisan:
+                raise KesalahanKB(f"{awal}lapisannya berbeda ({x.lapisan} vs {t.lapisan}); `menggantikan` hanya berlaku di "
+                                  "dalam satu lapisan, urutan antar-lapisan diatur lex superior / override sah")
+            for a in (x, t):
+                if a.sifat == "tafsir" or a.tafsir:
+                    raise KesalahanKB(f"{awal}{a.id} adalah aturan tafsir; aturan tafsir dipilih lewat varian, bukan "
+                                      "dicabut lewat `menggantikan`")
+            if x.mulai <= t.mulai:
+                raise KesalahanKB(f"{awal}{x.id} mulai berlaku {x.mulai}, tidak lebih baru daripada {t.id} ({t.mulai}); "
+                                  "aturan pengganti wajib mulai berlaku sesudah aturan yang digantikannya")
+            if t.sampai is not None and t.sampai < x.mulai:
+                raise KesalahanKB(f"{awal}{t.id} sudah berakhir {t.sampai}, sebelum {x.id} mulai berlaku ({x.mulai}), "
+                                  "sehingga tidak ada yang digantikan")
+
+
 def verifikasi_statis(kb):
     """Pemeriksaan yang tidak bergantung kasus (§6.6). Pemeriksaan per-tahun ada di inferensi.graf()."""
     _verifikasi_versi_tabel(kb)
@@ -504,6 +542,7 @@ def verifikasi_statis(kb):
             raise KesalahanKB(f"{a.id}: aturan titik_tetap wajib punya batas_titik_tetap (bawah/atas) agar Tarski berlaku")
         if a.sampai is not None and a.sampai < a.mulai:
             raise KesalahanKB(f"{a.id}: masa berlaku terbalik")
+    _verifikasi_menggantikan(kb)
     for k in kb.komponen:
         if k.fakta not in per_fakta:
             raise KesalahanKB(f"komponen perusahaan {k.fakta} tidak dihasilkan aturan mana pun")
@@ -551,3 +590,22 @@ def parameter_pada(kb, nama, tgl):
     if len(cocok) != 1:
         raise KesalahanKB(f"parameter {nama} pada {tgl}: {len(cocok)} versi berlaku (harus tepat 1)")
     return cocok[0]
+
+
+def masa_berlaku_efektif(kb):
+    """{id aturan: (mulai, sampai_efektif)}: masa berlaku tiap aturan setelah pencabutan eksplisit (`menggantikan`).
+
+    sampai_efektif = `sampai` aturan itu sendiri, dipendekkan menjadi sehari sebelum `mulai` aturan pengganti PERMANEN
+    (tanpa `sampai`) paling awal yang menyebutnya. Pengganti sementara tidak memendekkannya: sesudah pengganti itu
+    berakhir, aturan lama berlaku lagi. Dihitung dari seluruh KB (tanpa knowledge time); dipakai mis. agar isian yang
+    hanya dibaca aturan yang sudah dicabut permanen tidak lagi diminta."""
+    hasil = {a.id: (a.mulai, a.sampai) for a in kb.aturan}
+    for x in kb.aturan:
+        if x.sampai is not None:
+            continue
+        akhir = x.mulai - timedelta(days=1)
+        for id_lama in x.menggantikan:
+            mulai, sampai = hasil[id_lama]
+            if sampai is None or akhir < sampai:
+                hasil[id_lama] = (mulai, akhir)
+    return hasil

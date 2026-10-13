@@ -1,0 +1,87 @@
+% ============================================================================
+\section{Tinjauan Pustaka}
+\label{sec:tinjauan}
+% ============================================================================
+
+Penelitian ini bersinggungan dengan lima kelompok pustaka: (A) \en{rules as code} dan formalisasi peraturan pajak; (B) \en{knowledge-based system} untuk pajak dan payroll; (C) resolusi konflik norma dan representasi temporal peraturan; (D) pengujian perangkat lunak pajak dan masalah \en{test oracle}; serta (E) LLM untuk penalaran hukum, fasilitas penjelasan, dan pengawasan manusia.
+
+% ----------------------------------------------------------------------------
+\subsection{\en{Rules as Code} dan Formalisasi Peraturan Pajak}
+% ----------------------------------------------------------------------------
+
+Gerakan \en{rules as code} menuliskan peraturan sebagai spesifikasi yang dapat dieksekusi, sehingga aturan terpisah dari kode aplikasi. Catala~\cite{merigoux2021catala} adalah bahasa pemrograman yang dirancang untuk menerjemahkan teks undang-undang secara sistematis, termasuk pola ``kasus umum dan pengecualian'' yang dimodelkan dengan \en{default logic}. Evaluasinya pada pajak penghasilan federal Amerika Serikat dan tunjangan keluarga Prancis menemukan \en{bug} pada implementasi resmi tunjangan tersebut. Huttner dan Merigoux~\cite{huttner2022catala} menegaskan bahwa \en{legal expert system} yang menghitung pajak berisiko hukum bila menyimpang dari undang-undang, dan bahwa proses pengembangan perangkat lunak konvensional sulit mengikuti arus perubahan peraturan. Mlang~\cite{merigoux2021mlang} dirancang untuk menggantikan \en{compiler} warisan mesin pajak penghasilan Prancis yang makin sulit dipelihara setiap kali undang-undang berubah. Mlang divalidasi terhadap \en{test suite} internal otoritas pajak, yang kemudian memulai peralihan resmi ke Mlang. Penelitian lanjutan dalam ekosistem Catala memformalkan aritmetika tanggal dan mendeteksi ambiguitasnya secara statis~\cite{monat2024date}, serta membangkitkan \en{test case} dengan \en{concolic execution} untuk program pajak dan tunjangan~\cite{goutagny2025cutecat}.
+
+Di luar Catala, DataLex merepresentasikan peraturan sebagai himpunan proposisi dalam bahasa aturan semi-alami yang dijalankan oleh \en{inference engine} beserta penjelasannya~\cite{mowbray2023scaling}. Penulisnya juga merumuskan sifat \en{explainability} yang diperlukan \en{rules as code}, antara lain \en{traceability} dan tautan ke sumber hukum~\cite{mowbray2023xai}. Logical English menawarkan \en{controlled natural language} yang dapat dieksekusi sebagai program logika~\cite{kowalski2022logicalenglish}. Meessen~\cite{meessen2023arrows} membandingkan Catala dengan Regelspraak milik otoritas pajak Belanda dan menunjukkan bahwa banyak keputusan yang memengaruhi normativitas justru dibuat di dalam komponen teknis. Witt dkk.~\cite{witt2024encoding} membedakan validasi teknis (kode berjalan sesuai konvensi) dari \en{legal alignment} (kode bermakna sama dengan undang-undang). Pembedaan ini dipakai di penelitian ini untuk menyatakan batas klaim secara jujur, karena evaluasinya tidak melibatkan pakar hukum.
+
+Penelitian ini mengambil prinsip yang sama, yaitu memisahkan aturan dari kode. Bedanya ada pada tiga hal. Pertama, penelitian ini memisahkan secara eksplisit lapisan regulasi dari lapisan kebijakan perusahaan, beserta sifat aturan yang mengatur siapa boleh menimpa siapa. Kedua, satu \en{knowledge base} mencakup dua rezim pajak Indonesia sekaligus dengan versi waktu bitemporal. Ketiga, kebenaran sampai rupiah ditetapkan dengan metodologi validasi tanpa \en{domain expert}.
+
+% ----------------------------------------------------------------------------
+\subsection{\en{Knowledge-Based System} untuk Pajak dan Payroll}
+% ----------------------------------------------------------------------------
+
+Dumancic dkk.~\cite{dumancic2021payroll} menerjemahkan pengetahuan legislasi pajak dan jaminan sosial ke representasi formal yang cukup fleksibel untuk berbagai skenario perhitungan payroll. Pengetahuan itu lalu dikompilasi menjadi \en{constraint} agar \en{constraint solver} dapat mencari kebijakan payroll yang optimal, dan hasilnya dipakai di sebuah lembaga jaminan sosial. Penelitian ini menunjukkan bahwa pengetahuan pajak payroll layak dinyatakan secara deklaratif, terpisah dari kode. Fokusnya adalah optimasi kebijakan, bukan pemisahan lapisan regulasi dan kebijakan perusahaan maupun validasi kebenaran per rupiah. Al-Hawari dkk.~\cite{alhawari2026payroll} membangun sistem manajemen payroll dengan otomatisasi \en{rule-based} yang dilengkapi \en{chatbot} \en{retrieval-augmented generation}. Pada akuntansi pajak, Makowski dan Tr\k{a}bka~\cite{makowski2025dmn} memakai \en{Decision Model and Notation} (DMN) dengan dukungan AI generatif untuk merumuskan aturan keputusan pajak di kantor akuntan Swiss, dan melaporkan peningkatan \en{auditability} serta pemakaian ulang aturan.
+
+Di Indonesia, penelitian tentang perhitungan PPh 21 umumnya membangun sistem informasi prosedural yang rumus pajaknya ditanam di aplikasi. Ramadhani dkk.~\cite{ramadhani2021grossup} merancang aplikasi web PHP/MySQL untuk metode \en{gross-up}. Yulistyawati dkk.~\cite{yulistyawati2022payroll} merancang sistem informasi penggajian yang memadukan komponen gaji perusahaan dengan perhitungan PPh 21. Setelah TER berlaku, Kusuma dkk.~\cite{kusuma2026pph21} merancang sistem terintegrasi berbasis \en{spreadsheet} yang memuat tabel TER, rekapitulasi tahunan, dan keluaran bukti potong 1721-A1. Sistem itu dimotivasi oleh perbedaan antara perhitungan internal perusahaan dan perhitungan konsultan pajak. Sherra dan Fitriani~\cite{sherra2025ter} menunjukkan bahwa penghasilan tidak tetap seperti bonus dan THR membuat pemotongan TER bulanan menyimpang dari kewajiban setahun, sehingga terjadi lebih bayar. Mereka menyarankan agar penghasilan tidak teratur dialokasikan ke masa pajak terakhir dan lebih bayar dikompensasikan.
+
+Sejauh penelusuran penulis atas artikel bereputasi sejak 2021, belum ditemukan sistem PPh 21 di Indonesia yang memisahkan aturan pemerintah dari kebijakan perusahaan sebagai dua lapis pengetahuan dengan resolusi konflik, menyertakan jejak penjelasan per angka, atau memvalidasi hasilnya terhadap contoh resmi sampai rupiah.
+
+% ----------------------------------------------------------------------------
+\subsection{Resolusi Konflik Norma dan Representasi Temporal}
+% ----------------------------------------------------------------------------
+
+Peraturan dan kebijakan dapat saling bertentangan, sehingga \en{rule-based system} memerlukan mekanisme untuk memilih norma mana yang berlaku. Robaldo dkk.~\cite{robaldo2024compliance} membandingkan beberapa \en{automated reasoner} untuk \en{compliance checking} pada norma yang saling bertentangan dan norma kompensasi, dan menyimpulkan bahwa keunggulan masing-masing \en{reasoner} belum terintegrasi dalam satu kerangka standar. Kharraz dkk.~\cite{kharraz2024conflicts} mendefinisikan konflik pada logika normatif berwaktu melalui \en{satisfiability} dan menyediakan prosedur berbasis SMT untuk mendeteksinya. Khoja dkk.~\cite{khoja2026consistency} memakai \en{solver} SMT untuk membuktikan adanya klausul kontrak yang saling bertentangan. Pada Catala, pola ``kasus umum dan pengecualian'' yang dimodelkan dengan \en{default logic} pada dasarnya mewujudkan \en{lex specialis}~\cite{merigoux2021catala}. Dalam penelusuran penulis, pustaka sejak 2021 umumnya memperlakukan asas preferensi antarnorma sebagai relasi prioritas generik. Belum ditemukan formalisasi yang secara khusus membedakan aturan wajib pemerintah dari kebijakan pemberi kerja dalam perhitungan payroll.
+
+Dimensi waktu sama pentingnya. Moguillansky dkk.~\cite{moguillansky2024temporalised} membedakan saat suatu ketentuan masuk ke sistem hukum, saat ketentuan itu berlaku, dan saat ia menimbulkan akibat hukum, termasuk akibat yang berlaku surut, lalu merumuskan operator revisi yang menjaga konsistensi berbasis waktu. De Martim~\cite{demartim2025satgraph} memodelkan peraturan sebagai karya yang memiliki ekspresi berversi agar jawaban tidak anakronistik. Olivieri dkk.~\cite{olivieri2025revising} menunjukkan bahwa merevisi teori \en{defeasible logic} dengan menghapus aturan seminimal mungkin adalah masalah yang sulit secara komputasi.
+
+Untuk kualitas basis aturan, Boujelben dan Amous~\cite{boujelben2025anomalies} mendeteksi dan menyelesaikan anomali pada \en{rule base} yang terus diperbarui dengan memanfaatkan relasi dependensi antaraturan. Fungwacharakorn dkk.~\cite{fungwacharakorn2021debugging} menelusuri konsekuensi yang janggal dari representasi undang-undang kembali ke kondisi aturan penyebabnya.
+
+Penelitian ini memakai gagasan-gagasan tersebut dalam bentuk yang deterministik dan dapat diaudit, dengan empat unsur. Pertama, asas \en{lex superior}, \en{lex specialis}, dan \en{lex posterior} diterapkan sebagai urutan resolusi terstratifikasi berdasarkan sifat aturan. Kedua, aturan berversi waktu bitemporal, yaitu \en{valid time} untuk masa berlaku dan \en{knowledge time} untuk regulasi yang berlaku surut. Ketiga, pencabutan aturan dinyatakan secara eksplisit lewat atribut \texttt{menggantikan} sebagai ganti revisi teori yang sulit dihitung. Keempat, verifikasi statis atas anomali dilakukan berbasis graf dependensi.
+
+% ----------------------------------------------------------------------------
+\subsection{Pengujian Perangkat Lunak Pajak dan Masalah \en{Test Oracle}}
+% ----------------------------------------------------------------------------
+
+Perangkat lunak pajak sulit diuji karena spesifikasi eksplisit dan \en{test oracle} umumnya tidak tersedia. Tizpaz-Niari dkk.~\cite{tizpaz2023metamorphic} menjawab masalah ini pada perangkat lunak pajak penghasilan Amerika Serikat dengan \en{metamorphic testing}. \en{Metamorphic relation}-nya diturunkan dari publikasi resmi otoritas pajak bersama pakar pajak, dan pendekatan ini menemukan \en{bug}, mulai dari perilaku tidak robust pada kasus tepi (misalnya pajak terutang mendekati nol) sampai syarat kelayakan yang hilang pada versi perangkat lunak yang diperbarui. Menyusun \en{metamorphic relation} dari dokumen pajak adalah pekerjaan manual yang mahal. Upaya mengotomatisasinya dengan \en{in-context learning} LLM menunjukkan potensi sekaligus keterbatasan~\cite{srinivas2023fewshot}, dan pendekatan \en{agentic} terbaru memperluasnya menjadi \en{higher-order metamorphic relation} sambil tetap menyatakan masalah \en{oracle} sebagai tantangan utama~\cite{khiabani2026agentic}. Survei terbaru menempatkan \en{metamorphic testing} sebagai teknik arus utama untuk masalah \en{oracle} dan merangkum cara menurunkan relasinya~\cite{li2025mrgeneration}.
+
+\en{Property-based testing} memeriksa spesifikasi yang dapat dieksekusi pada banyak input acak. Studi di perusahaan teknologi keuangan menunjukkan bahwa teknik ini menaikkan keyakinan atas kode yang kompleks melebihi pengujian konvensional, termasuk lewat pola \en{differential testing} terhadap implementasi rujukan~\cite{goldstein2024pbt}. Studi empiris pada proyek Python yang memakai pustaka Hypothesis menemukan bahwa satu \en{property-based test} rata-rata membunuh sekitar lima puluh kali lebih banyak mutan daripada satu \en{unit test}~\cite{ravi2025pbtpython}. \en{Mutation analysis} sendiri dipandang sebagai salah satu kriteria kecukupan uji yang terkuat~\cite{petrovic2022mutation}, dan analisis terhadap hampir 15 juta mutan menunjukkan bahwa mutan berkaitan dengan \en{fault} nyata~\cite{petrovic2021mutation}.
+
+Penelitian ini memakai teknik-teknik tersebut, tetapi menyusunnya sebagai \en{oracle pyramid} khusus untuk perhitungan pajak Indonesia. Puncaknya adalah contoh resmi regulasi dengan protokol erratum, diikuti \en{differential testing} terhadap \en{baseline} yang dibekukan lebih dulu, \en{metamorphic} dan \en{property-based testing}, lalu \en{mutation testing} yang diterapkan pada \emph{\en{knowledge base}}, bukan pada kode. Semuanya dijalankan di bawah kontrak presisi dengan kriteria nol selisih rupiah yang tidak terjelaskan.
+
+% ----------------------------------------------------------------------------
+\subsection{LLM, Penjelasan, dan Pengawasan Manusia}
+% ----------------------------------------------------------------------------
+
+LLM mulai dipakai untuk penalaran hukum dan pajak, tetapi bukti yang ada menunjukkan keterbatasan serius untuk tugas yang menuntut ketepatan. Blair-Stanek dkk.~\cite{blairstanek2023gpt3} menemukan bahwa GPT-3 membuat kesalahan yang jelas pada penalaran undang-undang pajak, bahkan pada undang-undang sintetis sederhana yang tidak mungkin dilihatnya saat pelatihan. Nay dkk.~\cite{nay2024taxattorneys} melaporkan bahwa akurasi LLM dalam menerapkan hukum pajak meningkat dari satu generasi model ke generasi berikutnya, tetapi belum mencapai tingkat ahli. Dahl dkk.~\cite{dahl2024legalfictions} menunjukkan bahwa LLM publik berhalusinasi pada 58\% sampai 88\% pertanyaan faktual yang dapat diverifikasi tentang putusan pengadilan federal Amerika Serikat, tergantung modelnya. Alat riset hukum komersial berbasis \en{retrieval-augmented generation} pun masih berhalusinasi pada 17--33\% kasus~\cite{magesh2025hallucination}.
+
+Di sisi lain, LLM dapat membantu tahap yang paling mahal dalam membangun sistem simbolik, yaitu mengubah teks peraturan menjadi representasi terstruktur. Pada studi Janatian dkk.~\cite{janatian2023texttostructure}, sekitar 60\% struktur yang dihasilkan LLM dinilai setara atau lebih baik daripada hasil manual. Artinya sisanya tetap memerlukan tinjauan.
+
+Untuk penjelasan, metode penjelasan yang berpusat pada pengguna bagi sistem keputusan \en{rule-based} telah didemonstrasikan pada skenario nyata di otoritas pajak Belanda~\cite{zuurmond2023explanation}. Sebaliknya, teknik XAI \en{post-hoc} pada model \en{machine learning} di bidang pajak dinilai belum memenuhi kewajiban hukum untuk memberikan alasan keputusan~\cite{gorski2025xaitax}. Pengawasan manusia diwajibkan untuk sistem AI berisiko tinggi~\cite{enqvist2023oversight}, tetapi pengawasan manusia saja dapat memberi rasa aman yang palsu bila tidak didukung mekanisme lain~\cite{green2022oversight}.
+
+Temuan-temuan ini mendasari pilihan desain penelitian ini. Perhitungan dijalankan oleh \en{inference engine} deterministik yang penjelasannya diturunkan langsung dari aturan dan pasal, bukan oleh LLM. LLM hanya dipakai di luar \en{engine} untuk menyusun \emph{rancangan} aturan baru. Rancangan itu wajib melewati validasi otomatis oleh \en{engine} (skema, verifikasi statis, simulasi) \emph{dan} persetujuan manusia sebelum berlaku.
+
+% ----------------------------------------------------------------------------
+\subsection{Posisi Penelitian}
+% ----------------------------------------------------------------------------
+
+Tabel~\ref{tab:posisi} merangkum perbedaan penelitian ini dengan karya yang paling dekat. Tanda ``--'' berarti aspek tersebut tidak dilaporkan sebagai fokus atau kontribusi dalam publikasi yang dirujuk.
+
+\begin{table*}[t]
+\centering
+\caption{Posisi penelitian terhadap karya terkait}
+\label{tab:posisi}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}P{2.6cm} P{2.0cm} L L P{1.9cm} L L@{}}
+\toprule
+\textbf{Karya} & \textbf{Domain} & \textbf{Representasi aturan} & \textbf{Regulasi vs kebijakan pemberi kerja} & \textbf{Versi waktu} & \textbf{Penjelasan} & \textbf{Validasi kebenaran} \\
+\midrule
+Catala~\cite{merigoux2021catala,huttner2022catala} & pajak dan tunjangan (Prancis, AS) & DSL dengan \en{default logic} & -- & -- & kode berdampingan dengan teks hukum & langkah inti \en{compiler} dibuktikan dengan F*; menemukan \en{bug} implementasi resmi \\
+DataLex~\cite{mowbray2023scaling,mowbray2023xai} & legislasi umum (Australia) & bahasa aturan semi-alami + \en{inference engine} & -- & -- & \en{traceability}, tautan ke sumber hukum & -- \\
+Dumancic dkk.~\cite{dumancic2021payroll} & payroll (Belgia) & representasi formal $\rightarrow$ \en{constraint} & -- (optimasi kebijakan) & -- & -- & dipakai lembaga jaminan sosial \\
+Makowski \& Tr\k{a}bka~\cite{makowski2025dmn} & akuntansi pajak (Swiss) & DMN + AI generatif & -- & -- & \en{auditability} & studi kasus deskriptif \\
+Tizpaz-Niari dkk.~\cite{tizpaz2023metamorphic} & pajak penghasilan (AS) & -- (objek uji) & -- & -- & -- & \en{metamorphic testing} \\
+Sistem PPh 21 Indonesia~\cite{ramadhani2021grossup,yulistyawati2022payroll,kusuma2026pph21} & PPh 21 & aplikasi prosedural / \en{spreadsheet} & -- & -- & -- & -- \\
+\midrule
+\textbf{Penelitian ini} & PPh 21 2023--2026 & DSL YAML + \en{forward chaining}; \en{gross-up} sebagai \en{fixed point} & dua lapis; resolusi berbasis sifat aturan dan asas hukum & \en{valid time} + \en{knowledge time} & jejak aturan dan pasal per angka; rentang tafsir & \en{oracle pyramid}, \en{mutation testing}, kontrak presisi; target nol selisih rupiah tak terjelaskan \\
+\bottomrule
+\end{tabularx}
+\end{table*}

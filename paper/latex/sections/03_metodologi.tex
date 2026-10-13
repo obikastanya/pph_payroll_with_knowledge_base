@@ -1,0 +1,508 @@
+% ============================================================================
+\section{Metodologi Penelitian}
+\label{sec:metodologi}
+% ============================================================================
+
+Penelitian ini mengikuti pendekatan rekayasa artefak: sebuah \en{knowledge-based system} (KBS) dirancang, dibangun, lalu diuji terhadap pertanyaan penelitian yang dapat difalsifikasi. Gambar~\ref{fig:alur} merangkum urutan kerjanya. Urutan itu sengaja dibuat untuk menjaga independensi \en{oracle}: kontrak presisi numerik ditetapkan lebih dulu, kemudian kodifikasi regulasi dan verifikasi tabel, lalu \en{baseline} \en{hard-coded} B1 ditulis dan dibekukan \emph{sebelum} berkas aturan \en{knowledge base} pertama dibuat. Setelah itu baru \en{knowledge base}, \en{inference engine}, lapisan perusahaan, perangkat validasi, dan antarmuka dibangun.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  node distance=1.6mm,
+  langkah/.style={draw, rounded corners=2pt, fill=gray!8, text width=0.86\columnwidth, align=left, font=\footnotesize, inner sep=3pt},
+  panah/.style={-{Latex[length=1.6mm]}, thick, gray!70}]
+\node[langkah] (a) {\textbf{1. Kontrak presisi}: aritmetika eksak, registri pembulatan, semantik interval, model tiga tanggal (Subbab~\ref{subsec:presisi}).};
+\node[langkah, below=of a] (b) {\textbf{2. Kodifikasi regulasi \& data}: 33 PDF regulasi, tabel parameter \en{double-entry} + SHA-256, transkripsi contoh resmi (Subbab~\ref{subsec:data}).};
+\node[langkah, below=of b] (c) {\textbf{3. \en{Baseline} B1 dibekukan}: implementasi \en{hard-coded} dari teks pasal, di-\en{tag} git sebelum aturan \en{knowledge base} ditulis (Subbab~\ref{subsec:baseline}).};
+\node[langkah, below=of c] (d) {\textbf{4. \en{Knowledge base} \& \en{inference engine}}: DSL YAML dua lapis, \en{forward chaining}, resolusi konflik, \en{fixed point}, \en{explanation trace} (Subbab~\ref{subsec:kb}--\ref{subsec:engine}).};
+\node[langkah, below=of d] (e) {\textbf{5. Lapisan perusahaan \& \en{baseline} B2}: kebijakan Perusahaan~X sebagai KB dan sebagai kode (Subbab~\ref{subsec:baseline}).};
+\node[langkah, below=of e] (f) {\textbf{6. Validasi tanpa SME}: \en{oracle pyramid} V1--V3, \en{mutation testing}, ablasi (Subbab~\ref{subsec:validasi}--\ref{subsec:eksperimen}).};
+\node[langkah, below=of f] (g) {\textbf{7. Antarmuka}: demo Streamlit dan aplikasi web Laravel lewat jembatan JSON (Subbab~\ref{subsec:web}).};
+\foreach \x/\y in {a/b,b/c,c/d,d/e,e/f,f/g} \draw[panah] (\x) -- (\y);
+\end{tikzpicture}
+\caption{Urutan tahapan penelitian. Urutan 2$\rightarrow$3$\rightarrow$4 menjaga agar B1 tidak dipengaruhi isi \en{knowledge base}.}
+\label{fig:alur}
+\end{figure}
+
+% ----------------------------------------------------------------------------
+\subsection{Pertanyaan Penelitian dan Hipotesis}
+\label{subsec:rq}
+% ----------------------------------------------------------------------------
+
+Lima pertanyaan penelitian (RQ) dirumuskan bersama hipotesis yang dapat dibantah oleh satu contoh tandingan (Tabel~\ref{tab:rq}). Klaim kebenaran \emph{tidak} memakai uji signifikansi statistik. Perhitungan pajak bersifat deterministik, sehingga satu tupel yang salah sudah cukup untuk menggugurkan klaim. Persentase dari data sintetis juga bergantung pada generator, sehingga statistik hanya dipakai secara deskriptif.
+
+Hipotesis pada Tabel~\ref{tab:rq} disalin apa adanya dari rencana penelitian yang ditulis sebelum implementasi. Hipotesis itu tidak direvisi setelah uji coba berjalan. Selama pengembangan, sebagian besar eksperimen sudah dijalankan dalam bentuk uji coba (\en{pilot}) untuk menguji perangkatnya. Hasil uji coba itu belum final dan tidak dilaporkan di draf ini. Hipotesis yang nantinya terbantah akan dilaporkan sebagai terbantah, bukan dirumuskan ulang.
+
+\begin{table*}[t]
+\centering
+\caption{Pertanyaan penelitian, hipotesis, dan eksperimen pengujinya}
+\label{tab:rq}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}P{2.3cm} L L P{1.9cm}@{}}
+\toprule
+\textbf{RQ} & \textbf{Pertanyaan} & \textbf{Hipotesis} & \textbf{Diuji di} \\
+\midrule
+RQ1 Representasi & Dapatkah aturan PPh 21 tahun 2023--2026 dan kebijakan perusahaan dinyatakan dalam \en{knowledge base} dua lapis berversi waktu tanpa kode khusus? & H1: $\geq$90\% dari 20 kebijakan katalog dapat dinyatakan \en{native} tanpa perubahan \en{engine}. & E7 \\
+RQ2 Kebenaran & Apakah setiap angka, per masa dan per komponen antara, identik sampai rupiah dengan \en{oracle}, dan apakah setiap selisih dapat dijelaskan? & H2a: 0 selisih terhadap contoh resmi terkoreksi. H2b: 0 selisih tak terjelaskan pada data sintetis terhadap \en{oracle} teradjudikasi. & E1, E2, E8, E10--E12 \\
+RQ3 Adaptabilitas & Ketika regulasi atau kebijakan berubah, seberapa kecil dan seberapa tepat perubahan yang diperlukan? & H3a: semua skenario perubahan tertangani tanpa mengubah kode \en{engine}. H3b: \en{impact} F1 $=1{,}0$. H3c: entri KB yang berubah jauh lebih sedikit daripada baris kode pada \en{baseline}. & E3 \\
+RQ4 Konflik & Dapatkah konflik antarlapisan dan kesalahan KB dideteksi secara otomatis? & H4: F1 deteksi $\geq0{,}95$ pada mutan KB dan konflik berlabel. & E4 \\
+RQ5 \en{Gross-up} & Kapan persamaan \en{gross-up} di bawah TER memiliki solusi tunggal atau ganda? & H5a: solusi selalu ada. H5b: ada pita solusi ganda di setiap batas lapisan TER. H5c: di masa pajak terakhir solusinya tunggal. & E6 \\
+Ablasi & Apakah setiap fitur KB benar-benar diperlukan? & Mematikan satu fitur menghasilkan $\geq1$ kasus salah yang dapat ditunjukkan. & E5 \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+% ----------------------------------------------------------------------------
+\subsection{Domain dan Ruang Lingkup}
+\label{subsec:domain}
+% ----------------------------------------------------------------------------
+
+Objek penelitian adalah pemotongan PPh Pasal 21 atas pegawai tetap, termasuk pegawai yang masuk atau keluar di tengah tahun, untuk tahun pajak 2023--2026. Rentang ini sengaja mencakup peralihan rezim. Tahun 2023 masih memakai metode disetahunkan menurut PER-16/PJ/2016~\cite{per16_2016}: penghasilan sebulan disetahunkan, dikenai tarif Pasal 17~\cite{uu7_2021}, lalu dibagi kembali per bulan. Sejak 1 Januari 2024 berlaku tarif efektif rata-rata (TER) bulanan menurut PP 58/2023~\cite{pp58_2023} dan PMK 168/2023~\cite{pmk168_2023}. Pada rezim TER, PPh Januari--November dihitung dari tarif TER kategori A, B, atau C dikali bruto bulanan, lalu masa pajak terakhir menghitung ulang setahun dengan tarif Pasal 17. Tahun 2025--2026 menambahkan fasilitas PPh 21 ditanggung pemerintah (DTP) untuk sektor tertentu~\cite{pmk10_2025,pmk72_2025,pmk105_2025}. PTKP mengikuti PMK 101/2016~\cite{pmk101_2016}.
+
+Komponen penghasilan yang dicakup adalah gaji, tunjangan tetap dan prorata, lembur, komisi, insentif, THR, bonus, premi BPJS yang dibayar pemberi kerja (JKK, JKM, Kesehatan), natura sederhana, dan tunjangan pajak. Pengurangnya adalah biaya jabatan, iuran pensiun/JHT/JP yang dibayar pegawai, dan zakat melalui pemberi kerja. Parameter BPJS mengikuti PP 44/2015, PP 45/2015, PP 46/2015, dan Perpres 82/2018 beserta perubahannya, termasuk batas upah JP yang diperbarui setiap 1 Maret. Metode yang dicakup adalah \en{gross}, \en{gross-up}, dan PPh ditanggung pemberi kerja.
+
+Di luar lingkup penelitian: pegawai tidak tetap, bukan pegawai, dan pensiunan; penghasilan dari lebih dari satu pemberi kerja; pesangon (PPh final); pelaporan e-Bupot/Coretax; \en{gross-up} pada rezim 2023; serta data pribadi riil.
+
+% ----------------------------------------------------------------------------
+\subsection{Akuisisi Pengetahuan dan Data}
+\label{subsec:data}
+% ----------------------------------------------------------------------------
+
+Penelitian ini tidak melibatkan \en{subject matter expert} (SME) dan tidak memakai data payroll riil. Karena itu, sumber pengetahuan dan sumber kebenaran dibangun dari dokumen resmi serta data publik yang dapat diperiksa ulang.
+
+\subsubsection{Korpus regulasi dan kodifikasi}
+Sebanyak 33 berkas PDF regulasi dikumpulkan, mayoritas dari JDIH BPK dan situs DJP, dan setiap berkas diperiksa keutuhannya. Setiap ketentuan yang relevan dikodifikasi menjadi baris berisi kondisi, akibat, pengecualian, parameter, masa berlaku, pasal sumber, sumbu waktu, dan titik pembulatan. Ketentuan yang dapat dibaca lebih dari satu cara dicatat sebagai \en{interpretation variant} (\emph{tafsir}), lengkap dengan varian bawaan dan alternatifnya.
+
+\subsubsection{Tabel parameter dengan \en{double-entry}}
+Tabel TER bulanan (125 lapisan: A~=~44, B~=~40, C~=~41), tarif Pasal 17 (lapisan UU HPP dan pra-HPP), PTKP (12 status), parameter BPJS, dan daftar KLU penerima DTP (269 baris) disimpan sebagai CSV. Untuk menghindari \en{single point of failure}, tabel parameter diekstraksi dua kali secara independen dengan metode berbeda. Ekstraksi pertama mem-\en{parse} lapisan teks (sebagian hasil OCR penerbit) dan memeriksa angka secara visual. Ekstraksi kedua membaca gambar halaman yang dirender, tanpa melihat hasil ekstraksi pertama. Kedua hasil dibandingkan sel demi sel: 512 sel pada TER bulanan dan harian, Pasal 17 rezim UU HPP, PTKP, kategori TER, biaya jabatan, dan BPJS. Baris Pasal 17 pra-HPP dan daftar KLU belum melewati \en{double-entry}; status ini tercatat di \en{manifest}, dan daftar KLU masih perlu dicek ke gambar halaman. Tabel final dikunci dengan \en{hash} SHA-256 di \en{manifest} itu, dan \en{loader} menolak tabel yang \en{hash}-nya tidak cocok.
+
+\subsubsection{Contoh perhitungan resmi}
+Contoh perhitungan dalam lampiran PMK 168/2023, PP 58/2023, PER-16/PJ/2016, dan PMK DTP 2025--2026 ditranskripsi menjadi \en{test case} kanonik berformat JSON. Setiap kasus memuat rujukan halaman dan diverifikasi dua kali terhadap gambar halaman PDF. Hasilnya 45 kasus kanonik dengan 1.213 nilai harapan: 21 dari PER-16, 13 dari PMK 168, 1 dari PP 58, dan 10 dari PMK DTP. Transkripsi menemukan bahwa contoh resmi pun memuat salah cetak dan pasangan contoh yang saling bertentangan. Karena itu diterapkan \emph{protokol erratum}:
+\begin{enumerate}[leftmargin=*,nosep]
+  \item Nilai harapan selalu disimpan sebagaimana tercetak.
+  \item Nilai yang salah cetak diberi \texttt{terkoreksi} yang diturunkan dari pasal berotoritas lebih tinggi, beserta alasannya (20 nilai).
+  \item Nilai yang bergantung pada tafsir diberi varian tafsir yang mereproduksinya (8 nilai).
+\end{enumerate}
+Hierarki otoritas yang dipakai, dari tertinggi: undang-undang, peraturan pemerintah, batang tubuh PMK/PER, lampiran contoh PMK/PER, kalkulator dan FAQ resmi DJP, lalu sumber sekunder.
+
+\subsubsection{Studi kasus Perusahaan X}
+Sebuah \en{spreadsheet} payroll kantor (\en{workbook} Excel, tahun pajak 2023) dipakai sebagai studi kasus kebijakan perusahaan nyata dan dianonimkan sebagai ``Perusahaan~X''. Hanya \en{sheet} kalkulator dengan data \en{dummy} yang dibaca; \en{sheet} berisi data pribadi tidak dibaca, tidak disalin, dan tidak dipublikasikan. Audit awal atas \en{spreadsheet} itu menemukan konstanta regulasi yang ditanam di 254 sel rumus, lembur yang diklasifikasikan sebagai penghasilan tidak teratur (bertentangan dengan PER-16 Pasal 1 angka 15), dan THR yang dipajaki pada masa yang keliru. Temuan ini menjadi motivasi lapisan perusahaan yang terpisah dan diawasi oleh aturan wajib. \en{Spreadsheet} tersebut diperlakukan sebagai \en{system under test}, bukan sebagai kebenaran.
+
+\subsubsection{Data sintetis}
+Dua jenis data sintetis dipakai.
+\begin{itemize}[leftmargin=*,nosep]
+  \item \textbf{\en{Test case} berstrata} (2.600 kasus, \en{seed} tetap) dibangkitkan dari delapan strata titik rawan: S1 acak, dengan gaji berdistribusi log-normal di sekitar median yang diasumsikan dan bobot status PTKP kasar (belum dikalibrasi ke data BPS); S2 bruto tepat di batas lapisan TER ($b-1$, $b$, $b+1$); S3 pita \en{gross-up}; S4 masuk/keluar di tengah tahun; S5 penghasilan tidak teratur besar; S6 profil identik lintas rezim 2023--2026; S7 bruto pecahan (prorata, kenaikan gaji di tengah bulan); dan S8 sumbu waktu (tanggal bayar berbeda dari periode kerja).
+  \item \textbf{Pegawai sintetis berformat data HR} (8 profil). Gaji pokoknya dibaca langsung dari sel data publik, yaitu UMP Kemnaker 2023--2026 dan rata-rata upah bersih BPS Sakernas per provinsi dan sektor, dengan sumber yang dicatat per pegawai. Tanggal Idul Fitri untuk THR diambil dari SKB tiga menteri tentang hari libur nasional. Status PTKP serta tanggal masuk dan keluar adalah variasi skenario yang dinyatakan eksplisit sebagai sintetis.
+\end{itemize}
+
+\subsubsection{Katalog kebijakan}
+Katalog 20 kebijakan perusahaan yang umum, KP-01 sampai KP-20, disusun dari regulasi ketenagakerjaan dan praktik payroll. Contohnya THR prorata per bulan sesuai Permenaker 6/2016, lembur per jam 1/173, dasar upah BPJS, prorata hari kalender, natura makan bersama, zakat, dan DPLK. Katalog ini dipakai untuk mengukur ekspresivitas (RQ1). Kebijakan yang bertentangan dengan aturan wajib diberi label untuk mengukur deteksi konflik (RQ4).
+
+% ----------------------------------------------------------------------------
+\subsection{Representasi \en{Knowledge Base}}
+\label{subsec:kb}
+% ----------------------------------------------------------------------------
+
+\subsubsection{Dua lapis pengetahuan}
+\en{Knowledge base} dibagi menjadi \emph{lapisan regulasi} dan \emph{lapisan perusahaan}. Lapisan regulasi memuat aturan pemerintah, tabel, dan parameter. Lapisan perusahaan memuat cara perusahaan menghitung komponen gaji dari data HR mentah, misalnya prorata hari kerja, kenaikan gaji di tengah bulan, tunjangan tetap dan prorata, premi dan iuran BPJS, THR, kompensasi, dan \en{take-home pay}.
+
+Kedua lapis bertemu di \emph{pemetaan komponen}. Setiap komponen perusahaan wajib dipetakan ke satu kategori pajak, yaitu \texttt{teratur}, \texttt{tidak\_teratur}, \texttt{premi\_objek}, \texttt{natura}, \texttt{iuran\_pengurang}, \texttt{zakat}, \texttt{bukan\_objek}, atau \texttt{tidak\_diperhitungkan}. Di sisi lain, lapisan regulasi menyimpan \emph{klasifikasi wajib} untuk 16 jenis komponen, misalnya lembur sebagai penghasilan teratur. Bila pemetaan perusahaan berbeda dari klasifikasi wajib, kategori regulasi yang dipakai dan sistem mengeluarkan peringatan \texttt{KONFLIK\_WAJIB}. Bila regulasi tidak mengatur suatu jenis komponen, kategori perusahaan dipakai dengan peringatan \texttt{KLASIFIKASI\_TIDAK\_DIATUR}.
+
+\subsubsection{Bahasa aturan}
+Aturan ditulis dalam \en{domain-specific language} (DSL) berbasis YAML dan divalidasi dengan JSON Schema sebelum dimuat. Lapisan ditetapkan per berkas. Di dalam berkas, satu aturan menyatakan satu fakta yang dihasilkannya, beserta atribut berikut:
+\begin{itemize}[leftmargin=*,nosep]
+  \item \texttt{sifat} (\texttt{wajib}, \texttt{default}, \texttt{opsional}, atau \texttt{tafsir}), ditambah kelompok dan nama varian untuk aturan tafsir;
+  \item masa berlaku \texttt{berlaku} (\en{valid time}) dan tanggal pencatatan \texttt{dicatat} (\en{knowledge time});
+  \item lingkup (\texttt{masa} atau \texttt{tahun}) dan sumbu waktu;
+  \item kondisi \texttt{jika} dan ekspresi \texttt{maka};
+  \item tipe hasil, rujukan entri registri pembulatan, dan \texttt{sumber}, yaitu pasal beserta regulasinya;
+  \item atribut opsional: prioritas, pencabutan tegas \texttt{menggantikan}, serta tanda dan batas \en{fixed point}.
+\end{itemize}
+Gambar~\ref{lst:aturan} memperlihatkan salah satu aturan.
+
+\begin{figure}[t]
+\begin{lstlisting}[language=yaml]
+- id: R24-03
+  sifat: wajib
+  berlaku: {mulai: 2024-01-01}
+  lingkup: masa
+  menghasilkan: _bruto_dasar
+  maka: "komponen('teratur','bulan')
+         + komponen('tidak_teratur','bulan')
+         + komponen('premi_objek','bulan') + ..."
+  pembulatan: BULAT-BRUTO-01
+  tipe_hasil: rupiah
+  sumber: "PMK 168/2023 Ps. 5(3), 8(2)a, ..."
+\end{lstlisting}
+\caption{Contoh aturan lapisan regulasi dalam DSL YAML (disingkat; ``\texttt{...}'' menandai bagian yang dipotong).}
+\label{lst:aturan}
+\end{figure}
+
+Ekspresi \texttt{jika} dan \texttt{maka} dibatasi pada bahasa ekspresi yang aman. Bahasa ini hanya menerima aritmetika, perbandingan, dan 33 fungsi bawaan, misalnya pencarian tabel TER dan Pasal 17, agregasi antar-masa, fungsi tanggal, pembacaan data HR, dan pembulatan terdaftar. Ekspresi divalidasi sebagai \en{abstract syntax tree} sebelum dievaluasi, dan tidak ada \en{escape hatch} ke kode bebas. Kebijakan yang tidak dapat dinyatakan dengan bahasa ini dihitung secara jujur sebagai ``tidak bisa'' pada metrik ekspresivitas.
+
+\subsubsection{Isi \en{knowledge base} dasar}
+Tabel~\ref{tab:kb} merangkum isi \en{knowledge base} dasar, yaitu lapisan regulasi ditambah Perusahaan~X. Jumlah aturan yang aktif berbeda per tahun karena masa berlakunya: 93 aturan pada 2023, 72 pada 2024, dan 82 pada 2025 maupun 2026.
+
+\begin{table}[t]
+\centering
+\caption{Isi \en{knowledge base} dasar}
+\label{tab:kb}
+\footnotesize
+\begin{tabular}{@{}lr@{}}
+\toprule
+\textbf{Unsur} & \textbf{Jumlah} \\
+\midrule
+Aturan lapisan regulasi (umum, TER, PER-16, DTP) & 90 \\
+Aturan lapisan perusahaan (Perusahaan X) & 32 \\
+Fakta turunan yang dihasilkan aturan & 88 \\
+Parameter berversi (nama / versi) & 14 / 18 \\
+Lapisan tabel TER bulanan (A/B/C) & 125 \\
+Baris tarif Pasal 17 (UU HPP + pra-HPP) & 9 \\
+Status PTKP & 12 \\
+Baris KLU penerima DTP & 269 \\
+Entri registri pembulatan (wajib/tafsir/kebijakan) & 1/8/1 \\
+Klasifikasi wajib jenis komponen & 16 \\
+Fungsi bawaan bahasa ekspresi & 33 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Verifikasi statis}
+Sebelum dievaluasi, \en{knowledge base} melewati pemeriksaan berikut. Sebagian dijalankan saat KB dimuat, dan sebagian saat graf dependensi dibangun untuk tahun evaluasi.
+\begin{itemize}[leftmargin=*,nosep]
+  \item validasi skema;
+  \item penolakan \en{float literal} dan kunci YAML ganda;
+  \item kecocokan \en{hash} tabel;
+  \item kelengkapan dan ketidaktumpangtindihan lapisan setiap versi tabel bertingkat;
+  \item tumpang tindih masa berlaku antar-versi tabel Pasal 17;
+  \item keunikan identitas aturan;
+  \item konsistensi lingkup dan tipe hasil per fakta;
+  \item kewajiban batas iterasi bagi aturan \en{fixed point};
+  \item keunikan varian bawaan per kelompok tafsir;
+  \item keberadaan setiap fakta yang dirujuk pada tahun evaluasi;
+  \item penolakan siklus yang tidak ditandai \en{fixed point}.
+\end{itemize}
+
+% ----------------------------------------------------------------------------
+\subsection{\en{Inference Engine}}
+\label{subsec:engine}
+% ----------------------------------------------------------------------------
+
+\en{Inference engine} adalah program generik yang tidak memuat pengetahuan pajak. Ia membaca \en{knowledge base}, lalu mengevaluasi fakta dengan \en{forward chaining} terstratifikasi (Algoritma~\ref{alg:engine}).
+
+\begin{algorithm}[t]
+\caption{Evaluasi satu pegawai untuk satu tahun pajak}
+\label{alg:engine}
+\footnotesize
+\begin{algorithmic}[1]
+\Require kasus $k$ (tahun $y$, masa $M$, fakta dasar), KB, varian tafsir $V$, tanggal pengetahuan $\kappa$ (opsional)
+\State $k \gets$ \Call{TerapkanTransaksi}{$k$} \Comment{masa = saat terutang}
+\State \Call{ValidasiInput}{$k$} \Comment{tolak \en{float}, data kurang}
+\State $R \gets \{r \in \mathrm{KB} : y \in r.\mathit{berlaku} \wedge (\kappa = \bot \vee r.\mathit{dicatat} \le \kappa) \wedge r \text{ sesuai } V\}$
+\State Bangun graf dependensi $G$ atas fakta yang dihasilkan $R$
+\State $\mathcal{C} \gets$ \Call{Tarjan}{$G$} \Comment{SCC dalam urutan topologis}
+\ForAll{$C \in \mathcal{C}$}
+  \If{$C$ bersiklus}
+    \State \Call{SelesaikanFixedPoint}{$C$} \Comment{Subbab~\ref{subsec:fixedpoint}}
+  \Else
+    \ForAll{instance $(a, m)$, $m \in M$ atau tahunan}
+      \State $K \gets \{r \in R : r \text{ menghasilkan } a \wedge r.\mathit{jika}(m)\}$
+      \State $r^{*} \gets$ \Call{Resolusi}{$K$} \Comment{Subbab~\ref{subsec:konflik}}
+      \State $v \gets$ \Call{Bulatkan}{$r^{*}.\mathit{maka}(m)$, $r^{*}.\mathit{pembulatan}$}
+      \State simpan $(a, m, v)$ dan jejak $(r^{*}, \text{pasal}, \text{aturan ditolak})$
+    \EndFor
+  \EndIf
+\EndFor
+\State \Return fakta per masa dan tahunan, jejak, peringatan
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Seleksi aturan dan urutan evaluasi}
+Aturan dipilih menurut masa berlakunya terhadap tahun pajak. Bila diminta perhitungan ``sebagaimana diketahui pada tanggal $\kappa$'', aturan dengan tanggal \texttt{dicatat} sesudah $\kappa$ juga dikeluarkan. Ketergantungan antar-fakta dibaca dari pohon ekspresi setiap aturan, termasuk rujukan tidak langsung lewat fungsi agregasi. Graf dependensi itu lalu dipecah menjadi \en{strongly connected components} (SCC) dengan algoritma Tarjan dan dievaluasi dalam urutan topologis. SCC yang bersiklus hanya diterima bila memuat aturan bertanda \en{fixed point}, misalnya tunjangan pajak pada metode \en{gross-up}. Siklus lain ditolak.
+
+\subsubsection{Resolusi konflik berbasis asas hukum}
+\label{subsec:konflik}
+Untuk fakta $a$ pada masa $m$, himpunan kandidat $K$ berisi aturan yang menghasilkan $a$, berlaku, dan kondisinya terpenuhi. Sebelum resolusi, aturan yang dicabut secara tegas oleh aturan lain lewat atribut \texttt{menggantikan}, selama aturan pengganti berlaku, dikeluarkan dari $K$. Resolusi berjalan dalam dua tahap.
+\begin{enumerate}[leftmargin=*,nosep]
+  \item \textbf{Pemilihan kelompok (\en{lex superior}).} Bila ada aturan regulasi bersifat \texttt{wajib} atau \texttt{tafsir}, kelompok ini dipakai dan aturan perusahaan yang bersaing ditolak dengan peringatan \texttt{KONFLIK\_WAJIB}. Bila tidak ada, aturan perusahaan dipakai dan mengalahkan aturan regulasi bersifat \texttt{default}/\texttt{opsional} (\en{override} yang sah). Bila keduanya tidak ada, aturan regulasi lainnya dipakai.
+  \item \textbf{Di dalam kelompok.} Urutannya: \en{lex specialis} (kondisi dengan konjungsi tingkat atas terbanyak), lalu \en{lex posterior} (tanggal mulai berlaku terbaru), lalu prioritas eksplisit.
+\end{enumerate}
+Bila setelah itu masih tersisa lebih dari satu aturan dan nilainya berbeda, evaluasi dihentikan dengan galat \texttt{AMBIGU} alih-alih memilih secara diam-diam. Seluruh keputusan, termasuk aturan yang ditolak dan alasannya, dicatat di jejak.
+
+\subsubsection{\en{Fixed point} untuk \en{gross-up}}
+\label{subsec:fixedpoint}
+Pada metode \en{gross-up}, tunjangan pajak $T$ sama dengan PPh atas bruto yang sudah memuat $T$ itu sendiri:
+\begin{equation}
+T = f(T) = \mathrm{PPh}_{\mathbb{Z}}(B + T),
+\label{eq:grossup}
+\end{equation}
+dengan $B$ bruto sebelum tunjangan pajak dan $\mathrm{PPh}_{\mathbb{Z}}$ PPh dalam rupiah bulat yang sudah memuat pembulatan resmi. Fungsi $f$ monoton tidak turun, dan aturan \en{fixed point} wajib menyatakan batas bawah dan batas atas iterasi yang memetakan selangnya ke dirinya sendiri. Dengan dua syarat itu, teorema \en{fixed point} Knaster--Tarski menjamin bahwa \en{least fixed point} dan \en{greatest fixed point} ada.
+
+\en{Engine} menghitung keduanya dengan iterasi Kleene, masing-masing dari batas bawah dan dari batas atas, disertai pengaman monotonisitas. Bila kedua hasil berbeda, sistem mengeluarkan peringatan \texttt{GROSSUP\_GANDA} beserta kedua solusinya, lalu memilih secara deterministik menurut varian tafsir \texttt{TITIK-TETAP-PILIH} (bawaan: terkecil). Dengan cara ini hasil tidak bergantung pada jalur iterasi. \en{Gross-up} bulanan (TER) dan \en{gross-up} masa pajak terakhir, yang merupakan persamaan tahunan, ditempatkan di SCC terpisah. Pada masa pajak terakhir, $T$ boleh negatif bila terjadi lebih bayar.
+
+\subsubsection{Fasilitas penjelasan dan rentang tafsir}
+Setiap fakta turunan menyimpan aturan pemenang, lapisan dan sifatnya, pasal sumber, serta aturan yang ditolak beserta alasannya, misalnya \en{lex superior} atau \en{lex specialis}. Untuk PPh Pasal 17 setahun, \en{engine} juga mengeluarkan rincian per lapisan tarif (dasar kena pajak dan pajak tiap lapisan), sehingga perhitungan bergaya bukti potong 1721-A1 dapat ditampilkan tanpa rumus tambahan di antarmuka.
+
+Untuk ketentuan berstatus tafsir, perhitungan diulang dengan setiap varian alternatif. Selisihnya terhadap varian bawaan dilaporkan sebagai \emph{rentang tafsir} per angka, sehingga eksposur risikonya terlihat dan bukan hanya satu angka yang tampak pasti. Saat ini rentang tafsir tersedia lewat CLI dan API \en{engine}, tetapi belum ditampilkan di demo Streamlit maupun aplikasi web.
+
+% ----------------------------------------------------------------------------
+\subsection{Kontrak Presisi Numerik dan Waktu}
+\label{subsec:presisi}
+% ----------------------------------------------------------------------------
+
+Dalam ranah keuangan, selisih Rp1 diperlakukan sebagai \en{bug}. Seluruh komponen sistem, yaitu \en{engine}, \en{knowledge base}, \en{baseline}, dan antarmuka, tunduk pada kontrak berikut.
+\begin{enumerate}[leftmargin=*,nosep]
+  \item \textbf{Aritmetika eksak.} Nilai uang bertipe bilangan bulat rupiah, sedangkan tarif dan nilai antara bertipe pecahan rasional eksak (\texttt{Fraction}) yang dibaca dari teks. Literal \en{floating point} di YAML ditolak \en{loader}. Pemanggilan \texttt{float()} dan \texttt{round()} dilarang di kode \en{engine} dan \en{baseline}, dan larangan ini ditegakkan oleh pemindai \en{abstract syntax tree} dalam \en{test suite}. Uji awal pada 44 tarif TER dan bruto kelipatan Rp1.000 dari Rp1.000 sampai Rp1.999.000 menunjukkan bahwa aritmetika \en{float} menghasilkan 700 selisih Rp1 dibanding aritmetika eksak bila hasilnya dibulatkan ke bawah.
+  \item \textbf{Registri pembulatan.} Setiap aturan bertipe rupiah wajib merujuk satu entri registri yang menyebut titik, satuan, mode, urutan, status (\texttt{wajib}, \texttt{tafsir}, atau \texttt{kebijakan}), dasar hukum, dan alternatifnya. Ada enam mode dengan semantik eksplisit untuk bilangan negatif: \texttt{bawah}, \texttt{atas}, \texttt{menuju\_nol}, \texttt{setengah\_atas}, \texttt{setengah\_menjauhi\_nol} (padanan \texttt{ROUND} di Excel), dan \texttt{setengah\_genap}. Satu-satunya titik yang diatur tegas oleh regulasi adalah PKP yang dibulatkan ke bawah ke ribuan rupiah. Titik lain berstatus tafsir dan menjadi sasaran kalibrasi E10.
+  \item \textbf{Semantik interval.} Frasa ``di atas $a$ sampai dengan $b$'' ditulis sebagai interval $(a, b]$. Setiap versi tabel bertingkat wajib menutup $[0, \infty)$ tanpa celah maupun tumpang tindih.
+  \item \textbf{Model tiga tanggal.} Setiap transaksi penghasilan membawa periode kerja, tanggal terutang, dan tanggal bayar. Masa pajak ditentukan oleh \emph{saat terutang} $=\min(\text{tanggal bayar}, \text{tanggal terutang})$ sesuai PMK 168/2023 Pasal 19 ayat (1) untuk tahun 2024 dan sesudahnya. Untuk tahun 2023 aturan yang sama diterapkan sebagai tafsir. Parameter BPJS mengikuti periode iuran.
+  \item \textbf{Validasi input.} Input yang tidak lengkap atau ambigu menghentikan perhitungan; sistem tidak mengisi nilai bawaan secara diam-diam. Nominal wajib bilangan bulat $\ge 0$. Keluaran yang diminta lewat CLI dan jembatan aplikasi disertai metadata audit berupa versi \en{knowledge base}, \en{hash} tabel, dan varian tafsir non-bawaan yang diminta secara eksplisit. Varian bawaan yang terpakai belum dicatat satu per satu di metadata ini.
+\end{enumerate}
+
+% ----------------------------------------------------------------------------
+\subsection{\en{Baseline} Pembanding}
+\label{subsec:baseline}
+% ----------------------------------------------------------------------------
+
+Tidak ada \en{leaderboard} untuk perhitungan PPh 21, sehingga pembanding yang dipakai adalah implementasi praktik. Semua pembanding berstatus \en{system under test}, bukan \en{oracle}.
+\begin{itemize}[leftmargin=*,nosep]
+  \item \textbf{B0}: \en{spreadsheet} Perusahaan X (tahun 2023), dengan aturan yang tertanam di sel rumus.
+  \item \textbf{B1}: kalkulator PPh 21 \en{hard-coded} dalam Python, ditulis langsung dari teks pasal tanpa melihat \en{knowledge base} dan tunduk pada kontrak presisi yang sama. B1 diberi \en{tag} git sebelum berkas aturan regulasi pertama dibuat, sehingga urutan pembuatannya dapat dibuktikan dari riwayat \en{commit}. Registri pembulatan dan \en{manifest} tabel (tahap 1--2) sudah ada sebelum \en{tag} itu dan dipakai bersama oleh B1 dan \en{knowledge base}. B1 menjadi versi independen kedua untuk \en{differential testing}.
+  \item \textbf{B2}: kalkulator payroll \emph{tanpa} \en{knowledge base}. Kebijakan Perusahaan X (prorata, kenaikan gaji, BPJS, THR, kompensasi, \en{take-home pay}) beserta konstantanya ditanam di kode, sedangkan pajaknya dihitung oleh B1 tanpa perubahan. B2 diuji agar tidak mengimpor \en{engine} maupun membaca berkas \en{knowledge base}. B2 adalah pembanding kontrafaktual yang adil: fiturnya sama dengan versi KB, tetapi mekanismenya berbeda.
+  \item \textbf{B3}: implementasi \en{open source}, berupa pustaka dan aplikasi (survei 35 kandidat, 7 di antaranya diuji), dan kalkulator daring, termasuk kalkulator resmi DJP yang dipakai secara manual sebagai penengah kalibrasi tafsir (E10).
+\end{itemize}
+
+% ----------------------------------------------------------------------------
+\subsection{Antarmuka dan Aplikasi Web}
+\label{subsec:web}
+% ----------------------------------------------------------------------------
+
+Sistem dilengkapi dua antarmuka. Keduanya \emph{tidak} memuat logika pajak: setiap angka yang ditampilkan berasal dari \en{engine} (Gambar~\ref{fig:arsitektur}). Dengan begitu antarmuka mewarisi bukti verifikasi \en{engine} untuk \en{knowledge base} dasar dan tidak menjadi sumber galat baru.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize,
+  kotak/.style={draw, rounded corners=2pt, align=center, inner sep=3pt, minimum height=8mm},
+  reg/.style={kotak, fill=blue!7},
+  prs/.style={kotak, fill=orange!10},
+  mes/.style={kotak, fill=gray!10},
+  ui/.style={kotak, fill=green!7},
+  llm/.style={kotak, fill=red!6, dashed},
+  panah/.style={-{Latex[length=1.6mm]}, thick, gray!70}]
+% KB
+\node[reg, text width=33mm] (reg) {\textbf{Lapisan regulasi}\\aturan YAML, tabel CSV (\en{hash}),\\parameter berversi, registri\\pembulatan, klasifikasi wajib};
+\node[prs, text width=33mm, below=3mm of reg] (prs) {\textbf{Lapisan perusahaan}\\Perusahaan X (YAML)\\+ berkas KB tambahan};
+\node[draw, dotted, fit=(reg)(prs), inner sep=2.5mm, label={[font=\footnotesize\bfseries]above:\en{Knowledge base}}] (kb) {};
+% engine
+\node[mes, text width=36mm, right=12mm of kb] (eng) {\textbf{\en{Inference engine}} (Python)\\seleksi aturan berlaku $\rightarrow$\\SCC (Tarjan) $\rightarrow$ resolusi konflik\\$\rightarrow$ \en{fixed point} $\rightarrow$ jejak};
+\node[mes, text width=36mm, below=4mm of eng] (b2) {\textbf{Kalkulator tanpa KB}\\B2 (kebijakan di kode) + B1};
+\node[mes, text width=36mm, above=4mm of eng] (jem) {\textbf{Jembatan JSON}\\\texttt{python -m jembatan}\\(stdin/stdout)};
+% UI
+\node[ui, text width=34mm, right=12mm of eng] (web) {\textbf{Aplikasi web Laravel}\\pegawai, data HR, payroll,\\slip, 1721-A1, jejak, rekap,\\riwayat (versi KB, sidik KB)};
+\node[ui, text width=34mm, below=4mm of web] (st) {\textbf{Demo Streamlit}\\kalkulator dengan/tanpa KB\\+ penjelajah KB};
+\node[llm, text width=34mm, above=4mm of web] (llm) {\textbf{Asisten KB}: PDF peraturan\\$\rightarrow$ LLM $\rightarrow$ rancangan YAML\\$\rightarrow$ validasi \en{engine} $\rightarrow$\\persetujuan manusia};
+% panah
+\draw[panah] (kb.east) -- (eng.west);
+\draw[panah] (web.west) |- (jem.east);
+\draw[panah] (jem) -- (eng);
+\draw[panah] (eng.south) -- node[left, font=\scriptsize]{cek silang} (b2.north);
+\draw[panah] (st.west) -- (b2.east);
+\draw[panah] (st.north west) -- (eng.south east);
+\draw[panah, dashed] (llm.west) -- node[above, font=\scriptsize]{\texttt{usulkan}} (jem.north east);
+\draw[panah, dashed] (llm.north) -- ++(0,3mm) -| node[pos=0.25, above, font=\scriptsize]{berkas KB tambahan setelah disetujui} (prs.north west);
+\end{tikzpicture}
+\caption{Arsitektur sistem. \en{Knowledge base} dibaca oleh \en{inference engine} generik. Aplikasi web memanggil \en{engine} lewat jembatan JSON dan tidak menghitung pajak sendiri. Kalkulator tanpa KB (B2+B1) dipakai sebagai cek silang. Jalur bergaris putus-putus (asisten KB berbasis LLM) hanya menghasilkan \emph{rancangan} aturan yang wajib divalidasi \en{engine} dan disetujui manusia, dan berada di luar evaluasi penelitian ini.}
+\label{fig:arsitektur}
+\end{figure*}
+
+\subsubsection{Demo Streamlit}
+Demo Streamlit dipakai untuk riset dan presentasi. Tab \emph{Kalkulator} menyajikan dua kalkulator dengan tampilan identik tetapi mekanisme berbeda, yaitu dengan KB (\en{engine}) dan tanpa KB (B2+B1). Isiannya hanya data yang biasa diisi admin \en{finance}, dengan nilai bawaan dari dataset: Karyawan A, delapan pegawai sintetis, dan 45 contoh resmi. Keluarannya meliputi slip gaji per bulan, perhitungan setahun bergaya 1721-A1, dan tabel 12 bulan. Setiap angka disertai kolom \emph{dasar}: aturan dan pasal pada versi KB, atau fungsi dan baris kode pada versi tanpa KB.
+
+Setiap hasil juga diberi \emph{cek silang} otomatis terhadap kalkulator satunya. Untuk contoh resmi yang belum diubah, hasil dicocokkan dengan nilai harapan dokumen memakai protokol V1. Tab \emph{Knowledge Base} menyajikan pengetahuan per topik, yaitu nilai yang berlaku per tahun, pasal sumber, label lapisan, dan konflik klasifikasi, dalam bahasa yang dapat dipahami pengguna non-teknis.
+
+\subsubsection{Aplikasi web Laravel}
+Aplikasi web multi-pengguna untuk admin \en{finance} dibangun dengan Laravel (PHP~$\ge$~8.3). Basis datanya SQLite atau PostgreSQL, dan strukturnya terdiri atas modul \emph{Pegawai}, \emph{Payroll}, \emph{Dashboard}, \emph{Basis pengetahuan}, dan \emph{Mesin}. Aplikasi menyusun kasus kanonik dari basis data, termasuk data HR per tahun pajak serta kehadiran dan penghasilan variabel per bulan. Kasus itu dikirim ke \en{engine} lewat jembatan JSON: proses Python yang menerima satu permintaan di \en{stdin} dan menjawab di \en{stdout}, dengan perintah seperti \texttt{hitung}, \texttt{masukan}, \texttt{validasi}, \texttt{periksa}, dan \texttt{usulkan}.
+
+Hasil \en{engine} disimpan apa adanya sebagai riwayat yang tidak pernah ditimpa. Setiap entri riwayat memuat kasus yang dikirim, keluaran \en{engine}, versi \en{knowledge base}, sidik berkas KB tambahan, dan identitas pengguna. Bila data HR atau berkas KB berubah sesudah perhitungan, hasil lama ditandai usang. Untuk jumlah pegawai yang besar, perhitungan massal dijalankan per \en{batch} dengan kunci per tahun pajak. Keluaran yang ditampilkan meliputi slip, perhitungan 1721-A1 dengan rincian Pasal 17, \en{inference trace} lengkap (termasuk aturan yang ditolak atau dicabut), peringatan konflik, dan cek silang terhadap kalkulator tanpa KB. Cek silang ini dilewati bila perhitungan memakai berkas KB tambahan (Subbab berikut), karena kalkulator tanpa KB tidak mengenal aturan baru. Sebuah uji integrasi memastikan bahwa kasus yang disusun dari basis data untuk sembilan pegawai contoh identik dengan kasus di dataset.
+
+\subsubsection{Berkas KB tambahan dan asisten KB}
+Aplikasi web juga menyediakan jalur operasional bagi aturan baru: peraturan pemerintah atau perusahaan dapat dimasukkan sebagai \emph{berkas KB tambahan} tanpa mengubah kode. Satu berkas dapat berisi:
+\begin{itemize}[leftmargin=*,nosep]
+  \item aturan baru, termasuk pencabutan tegas aturan lama lewat \texttt{menggantikan};
+  \item komponen gaji baru beserta kategori pajaknya;
+  \item amandemen parameter dan klasifikasi wajib yang berversi menurut tanggal mulai berlaku;
+  \item deklarasi \texttt{masukan}, yaitu isian baru yang diminta dari pengguna; aplikasi web membangun formulirnya secara otomatis dari deklarasi ini.
+\end{itemize}
+Tabel resmi (TER, Pasal 17, PTKP, KLU) tidak dapat diubah lewat jalur ini, karena perubahannya tetap harus melewati \en{double-entry} dan \en{manifest}.
+
+Rancangan berkas KB tambahan dapat disusun oleh \emph{asisten KB} dari PDF peraturan menggunakan \en{large language model} (LLM) dengan \en{structured output}. Asisten ini berada di luar \en{engine}. LLM tidak menghitung pajak, tidak dipakai sebagai \en{oracle} maupun \en{baseline}, dan tidak dapat mengubah tabel resmi. Rancangan baru berlaku setelah melewati dua gerbang:
+\begin{enumerate}[leftmargin=*,nosep]
+  \item \textbf{Validasi \en{engine}}: skema, verifikasi statis, kewajiban mendeklarasikan setiap isian baru, dan simulasi sebelum--sesudah pada dua pegawai contoh. Simulasi ini juga melaporkan aturan yang tidak pernah terpilih sebagai \emph{belum teruji}.
+  \item \textbf{Persetujuan manusia} di aplikasi web, dengan kutipan dan nomor halaman PDF untuk setiap aturan.
+\end{enumerate}
+Validasi \en{engine} memeriksa bentuk dan konsistensi rancangan, bukan kesesuaiannya dengan isi dokumen. Pencocokan itu adalah tugas peninjau manusia.
+
+Dalam penelitian ini, jalur berkas KB tambahan dan asisten KB diperlakukan sebagai \emph{perluasan yang belum dievaluasi}. Mutu ekstraksi LLM terhadap dokumen nyata belum diukur, dan jalur ini belum diuji dengan protokol RQ3 (Subbab~\ref{subsec:eksperimen}). Karena itu tidak ada klaim kuantitatif tentang asisten KB yang diajukan.
+
+% ----------------------------------------------------------------------------
+\subsection{Strategi Validasi tanpa SME: \en{Oracle Pyramid}}
+\label{subsec:validasi}
+% ----------------------------------------------------------------------------
+
+Karena tidak ada SME dan kalkulator yang sudah ada tidak dipercaya, kebenaran ditetapkan berlapis. Semakin tinggi lapisannya, semakin tinggi otoritasnya, tetapi semakin sedikit kasusnya (Gambar~\ref{fig:piramida}).
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[font=\footnotesize]
+\fill[blue!18] (0,3.0) -- (-0.9,2.25) -- (0.9,2.25) -- cycle;
+\fill[blue!12] (-0.9,2.25) -- (-1.8,1.5) -- (1.8,1.5) -- (0.9,2.25) -- cycle;
+\fill[blue!7]  (-1.8,1.5) -- (-2.7,0.75) -- (2.7,0.75) -- (1.8,1.5) -- cycle;
+\fill[gray!8]  (-2.7,0.75) -- (-3.6,0) -- (3.6,0) -- (2.7,0.75) -- cycle;
+\draw (0,3.0) -- (-3.6,0) -- (3.6,0) -- cycle;
+\draw (-0.9,2.25) -- (0.9,2.25); \draw (-1.8,1.5) -- (1.8,1.5); \draw (-2.7,0.75) -- (2.7,0.75);
+\node at (0,2.5) {V1};
+\node at (0,1.87) {V2: \en{differential} + adjudikasi};
+\node at (0,1.12) {V3: \en{metamorphic} \& \en{property-based}};
+\node at (0,0.37) {\en{mutation testing} (kecukupan uji)};
+\node[right, align=left, font=\scriptsize] at (1.0,2.75) {contoh resmi\\(45 kasus, 1.213 nilai)};
+\draw[-{Latex}, gray] (-3.9,0) -- node[left, rotate=90, anchor=south, font=\scriptsize]{otoritas $\uparrow$, jumlah kasus $\downarrow$} (-3.9,3.0);
+\end{tikzpicture}
+\caption{\en{Oracle pyramid} yang dipakai untuk menetapkan kebenaran tanpa \en{domain expert}.}
+\label{fig:piramida}
+\end{figure}
+
+\subsubsection{V1: contoh resmi}
+Setiap nilai harapan dibandingkan dengan keluaran sistem pada tingkat tupel (kasus, masa, fakta). Pemeriksaan mencakup komponen antara, seperti bruto, kategori dan tarif TER, biaya jabatan, PKP, dan PPh masa terakhir, bukan hanya total tahunan. Pemeriksaan total saja tidak memadai, karena masa pajak terakhir selalu menyamakan total setahun sehingga galat bulanan bisa tertutup. Nilai harapan dibandingkan dengan protokol erratum (Subbab~\ref{subsec:data}).
+
+V1 hampir tidak menguji pembulatan. Dari 170 perhitungan TER bulanan di contoh resmi, hanya satu yang menghasilkan pecahan rupiah. Pembulatan karena itu diuji tersendiri lewat strata S7 dan kalibrasi E10.
+
+\subsubsection{V2: \en{differential testing} dan adjudikasi}
+Untuk setiap kasus sintetis, keluaran KB dan B1 dibandingkan per masa dan per komponen antara~\cite{goldstein2024pbt}. Tidak ada voting mayoritas. Setiap kelas ketidaksesuaian ditelusuri ke teks pasal dan diputuskan dalam log adjudikasi tertulis. Log memuat nilai tiap versi, pasal acuan beserta tingkat otoritasnya, putusan, dan versi yang salah. Hasil adjudikasi menjadi \en{oracle} teradjudikasi untuk RQ2.
+
+Risiko terbesar V2 adalah \en{common-mode failure}: \en{knowledge base}, B1, dan adjudikasi ditulis oleh pihak yang sama. Tiga pengaman dipasang terhadap risiko ini: B1 dibekukan sebelum \en{knowledge base} ditulis; adjudikasi berbasis pasal, bukan berbasis implementasi; dan kalkulator resmi DJP dipakai sebagai penengah eksternal per kelas selisih.
+
+\subsubsection{V3: \en{metamorphic} dan \en{property-based testing}}
+Kebenaran juga diuji lewat relasi yang harus berlaku tanpa memerlukan nilai harapan~\cite{li2025mrgeneration,tizpaz2023metamorphic}. Lima belas \en{metamorphic relation} (MR) dirancang (Tabel~\ref{tab:mr}). Sebagian besar diuji dengan \en{property-based testing} (pustaka Hypothesis) atas ruang input yang dibangkitkan acak~\cite{goldstein2024pbt,ravi2025pbtpython}. MR7 dan MR14 diuji dengan contoh tetap, karena masukannya berupa perubahan berkas KB atau tanggal transaksi. MR11 diperiksa sebagai pemeriksaan tipe pada setiap keluaran. MR8 belum diimplementasikan.
+
+\begin{table}[t]
+\centering
+\caption{\en{Metamorphic relation} (MR) yang dirancang}
+\label{tab:mr}
+\footnotesize
+\begin{tabularx}{\columnwidth}{@{}l L@{}}
+\toprule
+\textbf{MR} & \textbf{Relasi} \\
+\midrule
+MR1 & Bruto naik $\Rightarrow$ PPh masa tidak turun (\en{gross}) \\
+MR2 & Tanggungan bertambah $\Rightarrow$ PPh setahun tidak naik \\
+MR3 & $\sum$ PPh Jan--Des $=$ PPh Pasal 17 setahun (TER) \\
+MR4 & \en{Gross-up}: $T = \mathrm{PPh}_{\mathbb{Z}}(B+T)$ persis \\
+MR5 & Memindahkan bonus antarbulan tidak mengubah total setahun \\
+MR6 & Memecah satu komponen menjadi dua tidak mengubah hasil \\
+MR7 & Menambah aturan di luar tahun $t$ tidak mengubah hasil tahun $t$ \\
+MR8 & Memecah berkas kebijakan tidak mengubah hasil (belum diimplementasikan) \\
+MR9 & Kategori TER hanya bergantung pada status PTKP \\
+MR10 & Neto $\le$ PTKP $\Rightarrow$ PPh setahun $=0$ \\
+MR11 & Setiap fakta uang bertipe bilangan bulat \\
+MR12 & Rekonsiliasi buku besar: bruto, neto, dan $\sum$ PPh konsisten \\
+MR13 & Mengganti mode pembulatan suatu titik hanya mengubah fakta yang bergantung padanya \\
+MR14 & Memindahkan tanggal bayar dalam satu bulan tidak mengubah hasil; melewati batas bulan hanya mengubah masa terkait \\
+MR15 & Urutan komponen input tidak memengaruhi hasil \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsubsection{Kecukupan pengujian dengan \en{mutation testing}}
+Kepekaan \en{test suite} terhadap kesalahan \en{knowledge base} diukur dengan \en{mutation testing}~\cite{petrovic2022mutation,petrovic2021mutation}: kesalahan kecil disuntikkan ke KB, lalu dihitung berapa yang tertangkap. Sebanyak 52 mutan dibangkitkan dari operator berikut:
+\begin{itemize}[leftmargin=*,nosep]
+  \item perubahan tarif dan batas lapisan TER, termasuk \en{off-by-one};
+  \item celah lapisan dan tarif yang tidak monoton;
+  \item perubahan tarif, batas, dan masa berlaku Pasal 17;
+  \item perubahan nilai dan kategori PTKP, daftar KLU, serta parameter;
+  \item perubahan mode dan satuan pembulatan;
+  \item perubahan ekspresi aturan, operator perbandingan, kondisi, dan masa berlaku aturan;
+  \item perubahan klasifikasi wajib dan batas \en{fixed point}.
+\end{itemize}
+Sebuah mutan dinyatakan terbunuh bila tertangkap oleh salah satu detektor: \en{double-entry} tabel, verifikasi statis, V1, properti V3, atau studi kasus Perusahaan X. Mutan yang lolos semua detektor dibandingkan dengan \en{golden master}, yaitu keluaran sistem asli pada sampel kasus. Bila keluarannya tidak berubah sama sekali, mutan itu digolongkan \emph{ekuivalen menurut sampel} dan dikeluarkan dari penyebut skor. Bila keluarannya berubah, mutan itu menandakan celah pada \en{test suite}.
+
+% ----------------------------------------------------------------------------
+\subsection{Desain Eksperimen dan Metrik}
+\label{subsec:eksperimen}
+% ----------------------------------------------------------------------------
+
+Tabel~\ref{tab:eksperimen} memetakan eksperimen ke data, sistem, metrik, dan RQ.
+
+\begin{table*}[t]
+\centering
+\caption{Desain eksperimen}
+\label{tab:eksperimen}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}l P{3.6cm} L L l@{}}
+\toprule
+\textbf{ID} & \textbf{Eksperimen} & \textbf{Data} & \textbf{Metrik utama} & \textbf{RQ} \\
+\midrule
+E1 & Kebenaran vs contoh resmi & 45 kasus kanonik, 1.213 nilai harapan & STJ $=0$ per tupel; selisih per kelas & RQ2 \\
+E2 & \en{Differential testing} KB vs B1 & kasus sintetis S1--S7, tanpa \en{gross-up} rezim 2023 (S8 di E11) & STJ vs \en{oracle} teradjudikasi; MaxAE per kelas & RQ2 \\
+E3 & Skenario perubahan regulasi & batas upah JP 2026; DTP berlaku surut (PMK 10/2025); PTKP dan TER hipotetis 2027 & berkas \en{engine} berubah; baris KB berubah; \en{impact} P/R/F1; regresi & RQ3 \\
+E4 & Deteksi kesalahan dan konflik & 52 mutan KB; pemetaan kebijakan berlabel & \en{mutation score}; P/R/F1 deteksi konflik & RQ4 \\
+E5 & Ablasi & acuan per varian (V1, E8, S3, S8) & jumlah tupel salah + contoh tandingan & semua \\
+E6 & Analisis \en{gross-up} & tabel TER A/B/C; strata S3 & jumlah dan lebar pita solusi ganda (domain real dan bulat) & RQ5 \\
+E7 & Ekspresivitas & katalog 20 kebijakan & \en{coverage} (\en{native}/\en{input}/tidak bisa) & RQ1 \\
+E8 & Studi kasus Perusahaan X & data HR 2023; dihitung ulang 2024--2026 & kecocokan per sel vs B0; adjudikasi setiap selisih & RQ2, RQ3 \\
+E9 & Kinerja & pegawai sintetis & latensi per pegawai-tahun & -- \\
+E10 & Kalibrasi pembulatan dan tafsir & S7 + kasus perwakilan tiap tafsir & varian yang cocok dengan kalkulator DJP; lebar rentang tafsir & RQ2 \\
+E11 & Sumbu waktu & strata S8 & STJ $=0$; MR14 & RQ2 \\
+E12 & Kalkulator dengan KB vs tanpa KB & Karyawan A 2023--2026; 8 pegawai sintetis; variasi isian; 45 contoh resmi & identik per rupiah; selisih sah hanya bila terjelaskan & RQ2 \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\subsubsection{Metrik kebenaran}
+Satuan pemeriksaan adalah tupel (kasus, masa, fakta). Metrik utamanya adalah jumlah \emph{selisih tak terjelaskan} (STJ), yaitu tupel dengan $\hat{y} \neq y$ yang belum memiliki kelas akar masalah, dengan target 0. Kelas akar masalah yang dipakai adalah \en{bug} KB, erratum contoh resmi, tafsir, \en{bug} pembanding, dan input tidak valid. Selisih maksimum (MaxAE) dilaporkan per kelas. Tidak ada toleransi: selisih Rp1 diperlakukan sama dengan selisih Rp1 juta sampai kelasnya diketahui. Rata-rata galat (MAE) tidak dipakai sebagai metrik utama karena dapat menyembunyikan kasus yang salah.
+
+\subsubsection{Metrik adaptabilitas}
+Untuk setiap skenario perubahan, himpunan $S^{*}$ (pasangan kasus dan masa yang \emph{seharusnya} berubah) diturunkan secara analitis dari aturan, \emph{sebelum} hasilnya dilihat. Himpunan $S$ adalah pasangan yang benar-benar berubah. Metriknya:
+\begin{equation}
+P = \frac{|S \cap S^{*}|}{|S|},\quad R = \frac{|S \cap S^{*}|}{|S^{*}|},\quad F_1 = \frac{2PR}{P+R}.
+\end{equation}
+Presisi $<1$ menandakan efek samping, sedangkan \en{recall} $<1$ menandakan pembaruan yang tidak lengkap. Ukuran pelengkapnya adalah jumlah berkas \en{engine} yang berubah (target 0), jumlah baris KB yang berubah, dan regresi pada tahun di luar skenario.
+
+\subsubsection{Metrik deteksi dan ekspresivitas}
+F1 hanya dipakai untuk tugas yang memang berupa klasifikasi biner, yaitu deteksi konflik antarlapisan dan prediksi keluaran yang terdampak perubahan. Untuk kecukupan uji dipakai \en{mutation score}: persentase mutan non-ekuivalen yang terbunuh. Ekspresivitas diukur sebagai persentase kebijakan katalog yang dapat dinyatakan pada tiga tingkat: \en{native} (cukup berkas KB, dieksekusi, dan diperiksa angkanya), cukup lewat isian data, atau tidak bisa tanpa mengubah \en{engine}.
+
+\subsubsection{Ablasi}
+Studi ablasi mematikan satu fitur pada satu waktu:
+\begin{itemize}[leftmargin=*,nosep]
+  \item A1: versi waktu;
+  \item A2: lapisan perusahaan;
+  \item A3: resolusi konflik;
+  \item A4: penyelesai \en{fixed point}, diganti iterasi naif;
+  \item A5: registri pembulatan;
+  \item A9: model tiga tanggal.
+\end{itemize}
+Untuk setiap varian dilaporkan jumlah tupel yang salah terhadap acuannya, beserta satu contoh tandingan konkret. Dampak aritmetika \en{float} (A8) ditunjukkan terpisah lewat uji kontrak presisi. Penomoran mengikuti rencana penelitian. Dua ablasi pada rencana itu, yaitu A6 (verifikasi statis) dan A7 (kategori objek wajib), belum diimplementasikan.
+
+\subsubsection{Penilaian antarmuka}
+Aplikasi web dan demo dinilai secara fungsional, bukan sebagai bagian dari RQ1--RQ5. Ada tiga hal yang diuji:
+\begin{itemize}[leftmargin=*,nosep]
+  \item Kasus yang disusun dari basis data identik dengan kasus di dataset.
+  \item Hasil lewat aplikasi identik dengan pemanggilan \en{engine} langsung.
+  \item Untuk \en{knowledge base} dasar, cek silang dengan kalkulator tanpa KB identik.
+\end{itemize}
+Pengujian ini dijalankan sebagai uji integrasi otomatis di \en{test suite} aplikasi.
+
+% ----------------------------------------------------------------------------
+\subsection{Ancaman terhadap Validitas dan Etika}
+\label{subsec:ancaman}
+% ----------------------------------------------------------------------------
+
+\textbf{Validitas internal.} Penulis \en{knowledge base} dan B1 adalah pihak yang sama. Selain itu, kode \en{engine}, berkas KB, B1, transkripsi contoh resmi, dan ekstraksi kedua tabel disusun dengan bantuan asisten pemrograman berbasis LLM di bawah arahan penulis, dan prosesnya tercatat dalam jurnal pengembangan. Asisten yang sama dapat membawa salah paham yang sama ke KB maupun B1, sehingga risiko \en{common-mode failure} bertambah. Mitigasinya adalah pembekuan B1, adjudikasi berbasis pasal, penengah kalkulator DJP, dan pembaca kedua untuk daftar asumsi. Perlu dicatat bahwa LLM hanya dipakai saat pengembangan. LLM tidak dipakai saat \en{engine}, \en{oracle}, atau \en{baseline} dijalankan.
+
+Hasil uji coba juga sudah memengaruhi KB. Misalnya, satu mutan yang lolos semua detektor mendorong penambahan satu varian tafsir. Karena itu, evaluasi final akan dijalankan pada versi KB yang dibekukan dengan \en{tag} git, dan setiap perubahan KB sesudah \en{tag} itu dicatat sebagai temuan. Beberapa keputusan implementasi juga menyimpang dari rancangan awal, dan penyimpangan ini dicatat terbuka: ukuran spesifisitas yang bersifat sintaksis (jumlah konjungsi), ambiguitas yang baru terdeteksi saat evaluasi, verifikasi formal yang belum diimplementasikan, serta penyaringan \en{knowledge time} yang hanya berlaku bagi aturan bertanggal pencatatan.
+
+\textbf{Validitas konstruk.} Kecocokan total tahunan bukan bukti kebenaran bulanan, sehingga pemeriksaan dilakukan per masa dan per komponen antara. ``Jumlah baris yang berubah'' hanyalah proksi biaya pemeliharaan, sehingga dilengkapi dengan \en{impact} F1 dan regresi.
+
+\textbf{Validitas eksternal.} Hanya ada satu studi kasus perusahaan. Mitigasinya adalah katalog 20 kebijakan, kasus sintetis berstrata yang menyasar titik rawan, dan delapan pegawai sintetis yang gajinya diambil dari data UMP dan BPS. Strata S1 belum dikalibrasi ke distribusi upah riil, sehingga persentase dari data sintetis tidak dapat digeneralisasi ke populasi pegawai. Default tafsir belum dikalibrasi ke kalkulator resmi DJP. Sampai kalibrasi E10 selesai, rentang tafsir dapat dihitung lewat CLI.
+
+\textbf{Etika dan data.} Data pribadi pada \en{spreadsheet} kantor tidak dibaca dan tidak dipublikasikan; hanya turunan teranonimkan yang dirilis. Kalkulator daring hanya diuji secara manual sesuai ketentuan layanannya. Sistem ini adalah prototipe penelitian, bukan alat konsultasi pajak resmi.

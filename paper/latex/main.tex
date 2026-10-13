@@ -1,0 +1,83 @@
+% Draf penelitian: Knowledge Base Dua Lapis Berversi Waktu untuk Perhitungan PPh Pasal 21
+% Format IEEE (IEEEtran, conference). Bahasa Indonesia; terminologi teknis dibiarkan dalam bahasa aslinya.
+% Kompilasi: latexmk -pdf main.tex   (atau pdflatex -> bibtex -> pdflatex x2)
+\documentclass[conference,a4paper]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+\usepackage[english,indonesian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,fit,shapes}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+
+% Istilah asing (tidak diterjemahkan) ditulis miring.
+\newcommand{\en}[1]{\textit{#1}}
+
+% Penamaan dalam Bahasa Indonesia
+\renewcommand{\IEEEkeywordsname}{Kata Kunci}
+\floatname{algorithm}{Algoritma}
+\addto\captionsindonesian{\renewcommand{\refname}{Daftar Pustaka}\renewcommand{\abstractname}{Abstrak}}
+\algrenewcommand\algorithmicrequire{\textbf{Masukan:}}
+\algrenewcommand\algorithmicforall{\textbf{untuk setiap}}
+\algrenewcommand\algorithmicif{\textbf{jika}}
+\algrenewcommand\algorithmicthen{\textbf{maka}}
+\algrenewcommand\algorithmicelse{\textbf{selain itu}}
+\algrenewcommand\algorithmicend{\textbf{akhir}}
+\algrenewcommand\algorithmicdo{\textbf{lakukan}}
+\algrenewcommand\algorithmicreturn{\textbf{kembalikan}}
+
+% YAML sederhana untuk listing
+\lstdefinelanguage{yaml}{
+  keywords={true,false,null},
+  sensitive=false,
+  comment=[l]{\#},
+  morestring=[b]",
+  morestring=[b]'
+}
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{blue!60!black},
+  stringstyle=\color{green!40!black},
+  commentstyle=\color{gray},
+  frame=single, framerule=0.3pt, rulecolor=\color{gray!50},
+  breaklines=true, columns=fullflexible, xleftmargin=2pt, xrightmargin=2pt
+}
+
+\begin{document}
+
+\title{Knowledge Base Dua Lapis Berversi Waktu untuk Perhitungan PPh Pasal 21: Rancangan Sistem, Aplikasi Web, dan Metodologi Validasi tanpa \textit{Domain Expert}\\
+{\normalsize\textit{Draf---sampai metodologi penelitian; hasil eksperimen belum disertakan}}}
+
+\author{\IEEEauthorblockN{[Nama Penulis]}
+\IEEEauthorblockA{\textit{Program Magister Informatika} \\
+\textit{[Nama Perguruan Tinggi]}\\
+{[Kota]}, Indonesia \\
+{[email]}}}
+
+\maketitle
+
+\input{sections/00_abstrak}
+\input{sections/01_pendahuluan}
+\input{sections/02_tinjauan}
+\input{sections/03_metodologi}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references,regulasi}
+
+\end{document}

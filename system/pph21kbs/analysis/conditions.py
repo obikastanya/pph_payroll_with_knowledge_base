@@ -50,8 +50,9 @@ def _choose(pool, order):
     return sel, status
 
 
-def conditions(result, base, event, oracle=None):
-    """{condition: Delta or None}. oracle(delta) -> bool marks a candidate correct on S^E (AB4_perfect only)."""
+def conditions(result, base, event, oracle=None, policies=()):
+    """{condition: Delta or None}. oracle(delta) -> bool marks a candidate correct on S^E (AB4_perfect only);
+    policies: the policy document of a company-layer event, as in the pipeline's G3."""
     rel = (result.get("relevance") or {}).get("output") or None
     issued = event.issued
     cands = result.get("candidates") or []
@@ -60,9 +61,9 @@ def conditions(result, base, event, oracle=None):
     for c in cands:
         init_delta = c.get("initial_delta") or (c["delta"] if not c.get("repaired") else None)
         if init_delta is not None:
-            initial[c["n"]] = (init_delta,) + all_gates(base, init_delta, event, issued, rel)
+            initial[c["n"]] = (init_delta,) + all_gates(base, init_delta, event, issued, rel, policies)
         if c.get("delta") is not None:
-            final[c["n"]] = (c["delta"],) + all_gates(base, c["delta"], event, issued, rel)
+            final[c["n"]] = (c["delta"],) + all_gates(base, c["delta"], event, issued, rel, policies)
     out = {"proposed": result.get("delta") if result.get("status") in ("applied", "empty") else None}
     if result.get("status") == "empty":
         for k in ("B3", "B4", "AB3_noG5", "AB3_noG4", "AB3_norepair", "AB4_first", "AB4_consensus", "AB4_perfect"):

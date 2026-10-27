@@ -47,7 +47,7 @@ def main():
         if args.conditions and res.get("candidates"):
             from pph21kbs.analysis.conditions import conditions
             conds = conditions(res, base, ev, oracle=lambda d: score_update(base, d, ev, tuples, cases).outcome
-                               == "benar")
+                               == "benar", policies=(ev.document,) if ev.layer == "company" else ())
         for name, delta in conds.items():
             s = score_update(base, delta, ev, tuples, cases) if delta is not None else None
             outcome = s.outcome if s else "abstain"

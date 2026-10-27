@@ -97,8 +97,9 @@ def main():
         k_star_prev = build_gold.prefix_at(chain, (ev.issued - timedelta(days=1)).isoformat())
         k_star = chain.until(gold.delta_id) if gold else build_gold.prefix_at(chain, ev.issued.isoformat())
         h_n = wrong_set(k_sis, f"prev-{ev.id}", k_star_prev, cases, ev.issued - timedelta(days=1), oracle)
-        iso_path = ROOT / "experiments" / args.iso / "results" / f"{ev.id}.json"
-        iso = json.loads(iso_path.read_text(encoding="utf-8")) if iso_path.exists() else None
+        iso_paths = [ROOT / "experiments" / r / "results" / f"{ev.id}.json" for r in args.iso.split(",")]
+        iso_path = next((x for x in iso_paths if x.exists()), None)
+        iso = json.loads(iso_path.read_text(encoding="utf-8")) if iso_path else None
         iso_delta = iso.get("delta") if iso and iso.get("status") in ("applied", "empty") else None
         source = "isolated"
         delta = iso_delta

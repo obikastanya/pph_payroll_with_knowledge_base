@@ -362,3 +362,52 @@ Uji `system/tests/test_analysis.py` (7): nilai acuan pustaka (Clopper–Pearson,
 
 - Bagian VI (rencana analisis): daftar uji di atas sesuai tabel uji *skeleton*; semua alat diuji sebelum data uji dibuka.
 - Bagian VII (B1): tabel di atas sebagai pembanding biaya pemeliharaan; kesimpulan hanya deskriptif (lima repositori).
+
+---
+
+## Tahap 11. Kalibrasi pada data pengembangan dan pembekuan
+
+Dikerjakan 2026-10-28 00:40–01:50 WIB. Hanya peristiwa pengembangan yang pernah dikirim ke LLM: D01, D05, FR01, PKB Koja
+(diperiksa dari semua `experiments/*/calls.jsonl` sebelum pembekuan).
+
+### Jalan kalibrasi
+
+| Jalan | Peristiwa | $m$ | Hasil | Biaya USD |
+|---|---|---|---|---|
+| `kalibrasi-1` | D05 (PMK 23/2020, DTP COVID) | 3 | *abstain*: ketiga kandidat ditolak G5 (subjek KLU); sesudah perbaikan gerbang ketiganya lolos tetapi salah 2–3 dari 363 tupel $S^E$ pengembangan (tanpa NPWP masih DTP; bulan THR pegawai keluar; DTP *employer-borne* bulan THR) | 0,62 |
+| `kalibrasi-1` | FR01 (TER fiktif) | 3 | diterapkan; ketiga kandidat lolos dan benar pada 454 tupel (peristiwa fiktif: tidak mungkin dihafal) | 0,71 |
+| `kalibrasi-1` | PKB Koja | 3 | relevansi "tidak relevan": teks yang terpilih hanya pembuka (segmentasi gagal) | 0,04 |
+| `kalibrasi-2` | PKB Koja | 1 | sesudah segmentasi diperbaiki: relevan; kandidat lolos sesudah perbaikan (G2 tarif 127/10000, lalu G5 tanggal 2012) tetapi berbeda dari emas di semua kasus $S^G$ (7 unsur vs 17: definisi upah dasar memakai komponen yang tidak ada, faktor upah ditahan, pembayaran tahunan, bonus proporsional terlewat) | 0,60 |
+
+Total LLM sampai pembekuan: USD 2,29 dari 15. Uji Batch API sebelumnya: dua *batch* dibatalkan tanpa satu permintaan pun
+diproses dalam 20–33 menit (biaya nol).
+
+### Perubahan alur dari kalibrasi (sebelum pembekuan)
+
+1. G5 subjek KLU: hanya kode lima digit yang disebut yang diperiksa.
+2. `build_texts.segment`: judul pasal bertajuk khusus PKB; Koja 1 → 137 segmen, Centex 2 → 56, Taekwang 2 → 91, AVCO
+   150 → 263. Regulasi tidak berubah (pola longgar memecah "PASAL 25" di tabel).
+3. G5 tanggal mulai sebelum 2013 diperiksa pada Januari 2013 (batas cakupan $S^G$).
+4. G2: tarif tertulis sebagai bilangan bulat per pangkat sepuluh.
+5. Relevansi tanpa *cache*; dokumen nyata sinkron (*cache* membuat draf ke-2 dan seterusnya setara harga *batch*),
+   pengecoh lewat *batch*.
+6. Konverter menolak draf kosong untuk dokumen yang dinilai relevan; uji `BatchDispatcher` dengan API tiruan.
+
+### Ukuran
+
+- *pass@1* kalibrasi 3/6 (kandidat benar pada $S^E$ pengembangan); Koja tidak punya $S^E$.
+- Token: sebagian besar keluaran adalah penalaran (rasio karakter JSON per token 1,1–1,5); draf D05 3,3 ribu token
+  keluaran, FR01 10 ribu, Koja 6,7 ribu.
+- Daya H2b: efek minimum ~0,45 (`docs/PRAREGISTRASI.md` §9).
+
+### Keputusan alokasi
+
+$m = 3$ regulasi uji, $m = 2$ PKB uji, pengecoh hanya relevansi lewat *batch*; kebijakan buatan, kontrafaktual, dan
+model kedua hanya dari sisa anggaran. Rinciannya di pra-registrasi §8.
+
+### Bahan paper
+
+- Bagian VI (kalibrasi): tabel di atas; setiap perubahan alur berasal dari data pengembangan.
+- Diskusi: kandidat yang lolos semua gerbang tetapi salah perilaku sudah muncul di pengembangan (D05, Koja). Gerbang
+  memeriksa konsistensi dengan dokumen dan non-vakuitas, bukan kelengkapan.
+- Keterbatasan: anggaran memaksa $m$ lebih kecil dari rancangan dan menghapus ablasi serta model kedua.

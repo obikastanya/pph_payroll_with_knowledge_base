@@ -212,6 +212,9 @@ def _grounded(value, quotes_norm, numbers=None):
     v = abs(v)
     if v in rates or v in ints:
         return True
+    if v.denominator == 1 and (v in (100, 10000) or any(
+            Fraction(v, 10 ** k) in rates or Fraction(v, 10 ** k) / 100 in rates for k in range(1, 5))):
+        return True                    # a written rate as integer over a power of ten: 1,27% -> 127 / 10000
     if v.denominator == 1:
         g = sorted(ints)
         for b in g:
@@ -592,6 +595,8 @@ def g5(base, kb2, delta, sgset, evals, starts, relevance=None):
         except ValueError:
             eff = None
         if eff:
+            from .sg import YEARS      # S^G covers these tax years; an earlier start shows from the first covered month
+            eff = max(eff, date(YEARS[0], 1, 1))
             hit = False
             for i in changed:
                 case = sgset.cases[i]

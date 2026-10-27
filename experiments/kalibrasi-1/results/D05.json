@@ -1,0 +1,1251 @@
+{
+ "run": "kalibrasi-1",
+ "event": "D05",
+ "condition": "proposed",
+ "documents": [
+  "PMK-23-PMK-03-2020"
+ ],
+ "selection": {
+  "PMK-23-PMK-03-2020": {
+   "tokens": 6442,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated subject KLU KLU codes listed in Lampiran A (440 codes, manufacturing sectors) is not reflected in a changed S^G case"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated subject KLU KLU codes listed in Lampiran A (440 codes, manufacturing sectors) is not reflected in a changed S^G case"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2020",
+      "label": "business classification codes eligible for PPh 21 DTP (PMK 23/2020)",
+      "label_id": "kode KLU penerima insentif PPh Pasal 21 DTP",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "recorded_on": "2020-03-23",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PMK-23-PMK-03-2020/LAMPIRAN-A\", \"columns\": {\"key\": \"klu\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 1",
+        "page": 6,
+        "quote": "memiliki kode Klasifikasi Lapangan Usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini"
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "page": 7,
+        "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_GROSS_LIMIT.2020",
+      "label": "annualised regular gross income limit for PPh 21 DTP",
+      "label_id": "batas penghasilan bruto teratur disetahunkan untuk PPh Pasal 21 DTP",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "recorded_on": "2020-03-23",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_gross_limit"
+       },
+       {
+        "name": "value",
+        "value": "200000000"
+       },
+       {
+        "name": "value_type",
+        "value": "money"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf c",
+        "page": 6,
+        "quote": "Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000 . 000,00 (dua ratus juta rupiah)"
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "page": 7,
+        "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.PMK23_2020",
+      "label": "PPh 21 borne by the government for eligible employees (COVID-19, PMK 23/2020)",
+      "label_id": "PPh Pasal 21 ditanggung Pemerintah bagi pegawai yang memenuhi kriteria (PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "recorded_on": "2020-03-23",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_dtp"
+       },
+       {
+        "name": "condition",
+        "value": "(in_table('dtp_klu', employer('klu')) or employer('kite') == True) and employee('has_npwp') != False and regular_gross * 12 <= param('dtp_gross_limit')"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, pph21_due)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1)",
+        "page": 6,
+        "quote": "Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000 . 000,00 (dua ratus juta rupiah), wajib dipotong PPh Pasal 21 setiap bulan oleh pemberi kerja dengan menerapkan tarif Pasal 17 ayat (1) huruf a Undang-Undang PPh."
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (2)",
+        "page": 6,
+        "quote": "Pajak Penghasilan yang dipotong PPh Pasal 21 sebagaimana dimaksud pada ayat (1), ditanggung Pemerintah."
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "page": 7,
+        "quote": "PPh Pasal 21 ditanggung Pemerintah sebagaimana dimaksud pada ayat (2) diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The DTP equals the full PPh 21 withheld for the month for employees of employers with a Lampiran A KLU (employer('klu')) or KITE status, with regular gross x 12 not above Rp200 million; NPWP is presumed held unless employee('has_npwp') is explicitly False, and the employer notification (Pasal 3) is assumed made. The DTP is paid in cash and is not taxable income, so gross income rules are unchanged."
+   },
+   "delta": {
+    "delta_id": "kalibrasi-1-D05-cand1",
+    "event_id": "D05",
+    "document": {
+     "id": "PMK-23-PMK-03-2020",
+     "title": "PMK 23/PMK.03/2020: Insentif pajak untuk wajib pajak terdampak COVID-19 (DTP PPh 21 pertama)",
+     "issued": "2020-03-23"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2020",
+      "recorded_on": "2020-03-23",
+      "label": "business classification codes eligible for PPh 21 DTP (PMK 23/2020)",
+      "label_id": "kode KLU penerima insentif PPh Pasal 21 DTP",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "name": "dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-23-PMK-03-2020/LAMPIRAN-A",
+       "columns": {
+        "key": "klu"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 1",
+        "quote": "memiliki kode Klasifikasi Lapangan Usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_GROSS_LIMIT.2020",
+      "recorded_on": "2020-03-23",
+      "label": "annualised regular gross income limit for PPh 21 DTP",
+      "label_id": "batas penghasilan bruto teratur disetahunkan untuk PPh Pasal 21 DTP",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "name": "dtp_gross_limit",
+      "value_type": "money",
+      "value": 200000000,
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf c",
+        "quote": "Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000 . 000,00 (dua ratus juta rupiah)",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.PMK23_2020",
+      "recorded_on": "2020-03-23",
+      "label": "PPh 21 borne by the government for eligible employees (COVID-19, PMK 23/2020)",
+      "label_id": "PPh Pasal 21 ditanggung Pemerintah bagi pegawai yang memenuhi kriteria (PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_dtp",
+      "condition": "(in_table('dtp_klu', employer('klu')) or employer('kite') == True) and employee('has_npwp') != False and regular_gross * 12 <= param('dtp_gross_limit')",
+      "expression": "max(0, pph21_due)",
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1)",
+        "quote": "Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000 . 000,00 (dua ratus juta rupiah), wajib dipotong PPh Pasal 21 setiap bulan oleh pemberi kerja dengan menerapkan tarif Pasal 17 ayat (1) huruf a Undang-Undang PPh.",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (2)",
+        "quote": "Pajak Penghasilan yang dipotong PPh Pasal 21 sebagaimana dimaksud pada ayat (1), ditanggung Pemerintah.",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "PPh Pasal 21 ditanggung Pemerintah sebagaimana dimaksud pada ayat (2) diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The DTP equals the full PPh 21 withheld for the month for employees of employers with a Lampiran A KLU (employer('klu')) or KITE status, with regular gross x 12 not above Rp200 million; NPWP is presumed held unless employee('has_npwp') is explicitly False, and the employer notification (Pasal 3) is assumed made. The DTP is paid in cash and is not taxable income, so gross income rules are unchanged."
+   },
+   "initial_delta": {
+    "delta_id": "kalibrasi-1-D05-cand1",
+    "event_id": "D05",
+    "document": {
+     "id": "PMK-23-PMK-03-2020",
+     "title": "PMK 23/PMK.03/2020: Insentif pajak untuk wajib pajak terdampak COVID-19 (DTP PPh 21 pertama)",
+     "issued": "2020-03-23"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2020",
+      "recorded_on": "2020-03-23",
+      "label": "business classification codes eligible for PPh 21 DTP (PMK 23/2020)",
+      "label_id": "kode KLU penerima insentif PPh Pasal 21 DTP",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "name": "dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-23-PMK-03-2020/LAMPIRAN-A",
+       "columns": {
+        "key": "klu"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 1",
+        "quote": "memiliki kode Klasifikasi Lapangan Usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_GROSS_LIMIT.2020",
+      "recorded_on": "2020-03-23",
+      "label": "annualised regular gross income limit for PPh 21 DTP",
+      "label_id": "batas penghasilan bruto teratur disetahunkan untuk PPh Pasal 21 DTP",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "name": "dtp_gross_limit",
+      "value_type": "money",
+      "value": 200000000,
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf c",
+        "quote": "Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000 . 000,00 (dua ratus juta rupiah)",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.PMK23_2020",
+      "recorded_on": "2020-03-23",
+      "label": "PPh 21 borne by the government for eligible employees (COVID-19, PMK 23/2020)",
+      "label_id": "PPh Pasal 21 ditanggung Pemerintah bagi pegawai yang memenuhi kriteria (PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_dtp",
+      "condition": "(in_table('dtp_klu', employer('klu')) or employer('kite') == True) and employee('has_npwp') == True and regular_gross * 12 <= param('dtp_gross_limit')",
+      "expression": "max(0, pph21_due)",
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1)",
+        "quote": "Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000 . 000,00 (dua ratus juta rupiah), wajib dipotong PPh Pasal 21 setiap bulan oleh pemberi kerja dengan menerapkan tarif Pasal 17 ayat (1) huruf a Undang-Undang PPh.",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (2)",
+        "quote": "Pajak Penghasilan yang dipotong PPh Pasal 21 sebagaimana dimaksud pada ayat (1), ditanggung Pemerintah.",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "PPh Pasal 21 ditanggung Pemerintah sebagaimana dimaksud pada ayat (2) diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The DTP equals the full PPh 21 withheld for the month for employees of employers with a Lampiran A KLU (as reported in the 2018 annual return, read from employer('klu')) or KITE status, with NPWP and regular gross x 12 not above Rp200 million; the employer notification requirement (Pasal 3) is assumed satisfied when the employer attributes are set. The DTP is paid in cash and is not taxable income, so gross income rules are unchanged."
+   }
+  },
+  {
+   "n": 2,
+   "order": 2,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated subject KLU KLU codes listed in Lampiran A (440 codes, manufacturing sectors) is not reflected in a changed S^G case"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "fail: TAB.DTP_KLU.2020: no effect on any S^G case (vacuous element); PAR.DTP_INCOME_LIMIT.2020: no effect on any S^G case (vacuous element); REG.DTP.PMK23_2020: no effect on any S^G case (vacuous element); stated effective date 2020-04-01 is not reflected: no S^G case changes in that month; stated subject KLU KLU codes listed in Lampiran A (440 codes, manufacturing sectors) is not reflected in a changed S^G case"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2020",
+      "label": "business classification codes eligible for PPh 21 DTP (PMK 23/2020 Annex A)",
+      "label_id": "kode KLU penerima insentif PPh Pasal 21 DTP (Lampiran huruf A PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "recorded_on": "2020-03-23",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PMK-23-PMK-03-2020/LAMPIRAN-A\", \"columns\": {\"key\": \"klu\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 1",
+        "page": 6,
+        "quote": "memiliki kode Klasifikasi Lapangan Usaha\nsebagaimana tercantum dalam Lampiran huruf\nA yang merupakan bagian tidak terpisahkan\ndari Peraturan Menteri ini"
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "page": 7,
+        "quote": "diberikan sejak Masa Pajak\nApril 2020 sampai dengan Masa Pajak September 2020."
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_INCOME_LIMIT.2020",
+      "label": "annualised regular gross income limit for PPh 21 DTP",
+      "label_id": "batas penghasilan bruto teratur disetahunkan untuk PPh Pasal 21 DTP",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "recorded_on": "2020-03-23",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_income_limit"
+       },
+       {
+        "name": "value",
+        "value": "200000000"
+       },
+       {
+        "name": "value_type",
+        "value": "money"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf c",
+        "page": 6,
+        "quote": "memperoleh Penghasilan Bruto yang bersifat tetap\ndan teratur yang disetahunkan tidak lebih dari\nRp200.000 . 000,00 (dua ratus juta rupiah)"
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "page": 7,
+        "quote": "diberikan sejak Masa Pajak\nApril 2020 sampai dengan Masa Pajak September 2020."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.PMK23_2020",
+      "label": "PPh 21 borne by the government for eligible employees (PMK 23/2020)",
+      "label_id": "PPh Pasal 21 ditanggung pemerintah bagi pegawai yang memenuhi kriteria (PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "recorded_on": "2020-03-23",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_dtp"
+       },
+       {
+        "name": "condition",
+        "value": "(in_table('dtp_klu', employer('klu')) or employer('kite') == True) and employee('has_npwp') != False and regular_gross * 12 <= param('dtp_income_limit')"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, pph21_due)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1)",
+        "page": 6,
+        "quote": "wajib dipotong PPh Pasal 21 setiap bulan oleh pemberi\nkerja dengan menerapkan tarif Pasal 17 ayat (1) huruf a\nUndang-Undang PPh."
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 2 dan huruf b",
+        "page": 6,
+        "quote": "telah ditetapkan sebagai Perusahaan KITE;\nb. memiliki NPWP; dan"
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (2)",
+        "page": 6,
+        "quote": "Pajak Penghasilan yang dipotong PPh Pasal 21\nsebagaimana dimaksud pada ayat (1), ditanggung\nPemerintah."
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "page": 7,
+        "quote": "diberikan sejak Masa Pajak\nApril 2020 sampai dengan Masa Pajak September 2020."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The DTP is modelled as a mandatory regulation rule for eligible employers (KLU in Lampiran A or KITE), employees with NPWP (assumed present unless the case says otherwise) and annualised regular gross (regular_gross x 12) of at most Rp200.000.000; the notification under Pasal 3 is treated as an administrative step. The DTP equals the PPh 21 withheld and is not added to gross income (Pasal 2 ayat (5))."
+   },
+   "delta": {
+    "delta_id": "kalibrasi-1-D05-cand2",
+    "event_id": "D05",
+    "document": {
+     "id": "PMK-23-PMK-03-2020",
+     "title": "PMK 23/PMK.03/2020: Insentif pajak untuk wajib pajak terdampak COVID-19 (DTP PPh 21 pertama)",
+     "issued": "2020-03-23"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2020",
+      "recorded_on": "2020-03-23",
+      "label": "business classification codes eligible for PPh 21 DTP (PMK 23/2020 Annex A)",
+      "label_id": "kode KLU penerima insentif PPh Pasal 21 DTP (Lampiran huruf A PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "name": "dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-23-PMK-03-2020/LAMPIRAN-A",
+       "columns": {
+        "key": "klu"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 1",
+        "quote": "memiliki kode Klasifikasi Lapangan Usaha\nsebagaimana tercantum dalam Lampiran huruf\nA yang merupakan bagian tidak terpisahkan\ndari Peraturan Menteri ini",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "diberikan sejak Masa Pajak\nApril 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_INCOME_LIMIT.2020",
+      "recorded_on": "2020-03-23",
+      "label": "annualised regular gross income limit for PPh 21 DTP",
+      "label_id": "batas penghasilan bruto teratur disetahunkan untuk PPh Pasal 21 DTP",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "name": "dtp_income_limit",
+      "value_type": "money",
+      "value": 200000000,
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf c",
+        "quote": "memperoleh Penghasilan Bruto yang bersifat tetap\ndan teratur yang disetahunkan tidak lebih dari\nRp200.000 . 000,00 (dua ratus juta rupiah)",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "diberikan sejak Masa Pajak\nApril 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.PMK23_2020",
+      "recorded_on": "2020-03-23",
+      "label": "PPh 21 borne by the government for eligible employees (PMK 23/2020)",
+      "label_id": "PPh Pasal 21 ditanggung pemerintah bagi pegawai yang memenuhi kriteria (PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_dtp",
+      "condition": "(in_table('dtp_klu', employer('klu')) or employer('kite') == True) and employee('has_npwp') != False and regular_gross * 12 <= param('dtp_income_limit')",
+      "expression": "max(0, pph21_due)",
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1)",
+        "quote": "wajib dipotong PPh Pasal 21 setiap bulan oleh pemberi\nkerja dengan menerapkan tarif Pasal 17 ayat (1) huruf a\nUndang-Undang PPh.",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 2 dan huruf b",
+        "quote": "telah ditetapkan sebagai Perusahaan KITE;\nb. memiliki NPWP; dan",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (2)",
+        "quote": "Pajak Penghasilan yang dipotong PPh Pasal 21\nsebagaimana dimaksud pada ayat (1), ditanggung\nPemerintah.",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "diberikan sejak Masa Pajak\nApril 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The DTP is modelled as a mandatory regulation rule for eligible employers (KLU in Lampiran A or KITE), employees with NPWP (assumed present unless the case says otherwise) and annualised regular gross (regular_gross x 12) of at most Rp200.000.000; the notification under Pasal 3 is treated as an administrative step. The DTP equals the PPh 21 withheld and is not added to gross income (Pasal 2 ayat (5))."
+   },
+   "initial_delta": {
+    "delta_id": "kalibrasi-1-D05-cand2",
+    "event_id": "D05",
+    "document": {
+     "id": "PMK-23-PMK-03-2020",
+     "title": "PMK 23/PMK.03/2020: Insentif pajak untuk wajib pajak terdampak COVID-19 (DTP PPh 21 pertama)",
+     "issued": "2020-03-23"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2020",
+      "recorded_on": "2020-03-23",
+      "label": "business classification codes eligible for PPh 21 DTP (PMK 23/2020 Annex A)",
+      "label_id": "kode KLU penerima insentif PPh Pasal 21 DTP (Lampiran huruf A PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "name": "dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-23-PMK-03-2020/LAMPIRAN-A",
+       "columns": {
+        "key": "klu"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 1",
+        "quote": "memiliki kode Klasifikasi Lapangan Usaha\nsebagaimana tercantum dalam Lampiran huruf\nA yang merupakan bagian tidak terpisahkan\ndari Peraturan Menteri ini",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "diberikan sejak Masa Pajak\nApril 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_INCOME_LIMIT.2020",
+      "recorded_on": "2020-03-23",
+      "label": "annualised regular gross income limit for PPh 21 DTP",
+      "label_id": "batas penghasilan bruto teratur disetahunkan untuk PPh Pasal 21 DTP",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "name": "dtp_income_limit",
+      "value_type": "money",
+      "value": 200000000,
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf c",
+        "quote": "memperoleh Penghasilan Bruto yang bersifat tetap\ndan teratur yang disetahunkan tidak lebih dari\nRp200.000 . 000,00 (dua ratus juta rupiah)",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "diberikan sejak Masa Pajak\nApril 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.PMK23_2020",
+      "recorded_on": "2020-03-23",
+      "label": "PPh 21 borne by the government for eligible employees (PMK 23/2020)",
+      "label_id": "PPh Pasal 21 ditanggung pemerintah bagi pegawai yang memenuhi kriteria (PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "layer": "regulation",
+      "modality": "optional",
+      "scope": "period",
+      "produces": "pph21_dtp",
+      "condition": "(in_table('dtp_klu', employer('klu')) or employer('kite') == True) and employee('has_npwp') == True and regular_gross * 12 <= param('dtp_income_limit')",
+      "expression": "max(0, pph21_due)",
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1)",
+        "quote": "wajib dipotong PPh Pasal 21 setiap bulan oleh pemberi\nkerja dengan menerapkan tarif Pasal 17 ayat (1) huruf a\nUndang-Undang PPh.",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 2 dan huruf b",
+        "quote": "telah ditetapkan sebagai Perusahaan KITE;\nb. memiliki NPWP; dan",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (2)",
+        "quote": "Pajak Penghasilan yang dipotong PPh Pasal 21\nsebagaimana dimaksud pada ayat (1), ditanggung\nPemerintah.",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "diberikan sejak Masa Pajak\nApril 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 3 ayat (1)",
+        "quote": "Pemanfaatan insentif PPh Pasal 21 ditanggung\nPemerintah sebagaimana dimaksud dalam Pasal 2\nayat (2) dilakukan dengan menyampaikan pemberitahuan\nsecara tertulis oleh pemberi kexja kepada Kepala KPP",
+        "page": 7
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The DTP is modelled as an optional regulation rule because the employer must notify the tax office to use it (Pasal 3); eligibility uses employer attributes klu/kite, employee attribute has_npwp and regular_gross x 12 as annualised regular gross. The DTP equals the PPh 21 withheld; it is not added to gross income (Pasal 2 ayat (5)) and is already paid out via the existing take-home-pay rule."
+   }
+  },
+  {
+   "n": 3,
+   "order": 0,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated subject KLU KLU codes listed in Lampiran A (440 codes, manufacturing sectors) is not reflected in a changed S^G case"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "fail: TAB.DTP_KLU.2020: no effect on any S^G case (vacuous element); PAR.DTP_GROSS_LIMIT.2020: no effect on any S^G case (vacuous element); REG.DTP.PMK23: no effect on any S^G case (vacuous element); stated effective date 2020-04-01 is not reflected: no S^G case changes in that month; stated subject KLU KLU codes listed in Lampiran A (440 codes, manufacturing sectors) is not reflected in a changed S^G case"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2020",
+      "label": "business classification codes eligible for PPh 21 DTP (PMK 23/2020)",
+      "label_id": "kode KLU penerima insentif PPh Pasal 21 DTP (PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "recorded_on": "2020-03-23",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PMK-23-PMK-03-2020/LAMPIRAN-A\", \"columns\": {\"key\": \"klu\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 1",
+        "page": 6,
+        "quote": "memiliki kode Klasifikasi Lapangan Usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini"
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "page": 7,
+        "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_GROSS_LIMIT.2020",
+      "label": "annualised regular gross income limit for PPh 21 DTP",
+      "label_id": "batas penghasilan bruto tetap dan teratur disetahunkan untuk PPh Pasal 21 DTP",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "recorded_on": "2020-03-23",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_gross_limit"
+       },
+       {
+        "name": "value",
+        "value": "200000000"
+       },
+       {
+        "name": "value_type",
+        "value": "money"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf c",
+        "page": 6,
+        "quote": "memperoleh Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000 . 000,00 (dua ratus juta rupiah)"
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "page": 7,
+        "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.PMK23",
+      "label": "PPh 21 borne by the government for eligible employees (PMK 23/2020)",
+      "label_id": "PPh Pasal 21 ditanggung Pemerintah bagi pegawai yang memenuhi kriteria (PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "recorded_on": "2020-03-23",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_dtp"
+       },
+       {
+        "name": "condition",
+        "value": "(in_table('dtp_klu', employer('klu')) or employer('kite') == True) and employee('has_npwp') != False and regular_gross * 12 <= param('dtp_gross_limit')"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, pph21_due)"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.DEFAULT.DTP"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 2 dan huruf b",
+        "page": 6,
+        "quote": "telah ditetapkan sebagai Perusahaan KITE; b. memiliki NPWP; dan"
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (2)",
+        "page": 6,
+        "quote": "Pajak Penghasilan yang dipotong PPh Pasal 21 sebagaimana dimaksud pada ayat (1), ditanggung Pemerintah."
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "page": 7,
+        "quote": "PPh Pasal 21 ditanggung Pemerintah sebagaimana dimaksud pada ayat (2) diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The DTP equals the full PPh 21 withheld for the month for employees of employers with a Lampiran A KLU code or KITE status, with NPWP (assumed present unless the case says otherwise) and regular gross x 12 not above Rp200 million; it is modelled as a mandatory regulation rule from the April 2020 period, treating the written notification of Pasal 3 as an administrative step not modelled."
+   },
+   "delta": {
+    "delta_id": "kalibrasi-1-D05-cand3",
+    "event_id": "D05",
+    "document": {
+     "id": "PMK-23-PMK-03-2020",
+     "title": "PMK 23/PMK.03/2020: Insentif pajak untuk wajib pajak terdampak COVID-19 (DTP PPh 21 pertama)",
+     "issued": "2020-03-23"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2020",
+      "recorded_on": "2020-03-23",
+      "label": "business classification codes eligible for PPh 21 DTP (PMK 23/2020)",
+      "label_id": "kode KLU penerima insentif PPh Pasal 21 DTP (PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "name": "dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-23-PMK-03-2020/LAMPIRAN-A",
+       "columns": {
+        "key": "klu"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 1",
+        "quote": "memiliki kode Klasifikasi Lapangan Usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_GROSS_LIMIT.2020",
+      "recorded_on": "2020-03-23",
+      "label": "annualised regular gross income limit for PPh 21 DTP",
+      "label_id": "batas penghasilan bruto tetap dan teratur disetahunkan untuk PPh Pasal 21 DTP",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "name": "dtp_gross_limit",
+      "value_type": "money",
+      "value": 200000000,
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf c",
+        "quote": "memperoleh Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000 . 000,00 (dua ratus juta rupiah)",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.PMK23",
+      "recorded_on": "2020-03-23",
+      "label": "PPh 21 borne by the government for eligible employees (PMK 23/2020)",
+      "label_id": "PPh Pasal 21 ditanggung Pemerintah bagi pegawai yang memenuhi kriteria (PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_dtp",
+      "condition": "(in_table('dtp_klu', employer('klu')) or employer('kite') == True) and employee('has_npwp') != False and regular_gross * 12 <= param('dtp_gross_limit')",
+      "expression": "max(0, pph21_due)",
+      "overrides": [
+       "REG.DEFAULT.DTP"
+      ],
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 2 dan huruf b",
+        "quote": "telah ditetapkan sebagai Perusahaan KITE; b. memiliki NPWP; dan",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (2)",
+        "quote": "Pajak Penghasilan yang dipotong PPh Pasal 21 sebagaimana dimaksud pada ayat (1), ditanggung Pemerintah.",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "PPh Pasal 21 ditanggung Pemerintah sebagaimana dimaksud pada ayat (2) diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The DTP equals the full PPh 21 withheld for the month for employees of employers with a Lampiran A KLU code or KITE status, with NPWP (assumed present unless the case says otherwise) and regular gross x 12 not above Rp200 million; it is modelled as a mandatory regulation rule from the April 2020 period, treating the written notification of Pasal 3 as an administrative step not modelled."
+   },
+   "initial_delta": {
+    "delta_id": "kalibrasi-1-D05-cand3",
+    "event_id": "D05",
+    "document": {
+     "id": "PMK-23-PMK-03-2020",
+     "title": "PMK 23/PMK.03/2020: Insentif pajak untuk wajib pajak terdampak COVID-19 (DTP PPh 21 pertama)",
+     "issued": "2020-03-23"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2020",
+      "recorded_on": "2020-03-23",
+      "label": "business classification codes eligible for PPh 21 DTP (PMK 23/2020)",
+      "label_id": "kode KLU penerima insentif PPh Pasal 21 DTP (PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "name": "dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-23-PMK-03-2020/LAMPIRAN-A",
+       "columns": {
+        "key": "klu"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 1",
+        "quote": "memiliki kode Klasifikasi Lapangan Usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_GROSS_LIMIT.2020",
+      "recorded_on": "2020-03-23",
+      "label": "annualised regular gross income limit for PPh 21 DTP",
+      "label_id": "batas penghasilan bruto tetap dan teratur disetahunkan untuk PPh Pasal 21 DTP",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "name": "dtp_gross_limit",
+      "value_type": "money",
+      "value": 200000000,
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf c",
+        "quote": "memperoleh Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000 . 000,00 (dua ratus juta rupiah)",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.PMK23",
+      "recorded_on": "2020-03-23",
+      "label": "PPh 21 borne by the government for eligible employees (PMK 23/2020)",
+      "label_id": "PPh Pasal 21 ditanggung Pemerintah bagi pegawai yang memenuhi kriteria (PMK 23/2020)",
+      "valid_from": "2020-04-01",
+      "valid_until": "2020-09-30",
+      "layer": "regulation",
+      "modality": "optional",
+      "scope": "period",
+      "produces": "pph21_dtp",
+      "condition": "(in_table('dtp_klu', employer('klu')) or employer('kite') == True) and employee('has_npwp') == True and regular_gross * 12 <= param('dtp_gross_limit')",
+      "expression": "max(0, pph21_due)",
+      "overrides": [
+       "REG.DEFAULT.DTP"
+      ],
+      "source": [
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (1) huruf a angka 2 dan huruf b",
+        "quote": "telah ditetapkan sebagai Perusahaan KITE; b. memiliki NPWP; dan",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (2)",
+        "quote": "Pajak Penghasilan yang dipotong PPh Pasal 21 sebagaimana dimaksud pada ayat (1), ditanggung Pemerintah.",
+        "page": 6
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 2 ayat (6)",
+        "quote": "PPh Pasal 21 ditanggung Pemerintah sebagaimana dimaksud pada ayat (2) diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020.",
+        "page": 7
+       },
+       {
+        "document": "PMK-23-PMK-03-2020",
+        "provision": "Pasal 3 ayat (1)",
+        "quote": "Pemanfaatan insentif PPh Pasal 21 ditanggung Pemerintah sebagaimana dimaksud dalam Pasal 2 ayat (2) dilakukan dengan menyampaikan pemberitahuan secara tertulis",
+        "page": 7
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The DTP equals the full PPh 21 withheld for the month for employees of employers in Lampiran A KLU codes or KITE companies, with NPWP and regular gross x 12 not above Rp200 million; it is modelled as an optional regulation rule because use depends on the employer's written notification (Pasal 3), and it starts at the April 2020 period (notification-month start is not modelled). Pasal 2 ayat (5) needs no change since pph21_dtp is not part of taxable income in the KB."
+   }
+  }
+ ],
+ "groups": [],
+ "selected": null,
+ "status": "abstain",
+ "delta": null,
+ "cost_usd": 0.617196,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "Introduces a government-borne (DTP) PPh 21 facility for employees of employers in listed KLU codes (Lampiran A) or KITE companies, with NPWP and annualized regular gross income up to Rp200 million, for tax periods April–September 2020. The DTP amount is paid in cash to the employee and is not counted as taxable income. This changes the PPh 21 calculation for permanent employees.",
+   "quotes": [
+    {
+     "provision": "Pasal 2 ayat (1)",
+     "quote": "memperoleh Penghasilan Bruto yang bersifat tetap\ndan teratur yang disetahunkan tidak lebih dari\nRp200.000 . 000,00 (dua ratus juta rupiah),"
+    },
+    {
+     "provision": "Pasal 2 ayat (2)",
+     "quote": "Pajak Penghasilan yang dipotong PPh Pasal 21\nsebagaimana dimaksud pada ayat (1), ditanggung\nPemerintah."
+    },
+    {
+     "provision": "Pasal 2 ayat (5)",
+     "quote": "PPh Pasal 21 ditanggung Pemerintah yang diterima oleh\nPegawai sebagaimana dimaksud pada ayat (2) dari\npemberi kerja tidak diperhitungkan sebagai penghasilan\nyang dikenakan pajak."
+    },
+    {
+     "provision": "Pasal 2 ayat (6)",
+     "quote": "diberikan sejak Masa Pajak\nApril 2020 sampai dengan Masa Pajak September 2020."
+    }
+   ],
+   "effective_from": "2020-04-01",
+   "effective_from_quote": "diberikan sejak Masa Pajak\nApril 2020 sampai dengan Masa Pajak September 2020.",
+   "effective_until": "2020-09-30",
+   "effective_until_quote": "diberikan sejak Masa Pajak\nApril 2020 sampai dengan Masa Pajak September 2020.",
+   "subjects": [
+    {
+     "kind": "klu",
+     "value": "KLU codes listed in Lampiran A (440 codes, manufacturing sectors)",
+     "quote": "memiliki kode Klasifikasi Lapangan Usaha\nsebagaimana tercantum dalam Lampiran huruf\nA"
+    },
+    {
+     "kind": "employer_group",
+     "value": "Perusahaan KITE",
+     "quote": "telah ditetapkan sebagai Perusahaan KITE;"
+    },
+    {
+     "kind": "employee_group",
+     "value": "Employees with NPWP and annualized regular gross income up to Rp200 million",
+     "quote": "memperoleh Penghasilan Bruto yang bersifat tetap\ndan teratur yang disetahunkan tidak lebih dari\nRp200.000 . 000,00 (dua ratus juta rupiah),"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

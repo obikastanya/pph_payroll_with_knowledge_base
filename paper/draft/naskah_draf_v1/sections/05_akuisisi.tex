@@ -1,0 +1,144 @@
+% ============================================================================
+\section{Akuisisi pengetahuan inkremental berbantuan LLM}
+\label{sec:akuisisi}
+% ============================================================================
+
+Bagian ini mendefinisikan pembaruan dan adaptivitas secara operasional, lalu menjelaskan alur akuisisi yang menjaganya. Bagian ini menjadi dasar kontribusi K2 dan K3.
+
+\status{Rancangan. Prototipe \texttt{asisten\_kb/} baru dapat mengubah satu PDF peraturan menjadi rancangan berkas aturan lewat satu panggilan LLM dengan keluaran terstruktur, lalu memvalidasi bentuknya dengan \en{engine}. Prototipe ini baru diuji satu kali pada PDF peraturan fiktif. Penilaian relevansi, $m$ kandidat, gerbang G2 dan G5, generator $\SG$, konsensus perilaku, \en{abstain}, dan pencatat eksperimen belum dibangun (Tahap 9).}
+
+\subsection{Pembaruan dan adaptivitas}
+\label{subsec:adaptif}
+
+\begin{definisi}[Peristiwa perubahan]
+\label{def:peristiwa}
+Peristiwa perubahan adalah $\epsilon = \langle d, t_{\mathit{terbit}}, t_{\mathit{berlaku}}, \tau \rangle$, yang terdiri atas dokumen sumber $d$, tanggal terbit, tanggal mulai berlaku, dan jenis perubahan $\tau$ menurut Tabel~\ref{tab:jenis}. Peristiwa berlaku surut bila $t_{\mathit{berlaku}} < t_{\mathit{terbit}}$. Rangkaian $\epsilon_1, \dots, \epsilon_N$ diurutkan menurut $t_{\mathit{terbit}}$.
+\end{definisi}
+
+\begin{definisi}[Pembaruan]
+\label{def:pembaruan}
+Pembaruan adalah $\Delta = \langle \Delta^{+}, \Delta^{\sim}, \Delta^{-} \rangle$, yang berisi unsur yang ditambah, diubah, dan dicabut, dengan $\K' = \K \oplus \Delta$. Pembaruan emas $\Delta^{\emas}_n$ disusun peneliti untuk peristiwa $\epsilon_n$ dan memenuhi $\K^{\emas}_n = \K^{\emas}_{n-1} \oplus \Delta^{\emas}_n$. Pembaruan dari alur akuisisi ditulis $\hat{\Delta}_n$. Pembaruan kosong ($\Delta = \langle \emptyset, \emptyset, \emptyset \rangle$) adalah jawaban yang benar untuk dokumen yang tidak mengubah perhitungan.
+\end{definisi}
+
+\begin{definisi}[Syarat adaptif]
+\label{def:syarat}
+Untuk $\K' = \K \oplus \Delta$ yang menanggapi peristiwa $\epsilon$, dan himpunan kasus $S$, syaratnya adalah sebagai berikut.
+\begin{itemize}[leftmargin=3.4em,labelsep=0.4em,nosep]
+  \item[(A1)] Invariansi kode. Kode \en{engine} tidak berubah.
+  \item[(A2)] Kesesuaian. $\hasil(\K', x, t, \omega) = \hasil(\K^{\emas}, x, t, \omega)$ untuk setiap $x \in S$, $t \geq t_{\mathit{berlaku}}$, dan $\omega \geq t_{\mathit{terbit}}$.
+  \item[(A3$_t$)] Isolasi masa. Hasil untuk $t < t_{\mathit{berlaku}}$ tidak berubah, untuk semua $\omega$.
+  \item[(A3$_\omega$)] Isolasi pengetahuan. Hasil untuk $\omega < t_{\mathit{terbit}}$ tidak berubah.
+  \item[(A4)] Konsistensi lintas lapis. Setiap kebijakan perusahaan yang berkonflik dengan aturan wajib di $\K'$ dilaporkan.
+\end{itemize}
+\end{definisi}
+
+\begin{definisi}[Adaptivitas representasional]
+\label{def:adapt-rep}
+Representasi adaptif terhadap $\epsilon$ bila \emph{ada} $\Delta$ dalam bahasa representasi yang memenuhi A1--A4. Ini sifat representasi. Peneliti membuktikannya untuk setiap peristiwa dengan menyusun $\Delta^{\emas}$ (RQ1).
+\end{definisi}
+
+\begin{definisi}[Adaptivitas operasional]
+\label{def:adapt-op}
+Sistem adaptif secara operasional terhadap $\epsilon$ bila pembaruan $\hat{\Delta}$ yang \emph{dipilih alur akuisisi} memenuhi A2, A3$_t$, dan A4 pada himpunan kasus evaluasi $\SE$. Ini sifat alur akuisisi dan diukur sebagai laju atas peristiwa (RQ2, RQ3).
+\end{definisi}
+
+Dua syarat berlaku karena arsitekturnya. A1 berlaku karena LLM hanya menyunting \en{knowledge base} dan tidak pernah menyentuh kode \en{engine}. A3$_\omega$ berlaku karena konstruksi bila setiap unsur baru dicatat dengan $t_c = t_{\mathit{terbit}}$, sebab $\hasil$ untuk $\omega < t_c$ tidak melihat unsur itu. Karena itu kedua syarat diperiksa sebagai invarian, bukan diuji sebagai hipotesis. Syarat yang bergantung pada LLM, yaitu A2, A3$_t$, dan A4, adalah yang diuji.
+
+\definisikan{Semantik berlaku surut menurut mekanisme hukumnya. Untuk PMK 10/2025, harus ditetapkan bagaimana PPh 21 masa Januari 2025, yang dipotong sebelum PMK itu terbit, diselesaikan, misalnya lewat pembayaran tunai DTP atau perhitungan ulang di masa pajak terakhir, bukan dengan menghitung ulang potongan bulan yang sudah lewat. Nilai \emph{sebagaimana seharusnya} untuk $t < t_{\mathit{terbit}}$ mengikuti mekanisme itu. Tanpa definisi ini, \en{ground truth} untuk peristiwa berlaku surut tidak terdefinisi.}
+
+\subsection{Alur akuisisi}
+\label{subsec:alur}
+
+Gambar~\ref{fig:alur} menunjukkan delapan tahap alur akuisisi. Pertama, sistem memotong dokumen per pasal. Kedua, LLM menilai apakah dokumen mengubah perhitungan PPh 21 pegawai tetap, dan menyertakan kutipan teks pendukung. Bila dokumen dinilai tidak relevan dan kutipannya lolos G2, sistem menerapkan pembaruan kosong dan berhenti. Ketiga, sistem menyusun konteks dari bagian graf yang relevan, yaitu aturan, fakta, dan parameter yang disebut atau disentuh dokumen. Keempat, LLM menyusun $m$ kandidat $\Delta$ secara independen, dan setiap unsurnya disertai kutipan sumber. Kelima, setiap kandidat melewati gerbang G1--G5. Kandidat yang gagal mendapat umpan balik dari gerbang dan boleh diperbaiki dalam jumlah putaran terbatas. Keenam, sistem memilih satu kandidat lewat konsensus perilaku, atau \en{abstain} bila tidak ada kandidat yang lolos. Ketujuh, peninjau manusia memeriksa pembaruan dengan bantuan laporan dampak. Kedelapan, pembaruan berlaku sebagai versi baru \en{knowledge base}.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  node distance=3mm,
+  tahap/.style={draw=black!70, rounded corners=2pt, align=left, text width=44mm, minimum height=6mm, fill=white},
+  llm/.style={tahap, fill=violet!7},
+  grb/.style={tahap, fill=teal!8},
+  sisi/.style={draw=black!50, dashed, rounded corners=2pt, align=center, text width=15mm, minimum height=6mm, fill=gray!6},
+  panah/.style={-{Stealth[length=1.6mm]}, semithick},
+  ket/.style={font=\tiny, align=center, fill=white, inner sep=1pt}
+]
+\node[tahap] (s1) {(1) Potong dokumen per pasal};
+\node[llm, below=of s1] (s2) {(2) Penilaian relevansi berkutipan};
+\node[tahap, below=of s2] (s3) {(3) Susun konteks dari graf};
+\node[llm, below=of s3] (s4) {(4) Susun $m$ kandidat $\Delta$ berkutipan};
+\node[grb, below=of s4] (s5) {(5) Gerbang G1--G5};
+\node[grb, below=of s5] (s6) {(6) Konsensus perilaku pada $\SG$};
+\node[tahap, below=of s6] (s7) {(7) Peninjauan dengan laporan dampak};
+\node[tahap, below=of s7, fill=green!6] (s8) {(8) Terapkan sebagai versi baru $\K'$};
+\node[sisi, right=10mm of s2] (kosong) {$\Delta$ kosong};
+\node[sisi, right=10mm of s6] (abs) {\en{Abstain}};
+\draw[panah] (s1) -- (s2);
+\draw[panah] (s2) -- (s3);
+\draw[panah] (s3) -- (s4);
+\draw[panah] (s4) -- (s5);
+\draw[panah] (s5) -- (s6);
+\draw[panah] (s6) -- (s7);
+\draw[panah] (s7) -- (s8);
+\draw[panah] (s2) -- node[ket, above]{tidak\\relevan} (kosong);
+\draw[panah] (s6) -- node[ket, above]{tak ada\\yang lolos} (abs);
+\draw[panah] (s5.west) -- ++(-3mm,0) |- (s4.west);
+\draw[panah] (kosong.east) -- ++(3mm,0) |- (s8.east);
+\draw[panah] (abs) |- (s7.east);
+\end{tikzpicture}
+\caption{Alur akuisisi pengetahuan inkremental. Kandidat yang gagal di gerbang mendapat umpan balik untuk diperbaiki. Dokumen yang membuat sistem \en{abstain} diteruskan ke peninjau tanpa pembaruan otomatis.}
+\label{fig:alur}
+\end{figure}
+
+\terbuka{Tabel tarif di lampiran regulasi dapat berisi ratusan baris, misalnya tabel TER. Apakah LLM menyalinnya sendiri, atau boleh memanggil alat ekstraksi tabel PDF yang deterministik? Usulan \en{skeleton}: alat diizinkan dan dicatat di pra-registrasi, sehingga kemampuan memahami aturan terpisah dari kemampuan menyalin angka.}
+
+\subsection{Gerbang verifikasi}
+\label{subsec:gerbang}
+
+Tabel~\ref{tab:gerbang} memuat lima gerbang beserta syarat yang dijaganya. G1 memeriksa struktur dengan \en{shape} SHACL (Bagian~\ref{subsec:ontologi}). G2 memeriksa bahwa setiap kutipan benar-benar ada di dokumen sumber, sehingga dasar hukum karangan tertolak. G3 memeriksa konsistensi statis atas tipe, dependensi, konflik, dan anomali \en{knowledge base}. G4 adalah uji regresi pada $\SG$. Hasil untuk masa sebelum $t_{\mathit{berlaku}}$ tidak boleh berubah. Peran G4 setara dengan \en{cornerstone case} pada \en{Ripple-Down Rules}. G5 adalah gerbang non-vakuitas.
+
+\begin{table}[t]
+\centering
+\caption{Gerbang verifikasi dan syarat yang dijaganya}
+\label{tab:gerbang}
+\scriptsize
+\begin{tabularx}{\columnwidth}{@{}P{0.5cm} L P{1.35cm}@{}}
+\toprule
+\textbf{ID} & \textbf{Pemeriksaan} & \textbf{Syarat} \\
+\midrule
+G1 & Struktur dan batasan graf (\en{shape} SHACL) & validitas \\
+G2 & Kutipan sumber ada di dokumen & keberadaan kutipan \\
+G3 & Konsistensi statis atas tipe, dependensi, konflik, dan anomali & A4 \\
+G4 & Regresi pada $\SG$; hasil sebelum $t_{\mathit{berlaku}}$ tidak berubah & A3$_t$ \\
+G5 & Non-vakuitas untuk $\Delta$ tidak kosong. Setiap unsur yang ditambah atau diubah mengubah minimal satu fakta keluaran pada kasus $\SG$ sesudah $t_{\mathit{berlaku}}$, termasuk fakta selain PPh 21. Setiap unsur yang dicabut tidak lagi menyala. Tanggal dan subjek yang disebut dokumen tercermin di $\Delta$ & menolak pembaruan tanpa efek \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+G5 diperlukan karena celah pada empat gerbang lainnya. Pembaruan kosong, atau aturan yang tidak pernah menyala, lolos G1--G4, karena keduanya tidak menimbulkan regresi. Putaran perbaikan yang hanya menerima umpan balik regresi bahkan mendorong kandidat ke arah itu. G5 menutup celah ini. G5 tidak bertentangan dengan dokumen pengecoh, karena pembaruan kosong hanya dapat diterapkan lewat penilaian relevansi yang kutipannya lolos G2, bukan lewat gerbang.
+
+Kasus $\SG$ dibangkitkan otomatis dari $\K_{n-1} \oplus \hat{\Delta}$. Generatornya menyasar kondisi $\varphi$ setiap unsur yang berubah, sehingga pengetahuan manusia tentang isi dokumen tidak bocor ke alur. $\SG$ hanya dipakai gerbang, dan tidak beririsan dengan $\SE$ yang dipakai untuk menilai sistem.
+
+\subsection{Pemilihan kandidat dan \en{abstain}}
+\label{subsec:konsensus}
+
+Untuk setiap kandidat $\hat{\Delta}_j$ yang lolos semua gerbang, sistem menghitung vektor hasil
+\begin{equation}
+v_j = \big(\hasil(\K \oplus \hat{\Delta}_j, x, t, \omega)\big)_{(x,t,\omega) \in \SG}.
+\label{eq:vektor}
+\end{equation}
+Kandidat dengan vektor yang sama dikelompokkan, dan sistem memilih wakil kelompok terbesar. Cara ini disebut konsensus perilaku, karena kandidat dikelompokkan menurut hasil perhitungannya, bukan menurut kemiripan bentuk aturannya. Dua kandidat yang ditulis berbeda tetapi selalu memberi angka yang sama dianggap setara. Bila tidak ada kandidat yang lolos, sistem \en{abstain} dan meneruskan dokumen ke peninjau manusia.
+
+\definisikan{(1) Daftar \en{constraint} G1 dan tingkatnya. (2) Cara G2 mencocokkan kutipan, misalnya kecocokan setelah normalisasi spasi dan nomor pasal. (3) Generator $\SG$ dan jaminan bahwa $\SG \cap \SE = \emptyset$. (4) Nilai $m$ (usulan 5) dan batas putaran perbaikan. (5) Aturan bila dua kelompok sama besar. Usulan draf ini: \en{abstain}. (6) Syarat pembekuan. G5 harus menerima $\Delta^{\emas}$ dari seluruh peristiwa pengembangan, artinya laju penolakan kelirunya nol.}
+
+\subsection{Analisis dampak lintas lapis}
+\label{subsec:dampak}
+
+Diberikan pembaruan $\Delta$, detektor menelusuri graf secara statis lewat \en{query} SPARQL untuk menemukan kebijakan perusahaan yang terdampak. Sebuah kebijakan disebut terdampak oleh $\Delta$ bila memenuhi minimal satu dari tiga jenis berikut. Jenis (a), nilai fakta keluaran berubah untuk minimal satu kasus. Jenis (b), aturan pemenang untuk fakta yang dibaca atau dihasilkan kebijakan itu berubah. Jenis (c), kebijakan itu menjadi berkonflik dengan aturan wajib. Label jenis (a) dan (b) diturunkan dari eksekusi $\K^{\emas}$ pada $\SE$, sedangkan detektor bekerja statis pada graf tanpa menjalankan \en{engine}. Karena sumber label dan cara kerja detektor berbeda, evaluasinya tidak tautologis. Label jenis (c) diberikan dua pelabel secara independen.
+
+\subsection{Konfigurasi LLM}
+\label{subsec:konfigurasi}
+
+Untuk setiap jalan eksperimen, sistem mencatat model dan versinya, tanggal akses, \en{training cutoff} model, parameter pembangkitan, format keluaran terstruktur, isi \en{prompt}, serta seluruh masukan dan keluaran. Dengan catatan ini, semua analisis dapat diulang tanpa memanggil LLM lagi.
+
+\terbuka{Model utama, model kedua (\en{open-weight}), dan anggaran API. Prototipe asisten memakai API OpenAI sebagai bawaan dan juga mendukung API Anthropic. Model kedua hanya dipakai untuk kondisi usulan dan pembanding B3 (Bagian~\ref{subsec:pembanding}).}

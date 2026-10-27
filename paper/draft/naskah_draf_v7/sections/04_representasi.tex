@@ -1,0 +1,94 @@
+% ============================================================================
+\section{Representasi pengetahuan dan \en{inference engine}}
+\label{sec:representasi}
+% ============================================================================
+
+\subsection{Model pengetahuan}
+Pengetahuan PPh 21 terdiri atas dua jenis. Pengetahuan struktural, seperti regulasi memuat pasal, aturan bersumber dari pasal, PMK baru mengubah PMK lama, dan kebijakan berkonflik dengan aturan wajib, disimpan sebagai \en{legal knowledge graph} RDF/OWL. Pengetahuan komputasional, seperti TER dikali bruto, pembulatan per pasal, dan \en{gross-up} sebagai \en{fixed point}, disimpan sebagai ekspresi pada \en{node} aturan dan dijalankan \en{inference engine} deterministik. Perhitungan tidak dipindahkan ke penalaran ontologi, karena OWL dan SWRL tidak menyediakan aritmetika eksak berpembulatan maupun iterasi \en{fixed point}. Prototipe \en{engine} yang dipakai ulang sudah tidak menghasilkan selisih yang tidak terjelaskan pada 1.213 nilai harapan dari 45 contoh perhitungan resmi.
+
+\begin{definisi}[\en{Knowledge base}]
+\label{def:kb}
+$\K = \langle \mathcal{O}, \mathcal{R}, \mathcal{P}, \mathcal{T} \rangle$ terdiri atas ontologi beserta individunya, himpunan aturan, parameter berversi, dan tabel berversi. Setiap aturan, parameter, dan tabel berada pada lapisan $\ell \in \{\mathit{reg}, \mathit{prs}\}$. Lapisan perusahaan disimpan sebagai \en{named graph} per perusahaan, sehingga beberapa perusahaan dapat memakai lapisan regulasi yang sama.
+\end{definisi}
+
+\begin{definisi}[Aturan]
+\label{def:aturan}
+Aturan adalah tupel
+\[ r = \langle \mathit{id}, \ell, \sigma, [t_s, t_e], t_c, \varphi, f \coloneqq e, \mathit{src} \rangle, \]
+dengan sifat $\sigma \in \{\mathit{wajib}, \mathit{tafsir}, \mathit{default}, \mathit{opsional}\}$, masa berlaku $[t_s, t_e]$, tanggal pencatatan $t_c$, kondisi $\varphi$, fakta $f$ yang dihasilkan dengan ekspresi $e$, dan pasal sumber $\mathit{src}$. Aturan wajib tidak dapat ditimpa lapisan perusahaan, sedangkan aturan \en{default} boleh ditimpa aturan opsional perusahaan.
+\end{definisi}
+
+\begin{definisi}[Hasil perhitungan]
+\label{def:hasil}
+$\hasil(\K, x, t, \omega)$ adalah nilai fakta keluaran untuk kasus $x$ pada masa pajak $t$, dihitung hanya dengan unsur $\K$ yang $t_c \le \omega$. Fakta keluaran utamanya adalah PPh 21 yang dipotong per pegawai per masa, dalam rupiah bulat.
+\end{definisi}
+
+\subsection{Ontologi dan validasi}
+Gambar~\ref{fig:ontologi} menunjukkan kelas dan relasi utama. Kosakatanya memakai ulang ELI untuk regulasi dan relasi amandemen, OWL-Time untuk masa berlaku, dan PROV-O untuk asal-usul serta waktu pencatatan~\cite{publicationsoffice2026eli,cox2017owltime,lebo2013provo}. Kebijakan perusahaan dimodelkan setara dengan regulasi, dan perbedaannya hanya pada lapisan dan otoritas penerbitnya. \en{Shape} SHACL~\cite{knublauch2017shacl} memvalidasi struktur graf, termasuk pembaruan yang diusulkan LLM. Pelanggaran struktural, seperti aturan regulasi tanpa pasal sumber, ditolak, sedangkan konflik kebijakan dengan aturan wajib dicatat sebagai peringatan. \en{Query} SPARQL dipakai untuk menemukan kebijakan yang terdampak perubahan regulasi.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  kelas/.style={draw=black!70, rounded corners=2pt, align=center, text width=28mm, minimum height=9mm, fill=white},
+  panah/.style={-{Stealth[length=1.8mm]}, semithick},
+  ket/.style={font=\tiny, align=center, fill=white, inner sep=1pt}
+]
+\node[kelas, fill=lapreg!25] (reg) at (0,0) {Regulasi\\(UU, PP, PMK, PER)};
+\node[kelas] (pasal) at (0,-1.7) {Pasal atau butir};
+\node[kelas, fill=lapprs!30] (keb) at (0,-3.4) {Kebijakan perusahaan\\(PP, PKB, SK direksi)};
+\node[kelas, text width=44mm, minimum height=14mm, fill=gray!8] (atr) at (6.2,-1.7) {\textbf{Aturan}\\lapisan $\ell$, sifat $\sigma$, kondisi $\varphi$,\\ekspresi $f \coloneqq e$};
+\node[kelas] (kon) at (12.2,0) {Konsep\\(fakta, jenis penghasilan,\\kategori pajak)};
+\node[kelas] (par) at (12.2,-1.7) {Parameter berversi};
+\node[kelas] (tab) at (12.2,-3.4) {Tabel berversi};
+\node[kelas, text width=62mm, fill=violet!6] (ver) at (6.2,-4.5) {Versi: masa berlaku $[t_s, t_e]$ (OWL-Time),\\tanggal pencatatan $t_c$ dan asal-usul (PROV-O)};
+\draw[panah] (reg) -- node[ket, right]{memuat} (pasal);
+\draw[panah] (keb) -- node[ket, right]{memuat} (pasal);
+\draw (reg) edge[panah, loop above, looseness=5] node[ket, above]{mengubah, mencabut} (reg);
+\draw[panah] (atr) -- node[ket, above]{bersumber} (pasal);
+\draw[panah] (atr) -- node[ket, above, sloped]{menghasilkan,\\membaca} (kon);
+\draw[panah] (atr) -- node[ket, above]{membaca} (par);
+\draw[panah] (atr) -- node[ket, below, sloped]{membaca} (tab);
+\draw (atr) edge[panah, loop above, looseness=5] node[ket, above]{berkonflik dengan, menggantikan} (atr);
+\draw[panah] (atr) -- node[ket, right]{berversi} (ver);
+\draw[panah] (par.south west) -- (ver.north east);
+\draw[panah] (tab) -- (ver);
+\end{tikzpicture}
+\caption{Ontologi \en{knowledge base}. Kebijakan perusahaan (oranye) dimodelkan setara dengan regulasi (biru); yang membedakan hanya lapisan dan otoritas penerbitnya.}
+\label{fig:ontologi}
+\end{figure*}
+
+\subsection{Resolusi konflik antarlapis}
+Bila beberapa aturan menghasilkan fakta yang sama pada masa yang sama, \en{engine} mengeluarkan aturan yang dicabut eksplisit, lalu memilih pemenang dengan kunci leksikografis
+\begin{equation}
+\kappa(r) = \big(\mathit{sup}(r),\ \mathit{ovr}(r),\ \mathit{spec}(r),\ t_s(r),\ \mathit{prio}(r)\big).
+\label{eq:kunci}
+\end{equation}
+Komponen $\mathit{sup}$ mewakili \en{lex superior}, yaitu aturan wajib regulasi mengalahkan aturan perusahaan. Komponen $\mathit{ovr}$ mewakili penimpaan sah, yaitu aturan opsional perusahaan mengalahkan aturan \en{default}. Komponen $\mathit{spec}$ mewakili \en{lex specialis}, $t_s$ mewakili \en{lex posterior}, dan $\mathit{prio}$ adalah prioritas eksplisit. Bila tersisa lebih dari satu pemenang dengan nilai berbeda, \en{engine} berhenti dengan status AMBIGU dan tidak memilih diam-diam. Setiap kemenangan aturan wajib atas aturan perusahaan dicatat di jejak.
+
+\subsection{\en{Inference engine}}
+Algoritma~\ref{alg:inferensi} merangkum langkah inferensi. Komponen bersiklus hanya diizinkan bila memuat aturan \en{fixed point}, seperti \en{gross-up}, dengan tunjangan pajak $T = \mathrm{PPh}(B + T)$ untuk bruto $B$. Fungsi ini tidak turun dan memetakan rupiah bulat $\{0, \dots, B\}$ ke dirinya sendiri, sehingga menurut teorema Knaster--Tarski titik tetapnya ada. Iterasi dari batas bawah dan atas menemukan titik tetap terkecil dan terbesar, dan bila keduanya berbeda, \en{engine} mencatat solusi ganda. Rupiah disimpan sebagai bilangan bulat dan tarif sebagai bilangan rasional, setiap pembulatan merujuk ke registri yang mencatat dasar hukumnya, dan setiap nilai keluaran disertai jejak sampai pasal sumber.
+
+\begin{algorithm}[t]
+\caption{Inferensi untuk satu pegawai dan satu tahun pajak}
+\label{alg:inferensi}
+\footnotesize
+\begin{algorithmic}[1]
+\Require $\K$, data pegawai $x$, tahun pajak $y$, tanggal pengetahuan $\omega$
+\Ensure nilai setiap fakta per masa beserta jejaknya
+\State $R \gets$ aturan dengan $t_c \le \omega$ yang masa berlakunya beririsan dengan $y$
+\State keluarkan dari $R$ aturan yang digantikan aturan lain di $R$
+\State bangun graf dependensi fakta, hitung komponen terhubung kuat, urutkan topologis
+\ForAll{komponen $Q$ menurut urutan topologis}
+  \If{$Q$ bersiklus}
+    \State iterasi \en{fixed point} dari batas bawah dan atas
+  \Else
+    \ForAll{instans $(f, t)$ dengan $f \in Q$}
+      \State pilih pemenang dengan kunci $\kappa$, evaluasi secara eksak
+      \State catat nilai, pemenang, pasal, dan aturan yang ditolak
+    \EndFor
+  \EndIf
+\EndFor
+\State \Return nilai fakta dan jejak
+\end{algorithmic}
+\end{algorithm}

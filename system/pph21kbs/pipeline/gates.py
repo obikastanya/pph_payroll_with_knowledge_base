@@ -606,7 +606,9 @@ def g5(base, kb2, delta, sgset, evals, starts, relevance=None):
     for s in (relevance or {}).get("subjects", []):
         if s.get("kind") != "klu":
             continue
-        klu = str(s.get("value"))
-        if not any(sgset.cases[i]["employer"].get("klu") == klu for i in changed):
-            msgs.append(f"stated subject KLU {klu} is not reflected in a changed S^G case")
+        # the subject names codes ("14111") or describes a set ("codes in Lampiran A"): only named five-digit codes
+        # can be checked, and one of them must appear in a changed case
+        codes = set(re.findall(r"(?<!\d)\d{5}(?!\d)", str(s.get("value"))))
+        if codes and not any(sgset.cases[i]["employer"].get("klu") in codes for i in changed):
+            msgs.append(f"stated subject KLU {', '.join(sorted(codes))} is not reflected in a changed S^G case")
     return GateResult("G5", not msgs, msgs)

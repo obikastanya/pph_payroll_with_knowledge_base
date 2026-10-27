@@ -331,3 +331,34 @@ Jalan `dev-smoke`, peristiwa pengembangan D01 (PMK 162/2012), Claude Opus 5.5, $
 - Bagian V: alur delapan tahap sebagaimana diimplementasikan; skema keluaran LLM dan alasannya (batas tata bahasa keluaran terstruktur).
 - Bagian VI/VII: biaya per panggilan terukur sebagai dasar perkiraan anggaran (Tahap 11).
 - Contoh kualitatif: D01, representasi berbeda tetapi setara perilaku.
+
+---
+
+## Tahap 10. Alat analisis, penilaian, dan pembanding non-LLM
+
+Dikerjakan 2026-10-27/28, sebelum data uji disentuh.
+
+### Hasil
+
+| Berkas | Isi |
+|---|---|
+| `system/pph21kbs/analysis/stats.py` | Clopper–Pearson (dua sisi) dan batas atas satu sisi; Newcombe (berpasangan dan tidak berpasangan, Wilson); McNemar eksak; uji non-inferioritas; Wilcoxon bertanda; *bootstrap* klaster; Holm; *pass@k* tak bias; efisiensi seleksi η; $F_\beta$ dan $F_2$ "tandai semua" |
+| `system/pph21kbs/analysis/agreement.py` | α Krippendorff nominal, κ Cohen |
+| `system/pph21kbs/analysis/evaluate.py` | penilaian $\hat{\Delta}$ pada $S^E$: hasil benar/salah/*abstain*, tupel salah dipecah A2, A3$_t$, A3$_\omega$, A4, galat *engine* baru |
+| `system/pph21kbs/analysis/conditions.py` | kondisi pembanding dari kandidat yang sama (tanpa panggilan LLM baru): B3, B4, AB3 (tanpa G5, tanpa G4, tanpa perbaikan), AB4 (pertama lolos, konsensus, seleksi sempurna sebagai batas atas) |
+| `system/tools/score_run.py` | SER/CAR/ABS per kondisi dan lapisan, pengecoh, *pass@1*, *pass@m*, *1@m*, η |
+| `system/tools/run_chain.py` | E3 mode berantai: $H_n$, kesalahan baru, OAR, komponen mekanis, varian *abstain* (tetap/peninjau sempurna) |
+| `system/tools/rq4_labels.py` | label eksekusi (a)/(b)/(c) pasangan kebijakan × peristiwa, detektor, B5(i), B5(ii), κ terhadap label manual |
+| `system/tools/b1_maintenance.py` | B1: waktu dan ukuran perubahan kalkulator sumber terbuka saat TER |
+| `system/pph21kbs/mutation.py`, `system/tools/mutation_score.py` | operator mutasi: nilai, tanggal mulai, tanggal akhir, kondisi, buang kondisi, lapisan, modalitas, cabut |
+
+Uji `system/tests/test_analysis.py` (7): nilai acuan pustaka (Clopper–Pearson, contoh tidak berpasangan Newcombe 1998 = (0,0524; 0,3339), α Krippendorff 2011 = 0,743), sifat (monoton, simetri, rentang), McNemar dan Holm pada kasus kecil.
+
+### B1 (pemeliharaan kalkulator hand-coded saat TER)
+
+`docs/hasil/b1_pemeliharaan.csv`: dari dua repositori yang sudah ada sebelum PP 58/2023 (27 Desember 2023), `open-synergy` memasukkan TER 26 hari kemudian (15 berkas, 163 baris, 7 fungsi; 2 *commit* perbaikan sesudahnya) dan `pajakin` 915 hari kemudian (3 berkas, 504 baris, 8 fungsi). Tiga repositori lain lahir sudah dengan TER (340–1.411 baris). Sisi *knowledge base*: $\Delta^\star$ E03 (7 unsur baru) dan E04 (1 baru, 12 diubah), tanpa perubahan *engine*.
+
+### Bahan paper
+
+- Bagian VI (rencana analisis): daftar uji di atas sesuai tabel uji *skeleton*; semua alat diuji sebelum data uji dibuka.
+- Bagian VII (B1): tabel di atas sebagai pembanding biaya pemeliharaan; kesimpulan hanya deskriptif (lima repositori).

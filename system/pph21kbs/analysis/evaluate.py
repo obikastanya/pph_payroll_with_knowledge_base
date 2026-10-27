@@ -29,8 +29,9 @@ def load_gz(path):
 def se_cases(dev=False):
     root = SE_DIR / "pengembangan" if dev else SE_DIR
     out = {c["case_id"]: c for c in load_gz(root / "kasus.jsonl.gz")}
-    if (root / "kasus_kebijakan.jsonl.gz").exists():       # cases of the test policies (company KLU, HR items)
-        out.update({c["case_id"]: c for c in load_gz(root / "kasus_kebijakan.jsonl.gz")})
+    for extra in ("kasus_kebijakan", "kasus_terarah"):    # test policy cases; targeted cases from mutation analysis
+        if (root / f"{extra}.jsonl.gz").exists():
+            out.update({c["case_id"]: c for c in load_gz(root / f"{extra}.jsonl.gz")})
     return out
 
 

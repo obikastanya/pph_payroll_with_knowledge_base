@@ -145,11 +145,16 @@ def extract(row):
 
 
 ARTICLE = re.compile(r"^\s*Pasal\s+([0-9]+[A-Z]?|[IVX]+)\s*$")
+# collective agreements also title their articles: "Pasal 1 : Pihak-Pihak", "PASAL 7 - Upah". Not used for regulations,
+# where "PASAL 25" or "Pasal 21." names a tax article in tables and FAQs. References in sentences carry "ayat".
+ARTICLE_TITLED = re.compile(r"^\s*(?:Pasal|PASAL)\s+([0-9]+[A-Z]?|[IVX]+)\s*(?:$|[:.\-–]\s*(?!.*\bayat\b)[A-Z][^.;]{0,90}$)")
 CLOSING = re.compile(r"^\s*Ditetapkan di\b", re.I)
 ANNEX = re.compile(r"^\s*LAMPIRAN\b")
 
 
-def segment(text):
+def segment(text, titled=False):
+    """titled: article headings may carry a title (collective agreements)."""
+    article = ARTICLE_TITLED if titled else ARTICLE
     segs, cur = [], {"id": "pembuka", "kind": "opening", "heading": "pembuka", "page_start": 1, "lines": []}
     page = 1
     for line in text.splitlines():
@@ -158,7 +163,7 @@ def segment(text):
             page = int(m.group(1))
             continue
         new = None
-        a = ARTICLE.match(line)
+        a = article.match(line)
         if a:
             new = {"id": f"Pasal {a.group(1)}", "kind": "article", "heading": line.strip()}
         elif CLOSING.match(line) and cur["kind"] != "closing":
@@ -207,7 +212,7 @@ def main(force=False):
         d.mkdir(exist_ok=True)
         text = extract(row)
         (d / "teks.txt").write_text(text, encoding="utf-8")
-        (d / "segmen.json").write_text(json.dumps(segment(text), ensure_ascii=False, indent=1), encoding="utf-8")
+        (d / "segmen.json").write_text(json.dumps(segment(text, row["id"].startswith("PKB-")), ensure_ascii=False, indent=1), encoding="utf-8")
         lines = [f"{sha(DATA / rel)}  sumber:{rel}" for rel in row["files"].split(";") if rel]
         lines.append(f"{sha(d / 'teks.txt')}  teks.txt")
         (d / "MANIFEST.sha256").write_text("\n".join(lines) + "\n", encoding="utf-8")

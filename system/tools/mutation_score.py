@@ -39,6 +39,8 @@ def main():
     args = ap.parse_args()
     root = SE if args.set == "test" else SE / "pengembangan"
     cases = {c["case_id"]: c for c in load_gz(root / "kasus.jsonl.gz")}
+    if (root / "kasus_terarah.jsonl.gz").exists():
+        cases.update({c["case_id"]: c for c in load_gz(root / "kasus_terarah.jsonl.gz")})
     chain = build_gold.load_graph()
     ids = [u.update_id for u in chain.updates]
     wanted = set(filter(None, args.events.split(",")))

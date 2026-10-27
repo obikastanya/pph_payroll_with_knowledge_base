@@ -141,7 +141,8 @@ class Client:
         meta = self._begin(req)
         t0 = time.time()
         try:
-            reply = self._call(system, prefix, user, schema, schema_name, effort, max_tokens)
+            reply = self._call(system, prefix, user, schema, schema_name, effort, max_tokens,
+                               cache=_cached(step))
             error = None
         except Exception as e:  # noqa: BLE001 - a refusal or API error is a failed candidate, recorded
             reply, error = _failed(self.model), f"{type(e).__name__}: {e}"[:500]
@@ -179,7 +180,7 @@ class Client:
         self.ledger.log(entry)
         return reply, parsed, entry
 
-    def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens):
+    def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens, cache=True):
         raise NotImplementedError
 
 
@@ -195,18 +196,21 @@ class AnthropicClient(Client):
         self.model = model
         self.api = anthropic.Anthropic(api_key=key, max_retries=3)
 
-    def request_params(self, system, prefix, user, schema, effort, max_tokens):
+    def request_params(self, system, prefix, user, schema, effort, max_tokens, cache=True):
         blocks = [{"type": "text", "text": t} for t in prefix]
-        if blocks:
+        if blocks and cache:
             blocks[-1]["cache_control"] = {"type": "ephemeral"}
         blocks.append({"type": "text", "text": user})
+        sys_block = {"type": "text", "text": system}
+        if cache:
+            sys_block["cache_control"] = {"type": "ephemeral"}
         return {"model": self.model, "max_tokens": max_tokens,
-                "system": [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
+                "system": [sys_block],
                 "messages": [{"role": "user", "content": blocks}],
                 "output_config": {"effort": effort, "format": {"type": "json_schema", "schema": schema}}}
 
-    def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens):
-        params = self.request_params(system, prefix, user, schema, effort, max_tokens)
+    def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens, cache=True):
+        params = self.request_params(system, prefix, user, schema, effort, max_tokens, cache)
         with self.api.messages.stream(**params) as stream:
             msg = stream.get_final_message()
         return self.reply_of(msg)
@@ -239,12 +243,18 @@ class AnthropicBatchClient(AnthropicClient):
         for i, r in enumerate(reqs):
             cid = "".join(ch if ch.isalnum() or ch in "_-" else "_" for ch in str(r["call_id"] or f"req{i}"))[:64]
             params = self.request_params(r["system"], r["prefix"], r["user"], r["schema"], r["effort"],
-                                         r["max_tokens"])
+                                         r["max_tokens"], _cached(r["step"]))
             items.append((cid, params, self.model))
         if len({cid for cid, _, _ in items}) != len(items):
             raise LLMError("duplicate call ids in one batch")
         results = self.dispatcher.submit(items)
         return [self._end(r, m, reply, err) for r, m, (reply, err) in zip(reqs, metas, results)]
+
+
+def _cached(step):
+    """The relevance call is the only one with its system prompt and prefix, so nothing would read its cache; a
+    cache write costs 1.25 x input. Drafts and repairs of one document share the cached prefix."""
+    return step != "relevance"
 
 
 def _failed(model):
@@ -392,7 +402,7 @@ class OpenAIClient(Client):
         self.model = model
         self.api = openai.OpenAI(api_key=key, max_retries=3)
 
-    def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens):
+    def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens, cache=True):
         content = [{"type": "input_text", "text": t} for t in prefix] + [{"type": "input_text", "text": user}]
         resp = self.api.responses.create(
             model=self.model, instructions=system, input=[{"role": "user", "content": content}],
@@ -426,7 +436,7 @@ class MockClient(Client):
         self.model = model
         self.seen = []
 
-    def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens):
+    def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens, cache=True):
         self.seen.append({"system": system, "prefix": prefix, "user": user, "schema_name": schema_name})
         if not self.outputs:
             raise LLMError("mock client has no more outputs")

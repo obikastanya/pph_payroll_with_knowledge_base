@@ -1,7 +1,7 @@
 {
   "dokumen": "PKB_AVCO_2024_2026",
   "dibuat": "2026-10-27",
-  "status": "draf, menunggu tinjauan pakar",
+  "status": "ditinjau 2026-10-27; putusan tafsir di README",
   "contoh": [
     {
       "id": "GT5-AVCO-01",
@@ -26,10 +26,11 @@
         "status_ptkp": "K/2"
       },
       "asumsi": [
-        "'Upah bulanan' untuk lembur = upah pokok (golongan Pratama tidak punya tunjangan tetap di PKB)",
+        "'Upah bulanan' untuk lembur = upah (Lampiran III angka 3); golongan Pratama tidak punya tunjangan tetap di PKB sehingga = upah pokok",
         "Dasar iuran BPJS = upah pokok; JKK 1,74% sesuai Ps 41",
-        "PPh 21 dipotong dari pegawai (Ps 20 ayat 10)",
-        "Makan siang natura Rp47.000/hari tidak masuk bruto (PMK 66/2023 Ps 4 huruf a)",
+        "PPh 21 dipotong dari pegawai (Ps 20 ayat 10); AVCO bukan KLU DTP",
+        "Makan siang natura Rp47.000/hari bagi seluruh pekerja tidak masuk bruto (PMK 66/2023 Ps 4 huruf a)",
+        "PPh TER Masa 2025 dibulatkan ke rupiah terdekat (tafsir K1)",
         "Transport Rp28.000/hari hadir (dataran rendah)",
         "Upah lembur dibayar pada bulan yang sama"
       ],
@@ -40,7 +41,7 @@
           "uraian": "Upah lembur per jam = 12.238.300 / 173",
           "ekspresi": "12238300 / 173",
           "hasil": 70741.61849710983,
-          "sumber": "AVCO-22-3a"
+          "sumber": "AVCO-22-3a; AVCO-L2 (Lampiran II, PDF hlm. 64)"
         },
         {
           "no": 2,
@@ -48,7 +49,7 @@
           "uraian": "Lembur: hari kerja (1,5 + 2 + 2) + hari istirahat 10 jam (7 x 2 + 3 + 2 x 4) = 30,5 jam-pengali",
           "ekspresi": "rnd((1.5 + 2 + 2 + 7 * 2 + 3 + 2 * 4) * (12238300 / 173))",
           "hasil": 2157619,
-          "sumber": "AVCO-22-3b1, AVCO-22-3b3"
+          "sumber": "AVCO-22-3b1, AVCO-22-3b3 (Lampiran III angka 1, PDF hlm. 65)"
         },
         {
           "no": 3,
@@ -94,9 +95,9 @@
           "no": 8,
           "kunci": "pph_mei",
           "uraian": "PPh 21 Mei (dipotong): TER kategori B untuk bruto 15713580.32 (di atas 14950000 s.d. 16400000) = 6%",
-          "ekspresi": "floor(6 / 100 * 15713580.32)",
-          "hasil": 942814,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf B (Tarif Efektif Bulanan Kategori B), hlm. lampiran -7- (PDF hlm. 17); kategori: Pasal 2 ayat (4) huruf b (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh; PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
+          "ekspresi": "rnd(6 / 100 * 15713580.32)",
+          "hasil": 942815,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf B (Tarif Efektif Bulanan Kategori B), hlm. lampiran -7- (PDF hlm. 17); kategori: Pasal 2 ayat (4) huruf b (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106); PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
           "ter": {
             "kategori": "B",
             "bruto": 15713580.32,
@@ -117,7 +118,7 @@
           "uraian": "Iuran JP pegawai 1% x min(12238300, batas upah 10547400 untuk iuran 2025-05)",
           "ekspresi": "1 / 100 * min(12238300, 10547400)",
           "hasil": 105474,
-          "sumber": "PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv"
+          "sumber": "PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv (tafsir K11)"
         },
         {
           "no": 11,
@@ -131,8 +132,8 @@
           "no": 12,
           "kunci": "take_home",
           "uraian": "Uang diterima",
-          "ekspresi": "12238300 + 2157619 + 588000 - 942814 - 244766 - 105474 - 120000",
-          "hasil": 13570865,
+          "ekspresi": "12238300 + 2157619 + 588000 - 942815 - 244766 - 105474 - 120000",
+          "hasil": 13570864,
           "sumber": "AVCO-20-10"
         }
       ],
@@ -140,8 +141,8 @@
         "upah_per_jam": 70741.61849710983,
         "lembur": 2157619,
         "bruto_mei": 15713580.32,
-        "pph_mei": 942814,
-        "take_home": 13570865
+        "pph_mei": 942815,
+        "take_home": 13570864
       },
       "nilai_harapan_keterangan": {
         "upah_per_jam": "upah lembur per jam",
@@ -154,6 +155,10 @@
       "ambiguitas": [
         "'Upah bulanan' (Ps 22 ayat 3a) tidak didefinisikan",
         "Pola 5-2 di Lampiran III memakai pengali 2/3/4 untuk jam 1-7/8/9+ (lebih tinggi dari pola 5 hari umum); contoh mengikuti PKB"
+      ],
+      "putusan": [
+        "'Upah bulanan' = upah (Lampiran III angka 3; Ps 1 angka 83), dengan dasar lembur upah pokok + tunjangan tetap (PP 35/2021 Ps 32, di luar dataset); bagi Pratama = upah pokok",
+        "Pengali pola 5-2 di Lampiran III (2/3/4 untuk jam 1-7/8/9+) lebih tinggi dari minimum dan dipakai apa adanya"
       ]
     },
     {
@@ -180,11 +185,12 @@
         "status_ptkp": "K/2"
       },
       "asumsi": [
-        "'Upah bulanan' untuk lembur = upah pokok (golongan Pratama tidak punya tunjangan tetap di PKB)",
+        "'Upah bulanan' untuk lembur = upah (Lampiran III angka 3); golongan Pratama tidak punya tunjangan tetap di PKB sehingga = upah pokok",
         "Dasar iuran BPJS = upah pokok; JKK 1,74% sesuai Ps 41",
-        "PPh 21 dipotong dari pegawai (Ps 20 ayat 10)",
-        "Makan siang natura Rp47.000/hari tidak masuk bruto (PMK 66/2023 Ps 4 huruf a)",
-        "Prorata = masa kerja (bulan penuh) / 12 x THR penuh",
+        "PPh 21 dipotong dari pegawai (Ps 20 ayat 10); AVCO bukan KLU DTP",
+        "Makan siang natura Rp47.000/hari bagi seluruh pekerja tidak masuk bruto (PMK 66/2023 Ps 4 huruf a)",
+        "PPh TER Masa 2025 dibulatkan ke rupiah terdekat (tafsir K1)",
+        "Prorata = masa kerja (bulan penuh) / 12 x THR penuh; THR dibulatkan ke rupiah terdekat",
         "Kerja gilir bukan di tambang: Rp30.000/hari"
       ],
       "langkah": [
@@ -194,7 +200,7 @@
           "uraian": "THR = 7/12 x 2 x 10.169.300 (dibulatkan ke rupiah)",
           "ekspresi": "rnd(7 / 12 * 2 * 10169300)",
           "hasil": 11864183,
-          "sumber": "AVCO-23-1, AVCO-23-1a"
+          "sumber": "AVCO-23-1, AVCO-23-1a; AVCO-L2 (Lampiran I, PDF hlm. 63)"
         },
         {
           "no": 2,
@@ -248,9 +254,9 @@
           "no": 8,
           "kunci": "pph_maret",
           "uraian": "PPh 21 Maret (dipotong): TER kategori B untuk bruto 23807708.72 (di atas 21850000 s.d. 26000000) = 9%",
-          "ekspresi": "floor(9 / 100 * 23807708.72)",
-          "hasil": 2142693,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf B (Tarif Efektif Bulanan Kategori B), hlm. lampiran -7- (PDF hlm. 17); kategori: Pasal 2 ayat (4) huruf b (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh; PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
+          "ekspresi": "rnd(9 / 100 * 23807708.72)",
+          "hasil": 2142694,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf B (Tarif Efektif Bulanan Kategori B), hlm. lampiran -7- (PDF hlm. 17); kategori: Pasal 2 ayat (4) huruf b (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106); PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
           "ter": {
             "kategori": "B",
             "bruto": 23807708.72,
@@ -271,7 +277,7 @@
           "uraian": "Iuran JP pegawai 1% x min(10169300, batas upah 10547400 untuk iuran 2025-03)",
           "ekspresi": "1 / 100 * min(10169300, 10547400)",
           "hasil": 101693,
-          "sumber": "PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv"
+          "sumber": "PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv (tafsir K11)"
         },
         {
           "no": 11,
@@ -285,17 +291,17 @@
           "no": 12,
           "kunci": "take_home",
           "uraian": "Uang diterima",
-          "ekspresi": "10169300 + 11864183 + 600000 + 560000 - 2142693 - 203386 - 101693 - 101693",
-          "hasil": 20644018,
+          "ekspresi": "10169300 + 11864183 + 600000 + 560000 - 2142694 - 203386 - 101693 - 101693",
+          "hasil": 20644017,
           "sumber": "AVCO-20-10"
         }
       ],
       "nilai_harapan": {
         "thr": 11864183,
         "bruto_maret": 23807708.72,
-        "pph_maret": 2142693,
+        "pph_maret": 2142694,
         "iuran_jp": 101693,
-        "take_home": 20644018
+        "take_home": 20644017
       },
       "nilai_harapan_keterangan": {
         "thr": "THR prorata",
@@ -308,6 +314,10 @@
       "ambiguitas": [
         "Rumus prorata THR tidak ditulis di PKB",
         "Pembulatan THR"
+      ],
+      "putusan": [
+        "'Proporsional' = masa kerja (bulan penuh sampai hari raya)/12 x THR penuh (Permenaker 6/2016 Ps 3 ayat (1) huruf b)",
+        "THR dibulatkan ke rupiah terdekat"
       ]
     },
     {
@@ -328,12 +338,13 @@
         "status_ptkp": "TK/0"
       },
       "asumsi": [
-        "'Upah bulanan' untuk lembur = upah pokok (golongan Pratama tidak punya tunjangan tetap di PKB)",
+        "'Upah bulanan' untuk lembur = upah (Lampiran III angka 3); golongan Pratama tidak punya tunjangan tetap di PKB sehingga = upah pokok",
         "Dasar iuran BPJS = upah pokok; JKK 1,74% sesuai Ps 41",
-        "PPh 21 dipotong dari pegawai (Ps 20 ayat 10)",
-        "Makan siang natura Rp47.000/hari tidak masuk bruto (PMK 66/2023 Ps 4 huruf a)",
-        "Tunjangan radiasi diberikan penuh Rp950.000 dan tidak masuk dasar iuran BPJS",
-        "Gross-up inkremental: G terkecil (rupiah) sehingga G - [PPh(bruto + G) - PPh(bruto)] >= 950.000"
+        "PPh 21 dipotong dari pegawai (Ps 20 ayat 10); AVCO bukan KLU DTP",
+        "Makan siang natura Rp47.000/hari bagi seluruh pekerja tidak masuk bruto (PMK 66/2023 Ps 4 huruf a)",
+        "PPh TER Masa 2025 dibulatkan ke rupiah terdekat (tafsir K1)",
+        "Tunjangan radiasi diberikan penuh Rp950.000 bersih dan tidak masuk dasar iuran BPJS (besarnya 'maksimal' dan terkait penugasan sebagai RSO, sehingga tunjangan tidak tetap menurut Ps 1 angka 81)",
+        "PPh tambahan akibat tunjangan ditanggung Perusahaan (metode selisih) dan merupakan kenikmatan; tunjangan bruto G = 950.000 + T, T = titik tetap terkecil dari T = R(TER(B0 + 950.000 + T) x (B0 + 950.000 + T)) - PPh(B0)"
       ],
       "langkah": [
         {
@@ -363,7 +374,7 @@
         {
           "no": 4,
           "kunci": "bruto_dasar",
-          "uraian": "Bruto tanpa tunjangan radiasi",
+          "uraian": "Bruto tanpa tunjangan radiasi (B0)",
           "ekspresi": "13367100 + 232587.54 + 40101.3 + 480000",
           "hasil": 14119788.84,
           "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
@@ -372,9 +383,9 @@
           "no": 5,
           "kunci": "pph_dasar",
           "uraian": "PPh tanpa tunjangan radiasi: TER kategori A untuk bruto 14119788.84 (di atas 13750000 s.d. 15100000) = 6%",
-          "ekspresi": "floor(6 / 100 * 14119788.84)",
+          "ekspresi": "rnd(6 / 100 * 14119788.84)",
           "hasil": 847187,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -2- (PDF hlm. 12); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh; PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -2- (PDF hlm. 12); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106); PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
           "ter": {
             "kategori": "A",
             "bruto": 14119788.84,
@@ -383,27 +394,11 @@
         },
         {
           "no": 6,
-          "kunci": "radiasi_gross",
-          "uraian": "Tunjangan radiasi gross (hasil iterasi)",
-          "ekspresi": "1173331",
-          "hasil": 1173331,
-          "sumber": "AVCO-23-8; asumsi metode inkremental"
-        },
-        {
-          "no": 7,
-          "kunci": "bruto_juni",
-          "uraian": "Bruto Juni = bruto dasar + tunjangan gross",
-          "ekspresi": "14119788.84 + 1173331",
-          "hasil": 15293119.84,
-          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
-        },
-        {
-          "no": 8,
-          "kunci": "pph_juni",
-          "uraian": "PPh 21 Juni: TER kategori A untuk bruto 15293119.84 (di atas 15100000 s.d. 16950000) = 7%",
-          "ekspresi": "floor(7 / 100 * 15293119.84)",
-          "hasil": 1070518,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh",
+          "kunci": "pph_atas_radiasi",
+          "uraian": "PPh tambahan karena tunjangan radiasi, ditanggung Perusahaan: titik tetap terkecil T = R(TER(X + T) x (X + T)) - 847187 dengan X = 15069788.84; bruto X + T = 15293119.84 masuk lapisan TER kategori A di atas 15100000 s.d. 16950000 = 7%",
+          "ekspresi": "rnd(7 / 100 * (15069788.84 + 223331)) - 847187",
+          "hasil": 223331,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106); PPh ditanggung pemberi kerja = kenikmatan objek PPh 21, full gross-up: PMK 168/2023 Lampiran B Bagian Kedua I.4 (PDF hlm. 44); titik tetap terkecil: tafsir K3-K4",
           "ter": {
             "kategori": "A",
             "bruto": 15293119.84,
@@ -411,17 +406,38 @@
           }
         },
         {
+          "no": 7,
+          "kunci": "radiasi_gross",
+          "uraian": "Tunjangan radiasi bruto = 950.000 + PPh tambahan",
+          "ekspresi": "950000 + 223331",
+          "hasil": 1173331,
+          "sumber": "AVCO-23-8; PPh ditanggung pemberi kerja = kenikmatan objek PPh 21, full gross-up: PMK 168/2023 Lampiran B Bagian Kedua I.4 (PDF hlm. 44); titik tetap terkecil: tafsir K3-K4"
+        },
+        {
+          "no": 8,
+          "kunci": "bruto_juni",
+          "uraian": "Bruto Juni = B0 + tunjangan bruto",
+          "ekspresi": "14119788.84 + 1173331",
+          "hasil": 15293119.84,
+          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+        },
+        {
           "no": 9,
-          "kunci": "pph_atas_radiasi",
-          "uraian": "PPh tambahan karena tunjangan (ditanggung perusahaan)",
-          "ekspresi": "1070518 - 847187",
-          "hasil": 223331,
-          "sumber": "AVCO-23-8"
+          "kunci": "pph_juni",
+          "uraian": "PPh 21 Juni total: TER kategori A untuk bruto 15293119.84 (di atas 15100000 s.d. 16950000) = 7%",
+          "ekspresi": "rnd(7 / 100 * 15293119.84)",
+          "hasil": 1070518,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106)",
+          "ter": {
+            "kategori": "A",
+            "bruto": 15293119.84,
+            "tarif_persen": 7.0
+          }
         },
         {
           "no": 10,
           "kunci": "radiasi_bersih",
-          "uraian": "Cek: tunjangan bersih = gross - PPh tambahan",
+          "uraian": "Cek: tunjangan bersih = tunjangan bruto - PPh tambahan",
           "ekspresi": "1173331 - 223331",
           "hasil": 950000,
           "sumber": "AVCO-23-8"
@@ -437,10 +453,10 @@
         {
           "no": 12,
           "kunci": "radiasi_gross_marginal",
-          "uraian": "Pembanding: gross-up dengan tarif TER lapisan baru saja = 950.000 / (1 - 7%)",
+          "uraian": "Pembanding (ditolak): gross-up dengan tarif lapisan baru saja = 950.000 / (1 - 7%)",
           "ekspresi": "rnd(950000 / (1 - 7 / 100))",
           "hasil": 1021505,
-          "sumber": "pembanding ambiguitas"
+          "sumber": "pembanding"
         }
       ],
       "nilai_harapan": {
@@ -449,21 +465,26 @@
         "pph_juni": 1070518,
         "pph_atas_radiasi": 223331,
         "radiasi_bersih": 950000,
-        "radiasi_gross_marginal": 1021505
+        "pph_dipotong_pegawai": 847187
       },
       "nilai_harapan_keterangan": {
         "bruto_dasar": "bruto tanpa radiasi",
-        "radiasi_gross": "tunjangan radiasi gross",
+        "radiasi_gross": "tunjangan radiasi bruto",
         "pph_juni": "PPh 21 Juni total",
         "pph_atas_radiasi": "PPh ditanggung perusahaan",
-        "radiasi_bersih": "tunjangan bersih (>= 950.000)",
-        "radiasi_gross_marginal": "pembanding gross-up marginal"
+        "radiasi_bersih": "tunjangan bersih",
+        "pph_dipotong_pegawai": "PPh dipotong dari pegawai"
       },
-      "pph21_masuk": "Ya: PPh dihitung TER kategori A; PPh tambahan akibat tunjangan ditanggung perusahaan",
+      "pph21_masuk": "Ya: PPh dihitung TER kategori A atas bruto termasuk tunjangan bruto; PPh tambahan (termasuk lompatan 6% ke 7%) ditanggung perusahaan",
       "ambiguitas": [
         "Arti 'net' dan metode gross-up tidak diatur; karena TER berlaku atas seluruh bruto, tunjangan menaikkan tarif seluruh bruto (6% ke 7%) sehingga PPh tambahan jauh di atas 7% x tunjangan",
         "Apakah tunjangan radiasi adalah tunjangan tetap (masuk dasar iuran BPJS)",
         "Perlakuan di Masa Pajak Desember (perhitungan ulang setahun) tidak diatur"
+      ],
+      "putusan": [
+        "'Net' berarti PPh atas tunjangan ditanggung Perusahaan. Karena PPh yang ditanggung adalah kenikmatan (PMK 168/2023 Lampiran B Bagian Kedua I.4, PDF hlm. 44), tunjangan bruto = 950.000 + PPh tambahan, dihitung sebagai titik tetap terkecil (tafsir K3) dengan metode selisih; lompatan lapisan TER atas seluruh bruto ikut ditanggung Perusahaan. Gross-up dengan tarif marginal ditolak karena tidak menghasilkan 950.000 bersih",
+        "Tunjangan radiasi tidak masuk dasar iuran BPJS: besarnya 'maksimal' dan melekat pada penugasan RSO, sehingga tunjangan tidak tetap menurut definisi PKB sendiri (Ps 1 angka 80-81)",
+        "Masa Pajak Desember: kaidah selisih yang sama atas PPh setahun (Perusahaan menanggung PPh setahun dengan tunjangan dikurangi PPh setahun tanpa tunjangan)"
       ]
     },
     {
@@ -485,10 +506,11 @@
         "status_ptkp": "TK/0"
       },
       "asumsi": [
-        "'Upah bulanan' untuk lembur = upah pokok (golongan Pratama tidak punya tunjangan tetap di PKB)",
+        "'Upah bulanan' untuk lembur = upah (Lampiran III angka 3); golongan Pratama tidak punya tunjangan tetap di PKB sehingga = upah pokok",
         "Dasar iuran BPJS = upah pokok; JKK 1,74% sesuai Ps 41",
-        "PPh 21 dipotong dari pegawai (Ps 20 ayat 10)",
-        "Makan siang natura Rp47.000/hari tidak masuk bruto (PMK 66/2023 Ps 4 huruf a)",
+        "PPh 21 dipotong dari pegawai (Ps 20 ayat 10); AVCO bukan KLU DTP",
+        "Makan siang natura Rp47.000/hari bagi seluruh pekerja tidak masuk bruto (PMK 66/2023 Ps 4 huruf a)",
+        "PPh TER Masa 2025 dibulatkan ke rupiah terdekat (tafsir K1)",
         "Potongan mengurangi bruto; dasar iuran BPJS tidak berubah"
       ],
       "langkah": [
@@ -498,7 +520,7 @@
           "uraian": "Pola 5-2 (8 jam reguler): 12.238.300 / 173 x 8",
           "ekspresi": "rnd(12238300 / 173 * 8)",
           "hasil": 565933,
-          "sumber": "AVCO-24-3"
+          "sumber": "AVCO-24-3; Lampiran III angka 1 huruf a"
         },
         {
           "no": 2,
@@ -506,7 +528,7 @@
           "uraian": "Pola 6-1 (7 jam reguler): 12.238.300 / 173 x 7",
           "ekspresi": "rnd(12238300 / 173 * 7)",
           "hasil": 495191,
-          "sumber": "AVCO-24-3; Ps 1 angka 26"
+          "sumber": "AVCO-24-3; Lampiran III angka 2 huruf a"
         },
         {
           "no": 3,
@@ -546,15 +568,15 @@
           "uraian": "Bruto Juli (pola 5-2)",
           "ekspresi": "12238300 - 565933 + 560000 + 212946.42 + 36714.9 + 480000",
           "hasil": 12962028.32,
-          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10); PMK 168/2023 Ps 8 ayat (2) huruf a"
         },
         {
           "no": 8,
           "kunci": "pph_juli",
           "uraian": "PPh 21 Juli: TER kategori A untuk bruto 12962028.32 (di atas 12500000 s.d. 13750000) = 5%",
-          "ekspresi": "floor(5 / 100 * 12962028.32)",
+          "ekspresi": "rnd(5 / 100 * 12962028.32)",
           "hasil": 648101,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -2- (PDF hlm. 12); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh; PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -2- (PDF hlm. 12); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106); PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
           "ter": {
             "kategori": "A",
             "bruto": 12962028.32,
@@ -578,6 +600,10 @@
       "ambiguitas": [
         "Apakah potongan hukuman mengurangi bruto PPh",
         "Jam kerja reguler 7 atau 8 jam bergantung jadwal (Ps 1 angka 26)"
+      ],
+      "putusan": [
+        "Potongan hukuman mengurangi bruto karena upah itu tidak diterima pegawai (PMK 168/2023 Ps 8 ayat (2) huruf a, PDF hlm. 10)",
+        "Jam kerja reguler mengikuti pola jadwal: 8 jam untuk pola 5-2, 7 jam untuk pola 6-1 (Lampiran III angka 1-2 huruf a)"
       ]
     }
   ]

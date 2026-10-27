@@ -1,12 +1,12 @@
 {
   "dokumen": "PKB_Taekwang_2024_2026",
   "dibuat": "2026-10-27",
-  "status": "draf, menunggu tinjauan pakar",
+  "status": "ditinjau 2026-10-27; putusan tafsir di README",
   "contoh": [
     {
       "id": "GT5-TKG-01",
       "judul": "THR dengan tambahan masa kerja, THR prorata, dan PPh 21 DTP (Maret 2025)",
-      "menguji": "Tambahan THR 20% untuk masa kerja 4 tahun, prorata pegawai baru, DTP pada metode gross (tidak dipotong / dibayar tunai)",
+      "menguji": "Tambahan THR 20% untuk masa kerja 4 tahun, prorata pegawai baru, DTP pada metode gross (PPh tidak mengurangi upah)",
       "tahun_pajak": 2025,
       "klausul": [
         "TKG-53-1",
@@ -31,10 +31,11 @@
       },
       "asumsi": [
         "Nominal (tidak ada di PKB, dipilih untuk ilustrasi): gaji pokok 3.600.000; tunjangan senioritas 100.000 (tunjangan tetap); upah = 3.700.000; tunjangan kehadiran 150.000/bulan; transport 15.000/hari masuk",
-        "Tingkat risiko JKK alas kaki diasumsikan 'rendah' 0,54%; dengan keringanan PP 7/2025 menjadi 0,27% (iuran Feb 2025-Jan 2026), perusahaan dianggap memenuhi syarat",
+        "Tingkat risiko JKK alas kaki diasumsikan 'rendah' 0,54%; perusahaan lolos keringanan PP 7/2025 (alas kaki, >= 50 peserta aktif, verifikasi BPJS) sehingga 0,27% untuk iuran Feb 2025-Jan 2026",
         "Dasar iuran BPJS = gaji pokok + tunjangan tetap",
-        "PPh 21 dipotong (Ps 46); KLU alas kaki eligible DTP 2025 dan 2026",
-        "PPh dihitung untuk pegawai A; bruto tetap dan teratur Januari 2025 = 3.700.000 <= 10 juta (eligible DTP)"
+        "PPh 21 metode gross (Ps 46); KLU alas kaki eligible DTP 2025 dan 2026",
+        "PPh TER Masa 2025 dibulatkan ke rupiah terdekat (tafsir K1)",
+        "PPh dihitung untuk pegawai A; gaji dan tunjangan tetap-teratur Januari 2025 = 3.700.000 <= 10 juta (layak DTP, tafsir K5)"
       ],
       "langkah": [
         {
@@ -67,7 +68,7 @@
           "uraian": "Premi JKK pemberi kerja 0.27% x 3700000",
           "ekspresi": "0.27 / 100 * 3700000",
           "hasil": 9990,
-          "sumber": "PP 7/2025 Ps 4 ayat (1) (PDF hlm. 4), masa iuran Feb-Jul 2025 (Ps 10); diperpanjang s.d. iuran Jan 2026 oleh PP 36/2025 Ps 10A (PDF hlm. 4); masuk bruto: PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+          "sumber": "PP 7/2025 Ps 4 ayat (1) (PDF hlm. 4), masa iuran Feb-Jul 2025 (Ps 10, PDF hlm. 6); diperpanjang s.d. iuran Jan 2026 oleh PP 36/2025 Ps 10A (PDF hlm. 4); tafsir K7-K8; masuk bruto: PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
         },
         {
           "no": 5,
@@ -97,9 +98,9 @@
           "no": 8,
           "kunci": "pph_maret",
           "uraian": "PPh 21 Maret pegawai A: TER kategori A untuk bruto 8789090 (di atas 8550000 s.d. 9650000) = 1.75%",
-          "ekspresi": "floor(1.75 / 100 * 8789090)",
+          "ekspresi": "rnd(1.75 / 100 * 8789090)",
           "hasil": 153809,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -2- (PDF hlm. 12); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh; PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -2- (PDF hlm. 12); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106); PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
           "ter": {
             "kategori": "A",
             "bruto": 8789090.0,
@@ -109,7 +110,7 @@
         {
           "no": 9,
           "kunci": "pph_dipotong",
-          "uraian": "PPh yang dipotong dari pegawai (DTP: tidak dipotong / dibayar tunai)",
+          "uraian": "PPh yang mengurangi upah (DTP: dipotong lalu dibayar kembali tunai, atau tidak dipotong)",
           "ekspresi": "0",
           "hasil": 0,
           "sumber": "PMK 10/2025 Ps 2-4 (PDF hlm. 4-5), Ps 5 ayat (1)-(2) (PDF hlm. 6); PMK 168/2023 Ps 7 huruf h (PDF hlm. 10); KLU alas kaki: tables/klu_dtp.csv (PMK 10/2025 Lampiran A, PDF hlm. 15)"
@@ -128,7 +129,7 @@
           "uraian": "Iuran JP pegawai 1% x min(3700000, batas upah 10547400 untuk iuran 2025-03)",
           "ekspresi": "1 / 100 * min(3700000, 10547400)",
           "hasil": 37000,
-          "sumber": "PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv"
+          "sumber": "PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv (tafsir K11)"
         },
         {
           "no": 12,
@@ -149,7 +150,7 @@
         {
           "no": 14,
           "kunci": "take_home_jika_dipotong",
-          "uraian": "Pembanding C4: bila Ps 46 dijalankan (PPh dipotong, DTP tidak dibayar)",
+          "uraian": "Pembanding pelaksanaan keliru: PPh dipotong dan DTP tidak dibayarkan",
           "ekspresi": "8472000 - 153809",
           "hasil": 8318191,
           "sumber": "TKG-46"
@@ -160,27 +161,30 @@
         "thr_B": 1541667,
         "bruto_maret": 8789090,
         "pph_maret": 153809,
-        "take_home": 8472000,
-        "take_home_jika_dipotong": 8318191
+        "take_home": 8472000
       },
       "nilai_harapan_keterangan": {
         "thr_A": "THR pegawai A",
         "thr_B": "THR pegawai B (prorata)",
         "bruto_maret": "bruto Maret pegawai A",
         "pph_maret": "PPh 21 Maret = DTP",
-        "take_home": "uang diterima pegawai A",
-        "take_home_jika_dipotong": "uang diterima bila PPh dipotong (C4)"
+        "take_home": "uang diterima pegawai A"
       },
       "pph21_masuk": "Ya: TER kategori A; seluruh PPh DTP",
       "ambiguitas": [
         "Masa kerja tepat 1 bulan tidak tercakup ('lebih dari 1 bulan') - C10 laten",
         "Tingkat risiko JKK dan status keringanan perusahaan"
+      ],
+      "putusan": [
+        "Syarat 'lebih dari 1 bulan' (Ps 53 ayat 3) di bawah Permenaker 6/2016 Ps 2 ayat (1) untuk masa kerja tepat 1 bulan: C10 laten; pegawai B (5 bulan) tidak terdampak",
+        "Tingkat risiko JKK ditetapkan per perusahaan (PP 44/2015 Ps 16); 0,54% dipakai sebagai asumsi. Keringanan berlaku bila syarat PP 7/2025 Ps 3 ayat (3)-(4), Ps 5, Ps 6 ayat (2) terpenuhi",
+        "Pada metode gross, PPh DTP tidak boleh mengurangi upah; tidak membayarkannya adalah kesalahan pelaksanaan, bukan konflik teks Ps 46"
       ]
     },
     {
       "id": "GT5-TKG-02",
       "judul": "Upah lembur hari kerja 4 jam dan hari istirahat pola 5 hari",
-      "menguji": "Dasar 1/173 x (gaji pokok + tunjangan tetap); celah pengali jam ke-4 (C10 laten)",
+      "menguji": "Dasar 1/173 x (gaji pokok + tunjangan tetap); jam lembur ke-4 hari kerja mengikuti regulasi yang dirujuk Ps 44 ayat 1",
       "tahun_pajak": 2025,
       "klausul": [
         "TKG-44-2",
@@ -195,11 +199,12 @@
       },
       "asumsi": [
         "Nominal (tidak ada di PKB, dipilih untuk ilustrasi): gaji pokok 3.600.000; tunjangan senioritas 100.000 (tunjangan tetap); upah = 3.700.000; tunjangan kehadiran 150.000/bulan; transport 15.000/hari masuk",
-        "Tingkat risiko JKK alas kaki diasumsikan 'rendah' 0,54%; dengan keringanan PP 7/2025 menjadi 0,27% (iuran Feb 2025-Jan 2026), perusahaan dianggap memenuhi syarat",
+        "Tingkat risiko JKK alas kaki diasumsikan 'rendah' 0,54%; perusahaan lolos keringanan PP 7/2025 (alas kaki, >= 50 peserta aktif, verifikasi BPJS) sehingga 0,27% untuk iuran Feb 2025-Jan 2026",
         "Dasar iuran BPJS = gaji pokok + tunjangan tetap",
-        "PPh 21 dipotong (Ps 46); KLU alas kaki eligible DTP 2025 dan 2026",
-        "Jam ke-4 hari kerja dibayar 2x mengikuti PP 35/2021 Ps 31 (PKB diam)",
-        "Dibulatkan ke rupiah; dibayar bulan berikutnya"
+        "PPh 21 metode gross (Ps 46); KLU alas kaki eligible DTP 2025 dan 2026",
+        "PPh TER Masa 2025 dibulatkan ke rupiah terdekat (tafsir K1)",
+        "Jam ke-4 hari kerja dibayar 2x: Ps 44 ayat 1 merujuk peraturan perundang-undangan (PP 35/2021 Ps 31)",
+        "Dibulatkan ke rupiah terdekat"
       ],
       "langkah": [
         {
@@ -216,12 +221,12 @@
           "uraian": "Hari kerja 4 jam: (1,5 + 2 + 2 + 2) x upah per jam",
           "ekspresi": "rnd((1.5 + 2 + 2 + 2) * (3700000 / 173))",
           "hasil": 160405,
-          "sumber": "TKG-44-3a; jam ke-4: PP 35/2021 Ps 31"
+          "sumber": "TKG-44-3a; jam ke-4 melalui Ps 44 ayat 1: PP 35/2021 Ps 31 (di luar dataset)"
         },
         {
           "no": 3,
           "kunci": "lembur_hari_kerja_literal",
-          "uraian": "Bagian yang tertulis di PKB (jam 1-3): 5,5 x upah per jam",
+          "uraian": "Pembanding: bagian yang tertulis di Ps 44 ayat 3 huruf a (jam 1-3): 5,5 x upah per jam",
           "ekspresi": "rnd((1.5 + 2 + 2) * (3700000 / 173))",
           "hasil": 117630,
           "sumber": "TKG-44-3a"
@@ -238,18 +243,19 @@
       "nilai_harapan": {
         "upah_per_jam": 21387.28323699422,
         "lembur_hari_kerja": 160405,
-        "lembur_hari_kerja_literal": 117630,
         "lembur_istirahat": 491908
       },
       "nilai_harapan_keterangan": {
         "upah_per_jam": "upah lembur per jam",
         "lembur_hari_kerja": "lembur 4 jam hari kerja",
-        "lembur_hari_kerja_literal": "bagian jam 1-3 menurut PKB",
         "lembur_istirahat": "lembur 10 jam hari istirahat"
       },
-      "pph21_masuk": "Ya, tidak langsung: upah lembur masuk bruto Masa Pajak saat dibayar (bulan berikutnya)",
+      "pph21_masuk": "Ya, tidak langsung: lembur bulan M dibayar bersama upah bulan M (tanggal 10 bulan M+1) dan masuk bruto Masa Pajak M (PMK 168/2023 Ps 19 ayat (1) huruf a, PDF hlm. 20)",
       "ambiguitas": [
         "Pengali jam lembur ke-4 pada hari kerja tidak diatur"
+      ],
+      "putusan": [
+        "Jam lembur ke-4 hari kerja = 2x upah per jam lewat rujukan Ps 44 ayat 1 ke regulasi; ini celah yang diisi regulasi, bukan konflik"
       ]
     },
     {
@@ -273,10 +279,10 @@
         "Nominal (tidak ada di PKB, dipilih untuk ilustrasi): gaji pokok 3.600.000; tunjangan senioritas 100.000 (tunjangan tetap); upah = 3.700.000; tunjangan kehadiran 150.000/bulan; transport 15.000/hari masuk",
         "Tingkat risiko JKK alas kaki diasumsikan 'rendah' 0,54%; dengan keringanan PP 7/2025 menjadi 0,27% (iuran Feb 2025-Jan 2026), perusahaan dianggap memenuhi syarat",
         "Dasar iuran BPJS = gaji pokok + tunjangan tetap",
-        "PPh 21 dipotong (Ps 46); KLU alas kaki eligible DTP 2025 dan 2026",
-        "Pembagi utama: hari kalender (21 dari 30 hari); pembanding: hari kerja Senin-Jumat (15 dari 21, tanpa memperhitungkan hari libur)",
+        "PPh 21 metode gross (Ps 46); KLU alas kaki eligible DTP 2025 dan 2026",
         "Tunjangan kehadiran tidak dibayar karena tidak bekerja satu bulan penuh; transport 15 hari",
-        "Iuran BPJS bulan pertama dari upah sebulan penuh"
+        "Iuran BPJS bulan pertama dari upah sebulan penuh",
+        "Pembagi prorata = hari kalender (10-30 Juni = 21 dari 30 hari) karena periode upah tanggal 1 s.d. akhir bulan (Ps 37 ayat 4); pembanding hari kerja hanya dicatat"
       ],
       "langkah": [
         {
@@ -309,7 +315,7 @@
           "uraian": "Premi JKK pemberi kerja 0.27% x 3700000",
           "ekspresi": "0.27 / 100 * 3700000",
           "hasil": 9990,
-          "sumber": "PP 7/2025 Ps 4 ayat (1) (PDF hlm. 4), masa iuran Feb-Jul 2025 (Ps 10); diperpanjang s.d. iuran Jan 2026 oleh PP 36/2025 Ps 10A (PDF hlm. 4); masuk bruto: PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+          "sumber": "PP 7/2025 Ps 4 ayat (1) (PDF hlm. 4), masa iuran Feb-Jul 2025 (Ps 10, PDF hlm. 6); diperpanjang s.d. iuran Jan 2026 oleh PP 36/2025 Ps 10A (PDF hlm. 4); tafsir K7-K8; masuk bruto: PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
         },
         {
           "no": 5,
@@ -339,9 +345,9 @@
           "no": 8,
           "kunci": "pph_juni",
           "uraian": "PPh 21 Juni: TER kategori A untuk bruto 2984090 (di atas 0 s.d. 5400000) = 0%",
-          "ekspresi": "floor(0 / 100 * 2984090)",
+          "ekspresi": "rnd(0 / 100 * 2984090)",
           "hasil": 0,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -1- (PDF hlm. 11); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh; PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -1- (PDF hlm. 11); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106); PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
           "ter": {
             "kategori": "A",
             "bruto": 2984090.0,
@@ -351,13 +357,11 @@
       ],
       "nilai_harapan": {
         "upah_kalender": 2590000,
-        "upah_hari_kerja": 2642857,
         "bruto_juni": 2984090,
         "pph_juni": 0
       },
       "nilai_harapan_keterangan": {
         "upah_kalender": "upah Juni (hari kalender)",
-        "upah_hari_kerja": "upah Juni (hari kerja, pembanding)",
         "bruto_juni": "bruto Juni",
         "pph_juni": "PPh 21 Juni"
       },
@@ -367,6 +371,12 @@
         "Apakah tunjangan kehadiran dibayar sebagian untuk bulan pertama",
         "Dasar iuran BPJS bulan pertama: penuh atau prorata",
         "Syarat DTP pegawai baru: bruto tetap dan teratur bulan pertama = upah prorata 2.590.000"
+      ],
+      "putusan": [
+        "Pembagi = hari kalender: Ps 37 ayat 4 menetapkan periode upah tanggal 1 s.d. tanggal terakhir bulan",
+        "Tunjangan kehadiran tidak dibayar untuk bulan pertama yang tidak penuh (Ps 41 ayat 3: dibayar penuh bila masuk satu bulan kerja berturut-turut)",
+        "Iuran BPJS bulan pertama dari upah sebulan penuh: dasar iuran adalah upah sebulan (PP 44/2015 Ps 19, PDF hlm. 13; PP 46/2015 Ps 17, PDF hlm. 11), bukan upah yang diprorata",
+        "Kelayakan DTP pegawai baru diuji pada bulan pertama bekerja dengan gaji dan tunjangan tetap-teratur yang ditetapkan (3.700.000) <= 10 juta (PMK 10/2025 Ps 4 ayat (2) huruf b angka 2; tafsir K5)"
       ]
     },
     {
@@ -441,6 +451,10 @@
       "ambiguitas": [
         "Besar potongan upah untuk hari mangkir (Ps 46 angka 1) tidak diatur sehingga tidak dihitung",
         "Nilai harian tunjangan kehadiran (pembagi) tidak diatur"
+      ],
+      "putusan": [
+        "Potongan upah untuk hari mangkir tidak dihitung karena Ps 46 angka 1 tidak menetapkan besarnya; prinsip no work no pay berlaku tetapi nilainya di luar PKB",
+        "Nilai harian tunjangan kehadiran = tunjangan bulanan / jumlah hari kerja bulan itu (22), karena tunjangan hilang 'pada hari yang ditinggalkan' (Ps 41 ayat 4 huruf b dan d)"
       ]
     }
   ]

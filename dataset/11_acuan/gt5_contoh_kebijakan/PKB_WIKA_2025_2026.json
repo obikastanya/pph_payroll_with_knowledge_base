@@ -1,12 +1,12 @@
 {
   "dokumen": "PKB_WIKA_2025_2026",
   "dibuat": "2026-10-27",
-  "status": "draf, menunggu tinjauan pakar",
+  "status": "ditinjau 2026-10-27; putusan tafsir di README",
   "contoh": [
     {
       "id": "GT5-WIKA-01",
       "judul": "THR prorata pegawai baru dan PPh 21 ditanggung perusahaan (Maret 2025)",
-      "menguji": "Rumus prorata THR (masa kerja/12 x THP), THR sebagai penghasilan tidak teratur dalam TER, metode ditanggung perusahaan",
+      "menguji": "Rumus prorata THR (masa kerja/12 x THP), THR sebagai penghasilan tidak teratur dalam TER, PPh ditanggung perusahaan sebagai kenikmatan (gross-up)",
       "tahun_pajak": 2025,
       "klausul": [
         "WIKA-31-3",
@@ -24,12 +24,13 @@
       "asumsi": [
         "Pegawai Organik, status PTKP TK/0 (kategori TER A) kecuali disebut lain",
         "Fixed Pay (FP) Rp12.000.000, Tunjangan Grade (TG) Rp6.000.000, THP Rp18.000.000 (nominal tidak ada di PKB; dipilih untuk ilustrasi)",
-        "Tingkat risiko JKK konstruksi diasumsikan 'tinggi' 1,27% (PKB tidak menyebut)",
-        "Dasar iuran BPJS TK dan JKN = Fixed Pay (Ps 32 ayat 4; Tunjangan Grade dikecualikan menurut Ps 4 angka 36)",
-        "PPh 21 ditanggung perusahaan dengan metode net: PPh tidak ditambahkan ke bruto (Ps 22 ayat 2)",
+        "Tingkat risiko JKK konstruksi diasumsikan 'tinggi' 1,27% (tingkat risiko ditetapkan per perusahaan; PKB tidak menyebut)",
+        "Dasar iuran BPJS TK dan JKN = Fixed Pay (Ps 32 ayat 4; TG dikecualikan menurut Ps 4 angka 36). Pengecualian ini dipakai sebagai acuan; konflik laten C8 dicatat di WIKA-4-36",
+        "PPh 21 yang ditanggung Perusahaan (Ps 22 ayat 2) adalah kenikmatan objek PPh 21 dan masuk bruto dengan full gross-up (PMK 168/2023 Lampiran B Bagian Kedua I.4, PDF hlm. 44; tafsir K3-K4)",
+        "PPh TER Masa 2025 dibulatkan ke rupiah terdekat (tafsir K1)",
         "Pembagian iuran JHT 2% dan JP 1% oleh pegawai mengikuti regulasi (PKB tidak menyebut)",
         "Masa kerja dihitung dalam bulan penuh sampai hari raya: 1 Okt 2024 - 31 Mar 2025 = 6 bulan",
-        "THR dibayar sebesar batas bawah (1,0 x THP) dan pada payroll Maret"
+        "THR dibayar sebesar batas bawah (1,0 x THP) pada payroll Maret"
       ],
       "langkah": [
         {
@@ -67,7 +68,7 @@
         {
           "no": 5,
           "kunci": "bruto_teratur",
-          "uraian": "Bruto teratur sebulan = THP + premi JKK + JKM + JKN",
+          "uraian": "Bruto teratur sebulan tanpa PPh ditanggung = THP + premi JKK + JKM + JKN",
           "ekspresi": "18000000 + 152400 + 36000 + 480000",
           "hasil": 18668400,
           "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
@@ -75,10 +76,10 @@
         {
           "no": 6,
           "kunci": "masa_kerja_bulan",
-          "uraian": "Masa kerja (bulan penuh)",
+          "uraian": "Masa kerja (bulan penuh sampai hari raya)",
           "ekspresi": "6",
           "hasil": 6,
-          "sumber": "WIKA-31-4; asumsi penghitungan bulan"
+          "sumber": "WIKA-31-4; Permenaker 6/2016 Ps 3 ayat (1) huruf b (tidak ada di dataset)"
         },
         {
           "no": 7,
@@ -90,8 +91,8 @@
         },
         {
           "no": 8,
-          "kunci": "bruto_maret",
-          "uraian": "Bruto Maret = bruto teratur + THR",
+          "kunci": "bruto_sebelum_pph",
+          "uraian": "Bruto Maret sebelum PPh ditanggung (X) = bruto teratur + THR",
           "ekspresi": "18668400 + 9000000",
           "hasil": 27668400,
           "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
@@ -99,18 +100,26 @@
         {
           "no": 9,
           "kunci": "pph21_maret",
-          "uraian": "PPh 21 Maret (ditanggung perusahaan): TER kategori A untuk bruto 27668400 (di atas 26450000 s.d. 28000000) = 11%",
-          "ekspresi": "floor(11 / 100 * 27668400)",
-          "hasil": 3043524,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh",
+          "uraian": "PPh 21 Maret ditanggung Perusahaan: titik tetap terkecil T = R(TER(X + T) x (X + T)) dengan X = 27668400; bruto X + T = 31802759 masuk lapisan TER kategori A di atas 30050000 s.d. 32400000 = 13%",
+          "ekspresi": "rnd(13 / 100 * (27668400 + 4134359))",
+          "hasil": 4134359,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106); PPh ditanggung pemberi kerja = kenikmatan objek PPh 21, full gross-up: PMK 168/2023 Lampiran B Bagian Kedua I.4 (PDF hlm. 44); titik tetap terkecil: tafsir K3-K4",
           "ter": {
             "kategori": "A",
-            "bruto": 27668400.0,
-            "tarif_persen": 11.0
+            "bruto": 31802759.0,
+            "tarif_persen": 13.0
           }
         },
         {
           "no": 10,
+          "kunci": "bruto_maret",
+          "uraian": "Bruto Maret = X + PPh ditanggung",
+          "ekspresi": "27668400 + 4134359",
+          "hasil": 31802759,
+          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10); PPh ditanggung pemberi kerja = kenikmatan objek PPh 21, full gross-up: PMK 168/2023 Lampiran B Bagian Kedua I.4 (PDF hlm. 44); titik tetap terkecil: tafsir K3-K4"
+        },
+        {
+          "no": 11,
           "kunci": "iuran_jht",
           "uraian": "Iuran JHT pegawai 2% x 12000000",
           "ekspresi": "2 / 100 * 12000000",
@@ -118,15 +127,15 @@
           "sumber": "PP 46/2015 Ps 16 ayat (1)-(2) (PDF hlm. 11)"
         },
         {
-          "no": 11,
+          "no": 12,
           "kunci": "iuran_jp",
           "uraian": "Iuran JP pegawai 1% x min(12000000, batas upah 10547400 untuk iuran 2025-03)",
           "ekspresi": "1 / 100 * min(12000000, 10547400)",
           "hasil": 105474,
-          "sumber": "PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv"
+          "sumber": "PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv (tafsir K11)"
         },
         {
-          "no": 12,
+          "no": 13,
           "kunci": "iuran_jkn",
           "uraian": "Iuran JKN pegawai 1% x min(12000000, 12.000.000)",
           "ekspresi": "1 / 100 * min(12000000, 12000000)",
@@ -134,9 +143,9 @@
           "sumber": "Perpres 75/2019 Pasal I angka 2-3 (Ps 30 ayat (2), Ps 32 ayat (1)) (PDF hlm. 2-3); batas upah Rp12.000.000"
         },
         {
-          "no": 13,
+          "no": 14,
           "kunci": "take_home",
-          "uraian": "Uang diterima = THP + THR - iuran JHT - JP - JKN (PPh tidak dipotong)",
+          "uraian": "Uang diterima = THP + THR - iuran JHT - JP - JKN (PPh ditanggung, tidak dipotong)",
           "ekspresi": "18000000 + 9000000 - 240000 - 105474 - 120000",
           "hasil": 26534526,
           "sumber": "WIKA-22-2"
@@ -144,26 +153,30 @@
       ],
       "nilai_harapan": {
         "thr": 9000000,
-        "bruto_maret": 27668400,
-        "pph21_maret": 3043524,
+        "bruto_maret": 31802759,
+        "pph21_maret": 4134359,
         "take_home": 26534526
       },
       "nilai_harapan_keterangan": {
         "thr": "THR (Rp)",
-        "bruto_maret": "bruto Masa Pajak Maret",
+        "bruto_maret": "bruto Masa Pajak Maret (termasuk PPh ditanggung)",
         "pph21_maret": "PPh 21 Maret, beban perusahaan",
         "take_home": "uang diterima pegawai Maret"
       },
-      "pph21_masuk": "Ya: THR masuk bruto Maret dan dikenai TER kategori A",
+      "pph21_masuk": "Ya: THR dan PPh yang ditanggung (kenikmatan) masuk bruto Maret; TER kategori A atas bruto setelah gross-up",
       "ambiguitas": [
         "Cara menghitung masa kerja: bulan penuh vs pecahan bulan (PKB tidak menjelaskan)",
         "Apakah PPh yang ditanggung perusahaan harus ditambahkan ke bruto (gross-up) atau tidak (net); contoh memakai net"
+      ],
+      "putusan": [
+        "Masa kerja dihitung dalam bulan penuh yang telah dilalui sampai hari raya (Permenaker 6/2016 Ps 3 ayat (1) huruf b: 'masa kerja/12 x 1 bulan upah'); pecahan bulan tidak dihitung",
+        "PPh ditanggung perusahaan ditambahkan ke bruto (full gross-up): PMK 168/2023 Lampiran B Bagian Kedua I.4, PDF hlm. 44; tafsir K4. Metode net hanya berlaku untuk Masa Januari-Juni 2023"
       ]
     },
     {
       "id": "GT5-WIKA-02",
       "judul": "Jasa Produksi: PPh dipotong dari pegawai, PPh gaji ditanggung perusahaan (Juni 2025)",
-      "menguji": "Pengecualian Ps 22 ayat 2 dan alokasi PPh satu Masa Pajak antara bagian ditanggung dan bagian dipotong",
+      "menguji": "Pengecualian Ps 22 ayat 2: PPh atas Jasa Produksi ditanggung pegawai (metode selisih), PPh atas gaji ditanggung perusahaan (gross-up)",
       "tahun_pajak": 2025,
       "klausul": [
         "WIKA-22-2",
@@ -177,12 +190,13 @@
       "asumsi": [
         "Pegawai Organik, status PTKP TK/0 (kategori TER A) kecuali disebut lain",
         "Fixed Pay (FP) Rp12.000.000, Tunjangan Grade (TG) Rp6.000.000, THP Rp18.000.000 (nominal tidak ada di PKB; dipilih untuk ilustrasi)",
-        "Tingkat risiko JKK konstruksi diasumsikan 'tinggi' 1,27% (PKB tidak menyebut)",
-        "Dasar iuran BPJS TK dan JKN = Fixed Pay (Ps 32 ayat 4; Tunjangan Grade dikecualikan menurut Ps 4 angka 36)",
-        "PPh 21 ditanggung perusahaan dengan metode net: PPh tidak ditambahkan ke bruto (Ps 22 ayat 2)",
+        "Tingkat risiko JKK konstruksi diasumsikan 'tinggi' 1,27% (tingkat risiko ditetapkan per perusahaan; PKB tidak menyebut)",
+        "Dasar iuran BPJS TK dan JKN = Fixed Pay (Ps 32 ayat 4; TG dikecualikan menurut Ps 4 angka 36). Pengecualian ini dipakai sebagai acuan; konflik laten C8 dicatat di WIKA-4-36",
+        "PPh 21 yang ditanggung Perusahaan (Ps 22 ayat 2) adalah kenikmatan objek PPh 21 dan masuk bruto dengan full gross-up (PMK 168/2023 Lampiran B Bagian Kedua I.4, PDF hlm. 44; tafsir K3-K4)",
+        "PPh TER Masa 2025 dibulatkan ke rupiah terdekat (tafsir K1)",
         "Pembagian iuran JHT 2% dan JP 1% oleh pegawai mengikuti regulasi (PKB tidak menyebut)",
         "Besaran Jasa Produksi Rp20.000.000 (ditetapkan Direksi; dipilih untuk ilustrasi), dibayar Juni 2025",
-        "Alokasi utama: metode inkremental, yaitu PPh pegawai = PPh(bruto dengan Jasa Produksi) - PPh(bruto tanpa Jasa Produksi)"
+        "Alokasi: metode selisih. Bagian Perusahaan = PPh gross-up atas gaji tanpa Jasa Produksi; bagian pegawai = PPh total bulan itu - bagian Perusahaan"
       ],
       "langkah": [
         {
@@ -220,96 +234,82 @@
         {
           "no": 5,
           "kunci": "bruto_teratur",
-          "uraian": "Bruto teratur sebulan = THP + premi JKK + JKM + JKN",
+          "uraian": "Bruto teratur sebulan tanpa PPh ditanggung (X)",
           "ekspresi": "18000000 + 152400 + 36000 + 480000",
           "hasil": 18668400,
           "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
         },
         {
           "no": 6,
-          "kunci": "pph_tanpa_jp",
-          "uraian": "PPh 21 atas bruto teratur saja: TER kategori A untuk bruto 18668400 (di atas 16950000 s.d. 19750000) = 8%",
-          "ekspresi": "floor(8 / 100 * 18668400)",
-          "hasil": 1493472,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh",
+          "kunci": "pph_perusahaan",
+          "uraian": "PPh atas gaji tanpa Jasa Produksi, ditanggung Perusahaan: titik tetap terkecil T = R(TER(X + T) x (X + T)) dengan X = 18668400; bruto X + T = 20514725 masuk lapisan TER kategori A di atas 19750000 s.d. 24150000 = 9%",
+          "ekspresi": "rnd(9 / 100 * (18668400 + 1846325))",
+          "hasil": 1846325,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106); PPh ditanggung pemberi kerja = kenikmatan objek PPh 21, full gross-up: PMK 168/2023 Lampiran B Bagian Kedua I.4 (PDF hlm. 44); titik tetap terkecil: tafsir K3-K4",
           "ter": {
             "kategori": "A",
-            "bruto": 18668400.0,
-            "tarif_persen": 8.0
+            "bruto": 20514725.0,
+            "tarif_persen": 9.0
           }
         },
         {
           "no": 7,
           "kunci": "bruto_juni",
-          "uraian": "Bruto Juni = bruto teratur + Jasa Produksi",
-          "ekspresi": "18668400 + 20000000",
-          "hasil": 38668400,
-          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+          "uraian": "Bruto Juni = X + PPh ditanggung + Jasa Produksi",
+          "ekspresi": "18668400 + 1846325 + 20000000",
+          "hasil": 40514725,
+          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10); PPh ditanggung pemberi kerja = kenikmatan objek PPh 21, full gross-up: PMK 168/2023 Lampiran B Bagian Kedua I.4 (PDF hlm. 44); titik tetap terkecil: tafsir K3-K4"
         },
         {
           "no": 8,
           "kunci": "pph_total",
-          "uraian": "PPh 21 Juni seluruhnya: TER kategori A untuk bruto 38668400 (di atas 35400000 s.d. 39100000) = 15%",
-          "ekspresi": "floor(15 / 100 * 38668400)",
-          "hasil": 5800260,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh",
+          "uraian": "PPh 21 Juni seluruhnya: TER kategori A untuk bruto 40514725 (di atas 39100000 s.d. 43850000) = 16%",
+          "ekspresi": "rnd(16 / 100 * 40514725)",
+          "hasil": 6482356,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -4- (PDF hlm. 14); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106)",
           "ter": {
             "kategori": "A",
-            "bruto": 38668400.0,
-            "tarif_persen": 15.0
+            "bruto": 40514725.0,
+            "tarif_persen": 16.0
           }
         },
         {
           "no": 9,
           "kunci": "pph_pegawai",
-          "uraian": "Bagian PPh ditanggung pegawai (inkremental)",
-          "ekspresi": "5800260 - 1493472",
-          "hasil": 4306788,
-          "sumber": "WIKA-22-2; asumsi alokasi"
+          "uraian": "Bagian PPh dipotong dari Jasa Produksi (selisih)",
+          "ekspresi": "6482356 - 1846325",
+          "hasil": 4636031,
+          "sumber": "WIKA-22-2; metode selisih: preseden PER-16/PJ/2016 Ps 14 ayat (3) huruf b (PDF hlm. 13, OCR)"
         },
         {
           "no": 10,
-          "kunci": "pph_perusahaan",
-          "uraian": "Bagian PPh ditanggung perusahaan",
-          "ekspresi": "1493472",
-          "hasil": 1493472,
-          "sumber": "WIKA-22-2"
-        },
-        {
-          "no": 11,
           "kunci": "jasa_produksi_neto",
           "uraian": "Jasa Produksi diterima = 20.000.000 - PPh bagian pegawai",
-          "ekspresi": "20000000 - 4306788",
-          "hasil": 15693212,
+          "ekspresi": "20000000 - 4636031",
+          "hasil": 15363969,
           "sumber": "WIKA-22-2"
-        },
-        {
-          "no": 12,
-          "kunci": "pph_pegawai_proporsional",
-          "uraian": "Pembanding: alokasi proporsional = PPh total x 20.000.000 / bruto Juni",
-          "ekspresi": "floor(5800260 * 20000000 / 38668400)",
-          "hasil": 3000000,
-          "sumber": "pembanding ambiguitas"
         }
       ],
       "nilai_harapan": {
-        "pph_total": 5800260,
-        "pph_pegawai": 4306788,
-        "pph_perusahaan": 1493472,
-        "jasa_produksi_neto": 15693212,
-        "pph_pegawai_proporsional": 3000000
+        "pph_total": 6482356,
+        "pph_pegawai": 4636031,
+        "pph_perusahaan": 1846325,
+        "jasa_produksi_neto": 15363969
       },
       "nilai_harapan_keterangan": {
         "pph_total": "PPh 21 Juni total",
-        "pph_pegawai": "PPh dipotong dari Jasa Produksi (inkremental)",
-        "pph_perusahaan": "PPh beban perusahaan",
-        "jasa_produksi_neto": "Jasa Produksi bersih",
-        "pph_pegawai_proporsional": "pembanding alokasi proporsional"
+        "pph_pegawai": "PPh dipotong dari Jasa Produksi (selisih)",
+        "pph_perusahaan": "PPh beban perusahaan (gross-up gaji)",
+        "jasa_produksi_neto": "Jasa Produksi bersih"
       },
-      "pph21_masuk": "Ya: Jasa Produksi menaikkan lapisan TER dari 8% ke 15% atas seluruh bruto",
+      "pph21_masuk": "Ya: Jasa Produksi menaikkan lapisan TER dari 9% (gaji setelah gross-up) ke 16% atas seluruh bruto; lompatan itu ditanggung pegawai lewat metode selisih",
       "ambiguitas": [
         "Metode alokasi PPh antara komponen ditanggung dan dipotong tidak diatur: inkremental (contoh ini) vs proporsional; selisihnya besar karena lompatan lapisan TER",
         "Alokasi pada perhitungan ulang Masa Pajak Desember juga tidak diatur"
+      ],
+      "putusan": [
+        "Alokasi: metode selisih (komponen yang dikecualikan menanggung PPh(dengan) - PPh(tanpa)). Dasarnya: Ps 22 ayat 2 menjadikan PPh atas gaji tanggungan Perusahaan sebagaimana bila Jasa Produksi tidak dibayar; kaidah selisih untuk penghasilan tidak teratur dipakai PER-16/PJ/2016 Ps 14 ayat (3) huruf b. Alokasi proporsional ditolak karena membebankan sebagian PPh atas Jasa Produksi kepada Perusahaan",
+        "Masa Pajak Desember: kaidah yang sama atas PPh setahun, yaitu Perusahaan menanggung PPh setahun tanpa Jasa Produksi/IHL (dengan gross-up), pegawai menanggung sisanya dikurangi bagian yang telah dipotong dari Jasa Produksi"
       ]
     },
     {
@@ -331,9 +331,10 @@
       "asumsi": [
         "Pegawai Organik, status PTKP TK/0 (kategori TER A) kecuali disebut lain",
         "Fixed Pay (FP) Rp12.000.000, Tunjangan Grade (TG) Rp6.000.000, THP Rp18.000.000 (nominal tidak ada di PKB; dipilih untuk ilustrasi)",
-        "Tingkat risiko JKK konstruksi diasumsikan 'tinggi' 1,27% (PKB tidak menyebut)",
-        "Dasar iuran BPJS TK dan JKN = Fixed Pay (Ps 32 ayat 4; Tunjangan Grade dikecualikan menurut Ps 4 angka 36)",
-        "PPh 21 ditanggung perusahaan dengan metode net: PPh tidak ditambahkan ke bruto (Ps 22 ayat 2)",
+        "Tingkat risiko JKK konstruksi diasumsikan 'tinggi' 1,27% (tingkat risiko ditetapkan per perusahaan; PKB tidak menyebut)",
+        "Dasar iuran BPJS TK dan JKN = Fixed Pay (Ps 32 ayat 4; TG dikecualikan menurut Ps 4 angka 36). Pengecualian ini dipakai sebagai acuan; konflik laten C8 dicatat di WIKA-4-36",
+        "PPh 21 yang ditanggung Perusahaan (Ps 22 ayat 2) adalah kenikmatan objek PPh 21 dan masuk bruto dengan full gross-up (PMK 168/2023 Lampiran B Bagian Kedua I.4, PDF hlm. 44; tafsir K3-K4)",
+        "PPh TER Masa 2025 dibulatkan ke rupiah terdekat (tafsir K1)",
         "Pembagian iuran JHT 2% dan JP 1% oleh pegawai mengikuti regulasi (PKB tidak menyebut)",
         "Uang cuti dibayar sebesar batas bawah 1 x FP",
         "Satya Karya 20 tahun dibayar Maret 2025 (HUT perusahaan); hanya nilainya yang dihitung"
@@ -374,7 +375,7 @@
         {
           "no": 5,
           "kunci": "bruto_teratur",
-          "uraian": "Bruto teratur sebulan = THP + premi JKK + JKM + JKN",
+          "uraian": "Bruto teratur sebulan tanpa PPh ditanggung",
           "ekspresi": "18000000 + 152400 + 36000 + 480000",
           "hasil": 18668400,
           "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
@@ -393,12 +394,12 @@
           "uraian": "Ekstra uang cuti masa kerja 20 tahun = 125% x FP",
           "ekspresi": "125 / 100 * 12000000",
           "hasil": 15000000,
-          "sumber": "WIKA-L1"
+          "sumber": "WIKA-L1 (Lampiran 1, PDF hlm. 78)"
         },
         {
           "no": 8,
-          "kunci": "bruto_feb",
-          "uraian": "Bruto Februari",
+          "kunci": "bruto_sebelum_pph",
+          "uraian": "Bruto Februari sebelum PPh ditanggung (X)",
           "ekspresi": "18668400 + 12000000 + 15000000",
           "hasil": 45668400,
           "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
@@ -406,18 +407,26 @@
         {
           "no": 9,
           "kunci": "pph21_feb",
-          "uraian": "PPh 21 Februari (ditanggung perusahaan): TER kategori A untuk bruto 45668400 (di atas 43850000 s.d. 47800000) = 17%",
-          "ekspresi": "floor(17 / 100 * 45668400)",
-          "hasil": 7763628,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -4- (PDF hlm. 14); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh",
+          "uraian": "PPh 21 Februari ditanggung Perusahaan: titik tetap terkecil T = R(TER(X + T) x (X + T)) dengan X = 45668400; bruto X + T = 57085500 masuk lapisan TER kategori A di atas 56300000 s.d. 62200000 = 20%",
+          "ekspresi": "rnd(20 / 100 * (45668400 + 11417100))",
+          "hasil": 11417100,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -4- (PDF hlm. 14); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106); PPh ditanggung pemberi kerja = kenikmatan objek PPh 21, full gross-up: PMK 168/2023 Lampiran B Bagian Kedua I.4 (PDF hlm. 44); titik tetap terkecil: tafsir K3-K4",
           "ter": {
             "kategori": "A",
-            "bruto": 45668400.0,
-            "tarif_persen": 17.0
+            "bruto": 57085500.0,
+            "tarif_persen": 20.0
           }
         },
         {
           "no": 10,
+          "kunci": "bruto_feb",
+          "uraian": "Bruto Februari = X + PPh ditanggung",
+          "ekspresi": "45668400 + 11417100",
+          "hasil": 57085500,
+          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10); PPh ditanggung pemberi kerja = kenikmatan objek PPh 21, full gross-up: PMK 168/2023 Lampiran B Bagian Kedua I.4 (PDF hlm. 44); titik tetap terkecil: tafsir K3-K4"
+        },
+        {
+          "no": 11,
           "kunci": "iuran_jht",
           "uraian": "Iuran JHT pegawai 2% x 12000000",
           "ekspresi": "2 / 100 * 12000000",
@@ -425,15 +434,15 @@
           "sumber": "PP 46/2015 Ps 16 ayat (1)-(2) (PDF hlm. 11)"
         },
         {
-          "no": 11,
+          "no": 12,
           "kunci": "iuran_jp",
           "uraian": "Iuran JP pegawai 1% x min(12000000, batas upah 10042300 untuk iuran 2025-02)",
           "ekspresi": "1 / 100 * min(12000000, 10042300)",
           "hasil": 100423,
-          "sumber": "PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv"
+          "sumber": "PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv (tafsir K11)"
         },
         {
-          "no": 12,
+          "no": 13,
           "kunci": "iuran_jkn",
           "uraian": "Iuran JKN pegawai 1% x min(12000000, 12.000.000)",
           "ekspresi": "1 / 100 * min(12000000, 12000000)",
@@ -441,7 +450,7 @@
           "sumber": "Perpres 75/2019 Pasal I angka 2-3 (Ps 30 ayat (2), Ps 32 ayat (1)) (PDF hlm. 2-3); batas upah Rp12.000.000"
         },
         {
-          "no": 13,
+          "no": 14,
           "kunci": "take_home",
           "uraian": "Uang diterima Februari",
           "ekspresi": "18000000 + 12000000 + 15000000 - 240000 - 100423 - 120000",
@@ -449,7 +458,7 @@
           "sumber": "WIKA-22-2"
         },
         {
-          "no": 14,
+          "no": 15,
           "kunci": "satya_karya",
           "uraian": "Satya Karya 20 tahun (masa kerja s.d. 11 Maret 2025 = 20 tahun) = 1,5 x FP",
           "ekspresi": "1.5 * 12000000",
@@ -459,30 +468,34 @@
       ],
       "nilai_harapan": {
         "ekstra_uang_cuti": 15000000,
-        "bruto_feb": 45668400,
-        "pph21_feb": 7763628,
+        "bruto_feb": 57085500,
+        "pph21_feb": 11417100,
         "iuran_jp": 100423,
         "take_home": 44539577,
         "satya_karya": 18000000
       },
       "nilai_harapan_keterangan": {
         "ekstra_uang_cuti": "ekstra uang cuti",
-        "bruto_feb": "bruto Februari",
+        "bruto_feb": "bruto Februari (termasuk PPh ditanggung)",
         "pph21_feb": "PPh 21 Februari (beban perusahaan)",
         "iuran_jp": "iuran JP pegawai (batas upah 2024 masih berlaku untuk iuran Februari)",
         "take_home": "uang diterima",
         "satya_karya": "Satya Karya (Maret)"
       },
-      "pph21_masuk": "Ya: uang cuti dan ekstra uang cuti adalah penghasilan tidak teratur pada Masa Pajak Februari",
+      "pph21_masuk": "Ya: uang cuti dan ekstra uang cuti adalah penghasilan tidak teratur Masa Februari; PPh ditanggung ikut masuk bruto",
       "ambiguitas": [
         "Lampiran 1 dibaca dari gambar tabel; ekstra uang cuti hanya pada kelipatan 5 tahun",
         "'minimal 1 kali Fixed Pay': nilai aktual bisa lebih besar"
+      ],
+      "putusan": [
+        "Lampiran 1 dicocokkan ulang dengan render PDF hlm. 78: ekstra uang cuti hanya pada masa kerja 5, 10, ..., 35 tahun (50%-200% x FP)",
+        "'Minimal 1 kali Fixed Pay': acuan memakai batas bawah; nilai lebih besar hanya bila ditetapkan Perusahaan"
       ]
     },
     {
       "id": "GT5-WIKA-04",
       "judul": "Pegawai mengundurkan diri 31 Oktober 2025: uang pisah dan PPh Masa Pajak Terakhir",
-      "menguji": "Tabel uang pisah (Ps 90), perhitungan ulang setahun di masa berhenti bekerja, lebih potong pada PPh yang ditanggung",
+      "menguji": "Tabel uang pisah (Ps 90) dan PPh finalnya, Masa Pajak Terakhir pegawai berhenti dengan PPh ditanggung (gross-up), lebih potong",
       "tahun_pajak": 2025,
       "klausul": [
         "WIKA-90-1",
@@ -499,14 +512,16 @@
       "asumsi": [
         "Pegawai Organik, status PTKP TK/0 (kategori TER A) kecuali disebut lain",
         "Fixed Pay (FP) Rp12.000.000, Tunjangan Grade (TG) Rp6.000.000, THP Rp18.000.000 (nominal tidak ada di PKB; dipilih untuk ilustrasi)",
-        "Tingkat risiko JKK konstruksi diasumsikan 'tinggi' 1,27% (PKB tidak menyebut)",
-        "Dasar iuran BPJS TK dan JKN = Fixed Pay (Ps 32 ayat 4; Tunjangan Grade dikecualikan menurut Ps 4 angka 36)",
-        "PPh 21 ditanggung perusahaan dengan metode net: PPh tidak ditambahkan ke bruto (Ps 22 ayat 2)",
+        "Tingkat risiko JKK konstruksi diasumsikan 'tinggi' 1,27% (tingkat risiko ditetapkan per perusahaan; PKB tidak menyebut)",
+        "Dasar iuran BPJS TK dan JKN = Fixed Pay (Ps 32 ayat 4; TG dikecualikan menurut Ps 4 angka 36). Pengecualian ini dipakai sebagai acuan; konflik laten C8 dicatat di WIKA-4-36",
+        "PPh 21 yang ditanggung Perusahaan (Ps 22 ayat 2) adalah kenikmatan objek PPh 21 dan masuk bruto dengan full gross-up (PMK 168/2023 Lampiran B Bagian Kedua I.4, PDF hlm. 44; tafsir K3-K4)",
+        "PPh TER Masa 2025 dibulatkan ke rupiah terdekat (tafsir K1)",
         "Pembagian iuran JHT 2% dan JP 1% oleh pegawai mengikuti regulasi (PKB tidak menyebut)",
         "THR 1 x THP dibayar Maret 2025; uang cuti 1 x FP dibayar Juli (bulan tanggal masuk); tidak ada penghasilan lain",
-        "Biaya jabatan untuk 10 bulan dibatasi 10 x Rp500.000 = Rp5.000.000",
-        "Uang pisah dikenai PPh final pesangon (PP 68/2009, tidak ada di dataset) sehingga tidak masuk perhitungan PPh 21 TER/Pasal 17",
-        "Pegawai tetap di Indonesia: tidak disetahunkan (PMK 168/2023 Ps 15 ayat (3) hanya untuk kewajiban subjektif yang mulai/berakhir)"
+        "Pegawai tetap di Indonesia: neto tidak disetahunkan, PTKP penuh (PMK 168/2023 Ps 15 ayat (3) hanya untuk kewajiban subjektif yang mulai/berakhir)",
+        "Biaya jabatan bagian tahun = min(5% x bruto, 10 x Rp500.000) (tafsir K6)",
+        "Uang pisah dikenai PPh 21 final PP 68/2009 dan tidak masuk perhitungan TER/Pasal 17",
+        "Masa Pajak Terakhir (Oktober): PPh ditanggung = titik tetap PPh setahun - PPh Jan-Sep; bila lebih potong, PPh ditanggung Oktober = 0 dan kelebihan dikembalikan (tafsir K3 butir 2)"
       ],
       "langkah": [
         {
@@ -544,7 +559,7 @@
         {
           "no": 5,
           "kunci": "bruto_teratur",
-          "uraian": "Bruto teratur sebulan = THP + premi JKK + JKM + JKN",
+          "uraian": "Bruto teratur sebulan tanpa PPh ditanggung",
           "ekspresi": "18000000 + 152400 + 36000 + 480000",
           "hasil": 18668400,
           "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
@@ -559,82 +574,82 @@
         },
         {
           "no": 7,
-          "kunci": "pph_bulan_biasa",
-          "uraian": "PPh 21 bulan tanpa penghasilan tidak teratur: TER kategori A untuk bruto 18668400 (di atas 16950000 s.d. 19750000) = 8%",
-          "ekspresi": "floor(8 / 100 * 18668400)",
-          "hasil": 1493472,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh",
-          "ter": {
-            "kategori": "A",
-            "bruto": 18668400.0,
-            "tarif_persen": 8.0
-          }
+          "kunci": "pph_uang_pisah",
+          "uraian": "PPh 21 final uang pisah: lapisan 0% (s.d. Rp50.000.000)",
+          "ekspresi": "0 / 100 * 36000000",
+          "hasil": 0,
+          "sumber": "PPh 21 final uang pesangon: PP 68/2009 Ps 1-2 (tidak ada di dataset/01_regulasi), lapisan 0% s.d. Rp50.000.000; dipisahkan dari TER dan Pasal 17 (PER-16/PJ/2016 Ps 18, PDF hlm. 15)"
         },
         {
           "no": 8,
-          "kunci": "bruto_maret",
-          "uraian": "Bruto Maret = bruto teratur + THR 18.000.000",
-          "ekspresi": "18668400 + 18000000",
-          "hasil": 36668400,
-          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+          "kunci": "pph_bulan_biasa",
+          "uraian": "PPh 21 bulan tanpa penghasilan tidak teratur (ditanggung): titik tetap terkecil T = R(TER(X + T) x (X + T)) dengan X = 18668400; bruto X + T = 20514725 masuk lapisan TER kategori A di atas 19750000 s.d. 24150000 = 9%",
+          "ekspresi": "rnd(9 / 100 * (18668400 + 1846325))",
+          "hasil": 1846325,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106); PPh ditanggung pemberi kerja = kenikmatan objek PPh 21, full gross-up: PMK 168/2023 Lampiran B Bagian Kedua I.4 (PDF hlm. 44); titik tetap terkecil: tafsir K3-K4",
+          "ter": {
+            "kategori": "A",
+            "bruto": 20514725.0,
+            "tarif_persen": 9.0
+          }
         },
         {
           "no": 9,
           "kunci": "pph_maret",
-          "uraian": "PPh 21 Maret: TER kategori A untuk bruto 36668400 (di atas 35400000 s.d. 39100000) = 15%",
-          "ekspresi": "floor(15 / 100 * 36668400)",
-          "hasil": 5500260,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh",
+          "uraian": "PPh 21 Maret, gaji + THR 18.000.000 (ditanggung): titik tetap terkecil T = R(TER(X + T) x (X + T)) dengan X = 36668400; bruto X + T = 43652857 masuk lapisan TER kategori A di atas 39100000 s.d. 43850000 = 16%",
+          "ekspresi": "rnd(16 / 100 * (36668400 + 6984457))",
+          "hasil": 6984457,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -4- (PDF hlm. 14); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106); PPh ditanggung pemberi kerja = kenikmatan objek PPh 21, full gross-up: PMK 168/2023 Lampiran B Bagian Kedua I.4 (PDF hlm. 44); titik tetap terkecil: tafsir K3-K4",
           "ter": {
             "kategori": "A",
-            "bruto": 36668400.0,
-            "tarif_persen": 15.0
+            "bruto": 43652857.0,
+            "tarif_persen": 16.0
           }
         },
         {
           "no": 10,
-          "kunci": "bruto_juli",
-          "uraian": "Bruto Juli = bruto teratur + uang cuti 12.000.000",
-          "ekspresi": "18668400 + 12000000",
-          "hasil": 30668400,
-          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
-        },
-        {
-          "no": 11,
           "kunci": "pph_juli",
-          "uraian": "PPh 21 Juli: TER kategori A untuk bruto 30668400 (di atas 30050000 s.d. 32400000) = 13%",
-          "ekspresi": "floor(13 / 100 * 30668400)",
-          "hasil": 3986892,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh",
+          "uraian": "PPh 21 Juli, gaji + uang cuti 12.000.000 (ditanggung): titik tetap terkecil T = R(TER(X + T) x (X + T)) dengan X = 30668400; bruto X + T = 36080471 masuk lapisan TER kategori A di atas 35400000 s.d. 39100000 = 15%",
+          "ekspresi": "rnd(15 / 100 * (30668400 + 5412071))",
+          "hasil": 5412071,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106); PPh ditanggung pemberi kerja = kenikmatan objek PPh 21, full gross-up: PMK 168/2023 Lampiran B Bagian Kedua I.4 (PDF hlm. 44); titik tetap terkecil: tafsir K3-K4",
           "ter": {
             "kategori": "A",
-            "bruto": 30668400.0,
-            "tarif_persen": 13.0
+            "bruto": 36080471.0,
+            "tarif_persen": 15.0
           }
         },
         {
-          "no": 12,
+          "no": 11,
           "kunci": "pph_jan_sep",
-          "uraian": "PPh dipotong Jan-Sep = 7 bulan biasa + Maret + Juli",
-          "ekspresi": "7 * 1493472 + 5500260 + 3986892",
-          "hasil": 19941456,
+          "uraian": "PPh dipotong (ditanggung) Jan-Sep = 7 bulan biasa + Maret + Juli",
+          "ekspresi": "7 * 1846325 + 6984457 + 5412071",
+          "hasil": 25320803,
           "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15)"
+        },
+        {
+          "no": 12,
+          "kunci": "pph_ditanggung_okt",
+          "uraian": "PPh ditanggung Oktober: titik tetap PPh setahun - PPh Jan-Sep bernilai negatif (lebih potong), sehingga = 0",
+          "ekspresi": "0",
+          "hasil": 0,
+          "sumber": "tafsir K3 butir 2; PMK 168/2023 Ps 1 angka 18 (PDF hlm. 4); Ps 15 ayat (1) huruf b dan ayat (2) (PDF hlm. 15-16)"
         },
         {
           "no": 13,
           "kunci": "bruto_setahun",
-          "uraian": "Bruto Jan-Okt",
-          "ekspresi": "10 * 18668400 + 18000000 + 12000000",
-          "hasil": 216684000,
-          "sumber": "PMK 168/2023 Ps 1 angka 18 (PDF hlm. 4); Ps 15 ayat (1) huruf b dan ayat (2) (PDF hlm. 15-16)"
+          "uraian": "Bruto Jan-Okt = 10 bulan gaji + THR + uang cuti + PPh ditanggung Jan-Sep + PPh ditanggung Oktober",
+          "ekspresi": "10 * 18668400 + 18000000 + 12000000 + 25320803 + 0",
+          "hasil": 242004803,
+          "sumber": "PMK 168/2023 Ps 1 angka 18 (PDF hlm. 4); Ps 15 ayat (1) huruf b dan ayat (2) (PDF hlm. 15-16); PPh ditanggung pemberi kerja = kenikmatan objek PPh 21, full gross-up: PMK 168/2023 Lampiran B Bagian Kedua I.4 (PDF hlm. 44); titik tetap terkecil: tafsir K3-K4"
         },
         {
           "no": 14,
           "kunci": "biaya_jabatan",
           "uraian": "Biaya jabatan = min(5% x bruto, 10 x 500.000)",
-          "ekspresi": "min(5 / 100 * 216684000, 10 * 500000)",
+          "ekspresi": "min(5 / 100 * 242004803, 10 * 500000)",
           "hasil": 5000000,
-          "sumber": "PMK 168/2023 Ps 10 ayat (1) huruf a dan ayat (2) (PDF hlm. 11-12)"
+          "sumber": "PMK 168/2023 Ps 10 ayat (1) huruf a dan ayat (2) (PDF hlm. 11-12); plafon bagian tahun n x 500.000 (tafsir K6; PMK 168/2023 Lampiran B contoh, PDF hlm. 39)"
         },
         {
           "no": 15,
@@ -642,61 +657,69 @@
           "uraian": "Iuran JHT 10 x 240.000 + JP 2 x 100.423 (batas 2024) + 8 x 105.474 (batas 2025)",
           "ekspresi": "10 * 240000 + 2 * 100423 + 8 * 105474",
           "hasil": 3444638,
-          "sumber": "PMK 168/2023 Ps 10 ayat (1) huruf b (PDF hlm. 11-12); PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv"
+          "sumber": "PMK 168/2023 Ps 10 ayat (1) huruf b (PDF hlm. 11-12); PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv (tafsir K11)"
         },
         {
           "no": 16,
           "kunci": "neto",
           "uraian": "Neto = bruto - biaya jabatan - iuran",
-          "ekspresi": "216684000 - 5000000 - 3444638",
-          "hasil": 208239362,
+          "ekspresi": "242004803 - 5000000 - 3444638",
+          "hasil": 233560165,
           "sumber": "PMK 168/2023 Ps 1 angka 18 (PDF hlm. 4); Ps 15 ayat (1) huruf b dan ayat (2) (PDF hlm. 15-16)"
         },
         {
           "no": 17,
           "kunci": "pkp",
           "uraian": "PKP = neto - PTKP TK/0 54.000.000, dibulatkan ke bawah ribuan",
-          "ekspresi": "floor1000(208239362 - 54000000)",
-          "hasil": 154239000,
+          "ekspresi": "floor1000(233560165 - 54000000)",
+          "hasil": 179560000,
           "sumber": "PMK 168/2023 Ps 8 ayat (3)-(4) (PDF hlm. 10); PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv"
         },
         {
           "no": 18,
           "kunci": "pph_setahun",
           "uraian": "PPh Pasal 17: 5% x 60 jt + 15% x sisa",
-          "ekspresi": "5 / 100 * 60000000 + 15 / 100 * (154239000 - 60000000)",
-          "hasil": 17135850,
+          "ekspresi": "5 / 100 * 60000000 + 15 / 100 * (179560000 - 60000000)",
+          "hasil": 20934000,
           "sumber": "UU 7/2021 (HPP) Ps 3 angka 7, Pasal 17 ayat (1) huruf a UU PPh (PDF hlm. 56); tables/tarif_pasal17.csv"
         },
         {
           "no": 19,
           "kunci": "pph_oktober",
-          "uraian": "PPh Masa Pajak Terakhir (Oktober) = PPh setahun - PPh Jan-Sep (negatif = lebih potong)",
-          "ekspresi": "17135850 - 19941456",
-          "hasil": -2805606,
-          "sumber": "PMK 168/2023 Ps 1 angka 18 (PDF hlm. 4); Ps 15 ayat (1) huruf b dan ayat (2) (PDF hlm. 15-16)"
+          "uraian": "PPh Masa Pajak Terakhir (Oktober) = PPh setahun - PPh Jan-Sep (negatif = lebih potong, dikembalikan kepada pegawai)",
+          "ekspresi": "20934000 - 25320803",
+          "hasil": -4386803,
+          "sumber": "PMK 168/2023 Ps 1 angka 18 (PDF hlm. 4); Ps 15 ayat (1) huruf b dan ayat (2) (PDF hlm. 15-16); pengembalian: PMK 168/2023 Ps 21 ayat (1) dan Ps 22 ayat (2) (PDF hlm. 21-22)"
         }
       ],
       "nilai_harapan": {
         "uang_pisah": 36000000,
-        "pph_jan_sep": 19941456,
-        "pkp": 154239000,
-        "pph_setahun": 17135850,
-        "pph_oktober": -2805606
+        "pph_uang_pisah": 0,
+        "pph_jan_sep": 25320803,
+        "pkp": 179560000,
+        "pph_setahun": 20934000,
+        "pph_oktober": -4386803
       },
       "nilai_harapan_keterangan": {
         "uang_pisah": "uang pisah",
+        "pph_uang_pisah": "PPh final uang pisah",
         "pph_jan_sep": "PPh 21 Jan-Sep (beban perusahaan)",
         "pkp": "PKP",
         "pph_setahun": "PPh 21 terutang Jan-Okt",
-        "pph_oktober": "PPh Oktober (negatif = lebih potong)"
+        "pph_oktober": "PPh Oktober (negatif = lebih potong, dikembalikan)"
       },
-      "pph21_masuk": "Ya: Masa Pajak Terakhir dihitung ulang dengan tarif Pasal 17",
+      "pph21_masuk": "Ya: setiap bulan PPh ditanggung di-gross-up dengan TER; Masa Pajak Terakhir dihitung ulang dengan tarif Pasal 17 dan menghasilkan lebih potong. Uang pisah dikenai PPh final terpisah (0%)",
       "ambiguitas": [
         "Batas biaya jabatan untuk bagian tahun: 10 x 500.000 (contoh) atau 6.000.000 setahun",
         "Lebih potong pada Masa Pajak Terakhir: karena PPh ditanggung perusahaan, apakah kelebihan menjadi hak pegawai atau dikembalikan ke perusahaan",
         "Perlakuan PPh uang pisah (PPh final pesangon atau PPh 21 tidak teratur)",
         "Sisa cuti: Ps 52 ayat 7 hanya untuk PHK huruf d-j; untuk pengunduran diri Ps 52 ayat 8 mengompensasikan dengan manfaat dana pensiun (tidak dihitung)"
+      ],
+      "putusan": [
+        "Batas biaya jabatan bagian tahun = min(5% x bruto, n x 500.000): tafsir K6; PMK 168/2023 Lampiran B contoh 'maksimal 8 x Rp500.000' (PDF hlm. 39)",
+        "Lebih potong di Masa Pajak Terakhir: PPh ditanggung bulan itu = 0 (tidak ada kenikmatan negatif, tafsir K3 butir 2) dan kelebihan wajib dikembalikan kepada pegawai paling lambat akhir bulan berikutnya (PMK 168/2023 Ps 21 ayat (1), Ps 22 ayat (2), PDF hlm. 21-22); pengecualian hanya untuk PPh DTP (Ps 21 ayat (2))",
+        "Uang pisah = uang pesangon dalam arti PP 68/2009 Ps 1 ('dengan nama dan dalam bentuk apa pun sehubungan dengan berakhirnya masa kerja'): PPh 21 final, 0% untuk Rp36.000.000",
+        "Sisa cuti pada pengunduran diri: Ps 52 ayat 7 hanya untuk PHK Ps 84 ayat (1) huruf d-j; ayat 8 mengompensasikan dengan manfaat dana pensiun. Tidak ada uang penggantian sisa cuti yang dihitung di contoh ini"
       ]
     },
     {
@@ -718,8 +741,10 @@
         "kontrafaktual": "KLU WIKA dianggap tercantum di Lampiran A PMK 10/2025 (aslinya tidak)"
       },
       "asumsi": [
-        "JKK 1,27%; dasar iuran = FP; PPh ditanggung perusahaan (net)",
-        "Syarat bruto tetap dan teratur Januari <= Rp10 juta terpenuhi baik TG dihitung (9 jt) maupun tidak (6 jt)"
+        "JKK 1,27%; dasar iuran = FP; PPh di luar DTP ditanggung perusahaan",
+        "Kelayakan DTP: gaji dan tunjangan tetap-teratur Januari = FP + TG = 9.000.000 <= 10.000.000 (TG dibayar setiap bulan menurut jabatan; premi BPJS tidak dihitung, tafsir K5)",
+        "Pada masa DTP PPh 21 ditanggung pemerintah, jadi tidak ada PPh yang ditanggung Perusahaan untuk di-gross-up (PMK 168/2023 Ps 7 huruf h)",
+        "PPh TER Masa 2025 dibulatkan ke rupiah terdekat (tafsir K1)"
       ],
       "langkah": [
         {
@@ -766,9 +791,9 @@
           "no": 6,
           "kunci": "pph_jan",
           "uraian": "PPh 21 Januari: TER kategori A untuk bruto 9334200 (di atas 8550000 s.d. 9650000) = 1.75%",
-          "ekspresi": "floor(1.75 / 100 * 9334200)",
-          "hasil": 163348,
-          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -2- (PDF hlm. 12); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh",
+          "ekspresi": "rnd(1.75 / 100 * 9334200)",
+          "hasil": 163349,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -2- (PDF hlm. 12); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); pembulatan: mulai Masa Januari 2025 ke rupiah terdekat, 0,50 ke atas (tafsir K1; PER-11/PJ/2025 Ps 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106)",
           "ter": {
             "kategori": "A",
             "bruto": 9334200.0,
@@ -779,8 +804,8 @@
           "no": 7,
           "kunci": "dtp_wajib_tunai",
           "uraian": "PPh 21 DTP yang menurut regulasi wajib dibayar tunai ke pegawai",
-          "ekspresi": "163348",
-          "hasil": 163348,
+          "ekspresi": "163349",
+          "hasil": 163349,
           "sumber": "PMK 10/2025 Ps 2-4 (PDF hlm. 4-5), Ps 5 ayat (1)-(2) (PDF hlm. 6); PMK 168/2023 Ps 7 huruf h (PDF hlm. 10)"
         },
         {
@@ -795,16 +820,16 @@
           "no": 9,
           "kunci": "selisih_konflik",
           "uraian": "Nilai konflik per bulan",
-          "ekspresi": "163348 - 0",
-          "hasil": 163348,
+          "ekspresi": "163349 - 0",
+          "hasil": 163349,
           "sumber": "C4"
         }
       ],
       "nilai_harapan": {
         "bruto_jan": 9334200,
-        "pph_jan": 163348,
-        "dtp_wajib_tunai": 163348,
-        "selisih_konflik": 163348
+        "pph_jan": 163349,
+        "dtp_wajib_tunai": 163349,
+        "selisih_konflik": 163349
       },
       "nilai_harapan_keterangan": {
         "bruto_jan": "bruto Januari",
@@ -817,6 +842,11 @@
         "Penjelasan Ps 22 ayat 3 mendefinisikan insentif pajak sebagai pengurang beban pajak perusahaan (contoh pajak badan); apakah PPh 21 DTP termasuk",
         "Apakah Tunjangan Grade ('tidak bersifat tetap') termasuk bruto tetap dan teratur untuk syarat Rp10 juta",
         "Contoh ini kontrafaktual: dalam data asli WIKA tidak eligible sehingga konflik laten"
+      ],
+      "putusan": [
+        "Ps 22 ayat 3 mencakup PPh 21 DTP: Penjelasan mendefinisikan insentif sebagai pengurang 'beban pajak Perusahaan', dan PPh 21 pegawai adalah beban Perusahaan (ayat 2); daftar contoh pajak badan bersifat terbuka",
+        "Tunjangan Grade dibayar setiap bulan menurut jabatan sehingga termasuk 'tunjangan yang sifatnya tetap dan teratur setiap bulan' untuk kriteria DTP (PMK 10/2025 Ps 4 ayat (3), PDF hlm. 5; tafsir K5); di contoh ini kelayakan sama saja dengan atau tanpa TG",
+        "Contoh kontrafaktual tetap dipakai sebagai acuan nilai konflik; pada data asli konflik WIKA-22-3 laten karena KLU konstruksi tidak tercantum di Lampiran A PMK 10/2025, PMK 72/2025, maupun PMK 105/2025"
       ]
     }
   ]

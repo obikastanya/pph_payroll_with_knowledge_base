@@ -24,7 +24,7 @@ Dua selisih awal ternyata kesalahan konverter, bukan kesalahan GT3, dan sudah di
 
 | Kelompok | Kasus | Selisih | Dugaan | Yang lebih mungkin benar |
 |---|---|---|---|---|
-| Natura (PMK 66/2023) | GT3-006, 009, 019, 050 | bruto dan PPh 21 bulan bernatura; PKP dan PPh setahun | Engine lama memakai seluruh nilai natura sebagai objek; ambang dan pengecualian PMK 66/2023 (rumah, kendaraan dinas, kupon makan dinas luar) belum dimodelkan. GT3 menerapkannya | GT3, menunggu konfirmasi pakar |
+| Natura (PMK 66/2023) | GT3-006, 009, 019, 050 | bruto dan PPh 21 bulan bernatura; PKP dan PPh setahun | Engine lama memakai seluruh nilai natura sebagai objek; ambang dan pengecualian PMK 66/2023 (rumah, kendaraan dinas, kupon makan dinas luar) belum dimodelkan. GT3 menerapkannya | GT3 |
 | Definisi "bruto" masa 2023 | GT3-003, 008, 009, 010 | bruto bulan THR 2023 berbeda tepat sebesar THR; PPh 21 sama | Engine lama melaporkan bruto teratur pada metode lama; GT3 melaporkan bruto termasuk penghasilan tidak teratur | bukan kesalahan; perbedaan definisi fakta keluaran (perlu ditetapkan di Tahap 3) |
 | Pembulatan PPh bulanan 2023 | GT3-007, 010 | Rp1 per bulan | GT3 membulatkan ke bawah PPh setahun ÷ 12; engine lama membulatkan berbeda. PER-16 tidak mengatur tegas (ambiguitas K2 di README GT3) | perlu keputusan |
 

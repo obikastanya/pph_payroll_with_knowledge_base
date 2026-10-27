@@ -103,26 +103,26 @@ Tanggal *cutoff* Claude Opus 5.5 dan GPT-6 dicatat dari dokumentasi resmi penyed
 
 ## 4. Status (diperbarui 2026-10-27)
 
-"Menunggu tinjauan" berarti materi sudah ada tetapi belum boleh dipakai di eksperimen sampai disetujui di [review/](../review/README.md).
+"Siap dipakai" berarti materi sudah diperiksa terhadap teks sumber dan dikoreksi; lembar pemeriksaan dan putusannya ada di [review/](../review/README.md).
 
 | ID | Dataset | Status | Lokasi / catatan |
 |---|---|---|---|
 | D01 | PDF regulasi peristiwa nyata | selesai | `01_regulasi/` (37 PDF) |
-| D02 | Tabel peristiwa | selesai, menunggu tinjauan | `09_korpus_peristiwa/peristiwa.csv`: 12 uji, 21 pengecoh, 13 pengembangan; tanggal dari PDF dan metadata JDIH |
-| D03 | Pengecoh | selesai, menunggu tinjauan | 21 pengecoh; 12 PDF baru di `01_regulasi/pengecoh/` |
-| D04 | Data pengembangan nyata | selesai, menunggu tinjauan | 13 peristiwa sebelum 2023, `01_regulasi/pengembangan/`; masa berlaku dicek ke pasal; PMK 149/2021 ternyata perubahan cakupan, PMK 3/2022 pengecoh |
-| D05 | Regulasi fiktif | selesai, menunggu tinjauan | 5 dokumen (FR01–FR05) di `09_korpus_peristiwa/fiktif/` |
+| D02 | Tabel peristiwa | siap dipakai | `09_korpus_peristiwa/peristiwa.csv`: 12 uji, 21 pengecoh, 13 pengembangan; tanggal dari PDF dan metadata JDIH |
+| D03 | Pengecoh | siap dipakai | 21 pengecoh; 12 PDF baru di `01_regulasi/pengecoh/` |
+| D04 | Data pengembangan nyata | siap dipakai | 13 peristiwa sebelum 2023, `01_regulasi/pengembangan/`; masa berlaku dicek ke pasal; PMK 149/2021 ternyata perubahan cakupan, PMK 3/2022 pengecoh |
+| D05 | Regulasi fiktif | siap dipakai | 5 dokumen (FR01–FR05) di `09_korpus_peristiwa/fiktif/` |
 | D06 | Kontrafaktual | spesifikasi selesai | 21 varian (12 tanggal, 9 nilai/ambang) di `09_korpus_peristiwa/kontrafaktual_spesifikasi.csv`; teks dan Δ* dibangkitkan setelah Δ* ada (Tahap 7–8) |
 | D07 | Perubahan tak terlihat | selesai, tersegel | 16 perubahan, 100 contoh; `review/unseen_changes/sealed/`, hash di `review/unseen_changes/SEGEL.md` |
-| D08 | Kebijakan perusahaan nyata | selesai, menunggu tinjauan | 5 PKB uji + 1 pengembangan (salinan lokal, manifes di-commit); 201 klausul di `10_kebijakan_perusahaan/klausul/`; konflik nyata: WIKA C4 laten, Century C6 terpicu E07/E09 |
-| D09 | Kebijakan dan konflik sintetis | selesai, menunggu tinjauan | 14 kebijakan (C1–C10, 3 kontrol) di `10_kebijakan_perusahaan/sintetis/` |
+| D08 | Kebijakan perusahaan nyata | siap dipakai | 5 PKB uji + 1 pengembangan (salinan lokal, manifes di-commit); 201 klausul di `10_kebijakan_perusahaan/klausul/`; konflik nyata: WIKA C4 laten, Century C6 terpicu E07/E09 |
+| D09 | Kebijakan dan konflik sintetis | siap dipakai | 14 kebijakan (C1–C10, 3 kontrol) di `10_kebijakan_perusahaan/sintetis/` |
 | D10 | Katalog variasi kebijakan | selesai | `05_katalog_kebijakan/` (20 variasi) |
 | D11 | Studi kasus Perusahaan X | selesai (terbatas) | `02_studi_kasus/`; bukan dokumen masukan akuisisi |
 | D12 | GT1 contoh resmi + *holdout* | selesai | 32 pengembangan, 14 *holdout* disegel `07_kasus_uji_resmi/HOLDOUT.sha256` |
 | D13 | GT2 kalkulator DJP | selesai | `11_acuan/gt2_kalkulator_djp/`: 18 kasus rezim 2026, 36 tangkapan layar; kategori, tarif, dan gross-up cocok di 18/18; 4 selisih Rp1 karena kalkulator DJP membuang pecahan, sedangkan PER-11/PJ/2025 Ps. 129 mewajibkan rupiah terdekat |
-| D14 | GT3 kasus bertingkat | selesai, menunggu tinjauan | 50 kasus `11_acuan/gt3_kasus_bertingkat/`; diferensial terhadap engine lama 683/743 sama, selisih di 8 kasus menunggu adjudikasi (`11_acuan/diferensial_gt3.md`) |
+| D14 | GT3 kasus bertingkat | siap dipakai | 50 kasus `11_acuan/gt3_kasus_bertingkat/`; diferensial terhadap engine lama 683/743 sama, selisih di 8 kasus sudah diadjudikasi (`11_acuan/diferensial_gt3.md`) |
 | D15 | GT4 pihak ketiga | selesai | `03_pembanding/` (7 repo, 22 kalkulator daring); hanya untuk uji diferensial |
-| D16 | GT5 contoh kebijakan | selesai, menunggu tinjauan | 21 contoh `11_acuan/gt5_contoh_kebijakan/` |
+| D16 | GT5 contoh kebijakan | siap dipakai | 21 contoh `11_acuan/gt5_contoh_kebijakan/` |
 | D17 | Δ* dan K* | belum, bergantung sistem | disusun di Tahap 7 setelah spesifikasi representasi |
 | D18 | Tabel tarif dan parameter | selesai | `01_regulasi/tables/` (*double entry*) |
 | D19 | Distribusi operasional | selesai | `04_data_publik/` (BPS, Kemnaker) |

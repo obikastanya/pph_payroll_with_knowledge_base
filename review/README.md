@@ -27,6 +27,11 @@ Semua materi penelitian disusun lebih dulu oleh Claude. Folder ini menampung mat
 |---|---|---|---|
 | [corpus/peristiwa.review.md](corpus/peristiwa.review.md) | pakar *payroll* | menunggu | 2026-10-27 |
 | [gold_cases/gt3.review.md](gold_cases/gt3.review.md) | pakar *payroll* | menunggu | 2026-10-27 |
+| [adjudication/gt3_engine_lama.review.md](adjudication/gt3_engine_lama.review.md) | pakar *payroll* | menunggu | 2026-10-27 |
+| [company_policies/klausul.review.md](company_policies/klausul.review.md) | pakar *payroll* | menunggu | 2026-10-27 |
+| [company_policies/gt5.review.md](company_policies/gt5.review.md) | pakar *payroll* | menunggu | 2026-10-27 |
+| [company_policies/sintetis.review.md](company_policies/sintetis.review.md) | pakar *payroll* | menunggu | 2026-10-27 |
+| [corpus/fiktif.review.md](corpus/fiktif.review.md) | pakar *payroll* | menunggu | 2026-10-27 |
 | [unseen_changes/SEGEL.md](unseen_changes/SEGEL.md) | teman peneliti dan pakar *payroll* | tersegel, dibuka saat RQ1 | 2026-10-27 |
 
 ## Catatan independensi

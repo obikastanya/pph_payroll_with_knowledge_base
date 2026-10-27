@@ -101,15 +101,35 @@ Tanggal *cutoff* Claude Opus 5.5 dan GPT-6 dicatat dari dokumentasi resmi penyed
 4. D14, D16, dan D13, yang dipakai untuk memvalidasi K\*.
 5. Bergantung pada sistem: D17 (Tahap 7), D06, D21, D24 (Tahap 8), D22 (Tahap 17).
 
-## 4. Status
+## 4. Status (diperbarui 2026-10-27)
 
-| ID | Status | Tanggal | Catatan |
+"Menunggu tinjauan" berarti materi sudah ada tetapi belum boleh dipakai di eksperimen sampai disetujui di [review/](../review/README.md).
+
+| ID | Dataset | Status | Lokasi / catatan |
 |---|---|---|---|
-| D02 | draf selesai, menunggu tinjauan | 2026-10-27 | `09_korpus_peristiwa/peristiwa.csv`: 12 peristiwa relevan, 9 pengecoh; tanggal dari PDF dan metadata JDIH BPK |
-| D03 | selesai, menunggu tinjauan | 2026-10-27 | 21 pengecoh (12 PDF baru di `01_regulasi/pengecoh/`) |
-| D04 | sebagian | 2026-10-27 | 13 peristiwa pengembangan (13 PDF di `01_regulasi/pengembangan/`); masa berlaku sebagian belum dicek ke pasal |
-| D08 | diunduh | 2026-10-27 | 5 dokumen uji + 1 pengembangan (Koja) di `10_kebijakan_perusahaan/dokumen/` (lokal); manifes di-commit |
-| D04 | selesai, menunggu tinjauan | 2026-10-27 | masa berlaku 11 peristiwa pengembangan dicek ke pasal; PMK 149/2021 ternyata perubahan cakupan dan PMK 3/2022 ternyata pengecoh |
-| D06 | spesifikasi selesai | 2026-10-27 | `09_korpus_peristiwa/kontrafaktual_spesifikasi.csv`: 12 varian, teks asli diverifikasi ada di dokumen; teks dan Δ* dibangkitkan setelah Δ* ada |
-| D25 | selesai | 2026-10-27 | `09_korpus_peristiwa/model_cutoff.csv`; tidak ada peristiwa uji sesudah cutoff |
-| D12 | selesai | 2026-10-27 | 32 pengembangan, 14 *holdout*, disegel `HOLDOUT.sha256` |
+| D01 | PDF regulasi peristiwa nyata | selesai | `01_regulasi/` (37 PDF) |
+| D02 | Tabel peristiwa | selesai, menunggu tinjauan | `09_korpus_peristiwa/peristiwa.csv`: 12 uji, 21 pengecoh, 13 pengembangan; tanggal dari PDF dan metadata JDIH |
+| D03 | Pengecoh | selesai, menunggu tinjauan | 21 pengecoh; 12 PDF baru di `01_regulasi/pengecoh/` |
+| D04 | Data pengembangan nyata | selesai, menunggu tinjauan | 13 peristiwa sebelum 2023, `01_regulasi/pengembangan/`; masa berlaku dicek ke pasal; PMK 149/2021 ternyata perubahan cakupan, PMK 3/2022 pengecoh |
+| D05 | Regulasi fiktif | selesai, menunggu tinjauan | 5 dokumen (FR01–FR05) di `09_korpus_peristiwa/fiktif/` |
+| D06 | Kontrafaktual | spesifikasi selesai | 21 varian (12 tanggal, 9 nilai/ambang) di `09_korpus_peristiwa/kontrafaktual_spesifikasi.csv`; teks dan Δ* dibangkitkan setelah Δ* ada (Tahap 7–8) |
+| D07 | Perubahan tak terlihat | selesai, tersegel | 16 perubahan, 100 contoh; `review/unseen_changes/sealed/`, hash di `review/unseen_changes/SEGEL.md` |
+| D08 | Kebijakan perusahaan nyata | selesai, menunggu tinjauan | 5 PKB uji + 1 pengembangan (salinan lokal, manifes di-commit); 201 klausul di `10_kebijakan_perusahaan/klausul/`; konflik nyata: WIKA C4 laten, Century C6 terpicu E07/E09 |
+| D09 | Kebijakan dan konflik sintetis | selesai, menunggu tinjauan | 14 kebijakan (C1–C10, 3 kontrol) di `10_kebijakan_perusahaan/sintetis/` |
+| D10 | Katalog variasi kebijakan | selesai | `05_katalog_kebijakan/` (20 variasi) |
+| D11 | Studi kasus Perusahaan X | selesai (terbatas) | `02_studi_kasus/`; bukan dokumen masukan akuisisi |
+| D12 | GT1 contoh resmi + *holdout* | selesai | 32 pengembangan, 14 *holdout* disegel `07_kasus_uji_resmi/HOLDOUT.sha256` |
+| D13 | GT2 kalkulator DJP | selesai | `11_acuan/gt2_kalkulator_djp/`: 18 kasus rezim 2026, 36 tangkapan layar, 18/18 sama dengan GT3 atau tabel TER |
+| D14 | GT3 kasus bertingkat | selesai, menunggu tinjauan | 50 kasus `11_acuan/gt3_kasus_bertingkat/`; diferensial terhadap engine lama 683/743 sama, selisih di 8 kasus menunggu adjudikasi (`11_acuan/diferensial_gt3.md`) |
+| D15 | GT4 pihak ketiga | selesai | `03_pembanding/` (7 repo, 22 kalkulator daring); hanya untuk uji diferensial |
+| D16 | GT5 contoh kebijakan | selesai, menunggu tinjauan | 21 contoh `11_acuan/gt5_contoh_kebijakan/` |
+| D17 | Δ* dan K* | belum, bergantung sistem | disusun di Tahap 7 setelah spesifikasi representasi |
+| D18 | Tabel tarif dan parameter | selesai | `01_regulasi/tables/` (*double entry*) |
+| D19 | Distribusi operasional | selesai | `04_data_publik/` (BPS, Kemnaker) |
+| D20 | Profil pegawai sintetis | selesai | `06_kasus_uji_sintetis/` (2.600), `08_pegawai_sintetis/` (8) |
+| D21 | Ruang uji $S^E$ | belum, bergantung sistem | generator di Tahap 8; nilai harapan dari K* |
+| D22 | Label dampak RQ4 | sebagian | label (c) untuk 14 kebijakan sintetis dan konflik pada klausul PKB; label (a), (b) diturunkan dari eksekusi K* (Tahap 17) |
+| D23 | B1 riwayat *commit* | selesai | `03_pembanding/maintenance_ter_commits.csv` (15 *commit*) |
+| D24 | Kasus B2 | input selesai | 100 kasus `11_acuan/b2_kasus/`; nilai harapan dari K* |
+| D25 | *Cutoff* model | selesai | `09_korpus_peristiwa/model_cutoff.csv`; tidak ada peristiwa uji sesudah *cutoff* |
+| D26 | Peristiwa prospektif | dipantau | `09_korpus_peristiwa/pantauan_prospektif.md`; surat batas upah JP 2027 pasti terbit akhir Februari 2027 |

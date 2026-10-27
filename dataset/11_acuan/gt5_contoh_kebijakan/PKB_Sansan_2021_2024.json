@@ -1,0 +1,584 @@
+{
+  "dokumen": "PKB_Sansan_2021_2024",
+  "dibuat": "2026-10-27",
+  "status": "draf, menunggu tinjauan pakar",
+  "contoh": [
+    {
+      "id": "GT5-SANSAN-01",
+      "judul": "THR prorata 8 bulan dan kasus tepat 1 bulan (April 2024)",
+      "menguji": "Rumus (masa kerja/12) x 1 bulan upah, batas 'lebih dari 1 bulan' (C10 laten), PPh 21 bulan THR",
+      "tahun_pajak": 2024,
+      "klausul": [
+        "SANSAN-41-1",
+        "SANSAN-41-2",
+        "SANSAN-31-3",
+        "SANSAN-37-2",
+        "SANSAN-36-1",
+        "SANSAN-52-2a"
+      ],
+      "masukan": {
+        "pegawai_A": {
+          "tanggal_masuk": "2023-08-10",
+          "masa_kerja": "8 bulan",
+          "status_ptkp": "TK/0"
+        },
+        "pegawai_B": {
+          "tanggal_masuk": "2024-03-10",
+          "masa_kerja": "tepat 1 bulan"
+        },
+        "hari_raya": "2024-04-10",
+        "masa_pajak": "2024-04"
+      },
+      "asumsi": [
+        "Operator: gaji pokok 3.700.000, tanpa tunjangan jabatan; upah = 3.700.000 (nominal dipilih untuk ilustrasi)",
+        "Divisi garmen: JKK 0,24%; JKN 4% (PKB tidak menyebut tarif JKN; mengikuti Perpres)",
+        "Tahun pajak 2024 (rezim TER); tidak ada PPh 21 DTP padat karya pada 2024",
+        "PPh 21 dipotong dari pegawai (Ps 31 ayat 8)",
+        "Pegawai A: premi hadir 20% x upah pokok = 740.000 (hadir penuh); uang makan 15.000 x 22 hari"
+      ],
+      "langkah": [
+        {
+          "no": 1,
+          "kunci": "thr_A",
+          "uraian": "THR pegawai A = 8/12 x 3.700.000 (dibulatkan)",
+          "ekspresi": "rnd(8 / 12 * 3700000)",
+          "hasil": 2466667,
+          "sumber": "SANSAN-41-2"
+        },
+        {
+          "no": 2,
+          "kunci": "thr_B_pkb",
+          "uraian": "THR pegawai B menurut PKB (masa kerja tidak 'lebih dari 1 bulan')",
+          "ekspresi": "0",
+          "hasil": 0,
+          "sumber": "SANSAN-41-2"
+        },
+        {
+          "no": 3,
+          "kunci": "thr_B_regulasi",
+          "uraian": "THR pegawai B menurut Permenaker 6/2016 = 1/12 x upah (dibulatkan)",
+          "ekspresi": "rnd(1 / 12 * 3700000)",
+          "hasil": 308333,
+          "sumber": "Permenaker 6/2016 Ps 2-3 (tidak di dataset)"
+        },
+        {
+          "no": 4,
+          "kunci": "premi_hadir",
+          "uraian": "Premi hadir A = 20% x 3.700.000",
+          "ekspresi": "20 / 100 * 3700000",
+          "hasil": 740000,
+          "sumber": "SANSAN-37-2"
+        },
+        {
+          "no": 5,
+          "kunci": "uang_makan",
+          "uraian": "Uang makan 22 x 15.000",
+          "ekspresi": "22 * 15000",
+          "hasil": 330000,
+          "sumber": "SANSAN-36-1"
+        },
+        {
+          "no": 6,
+          "kunci": "premi_jkk",
+          "uraian": "Premi JKK pemberi kerja 0.24% x 3700000",
+          "ekspresi": "0.24 / 100 * 3700000",
+          "hasil": 8880,
+          "sumber": "SANSAN-52-2a; PP 44/2015 Ps 16 ayat (1) (PDF hlm. 12); masuk bruto: PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+        },
+        {
+          "no": 7,
+          "kunci": "premi_jkm",
+          "uraian": "Premi JKM pemberi kerja 0,30% x 3700000",
+          "ekspresi": "0.30 / 100 * 3700000",
+          "hasil": 11100,
+          "sumber": "PP 44/2015 Ps 18 ayat (1) (PDF hlm. 13)"
+        },
+        {
+          "no": 8,
+          "kunci": "premi_jkn",
+          "uraian": "Premi JKN pemberi kerja 4% x min(3700000, 12.000.000)",
+          "ekspresi": "4 / 100 * min(3700000, 12000000)",
+          "hasil": 148000,
+          "sumber": "Perpres 75/2019 Pasal I angka 2-3 (Ps 30 ayat (2), Ps 32 ayat (1)) (PDF hlm. 2-3); batas upah Rp12.000.000"
+        },
+        {
+          "no": 9,
+          "kunci": "bruto_april",
+          "uraian": "Bruto April pegawai A",
+          "ekspresi": "3700000 + 740000 + 330000 + 2466667 + 8880 + 11100 + 148000",
+          "hasil": 7404647,
+          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+        },
+        {
+          "no": 10,
+          "kunci": "pph_april",
+          "uraian": "PPh 21 April pegawai A (dipotong): TER kategori A untuk bruto 7404647 (di atas 6750000 s.d. 7500000) = 1.25%",
+          "ekspresi": "floor(1.25 / 100 * 7404647)",
+          "hasil": 92558,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -1- (PDF hlm. 11); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh; PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
+          "ter": {
+            "kategori": "A",
+            "bruto": 7404647.0,
+            "tarif_persen": 1.25
+          }
+        },
+        {
+          "no": 11,
+          "kunci": "iuran_jht",
+          "uraian": "Iuran JHT pegawai 2% x 3700000",
+          "ekspresi": "2 / 100 * 3700000",
+          "hasil": 74000,
+          "sumber": "PP 46/2015 Ps 16 ayat (1)-(2) (PDF hlm. 11)"
+        },
+        {
+          "no": 12,
+          "kunci": "iuran_jp",
+          "uraian": "Iuran JP pegawai 1% x min(3700000, batas upah 10042300 untuk iuran 2024-04)",
+          "ekspresi": "1 / 100 * min(3700000, 10042300)",
+          "hasil": 37000,
+          "sumber": "PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv"
+        },
+        {
+          "no": 13,
+          "kunci": "iuran_jkn",
+          "uraian": "Iuran JKN pegawai 1% x min(3700000, 12.000.000)",
+          "ekspresi": "1 / 100 * min(3700000, 12000000)",
+          "hasil": 37000,
+          "sumber": "Perpres 75/2019 Pasal I angka 2-3 (Ps 30 ayat (2), Ps 32 ayat (1)) (PDF hlm. 2-3); batas upah Rp12.000.000"
+        },
+        {
+          "no": 14,
+          "kunci": "take_home",
+          "uraian": "Uang diterima pegawai A",
+          "ekspresi": "3700000 + 740000 + 330000 + 2466667 - 92558 - 74000 - 37000 - 37000",
+          "hasil": 6996109,
+          "sumber": "SANSAN-31-8"
+        }
+      ],
+      "nilai_harapan": {
+        "thr_A": 2466667,
+        "thr_B_pkb": 0,
+        "thr_B_regulasi": 308333,
+        "bruto_april": 7404647,
+        "pph_april": 92558,
+        "take_home": 6996109
+      },
+      "nilai_harapan_keterangan": {
+        "thr_A": "THR pegawai A",
+        "thr_B_pkb": "THR pegawai B menurut PKB",
+        "thr_B_regulasi": "THR pegawai B menurut regulasi (C10)",
+        "bruto_april": "bruto April A",
+        "pph_april": "PPh 21 April A",
+        "take_home": "uang diterima A"
+      },
+      "pph21_masuk": "Ya: THR masuk bruto April; TER kategori A",
+      "ambiguitas": [
+        "'lebih dari 1 bulan' vs 'sekurang-kurangnya 1 bulan' (C10 laten)",
+        "Masa kerja dihitung sampai hari raya atau sampai tanggal pembayaran"
+      ]
+    },
+    {
+      "id": "GT5-SANSAN-02",
+      "judul": "Dua pembacaan batas premi hadir",
+      "menguji": "Ambiguitas Ps 37 ayat 2a ('20% dari upah pokok dan premi hadir') dan gugur 50%/100% karena absen",
+      "tahun_pajak": 2024,
+      "klausul": [
+        "SANSAN-37-2"
+      ],
+      "masukan": {
+        "upah_pokok": 3700000,
+        "absen_hari": [
+          0,
+          1,
+          2
+        ]
+      },
+      "asumsi": [
+        "Operator: gaji pokok 3.700.000, tanpa tunjangan jabatan; upah = 3.700.000 (nominal dipilih untuk ilustrasi)",
+        "Divisi garmen: JKK 0,24%; JKN 4% (PKB tidak menyebut tarif JKN; mengikuti Perpres)",
+        "Tahun pajak 2024 (rezim TER); tidak ada PPh 21 DTP padat karya pada 2024",
+        "PPh 21 dipotong dari pegawai (Ps 31 ayat 8)",
+        "Premi diberikan sebesar batas maksimum"
+      ],
+      "langkah": [
+        {
+          "no": 1,
+          "kunci": "premi_baca_A",
+          "uraian": "Pembacaan A: premi = 20% x upah pokok",
+          "ekspresi": "20 / 100 * 3700000",
+          "hasil": 740000,
+          "sumber": "SANSAN-37-2"
+        },
+        {
+          "no": 2,
+          "kunci": "premi_baca_B",
+          "uraian": "Pembacaan B: premi = 20% x (upah pokok + premi) -> premi = 0,2/0,8 x upah pokok",
+          "ekspresi": "0.2 / 0.8 * 3700000",
+          "hasil": 925000,
+          "sumber": "SANSAN-37-2"
+        },
+        {
+          "no": 3,
+          "kunci": "absen1_A",
+          "uraian": "Absen 1 hari, pembacaan A: 50%",
+          "ekspresi": "50 / 100 * 740000",
+          "hasil": 370000,
+          "sumber": "SANSAN-37-2"
+        },
+        {
+          "no": 4,
+          "kunci": "absen1_B",
+          "uraian": "Absen 1 hari, pembacaan B: 50%",
+          "ekspresi": "50 / 100 * 925000",
+          "hasil": 462500,
+          "sumber": "SANSAN-37-2"
+        },
+        {
+          "no": 5,
+          "kunci": "absen2",
+          "uraian": "Absen 2 hari: premi hilang seluruhnya",
+          "ekspresi": "0",
+          "hasil": 0,
+          "sumber": "SANSAN-37-2"
+        }
+      ],
+      "nilai_harapan": {
+        "premi_baca_A": 740000,
+        "premi_baca_B": 925000,
+        "absen1_A": 370000,
+        "absen1_B": 462500,
+        "absen2": 0
+      },
+      "nilai_harapan_keterangan": {
+        "premi_baca_A": "premi maksimum (pembacaan A)",
+        "premi_baca_B": "premi maksimum (pembacaan B)",
+        "absen1_A": "absen 1 hari (A)",
+        "absen1_B": "absen 1 hari (B)",
+        "absen2": "absen 2 hari"
+      },
+      "pph21_masuk": "Ya, tidak langsung: premi hadir masuk bruto teratur; selisih 185.000 per bulan dapat menggeser lapisan TER",
+      "ambiguitas": [
+        "Pembacaan mana yang dimaksud; contoh tidak memilih, keduanya dicatat sebagai nilai acuan bersyarat"
+      ]
+    },
+    {
+      "id": "GT5-SANSAN-03",
+      "judul": "Iuran JP tanpa batas upah (C8) dan PPh 21 Desember 2024",
+      "menguji": "Konflik C8 SANSAN-52-2d: JP 1% x upah tanpa batas vs batas upah JP (E01, E05); dampak ke potongan dan pengurang pada Masa Pajak Terakhir",
+      "tahun_pajak": 2024,
+      "klausul": [
+        "SANSAN-52-2d",
+        "SANSAN-41-1",
+        "SANSAN-31-3",
+        "SANSAN-31-8"
+      ],
+      "masukan": {
+        "gaji_pokok": 9500000,
+        "tunjangan_jabatan": 1500000,
+        "status_ptkp": "K/1",
+        "thr_bulan": "2024-04"
+      },
+      "asumsi": [
+        "Divisi garmen: JKK 0,24%; JKN 4% (PKB tidak menyebut tarif JKN; mengikuti Perpres)",
+        "Tahun pajak 2024 (rezim TER); tidak ada PPh 21 DTP padat karya pada 2024",
+        "PPh 21 dipotong dari pegawai (Ps 31 ayat 8)",
+        "Pegawai berjabatan: upah = 9.500.000 + 1.500.000 = 11.000.000 tetap sepanjang 2024; tidak ada premi hadir/lembur",
+        "THR 1 x upah dibayar April; tidak ada penghasilan lain"
+      ],
+      "langkah": [
+        {
+          "no": 1,
+          "kunci": "premi_jkk",
+          "uraian": "Premi JKK pemberi kerja 0.24% x 11000000",
+          "ekspresi": "0.24 / 100 * 11000000",
+          "hasil": 26400,
+          "sumber": "SANSAN-52-2a; PP 44/2015 Ps 16 ayat (1) (PDF hlm. 12); masuk bruto: PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+        },
+        {
+          "no": 2,
+          "kunci": "premi_jkm",
+          "uraian": "Premi JKM pemberi kerja 0,30% x 11000000",
+          "ekspresi": "0.30 / 100 * 11000000",
+          "hasil": 33000,
+          "sumber": "PP 44/2015 Ps 18 ayat (1) (PDF hlm. 13)"
+        },
+        {
+          "no": 3,
+          "kunci": "premi_jkn",
+          "uraian": "Premi JKN pemberi kerja 4% x min(11000000, 12.000.000)",
+          "ekspresi": "4 / 100 * min(11000000, 12000000)",
+          "hasil": 440000,
+          "sumber": "Perpres 75/2019 Pasal I angka 2-3 (Ps 30 ayat (2), Ps 32 ayat (1)) (PDF hlm. 2-3); batas upah Rp12.000.000"
+        },
+        {
+          "no": 4,
+          "kunci": "bruto_teratur",
+          "uraian": "Bruto teratur sebulan",
+          "ekspresi": "11000000 + 26400 + 33000 + 440000",
+          "hasil": 11499400,
+          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+        },
+        {
+          "no": 5,
+          "kunci": "pph_bulan_biasa",
+          "uraian": "PPh 21 bulan biasa: TER kategori B untuk bruto 11499400 (di atas 11250000 s.d. 11600000) = 2.5%",
+          "ekspresi": "floor(2.5 / 100 * 11499400)",
+          "hasil": 287485,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf B (Tarif Efektif Bulanan Kategori B), hlm. lampiran -6- (PDF hlm. 16); kategori: Pasal 2 ayat (4) huruf b (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh; PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
+          "ter": {
+            "kategori": "B",
+            "bruto": 11499400.0,
+            "tarif_persen": 2.5
+          }
+        },
+        {
+          "no": 6,
+          "kunci": "bruto_april",
+          "uraian": "Bruto April = bruto teratur + THR",
+          "ekspresi": "11499400 + 11000000",
+          "hasil": 22499400,
+          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+        },
+        {
+          "no": 7,
+          "kunci": "pph_april",
+          "uraian": "PPh 21 April: TER kategori B untuk bruto 22499400 (di atas 21850000 s.d. 26000000) = 9%",
+          "ekspresi": "floor(9 / 100 * 22499400)",
+          "hasil": 2024946,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf B (Tarif Efektif Bulanan Kategori B), hlm. lampiran -7- (PDF hlm. 17); kategori: Pasal 2 ayat (4) huruf b (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh",
+          "ter": {
+            "kategori": "B",
+            "bruto": 22499400.0,
+            "tarif_persen": 9.0
+          }
+        },
+        {
+          "no": 8,
+          "kunci": "pph_jan_nov",
+          "uraian": "PPh dipotong Jan-Nov = 10 bulan biasa + April",
+          "ekspresi": "10 * 287485 + 2024946",
+          "hasil": 4899796,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15)"
+        },
+        {
+          "no": 9,
+          "kunci": "bruto_setahun",
+          "uraian": "Bruto setahun",
+          "ekspresi": "12 * 11499400 + 11000000",
+          "hasil": 148992800,
+          "sumber": "PMK 168/2023 Ps 1 angka 18 (PDF hlm. 4); Ps 15 ayat (1) huruf b dan ayat (2) (PDF hlm. 15-16)"
+        },
+        {
+          "no": 10,
+          "kunci": "biaya_jabatan",
+          "uraian": "Biaya jabatan = min(5% x bruto, 6.000.000)",
+          "ekspresi": "min(5 / 100 * 148992800, 6000000)",
+          "hasil": 6000000,
+          "sumber": "PMK 168/2023 Ps 10 ayat (1) huruf a dan ayat (2) (PDF hlm. 11-12)"
+        },
+        {
+          "no": 11,
+          "kunci": "jp_regulasi",
+          "uraian": "Iuran JP setahun menurut batas upah: 2 x 1% x 9.559.600 + 10 x 1% x 10.042.300",
+          "ekspresi": "2 * 1 / 100 * 9559600 + 10 * 1 / 100 * 10042300",
+          "hasil": 1195422,
+          "sumber": "PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv (E01, E05)"
+        },
+        {
+          "no": 12,
+          "kunci": "jp_pkb",
+          "uraian": "Iuran JP setahun menurut PKB: 12 x 1% x 11.000.000",
+          "ekspresi": "12 * 1 / 100 * 11000000",
+          "hasil": 1320000,
+          "sumber": "SANSAN-52-2d"
+        },
+        {
+          "no": 13,
+          "kunci": "jht",
+          "uraian": "Iuran JHT setahun 12 x 2% x 11.000.000",
+          "ekspresi": "12 * 2 / 100 * 11000000",
+          "hasil": 2640000,
+          "sumber": "PP 46/2015 Ps 16 ayat (1)-(2) (PDF hlm. 11)"
+        },
+        {
+          "no": 14,
+          "kunci": "neto_regulasi",
+          "uraian": "Neto (regulasi)",
+          "ekspresi": "148992800 - 6000000 - 2640000 - 1195422",
+          "hasil": 139157378,
+          "sumber": "PMK 168/2023 Ps 1 angka 18 (PDF hlm. 4); Ps 15 ayat (1) huruf b dan ayat (2) (PDF hlm. 15-16); PMK 168/2023 Ps 10 ayat (1) huruf b (PDF hlm. 11-12)"
+        },
+        {
+          "no": 15,
+          "kunci": "pkp_regulasi",
+          "uraian": "PKP (regulasi) = neto - PTKP K/1 63.000.000, dibulatkan ke bawah ribuan",
+          "ekspresi": "floor1000(139157378 - 63000000)",
+          "hasil": 76157000,
+          "sumber": "PMK 168/2023 Ps 8 ayat (3)-(4) (PDF hlm. 10); PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv"
+        },
+        {
+          "no": 16,
+          "kunci": "pph_setahun_regulasi",
+          "uraian": "PPh setahun (regulasi)",
+          "ekspresi": "5 / 100 * 60000000 + 15 / 100 * (76157000 - 60000000)",
+          "hasil": 5423550,
+          "sumber": "UU 7/2021 (HPP) Ps 3 angka 7, Pasal 17 ayat (1) huruf a UU PPh (PDF hlm. 56); tables/tarif_pasal17.csv"
+        },
+        {
+          "no": 17,
+          "kunci": "pph_desember_regulasi",
+          "uraian": "PPh Desember (regulasi) = PPh setahun - PPh Jan-Nov",
+          "ekspresi": "5423550 - 4899796",
+          "hasil": 523754,
+          "sumber": "PMK 168/2023 Ps 1 angka 18 (PDF hlm. 4); Ps 15 ayat (1) huruf b dan ayat (2) (PDF hlm. 15-16)"
+        },
+        {
+          "no": 18,
+          "kunci": "neto_pkb",
+          "uraian": "Neto (pkb)",
+          "ekspresi": "148992800 - 6000000 - 2640000 - 1320000",
+          "hasil": 139032800,
+          "sumber": "PMK 168/2023 Ps 1 angka 18 (PDF hlm. 4); Ps 15 ayat (1) huruf b dan ayat (2) (PDF hlm. 15-16); PMK 168/2023 Ps 10 ayat (1) huruf b (PDF hlm. 11-12)"
+        },
+        {
+          "no": 19,
+          "kunci": "pkp_pkb",
+          "uraian": "PKP (pkb) = neto - PTKP K/1 63.000.000, dibulatkan ke bawah ribuan",
+          "ekspresi": "floor1000(139032800 - 63000000)",
+          "hasil": 76032000,
+          "sumber": "PMK 168/2023 Ps 8 ayat (3)-(4) (PDF hlm. 10); PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv"
+        },
+        {
+          "no": 20,
+          "kunci": "pph_setahun_pkb",
+          "uraian": "PPh setahun (pkb)",
+          "ekspresi": "5 / 100 * 60000000 + 15 / 100 * (76032000 - 60000000)",
+          "hasil": 5404800,
+          "sumber": "UU 7/2021 (HPP) Ps 3 angka 7, Pasal 17 ayat (1) huruf a UU PPh (PDF hlm. 56); tables/tarif_pasal17.csv"
+        },
+        {
+          "no": 21,
+          "kunci": "pph_desember_pkb",
+          "uraian": "PPh Desember (pkb) = PPh setahun - PPh Jan-Nov",
+          "ekspresi": "5404800 - 4899796",
+          "hasil": 505004,
+          "sumber": "PMK 168/2023 Ps 1 angka 18 (PDF hlm. 4); Ps 15 ayat (1) huruf b dan ayat (2) (PDF hlm. 15-16)"
+        },
+        {
+          "no": 22,
+          "kunci": "selisih_potongan_jp",
+          "uraian": "Kelebihan potongan JP pegawai menurut PKB",
+          "ekspresi": "1320000 - 1195422",
+          "hasil": 124578,
+          "sumber": "C8"
+        },
+        {
+          "no": 23,
+          "kunci": "selisih_pph",
+          "uraian": "Selisih PPh setahun (regulasi - PKB)",
+          "ekspresi": "5423550 - 5404800",
+          "hasil": 18750,
+          "sumber": "C8"
+        }
+      ],
+      "nilai_harapan": {
+        "pph_jan_nov": 4899796,
+        "jp_regulasi": 1195422,
+        "jp_pkb": 1320000,
+        "pph_desember_regulasi": 523754,
+        "pph_desember_pkb": 505004,
+        "selisih_potongan_jp": 124578,
+        "selisih_pph": 18750
+      },
+      "nilai_harapan_keterangan": {
+        "pph_jan_nov": "PPh dipotong Jan-Nov",
+        "jp_regulasi": "iuran JP pegawai setahun (regulasi)",
+        "jp_pkb": "iuran JP pegawai setahun (PKB)",
+        "pph_desember_regulasi": "PPh Desember (regulasi)",
+        "pph_desember_pkb": "PPh Desember (PKB literal)",
+        "selisih_potongan_jp": "kelebihan potongan JP",
+        "selisih_pph": "selisih PPh setahun"
+      },
+      "pph21_masuk": "Ya: Masa Pajak Desember dihitung ulang; iuran JP adalah pengurang sehingga kelebihan iuran menurunkan PPh",
+      "ambiguitas": [
+        "Apakah 'upah sebulan' untuk iuran JP di PKB memang dimaksudkan tanpa batas atau hanya penulisan ringkas",
+        "JKN: PKB tidak menyebut tarif; batas Rp12 juta tidak terlampaui di contoh ini"
+      ]
+    },
+    {
+      "id": "GT5-SANSAN-04",
+      "judul": "Uang pisah operator masa kerja 16 tahun (Lampiran 2)",
+      "menguji": "Rumus UMK x faktor; inkonsistensi angka ilustrasi baris faktor 1,6",
+      "tahun_pajak": 2024,
+      "klausul": [
+        "SANSAN-L2"
+      ],
+      "masukan": {
+        "masa_kerja": "16 tahun",
+        "faktor": 1.6,
+        "umk_ilustrasi": "UMK tersirat dari ilustrasi Lampiran 2 (UMK Kota Cimahi 2021) = 1.945.157 / 0,6"
+      },
+      "asumsi": [
+        "UMK berjalan tidak ada di dataset; contoh memakai UMK yang tersirat dari baris faktor 0,6 ilustrasi Lampiran 2",
+        "PPh atas uang pisah tidak dihitung (perlakuan perlu putusan; kemungkinan PPh final pesangon PP 68/2009)"
+      ],
+      "langkah": [
+        {
+          "no": 1,
+          "kunci": "umk_tersirat",
+          "uraian": "UMK tersirat = 1.945.157 / 0,6",
+          "ekspresi": "1945157 / 0.6",
+          "hasil": 3241928.3333333335,
+          "sumber": "SANSAN-L2"
+        },
+        {
+          "no": 2,
+          "kunci": "uang_pisah",
+          "uraian": "Uang pisah = 1,6 x UMK (dibulatkan)",
+          "ekspresi": "rnd(1.6 * 1945157 / 0.6)",
+          "hasil": 5187085,
+          "sumber": "SANSAN-L2"
+        },
+        {
+          "no": 3,
+          "kunci": "angka_ilustrasi_pkb",
+          "uraian": "Angka tercetak di ilustrasi untuk faktor 1,6",
+          "ekspresi": "5192086",
+          "hasil": 5192086,
+          "sumber": "SANSAN-L2"
+        },
+        {
+          "no": 4,
+          "kunci": "selisih_ilustrasi",
+          "uraian": "Selisih angka tercetak - rumus",
+          "ekspresi": "5192086 - rnd(1.6 * 1945157 / 0.6)",
+          "hasil": 5001,
+          "sumber": "SANSAN-L2"
+        },
+        {
+          "no": 5,
+          "kunci": "cek_faktor_1_8",
+          "uraian": "Cek baris faktor 1,8 (tercetak 5.835.472) dengan UMK tersirat",
+          "ekspresi": "rnd(1.8 * 1945157 / 0.6)",
+          "hasil": 5835471,
+          "sumber": "SANSAN-L2"
+        }
+      ],
+      "nilai_harapan": {
+        "uang_pisah": 5187085,
+        "angka_ilustrasi_pkb": 5192086,
+        "selisih_ilustrasi": 5001
+      },
+      "nilai_harapan_keterangan": {
+        "uang_pisah": "uang pisah (rumus)",
+        "angka_ilustrasi_pkb": "angka ilustrasi PKB",
+        "selisih_ilustrasi": "selisih ilustrasi vs rumus"
+      },
+      "pph21_masuk": "Tidak dihitung: perlakuan PPh uang pisah perlu putusan pakar",
+      "ambiguitas": [
+        "Angka ilustrasi baris 1,6 (5.192.086) tidak sesuai rumus (sekitar 5.187.086); baris lain cocok dengan selisih <= 2 rupiah. Acuan memakai rumus",
+        "UMK tahun berjalan dan kota unit produksi harus ditetapkan saat dipakai"
+      ]
+    }
+  ]
+}

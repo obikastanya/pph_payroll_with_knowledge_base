@@ -1,0 +1,533 @@
+{
+  "dokumen": "PKB_Century_Textile_2024_2026",
+  "dibuat": "2026-10-27",
+  "status": "draf, menunggu tinjauan pakar",
+  "contoh": [
+    {
+      "id": "GT5-CENTEX-01",
+      "judul": "Upah lembur hari biasa, hari libur group, dan lembur terjadwal giliran malam",
+      "menguji": "Dasar UP = (B..G)/173 dan pengali Lampiran 1; jam pecahan pada lembur terjadwal",
+      "tahun_pajak": 2025,
+      "klausul": [
+        "CENTEX-L1",
+        "CENTEX-L1C",
+        "CENTEX-22-2",
+        "CENTEX-13-1d"
+      ],
+      "masukan": {
+        "lembur_hari_biasa_jam": 3,
+        "lembur_libur_group_jam": 9,
+        "lembur_terjadwal_malam_jam": 1.25
+      },
+      "asumsi": [
+        "Komponen upah (nominal tidak ada di PKB, dipilih untuk ilustrasi): B upah pokok 5.400.000; C uang makan 300.000; D tunjangan giliran 200.000; E jabatan 0; F keluarga 150.000; G perumahan 0; jumlah 6.050.000",
+        "'Satu bulan upah' untuk THR dan bonus = B+...+G seperti definisi Lampiran (PKB tidak merinci)",
+        "Dasar iuran BPJS = 6.050.000",
+        "Perusahaan memenuhi syarat keringanan JKK PP 7/2025 (tekstil, >= 50 pekerja, iuran Januari 2025 lunas): JKK 0,445% untuk iuran Feb 2025-Jan 2026",
+        "PPh ditanggung perusahaan (Ps 28) dengan metode net; KLU tekstil eligible DTP 2025 (PMK 10/2025) dan 2026 (PMK 105/2025)",
+        "Jam lembur pecahan dibayar pro rata dengan pengali jam bersangkutan (0,25 jam pada pengali jam ke-2)",
+        "Hasil dibulatkan ke rupiah terdekat"
+      ],
+      "langkah": [
+        {
+          "no": 1,
+          "kunci": "up",
+          "uraian": "UP = (B+C+D+E+F+G)/173",
+          "ekspresi": "(5400000 + 300000 + 200000 + 0 + 150000 + 0) / 173",
+          "hasil": 34971.098265895955,
+          "sumber": "CENTEX-L1C"
+        },
+        {
+          "no": 2,
+          "kunci": "lembur_biasa",
+          "uraian": "Hari biasa 3 jam: (1,5 + 2 + 2) x UP",
+          "ekspresi": "rnd((1.5 + 2 + 2) * (6050000 / 173))",
+          "hasil": 192341,
+          "sumber": "CENTEX-L1"
+        },
+        {
+          "no": 3,
+          "kunci": "lembur_libur",
+          "uraian": "Libur group 9 jam: (7 x 2 + 3 + 4) x UP",
+          "ekspresi": "rnd((7 * 2 + 3 + 4) * (6050000 / 173))",
+          "hasil": 734393,
+          "sumber": "CENTEX-L1"
+        },
+        {
+          "no": 4,
+          "kunci": "lembur_malam",
+          "uraian": "Lembur terjadwal 1,25 jam per giliran malam: (1,5 + 0,25 x 2) x UP",
+          "ekspresi": "rnd((1.5 + 0.25 * 2) * (6050000 / 173))",
+          "hasil": 69942,
+          "sumber": "CENTEX-13-1d, CENTEX-L1"
+        }
+      ],
+      "nilai_harapan": {
+        "up": 34971.098265895955,
+        "lembur_biasa": 192341,
+        "lembur_libur": 734393,
+        "lembur_malam": 69942
+      },
+      "nilai_harapan_keterangan": {
+        "up": "upah per jam (UP)",
+        "lembur_biasa": "lembur 3 jam hari biasa",
+        "lembur_libur": "lembur 9 jam libur group",
+        "lembur_malam": "lembur terjadwal per malam"
+      },
+      "pph21_masuk": "Ya, tidak langsung: upah lembur adalah penghasilan teratur yang masuk bruto bulan dibayar (PMK 168/2023 Ps 5 ayat (3) huruf a)",
+      "ambiguitas": [
+        "Perlakuan 0,25 jam lembur terjadwal tidak diatur",
+        "Pembulatan upah lembur tidak diatur"
+      ]
+    },
+    {
+      "id": "GT5-CENTEX-02",
+      "judul": "THR 120% tanpa prorata, keringanan JKK, dan PPh 21 DTP pada PPh ditanggung (Maret 2025)",
+      "menguji": "Pembacaan literal Ps 24, konflik C6 (JKK 0,89% di PKB vs 0,445% regulasi) yang menggeser lapisan TER, konflik C4 pelaksanaan (DTP wajib tunai)",
+      "tahun_pajak": 2025,
+      "klausul": [
+        "CENTEX-24",
+        "CENTEX-28",
+        "CENTEX-33-3a",
+        "CENTEX-34"
+      ],
+      "masukan": {
+        "tanggal_masuk": "2024-11-01",
+        "hari_raya": "2025-03-31",
+        "masa_pajak": "2025-03",
+        "status_ptkp": "K/1"
+      },
+      "asumsi": [
+        "Komponen upah (nominal tidak ada di PKB, dipilih untuk ilustrasi): B upah pokok 5.400.000; C uang makan 300.000; D tunjangan giliran 200.000; E jabatan 0; F keluarga 150.000; G perumahan 0; jumlah 6.050.000",
+        "'Satu bulan upah' untuk THR dan bonus = B+...+G seperti definisi Lampiran (PKB tidak merinci)",
+        "Dasar iuran BPJS = 6.050.000",
+        "Perusahaan memenuhi syarat keringanan JKK PP 7/2025 (tekstil, >= 50 pekerja, iuran Januari 2025 lunas): JKK 0,445% untuk iuran Feb 2025-Jan 2026",
+        "PPh ditanggung perusahaan (Ps 28) dengan metode net; KLU tekstil eligible DTP 2025 (PMK 10/2025) dan 2026 (PMK 105/2025)",
+        "THR dibayar penuh 120% walau masa kerja 5 bulan (PKB tidak mengatur prorata)",
+        "Pegawai mulai bekerja sebelum Januari 2025; bruto tetap dan teratur Januari 2025 = 6.050.000 <= 10 juta (eligible DTP)"
+      ],
+      "langkah": [
+        {
+          "no": 1,
+          "kunci": "thr",
+          "uraian": "THR = 120% x satu bulan upah",
+          "ekspresi": "120 / 100 * 6050000",
+          "hasil": 7260000,
+          "sumber": "CENTEX-24"
+        },
+        {
+          "no": 2,
+          "kunci": "thr_jika_prorata",
+          "uraian": "Pembanding bila diprorata: 5/12 x 120% x upah",
+          "ekspresi": "5 / 12 * 120 / 100 * 6050000",
+          "hasil": 3025000,
+          "sumber": "pembanding ambiguitas"
+        },
+        {
+          "no": 3,
+          "kunci": "premi_jkk",
+          "uraian": "Premi JKK pemberi kerja 0.445% x 6050000",
+          "ekspresi": "0.445 / 100 * 6050000",
+          "hasil": 26922.5,
+          "sumber": "PP 7/2025 Ps 4 ayat (1) (PDF hlm. 4), masa iuran Feb-Jul 2025 (Ps 10); diperpanjang s.d. iuran Jan 2026 oleh PP 36/2025 Ps 10A (PDF hlm. 4); masuk bruto: PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+        },
+        {
+          "no": 4,
+          "kunci": "premi_jkm",
+          "uraian": "Premi JKM pemberi kerja 0,30% x 6050000",
+          "ekspresi": "0.30 / 100 * 6050000",
+          "hasil": 18150,
+          "sumber": "PP 44/2015 Ps 18 ayat (1) (PDF hlm. 13)"
+        },
+        {
+          "no": 5,
+          "kunci": "premi_jkn",
+          "uraian": "Premi JKN pemberi kerja 4% x min(6050000, 12.000.000)",
+          "ekspresi": "4 / 100 * min(6050000, 12000000)",
+          "hasil": 242000,
+          "sumber": "Perpres 75/2019 Pasal I angka 2-3 (Ps 30 ayat (2), Ps 32 ayat (1)) (PDF hlm. 2-3); batas upah Rp12.000.000"
+        },
+        {
+          "no": 6,
+          "kunci": "bruto_maret",
+          "uraian": "Bruto Maret = upah + THR + premi (JKK 0,445%)",
+          "ekspresi": "6050000 + 7260000 + 26922.5 + 18150 + 242000",
+          "hasil": 13597072.5,
+          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+        },
+        {
+          "no": 7,
+          "kunci": "pph_maret",
+          "uraian": "PPh 21 Maret: TER kategori B untuk bruto 13597072.5 (di atas 12600000 s.d. 13600000) = 4%",
+          "ekspresi": "floor(4 / 100 * 13597072.5)",
+          "hasil": 543882,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf B (Tarif Efektif Bulanan Kategori B), hlm. lampiran -7- (PDF hlm. 17); kategori: Pasal 2 ayat (4) huruf b (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh; PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
+          "ter": {
+            "kategori": "B",
+            "bruto": 13597072.5,
+            "tarif_persen": 4.0
+          }
+        },
+        {
+          "no": 8,
+          "kunci": "bruto_jkk_pkb",
+          "uraian": "Pembanding C6: bruto bila JKK 0,89% sesuai angka PKB",
+          "ekspresi": "6050000 + 7260000 + 0.89 / 100 * 6050000 + 18150 + 242000",
+          "hasil": 13623995,
+          "sumber": "CENTEX-33-3a"
+        },
+        {
+          "no": 9,
+          "kunci": "pph_jkk_pkb",
+          "uraian": "Pembanding C6: PPh bila JKK 0,89%: TER kategori B untuk bruto 13623995 (di atas 13600000 s.d. 14950000) = 5%",
+          "ekspresi": "floor(5 / 100 * 13623995)",
+          "hasil": 681199,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf B (Tarif Efektif Bulanan Kategori B), hlm. lampiran -7- (PDF hlm. 17); kategori: Pasal 2 ayat (4) huruf b (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh",
+          "ter": {
+            "kategori": "B",
+            "bruto": 13623995.0,
+            "tarif_persen": 5.0
+          }
+        },
+        {
+          "no": 10,
+          "kunci": "dtp_tunai",
+          "uraian": "PPh 21 DTP dibayar tunai ke pegawai (walau PPh ditanggung perusahaan)",
+          "ekspresi": "543882",
+          "hasil": 543882,
+          "sumber": "PMK 10/2025 Ps 2-4 (PDF hlm. 4-5), Ps 5 ayat (1)-(2) (PDF hlm. 6); PMK 168/2023 Ps 7 huruf h (PDF hlm. 10); KLU tekstil: tables/klu_dtp.csv (PMK 10/2025 Lampiran A, PDF hlm. 9-12)"
+        },
+        {
+          "no": 11,
+          "kunci": "iuran_jht",
+          "uraian": "Iuran JHT pegawai 2% x 6050000",
+          "ekspresi": "2 / 100 * 6050000",
+          "hasil": 121000,
+          "sumber": "PP 46/2015 Ps 16 ayat (1)-(2) (PDF hlm. 11)"
+        },
+        {
+          "no": 12,
+          "kunci": "iuran_jp",
+          "uraian": "Iuran JP pegawai 1% x min(6050000, batas upah 10547400 untuk iuran 2025-03)",
+          "ekspresi": "1 / 100 * min(6050000, 10547400)",
+          "hasil": 60500,
+          "sumber": "PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv"
+        },
+        {
+          "no": 13,
+          "kunci": "iuran_jkn",
+          "uraian": "Iuran JKN pegawai 1% x min(6050000, 12.000.000)",
+          "ekspresi": "1 / 100 * min(6050000, 12000000)",
+          "hasil": 60500,
+          "sumber": "Perpres 75/2019 Pasal I angka 2-3 (Ps 30 ayat (2), Ps 32 ayat (1)) (PDF hlm. 2-3); batas upah Rp12.000.000"
+        },
+        {
+          "no": 14,
+          "kunci": "take_home",
+          "uraian": "Uang diterima = upah + THR + DTP tunai - iuran JHT - JP - JKN",
+          "ekspresi": "6050000 + 7260000 + 543882 - 121000 - 60500 - 60500",
+          "hasil": 13611882,
+          "sumber": "CENTEX-28; PMK 10/2025 Ps 2-4 (PDF hlm. 4-5), Ps 5 ayat (1)-(2) (PDF hlm. 6); PMK 168/2023 Ps 7 huruf h (PDF hlm. 10)"
+        },
+        {
+          "no": 15,
+          "kunci": "take_home_tanpa_dtp",
+          "uraian": "Pembanding C4: bila DTP tidak diteruskan (Ps 28 dijalankan apa adanya)",
+          "ekspresi": "13611882 - 543882",
+          "hasil": 13068000,
+          "sumber": "CENTEX-28"
+        }
+      ],
+      "nilai_harapan": {
+        "thr": 7260000,
+        "bruto_maret": 13597072.5,
+        "pph_maret": 543882,
+        "pph_jkk_pkb": 681199,
+        "dtp_tunai": 543882,
+        "take_home": 13611882,
+        "take_home_tanpa_dtp": 13068000
+      },
+      "nilai_harapan_keterangan": {
+        "thr": "THR",
+        "bruto_maret": "bruto Maret (JKK 0,445%)",
+        "pph_maret": "PPh 21 Maret = DTP",
+        "pph_jkk_pkb": "PPh bila JKK 0,89% (C6)",
+        "dtp_tunai": "DTP dibayar tunai",
+        "take_home": "uang diterima",
+        "take_home_tanpa_dtp": "uang diterima bila DTP ditahan (C4)"
+      },
+      "pph21_masuk": "Ya: TER kategori B; seluruh PPh adalah DTP; JKK lama 0,89% menggeser bruto ke lapisan 5%",
+      "ambiguitas": [
+        "Ps 24 tidak memuat prorata dan merujuk 'Kesepakatan Bersama 26 Januari 2000' yang tidak tersedia; pembanding prorata 3.025.000",
+        "Komponen 'satu bulan upah' untuk THR tidak dirinci",
+        "Apakah perusahaan benar-benar menerima keringanan JKK (syarat >= 50 pekerja aktif, iuran Januari lunas)"
+      ]
+    },
+    {
+      "id": "GT5-CENTEX-03",
+      "judul": "Bonus tahunan pita masa kerja dan DTP 2026 (Januari 2026)",
+      "menguji": "Pita masa kerja per 20 Desember (Ps 25 ayat 1-3), bonus dibayar 20 Januari, keringanan JKK Januari 2026, DTP PMK 105/2025",
+      "tahun_pajak": 2026,
+      "klausul": [
+        "CENTEX-25",
+        "CENTEX-25-1",
+        "CENTEX-25-2",
+        "CENTEX-28",
+        "CENTEX-33-3a"
+      ],
+      "masukan": {
+        "tanggal_masuk": "2025-04-01",
+        "tanggal_acuan_masa_kerja": "2025-12-20",
+        "masa_pajak": "2026-01",
+        "status_ptkp": "TK/0"
+      },
+      "asumsi": [
+        "Komponen upah (nominal tidak ada di PKB, dipilih untuk ilustrasi): B upah pokok 5.400.000; C uang makan 300.000; D tunjangan giliran 200.000; E jabatan 0; F keluarga 150.000; G perumahan 0; jumlah 6.050.000",
+        "'Satu bulan upah' untuk THR dan bonus = B+...+G seperti definisi Lampiran (PKB tidak merinci)",
+        "Dasar iuran BPJS = 6.050.000",
+        "Perusahaan memenuhi syarat keringanan JKK PP 7/2025 (tekstil, >= 50 pekerja, iuran Januari 2025 lunas): JKK 0,445% untuk iuran Feb 2025-Jan 2026",
+        "PPh ditanggung perusahaan (Ps 28) dengan metode net; KLU tekstil eligible DTP 2025 (PMK 10/2025) dan 2026 (PMK 105/2025)",
+        "alfa = 0 (tidak didefinisikan)",
+        "Upah Desember 2025 sama dengan 6.050.000 (tanpa kenaikan 21 Desember)",
+        "Bruto tetap dan teratur Januari 2026 = 6.050.000 <= 10 juta (eligible DTP 2026)"
+      ],
+      "langkah": [
+        {
+          "no": 1,
+          "kunci": "masa_kerja_bulan",
+          "uraian": "Masa kerja 1 Apr 2025 - 20 Des 2025 = 8 bulan 19 hari -> pita 6 s.d. <9 bulan",
+          "ekspresi": "8",
+          "hasil": 8,
+          "sumber": "CENTEX-25-1, CENTEX-25-2"
+        },
+        {
+          "no": 2,
+          "kunci": "bonus",
+          "uraian": "Bonus = 50% x (1 bulan upah Desember + alfa)",
+          "ekspresi": "50 / 100 * (6050000 + 0)",
+          "hasil": 3025000,
+          "sumber": "CENTEX-25-1"
+        },
+        {
+          "no": 3,
+          "kunci": "premi_jkk",
+          "uraian": "Premi JKK pemberi kerja 0.445% x 6050000",
+          "ekspresi": "0.445 / 100 * 6050000",
+          "hasil": 26922.5,
+          "sumber": "PP 7/2025 Ps 4 ayat (1) (PDF hlm. 4), masa iuran Feb-Jul 2025 (Ps 10); diperpanjang s.d. iuran Jan 2026 oleh PP 36/2025 Ps 10A (PDF hlm. 4); masuk bruto: PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+        },
+        {
+          "no": 4,
+          "kunci": "premi_jkm",
+          "uraian": "Premi JKM pemberi kerja 0,30% x 6050000",
+          "ekspresi": "0.30 / 100 * 6050000",
+          "hasil": 18150,
+          "sumber": "PP 44/2015 Ps 18 ayat (1) (PDF hlm. 13)"
+        },
+        {
+          "no": 5,
+          "kunci": "premi_jkn",
+          "uraian": "Premi JKN pemberi kerja 4% x min(6050000, 12.000.000)",
+          "ekspresi": "4 / 100 * min(6050000, 12000000)",
+          "hasil": 242000,
+          "sumber": "Perpres 75/2019 Pasal I angka 2-3 (Ps 30 ayat (2), Ps 32 ayat (1)) (PDF hlm. 2-3); batas upah Rp12.000.000"
+        },
+        {
+          "no": 6,
+          "kunci": "bruto_jan",
+          "uraian": "Bruto Januari 2026",
+          "ekspresi": "6050000 + 3025000 + 26922.5 + 18150 + 242000",
+          "hasil": 9362072.5,
+          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+        },
+        {
+          "no": 7,
+          "kunci": "pph_jan",
+          "uraian": "PPh 21 Januari 2026: TER kategori A untuk bruto 9362072.5 (di atas 8550000 s.d. 9650000) = 1.75%",
+          "ekspresi": "floor(1.75 / 100 * 9362072.5)",
+          "hasil": 163836,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -2- (PDF hlm. 12); kategori: Pasal 2 ayat (4) huruf a (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh; PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
+          "ter": {
+            "kategori": "A",
+            "bruto": 9362072.5,
+            "tarif_persen": 1.75
+          }
+        },
+        {
+          "no": 8,
+          "kunci": "dtp_tunai",
+          "uraian": "PPh 21 DTP 2026 dibayar tunai",
+          "ekspresi": "163836",
+          "hasil": 163836,
+          "sumber": "PMK 105/2025 Ps 2-4 (PDF hlm. 4-6), Ps 5 ayat (1)-(2) (PDF hlm. 6); KLU tekstil: tables/klu_dtp.csv (PMK 105/2025 Lampiran A, PDF hlm. 9-13)"
+        },
+        {
+          "no": 9,
+          "kunci": "iuran_jht",
+          "uraian": "Iuran JHT pegawai 2% x 6050000",
+          "ekspresi": "2 / 100 * 6050000",
+          "hasil": 121000,
+          "sumber": "PP 46/2015 Ps 16 ayat (1)-(2) (PDF hlm. 11)"
+        },
+        {
+          "no": 10,
+          "kunci": "iuran_jp",
+          "uraian": "Iuran JP pegawai 1% x min(6050000, batas upah 10547400 untuk iuran 2026-01)",
+          "ekspresi": "1 / 100 * min(6050000, 10547400)",
+          "hasil": 60500,
+          "sumber": "PP 45/2015 Ps 28-29 (PDF hlm. 20-21); batas upah dari tables/bpjs.csv"
+        },
+        {
+          "no": 11,
+          "kunci": "iuran_jkn",
+          "uraian": "Iuran JKN pegawai 1% x min(6050000, 12.000.000)",
+          "ekspresi": "1 / 100 * min(6050000, 12000000)",
+          "hasil": 60500,
+          "sumber": "Perpres 75/2019 Pasal I angka 2-3 (Ps 30 ayat (2), Ps 32 ayat (1)) (PDF hlm. 2-3); batas upah Rp12.000.000"
+        },
+        {
+          "no": 12,
+          "kunci": "take_home",
+          "uraian": "Uang diterima Januari 2026",
+          "ekspresi": "6050000 + 3025000 + 163836 - 121000 - 60500 - 60500",
+          "hasil": 8996836,
+          "sumber": "CENTEX-28; PMK 105/2025 Ps 2-4 (PDF hlm. 4-6), Ps 5 ayat (1)-(2) (PDF hlm. 6)"
+        }
+      ],
+      "nilai_harapan": {
+        "bonus": 3025000,
+        "bruto_jan": 9362072.5,
+        "pph_jan": 163836,
+        "take_home": 8996836
+      },
+      "nilai_harapan_keterangan": {
+        "bonus": "bonus",
+        "bruto_jan": "bruto Januari 2026",
+        "pph_jan": "PPh 21 Januari 2026 = DTP",
+        "take_home": "uang diterima"
+      },
+      "pph21_masuk": "Ya: bonus masuk bruto Januari tahun berikutnya; TER kategori A; DTP 2026",
+      "ambiguitas": [
+        "Nilai alfa tidak didefinisikan",
+        "Upah Desember: kenaikan upah berlaku 21 Desember (Ps 20 ayat 2e) sehingga 'upah bulan Desember' bisa sudah naik"
+      ]
+    },
+    {
+      "id": "GT5-CENTEX-04",
+      "judul": "Potongan absen Pekerja Bulanan II dan penggantian sisa cuti",
+      "menguji": "Rumus Lampiran 3 (faktor 1,125 untuk 4 group 3 shift) dan Lampiran 2 (1,5 x upah harian /30)",
+      "tahun_pajak": 2025,
+      "klausul": [
+        "CENTEX-L3",
+        "CENTEX-L2",
+        "CENTEX-15-1",
+        "CENTEX-44-1"
+      ],
+      "masukan": {
+        "hari_alpha": 2,
+        "hari_sisa_cuti": 4,
+        "kehadiran_setahun": "99%",
+        "masa_pajak": "2025-02",
+        "status_ptkp": "K/1"
+      },
+      "asumsi": [
+        "Komponen upah (nominal tidak ada di PKB, dipilih untuk ilustrasi): B upah pokok 5.400.000; C uang makan 300.000; D tunjangan giliran 200.000; E jabatan 0; F keluarga 150.000; G perumahan 0; jumlah 6.050.000",
+        "'Satu bulan upah' untuk THR dan bonus = B+...+G seperti definisi Lampiran (PKB tidak merinci)",
+        "Dasar iuran BPJS = 6.050.000",
+        "Perusahaan memenuhi syarat keringanan JKK PP 7/2025 (tekstil, >= 50 pekerja, iuran Januari 2025 lunas): JKK 0,445% untuk iuran Feb 2025-Jan 2026",
+        "PPh ditanggung perusahaan (Ps 28) dengan metode net; KLU tekstil eligible DTP 2025 (PMK 10/2025) dan 2026 (PMK 105/2025)",
+        "Potongan mengurangi bruto; dasar iuran BPJS tidak ikut turun"
+      ],
+      "langkah": [
+        {
+          "no": 1,
+          "kunci": "potongan_4g3s",
+          "uraian": "Potongan 4 group 3 shift = 2/30 x gaji pokok x 1,125",
+          "ekspresi": "2 / 30 * 5400000 * 1.125",
+          "hasil": 405000,
+          "sumber": "CENTEX-L3"
+        },
+        {
+          "no": 2,
+          "kunci": "potongan_non",
+          "uraian": "Potongan non 4 group 3 shift = 2/30 x gaji pokok",
+          "ekspresi": "2 / 30 * 5400000",
+          "hasil": 360000,
+          "sumber": "CENTEX-L3"
+        },
+        {
+          "no": 3,
+          "kunci": "sisa_cuti",
+          "uraian": "Penggantian sisa cuti = 1,5 x (B+...+G)/30 x 4",
+          "ekspresi": "1.5 * 6050000 / 30 * 4",
+          "hasil": 1210000,
+          "sumber": "CENTEX-L2, CENTEX-15-1"
+        },
+        {
+          "no": 4,
+          "kunci": "premi_jkk",
+          "uraian": "Premi JKK pemberi kerja 0.445% x 6050000",
+          "ekspresi": "0.445 / 100 * 6050000",
+          "hasil": 26922.5,
+          "sumber": "PP 7/2025 Ps 4 ayat (1) (PDF hlm. 4), masa iuran Feb-Jul 2025 (Ps 10); diperpanjang s.d. iuran Jan 2026 oleh PP 36/2025 Ps 10A (PDF hlm. 4); masuk bruto: PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+        },
+        {
+          "no": 5,
+          "kunci": "premi_jkm",
+          "uraian": "Premi JKM pemberi kerja 0,30% x 6050000",
+          "ekspresi": "0.30 / 100 * 6050000",
+          "hasil": 18150,
+          "sumber": "PP 44/2015 Ps 18 ayat (1) (PDF hlm. 13)"
+        },
+        {
+          "no": 6,
+          "kunci": "premi_jkn",
+          "uraian": "Premi JKN pemberi kerja 4% x min(6050000, 12.000.000)",
+          "ekspresi": "4 / 100 * min(6050000, 12000000)",
+          "hasil": 242000,
+          "sumber": "Perpres 75/2019 Pasal I angka 2-3 (Ps 30 ayat (2), Ps 32 ayat (1)) (PDF hlm. 2-3); batas upah Rp12.000.000"
+        },
+        {
+          "no": 7,
+          "kunci": "bruto_feb",
+          "uraian": "Bruto Februari (4 group 3 shift, dengan potongan)",
+          "ekspresi": "6050000 - 405000 + 26922.5 + 18150 + 242000",
+          "hasil": 5932072.5,
+          "sumber": "PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10)"
+        },
+        {
+          "no": 8,
+          "kunci": "pph_feb",
+          "uraian": "PPh 21 Februari: TER kategori B untuk bruto 5932072.5 (di atas 0 s.d. 6200000) = 0%",
+          "ekspresi": "floor(0 / 100 * 5932072.5)",
+          "hasil": 0,
+          "sumber": "PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf B (Tarif Efektif Bulanan Kategori B), hlm. lampiran -6- (PDF hlm. 16); kategori: Pasal 2 ayat (4) huruf b (PDF hlm. 4); Pembulatan PPh hasil TER tidak diatur (tables/pembulatan_dan_lainnya.csv); asumsi: dibulatkan ke bawah ke rupiah penuh; PMK 101/PMK.010/2016 Ps 1 (PDF hlm. 2-3); kategori TER: PP 58/2023 Ps 2 ayat (4) (PDF hlm. 4); tables/ptkp.csv",
+          "ter": {
+            "kategori": "B",
+            "bruto": 5932072.5,
+            "tarif_persen": 0.0
+          }
+        }
+      ],
+      "nilai_harapan": {
+        "potongan_4g3s": 405000,
+        "potongan_non": 360000,
+        "sisa_cuti": 1210000,
+        "bruto_feb": 5932072.5,
+        "pph_feb": 0
+      },
+      "nilai_harapan_keterangan": {
+        "potongan_4g3s": "potongan 2 hari alpha (4 group 3 shift)",
+        "potongan_non": "potongan 2 hari alpha (non 4G3S)",
+        "sisa_cuti": "penggantian 4 hari sisa cuti",
+        "bruto_feb": "bruto Februari",
+        "pph_feb": "PPh 21 Februari"
+      },
+      "pph21_masuk": "Ya: bruto Februari di bawah batas TER B 0% (6.200.000) sehingga PPh 0",
+      "ambiguitas": [
+        "Apakah potongan absen mengurangi bruto PPh atau diperlakukan sebagai potongan setelah pajak",
+        "Dasar faktor 1,125 tidak dijelaskan"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,753 @@
+{
+ "run": "e2-pkb",
+ "event": "PKB-TAEKWANG-2024",
+ "condition": "proposed",
+ "documents": [
+  "PKB-TAEKWANG-2024"
+ ],
+ "selection": {
+  "PKB-TAEKWANG-2024": {
+   "tokens": 13970,
+   "dropped": [
+    "Pasal 1",
+    "Pasal 3",
+    "Pasal 4",
+    "Pasal 5",
+    "Pasal 6",
+    "Pasal 7",
+    "Pasal 8",
+    "Pasal 9",
+    "Pasal 10",
+    "Pasal 11",
+    "Pasal 12",
+    "Pasal 14",
+    "Pasal 15",
+    "Pasal 16",
+    "Pasal 17",
+    "Pasal 19",
+    "Pasal 20",
+    "Pasal 21",
+    "Pasal 22",
+    "Pasal 23",
+    "Pasal 24",
+    "Pasal 25",
+    "Pasal 26",
+    "Pasal 27",
+    "Pasal 29",
+    "Pasal 31",
+    "Pasal 32",
+    "Pasal 33",
+    "Pasal 34",
+    "Pasal 35",
+    "Pasal 47",
+    "Pasal 48",
+    "Pasal 49",
+    "Pasal 51",
+    "Pasal 52",
+    "Pasal 54",
+    "Pasal 55",
+    "Pasal 56",
+    "Pasal 57",
+    "Pasal 58",
+    "Pasal 59",
+    "Pasal 60",
+    "Pasal 61",
+    "Pasal 62",
+    "Pasal 63",
+    "Pasal 64",
+    "Pasal 65",
+    "Pasal 67",
+    "Pasal 68",
+    "Pasal 69",
+    "Pasal 70",
+    "Pasal 71",
+    "Pasal 72",
+    "Pasal 73",
+    "Pasal 74",
+    "Pasal 75",
+    "Pasal 77",
+    "Pasal 78",
+    "Pasal 79",
+    "Pasal 80",
+    "Pasal 81",
+    "Pasal 82",
+    "Pasal 83",
+    "Pasal 84",
+    "Pasal 85",
+    "Pasal 86",
+    "Pasal 87",
+    "Pasal 88",
+    "Pasal 89"
+   ]
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "fail: PRS.TAEKWANG.THR: valid_from 2024-03-01 is not supported by a quote of this element; PRS.TAEKWANG.THR: valid_until 2026-03-31 is not supported by a quote of this element"
+   },
+   "first_gate_log": {
+    "G1": "fail: SHACL PRS.TAEKWANG.THR: G1: validUntil must be the last day of a month"
+   },
+   "sg_size": 0,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.TAEKWANG.THR",
+      "label": "Taekwang THR: one month's wage plus a seniority add-on, pro rata below one year",
+      "label_id": "THR Idul Fitri PKB Taekwang: satu bulan upah ditambah penambahan masa kerja, proporsional di bawah satu tahun",
+      "valid_from": "2024-03-01",
+      "valid_until": "2026-03-31",
+      "recorded_on": "2024-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "thr"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-TAEKWANG-2024"
+       },
+       {
+        "name": "condition",
+        "value": "hr('thr_holiday') == 1 and hr('days_terminated_before_holiday') <= 30"
+       },
+       {
+        "name": "expression",
+        "value": "round((base_salary + fixed_allowance) * (1 + (30 / 100 if hr('months_of_service') >= 60 else (20 / 100 if hr('months_of_service') >= 48 else (10 / 100 if hr('months_of_service') >= 36 else 0)))), 1, 'down') if hr('months_of_service') >= 12 else (round((base_salary + fixed_allowance) * hr('months_of_service') / 12, 1, 'down') if hr('months_of_service') >= 1 else 0)"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C10"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (1)",
+        "page": 1,
+        "quote": "Setiap tahun Perusahaan memberikan THR (Tunjangan Hari Raya) Idul Fitri kepada Pekerja sebesar 1 (satu) bulan upah."
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf a",
+        "page": 1,
+        "quote": "Masa kerja 3 (tiga) tahun sampai dengan kurang dari 4 (empat) tahun + 10% dari upah."
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf b",
+        "page": 1,
+        "quote": "Masa kerja 4 (empat) tahun sampai dengan kurang dari 5 (lima) tahun + 20% dari upah."
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf c",
+        "page": 1,
+        "quote": "Masa kerja 5 (lima) tahun ke atas + 30% dari upah."
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (3)",
+        "page": 1,
+        "quote": "Pekerja yang masa kerjanya belum mencapai 1 (satu) tahun tetapi lebih dari 1 (satu) bulan maka Perusahaan memberikan THR Keagamaan secara proporsional"
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (4)",
+        "page": 1,
+        "quote": "Komponen upah sebagai dasar perhitungan THR adalah:"
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (6)",
+        "page": 1,
+        "quote": "Pekerja yang putus hubungan kerjanya terhitung sejak waktu 30 (tiga puluh) hari sebelum jatuh tempo Hari Raya Idul Fitri, berhak atas THR."
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "penutup",
+        "page": 1,
+        "quote": "Tanggal dimulainya perjanjian: → 2024-03-01"
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "penutup",
+        "page": 1,
+        "quote": "Tanggal berakhirnya perjanjian: → 2026-03-28"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Only the THR formula (Pasal 53) changes the computation; the wage base is base salary plus fixed allowances, and the pro-rata case uses months_of_service >= 1 so it never falls below the statutory minimum. The agreement ends on 28 March 2026, so validity is closed at the end of March 2026, the last month it covers."
+   },
+   "delta": {
+    "delta_id": "e2-pkb-PKB-TAEKWANG-2024-cand1",
+    "event_id": "PKB-TAEKWANG-2024",
+    "document": {
+     "id": "PKB-TAEKWANG-2024",
+     "title": "PKB PT TKG Taekwang Indonesia 2024-2026",
+     "issued": "2024-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.TAEKWANG.THR",
+      "recorded_on": "2024-01-01",
+      "label": "Taekwang THR: one month's wage plus a seniority add-on, pro rata below one year",
+      "label_id": "THR Idul Fitri PKB Taekwang: satu bulan upah ditambah penambahan masa kerja, proporsional di bawah satu tahun",
+      "valid_from": "2024-03-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "condition": "hr('thr_holiday') == 1 and hr('days_terminated_before_holiday') <= 30",
+      "expression": "round((base_salary + fixed_allowance) * (1 + (30 / 100 if hr('months_of_service') >= 60 else (20 / 100 if hr('months_of_service') >= 48 else (10 / 100 if hr('months_of_service') >= 36 else 0)))), 1, 'down') if hr('months_of_service') >= 12 else (round((base_salary + fixed_allowance) * hr('months_of_service') / 12, 1, 'down') if hr('months_of_service') >= 1 else 0)",
+      "policy": "PKB-TAEKWANG-2024",
+      "conflict_code": "C10",
+      "source": [
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (1)",
+        "quote": "Setiap tahun Perusahaan memberikan THR (Tunjangan Hari Raya) Idul Fitri kepada Pekerja sebesar 1 (satu) bulan upah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf a",
+        "quote": "Masa kerja 3 (tiga) tahun sampai dengan kurang dari 4 (empat) tahun + 10% dari upah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf b",
+        "quote": "Masa kerja 4 (empat) tahun sampai dengan kurang dari 5 (lima) tahun + 20% dari upah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf c",
+        "quote": "Masa kerja 5 (lima) tahun ke atas + 30% dari upah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (3)",
+        "quote": "Pekerja yang masa kerjanya belum mencapai 1 (satu) tahun tetapi lebih dari 1 (satu) bulan maka Perusahaan memberikan THR Keagamaan secara proporsional",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (4)",
+        "quote": "Komponen upah sebagai dasar perhitungan THR adalah:",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (6)",
+        "quote": "Pekerja yang putus hubungan kerjanya terhitung sejak waktu 30 (tiga puluh) hari sebelum jatuh tempo Hari Raya Idul Fitri, berhak atas THR.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "penutup",
+        "quote": "Tanggal dimulainya perjanjian: → 2024-03-01",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "penutup",
+        "quote": "Tanggal berakhirnya perjanjian: → 2026-03-28",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only the THR formula (Pasal 53) changes the computation; the wage base is base salary plus fixed allowances, and the pro-rata case uses months_of_service >= 1 so it never falls below the statutory minimum. The agreement ends on 28 March 2026, so validity is closed at the end of March 2026, the last month it covers."
+   },
+   "initial_delta": {
+    "delta_id": "e2-pkb-PKB-TAEKWANG-2024-cand1",
+    "event_id": "PKB-TAEKWANG-2024",
+    "document": {
+     "id": "PKB-TAEKWANG-2024",
+     "title": "PKB PT TKG Taekwang Indonesia 2024-2026",
+     "issued": "2024-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.TAEKWANG.THR",
+      "recorded_on": "2024-01-01",
+      "label": "Taekwang THR: one month's wage plus a seniority add-on, pro rata below one year",
+      "label_id": "THR Idul Fitri PKB Taekwang: satu bulan upah ditambah penambahan masa kerja, proporsional di bawah satu tahun",
+      "valid_from": "2024-03-01",
+      "valid_until": "2026-03-28",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "condition": "hr('thr_holiday') == 1 and hr('days_terminated_before_holiday') <= 30",
+      "expression": "round((base_salary + fixed_allowance) * (1 + (30 / 100 if hr('months_of_service') >= 60 else (20 / 100 if hr('months_of_service') >= 48 else (10 / 100 if hr('months_of_service') >= 36 else 0)))), 1, 'down') if hr('months_of_service') >= 12 else (round((base_salary + fixed_allowance) * hr('months_of_service') / 12, 1, 'down') if hr('months_of_service') >= 1 else 0)",
+      "policy": "PKB-TAEKWANG-2024",
+      "conflict_code": "C10",
+      "source": [
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (1)",
+        "quote": "Setiap tahun Perusahaan memberikan THR (Tunjangan Hari Raya) Idul Fitri kepada Pekerja sebesar 1 (satu) bulan upah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf a",
+        "quote": "Masa kerja 3 (tiga) tahun sampai dengan kurang dari 4 (empat) tahun + 10% dari upah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf b",
+        "quote": "Masa kerja 4 (empat) tahun sampai dengan kurang dari 5 (lima) tahun + 20% dari upah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf c",
+        "quote": "Masa kerja 5 (lima) tahun ke atas + 30% dari upah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (3)",
+        "quote": "Pekerja yang masa kerjanya belum mencapai 1 (satu) tahun tetapi lebih dari 1 (satu) bulan maka Perusahaan memberikan THR Keagamaan secara proporsional",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (4)",
+        "quote": "Komponen upah sebagai dasar perhitungan THR adalah:",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (6)",
+        "quote": "Pekerja yang putus hubungan kerjanya terhitung sejak waktu 30 (tiga puluh) hari sebelum jatuh tempo Hari Raya Idul Fitri, berhak atas THR.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "penutup",
+        "quote": "Tanggal dimulainya perjanjian: → 2024-03-01",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "penutup",
+        "quote": "Tanggal berakhirnya perjanjian: → 2026-03-28",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only the THR formula (Pasal 53) changes the computation; the wage base is base salary plus fixed allowances, and the pro-rata case uses months_of_service >= 1 so that it never falls below the statutory minimum. Other components (overtime, Ramadan meal money, sickness pay) remain case inputs, and workplace meals in kind are already non-taxable under the existing rules."
+   }
+  },
+  {
+   "n": 2,
+   "order": 1,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "fail: PRS.PKB-TAEKWANG-2024.THR: quote shorter than 20 characters: '10% dari upah.'; PRS.PKB-TAEKWANG-2024.THR: quote shorter than 20 characters: '20% dari upah.'; PRS.PKB-TAEKWANG-2024.THR: valid_from 2024-03-01 is not supported by a quote of this element; PRS.PKB-TAEKWANG-2024.THR: valid_until 2026-03-31 is not supported by a quote of this element"
+   },
+   "first_gate_log": {
+    "G1": "fail: SHACL PRS.PKB-TAEKWANG-2024.THR: G1: validUntil must be the last day of a month"
+   },
+   "sg_size": 0,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-TAEKWANG-2024.THR",
+      "label": "THR under the Taekwang PKB: one month's wage plus a seniority add-on, pro rata below one year",
+      "label_id": "THR menurut PKB Taekwang: satu bulan upah ditambah tambahan masa kerja, proporsional di bawah satu tahun",
+      "valid_from": "2024-03-01",
+      "valid_until": "2026-03-31",
+      "recorded_on": "2024-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "thr"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-TAEKWANG-2024"
+       },
+       {
+        "name": "condition",
+        "value": "hr('thr_holiday') == 1"
+       },
+       {
+        "name": "expression",
+        "value": "((round((base_salary + fixed_allowance) * hr('months_of_service') / 12, 1, 'down') if hr('months_of_service') < 12 else (base_salary + fixed_allowance) + round((base_salary + fixed_allowance) * (dec('0.3') if hr('months_of_service') >= 60 else (dec('0.2') if hr('months_of_service') >= 48 else (dec('0.1') if hr('months_of_service') >= 36 else 0))), 1, 'down')) if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (1)",
+        "page": 1,
+        "quote": "Setiap tahun Perusahaan memberikan THR (Tunjangan Hari Raya) Idul"
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf a",
+        "page": 1,
+        "quote": "Masa kerja 3 (tiga) tahun sampai dengan kurang dari 4 (empat) tahun +"
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf a",
+        "page": 1,
+        "quote": "10% dari upah."
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf b",
+        "page": 1,
+        "quote": "Masa kerja 4 (empat) tahun sampai dengan kurang dari 5 (lima) tahun +"
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf b",
+        "page": 1,
+        "quote": "20% dari upah."
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf c",
+        "page": 1,
+        "quote": "c. Masa kerja 5 (lima) tahun ke atas + 30% dari upah."
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (4)",
+        "page": 1,
+        "quote": "Komponen upah sebagai dasar perhitungan THR adalah:"
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (6)",
+        "page": 1,
+        "quote": "Pekerja yang putus hubungan kerjanya terhitung sejak waktu 30 (tiga"
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "penutup",
+        "page": 1,
+        "quote": "Tanggal dimulainya perjanjian: → 2024-03-01"
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "penutup",
+        "page": 1,
+        "quote": "Tanggal berakhirnya perjanjian: → 2026-03-28"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Only the THR formula (Pasal 53) is modelled: base is gross salary plus fixed allowances, with a 10/20/30% seniority add-on from 36/48/60 months of service and pro rata pay under 12 months. The agreement ends 2026-03-28, so validity is set to the end of that last covered month (2026-03-31)."
+   },
+   "delta": {
+    "delta_id": "e2-pkb-PKB-TAEKWANG-2024-cand2",
+    "event_id": "PKB-TAEKWANG-2024",
+    "document": {
+     "id": "PKB-TAEKWANG-2024",
+     "title": "PKB PT TKG Taekwang Indonesia 2024-2026",
+     "issued": "2024-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-TAEKWANG-2024.THR",
+      "recorded_on": "2024-01-01",
+      "label": "THR under the Taekwang PKB: one month's wage plus a seniority add-on, pro rata below one year",
+      "label_id": "THR menurut PKB Taekwang: satu bulan upah ditambah tambahan masa kerja, proporsional di bawah satu tahun",
+      "valid_from": "2024-03-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "condition": "hr('thr_holiday') == 1",
+      "expression": "((round((base_salary + fixed_allowance) * hr('months_of_service') / 12, 1, 'down') if hr('months_of_service') < 12 else (base_salary + fixed_allowance) + round((base_salary + fixed_allowance) * (dec('0.3') if hr('months_of_service') >= 60 else (dec('0.2') if hr('months_of_service') >= 48 else (dec('0.1') if hr('months_of_service') >= 36 else 0))), 1, 'down')) if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0)",
+      "policy": "PKB-TAEKWANG-2024",
+      "source": [
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (1)",
+        "quote": "Setiap tahun Perusahaan memberikan THR (Tunjangan Hari Raya) Idul",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf a",
+        "quote": "Masa kerja 3 (tiga) tahun sampai dengan kurang dari 4 (empat) tahun +",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf a",
+        "quote": "10% dari upah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf b",
+        "quote": "Masa kerja 4 (empat) tahun sampai dengan kurang dari 5 (lima) tahun +",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf b",
+        "quote": "20% dari upah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf c",
+        "quote": "c. Masa kerja 5 (lima) tahun ke atas + 30% dari upah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (4)",
+        "quote": "Komponen upah sebagai dasar perhitungan THR adalah:",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (6)",
+        "quote": "Pekerja yang putus hubungan kerjanya terhitung sejak waktu 30 (tiga",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "penutup",
+        "quote": "Tanggal dimulainya perjanjian: → 2024-03-01",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "penutup",
+        "quote": "Tanggal berakhirnya perjanjian: → 2026-03-28",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only the THR formula (Pasal 53) is modelled: base is gross salary plus fixed allowances, with a 10/20/30% seniority add-on from 36/48/60 months of service and pro rata pay under 12 months. The agreement ends 2026-03-28, so validity is set to the end of that last covered month (2026-03-31)."
+   },
+   "initial_delta": {
+    "delta_id": "e2-pkb-PKB-TAEKWANG-2024-cand2",
+    "event_id": "PKB-TAEKWANG-2024",
+    "document": {
+     "id": "PKB-TAEKWANG-2024",
+     "title": "PKB PT TKG Taekwang Indonesia 2024-2026",
+     "issued": "2024-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-TAEKWANG-2024.THR",
+      "recorded_on": "2024-01-01",
+      "label": "THR under the Taekwang PKB: one month's wage plus a seniority add-on, pro rata below one year",
+      "label_id": "THR menurut PKB Taekwang: satu bulan upah ditambah tambahan masa kerja, proporsional di bawah satu tahun",
+      "valid_from": "2024-03-01",
+      "valid_until": "2026-03-28",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "condition": "hr('thr_holiday') == 1",
+      "expression": "((round((base_salary + fixed_allowance) * hr('months_of_service') / 12, 1, 'down') if hr('months_of_service') < 12 else (base_salary + fixed_allowance) + round((base_salary + fixed_allowance) * (dec('0.3') if hr('months_of_service') >= 60 else (dec('0.2') if hr('months_of_service') >= 48 else (dec('0.1') if hr('months_of_service') >= 36 else 0))), 1, 'down')) if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0)",
+      "policy": "PKB-TAEKWANG-2024",
+      "source": [
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (1)",
+        "quote": "Setiap tahun Perusahaan memberikan THR (Tunjangan Hari Raya) Idul",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf a",
+        "quote": "Masa kerja 3 (tiga) tahun sampai dengan kurang dari 4 (empat) tahun + 10% dari upah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf b",
+        "quote": "Masa kerja 4 (empat) tahun sampai dengan kurang dari 5 (lima) tahun + 20% dari upah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (2) huruf c",
+        "quote": "c. Masa kerja 5 (lima) tahun ke atas + 30% dari upah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (4)",
+        "quote": "Komponen upah sebagai dasar perhitungan THR adalah:",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "Pasal 53 ayat (6)",
+        "quote": "Pekerja yang putus hubungan kerjanya terhitung sejak waktu 30 (tiga",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "penutup",
+        "quote": "Tanggal dimulainya perjanjian: → 2024-03-01",
+        "page": 1
+       },
+       {
+        "document": "PKB-TAEKWANG-2024",
+        "provision": "penutup",
+        "quote": "Tanggal berakhirnya perjanjian: → 2026-03-28",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only the THR formula (Pasal 53) is modelled: the base is gross salary plus fixed allowances, with a 10/20/30% seniority add-on from 36/48/60 months of service, and pro rata pay for service under 12 months. Overtime, Ramadan meal money, long-sickness pay and the in-kind meals are left to the existing income inputs and the regulatory natura rules, because they do not change how PPh 21 is computed."
+   }
+  }
+ ],
+ "groups": [],
+ "selected": null,
+ "status": "abstain",
+ "delta": null,
+ "cost_usd": 0.632948,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "This collective labour agreement (PKB) sets company payroll rules for Taekwang workers, including permanent workers, that feed into gross income for PPh 21. It defines the wage components: base salary, fixed allowances, attendance, transport and shift allowances, overtime, Ramadan meal money and incentives. It sets the overtime basis (1/173 of wages, with multipliers). It sets THR at one month's wages plus seniority add-ons of 10%, 20% or 30%. It sets the long-sickness pay percentages. It provides meals in kind (natura), replaced by cash during Ramadan. It requires payroll deductions for PPh and for BPJS contributions.",
+   "quotes": [
+    {
+     "provision": "Pasal 38 ayat 1",
+     "quote": "1) Tunjangan Tidak Tetap:"
+    },
+    {
+     "provision": "Pasal 44 ayat 2",
+     "quote": "Standar upah lembur per jam adalah 1/173 kali Upah."
+    },
+    {
+     "provision": "Pasal 44 ayat 3.a",
+     "quote": "1) Jam kerja lembur pertama wajib dibayar upah sebesar 1,5 (satu koma"
+    },
+    {
+     "provision": "Pasal 53 ayat 1",
+     "quote": "Fitri kepada Pekerja sebesar 1 (satu) bulan upah."
+    },
+    {
+     "provision": "Pasal 53 ayat 2",
+     "quote": "c. Masa kerja 5 (lima) tahun ke atas + 30% dari upah."
+    },
+    {
+     "provision": "Pasal 28 ayat 1",
+     "quote": "a. Untuk 4 bulan pertama, dibayar 100% dari upah satu bulan."
+    },
+    {
+     "provision": "Pasal 40 ayat 3",
+     "quote": "3. Tunjangan makan diberikan dalam bentuk makanan jadi (natura) sesuai"
+    },
+    {
+     "provision": "Pasal 40 ayat 5",
+     "quote": "siang digantikan dengan uang, termasuk bagi Pekerja selain yang beragama"
+    },
+    {
+     "provision": "Pasal 46",
+     "quote": "3. Pembayaran Pajak Penghasilan (PPh)"
+    }
+   ],
+   "effective_from": "2024-03-01",
+   "effective_from_quote": "Tanggal dimulainya perjanjian: → 2024-03-01",
+   "effective_until": "2026-03-28",
+   "effective_until_quote": "Tanggal berakhirnya perjanjian: → 2026-03-28",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT TKG Taekwang Indonesia (Subang)",
+     "quote": "2. Perusahaan, adalah PT TKG Taekwang Indonesia yang berbadan hukum dengan"
+    },
+    {
+     "kind": "sector",
+     "value": "Garment manufacturing",
+     "quote": "Nama industri: → Pabrik Manufaktur Garmen (garmen, pakaian jadi)"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

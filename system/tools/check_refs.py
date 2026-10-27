@@ -87,12 +87,12 @@ def _gt1_errata():
     return out
 
 
-def gt1(verbose=True, kb=None, rows=None):
+def gt1(verbose=True, kb=None, rows=None, cases=None, label="GT1 dev"):
     kb = kb or _kb()
     errata = _gt1_errata()
     ok = total = obs = bad = explained = 0
     skipped = []
-    for c in load_gt1_dev():
+    for c in (cases if cases is not None else load_gt1_dev()):
         try:
             case, exp, _ = gt1_case(c)
         except Unsupported as e:
@@ -118,7 +118,7 @@ def gt1(verbose=True, kb=None, rows=None):
             print(c["id"], c["tahun_pajak"], "ralat contoh resmi:" if note else "", note[:110])
             for k, got, want in diffs[:6]:
                 print(f"   {k}: engine {got} reference {want}")
-    print(f"GT1 dev: {ok}/{total} cases equal; {obs - bad}/{obs} observations equal; "
+    print(f"{label}: {ok}/{total} cases equal; {obs - bad}/{obs} observations equal; "
           f"{explained}/{bad} differences are documented errata of the official example")
     print("   outside the case model:", "; ".join(f"{i} ({why})" for i, why in skipped))
     return ok, total, obs - bad, obs

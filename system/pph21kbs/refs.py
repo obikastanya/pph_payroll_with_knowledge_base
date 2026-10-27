@@ -146,12 +146,20 @@ def gt1_split():
 
 def load_gt1_dev():
     """Development GT1 cases only. Holdout files are never opened here (Tahap 8, GT1 holdout)."""
+    return load_gt1("pengembangan")
+
+
+def load_gt1(wanted):
+    """GT1 cases of one split. The holdout split is read only by system/tools/e0_holdout.py, once (E0)."""
     out = []
     by_stem = {p.stem.replace("-", "_"): p for p in (GT1_DIR / "kanonik").glob("*.json")}
     for name, part in sorted(gt1_split().items()):
-        if part != "pengembangan":
+        if part != wanted:
             continue
-        path = by_stem[Path(name).stem.replace("-", "_")]
+        path = by_stem.get(Path(name).stem.replace("-", "_"))
+        if path is None:            # not transcribed: outside the case model (kanonik/buat_kanonik.py)
+            print(f"GT1 {name}: no canonical transcription (outside the case model)")
+            continue
         out.append(json.loads(path.read_text(encoding="utf-8")))
     return out
 
@@ -204,8 +212,11 @@ def gt1_case(c):
         periods.append({"month": m, "income": income, "benefits": benefits, "zakat": zakat})
     case = {"case_id": c["id"], "tax_year": c["tahun_pajak"],
             "employee": {"ptkp_status": peg["status_ptkp"], "sex": "F" if female else "M",
-                         "husband_no_income_certified": bool(female and peg["status_ptkp"].startswith("K/")),
+                         "husband_no_income_certified": bool(
+                             female and peg["status_ptkp"].startswith("K/")
+                             and peg.get("suami_tidak_berpenghasilan_terbukti", True) is not False),
                          "tax_id_valid": bool(peg.get("punya_npwp", True)),
+                         "contract_fixed_income": (c.get("dtp") or {}).get("penghasilan_tetap_teratur_kontrak_januari"),
                          "subjective_start_month": peg.get("subjektif_mulai_bulan"),
                          "subjective_end_month": peg.get("subjektif_akhir_bulan")},
             "employer": {"klu": c["pemberi_kerja"].get("klu"), "jkk_risk_group": "very_low",

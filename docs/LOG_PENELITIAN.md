@@ -411,3 +411,54 @@ model kedua hanya dari sisa anggaran. Rinciannya di pra-registrasi §8.
 - Diskusi: kandidat yang lolos semua gerbang tetapi salah perilaku sudah muncul di pengembangan (D05, Koja). Gerbang
   memeriksa konsistensi dengan dokumen dan non-vakuitas, bukan kelengkapan.
 - Keterbatasan: anggaran memaksa $m$ lebih kecil dari rancangan dan menghapus ablasi serta model kedua.
+
+---
+
+## Tahap 8 (penutup) dan 13. Kecukupan $S^E$ dan E0, validasi instrumen
+
+Dikerjakan 2026-10-28 01:00–02:30 WIB, sesudah pembekuan alur dan sebelum hasil E2 dinilai.
+
+### *Mutation score* (`docs/hasil/mutasi.csv`, `mutasi_kesetaraan.csv`, `mutasi_ringkasan.json`)
+
+| | Jumlah |
+|---|---|
+| Mutan (tidak *stillborn*) | 290 |
+| Terbunuh $S^E$ awal | 157 (0,54 mentah) |
+| Kemungkinan setara (tidak terbedakan pada $S^G$ emas dan mutan) | 116 |
+| Terbedakan tetapi lolos $S^E$ → kasus terarah | 17 (E02 4, E06 8, E11 5) |
+| Skor non-setara sebelum / sesudah kasus terarah | 0,90 / 1,00 (diverifikasi ulang) |
+
+Per peristiwa sebelum penambahan: E06 0,79 dan E11 0,77 (di bawah ambang 0,80), E02 0,89, lainnya 1,00. Operator
+dengan mutan setara terbanyak: modalitas (tanpa pesaing, *wajib* → *bawaan* tidak berefek), tanggal akhir dan tanggal
+mulai (E04 menyatakan ulang aturan E03 yang sudah berlaku pada tanggal yang sama). Alat: `system/tools/mutation_equivalence.py`.
+
+### GT1 *holdout* (sekali pakai; `docs/hasil/acuan_gt1_holdout.csv`)
+
+14 berkas *holdout*: 1 tanpa transkripsi kanonik (PER16-I.5, banyak pemotong), 3 di luar model kasus (mata uang asing,
+komponen belum dipetakan), 10 dibandingkan: **6/10 kasus sama, 221/235 observasi sama**. Adjudikasi selisih:
+
+| Kasus | Selisih | Putusan |
+|---|---|---|
+| PMK10-B-4 (2025) | `dtp_eligible` engine benar, acuan salah | **emas salah**: kriteria DTP memakai penghasilan tetap menurut kontrak, bukan yang dibayar sesudah sanksi (Lampiran B angka 4 PMK 10/2025). Dikoreksi (lihat di bawah) |
+| PER16-I.1.4 (2016) | PTKP 72 jt vs 54 jt | **pengonversi acuan**: karyawati kawin tanpa keterangan suami tidak berpenghasilan diberi sertifikat; `refs.gt1_case` kini membaca `suami_tidak_berpenghasilan_terbukti` |
+| PER16-I.1.2, I.1.4 (2016) | `employee_pension_contributions` | pemetaan observasi: acuan memisah iuran pensiun dan JHT, fakta engine menjumlahkannya; pajak tidak terpengaruh. I.1.2 juga ralat dokumen (200.000 → 100.000) |
+| PER16-I.1.2 | PPh 126.287 vs 126.288 | pembulatan setengah rupiah (contoh membulatkan ke atas; tafsir pembulatan PER-16 yang sama dengan GT1 pengembangan) |
+| PER16-II.1.1 (2016) | PPh masa 577.083 vs 50.000 | **emas latar salah, belum dikoreksi**: pegawai pensiun Juni yang bulan kerjanya sudah diketahui disetahunkan atas 6 bulan; aturan latar hanya menangani pegawai baru. Di luar tahun uji (2023–2026), dilaporkan sebagai keterbatasan |
+
+Sesudah koreksi: **7/10 kasus, 226/235 observasi** (`acuan_gt1_holdout_koreksi.csv`). Syarat lulus E0 untuk domain uji
+terpenuhi (tidak ada selisih "emas salah" yang belum diselesaikan pada tahun 2023–2026; satu kesalahan latar 2016 tercatat).
+
+### Koreksi emas (protokol prareg §6)
+
+- `REG.DTP.INCOME_TEST` (E06, berlaku juga di E10/E11 lewat perubahan): `employee('contract_fixed_income')` bila
+  kasus menyatakannya, selain itu penghasilan tetap bulan pertama. Sumber: kutipan Lampiran B angka 4 PMK 10/2025.
+- Emas dibangun ulang (sidik jari 07765b1a51716e1e), acuan pengembangan tetap (GT3 50/50, GT1 22/26, GT2 15/20 + 90/90,
+  GT5 67/79), gerbang emas E06/E10/E11 dan kontrafaktual lolos.
+- $S^E$: kasus tanpa atribut kontrak tidak berubah nilainya; ditambah 2 kasus terarah per E06 dan E11 (kontrak di atas
+  dan di bawah batas). Semua kondisi E2 dinilai dengan emas yang sudah dikoreksi.
+- Jumlah koreksi emas sesudah pembekuan: 1 (ditambah 1 perbaikan pengonversi acuan).
+
+### Bahan paper
+
+- Bagian VII (keandalan instrumen): tabel mutasi dan tabel adjudikasi *holdout*; contoh nyata protokol koreksi emas
+  (kesalahan yang lolos semua acuan pengembangan dan pembaca kedua, ditemukan oleh *holdout*).

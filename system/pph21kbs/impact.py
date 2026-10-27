@@ -41,13 +41,39 @@ def impact_graph(kb, update_id, omega):
 
 
 def affected_facts(ds):
+    if isinstance(ds, _Remote):
+        return sorted(r["fact"].rsplit("/", 1)[1] for r in ds.select(query_text("impact_facts")))
     return sorted(str(row.fact).rsplit("/", 1)[1] for row in ds.query(query_text("impact_facts")))
 
 
-def detect(kb, update_id, policies, omega):
-    """{policy: {"kinds": set of "a"/"b"/"c", "hits": [(kind, company rule, delta element, fact)]}} for each
-    policy whose rules are in kb (installed as K_n (+) P)."""
+class _Remote:
+    """The impact graph loaded into GraphDB (graphs view and delta of the repository, replaced on each load): the
+    same SPARQL queries, evaluated by GraphDB instead of rdflib's in-memory engine (property paths over the whole
+    view are slow there). Used by the RQ4 evaluation, where the detector runs for every policy x event pair."""
+
+    def __init__(self, ds):
+        from .kb import graphdb
+        self.db = graphdb
+        for g in (VIEW, DELTA):
+            graphdb._request("DELETE", graphdb._endpoint(f"/statements?context=<{g}>".replace("<", "%3C")
+                                                         .replace(">", "%3E")))
+        data = ds.serialize(format="trig").encode("utf-8")
+        graphdb._request("POST", graphdb._endpoint("/statements"), data, {"Content-Type": "application/x-trig"},
+                         timeout=300)
+
+    def select(self, query):
+        return self.db.select(query)
+
+
+def _graph(kb, update_id, omega, remote):
     ds = impact_graph(kb, update_id, omega)
+    return _Remote(ds) if remote else ds
+
+
+def detect(kb, update_id, policies, omega, remote=False):
+    """{policy: {"kinds": set of "a"/"b"/"c", "hits": [(kind, company rule, delta element, fact)]}} for each
+    policy whose rules are in kb (installed as K_n (+) P). remote=True evaluates the queries in GraphDB."""
+    ds = _graph(kb, update_id, omega, remote)
     facts = affected_facts(ds)
     # F_Delta is passed as FILTER ... IN: rdflib ignores an inline VALUES block inside a UNION branch
     members = ", ".join(f"<{rdf.fact_iri(f)}>" for f in facts) or "<urn:pph21kbs:none>"
@@ -55,17 +81,22 @@ def detect(kb, update_id, policies, omega):
     out = {}
     for p in policies:
         hits = []
-        for row in ds.query(q, initBindings={"policy": URIRef(rdf.doc_iri(p))}):
-            hits.append((str(row.kind), str(row.rule), str(row.element), str(row.fact).rsplit("/", 1)[1]))
+        if remote:
+            rows = ds.select(q.replace("?r pph:policy ?policy ;", f"?r pph:policy <{rdf.doc_iri(p)}> ;"))
+            hits += [(r["kind"], r["rule"], r["element"], r["fact"].rsplit("/", 1)[1]) for r in rows]
+        else:
+            for row in ds.query(q, initBindings={"policy": URIRef(rdf.doc_iri(p))}):
+                hits.append((str(row.kind), str(row.rule), str(row.element), str(row.fact).rsplit("/", 1)[1]))
         out[p] = {"kinds": {h[0] for h in hits}, "hits": sorted(set(hits))}
     return out
 
 
-def flag_all(kb, update_id, policies, omega):
+def flag_all(kb, update_id, policies, omega, remote=False, facts=None):
     """Baseline B5(i): a policy is flagged when any of its rules reads or produces a fact in F_Delta downstream,
-    whatever the validity."""
-    ds = impact_graph(kb, update_id, omega)
-    facts = set(affected_facts(ds))
+    whatever the validity. facts: F_Delta already computed (skips the query)."""
+    if facts is None:
+        facts = affected_facts(_graph(kb, update_id, omega, remote))
+    facts = set(facts)
     view = kb.view(omega)
     out = {}
     for p in policies:

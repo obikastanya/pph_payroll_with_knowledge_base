@@ -61,3 +61,27 @@ def test_removed_rule_counts_through_its_old_record():
     kb = apply_delta(kb, ev)
     res = impact.detect(kb, "EVR", ["PX"], OMEGA)
     assert "b" in res["PX"]["kinds"]
+
+
+
+def test_graphdb_backend_gives_the_same_labels():
+    """The RQ4 evaluation runs the same queries in GraphDB; both engines must agree (skipped without GraphDB)."""
+    import pytest
+    from pph21kbs.kb import graphdb
+    if not graphdb.available():
+        pytest.skip("GraphDB not running")
+    events = [
+        delta("EV", issued="2022-01-10", add=[
+            {"kind": "parameter", "id": "PAR.ROUND.2", "name": "round_mode", "value": "half_up",
+             "value_type": "category", "valid_from": "2022-01-01", "recorded_on": "2022-01-10", "source": SRC},
+            rule("REG.ALLOW.MIN", "allowance", "100000", vf="2022-01-01", rec="2022-01-10")]),
+        delta("EVC", issued="2022-01-10", add=[
+            {"kind": "constraint", "id": "CON.CANTEEN", "scope": "period", "assertion": "canteen_pz <= 10000",
+             "conflict_code": "C8", "valid_from": "2022-01-01", "recorded_on": "2022-01-10", "source": SRC}]),
+        delta("EVR", issued="2022-01-10", remove=[{"id": "REG.ALLOW0", "recorded_on": "2022-01-10", "source": SRC}])]
+    pols = ["PX", "PY", "PZ"]
+    for ev in events:
+        kb = apply_delta(kb_with_policies(), ev)
+        uid = ev["delta_id"]
+        assert impact.detect(kb, uid, pols, OMEGA, remote=True) == impact.detect(kb, uid, pols, OMEGA)
+        assert impact.flag_all(kb, uid, pols, OMEGA, remote=True) == impact.flag_all(kb, uid, pols, OMEGA)

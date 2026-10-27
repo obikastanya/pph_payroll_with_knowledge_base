@@ -138,8 +138,8 @@ def main():
             ev_cases = [c for c in cases if start.year - 1 <= c["tax_year"] <= (ev.effective_until or
                                                                                   date(2026, 12, 31)).year]
             a, b, c = exec_labels(k_prev, k_new, rules, ev_cases, ev)
-            det = impact.detect(k_new, gold_of[ev.id], [pe.document], ev.issued)[pe.document]["kinds"]
-            b5i = impact.flag_all(k_new, gold_of[ev.id], [pe.document], ev.issued)[pe.document]
+            det = impact.detect(k_new, gold_of[ev.id], [pe.document], ev.issued, remote=True)[pe.document]["kinds"]
+            b5i = impact.flag_all(k_new, gold_of[ev.id], [pe.document], ev.issued, remote=True)[pe.document]
             b5ii = flat_scan(k_new, gold_of[ev.id], rules)
             man = manual.get((pe.id, ev.id))
             rows.append({"policy": pe.id, "part": pe.part, "event": ev.id, "cases": len(ev_cases),

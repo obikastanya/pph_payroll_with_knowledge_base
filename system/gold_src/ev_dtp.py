@@ -60,8 +60,14 @@ def _e06():
              " + benefit('company_vehicle')", fixed + [natura], VF, vu=VU,
              label="tafsir K5: fixed and regular pay including fixed benefits in kind; without employer premiums, "
                    "incidental overtime, THR, bonus"),
-        rule("REG.DTP.INCOME_TEST", "dtp_income_test", "value_in('dtp_fixed_income', first_month)", crit, VF,
-             vu=VU, scope="year"),
+        rule("REG.DTP.INCOME_TEST", "dtp_income_test",
+             "employee('contract_fixed_income') if employee('contract_fixed_income') != None"
+             " else value_in('dtp_fixed_income', first_month)",
+             crit + [q("Lampiran huruf B angka 4", "seharusnya menerima atau memperoleh penghasilan bruto yang")],
+             VF, vu=VU, scope="year",
+             label="koreksi emas E0 (GT1 holdout PMK10-B-4): the criterion is the fixed regular income the contract "
+                   "gives for January or the first month (case attribute contract_fixed_income); without it, the "
+                   "fixed regular income paid in that month"),
         rule("REG.DTP.ELIGIBLE", "dtp_eligible",
              "in_table('dtp_klu', employer('klu')) and dtp_income_test <= param('dtp_fixed_income_cap')"
              " and employee('tax_id_valid') != False and employee('other_dtp_incentive') != True",

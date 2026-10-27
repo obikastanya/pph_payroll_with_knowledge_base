@@ -11,7 +11,7 @@
 
 **Pasal 5 — Penyesuaian gaji pokok**
 
-(1) Gaji pokok setiap pegawai tetap dinaikkan sebesar 8% (delapan persen) dari gaji pokok yang berlaku pada tanggal 31 Desember 2026. Hasil kenaikan dibulatkan ke atas hingga ribuan rupiah penuh.
+(1) Gaji pokok setiap pegawai tetap dinaikkan sebesar 8% (delapan persen) dari gaji pokok yang berlaku pada tanggal 31 Desember 2026. Gaji pokok baru hasil kenaikan dibulatkan ke atas hingga ribuan rupiah penuh.
 
 (2) Bagi pegawai tetap yang mulai bekerja setelah tanggal 1 Januari 2027 dan sebelum Perjanjian Kerja Bersama ini ditandatangani, kenaikan sebagaimana dimaksud pada ayat (1) dihitung dari gaji pokok pada saat mulai bekerja dan berlaku sejak bulan mulai bekerja.
 

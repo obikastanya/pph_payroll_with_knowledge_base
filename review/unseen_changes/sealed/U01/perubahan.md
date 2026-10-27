@@ -28,7 +28,7 @@ Menetapkan: PERATURAN MENTERI KEUANGAN TENTANG PENYESUAIAN BESARNYA PENGHASILAN 
 
 **Pasal 1**
 
-(1) Penghasilan Tidak Kena Pajak per tahun diberikan paling sedikit sebesar:
+(1) Besarnya Penghasilan Tidak Kena Pajak per tahun disesuaikan menjadi sebagai berikut:
   a. Rp60.000.000,00 (enam puluh juta rupiah) untuk diri Wajib Pajak orang pribadi;
   b. Rp5.400.000,00 (lima juta empat ratus ribu rupiah) tambahan untuk Wajib Pajak yang kawin;
   c. Rp60.000.000,00 (enam puluh juta rupiah) tambahan untuk seorang istri yang penghasilannya digabung dengan penghasilan suami sebagaimana dimaksud dalam Pasal 8 ayat (1) Undang-Undang Pajak Penghasilan; dan

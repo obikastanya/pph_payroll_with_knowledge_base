@@ -504,6 +504,15 @@ class U14(Engine):
                 self.R.calc("Lebih potong Masa Pajak Terakhir menjadi hak perusahaan karena PPh 21 ditanggung melalui tunjangan (SK Direksi Pasal 4 ayat (4))", f"0 - ({res['per_masa'][-1]['pph21']})")
                 res["setahun"]["lebih_potong_menjadi_hak_perusahaan"] = v
                 self.bind["setahun.lebih_potong_menjadi_hak_perusahaan"] = self.R.last
+                # Lebih potong tidak dibayarkan kepada pegawai, sehingga PPh 21
+                # yang dikembalikan kepada pegawai pada Masa Pajak Terakhir nol
+                # (konsisten dengan perlakuan kelebihan DTP pada U06/U07).
+                last = len(res["per_masa"]) - 1
+                pph_last = res["per_masa"][last]["pph21"]
+                res["per_masa"][last]["pph21_dipotong"] = self.R.calc(
+                    f"PPh 21 yang dipotong dari/dikembalikan kepada pegawai masa {BULAN[res['per_masa'][last]['bulan']]}: lebih potong tidak dibayarkan kepada pegawai",
+                    f"{pph_last} + {v}")
+                self.bind[f"per_masa[{last}].pph21_dipotong"] = self.R.last
         return res
 
     def no_cache(self, m):

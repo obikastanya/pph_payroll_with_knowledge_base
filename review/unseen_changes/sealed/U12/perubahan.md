@@ -35,7 +35,7 @@ Di antara Pasal 15 dan Pasal 16 Peraturan Menteri Keuangan Nomor 168 Tahun 2023 
 >
 > (2) Penghasilan bruto setara sebulan penuh sebagaimana dimaksud pada ayat (1) dihitung dengan rumus:
 >
-> bruto setara = (penghasilan bruto teratur Masa Pajak bulan pertama × jumlah hari kalender dalam bulan tersebut ÷ jumlah hari kalender sejak tanggal mulai bekerja sampai dengan akhir bulan) + penghasilan bruto tidak teratur Masa Pajak bulan pertama,
+> bruto setara = (penghasilan bruto teratur Masa Pajak bulan pertama × jumlah hari kalender dalam bulan tersebut ÷ jumlah hari kalender sejak tanggal mulai bekerja sampai dengan akhir bulan, termasuk tanggal mulai bekerja) + penghasilan bruto tidak teratur Masa Pajak bulan pertama,
 >
 > dengan hasil bagi dibulatkan ke bawah hingga rupiah penuh.
 >

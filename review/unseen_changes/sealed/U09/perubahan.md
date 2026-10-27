@@ -44,6 +44,9 @@ PRESIDEN REPUBLIK INDONESIA,
 ttd.
 [NAMA FIKTIF]
 
+Diundangkan di Jakarta
+pada tanggal 22 Desember 2026
+
 ---
 
 ## Dokumen 2
@@ -104,6 +107,9 @@ pada tanggal 28 Desember 2026
 MENTERI KEUANGAN REPUBLIK INDONESIA,
 ttd.
 [NAMA FIKTIF]
+
+Diundangkan di Jakarta
+pada tanggal 29 Desember 2026
 
 ---
 

@@ -1,0 +1,62 @@
+% ============================================================================
+\section{Akuisisi pengetahuan inkremental berbantuan LLM}
+\label{sec:akuisisi}
+% ============================================================================
+
+\subsection{Pembaruan dan adaptivitas}
+\label{subsec:adaptif}
+
+\begin{definisi}[Peristiwa dan pembaruan]
+\label{def:pembaruan}
+Peristiwa perubahan $\epsilon = \langle d, t_{\mathit{terbit}}, t_{\mathit{berlaku}}, \tau \rangle$ terdiri atas dokumen sumber, tanggal terbit, tanggal berlaku, dan jenis perubahan; ia berlaku surut bila $t_{\mathit{berlaku}} < t_{\mathit{terbit}}$. Pembaruan $\Delta = \langle \Delta^{+}, \Delta^{\sim}, \Delta^{-} \rangle$ berisi unsur yang ditambah, diubah, dan dicabut, dengan $\K' = \K \oplus \Delta$. Pembaruan emas $\Delta^{\emas}_n$ disusun peneliti, sedangkan $\hat{\Delta}_n$ dihasilkan alur akuisisi. Pembaruan kosong adalah jawaban yang benar untuk dokumen yang tidak mengubah perhitungan.
+\end{definisi}
+
+\begin{definisi}[Syarat adaptif]
+\label{def:syarat}
+Untuk $\K' = \K \oplus \Delta$ dan himpunan kasus $S$:
+\begin{itemize}[leftmargin=3.4em,labelsep=0.4em,nosep]
+  \item[(A1)] kode \en{engine} tidak berubah;
+  \item[(A2)] $\hasil(\K', x, t, \omega) = \hasil(\K^{\emas}, x, t, \omega)$ untuk $x \in S$, $t \geq t_{\mathit{berlaku}}$, $\omega \geq t_{\mathit{terbit}}$;
+  \item[(A3$_t$)] hasil untuk $t < t_{\mathit{berlaku}}$ tidak berubah;
+  \item[(A3$_\omega$)] hasil untuk $\omega < t_{\mathit{terbit}}$ tidak berubah;
+  \item[(A4)] setiap kebijakan yang berkonflik dengan aturan wajib di $\K'$ dilaporkan.
+\end{itemize}
+\end{definisi}
+
+\begin{definisi}[Adaptivitas]
+\label{def:adapt}
+Representasi \emph{adaptif secara representasional} terhadap $\epsilon$ bila ada $\Delta$ dalam bahasa representasi yang memenuhi A1--A4 (RQ1). Sistem \emph{adaptif secara operasional} bila $\hat{\Delta}$ yang dipilih alur akuisisi memenuhi A2, A3$_t$, dan A4 pada himpunan kasus evaluasi $\SE$ (RQ2, RQ3).
+\end{definisi}
+
+A1 dan A3$_\omega$ berlaku karena arsitekturnya, sebab LLM hanya menyunting \en{knowledge base} dan unsur baru dicatat dengan $t_c = t_{\mathit{terbit}}$. Keduanya diperiksa sebagai invarian, sedangkan A2, A3$_t$, dan A4 diuji.
+
+\subsection{Alur akuisisi dan gerbang verifikasi}
+Alur akuisisi (Gambar~\ref{fig:ikhtisar}) memotong dokumen per pasal, lalu LLM menilai apakah dokumen mengubah perhitungan PPh 21 dengan menyertakan kutipan pendukung. Dokumen yang tidak relevan menghasilkan pembaruan kosong. Untuk dokumen yang relevan, sistem menyusun konteks dari bagian graf yang disentuh dokumen, dan LLM menyusun $m$ kandidat $\Delta$ secara independen, dengan kutipan sumber untuk setiap unsur. Setiap kandidat melewati gerbang G1--G5 (Tabel~\ref{tab:gerbang}). Kandidat yang gagal mendapat umpan balik dan boleh diperbaiki dalam jumlah putaran terbatas.
+
+\begin{table}[t]
+\centering
+\caption{Gerbang verifikasi}
+\label{tab:gerbang}
+\scriptsize
+\begin{tabularx}{\columnwidth}{@{}P{0.5cm} L P{1.2cm}@{}}
+\toprule
+\textbf{ID} & \textbf{Pemeriksaan} & \textbf{Menjaga} \\
+\midrule
+G1 & Struktur graf sesuai \en{shape} SHACL & validitas \\
+G2 & Setiap kutipan benar-benar ada di dokumen sumber & dasar hukum \\
+G3 & Konsistensi statis: tipe, dependensi, konflik, anomali & A4 \\
+G4 & Regresi pada $\SG$: hasil sebelum $t_{\mathit{berlaku}}$ tidak berubah & A3$_t$ \\
+G5 & Non-vakuitas: setiap unsur baru mengubah minimal satu fakta keluaran, dan unsur yang dicabut tidak lagi menyala & efek nyata \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+G5 diperlukan karena pembaruan kosong atau aturan yang tidak pernah menyala lolos G1--G4 tanpa menimbulkan regresi. Peran G4 setara dengan \en{cornerstone case} pada \en{Ripple-Down Rules}~\cite{compton2021rippledown}. Kasus $\SG$ dibangkitkan otomatis dengan menyasar kondisi unsur yang berubah, dan tidak beririsan dengan $\SE$ yang dipakai untuk menilai sistem.
+
+\subsection{Pemilihan kandidat dan analisis dampak}
+Untuk setiap kandidat $\hat{\Delta}_j$ yang lolos semua gerbang, sistem menghitung vektor hasil
+\begin{equation}
+v_j = \big(\hasil(\K \oplus \hat{\Delta}_j, x, t, \omega)\big)_{(x,t,\omega) \in \SG}.
+\label{eq:vektor}
+\end{equation}
+Kandidat dengan vektor yang sama dikelompokkan, dan wakil kelompok terbesar dipilih (konsensus perilaku). Bila tidak ada kandidat yang lolos, sistem \en{abstain} dan meneruskan dokumen ke peninjau manusia. Untuk analisis dampak, detektor menelusuri graf secara statis dan menandai kebijakan perusahaan sebagai terdampak bila nilai fakta keluarannya berubah, aturan pemenangnya berubah, atau kebijakan itu menjadi berkonflik dengan aturan wajib.

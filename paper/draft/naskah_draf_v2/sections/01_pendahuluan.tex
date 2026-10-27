@@ -1,0 +1,81 @@
+% ============================================================================
+\section{Pendahuluan}
+\label{sec:pendahuluan}
+% ============================================================================
+
+\IEEEPARstart{P}{Ph} Pasal 21 dipotong pemberi kerja setiap bulan dari penghasilan pegawai, sehingga kesalahan perhitungannya langsung muncul di setiap slip gaji. Regulasinya juga sering berubah. Sampai tahun pajak 2023, pemotongan bulanan memakai metode disetahunkan menurut PER-16/PJ/2016~\cite{per16_2016}. Sejak 1 Januari 2024, PP 58/2023~\cite{pp58_2023} dan PMK 168/2023~\cite{pmk168_2023} menggantinya dengan tarif efektif rata-rata (TER) bulanan dan perhitungan ulang setahun di masa pajak terakhir. Pada Februari 2025 terbit fasilitas PPh 21 ditanggung pemerintah (DTP) untuk industri padat karya yang berlaku surut sejak Januari 2025~\cite{pmk10_2025}. Fasilitas ini diperluas ke sektor pariwisata pada Oktober 2025~\cite{pmk72_2025} dan diperpanjang untuk 2026~\cite{pmk105_2025}. Batas upah iuran Jaminan Pensiun, yang menentukan besarnya pengurang penghasilan, juga naik setiap Maret. Kandidat korpus penelitian ini mencatat sembilan peristiwa perubahan yang memengaruhi PPh 21 pegawai tetap pada 2023--2026, atau dua sampai tiga peristiwa per tahun, dengan jenis yang beragam, yaitu perubahan parameter, klasifikasi penghasilan, fasilitas baru, dan pergantian metode perhitungan (Tabel~\ref{tab:korpus}).
+
+\status{Angka sembilan peristiwa berasal dari daftar kandidat di catatan revisi 27 Oktober (empat kenaikan batas upah JP, PMK 66/2023, pergantian ke TER, PMK 10/2025, PMK 72/2025, PMK 105/2025). Daftar ini belum diverifikasi sebagai korpus final. Bukti biaya perubahan pada praktik saat ini (pembanding B1) akan ditambahkan setelah Tahap 10.}
+
+Dalam praktik, aturan pajak dan kebijakan payroll perusahaan tertanam bercampur di kode program atau rumus \en{spreadsheet}. Audit pendahuluan penelitian ini atas \en{spreadsheet} payroll sebuah perusahaan, yang selanjutnya disebut Perusahaan X, menemukan konstanta regulasi tertanam di 254 sel rumus. \en{Spreadsheet} itu juga mencatat lembur sebagai penghasilan tidak teratur, padahal PER-16/PJ/2016 dan PMK 168/2023 menggolongkannya sebagai penghasilan teratur. Survei pendahuluan atas tujuh pustaka dan aplikasi PPh 21 \en{open source} menemukan kesalahan terverifikasi di ketujuhnya. Contohnya lapisan tarif Pasal 17 yang diperlakukan sebagai lebar lapisan, bukan batas kumulatif, dan lebih bayar di masa pajak terakhir yang dipotong menjadi nol. Pada salah satu aplikasi, perhitungan TER baru ditambahkan sekitar 30 bulan setelah TER berlaku, sebagai halaman terpisah di samping kode metode lama. Pola seperti ini menimbulkan tiga masalah. Pertama, setiap perubahan regulasi menuntut pemrograman ulang. Kedua, tidak ada bukti bahwa perubahan itu tidak menggeser hasil periode lama, padahal hasil masa lampau tetap dibutuhkan untuk pembetulan dan pemeriksaan pajak. Ketiga, kebijakan perusahaan yang menjadi melanggar setelah regulasi berubah tidak terdeteksi.
+
+\en{Knowledge-based system} (KBS) memisahkan pengetahuan dari kode, sehingga perubahan aturan cukup dilakukan pada \en{knowledge base}. Gerakan \en{rules as code} menerapkan gagasan yang sama pada peraturan perundang-undangan~\cite{merigoux2021catala,mowbray2023scaling,kowalski2022logicalenglish}. Pemisahan ini memindahkan beban ke pemeliharaan \en{knowledge base}. Setiap perubahan hukum harus dibaca, ditafsirkan, lalu ditulis ulang sebagai aturan oleh orang yang memahami hukum sekaligus representasinya. Masalah ini dikenal sebagai \en{knowledge acquisition bottleneck}. Metode akuisisi inkremental seperti \en{Ripple-Down Rules} menekan biaya setiap perubahan dengan menjaga kasus lama tetap benar, tetapi pakar manusia tetap harus menulis setiap perubahan.
+
+\en{Large language model} (LLM) dapat membantu tahap akuisisi ini, karena LLM mampu mengubah teks peraturan menjadi representasi terstruktur~\cite{janatian2023texttostructure}. Namun, LLM tidak andal untuk penalaran pajak yang menuntut ketepatan~\cite{blairstanek2023gpt3,nay2024taxattorneys} dan dapat mengarang fakta hukum~\cite{dahl2024legalfictions,magesh2025hallucination}. Karena itu, penelitian formalisasi pajak berbantuan LLM memakai LLM untuk menyusun aturan, lalu menyerahkan perhitungan kepada \en{engine} deterministik~\cite{veeramani2026neurosymbolic,yadamsuren2026formalization,lorenzo2025translating,jurayj2026tax}. Karya-karya itu membangun basis aturan dari nol untuk keadaan hukum pada satu waktu. Di sisi lain, penyuntingan pengetahuan LLM yang dilakukan berurutan terbukti dapat merusak pengetahuan yang sudah ada~\cite{gupta2024forgetting,gu2024harms}. Pada konsolidasi undang-undang dengan LLM, kemiripan teks hasil konsolidasi mencapai 93--99\%, tetapi kecocokan persisnya hanya 50,3\% untuk amandemen satu langkah dan 20,51\% untuk rangkaian amandemen~\cite{prior2025risks}. Kemiripan yang tinggi menyembunyikan hasil yang salah, dan kesalahan bertambah ketika perubahan berantai. Sejauh penelusuran penulis, belum ada penelitian yang mengukur tiga hal pada basis aturan yang dieksekusi, yaitu apakah pembaruan berulang dari LLM menjaga hasil periode lama, apakah kesalahan merambat dari satu perubahan ke perubahan berikutnya, dan bagaimana dampak perubahan regulasi terhadap lapisan kebijakan perusahaan.
+
+Penelitian ini mengusulkan KBS adaptif untuk perhitungan PPh 21 pegawai tetap (Gambar~\ref{fig:ikhtisar}). Pengetahuan disimpan sebagai \en{legal knowledge graph} temporal dua lapis yang memisahkan regulasi pemerintah dari kebijakan perusahaan. Seluruh aritmetika dijalankan \en{inference engine} deterministik yang mencatat jejak setiap angka sampai pasal sumbernya. Ketika dokumen regulasi atau kebijakan baru terbit, LLM menyusun beberapa kandidat pembaruan \en{knowledge base}, lima gerbang verifikasi menyaringnya, dan sistem memilih satu kandidat lewat konsensus perilaku atau menolak memilih (\en{abstain}). Kebenaran sistem diukur dari hasil perhitungan sampai rupiah dengan memutar ulang seluruh perubahan regulasi yang nyata secara berurutan, yang disebut \en{regulation replay}.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  node distance=5mm and 4.2mm,
+  langkah/.style={draw=black!70, rounded corners=2pt, align=center, text width=22mm, minimum height=10mm, fill=white},
+  llm/.style={langkah, fill=violet!7},
+  gerbang/.style={langkah, fill=teal!8},
+  manusia/.style={langkah, fill=gray!10},
+  lapis/.style={draw=black!60, rounded corners=1.5pt, align=center, text width=30mm, minimum height=6mm},
+  panah/.style={-{Stealth[length=1.8mm]}, semithick},
+  ket/.style={font=\tiny, align=center, fill=white, inner sep=1pt}
+]
+% Baris atas: alur akuisisi
+\node[manusia] (dok) {Dokumen regulasi\\atau kebijakan baru};
+\node[llm, right=of dok] (rel) {Penilaian relevansi\\berkutipan (LLM)};
+\node[llm, right=of rel] (kand) {$m$ kandidat\\pembaruan $\Delta$ (LLM)};
+\node[gerbang, right=of kand] (grb) {Gerbang\\G1--G5};
+\node[gerbang, right=of grb] (pilih) {Konsensus perilaku\\atau \en{abstain}};
+\node[manusia, right=of pilih] (tinjau) {Peninjau manusia\\dan laporan dampak};
+% Baris bawah: knowledge graph dan perhitungan
+\node[lapis, fill=lapreg!25] (reg) at ($(kand.south)!0.5!(grb.south)+(0,-17mm)$) {Lapisan regulasi};
+\node[lapis, fill=lapprs!30, below=1.5mm of reg] (prs) {Lapisan perusahaan};
+\node[draw=black!70, rounded corners=2pt, fit=(reg)(prs), inner sep=2.5mm,
+      label={[font=\scriptsize\itshape, align=center]below:Knowledge graph temporal\\(RDF/OWL, SHACL, SPARQL)}] (kg) {};
+\node[langkah, fill=blue!6] (eng) at (pilih |- kg) {\en{Inference engine}\\deterministik};
+\node[langkah, fill=green!6] (out) at (tinjau |- kg) {PPh 21 per masa dan\\jejak sampai pasal};
+\node[manusia, below=4mm of eng, minimum height=7mm] (data) {Data pegawai, $t$, $\omega$};
+% Panah alur
+\draw[panah] (dok) -- (rel);
+\draw[panah] (rel) -- (kand);
+\draw[panah] (kand) -- (grb);
+\draw[panah] (grb) -- (pilih);
+\draw[panah] (pilih) -- (tinjau);
+\draw[panah] (grb.north) to[bend right=40] node[ket, above]{umpan balik perbaikan} (kand.north);
+\draw[panah, dashed] (rel.south) |- node[ket, pos=0.3]{tidak relevan:\\$\Delta$ kosong} (kg.west);
+\draw[panah] (kg.north -| kand) -- node[ket]{konteks} (kand.south);
+\draw[panah] (tinjau.south) -- ++(0,-4mm) -| node[ket, pos=0.3]{pembaruan diterapkan sebagai versi baru} ($(kg.north)+(9mm,0)$);
+\draw[panah] (kg.east) -- (eng.west);
+\draw[panah] (eng) -- (out);
+\draw[panah] (data) -- (eng);
+\end{tikzpicture}
+\caption{Ikhtisar sistem yang diusulkan. Baris atas adalah alur akuisisi pengetahuan. Baris bawah adalah \en{knowledge base} dua lapis dan \en{inference engine} yang menghitung PPh 21. LLM hanya mengusulkan pembaruan dan tidak pernah menghitung pajak.}
+\label{fig:ikhtisar}
+\end{figure*}
+
+Penelitian ini menjawab empat pertanyaan penelitian (RQ).
+\begin{enumerate}[label=\textbf{RQ\arabic*},leftmargin=*,nosep]
+  \item \textbf{Adaptivitas representasi.} Sejauh mana representasi pengetahuan temporal dua lapis dapat menyatakan perubahan regulasi dan kebijakan, termasuk jenis perubahan yang tidak diketahui saat representasi dirancang, tanpa mengubah kode \en{engine}?
+  \item \textbf{Akuisisi satu langkah.} Seberapa sering akuisisi berbantuan LLM menerapkan pembaruan yang benar, seberapa sering ia menerapkan pembaruan salah tanpa terdeteksi, dan berapa besar peran gerbang verifikasi pada kedua angka itu?
+  \item \textbf{Adaptivitas operasional berantai.} Pada rangkaian perubahan regulasi yang nyata, berapa peristiwa yang berhasil diterapkan otomatis, dan apakah kesalahan merambat dari satu peristiwa ke peristiwa berikutnya?
+  \item \textbf{Dampak lintas lapis.} Seberapa lengkap dan tepat sistem mengidentifikasi kebijakan perusahaan yang terdampak atau menjadi melanggar setelah regulasi berubah?
+\end{enumerate}
+
+Kontribusi penelitian ini adalah sebagai berikut.
+\begin{enumerate}[label=\textbf{K\arabic*},leftmargin=*,nosep]
+  \item Representasi pengetahuan temporal dua lapis untuk perhitungan pajak penghasilan pegawai, dengan resolusi konflik antarlapis dan analisis dampak lintas lapis (RQ1, RQ4).
+  \item Metode akuisisi pengetahuan inkremental berbantuan LLM dengan gerbang verifikasi, gerbang non-vakuitas, dan pemilihan kandidat berbasis konsensus perilaku (RQ2).
+  \item Definisi adaptivitas representasional dan operasional, serta protokol \en{regulation replay} yang memisahkan kesalahan bawaan, kesalahan baru, dan kesalahan yang dipicu perambatan, beserta bukti empiris pada rangkaian perubahan PPh 21 yang nyata (RQ3).
+  \item Artefak terbuka berupa \en{knowledge base}, korpus perubahan beserta pembaruan emas, \en{test suite} dengan \en{ground truth}, dan kode evaluasi.
+\end{enumerate}
+Tabel~\ref{tab:lacak} di Bagian~\ref{sec:evaluasi} menghubungkan setiap kontribusi dengan RQ, hipotesis, dan metrik utamanya. Penelitian ini tidak mengklaim pola ``LLM menyusun aturan, \en{engine} deterministik menghitung'' sebagai kebaruan, karena pola itu sudah dipakai karya terdahulu (Bagian~\ref{sec:terkait}). Kebaruannya terletak pada pembaruan inkremental \en{knowledge base} yang dapat dieksekusi dan dijaga gerbang verifikasi, yang dievaluasi pada rangkaian amandemen nyata, beserta pengukuran perambatan kesalahan dan dampaknya terhadap lapisan kebijakan perusahaan.
+
+Sisa naskah disusun sebagai berikut. Bagian~\ref{sec:masalah} menjelaskan perhitungan PPh 21 pegawai tetap, batas kewenangan kebijakan perusahaan, jenis perubahan regulasi, dan rumusan masalah. Bagian~\ref{sec:terkait} membahas penelitian terkait. Bagian~\ref{sec:representasi} menetapkan representasi pengetahuan dan \en{inference engine}. Bagian~\ref{sec:akuisisi} mendefinisikan pembaruan dan adaptivitas, lalu menjelaskan alur akuisisi berbantuan LLM. Bagian~\ref{sec:evaluasi} menguraikan metodologi evaluasi. Bagian~\ref{sec:hasil} dan~\ref{sec:pembahasan} melaporkan dan membahas hasil, dan Bagian~\ref{sec:kesimpulan} menutup naskah.

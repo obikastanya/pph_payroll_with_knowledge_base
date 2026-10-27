@@ -1,0 +1,135 @@
+% ============================================================================
+% NASKAH DRAF v2 (27 Oktober 2026): v1 dengan rujukan difilter
+% Kriteria paper/reference/README.md (2021+, peer review, DOI Crossref); standar
+% sebagai sumber primer. Rincian entri yang gugur: FILTER_RUJUKAN.md.
+% Knowledge-Based System Adaptif untuk Perhitungan PPh 21 dengan Akuisisi
+% Pengetahuan Berbantuan LLM dari Regulasi dan Kebijakan Perusahaan
+%
+% Disusun dari paper/draft/skeleton.tex (versi origin/main b2aec05) dan
+% feedback_and_revision/revision_27_10_26.md. Skeleton tidak diubah; berkas
+% ini adalah salinan kerja terpisah.
+%
+% Format : IEEEtran (journal), seperti skeleton
+% Bahasa : Indonesia; istilah teknis asing ditulis miring lewat \en{}
+% Kompilasi: pdflatex, bibtex, lalu pdflatex dua kali
+%            (atau: tectonic -X compile main.tex)
+%
+% Penanda draf (matikan semuanya dengan \rancanganfalse):
+%   \status{}      kotak ungu  : status implementasi atau data yang sebenarnya
+%   \terbuka{}     kotak oranye: keputusan yang belum diambil peneliti
+%   \definisikan{} kotak hijau : hal yang masih harus didefinisikan
+%   \catatan{}     kotak abu   : catatan penyusunan draf
+%   \isian{}       teks abu    : angka atau teks yang menunggu hasil
+%   \rujuk{}       teks merah  : rujukan yang belum ada di bibliografi
+% ============================================================================
+\documentclass[journal,a4paper]{IEEEtran}
+\usepackage[english,indonesian]{babel}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,fit,calc,shapes.geometric}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+% Istilah asing (tidak diterjemahkan) ditulis miring.
+\newcommand{\en}[1]{\textit{#1}}
+
+% Penamaan dalam Bahasa Indonesia
+\renewcommand{\IEEEkeywordsname}{Kata Kunci}
+\addto\captionsindonesian{\renewcommand{\refname}{Daftar Pustaka}\renewcommand{\abstractname}{Abstrak}%
+  \renewcommand{\figurename}{Gambar}\renewcommand{\tablename}{Tabel}}
+\floatname{algorithm}{Algoritma}
+\algrenewcommand\algorithmicrequire{\textbf{Masukan:}}
+\algrenewcommand\algorithmicensure{\textbf{Keluaran:}}
+\algrenewcommand\algorithmicforall{\textbf{untuk setiap}}
+\algrenewcommand\algorithmicfor{\textbf{untuk}}
+\algrenewcommand\algorithmicif{\textbf{jika}}
+\algrenewcommand\algorithmicthen{\textbf{maka}}
+\algrenewcommand\algorithmicelse{\textbf{selain itu}}
+\algrenewcommand\algorithmicend{\textbf{akhir}}
+\algrenewcommand\algorithmicdo{\textbf{lakukan}}
+\algrenewcommand\algorithmicreturn{\textbf{kembalikan}}
+\newtheorem{definisi}{Definisi}
+
+% Notasi: x = kasus uji, t = masa pajak, \omega = tanggal pengetahuan,
+% m = jumlah kandidat, c = jumlah kandidat benar, n = indeks peristiwa.
+\newcommand{\K}{\mathcal{K}}
+\newcommand{\hasil}{\mathit{hasil}}
+\newcommand{\emas}{\star}
+\newcommand{\SG}{S^{G}}
+\newcommand{\SE}{S^{E}}
+
+% Listing Turtle/SHACL/SPARQL
+\lstdefinelanguage{rdf}{
+  morekeywords={PREFIX,SELECT,DISTINCT,WHERE,FILTER,a},
+  sensitive=true,
+  comment=[l]{\#},
+  morestring=[b]"
+}
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{blue!60!black}\bfseries,
+  stringstyle=\color{green!40!black},
+  commentstyle=\color{gray},
+  frame=single, framerule=0.3pt, rulecolor=\color{gray!50},
+  breaklines=true, columns=fullflexible, xleftmargin=2pt, xrightmargin=2pt,
+  aboveskip=4pt, belowskip=2pt
+}
+
+% Warna lapisan (sama dengan slide progres)
+\definecolor{lapreg}{HTML}{5B8DEF}
+\definecolor{lapprs}{HTML}{F2A15A}
+
+% ---------------------------------------------------------------------------
+% Penanda draf
+% ---------------------------------------------------------------------------
+\newif\ifrancangan \rancangantrue
+\newcommand{\kotak}[3]{\ifrancangan\par\begingroup\scriptsize
+  \def\FrameCommand{\fboxsep=3pt\fboxrule=0.4pt\fcolorbox{#1!60!black}{#1!6}}%
+  \MakeFramed{\advance\hsize-\width\FrameRestore}\noindent\textbf{#2}\par #3\endMakeFramed\endgroup\fi}
+\newcommand{\status}[1]{\kotak{violet}{Status}{#1}}
+\newcommand{\terbuka}[1]{\kotak{orange}{Keputusan terbuka}{#1}}
+\newcommand{\definisikan}[1]{\kotak{teal}{Harus didefinisikan}{#1}}
+\newcommand{\catatan}[1]{\kotak{gray}{Catatan draf}{#1}}
+\newcommand{\isian}[1]{\ifrancangan\textcolor{gray}{[#1]}\else[#1]\fi}
+\newcommand{\rujuk}[1]{\textcolor{red}{[rujukan: #1]}}
+\newcommand{\gambar}[1]{\fbox{\parbox[c][2.6cm][c]{0.94\columnwidth}{\centering\scriptsize #1}}}
+\newcommand{\gambarlebar}[1]{\fbox{\parbox[c][3.2cm][c]{0.96\textwidth}{\centering\scriptsize #1}}}
+
+\begin{document}
+% Lebih dari enam penulis ditulis "et al." (gaya IEEE); entri kontrol ada di rujukan_tambahan.bib
+\bstctlcite{IEEEexample:BSTcontrol}
+\title{\en{Knowledge-Based System} Adaptif untuk Perhitungan PPh 21 dengan Akuisisi Pengetahuan Berbantuan LLM dari Regulasi dan Kebijakan Perusahaan}
+\author{[Nama Penulis]%
+\thanks{Draf v2, 27 Oktober 2026: draf v1 dengan rujukan difilter (terbit 2021 ke atas, ber-\en{peer review}, DOI Crossref; standar sebagai sumber primer). Bagian I--VI berupa prosa; abstrak dan Bagian VII--IX menunggu hasil eksperimen.}}
+\maketitle
+
+\input{sections/00_abstrak}
+\input{sections/01_pendahuluan}
+\input{sections/02_latar_belakang}
+\input{sections/03_penelitian_terkait}
+\input{sections/04_representasi}
+\input{sections/05_akuisisi}
+\input{sections/06_evaluasi}
+\input{sections/07_hasil}
+\input{sections/08_pembahasan}
+\input{sections/09_kesimpulan}
+
+\bibliographystyle{IEEEtran}
+\bibliography{../../latex/references,../../latex/regulasi,rujukan_tambahan}
+
+\end{document}

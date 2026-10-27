@@ -1,0 +1,198 @@
+% ============================================================================
+\section{Representasi pengetahuan dan \en{inference engine}}
+\label{sec:representasi}
+% ============================================================================
+
+Bagian ini menetapkan bentuk final \en{knowledge base}, cara konflik antarlapis diselesaikan, dan cara \en{inference engine} menghitung. Bagian ini menjadi dasar kontribusi K1.
+
+\status{Rancangan. \en{Knowledge graph} belum dibangun. Prototipe menyimpan aturan dalam berkas YAML yang divalidasi skema JSON (\texttt{kb/regulasi/}, \texttt{kb/perusahaan/}) dan sudah menjalankan langkah inferensi di Algoritma~\ref{alg:inferensi}, kecuali pembacaan aturan dari graf. Spesifikasi ontologi ditulis di Tahap 3; migrasi YAML ke graf dan pemeriksaan kesetaraan hasil dilakukan di Tahap 5.}
+
+\subsection{Model pengetahuan}
+\label{subsec:model}
+
+Pengetahuan PPh 21 terdiri atas dua jenis yang sifatnya berbeda (Tabel~\ref{tab:pembagian}). Pengetahuan struktural menyatakan hubungan. Contohnya regulasi memuat pasal, aturan bersumber dari pasal, PMK baru mengubah atau mencabut PMK lama, uang lembur digolongkan sebagai penghasilan teratur, dan kebijakan perusahaan berkonflik dengan ketentuan wajib. Pengetahuan komputasional menyatakan cara menghitung. Contohnya TER dikali bruto, pembulatan PKP, \en{gross-up} sebagai \en{fixed point}, dan perhitungan ulang di masa pajak terakhir.
+
+\begin{table}[t]
+\centering
+\caption{Pembagian peran \en{knowledge graph} dan \en{inference engine}}
+\label{tab:pembagian}
+\scriptsize
+\begin{tabularx}{\columnwidth}{@{}P{1.85cm} L P{1.9cm}@{}}
+\toprule
+\textbf{Jenis} & \textbf{Contoh} & \textbf{Ditangani oleh} \\
+\midrule
+Struktural & Regulasi memuat pasal; aturan bersumber dari pasal; PMK baru mengubah atau mencabut PMK lama; lembur digolongkan penghasilan teratur; kebijakan berkonflik dengan aturan wajib; aturan membaca dan menghasilkan fakta & \en{Knowledge graph} \\
+Komputasional & TER $\times$ bruto; pembulatan per pasal; \en{gross-up} sebagai \en{fixed point}; perhitungan ulang di masa pajak terakhir & \en{Inference engine}; ekspresinya disimpan sebagai atribut \en{node} aturan \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Penelitian ini menyimpan pengetahuan struktural sebagai \en{legal knowledge graph} berbasis RDF/OWL. Ekspresi perhitungan disimpan sebagai atribut \en{node} aturan di graf yang sama, lalu \en{inference engine} deterministik membaca aturan dari graf dan menjalankan ekspresinya. Perhitungan tidak dipindahkan ke penalaran ontologi. OWL dan SWRL tidak menyediakan aritmetika eksak dengan aturan pembulatan per pasal, dan tidak menyediakan iterasi \en{fixed point}. Padahal prototipe \en{engine} yang dipakai ulang di penelitian ini sudah tidak menghasilkan selisih yang tidak terjelaskan pada 1.213 nilai harapan dari 45 contoh perhitungan resmi di PER-16/PJ/2016, PP 58/2023, PMK 168/2023, dan ketiga PMK DTP. Dari nilai-nilai itu, 1.185 cocok langsung, 20 berbeda karena kekeliruan contoh resmi yang dikoreksi lewat protokol erratum, dan 8 bergantung pada tafsir atas ketentuan yang tidak tegas. Pembagian peran ini mempertahankan ketepatan tersebut. Seluruh eksperimen prototipe harus menghasilkan keluaran yang identik sebelum dan sesudah migrasi ke graf.
+
+\begin{definisi}[\en{Knowledge base}]
+\label{def:kb}
+\en{Knowledge base} adalah $\K = \langle \mathcal{O}, \mathcal{R}, \mathcal{P}, \mathcal{T} \rangle$, dengan $\mathcal{O}$ ontologi beserta individunya (regulasi, pasal, dokumen kebijakan, konsep, dan fakta), $\mathcal{R}$ himpunan aturan, $\mathcal{P}$ himpunan parameter berversi, dan $\mathcal{T}$ himpunan tabel berversi. Setiap unsur $\mathcal{R}$, $\mathcal{P}$, dan $\mathcal{T}$ berada pada satu lapisan $\ell \in \{\mathit{reg}, \mathit{prs}\}$, yaitu regulasi atau perusahaan. Lapisan perusahaan disimpan sebagai \en{named graph} tersendiri untuk setiap perusahaan, sehingga beberapa perusahaan dapat memakai lapisan regulasi yang sama.
+\end{definisi}
+
+\begin{definisi}[Aturan]
+\label{def:aturan}
+Aturan adalah tupel
+\[ r = \langle \mathit{id}, \ell, \sigma, [t_s, t_e], t_c, \varphi, f \coloneqq e, \mathit{src} \rangle. \]
+Sifat $\sigma \in \{\mathit{wajib}, \mathit{tafsir}, \mathit{default}, \mathit{opsional}\}$ menentukan siapa boleh menimpa siapa. Aturan wajib tidak dapat ditimpa lapisan perusahaan. Aturan tafsir menyatakan pilihan peneliti ketika regulasi tidak tegas, beserta rentang tafsir lainnya. Aturan \en{default} boleh ditimpa aturan opsional perusahaan. Interval $[t_s, t_e]$ adalah masa berlaku (\en{valid time}), dengan $t_e = \infty$ bila aturan belum diakhiri, dan $t_c$ adalah tanggal aturan dicatat ke \en{knowledge base} (\en{knowledge time}). Kondisi $\varphi$ dievaluasi atas fakta dan data masukan. Bagian $f \coloneqq e$ menyatakan bahwa aturan menghasilkan fakta $f$ dengan ekspresi $e$. Himpunan $\mathit{src}$ berisi pasal atau butir sumber, dan tidak boleh kosong untuk aturan lapisan regulasi.
+\end{definisi}
+
+\begin{definisi}[Hasil perhitungan]
+\label{def:hasil}
+$\hasil(\K, x, t, \omega)$ adalah nilai fakta keluaran untuk kasus $x$ pada masa pajak $t$, yang dihitung hanya dengan unsur $\K$ yang tanggal pencatatannya $t_c \le \omega$. Fakta keluaran utama adalah PPh 21 yang dipotong per pegawai per masa. Fakta pendukungnya adalah PPh setahun, bruto, PKP, dan \en{take home pay}. Semua fakta keluaran bernilai rupiah bulat.
+\end{definisi}
+
+\status{Sifat \emph{tafsir} tidak ada di daftar \en{skeleton} (wajib, \en{default}, opsional), tetapi sudah dipakai prototipe dan catatan revisi. Draf ini mengusulkannya sebagai sifat keempat.}
+
+\subsection{Ontologi dan standar yang dipakai ulang}
+\label{subsec:ontologi}
+
+Gambar~\ref{fig:ontologi} menunjukkan kelas dan relasi utama. Kosakatanya memakai ulang standar yang sudah ada, bukan istilah buatan sendiri. ELI (\en{European Legislation Identifier}) dipakai untuk regulasi, bagian-bagiannya, dan relasi amandemen~\cite{publicationsoffice2026eli}. OWL-Time dipakai untuk masa berlaku~\cite{cox2017owltime}, dan PROV-O untuk asal-usul serta waktu pencatatan~\cite{lebo2013provo}. Dengan PROV-O, setiap unsur yang ditambahkan alur akuisisi juga menyimpan dokumen sumber, kutipan pendukung, dan identitas pembaruan yang menghasilkannya.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  kelas/.style={draw=black!70, rounded corners=2pt, align=center, text width=28mm, minimum height=9mm, fill=white},
+  panah/.style={-{Stealth[length=1.8mm]}, semithick},
+  ket/.style={font=\tiny, align=center, fill=white, inner sep=1pt}
+]
+\node[kelas, fill=lapreg!25] (reg) at (0,0) {Regulasi\\(UU, PP, PMK, PER)};
+\node[kelas] (pasal) at (0,-1.7) {Pasal atau butir};
+\node[kelas, fill=lapprs!30] (keb) at (0,-3.4) {Kebijakan perusahaan\\(PP, PKB, SK direksi)};
+\node[kelas, text width=44mm, minimum height=14mm, fill=gray!8] (atr) at (6.2,-1.7) {\textbf{Aturan}\\lapisan $\ell$, sifat $\sigma$, kondisi $\varphi$,\\ekspresi $f \coloneqq e$};
+\node[kelas] (kon) at (12.2,0) {Konsep\\(fakta, jenis penghasilan,\\kategori pajak)};
+\node[kelas] (par) at (12.2,-1.7) {Parameter berversi};
+\node[kelas] (tab) at (12.2,-3.4) {Tabel berversi};
+\node[kelas, text width=62mm, fill=violet!6] (ver) at (6.2,-4.5) {Versi: masa berlaku $[t_s, t_e]$ (OWL-Time),\\tanggal pencatatan $t_c$ dan asal-usul (PROV-O)};
+\draw[panah] (reg) -- node[ket, right]{memuat} (pasal);
+\draw[panah] (keb) -- node[ket, right]{memuat} (pasal);
+\draw (reg) edge[panah, loop above, looseness=5] node[ket, above]{mengubah, mencabut} (reg);
+\draw[panah] (atr) -- node[ket, above]{bersumber} (pasal);
+\draw[panah] (atr) -- node[ket, above, sloped]{menghasilkan,\\membaca} (kon);
+\draw[panah] (atr) -- node[ket, above]{membaca} (par);
+\draw[panah] (atr) -- node[ket, below, sloped]{membaca} (tab);
+\draw (atr) edge[panah, loop above, looseness=5] node[ket, above]{berkonflik dengan, menggantikan} (atr);
+\draw[panah] (atr) -- node[ket, right]{berversi} (ver);
+\draw[panah] (par.south west) -- (ver.north east);
+\draw[panah] (tab) -- (ver);
+\end{tikzpicture}
+\caption{Ontologi \en{knowledge base}. Kebijakan perusahaan dimodelkan setara dengan regulasi. Yang membedakan keduanya hanya lapisan dan otoritas penerbitnya. Warna biru dan oranye menandai lapisan regulasi dan lapisan perusahaan.}
+\label{fig:ontologi}
+\end{figure*}
+
+Kebijakan perusahaan dimodelkan setara dengan regulasi pemerintah (Tabel~\ref{tab:setara}). Isi lapisan perusahaan meliputi aturan kebijakan seperti prorata hari kerja, kenaikan gaji di tengah bulan, THR, BPJS, dan \en{take home pay}; pemetaan komponen gaji ke kategori pajak; isian data tambahan yang diminta kebijakan baru; dan aturan pembulatan perusahaan. Dengan pemodelan ini, hubungan antara kebijakan dan regulasi menjadi relasi eksplisit di graf. Akibatnya pertanyaan lintas lapis, misalnya kebijakan perusahaan mana yang berkonflik setelah sebuah regulasi terbit, dapat dijawab dengan satu \en{query}.
+
+\begin{table}[t]
+\centering
+\caption{Regulasi pemerintah dan kebijakan perusahaan di dalam graf}
+\label{tab:setara}
+\scriptsize
+\begin{tabularx}{\columnwidth}{@{}P{1.5cm} L L@{}}
+\toprule
+\textbf{Unsur} & \textbf{Regulasi pemerintah} & \textbf{Kebijakan perusahaan} \\
+\midrule
+Otoritas & Kemenkeu, DJP & Perusahaan \\
+Dokumen sumber & UU, PP, PMK, PER & Peraturan perusahaan, PKB, SK direksi \\
+Unit sumber & Pasal & Pasal atau butir dokumen internal \\
+Sifat aturan & Wajib, tafsir, \en{default} & Opsional, menimpa \en{default} yang sah \\
+Versi waktu & Masa berlaku dan tanggal pencatatan & Masa berlaku dan tanggal pencatatan \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+SHACL menjadi gerbang validasi struktural, termasuk untuk pembaruan yang diusulkan LLM~\cite{knublauch2017shacl}. \en{Shape} dengan tingkat \texttt{sh:Violation} menolak pembaruan, misalnya aturan lapisan regulasi yang tidak bersumber dari pasal, atau aturan pengganti yang mulai berlaku sebelum aturan yang digantikannya. \en{Shape} dengan tingkat \texttt{sh:Warning} tidak menolak, tetapi mencatat konflik antara kebijakan perusahaan dan ketentuan wajib. Konflik seperti ini memang harus tercatat, karena dokumen kebijakan yang sah pun dapat bertentangan dengan regulasi. SPARQL dipakai untuk analisis dampak lintas lapis. Gambar~\ref{lst:rdf} memberi contoh ketiganya untuk konflik klasifikasi lembur di Bagian~\ref{subsec:kebijakan}.
+
+\begin{figure}[t]
+\begin{lstlisting}[language=rdf]
+# Data: aturan wajib dan aturan Perusahaan X
+reg:KLS-LEMBUR a kb:Aturan ; kb:lapisan kb:Regulasi ;
+  kb:sifat kb:Wajib ; kb:menggolongkan kb:Lembur ;
+  kb:keKategori kb:Teratur ;
+  kb:bersumber reg:PER16-Ps1-a15 , reg:PMK168-Ps5-3a .
+px:PX-LEMBUR a kb:Aturan ; kb:lapisan kb:Perusahaan ;
+  kb:sifat kb:Opsional ; kb:menggolongkan kb:Lembur ;
+  kb:keKategori kb:TidakTeratur ; kb:bersumber px:PP-Ps12 .
+
+# SHACL: catat konflik dengan klasifikasi wajib
+kb:KlasifikasiWajib a sh:NodeShape ;
+  sh:targetClass kb:Aturan ; sh:severity sh:Warning ;
+  sh:sparql [ sh:select """SELECT $this WHERE {
+    $this kb:lapisan kb:Perusahaan ;
+          kb:menggolongkan ?j ; kb:keKategori ?k1 .
+    ?w kb:sifat kb:Wajib ; kb:menggolongkan ?j ;
+       kb:keKategori ?k2 . FILTER (?k1 != ?k2) }""" ] .
+
+# SPARQL: kebijakan yang menyentuh fakta dari regulasi R
+SELECT DISTINCT ?kebijakan WHERE {
+  ?a kb:bersumber/kb:bagianDari reg:PMK-168-2023 ;
+     (kb:menghasilkan|kb:menggolongkan) ?x .
+  ?kebijakan kb:lapisan kb:Perusahaan ;
+     (kb:membaca|kb:menghasilkan|kb:menggolongkan) ?x . }
+\end{lstlisting}
+\caption{Ilustrasi data, \en{shape} SHACL, dan \en{query} SPARQL. Nama kelas dan properti masih usulan dan akan ditetapkan di spesifikasi ontologi.}
+\label{lst:rdf}
+\end{figure}
+
+\definisikan{(1) Daftar kelas, properti, dan pemetaannya ke ELI, OWL-Time, dan PROV-O. (2) Daftar lengkap \en{shape} SHACL beserta tingkatnya. (3) Bentuk kanonik unsur, yaitu normalisasi aturan agar unsur hasil LLM dapat dicocokkan dengan unsur emas pada metrik diagnostik.}
+
+\subsection{Bahasa ekspresi dan semantik temporal}
+\label{subsec:ekspresi}
+
+Ekspresi $e$ dan kondisi $\varphi$ ditulis dalam bahasa ekspresi kecil yang divalidasi sebagai pohon sintaks. Bahasa ini hanya mengizinkan operator aritmetika dan perbandingan, rujukan ke fakta, dan himpunan fungsi bawaan yang terbatas. Prototipe menyediakan 33 fungsi bawaan, misalnya \texttt{tarif\_ter}, \texttt{pasal17}, \texttt{ptkp}, \texttt{bulatkan}, dan fungsi tanggal. Batasan ini juga membatasi keluaran LLM, karena ekspresi yang memanggil fungsi di luar daftar langsung ditolak.
+
+Masa berlaku $[t_s, t_e]$ menentukan aturan mana yang berlaku pada masa pajak $t$, sedangkan $t_c$ menentukan apa yang diketahui sistem pada tanggal $\omega$. Kedua sumbu ini terpisah. Akibatnya regulasi yang berlaku surut, misalnya PMK 10/2025 yang terbit 4 Februari 2025 tetapi berlaku untuk masa Januari 2025, dapat dinyatakan dengan $t_s < t_c$. Pertanyaan \emph{berapa yang seharusnya dipotong untuk Januari menurut hukum yang kini diketahui} dan \emph{berapa yang dihitung sistem pada akhir Januari} keduanya dapat dijawab.
+
+\definisikan{(1) Daftar fungsi yang diizinkan beserta sistem tipenya. (2) Batas ekspresivitas, yaitu jenis ketentuan yang sengaja tidak dapat dinyatakan. Beberapa fungsi bawaan prototipe, seperti \texttt{tarif\_ter} dan \texttt{dtp\_sektor\_tahun}, memuat struktur regulasi di dalam kode \en{engine}. Fungsi seperti ini dapat memaksa perubahan kode ketika regulasi berubah strukturnya, misalnya bila muncul kategori TER keempat, sehingga harus dikaji ulang terhadap syarat A1 sebelum E1.}
+
+\subsection{Resolusi konflik antarlapis}
+\label{subsec:resolusi}
+
+Bila lebih dari satu aturan menghasilkan fakta yang sama pada masa yang sama, \en{engine} memilih satu pemenang. Misalkan $C(f, t, \omega)$ adalah himpunan aturan yang menghasilkan fakta $f$, berlaku pada masa $t$, sudah dicatat pada tanggal $\omega$, dan kondisinya terpenuhi. Aturan yang dicabut secara eksplisit lewat relasi \emph{menggantikan} sudah dikeluarkan dari $C$. \en{Engine} lalu membandingkan kunci leksikografis
+\begin{equation}
+\kappa(r) = \big(\mathit{sup}(r),\ \mathit{ovr}(r),\ \mathit{spec}(r),\ t_s(r),\ \mathit{prio}(r)\big).
+\label{eq:kunci}
+\end{equation}
+Komponen $\mathit{sup}(r)$ bernilai 1 bila $r$ aturan wajib atau tafsir di lapisan regulasi, sesuai asas \en{lex superior}. Komponen $\mathit{ovr}(r)$ bernilai 1 bila $r$ aturan opsional perusahaan, sehingga aturan perusahaan mengalahkan aturan \en{default} regulasi. Komponen $\mathit{spec}(r)$ mengukur kekhususan kondisi sesuai asas \en{lex specialis}, $t_s(r)$ mewakili asas \en{lex posterior}, dan $\mathit{prio}(r)$ adalah prioritas eksplisit. Bila lebih dari satu aturan memiliki kunci terbesar dengan nilai berbeda, \en{engine} berhenti dengan status AMBIGU dan tidak memilih diam-diam. Setiap kali aturan wajib mengalahkan aturan perusahaan, \en{engine} mencatat konflik itu di jejak. Untuk contoh lembur, kategori dari regulasi yang dipakai, dan konflik dengan aturan Perusahaan X tercatat beserta pasal sumbernya.
+
+\terbuka{Ukuran \en{lex specialis}. Prototipe menghitung $\mathit{spec}(r)$ dari jumlah konjungsi di kondisi $\varphi$. Alternatifnya adalah relasi superioritas eksplisit antaraturan yang dicatat di graf. Pilihan ini juga menentukan apa yang harus dihasilkan LLM.}
+
+\subsection{\en{Inference engine}}
+\label{subsec:engine}
+
+Algoritma~\ref{alg:inferensi} merangkum langkah inferensi untuk satu pegawai dan satu tahun pajak. \en{Engine} memilih aturan menurut kedua sumbu waktu, membangun graf dependensi antarfakta, lalu mengurutkan komponen terhubung kuatnya secara topologis. Komponen yang bersiklus hanya diizinkan bila memuat aturan yang ditandai sebagai \en{fixed point}, seperti \en{gross-up}. Untuk \en{gross-up}, tunjangan pajak $T$ memenuhi $T = g(T)$ dengan $g(T) = \mathrm{PPh}(B + T)$ untuk bruto $B$ tanpa tunjangan. Fungsi $g$ tidak turun, karena PPh tidak pernah turun ketika bruto naik. Pada domain rupiah bulat $\{0, \dots, B\}$, $g$ juga memetakan domain ke dirinya sendiri, karena PPh tidak pernah melebihi setengah bruto. Menurut teorema Knaster--Tarski~\cite{tarski1955lattice}, titik tetapnya ada dan memiliki unsur terkecil dan terbesar. Iterasi dari batas bawah dan batas atas mencapai keduanya dalam jumlah langkah terbatas. Bila keduanya berbeda, \en{engine} mencatat solusi ganda dan memilih secara deterministik, dengan bawaan solusi terkecil.
+
+\begin{algorithm}[t]
+\caption{Inferensi untuk satu pegawai dan satu tahun pajak}
+\label{alg:inferensi}
+\footnotesize
+\begin{algorithmic}[1]
+\Require $\K$, data pegawai $x$, tahun pajak $y$, tanggal pengetahuan $\omega$
+\Ensure nilai setiap fakta per masa beserta jejaknya
+\State $R \gets$ aturan dengan $t_c \le \omega$ yang masa berlakunya beririsan dengan $y$
+\State keluarkan dari $R$ aturan yang digantikan aturan lain di $R$
+\State bangun graf dependensi $G$: $f' \to f$ bila aturan untuk $f$ membaca $f'$
+\State hitung komponen terhubung kuat $G$, lalu urutkan topologis
+\ForAll{komponen $Q$ menurut urutan topologis}
+  \If{$Q$ bersiklus}
+    \State galat bila $Q$ tidak memuat aturan \en{fixed point}
+    \State iterasi dari batas bawah dan atas; catat bila hasilnya ganda
+  \Else
+    \ForAll{instans $(f, t)$ dengan $f \in Q$ dan $t$ masa dalam $y$}
+      \State pilih pemenang dari $C(f, t, \omega)$ dengan kunci $\kappa$
+      \State evaluasi ekspresinya dengan aritmetika eksak
+      \State catat nilai, pemenang, pasal, dan aturan yang ditolak
+    \EndFor
+  \EndIf
+\EndFor
+\State \Return nilai fakta dan jejak
+\end{algorithmic}
+\end{algorithm}
+
+Ketepatan sampai rupiah dijaga tiga mekanisme. Pertama, nilai rupiah disimpan sebagai bilangan bulat dan tarif sebagai bilangan rasional, sehingga tidak ada bilangan titik mengambang. Pemindai pohon sintaks menolak kode \en{engine} yang memanggil konversi ke bilangan titik mengambang atau pembulatan bawaan bahasa pemrograman. Kedua, setiap titik pembulatan merujuk ke satu entri registri pembulatan yang mencatat satuan, salah satu dari enam mode pembulatan, dan dasar hukumnya. Ketiga, masa pajak suatu penghasilan ditentukan dari tiga tanggal, yaitu periode kerja, tanggal terutang, dan tanggal dibayar, karena PPh 21 terutang pada saat penghasilan dibayar atau terutang, mana yang lebih dahulu. Setiap nilai keluaran disertai jejak yang memuat aturan pemenang, pasal sumbernya, dan aturan yang ditolak beserta alasannya.
+
+\status{Algoritma~\ref{alg:inferensi}, aritmetika eksak, registri pembulatan, model tiga tanggal, dan jejak sudah ada di prototipe (\texttt{engine/inferensi.py}, \texttt{engine/pembulatan.py}). Yang baru adalah pembacaan aturan dari graf dan uji unit \en{engine} yang terpisah dari \en{knowledge base} (syarat E0).}

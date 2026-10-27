@@ -1,0 +1,349 @@
+% ============================================================================
+\section{Metodologi evaluasi}
+\label{sec:evaluasi}
+% ============================================================================
+
+Evaluasi memakai lima prinsip. Pertama, setiap RQ punya satu metrik utama yang ditetapkan sebelum eksperimen. Kedua, kebenaran diukur dari hasil perhitungan, bukan dari kemiripan bentuk aturan buatan LLM dengan aturan emas. Rata-rata selisih seperti MAE tidak dipakai, karena rata-rata yang kecil dapat menyembunyikan kasus yang salah. Ketiga, data yang dipakai sistem selalu terpisah dari data yang dipakai untuk menilainya. Keempat, alat ukur divalidasi sebelum dipakai mengukur sistem. Kelima, jumlah peristiwa nyata kecil, sehingga hasil dilaporkan sebagai estimasi dengan selang kepercayaan eksak, bukan sebagai keputusan signifikan atau tidak.
+
+\status{Seluruh bagian ini adalah rancangan. Belum ada eksperimen yang dijalankan, dan belum ada pra-registrasi. Ambang hipotesis $\theta_1$--$\theta_4$ dan margin $\delta_S$ masih kosong dan baru dikunci di Tahap 12.}
+
+\subsection{Desain penelitian dan pra-registrasi}
+\label{subsec:desain}
+
+Penelitian ini mengikuti \en{design science research}. Artefaknya adalah KBS adaptif beserta alur akuisisinya, dan evaluasinya adalah rangkaian eksperimen E0--E5. Sebelum eksperimen pada data uji, peneliti mendaftarkan hipotesis, metrik utama, ambang, pembagian data, kasus uji evaluasi, dan rencana analisis ke layanan pra-registrasi pihak ketiga yang memberi stempel waktu, misalnya OSF atau AsPredicted, lalu menautkannya dengan \en{tag} git. Analisis terdiri atas tiga jenis. Pemeriksaan invarian mencakup A1 dan A3$_\omega$, dan pelanggarannya harus nol. Analisis konfirmatori memakai metrik utama untuk menguji hipotesis. Analisis eksploratori memakai metrik diagnostik dan diberi label eksploratori saat dilaporkan.
+
+\subsection{Pembagian data dan kronologi}
+\label{subsec:pembagian}
+
+Data dibagi menjadi tiga bagian menurut kronologi.
+\begin{itemize}[leftmargin=*,nosep]
+  \item \textbf{Pengembangan.} Regulasi fiktif, perubahan historis sebelum rentang penelitian (misalnya perubahan PTKP 2016 dan lapisan Pasal 17 oleh UU HPP), dan sebagian kecil dokumen kebijakan buatan. Peneliti memakainya untuk merancang \en{prompt}, gerbang, dan aturan pemilihan, lalu membekukan ketiganya.
+  \item \textbf{Uji.} Seluruh peristiwa nyata pada 2023--2026, termasuk pergantian ke TER. Peneliti tidak melihat peristiwa uji selama mengembangkan alur LLM. Representasi, \en{engine}, dan $\K^{\emas}$ memang disusun dengan mengetahui peristiwa ini, dan akibatnya ditangani di Bagian~\ref{subsec:hindsight}.
+  \item \textbf{Uji prospektif.} Setiap regulasi PPh 21 yang terbit sesudah tanggal pra-registrasi. Peristiwa ini bebas kontaminasi data latih LLM dan belum pernah dilihat perancang.
+\end{itemize}
+
+\subsection{Bias pandangan belakang}
+\label{subsec:hindsight}
+
+Representasi dan \en{engine} prototipe dikembangkan ketika perubahan 2023--2026 sudah diketahui. Karena itu, klaim \emph{tanpa mengubah kode} untuk peristiwa tersebut lemah bila berdiri sendiri. Ada tiga mitigasi. Pertama, peneliti mempublikasikan riwayat pengembangan \en{engine} dan menghitung setiap perubahan \en{engine} yang dipicu suatu regulasi sebagai pelanggaran A1 pada representasi. Kedua, orang lain menulis perubahan struktural sintetis dari taksonomi perubahan, yang disebut perubahan tak terlihat, untuk diuji di RQ1. Ketiga, penelitian ini memakai peristiwa uji prospektif.
+
+Untuk perubahan tak terlihat, penulisnya menyerahkan teks perubahan beserta 5--10 contoh perhitungan yang sudah dihitung, sebelum peneliti melihatnya. Perubahan itu dihitung berhasil, yaitu RA bernilai 1, hanya bila $\Delta$ yang disusun peneliti mereproduksi seluruh contoh tanpa mengubah \en{engine} dalam batas waktu yang ditetapkan. Dengan cara ini peneliti tidak menilai pekerjaannya sendiri. Jumlah perubahan tak terlihat menentukan kekuatan klaim RQ1. Bila delapan perubahan semuanya berhasil, batas bawah eksak RA pada keyakinan 95\% hanya $0{,}05^{1/8} \approx 0{,}69$. Dengan lima belas perubahan, batasnya menjadi sekitar $0{,}82$.
+
+\terbuka{Siapa penulis perubahan tak terlihat, dan berapa jumlahnya? Usulan \en{skeleton}: minimal lima belas.}
+
+\subsection{Rantai kepercayaan dan validasi instrumen}
+\label{subsec:instrumen}
+
+Semua angka RQ2--RQ4 bergantung pada $\K^{\emas}$ dan $\SE$. Karena itu keduanya divalidasi lebih dulu sebagai instrumen, bukan sebagai hasil penelitian. Gambar~\ref{fig:rantai} menunjukkan rantainya. Acuan independen memvalidasi $\K^{\emas}_n$, lalu $\K^{\emas}_n$ menghasilkan nilai harapan $\SE$, dan $\SE$ menilai pembaruan dari LLM.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  acuan/.style={draw=black!60, rounded corners=1.5pt, align=center, text width=19mm, minimum height=5mm, fill=gray!8},
+  kotak/.style={draw=black!70, rounded corners=2pt, align=center, text width=17mm, minimum height=9mm, fill=white},
+  panah/.style={-{Stealth[length=1.6mm]}, semithick},
+  ket/.style={font=\tiny, align=center, fill=white, inner sep=1pt}
+]
+\node[acuan] (g1) at (0,0) {GT1 contoh resmi};
+\node[acuan] (g2) at (0,-0.7) {GT2 kalkulator DJP};
+\node[acuan] (g3) at (0,-1.4) {GT3 hitung manual};
+\node[acuan] (g4) at (0,-2.1) {GT4 pihak ketiga};
+\node[acuan, fill=lapprs!25] (g5) at (0,-2.8) {GT5 contoh kebijakan};
+\node[kotak, fill=blue!6] (kemas) at (3.1,-1.4) {$\K^{\emas}_n$\\tervalidasi};
+\node[kotak, fill=teal!8] (se) at (5.9,-1.4) {$\SE$ dan nilai harapan (kecukupan: \en{mutation score})};
+\node[kotak] (nilai) at (5.9,-3.3) {menilai $\hat{\Delta}$\\(A2, A3$_t$, A4)};
+\node[kotak, dashed, fill=gray!5] (sg) at (5.9,0.45) {$\SG$, hanya untuk gerbang};
+\foreach \g in {g1,g2,g3,g4,g5} \draw[panah] (\g.east) -- (kemas.west);
+\draw[panah] (kemas) -- (se);
+\draw[panah] (se) -- (nilai);
+\draw[dashed] (sg) -- node[ket, right]{tidak beririsan} (se);
+\end{tikzpicture}
+\caption{Rantai kepercayaan \en{ground truth}. GT1 yang dipakai di sini adalah subset \en{holdout} yang tidak pernah dipakai selama pengembangan.}
+\label{fig:rantai}
+\end{figure}
+
+\begin{enumerate}[leftmargin=*,nosep]
+  \item \textbf{Acuan.} Ada lima sumber kebenaran. GT1 adalah contoh perhitungan resmi di PMK, PP, dan PER, yang dibagi menjadi contoh yang sudah dipakai selama pengembangan dan subset \en{holdout} yang tidak pernah dipakai. GT2 adalah kalkulator otoritas pajak, bila tersedia untuk rezim yang diuji. GT3 adalah perhitungan manual oleh penghitung independen pada sampel bertingkat per lapisan tarif. GT4 adalah implementasi pihak ketiga, yaitu kalkulator \en{open source} dan kalkulator publik, dengan versi dan tanggal yang dicatat. GT5 adalah acuan untuk angka yang ditentukan kebijakan perusahaan, seperti gaji prorata, THR, dan \en{take home pay}. Isinya contoh perhitungan yang ditulis kolaborator dari teks kebijakan sebelum peneliti menyusun $\Delta^{\emas}$, ditambah contoh yang tercantum di dokumen kebijakan itu sendiri.
+  \item \textbf{Pelaporan selisih.} Peneliti melaporkan semua selisih menurut hasil adjudikasi, yaitu \en{knowledge base} salah, acuan salah, atau hukum ambigu. Pengadjudikasi kedua memeriksa ulang sampel acak secara buta.
+  \item \textbf{Matriks acuan.} Matriks ini menunjukkan sel ruang uji yang punya acuan independen dan sel yang tidak.
+  \item \textbf{Uji \en{engine}.} \en{Engine} diuji terpisah dari \en{knowledge base} dengan uji unit terhadap aritmetika yang dihitung tangan, karena $\SE$ juga dihitung dengan \en{engine} yang sama.
+  \item \textbf{Kecukupan $\SE$.} Peneliti mengukur \en{mutation score} global dan \en{mutation score} terfokus-$\Delta$ untuk setiap peristiwa, yang hanya memutasi unsur $\Delta^{\emas}_n$~\cite{petrovic2021mutation,petrovic2022mutation}. Kedua skor harus mencapai ambang minimum sebelum E2 dan E3. Kesalahan nyata LLM pada data pengembangan ditambahkan sebagai mutan realistis.
+  \item \textbf{Keandalan $\Delta^{\emas}$.} Penyusun pertama menyusun $\Delta^{\emas}$, lalu pembaca kedua yang independen memeriksanya. Kesepakatan atas keputusan unsur dilaporkan dengan Krippendorff's $\alpha$. $\Delta^{\emas}$ dikunci dengan stempel waktu sebelum LLM dijalankan.
+  \item \textbf{Syarat lulus E0.} Tidak ada selisih berstatus \en{knowledge base} salah yang belum diselesaikan, dan kedua \en{mutation score} mencapai ambang. E2--E4 baru dijalankan setelah E0 lulus.
+  \item \textbf{Protokol koreksi emas.} Bila keluaran LLM menyingkap kesalahan pada $\K^{\emas}$ atau $\Delta^{\emas}$, peneliti memperbaikinya, menilai ulang seluruh kondisi dengan emas yang sudah diperbaiki, dan melaporkan jumlah koreksi. Tanpa protokol ini, emas dapat dicurigai disunting secara selektif.
+\end{enumerate}
+
+\status{Bahan awal sudah ada. Prototipe memiliki 45 contoh resmi kanonik dengan 1.213 nilai harapan dan protokol erratum, tetapi seluruhnya sudah dipakai selama pengembangan sehingga tidak dapat menjadi \en{holdout} GT1. Prototipe juga memiliki 52 mutan pada \en{knowledge base} dengan \en{mutation score} 100\%. GT2 (kalkulasi ulang dengan kalkulator DJP) belum pernah dijalankan.}
+
+\terbuka{(1) Apakah ada praktisi pajak bersertifikat, misalnya dari \en{tax center} universitas, yang dapat dibayar beberapa jam untuk memeriksa $\Delta^{\emas}$ peristiwa TER dan sekitar 50 kasus bertingkat? Ini mengurangi kelemahan terbesar penelitian ini, yaitu tidak adanya \en{domain expert}. (2) Siapa pembaca kedua $\Delta^{\emas}$?}
+
+\subsection{Ruang uji}
+\label{subsec:ruanguji}
+
+Ruang uji mencakup seluruh lapisan tarif dan kombinasi dimensi di Tabel~\ref{tab:ruang-pajak} dengan tiga kriteria.
+\begin{itemize}[leftmargin=*,nosep]
+  \item \textbf{Cakupan kombinatorial berbatasan.} Setiap pasangan nilai dari dua dimensi muncul di minimal satu kasus (kombinasi 2-arah), dan cakupan 3-arah dilaporkan sebagai pelengkap. Keduanya dihitung hanya atas kombinasi yang sah menurut batasan antardimensi, misalnya DTP hanya pada 2025--2026.
+  \item \textbf{Cakupan batas.} Setiap batas lapisan diuji di tiga titik, yaitu tepat di batas, satu satuan di bawahnya, dan satu satuan di atasnya. Di titik-titik inilah kesalahan pembulatan dan pemilihan lapisan paling sering terjadi. Untuk TER, batasnya adalah bruto bulanan dalam rupiah. Untuk Pasal 17, batasnya ada pada PKP sesudah pembulatan, sehingga generator membangkitkan kasus secara terbalik, dari PKP ke penghasilan bruto.
+  \item \textbf{Sampel operasional.} Generator mengambil kasus pegawai-tahun secara acak sederhana dari distribusi upah dan status PTKP menurut data Badan Pusat Statistik. Sampel ini dipakai untuk memperkirakan laju kegagalan dalam pemakaian nyata.
+\end{itemize}
+
+Tabel~\ref{tab:cakupan} merangkum jumlah sel yang sudah dapat dihitung. Lima lapisan Pasal 17 memberi empat batas, sehingga untuk empat tahun pajak ada 48 titik uji. Tiga kategori TER dengan 125 lapisan memberi 122 batas, atau 366 titik uji. Untuk sampel operasional, bila $n$ kasus lulus tanpa satu pun kegagalan, batas atas eksak laju kegagalan pada keyakinan $1-\alpha$ adalah $1 - \alpha^{1/n}$. Klaim laju kegagalan di bawah 0,1\% dengan keyakinan 95\% membutuhkan $n \ge 2.995$.
+
+\begin{table}[t]
+\centering
+\caption{Ruang uji dan cakupannya}
+\label{tab:cakupan}
+\scriptsize
+\begin{tabularx}{\columnwidth}{@{}L P{1.5cm} P{0.8cm} P{0.9cm}@{}}
+\toprule
+\textbf{Kriteria} & \textbf{Sel} & \textbf{Teruji} & \textbf{Acuan} \\
+\midrule
+Batas lapisan Pasal 17 & $4 \times 3 \times 4 = 48$ & \isian{} & \isian{} \\
+Batas lapisan TER & $122 \times 3 = 366$ & \isian{} & \isian{} \\
+Kombinasi 2-arah berbatasan & \isian{generator} & \isian{} & \isian{} \\
+Kombinasi 3-arah berbatasan & \isian{generator} & \isian{} & \isian{} \\
+Sampel operasional acak & $\ge 2.995$ & \isian{} & \isian{} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\definisikan{Generator kasus untuk ketiga kriteria, sumber distribusi sampel operasional, dan satuan titik uji Pasal 17 setelah pembulatan PKP ke ribuan.}
+
+\subsection{Korpus}
+\label{subsec:korpus}
+
+\subsubsection{Peristiwa perubahan nyata}
+Korpus memuat seluruh peristiwa pada 2023--2026 yang memengaruhi PPh 21 pegawai tetap, termasuk perubahan parameter tahunan seperti batas upah iuran pensiun. Tabel~\ref{tab:korpus} memuat kandidatnya. Hasil dilaporkan per jenis perubahan.
+
+\begin{table}[t]
+\centering
+\caption{Kandidat korpus peristiwa perubahan}
+\label{tab:korpus}
+\scriptsize
+\begin{tabularx}{\columnwidth}{@{}P{0.35cm} L P{1.25cm} P{1.6cm} P{0.45cm}@{}}
+\toprule
+\textbf{No.} & \textbf{Dokumen} & \textbf{Berlaku} & \textbf{Jenis} & $|\Delta^{\emas}|$ \\
+\midrule
+1 & Batas upah JP 2023 (surat BPJS TK) & 1 Mar 2023 & parameter & \isian{} \\
+2 & PMK 66/2023 & 1 Jul 2023 & klasifikasi & \isian{} \\
+3 & PP 58/2023 dan PMK 168/2023 & 1 Jan 2024 & metode, tabel tarif, pencabutan & \isian{} \\
+4 & Batas upah JP 2024 & 1 Mar 2024 & parameter & \isian{} \\
+5 & PMK 10/2025 (terbit 4 Feb 2025) & 1 Jan 2025 & fasilitas baru, berlaku surut & \isian{} \\
+6 & Batas upah JP 2025 & 1 Mar 2025 & parameter & \isian{} \\
+7 & PMK 72/2025 & Okt 2025 & kondisi atau cakupan & \isian{} \\
+8 & PMK 105/2025 & 1 Jan 2026 & fasilitas baru & \isian{} \\
+9 & Batas upah JP 2026 & 1 Mar 2026 & parameter & \isian{} \\
+\midrule
+K1 & PP 7/2025 dan PP 36/2025 (keringanan iuran JKK padat karya) & Feb 2025 & parameter, kondisi & \isian{} \\
+\midrule
+P1 & PMK 81/2024, PER-11/PJ/2025 (administrasi Coretax) & -- & pengecoh & 0 \\
+P2 & PMK 6/2026 (DTP peserta pemagangan) & -- & pengecoh & 0 \\
+P3 & PP 20/2026 (PPh final UMKM) & -- & pengecoh & 0 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\status{Baris 1--9 dan P1--P3 berasal dari catatan revisi. Baris K1 adalah kandidat tambahan dari \texttt{dataset/01\_regulasi/README.md}. Keringanan iuran JKK menurunkan premi JKK yang dibayar pemberi kerja, dan premi itu termasuk bruto, sehingga PPh 21 pegawai di perusahaan tersebut ikut berubah. Seluruh baris masih harus diverifikasi saat korpus disusun (Tahap 6).}
+
+\subsubsection{Dokumen pengecoh}
+Korpus juga memuat dokumen pengecoh, yaitu regulasi yang terbit pada periode yang sama tetapi tidak mengubah perhitungan PPh 21 pegawai tetap. Pengecoh sulit adalah dokumen yang menyebut PPh 21 tetapi hanya mengatur hal lain, misalnya pegawai tidak tetap, peserta pemagangan, atau administrasi pelaporan. Jawaban yang benar untuk pengecoh adalah pembaruan kosong.
+
+\subsubsection{Dokumen kontrafaktual}
+Generator membuat dokumen kontrafaktual dengan mengubah nilai, tanggal, atau ambang di dokumen nyata secara konsisten, lalu menurunkan $\Delta^{\emas}$ kontrafaktual secara terprogram dari $\Delta^{\emas}$ asli. Dokumen ini memeriksa apakah LLM membaca dokumen atau mengingat regulasi dari data latihnya. Varian kontrafaktual dihitung satu kelompok dengan dokumen sumbernya, sehingga menambah presisi, bukan jumlah sampel independen.
+
+\subsubsection{Perubahan tak terlihat}
+Perubahan struktural sintetis ditulis orang lain (Bagian~\ref{subsec:hindsight}), misalnya kategori TER keempat, jenis pengurang baru, tunjangan berplafon, aturan pembulatan baru, atau tarif harian.
+
+\subsubsection{Kebijakan perusahaan}
+Inti korpus kebijakan diambil dari dokumen nyata yang terbuka untuk umum, seperti perjanjian kerja bersama atau peraturan perusahaan yang dipublikasikan. Kebijakan buatan melengkapi jenis konflik yang tidak muncul di dokumen nyata. Konflik buatan ditulis orang lain dari taksonomi konflik sebelum detektor dibekukan, dan kedua kelompok dilaporkan terpisah. Setiap dokumen kebijakan juga menjadi masukan akuisisi (E2) dan diuji ekspresivitasnya (E1), dengan $\Delta^{\emas}$ yang disusun dan diperiksa dengan cara yang sama seperti dokumen regulasi. Perubahan kebijakan tidak disisipkan ke rangkaian \en{regulation replay}.
+
+\status{Korpus kebijakan nyata saat ini kosong. Perusahaan X adalah rekonstruksi dari \en{spreadsheet} kantor, dan katalog KP-01 sampai KP-20 ditulis peneliti. Kandidat sumber dokumen nyata adalah koleksi PKB Indonesia di situs WageIndicator (sekitar 238 PKB, sekitar 37 di antaranya berlaku dalam 2023--2026, sebagian berpasangan versi lama dan baru). Lisensi redistribusinya belum diperiksa, dan sebagian PKB tidak memuat klausul PPh 21 sama sekali.}
+
+\subsection{Mode evaluasi dan hasil per dokumen}
+\label{subsec:mode}
+
+Eksperimen akuisisi berjalan dalam dua mode.
+\begin{itemize}[leftmargin=*,nosep]
+  \item \textbf{Mode terisolasi (RQ2).} $\hat{\Delta}_n$ diterapkan pada $\K^{\emas}_{n-1}$.
+  \item \textbf{Mode berantai (RQ3).} $\hat{\Delta}_n$ diterapkan pada $\K^{\mathrm{sis}}_{n-1}$, yaitu hasil pembaruan sistem sendiri pada langkah sebelumnya.
+\end{itemize}
+Kedua mode berjalan tanpa peninjau manusia, sehingga kandidat terpilih langsung diterapkan. Hasilnya adalah batas bawah kinerja, dan peran peninjau diukur lewat upaya koreksi. Peneliti tidak bertindak sebagai peninjau karena mengetahui jawaban emas.
+
+Setiap dokumen relevan berakhir pada satu dari tiga hasil, yaitu benar-diterapkan, salah-diterapkan (kesalahan senyap), atau \en{abstain}. $\hat{\Delta}$ benar bila A2, A3$_t$, dan A4 terpenuhi pada seluruh $\SE$, sesuai Definisi~\ref{def:adapt-op}. Dokumen relevan yang dinilai tidak relevan oleh sistem dihitung salah-diterapkan. Dokumen pengecoh tidak masuk SER dan CAR. Penilaian relevansi diukur terpisah lewat laju \en{false positive} pada pengecoh dan laju pembaruan terlewat pada dokumen relevan.
+
+Pada mode berantai, \en{abstain} ditangani dengan dua varian yang didaftarkan sebelumnya. Pada varian pertama, \en{knowledge base} lama dipertahankan, sehingga peristiwa berikutnya mewarisi kekosongan itu. Pada varian kedua, peninjau sempurna menyisipkan $\Delta^{\emas}_n$, sehingga perambatan kesalahan dapat diukur tanpa tercampur akibat \en{abstain}. Analisis konfirmatori memakai jalan pertama alur pada setiap dokumen sumber nyata. Jalan tambahan dan varian kontrafaktual dilaporkan sebagai strata terpisah.
+
+\subsection{Pembanding dan ablasi}
+\label{subsec:pembanding}
+
+Tabel~\ref{tab:pembanding} memuat pembanding dan ablasi. B3 dan B4 memakai anggaran komputasi yang setara dengan usulan, atau dibandingkan secara eksplisit, sehingga keunggulan usulan tidak dapat dijelaskan oleh jumlah sampel saja. AB5 menjawab dengan angka pertanyaan mengapa \en{knowledge graph} diperlukan, dengan membandingkan validasi skema biasa dengan \en{shape} graf, dan pemindaian dependensi datar dengan \en{query} graf.
+
+\begin{table}[t]
+\centering
+\caption{Pembanding dan ablasi}
+\label{tab:pembanding}
+\scriptsize
+\begin{tabularx}{\columnwidth}{@{}P{0.55cm} L P{0.9cm}@{}}
+\toprule
+\textbf{ID} & \textbf{Kondisi} & \textbf{RQ} \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Pembanding}} \\
+B1 & Praktik saat ini, diukur dari riwayat \en{commit} kalkulator PPh 21 \en{open source} di sekitar pergantian ke TER: waktu sampai diperbarui, baris yang berubah, dan \en{bug} regresi & motivasi, RQ3 \\
+B2 & LLM menghitung PPh 21 langsung dari dokumen pada $\pm$100 kasus operasional dengan satu model & motivasi \\
+B3 & Satu kandidat dengan gerbang G1--G2 saja (\en{pass@1}) & RQ2, RQ3 \\
+B4 & $m(1+\bar{r})$ kandidat, sama dengan jumlah panggilan usulan termasuk putaran perbaikan, dipilih dengan suara terbanyak tanpa gerbang & RQ2 \\
+B5 & Analisis dampak dengan tiga cara: menandai semua kebijakan yang menyentuh fakta yang berubah, menelusuri dependensi tanpa eksekusi, dan meminta penilaian LLM & RQ4 \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Ablasi (satu model)}} \\
+AB1 & Formalisasi dari nol pada 2--3 keadaan hukum terpilih (sebelum TER, sesudah TER, masa DTP) dengan gerbang dan model yang sama; dinilai dengan A2 dan hilangnya riwayat & RQ2, RQ3 \\
+AB2 & Tanpa konteks \en{knowledge base} & RQ2 \\
+AB3 & Tanpa G5, tanpa G4, atau tanpa putaran perbaikan & RQ2 \\
+AB4 & Pemilihan pertama lolos, konsensus, atau pilihan sempurna & RQ2 \\
+AB5 & Skema biasa dibanding \en{shape} graf; pemindaian datar dibanding \en{query} graf & RQ2, RQ4 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\terbuka{B2 bertentangan dengan keputusan awal proyek untuk tidak memakai LLM sebagai pembanding. Usulan \en{skeleton}: B2 tetap disertakan dalam skala kecil sebagai pembanding motivasi, karena penelaah akan menanyakannya.}
+
+\subsection{Hipotesis dan metrik utama}
+\label{subsec:hipotesis}
+
+Tabel~\ref{tab:lacak} menghubungkan setiap RQ dengan hipotesis, metrik utama, cara analisis, dan eksperimennya.
+
+\begin{table*}[t]
+\centering
+\caption{Keterlacakan RQ, hipotesis, dan metrik utama}
+\label{tab:lacak}
+\scriptsize
+\begin{tabularx}{\textwidth}{@{}P{0.9cm} L P{4.0cm} P{3.6cm} P{1.2cm}@{}}
+\toprule
+\textbf{RQ} & \textbf{Hipotesis} & \textbf{Metrik utama} & \textbf{Analisis} & \textbf{Eksperimen} \\
+\midrule
+-- & Invarian A1 dan A3$_\omega$ tanpa pelanggaran selama evaluasi & jumlah pelanggaran & pemeriksaan & semua \\
+RQ1 (K1) & H1: laju adaptivitas representasional pada perubahan tak terlihat $\geq \theta_1$ & RA; dilaporkan juga untuk perubahan nyata dan korpus kebijakan & proporsi dengan CI eksak Clopper--Pearson & E1 \\
+RQ2 (K2) & H2a: batas atas laju kesalahan senyap usulan $\leq \theta_2$. H2b: CAR usulan lebih tinggi daripada B3 dan B4, dan SER usulan tidak lebih buruk dari keduanya dengan margin $\delta_S$ & SER dan CAR atas dokumen sumber nyata, per lapisan & CI eksak; selisih risiko berpasangan dengan CI Newcombe; non-inferioritas SER & E2 \\
+RQ3 (K3) & H3a: laju adaptivitas operasional berantai $\geq \theta_3$. H3b: kesalahan terpicu tidak melebihi batas derau pembangkitan & OAR dan kesalahan terpicu $I$ & CI eksak; deskriptif atas $R$ pengulangan, dibanding batas derau & E3 \\
+RQ4 (K1) & H4a: \en{recall} $\geq \theta_4$. H4b: $F_2$ usulan lebih tinggi daripada setiap pembanding B5 & \en{Recall} dan $F_2$ & \en{bootstrap} klaster per peristiwa; batas Clopper--Pearson tingkat pasangan & E4 \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+Metrik utama didefinisikan sebagai berikut.
+\begin{itemize}[leftmargin=*,nosep]
+  \item \textbf{RA (RQ1).} Untuk setiap perubahan nyata, perubahan tak terlihat, dan kebijakan dalam korpus kebijakan, RA mencatat apakah ada $\Delta$ dalam bahasa representasi yang memenuhi A1--A4. Ketiga kelompok dilaporkan terpisah, dan hanya perubahan tak terlihat yang menguji H1.
+  \item \textbf{SER dan CAR (RQ2).} Keduanya dihitung atas himpunan $D$ dokumen sumber nyata yang relevan, yaitu dokumen regulasi dan dokumen kebijakan nyata, dengan satu hasil per dokumen, dan dilaporkan per lapisan. Varian kontrafaktual, pengecoh, dan kebijakan buatan tidak termasuk. Dengan $\mathbf{1}[\cdot]$ fungsi indikator,
+  \begin{align}
+  \mathrm{SER} &= \tfrac{1}{|D|}\textstyle\sum_{d \in D} \mathbf{1}[d \text{ salah-diterapkan}], \label{eq:ser}\\
+  \mathrm{CAR} &= \tfrac{1}{|D|}\textstyle\sum_{d \in D} \mathbf{1}[d \text{ benar-diterapkan}], \nonumber
+  \end{align}
+  dan laju \en{abstain} $\mathrm{ABS} = 1 - \mathrm{SER} - \mathrm{CAR}$. SER mengukur keamanan dan CAR mengukur kegunaan. Keduanya dilaporkan bersama, karena sistem yang selalu \en{abstain} punya SER nol tetapi tidak berguna. Batas atas eksak untuk $f$ kesalahan dari $|D|$ dokumen adalah kuantil Beta $(1-\alpha;\ f+1,\ |D|-f)$, yang untuk $f=0$ menjadi $1-\alpha^{1/|D|}$.
+  \item \textbf{OAR (RQ3).} Proporsi peristiwa yang tidak memperkenalkan kesalahan baru dalam mode berantai. A2, A3$_t$, dan A4 dinilai pada $\SE_{\leq n}$, yaitu gabungan kasus seluruh keadaan sampai peristiwa $n$ termasuk masa lampau, di luar tupel $H_n$ yang sudah salah sebelumnya. Tanpa pengecualian $H_n$, satu kesalahan lama terhitung ulang di setiap peristiwa berikutnya. Keadaan kumulatif dilaporkan terpisah lewat \en{drift} akhir $D_N$.
+  \item \textbf{Kesalahan terpicu (RQ3).} Untuk peristiwa $n$, misalkan $E^{\mathrm{ber}}_n$ dan $E^{\mathrm{iso}}_n$ adalah himpunan tupel salah pada mode berantai dan mode terisolasi, dan $H_n$ himpunan tupel yang sudah salah di $\K^{\mathrm{sis}}_{n-1}$. Kesalahan terpicu adalah
+  \begin{equation}
+  I_n = E^{\mathrm{ber}}_n \setminus \big(E^{\mathrm{iso}}_n \cup H_n\big).
+  \label{eq:terpicu}
+  \end{equation}
+  $I_n$ dipecah menjadi dua komponen. Komponen mekanis diperoleh dengan menerapkan $\hat{\Delta}_n$ dari mode terisolasi pada $\K^{\mathrm{sis}}_{n-1}$, sehingga yang terukur hanya perambatan lewat basis yang salah. Komponen kontekstual diperoleh dengan membangkitkan ulang $\hat{\Delta}_n$ memakai $\K^{\mathrm{sis}}_{n-1}$ sebagai konteks. Pembangkitan ulang memuat derau acak, sehingga batas derau diperkirakan dari selisih dua jalan terisolasi yang independen. H3b diuji terhadap batas itu, bukan terhadap nol.
+  \item \textbf{\en{Recall} dan $F_2$ (RQ4).} Keduanya dihitung atas pasangan kebijakan dan peristiwa, dengan $F_2 = 5PR/(4P+R)$ untuk \en{precision} $P$ dan \en{recall} $R$. \en{Recall} diutamakan, karena kebijakan terdampak yang terlewat lebih berbahaya daripada peringatan palsu. Bila semua $n_+$ pasangan positif terdeteksi, batas bawah eksak \en{recall} adalah $\alpha^{1/n_+}$, misalnya $0{,}905$ untuk $n_+ = 30$. Pembanding yang menandai semua kebijakan menghasilkan $F_2 = 5\pi/(4\pi+1)$ untuk prevalensi $\pi$, sehingga $F_2$ baru bermakna di atas angka itu.
+\end{itemize}
+
+Ambang harus dapat dicapai oleh jumlah sampel yang direncanakan. Dengan sepuluh dokumen uji tanpa satu pun kesalahan, batas atas eksak SER pada keyakinan 95\% hanya $1-0{,}05^{1/10} \approx 0{,}26$. Klaim SER $\leq 5\%$ baru mungkin dengan minimal 59 dokumen tanpa kesalahan. Untuk setiap hipotesis, pra-registrasi mencantumkan batas terbaik yang dapat dicapai oleh jumlah sampel yang direncanakan, lalu menetapkan $\theta$ pada atau di atas batas itu. Bila tidak ada ambang yang bermakna, hipotesis diganti dengan estimasi dan CI saja. Klaim keamanan lalu dinyatakan apa adanya, misalnya SER paling tinggi 26\% dengan keyakinan 95\% pada sepuluh dokumen, dan diperketat lewat peristiwa prospektif.
+
+\definisikan{Ambang $\theta_1$--$\theta_4$ dan margin $\delta_S$ beserta alasannya, dikunci sebelum eksperimen.}
+
+\subsection{Metrik diagnostik}
+\label{subsec:diagnostik}
+
+Metrik di Tabel~\ref{tab:diagnostik} menjelaskan mengapa metrik utama bernilai seperti itu. Metrik ini eksploratori dan tidak dipakai untuk menguji hipotesis. Metrik \en{pass@k} dan \en{n@k} dipinjam dari evaluasi kode buatan LLM~\cite{li2022alphacode}, dan gagasan risiko terhadap cakupan dari prediksi selektif~\cite{varshney2022selective}.
+
+\begin{table*}[t]
+\centering
+\caption{Metrik diagnostik (eksploratori)}
+\label{tab:diagnostik}
+\scriptsize
+\begin{tabularx}{\textwidth}{@{}P{1.2cm} P{3.3cm} L P{3.6cm}@{}}
+\toprule
+\textbf{RQ} & \textbf{Metrik} & \textbf{Definisi} & \textbf{Pertanyaan yang dijawab} \\
+\midrule
+Instrumen & Selisih per hasil adjudikasi; batas atas laju kegagalan & semua selisih $\K^{\emas}$ terhadap GT1--GT5; $p_U = 1-\alpha^{1/n}$ untuk $n$ kasus operasional tanpa kegagalan & seberapa dapat dipercaya \en{ground truth} \\
+Instrumen & \en{Mutation score} global dan terfokus-$\Delta$ & mutan terdeteksi dibagi mutan tak setara & apakah $\SE$ cukup tajam \\
+RQ1 & Akurasi resolusi konflik & pasangan aturan dengan pemenang hukum yang diketahui per asas, dinilai benar atau salah & apakah resolusi konflik bekerja \\
+RQ1 & Kelengkapan jejak & fakta keluaran yang jejaknya sampai ke sumber hukum, dibagi seluruh fakta keluaran & kelengkapan fasilitas penjelasan \\
+\midrule
+RQ2 & \en{pass@1}, \en{pass@m}, \en{1@m}, efisiensi pemilihan & pada kandidat sebelum perbaikan: $\text{pass@}j = 1-\binom{m-c}{j}/\binom{m}{j}$; $\eta = (\text{1@}m - \text{pass@}1)/(\text{pass@}m - \text{pass@}1)$ & seberapa baik gerbang memilih dibanding pemilihan sempurna \\
+RQ2 & Laju diterapkan tetapi tidak lengkap & $\hat{\Delta}$ diterapkan yang tidak memuat minimal satu unsur $\Delta^{\emas}$ & apakah kelalaian adalah kesalahan dominan \\
+RQ2 & Matriks konfusi gerbang & per gerbang: kebocoran $=\mathrm{FN}/(\mathrm{TP}+\mathrm{FN})$, penolakan keliru $=\mathrm{FP}/(\mathrm{FP}+\mathrm{TN})$, dan MCC; kandidat salah sebagai kelas positif & gerbang mana yang efektif \\
+RQ2 & Kesepakatan perilaku dan kebenaran per unsur & proporsi tupel $\SE$ yang sama dengan $\K^{\emas}_n$; unsur salah bila menukarnya dengan unsur emas mengubah hasil $\SE$ & seberapa dekat pembaruan yang salah \\
+RQ2 & Laju hafalan dan kesetiaan kontrafaktual & proporsi nilai yang diubah di mana $\hat{\Delta}$ memuat nilai asli, dan yang memuat nilai kontrafaktual & apakah LLM membaca dokumen atau mengingat \\
+RQ2 & Kontaminasi & SER dan CAR untuk peristiwa sebelum dan sesudah \en{training cutoff} model & pengaruh data latih \\
+RQ2 & Penilaian relevansi & laju \en{false positive} pada pengecoh dan laju pembaruan terlewat pada dokumen relevan & perubahan tanpa alasan dan perubahan terlewat \\
+RQ2 & Strata kontrafaktual dan kebijakan buatan & SER dan CAR pada kedua strata, CI \en{bootstrap} klaster per dokumen sumber & ketahanan terhadap nilai dan jenis kebijakan yang tidak dikenal LLM \\
+RQ2 & Ketepatan kutipan & unsur yang kutipannya ada dan mendukung unsur itu & dasar hukum karangan \\
+RQ2 & Upaya koreksi & operasi sunting atribut dari $\hat{\Delta}$ ke $\Delta^{\emas}$ setelah penyelarasan unsur, hanya pada unsur yang salah secara perilaku; penghematan $= 1 - \text{sunting}/\text{operasi menyusun } \Delta^{\emas} \text{ dari kosong}$ & pekerjaan manusia yang dihemat \\
+RQ2 & Kurva biaya dan akurasi & CAR terhadap biaya per peristiwa & kelayakan praktis \\
+\midrule
+RQ3 & Rasio perambatan & $P(\hat{\Delta}_n \text{ salah} \mid \K^{\mathrm{sis}}_{n-1} \text{ salah}) / P(\hat{\Delta}_n \text{ salah} \mid \K^{\emas}_{n-1})$ & apakah basis yang salah memperbesar kesalahan berikutnya \\
+RQ3 & Formalisasi dari nol (AB1) & A2 pada masa terpilih dan hilangnya riwayat, dibanding usulan & apa yang hilang bila \en{knowledge base} dibangun ulang \\
+RQ3 & Persistensi, pemulihan, penguncian & jumlah peristiwa yang dilalui kesalahan sebelum hilang; kesalahan bawaan yang perbaikannya ditolak G4 & apakah kesalahan menetap atau terawetkan gerbang \\
+RQ3 & \en{Drift} akhir dan anomali & $D_N$: proporsi pegawai-bulan berbobot yang PPh 21-nya salah setelah seluruh rangkaian, beserta rupiahnya; aturan redundan, berkonflik, tercakup, mati, rujukan menggantung & akibat finansial akhir dan mutu \en{knowledge base} \\
+RQ3 & Penerapan langsung & peristiwa yang diterapkan tanpa suntingan manusia, dengan paling banyak $k$ suntingan, dan waktu dari dokumen tersedia sampai \en{knowledge base} benar & bukti langsung bahwa perubahan regulasi dapat diterapkan \\
+\midrule
+RQ4 & \en{Precision}, MCC, AUPRC, $\kappa$ & dengan masukan $\Delta^{\emas}$ (detektor saja) dan $\hat{\Delta}$ (alur penuh); AUPRC untuk pembanding yang menghasilkan skor; Cohen's $\kappa$ untuk label jenis (c) & sumber kesalahan analisis dampak dan keandalan label \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\subsection{Analisis statistik}
+\label{subsec:statistik}
+
+Jumlah peristiwa nyata kecil. Karena itu penelitian ini tidak memakai uji yang membutuhkan sampel besar, dan melaporkan hasil sebagai estimasi dengan selang kepercayaan eksak beserta efek minimum yang dapat dideteksi (Tabel~\ref{tab:statistik}).
+
+\begin{table*}[t]
+\centering
+\caption{Rencana analisis statistik}
+\label{tab:statistik}
+\scriptsize
+\begin{tabularx}{\textwidth}{@{}P{3.3cm} P{3.6cm} L P{2.7cm}@{}}
+\toprule
+\textbf{Jenis data} & \textbf{Contoh} & \textbf{Penaksir atau uji} & \textbf{Ukuran efek} \\
+\midrule
+Pemeriksaan nol-cacat & invarian A1 dan A3$_\omega$; selisih $\K^{\emas}$ & hitungan dan batas atas eksak & -- \\
+Proporsi per kondisi & RA, SER, CAR, OAR, \en{recall} & CI eksak Clopper--Pearson & proporsi \\
+Biner berpasangan antarkondisi & benar-diterapkan, usulan dibanding B3 dan B4 & selisih risiko berpasangan dengan CI Newcombe; McNemar eksak sebagai pelengkap & selisih risiko; \en{odds ratio} pasangan sumbang \\
+Non-inferioritas & SER usulan dibanding B3 dan B4 & batas atas CI selisih SER berpasangan $< \delta_S$ & selisih risiko \\
+Kontinu berpasangan & kesepakatan perilaku, upaya koreksi & Wilcoxon bertanda & \en{rank-biserial} $r$ \\
+Antarpengulangan rangkaian & OAR dan $I$ atas $R$ pengulangan & median dan rentang dibanding batas derau; uji permutasi bila perlu & -- \\
+Proporsi berklaster & \en{recall} dan $F_2$ RQ4; strata kontrafaktual & \en{bootstrap} klaster per peristiwa atau per dokumen sumber & selisih $F_2$ \\
+Kesepakatan & label RQ4 dan $\Delta^{\emas}$ & Cohen's $\kappa$; Krippendorff's $\alpha$ & $\kappa$, $\alpha$ \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+Unit analisisnya adalah dokumen sumber nyata untuk RQ2, dan peristiwa untuk RQ3 dan RQ4. Jalan LLM, kandidat, dan varian kontrafaktual bersarang di dalam dokumen sumbernya dan tidak dihitung sebagai sampel independen. Hasil RQ3 bersyarat pada satu rangkaian nyata. $R$ pengulangan hanya menangkap keragaman pembangkitan LLM, sehingga hasilnya dilaporkan secara deskriptif. Koreksi Holm diterapkan per RQ dan hanya pada hipotesis komparatif. Pemeriksaan nol-cacat dan invarian tidak termasuk. Hasil dilaporkan per jenis perubahan, dan jenis mudah tidak digabung dengan jenis struktural.
+
+\definisikan{Nilai $m$ (usulan 5), $R$ (usulan 3), parameter pembangkitan, jumlah dokumen per bagian data, dan efek minimum yang dapat dideteksi.}
+
+\subsection{Prosedur eksperimen}
+\label{subsec:prosedur}
+
+\begin{itemize}[leftmargin=*,nosep]
+  \item \textbf{E0, validasi instrumen.} Bagian~\ref{subsec:instrumen}. E0 menjadi prasyarat semua eksperimen lain.
+  \item \textbf{E1, adaptivitas representasi (RQ1).} RA pada perubahan nyata, perubahan tak terlihat, dan korpus kebijakan; akurasi resolusi konflik; dan pemetaan riwayat \en{engine} ke regulasi pemicunya.
+  \item \textbf{E2, akuisisi terisolasi (RQ2).} Setiap dokumen uji, baik regulasi maupun kebijakan, dijalankan pada kondisi usulan, B3, B4, dan AB2--AB5. AB1 dijalankan pada keadaan hukum terpilih. Model utama dipakai untuk semua kondisi, dan model kedua hanya untuk usulan dan B3. Satu jalan terisolasi tambahan dipakai untuk batas derau.
+  \item \textbf{E3, \en{regulation replay} (RQ3).} Mode berantai dari \en{knowledge base} awal 2023 sampai peristiwa terakhir, dalam dua varian \en{abstain} dan $R$ pengulangan. Kesalahan didekomposisi menjadi bawaan, baru, terpicu mekanis, dan terpicu kontekstual. B1 menjadi pembanding praktik, dan peristiwa prospektif ditambahkan begitu terbit.
+  \item \textbf{E4, analisis dampak (RQ4).} Dua masukan, yaitu $\Delta^{\emas}$ dan $\hat{\Delta}$, dibandingkan dengan pembanding B5.
+  \item \textbf{E5, motivasi.} B2 pada $\pm$100 kasus operasional.
+\end{itemize}
+
+\subsection{Biaya, kolaborator, dan reproduksibilitas}
+\label{subsec:biaya}
+
+Jumlah panggilan LLM dihitung per eksperimen. Misalkan $\bar{r}$ adalah rata-rata putaran perbaikan dan $D'$ gabungan $D$, dokumen kontrafaktual, dan pengecoh. E2 membutuhkan $|D'| \times m(1+\bar{r})$ panggilan untuk usulan, $|D'|$ untuk B3, dan $|D'| \times m(1+\bar{r})$ untuk B4. Setiap varian AB2--AB5 membutuhkan $|D| \times m(1+\bar{r})$. AB1 membutuhkan jumlah keadaan hukum terpilih dikali $m(1+\bar{r})$ dengan konteks seluruh dokumen yang berlaku, dan inilah panggilan termahal. E3 membutuhkan $2 \times R \times N \times m(1+\bar{r})$ untuk dua varian \en{abstain}, ditambah $|D| \times m(1+\bar{r})$ untuk batas derau. E5 membutuhkan sekitar 100 panggilan. Total panggilan dikalikan rata-rata token dan harga model, lalu dicantumkan dalam rupiah di pra-registrasi. Biaya ditekan dengan memotong dokumen per pasal, memakai \en{prompt caching}, membangkitkan kontrafaktual secara otomatis, dan menjalankan ablasi pada satu model.
+
+Beberapa langkah membutuhkan orang selain peneliti, yaitu penulis perubahan tak terlihat dan konflik buatan, penulis contoh perhitungan kebijakan (GT5), pembaca kedua $\Delta^{\emas}$, pengadjudikasi kedua, pelabel kedua RQ4, dan praktisi pajak. Peran-peran ini digabung ke paling banyak dua kolaborator bernama, dan jam kerjanya dicatat. Untuk setiap peran yang tidak terisi, pra-registrasi mencantumkan apa yang dihapus dan bagaimana hal itu dilaporkan sebagai keterbatasan. Contohnya, tanpa penulis perubahan tak terlihat, RQ1 hanya melaporkan perubahan nyata, dan klaimnya turun menjadi kemampuan menyatakan perubahan yang sudah diketahui.
+
+Versi perangkat lunak dan model serta tanggal akses dicatat, dan seluruh \en{prompt} serta keluaran LLM diarsipkan, sehingga semua analisis dapat diulang tanpa memanggil LLM lagi. Materi tersembunyi, yaitu perubahan tak terlihat, konflik buatan, GT5, subset \en{holdout}, dan nilai harapan $\SE$, disimpan di repositori privat selama penelitian. Hash SHA-256 berkasnya dicatat di repositori publik sebagai bukti waktu.
+
+\terbuka{Kolaborator, paling banyak dua orang, untuk peran-peran di atas.}

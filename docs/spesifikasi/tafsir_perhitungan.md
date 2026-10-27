@@ -24,6 +24,7 @@ Ditetapkan 2026-10-27 dari tinjauan GT3 (`dataset/11_acuan/gt3_kasus_bertingkat/
 | K14 | Arti "bruto" masa pada metode lama | seluruh penghasilan masa itu, teratur + tidak teratur | tidak ada |
 | K15 | Lembur pada metode lama | penghasilan teratur (disetahunkan) | tidak ada |
 | K16 | PTKP karyawati kawin berstatus K/x | butuh keterangan kecamatan bahwa suami tidak berpenghasilan; tanpa itu PTKP diri sendiri | 048 (asumsi ditambahkan, angka tetap) |
+| K17 | Pembulatan premi dan iuran BPJS | rupiah penuh terdekat (0,50 ke atas) per program per pihak | tidak ada (GT3 memakai upah yang menghasilkan premi bulat) |
 
 ---
 
@@ -223,6 +224,16 @@ Bruto setahun, PKP, dan PPh setahun tidak berubah di kasus mana pun. Pembanding 
 **Dasar.** PMK 168/2023 Pasal 9 ayat (2) huruf a dan ayat (3), PDF hlm. 11; PER-16 Pasal 11 ayat (3)–(4), PDF hlm. 11; PP 58/2023 Pasal 2 ayat (3), PDF hlm. 4 (kategori TER "berdasarkan besarnya Penghasilan Tidak Kena Pajak"). Contoh resmi PER-16 I.1.3, PDF hlm. 29 (pengembangan) memakai keterangan Pemda.
 
 **Dampak.** GT3-048: asumsi dan uraian ditambah keterangan kecamatan; angka tidak berubah.
+
+## K17. Pembulatan premi dan iuran BPJS (baru, Tahap 5)
+
+**Pertanyaan.** Tarif × upah sering berpecahan. PP 44/2015, PP 45/2015, PP 46/2015, dan Perpres JKN tidak mengatur pembulatan.
+
+**Putusan.** Premi dan iuran dibulatkan ke rupiah penuh terdekat (0,50 ke atas), terpisah untuk setiap program (JKK, JKM, JHT, JP, JKN) dan setiap pihak (pemberi kerja, pegawai).
+
+**Dasar.** Tidak ada aturan tertulis; prototipe lama memakai mode yang sama (`BULAT-BPJS-01`, mengikuti fungsi ROUND di lembar kerja kantor). Kasus GT3 sengaja memakai upah yang menghasilkan premi bulat, sehingga putusan ini tidak mengubah acuan; kasus $S^E$ memakai putusan ini secara konsisten untuk emas dan kandidat. Dinyatakan di dokumen konvensi masukan.
+
+**Dampak.** Tidak ada perubahan GT.
 
 ## Hal yang tidak diputuskan di sini
 

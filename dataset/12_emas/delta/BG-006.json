@@ -1,0 +1,134 @@
+{
+ "delta_id": "BG-006",
+ "event_id": null,
+ "document": {
+  "id": "PERPRES-82-2018",
+  "title": "Perpres 82/2018 Jaminan Kesehatan",
+  "issued": "2018-09-18"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "parameter",
+   "id": "PAR.HEALTH_EMPLOYER_RATE.2018",
+   "name": "health_employer_rate",
+   "value": "0.04",
+   "value_type": "rate",
+   "valid_from": "2018-10-01",
+   "label_id": "iuran jaminan kesehatan pemberi kerja",
+   "source": [
+    {
+     "document": "PERPRES-82-2018",
+     "provision": "Pasal 30 ayat (2)",
+     "page": 22,
+     "quote": "a. 4% (empat persen) dibayar oleh Pemberi Kerja;"
+    }
+   ],
+   "recorded_on": "2018-09-18"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.HEALTH_EMPLOYEE_RATE.2018",
+   "name": "health_employee_rate",
+   "value": "0.01",
+   "value_type": "rate",
+   "valid_from": "2018-10-01",
+   "label_id": "iuran jaminan kesehatan pegawai",
+   "source": [
+    {
+     "document": "PERPRES-82-2018",
+     "provision": "Pasal 30 ayat (2) huruf b",
+     "page": 22,
+     "quote": "b. 1 % (satu persen) dibayar oleh Peserta."
+    }
+   ],
+   "recorded_on": "2018-09-18"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.HEALTH_WAGE_CAP.2018",
+   "name": "health_wage_cap",
+   "value": 8000000,
+   "value_type": "money",
+   "valid_from": "2018-10-01",
+   "label_id": "batas upah jaminan kesehatan",
+   "source": [
+    {
+     "document": "PERPRES-82-2018",
+     "provision": "Pasal 32 ayat (1)",
+     "page": 22,
+     "quote": "Rp8.000.000,00 (delapan juta rupiah)."
+    }
+   ],
+   "recorded_on": "2018-09-18"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.JKN.WAGE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "health_wage",
+   "expression": "min(bpjs_wage, param('health_wage_cap'))",
+   "valid_from": "2018-10-01",
+   "source": [
+    {
+     "document": "PERPRES-82-2018",
+     "provision": "Pasal 33 ayat (3)",
+     "page": 23,
+     "quote": "(3) Gaji atau Upah yang digunakan sebagai dasar"
+    },
+    {
+     "document": "PERPRES-82-2018",
+     "provision": "Pasal 33 ayat (4)",
+     "page": 24,
+     "quote": "(4) Tunjangan tetap sebagaimana dimaksud pada ayat"
+    }
+   ],
+   "recorded_on": "2018-09-18"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.JKN.EMPLOYER",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "health_premium_employer",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(param('health_employer_rate') * health_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2018-10-01",
+   "source": [
+    {
+     "document": "PERPRES-82-2018",
+     "provision": "Pasal 30 ayat (2)",
+     "page": 22,
+     "quote": "a. 4% (empat persen) dibayar oleh Pemberi Kerja;"
+    }
+   ],
+   "recorded_on": "2018-09-18"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.JKN.EMPLOYEE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "health_employee",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(param('health_employee_rate') * health_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2018-10-01",
+   "source": [
+    {
+     "document": "PERPRES-82-2018",
+     "provision": "Pasal 30 ayat (2) huruf b",
+     "page": 22,
+     "quote": "b. 1 % (satu persen) dibayar oleh Peserta."
+    }
+   ],
+   "recorded_on": "2018-09-18"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "JKN rates and wage cap as restated by Perpres 82/2018; earlier JKN changes are development events D02 and D04. valid_from set to the first full month after promulgation."
+}

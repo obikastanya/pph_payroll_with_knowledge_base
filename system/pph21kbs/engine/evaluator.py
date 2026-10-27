@@ -425,6 +425,16 @@ class Evaluator:
                 raise ExpressionError(f"{fname}() used in a year-scope rule")
             months = [m for m in self.months if (m <= ctx if fname == "sum_to_date" else m < ctx)]
             return self._sum(args[0], months)
+        if fname in ("cumulative", "cumulative_before"):
+            if ctx == YEAR:
+                raise ExpressionError(f"{fname}() used in a year-scope rule")
+            total = 0
+            for m in self.months:
+                if m > ctx or (m == ctx and fname == "cumulative_before"):
+                    break
+                if self.active_rules(args[0], m):
+                    total += check_number(self._value(self.key_of(args[0], m)), f"value of {args[0]} in month {m}")
+            return normalize(total)
         if fname == "value_in":
             m = args[1]
             if m not in self.periods:

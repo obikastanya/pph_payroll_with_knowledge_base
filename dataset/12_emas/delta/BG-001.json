@@ -1,0 +1,976 @@
+{
+ "delta_id": "BG-001",
+ "event_id": null,
+ "document": {
+  "id": "PER-16-PJ-2016",
+  "title": "PER-16/PJ/2016 pedoman pemotongan PPh 21",
+  "issued": "2016-09-29"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "table",
+   "id": "TAB.PTKP.2009",
+   "name": "ptkp",
+   "table_kind": "lookup",
+   "valid_from": "2009-01-01",
+   "label_id": "penghasilan tidak kena pajak",
+   "source": [
+    {
+     "document": "UU-36-2008",
+     "provision": "Pasal 7 ayat (1) huruf a",
+     "page": 13,
+     "quote": "Rp15.840.000,00 (lima belas juta delapan ratus"
+    },
+    {
+     "document": "UU-36-2008",
+     "provision": "Pasal 7 ayat (1) huruf b",
+     "page": 13,
+     "quote": "b. Rp1.320.000,00 (satu juta tiga ratus dua puluh"
+    },
+    {
+     "document": "UU-36-2008",
+     "provision": "Pasal 7 ayat (1) huruf d",
+     "page": 13,
+     "quote": "paling banyak 3 (tiga) orang untuk setiap keluarga"
+    }
+   ],
+   "rows": [
+    {
+     "key": "TK/0",
+     "value": 15840000
+    },
+    {
+     "key": "TK/1",
+     "value": 17160000
+    },
+    {
+     "key": "TK/2",
+     "value": 18480000
+    },
+    {
+     "key": "TK/3",
+     "value": 19800000
+    },
+    {
+     "key": "K/0",
+     "value": 17160000
+    },
+    {
+     "key": "K/1",
+     "value": 18480000
+    },
+    {
+     "key": "K/2",
+     "value": 19800000
+    },
+    {
+     "key": "K/3",
+     "value": 21120000
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "table",
+   "id": "TAB.PASAL17.2009",
+   "name": "pasal17",
+   "table_kind": "progressive",
+   "valid_from": "2009-01-01",
+   "label_id": "tarif Pasal 17",
+   "source": [
+    {
+     "document": "UU-36-2008",
+     "provision": "Pasal 17 ayat (1) huruf a",
+     "page": 22,
+     "quote": "sampai dengan Rp50.000.000,00 5%"
+    },
+    {
+     "document": "UU-36-2008",
+     "provision": "Pasal 17 ayat (1) huruf a",
+     "page": 23,
+     "quote": "di atas Rp250.000.000,00 (dua ratus 25%"
+    },
+    {
+     "document": "UU-36-2008",
+     "provision": "Pasal 17 ayat (1) huruf a",
+     "page": 23,
+     "quote": "di atas Rp500.000.000,00 (lima ratus 30%"
+    }
+   ],
+   "rows": [
+    {
+     "lower": 0,
+     "upper": 50000000,
+     "rate": "0.05"
+    },
+    {
+     "lower": 50000000,
+     "upper": 250000000,
+     "rate": "0.15"
+    },
+    {
+     "lower": 250000000,
+     "upper": 500000000,
+     "rate": "0.25"
+    },
+    {
+     "lower": 500000000,
+     "upper": null,
+     "rate": "0.30"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.PTKP.STATUS",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "ptkp_status_effective",
+   "expression": "ptkp_status_input",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "UU-36-2008",
+     "provision": "Pasal 7 ayat (2)",
+     "page": 13,
+     "quote": "ditentukan oleh keadaan pada awal tahun pajak atau"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.PTKP.STATUS.MARRIED_WOMAN",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "ptkp_status_effective",
+   "condition": "employee('sex') == 'F' and startswith(ptkp_status_input, 'K/') and not employee('husband_no_income_certified')",
+   "expression": "'TK/0'",
+   "valid_from": "2009-01-01",
+   "overrides": [
+    "REG.PTKP.STATUS"
+   ],
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 11 ayat (3)",
+     "page": 11,
+     "quote": "karyawati kawin"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.PTKP.AMOUNT",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "ptkp_amount",
+   "expression": "lookup('ptkp', ptkp_status_effective)",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "UU-36-2008",
+     "provision": "Pasal 7 ayat (1)",
+     "page": 13,
+     "quote": "Penghasilan Tidak Kena Pajak per tahun diberikan"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.JOB_EXPENSE_RATE.2009",
+   "name": "job_expense_rate",
+   "value": "0.05",
+   "value_type": "rate",
+   "valid_from": "2009-01-01",
+   "label_id": "biaya jabatan",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 10 ayat (3) huruf a",
+     "page": 10,
+     "quote": "biaya jabatan, sebesar 5% (lima persen) dari penghasilan bruto"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.JOB_EXPENSE_MAX_MONTH.2009",
+   "name": "job_expense_max_month",
+   "value": 500000,
+   "value_type": "money",
+   "valid_from": "2009-01-01",
+   "label_id": "biaya jabatan sebulan",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 10 ayat (3) huruf a",
+     "page": 10,
+     "quote": "Rp 500.000,00 (lima ratus ribu rupiah) sebulan"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.JOB_EXPENSE_MAX_YEAR.2009",
+   "name": "job_expense_max_year",
+   "value": 6000000,
+   "value_type": "money",
+   "valid_from": "2009-01-01",
+   "label_id": "biaya jabatan setahun",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 10 ayat (3) huruf a",
+     "page": 10,
+     "quote": "Rp6.000.000,00"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.GROSS.REGULAR",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "regular_gross",
+   "expression": "base_salary + fixed_allowance + other_regular_income + overtime_pay + employer_premiums_taxable + benefits_taxable_regular + tax_allowance",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Lampiran I angka 15",
+     "page": 4,
+     "quote": "berupa gaji atau upah, segala macam tunjangan, dan imbalan dengan nama"
+    },
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Lampiran I angka 15",
+     "page": 4,
+     "quote": "termasuk uang lembur"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.GROSS.IRREGULAR",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "irregular_gross",
+   "expression": "thr + bonus + other_irregular_income + benefits_taxable_irregular",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Lampiran I angka 16",
+     "page": 4,
+     "quote": "antara lain berupa bonus, Tunjangan Hari Raya"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.GROSS",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "gross_income",
+   "expression": "regular_gross + irregular_gross",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 10 ayat (1)",
+     "page": 10,
+     "quote": "adalah seluruh jumlah"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.PREMIUMS.TAXABLE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "employer_premiums_taxable",
+   "expression": "jkk_premium + jkm_premium + health_premium_employer",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Lampiran contoh",
+     "page": 21,
+     "quote": "(JKK), premi Jaminan Kematian (JK), dan premi"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.PENSION.EMPLOYEE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "employee_pension_contributions",
+   "expression": "jht_employee + jp_employee",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 10 ayat (3) huruf b",
+     "page": 10,
+     "quote": "iuran yang terkait dengan gaji yang dibayar oleh pegawai kepada dana pensiun"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.JOB_EXPENSE_MONTH",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "job_expense_month",
+   "condition": "not is_final_period",
+   "expression": "min(round(param('job_expense_rate') * regular_gross, 1, 'down'), param('job_expense_max_month'))",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 10 ayat (3) huruf a",
+     "page": 10,
+     "quote": "biaya jabatan, sebesar 5% (lima persen) dari penghasilan bruto"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.NET_MONTH",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "net_regular_month",
+   "condition": "not is_final_period",
+   "expression": "regular_gross - job_expense_month - employee_pension_contributions",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 10 ayat (3)",
+     "page": 10,
+     "quote": "Besarnya penghasilan neto bagi Pegawai Tetap yang dipotong PPh Pasal 21 adalah"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.FACTOR",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "annualization_factor",
+   "expression": "12",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (2) huruf a",
+     "page": 13,
+     "quote": "perkiraan atas penghasilan yang bersifat teratur adalah jumlah penghasilan"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.FACTOR.NEW_EMPLOYEE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "annualization_factor",
+   "condition": "first_month > 1 and employee('subjective_start_month') == None",
+   "expression": "12 - first_month + 1",
+   "valid_from": "2009-01-01",
+   "overrides": [
+    "REG.P16.FACTOR"
+   ],
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (4)",
+     "page": 13,
+     "quote": "jumlah bulan tersisa dalam tahun"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.TAXABLE_ANNUALIZED",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "taxable_regular_annualized",
+   "condition": "not is_final_period",
+   "expression": "max(0, round(net_regular_month * annualization_factor - ptkp_amount, 1000, 'down'))",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (2) huruf a",
+     "page": 13,
+     "quote": "perkiraan atas penghasilan yang bersifat teratur adalah jumlah penghasilan"
+    },
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (8)",
+     "page": 14,
+     "quote": "dibulatkan ke bawah hingga ribuan penuh"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.PPH_ANNUAL",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph_regular_annual",
+   "condition": "not is_final_period",
+   "expression": "round(progressive('pasal17', taxable_regular_annualized), 1, 'down')",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (1)",
+     "page": 13,
+     "quote": "Tarif berdasarkan Pasal 17 ayat (1) huruf a"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.PPH_MONTH",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph_regular_month",
+   "condition": "not is_final_period",
+   "expression": "round(pph_regular_annual / annualization_factor, 1, param('pph_round_mode'))",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (3) huruf a",
+     "page": 13,
+     "quote": "atas penghasilan yang bersifat teratur adalah sebesar Pajak Penghasilan"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.TAXABLE_WITH_IRREGULAR",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "taxable_with_irregular",
+   "condition": "not is_final_period and irregular_gross > 0",
+   "expression": "max(0, round((annualization_factor * regular_gross + irregular_gross) - min(round(param('job_expense_rate') * (annualization_factor * regular_gross + irregular_gross), 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (3) huruf b",
+     "page": 13,
+     "quote": "atas penghasilan yang bersifat tidak teratur adalah sebesar selisih antara Pajak"
+    },
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (2) huruf b",
+     "page": 13,
+     "quote": "ditambah dengan jumlah"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.TAXABLE_WITHOUT_IRREGULAR",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "taxable_without_irregular",
+   "condition": "not is_final_period and irregular_gross > 0",
+   "expression": "max(0, round(annualization_factor * regular_gross - min(round(param('job_expense_rate') * annualization_factor * regular_gross, 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (3) huruf b",
+     "page": 13,
+     "quote": "atas penghasilan yang bersifat tidak teratur adalah sebesar selisih antara Pajak"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.PPH_IRREGULAR",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph_irregular_month",
+   "condition": "not is_final_period and irregular_gross > 0",
+   "expression": "round(progressive('pasal17', taxable_with_irregular), 1, 'down') - round(progressive('pasal17', taxable_without_irregular), 1, 'down')",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (3) huruf b",
+     "page": 13,
+     "quote": "atas penghasilan yang bersifat tidak teratur adalah sebesar selisih antara Pajak"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.PPH_IRREGULAR.NONE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph_irregular_month",
+   "condition": "not is_final_period and irregular_gross <= 0",
+   "expression": "0",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (3) huruf b",
+     "page": 13,
+     "quote": "atas penghasilan yang bersifat tidak teratur adalah sebesar selisih antara Pajak"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.RUNNING",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph21_running",
+   "condition": "not is_final_period",
+   "expression": "pph_regular_month + pph_irregular_month",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (3)",
+     "page": 13,
+     "quote": "dimaksud pada ayat (2) adalah:"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.PPH.DUE.RUNNING",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph21_due",
+   "condition": "not is_final_period",
+   "expression": "pph21_running",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (2)",
+     "page": 13,
+     "quote": "harus dipotong setiap Masa Pajak, kecuali"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.PPH.DUE.FINAL",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph21_due",
+   "condition": "is_final_period",
+   "expression": "final_period_tax",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (5)",
+     "page": 13,
+     "quote": "selisih antara Pajak Penghasilan yang terutang atas seluruh penghasilan kena"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.GROSS",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "annual_gross",
+   "expression": "sum_periods('gross_income')",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (5)",
+     "page": 13,
+     "quote": "selisih antara Pajak Penghasilan yang terutang atas seluruh penghasilan kena"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.JOB_EXPENSE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "job_expense",
+   "expression": "min(round(param('job_expense_rate') * annual_gross, 1, 'down'), param('job_expense_max_month') * months_employed, param('job_expense_max_year'))",
+   "valid_from": "2009-01-01",
+   "label": "tafsir K6: aggregate cap of n x 500,000",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 10 ayat (3) huruf a",
+     "page": 10,
+     "quote": "biaya jabatan, sebesar 5% (lima persen) dari penghasilan bruto"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.PENSION",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "annual_pension_contributions",
+   "expression": "sum_periods('employee_pension_contributions')",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 10 ayat (3) huruf b",
+     "page": 10,
+     "quote": "iuran yang terkait dengan gaji yang dibayar oleh pegawai kepada dana pensiun"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.ZAKAT",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "annual_zakat_deduction",
+   "expression": "sum_periods('zakat_deductible')",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "INPUT-CONVENTION",
+     "provision": "3",
+     "page": 1,
+     "quote": "Unsur yang belum diatur atau belum dimodelkan pada suatu masa bernilai nol"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.DEDUCTIONS",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "annual_deductions",
+   "expression": "job_expense + annual_pension_contributions + annual_zakat_deduction",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 10 ayat (3)",
+     "page": 10,
+     "quote": "jumlah seluruh penghasilan bruto dikurangi dengan:"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.NET",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "annual_net",
+   "expression": "annual_gross - annual_deductions",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 10 ayat (3)",
+     "page": 10,
+     "quote": "Besarnya penghasilan neto bagi Pegawai Tetap yang dipotong PPh Pasal 21 adalah"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.SUBJECTIVE_MONTHS",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "subjective_months",
+   "expression": "(employee('subjective_end_month') if employee('subjective_end_month') != None else 12) - (employee('subjective_start_month') if employee('subjective_start_month') != None else 1) + 1",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (6)",
+     "page": 13,
+     "quote": "dihitung berdasarkan Penghasilan Kena Pajak yang disetahunkan,"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.TAXABLE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "taxable_income",
+   "expression": "max(0, round(annual_net - ptkp_amount, 1000, 'down'))",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (8)",
+     "page": 14,
+     "quote": "dibulatkan ke bawah hingga ribuan penuh"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.TAXABLE.PART_YEAR",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "taxable_income",
+   "condition": "subjective_months < 12",
+   "expression": "max(0, round(annual_net * 12 / subjective_months - ptkp_amount, 1000, 'down'))",
+   "valid_from": "2009-01-01",
+   "overrides": [
+    "REG.YEAR.TAXABLE"
+   ],
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (6)",
+     "page": 13,
+     "quote": "dihitung berdasarkan Penghasilan Kena Pajak yang disetahunkan,"
+    },
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (8)",
+     "page": 14,
+     "quote": "dibulatkan ke bawah hingga ribuan penuh"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.PPH",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "annual_pph21",
+   "expression": "round(progressive('pasal17', taxable_income), 1, 'down')",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (1)",
+     "page": 13,
+     "quote": "Tarif berdasarkan Pasal 17 ayat (1) huruf a"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.PPH.PART_YEAR",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "annual_pph21",
+   "condition": "subjective_months < 12",
+   "expression": "round(progressive('pasal17', taxable_income) * subjective_months / 12, 1, 'down')",
+   "valid_from": "2009-01-01",
+   "overrides": [
+    "REG.YEAR.PPH"
+   ],
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (6)",
+     "page": 13,
+     "quote": "dihitung berdasarkan Penghasilan Kena Pajak yang disetahunkan,"
+    },
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (6)",
+     "page": 13,
+     "quote": "sebanding dengan jumlah bulan dalam bagian tahun"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.WITHHELD",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "withheld_before_final",
+   "expression": "sum_periods_before_final('pph21_due')",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (5)",
+     "page": 13,
+     "quote": "yang telah dipotong pada masa"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.FINAL_TAX",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "final_period_tax",
+   "expression": "annual_pph21 - withheld_before_final",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (5)",
+     "page": 13,
+     "quote": "selisih antara Pajak Penghasilan yang terutang atas seluruh penghasilan kena"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.REFUND",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "refund_to_employee",
+   "expression": "max(0, 0 - final_period_tax)",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 14 ayat (7)",
+     "page": 13,
+     "quote": "lebih besar dari PPh Pasal 21 yang terutang untuk 1 (satu) tahun pajak maka kelebihan"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.GROSSUP.RUNNING",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "tax_allowance",
+   "condition": "withholding_method == 'gross_up' and not is_final_period",
+   "expression": "pph21_running",
+   "valid_from": "2009-01-01",
+   "fixed_point": {
+    "lower": "0",
+    "upper": "1000000000000"
+   },
+   "label": "tafsir K3: least fixed point T = PPh(B + T)",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 10 ayat (1)",
+     "page": 10,
+     "quote": "adalah seluruh jumlah"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.GROSSUP.FINAL",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "tax_allowance",
+   "condition": "withholding_method == 'gross_up' and is_final_period",
+   "expression": "max(0, final_period_tax)",
+   "valid_from": "2009-01-01",
+   "fixed_point": {
+    "lower": "0",
+    "upper": "1000000000000"
+   },
+   "label": "tafsir K3 item 2: final period allowance = shortfall of the year, least fixed point",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Pasal 10 ayat (1)",
+     "page": 10,
+     "quote": "adalah seluruh jumlah"
+    }
+   ],
+   "recorded_on": "2009-01-01"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "Annualised method and UU 36/2008 tariffs, recorded 2009-01-01. The method is quoted from PER-16/PJ/2016 because PMK 252/PMK.03/2008 and PER-31/PJ/2012 are not available; PER-16 restates the same method. Only the development range is affected by this anachronism."
+}

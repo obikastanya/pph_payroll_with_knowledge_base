@@ -18,8 +18,8 @@ Dokumen terkait:
 | 6 | Korpus dan dataset | selesai (sebelum jurnal ini) | `02c3e01` |
 | 3 | Spesifikasi representasi | selesai (v2) | `d00fe74`, lihat Tahap 4 |
 | 4 | Spesifikasi akuisisi dan kontrak antarmuka | selesai (v2) | (commit Tahap 4) |
-| 5 | Representasi dan *engine* | berjalan | |
-| 7 | Emas $\mathcal{K}^\star_n$, $\Delta^\star_n$ | belum | |
+| 5 | Representasi dan *engine* | berjalan (inti selesai) | `31c3d33` |
+| 7 | Emas $\mathcal{K}^\star_n$, $\Delta^\star_n$ | berjalan (rantai regulasi selesai) | |
 | 8 | Ruang uji dan acuan | belum | |
 | 9 | Alur akuisisi | belum | |
 | 10 | Pembanding, ablasi, skrip analisis | belum | |
@@ -85,3 +85,66 @@ Keputusan baru di Log keputusan: nilai yang dinilai untuk peristiwa berlaku suru
 - Bagian V: Definisi 4–9, tabel gerbang (G1–G5 dengan syarat yang dijaga), alur delapan tahap, generator $S^G$, definisi terdampak.
 - Bagian VI: mode terisolasi/berantai, $H_n$, B3/B4 dari kandidat yang sama, anggaran.
 - Diskusi: tinjauan independen spesifikasi menemukan 6 masalah blokir sebelum implementasi; contoh konkret bahwa definisi formal perlu diuji sebelum membangun (saran panduan "titik periksa dosen").
+
+---
+
+## Tahap 5. Representasi dan *engine* (bagian 1: inti)
+
+Mulai: 2026-10-27. *Commit* awal `31c3d33`.
+
+### Hasil
+
+- `system/pph21kbs/expr/`: bahasa ekspresi (subset Python yang aman, aritmetika `Fraction`, *float* ditolak, uang wajib bulat, `round` lima mode), katalog fungsi, pemeriksaan statis, kompilasi ke *closure*, bentuk kanonik.
+- `system/pph21kbs/kb/`: rekaman bitemporal (`add`/`change`/`remove` dengan *tombstone*), `KnowledgeBase.view(ω)` yang hanya menyaring lapisan regulasi, penerapan $\Delta$ ketat dan longgar, tabel ekstraksi `rows_ref` dari `dataset/13_teks/<DOK>/tabel/`.
+- `system/pph21kbs/engine/evaluator.py`: evaluasi berbasis permintaan dengan memo, deteksi siklus, titik tetap terkecil untuk *gross-up* (tafsir K3), resolusi peringkat → `overrides` → *posterior* ($t_c^0$), kunci konflik stabil, jejak dan pemenang.
+- `system/pph21kbs/text.py` (teks terkunci, pencarian kutipan → halaman), `system/pph21kbs/refs.py` (konversi kasus GT3 ke format kasus), `system/tools/check_refs.py`.
+- Uji unit: 9 lulus (`system/tests/test_engine_core.py`).
+
+### Temuan saat implementasi
+
+1. **Fungsi kumulatif.** Batas tahunan natura (bingkisan Rp3 jt, olahraga Rp1,5 jt; PMK 66/2023) dihitung kumulatif sejak Juli 2023. `sum_to_date` gagal karena bulan sebelum aturan berlaku tidak punya aturan; ditambahkan `cumulative`/`cumulative_before` yang hanya menjumlah bulan dengan aturan aktif (representasi.md §6.3).
+2. **Nama fakta bertabrakan dengan fungsi** (`zakat_paid`): fakta diganti `zakat_withheld`. Aturan pemeriksaan statis ditambah.
+3. **Pembulatan premi BPJS tidak diatur** regulasi mana pun → tafsir **K17** (rupiah terdekat per program per pihak).
+4. **Titik tetap bersarang.** *Gross-up* membaca bruto yang sedang dievaluasi; evaluasi ulang masuk ke tingkat titik tetap baru (`fp_level`) alih-alih dianggap siklus.
+
+### Bahan paper
+
+- Bagian IV/VII: implementasi engine (memo, titik tetap, resolusi), aritmetika eksak; batas ekspresivitas yang ditemui (fungsi kumulatif harus ditambahkan, contoh bahwa bahasa ekspresi perlu primitif temporal).
+
+---
+
+## Tahap 7. Emas $\mathcal{K}^\star_n$, $\Delta^\star_n$ (bagian 1: rantai regulasi)
+
+Mulai: 2026-10-27. Dikerjakan bersamaan dengan Tahap 5 karena validasi *engine* membutuhkan KB emas.
+
+### Hasil
+
+- Sumber emas sebagai kode: `system/gold_src/` (satu modul per kelompok peristiwa). Setiap kutipan diverifikasi otomatis terhadap teks terkunci `dataset/13_teks/` dan halamannya diisi otomatis; kutipan yang tidak ditemukan menghentikan *build*.
+- `system/tools/build_gold.py` menulis `dataset/12_emas/delta/*.json`, `rantai.csv`, `kosakata.md`.
+- Rantai: **23 pembaruan** (10 latar BG-000…BG-009, 13 peristiwa GOLD-E01…E13), **230 rekaman**, sidik jari `0d0fa5b4b1905a8e`. $\mathcal{K}^\star_0$ = rekaman dengan `recorded_on` ≤ 2022-12-31.
+- Teks dan tabel ekstraksi: 91 dokumen di `dataset/13_teks/` (PKB tidak di-*commit*); tabel Lampiran PP 58/2023 (TER), PMK 10/2025 (57 KLU), PMK 72/2025 (77), PMK 105/2025 (135).
+
+### Validasi terhadap GT3 (acuan pengembangan)
+
+| Tahun | Kasus sama | Observasi sama |
+|---|---|---|
+| 2023 | 12/12 | 520/520 |
+| 2024 | 13/13 | 480/480 |
+| 2025 (ω 2025-12-31) | 13/13 | 559/559 |
+| 2026 (ω 2026-10-27) | 12/12 | 548/548 |
+| Semua (ω 2026-10-27) | **50/50** | **2107/2107** |
+
+GT1 *holdout* (14 kasus) tidak dipakai.
+
+### Keputusan pemodelan dalam emas
+
+1. **DTP (E06/E10/E11).** Satu aturan pengembalian mencakup PMK 10/2025 Pasal 5 ayat (5) dan PMK 72/2025 ayat (5a): yang dikembalikan ke pegawai = max(0, kelebihan − DTP masa sebelumnya). Untuk padat karya hasilnya 0 (K13), untuk pariwisata hanya bagian Oktober–November yang tidak dikembalikan. DTP tidak di-*gross-up* (Pasal 5 ayat (1)–(2)). Kriteria penghasilan tetap diuji pada bulan pertama bekerja (K5). E10 menambah fasilitas pariwisata dengan aturan yang mengalahkan aturan fasilitas dasar (`overrides`), E11 memperpanjang validitas ke 2026 dan menambah versi tabel KLU 2026.
+2. **Keringanan JKK (E07/E09).** Tabel tarif keringanan terpisah dan aturan tarif bersyarat `employer('jkk_relief_eligible')`; menang atas tarif normal dengan *lex posterior*. E09 hanya mengubah `valid_until` (perpanjangan, T1).
+3. **Pembulatan (E13).** Satu parameter `pph_round_mode` = `half_up` berlaku 2025-01-01, dicatat 2025-05-22 (berlaku surut, B5).
+4. **E04** menutup 12 aturan PER-16 pada 2023-12-31 (pembaruan `change`), contoh penutupan yang dibebaskan dari G5.
+
+### Bahan paper
+
+- Bagian VI (dataset): tabel rantai emas (`dataset/12_emas/rantai.csv`), jumlah rekaman per jenis, prosedur kutipan terverifikasi otomatis.
+- Bagian VII (E0, validitas instrumen): tabel validasi GT3 di atas.
+- Contoh berjalan untuk paper: E10 (pariwisata) memperlihatkan pengecualian (*lex specialis*) dan nilai surut; E13 memperlihatkan perubahan parameter berlaku surut.

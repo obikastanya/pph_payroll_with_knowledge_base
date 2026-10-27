@@ -1,0 +1,190 @@
+{
+ "delta_id": "GOLD-E10",
+ "event_id": "E10",
+ "document": {
+  "id": "PMK-72-2025",
+  "title": "PMK 72/2025: Perubahan PMK 10/2025: DTP sektor pariwisata",
+  "issued": "2025-10-28"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "dtp_eligible_tourism",
+   "fact_type": "bool",
+   "fact_scope": "year",
+   "output": false,
+   "label": "employee eligible for tourism DTP",
+   "label_id": "pegawai tertentu sektor pariwisata",
+   "source": [
+    {
+     "document": "PMK-72-2025",
+     "provision": "Pasal I angka 2, Pasal 3 ayat (1) huruf a angka 5",
+     "page": 3,
+     "quote": "5. pariwisata; dan"
+    },
+    {
+     "document": "PMK-72-2025",
+     "provision": "Pasal I angka 2, Pasal 3 ayat (1) huruf b",
+     "page": 3,
+     "quote": "b. memiliki kode klasifikasi lapangan usaha"
+    },
+    {
+     "document": "PMK-72-2025",
+     "provision": "Pasal I angka 4, Pasal 4A huruf b",
+     "page": 4,
+     "quote": "b. Masa Pajak Oktober 2025 sampai dengan Masa Pajak"
+    },
+    {
+     "document": "PMK-72-2025",
+     "provision": "Pasal I angka 4, Pasal 4A huruf b",
+     "page": 4,
+     "quote": "Desember 2025, bagi Pegawai tertentu dari Pemberi"
+    }
+   ],
+   "recorded_on": "2025-10-28"
+  },
+  {
+   "kind": "table",
+   "id": "TAB.DTP_KLU_TOURISM.2025",
+   "name": "dtp_klu_tourism",
+   "table_kind": "set",
+   "valid_from": "2025-10-01",
+   "valid_until": "2025-12-31",
+   "label_id": "kode klasifikasi lapangan usaha pariwisata",
+   "source": [
+    {
+     "document": "PMK-72-2025",
+     "provision": "Pasal I angka 2, Pasal 3 ayat (1) huruf a angka 5",
+     "page": 3,
+     "quote": "5. pariwisata; dan"
+    },
+    {
+     "document": "PMK-72-2025",
+     "provision": "Pasal I angka 2, Pasal 3 ayat (1) huruf b",
+     "page": 3,
+     "quote": "b. memiliki kode klasifikasi lapangan usaha"
+    }
+   ],
+   "rows_ref": {
+    "extracted_table": "PMK-72-2025/LAMPIRAN-A",
+    "columns": {
+     "key": "klu",
+     "sector": "sektor"
+    },
+    "filter": {
+     "sektor": "pariwisata"
+    }
+   },
+   "recorded_on": "2025-10-28"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.DTP.ELIGIBLE.TOURISM",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "dtp_eligible_tourism",
+   "expression": "in_table('dtp_klu_tourism', employer('klu')) and dtp_income_test <= param('dtp_fixed_income_cap') and employee('tax_id_valid') != False",
+   "valid_from": "2025-10-01",
+   "valid_until": "2025-12-31",
+   "source": [
+    {
+     "document": "PMK-72-2025",
+     "provision": "Pasal I angka 2, Pasal 3 ayat (1) huruf a angka 5",
+     "page": 3,
+     "quote": "5. pariwisata; dan"
+    },
+    {
+     "document": "PMK-72-2025",
+     "provision": "Pasal I angka 2, Pasal 3 ayat (1) huruf b",
+     "page": 3,
+     "quote": "b. memiliki kode klasifikasi lapangan usaha"
+    },
+    {
+     "document": "PMK-72-2025",
+     "provision": "Pasal I angka 4, Pasal 4A huruf b",
+     "page": 4,
+     "quote": "b. Masa Pajak Oktober 2025 sampai dengan Masa Pajak"
+    },
+    {
+     "document": "PMK-72-2025",
+     "provision": "Pasal I angka 4, Pasal 4A huruf b",
+     "page": 4,
+     "quote": "Desember 2025, bagi Pegawai tertentu dari Pemberi"
+    }
+   ],
+   "recorded_on": "2025-10-28"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.DTP.FACILITY.TOURISM",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "dtp_facility",
+   "expression": "dtp_eligible or dtp_eligible_tourism",
+   "valid_from": "2025-10-01",
+   "valid_until": "2025-12-31",
+   "overrides": [
+    "REG.DTP.FACILITY"
+   ],
+   "source": [
+    {
+     "document": "PMK-72-2025",
+     "provision": "Pasal I angka 4, Pasal 4A huruf b",
+     "page": 4,
+     "quote": "b. Masa Pajak Oktober 2025 sampai dengan Masa Pajak"
+    },
+    {
+     "document": "PMK-72-2025",
+     "provision": "Pasal I angka 4, Pasal 4A huruf b",
+     "page": 4,
+     "quote": "Desember 2025, bagi Pegawai tertentu dari Pemberi"
+    }
+   ],
+   "recorded_on": "2025-10-28"
+  }
+ ],
+ "change": [
+  {
+   "kind": "rule",
+   "id": "REG.DTP.REFUND",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "refund_to_employee",
+   "condition": "dtp_eligible or value_or('dtp_eligible_tourism', False)",
+   "expression": "max(0, 0 - final_period_tax - sum_periods_before_final('pph21_dtp'))",
+   "valid_from": "2025-01-01",
+   "valid_until": "2025-12-31",
+   "overrides": [
+    "REG.YEAR.REFUND"
+   ],
+   "label": "Pasal 5 ayat (5) and (5a): only the part not borne by the government is refunded",
+   "source": [
+    {
+     "document": "PMK-10-2025",
+     "provision": "Pasal 5 ayat (5)",
+     "page": 6,
+     "quote": "pemerintah tidak dikembalikan kepada Pegawai Tetap"
+    },
+    {
+     "document": "PMK-72-2025",
+     "provision": "Pasal I angka 5, Pasal 5 ayat (5a)",
+     "page": 4,
+     "quote": "(5a) Dikecualikan dari ketentuan ayat (5), untuk Pegawai"
+    },
+    {
+     "document": "PMK-72-2025",
+     "provision": "Pasal I angka 5, Pasal 5 ayat (5a)",
+     "page": 5,
+     "quote": "kelebihan pemotongan pajak yang tidak"
+    }
+   ],
+   "recorded_on": "2025-10-28"
+  }
+ ],
+ "remove": [],
+ "note": ""
+}

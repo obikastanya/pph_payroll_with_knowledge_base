@@ -250,6 +250,8 @@ Semua aritmetika eksak. Pembagian menghasilkan pecahan. Pembulatan hanya terjadi
 | `sum_periods_before_final(fakta)` | tahun | Σ fakta atas masa selain masa terakhir |
 | `sum_to_date(fakta)` | masa | Σ fakta dari masa kerja pertama sampai masa ini |
 | `sum_before(fakta)` | masa | Σ fakta dari masa kerja pertama sampai sebelum masa ini |
+| `cumulative(fakta)` | masa | Σ fakta dari masa kerja pertama sampai masa ini, hanya atas masa yang punya aturan aktif untuk fakta itu (untuk batas kumulatif setahun atas fakta yang baru berlaku di tengah tahun) |
+| `cumulative_before(fakta)` | masa | seperti `cumulative`, untuk masa sebelum masa ini |
 | `value_in(fakta, bulan)` | semua | nilai fakta lingkup masa pada bulan tertentu |
 | `year_value(fakta)` | masa | nilai fakta lingkup tahun dari dalam aturan masa |
 | `defined(fakta)` | semua | apakah ada aturan aktif yang menghasilkan fakta itu |

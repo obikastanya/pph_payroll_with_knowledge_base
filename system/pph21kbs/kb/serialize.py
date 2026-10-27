@@ -34,6 +34,8 @@ def record_to_json(r, with_source=True):
         out["valid_until"] = r.valid_until.isoformat()
     if r.label:
         out["label"] = r.label
+    if getattr(r, "label_id", ""):
+        out["label_id"] = r.label_id
     if isinstance(r, Rule):
         out.update(layer=r.layer, modality=r.modality, scope=r.scope, produces=r.produces,
                    expression=r.expression.text)
@@ -43,8 +45,8 @@ def record_to_json(r, with_source=True):
             out["fixed_point"] = {"lower": r.fixed_point[0].text, "upper": r.fixed_point[1].text}
         if r.overrides:
             out["overrides"] = list(r.overrides)
-        if r.adopts:
-            out["adopts"] = list(r.adopts)
+        if r.policy:
+            out["policy"] = r.policy
         if r.conflict_code:
             out["conflict_code"] = r.conflict_code
     elif isinstance(r, Parameter):

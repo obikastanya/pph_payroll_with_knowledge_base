@@ -1,0 +1,131 @@
+{
+ "delta_id": "GOLD-E07",
+ "event_id": "E07",
+ "document": {
+  "id": "PP-7-2025",
+  "title": "PP 7/2025: Keringanan 50% iuran JKK industri padat karya tertentu",
+  "issued": "2025-02-07"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "table",
+   "id": "TAB.JKK_RATES_RELIEF.2025",
+   "name": "jkk_rates_relief",
+   "table_kind": "lookup",
+   "valid_from": "2025-02-01",
+   "valid_until": "2025-07-31",
+   "label_id": "tarif iuran JKK setelah keringanan",
+   "source": [
+    {
+     "document": "PP-7-2025",
+     "provision": "Pasal 4 ayat (1)",
+     "page": 4,
+     "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh"
+    },
+    {
+     "document": "PP-7-2025",
+     "provision": "Pasal 4 ayat (1) huruf a",
+     "page": 4,
+     "quote": "(nol koma satu"
+    },
+    {
+     "document": "PP-7-2025",
+     "provision": "Pasal 4 ayat (1) huruf b",
+     "page": 4,
+     "quote": "tujuh nol persen) dari Upah sebulan;"
+    },
+    {
+     "document": "PP-7-2025",
+     "provision": "Pasal 4 ayat (1) huruf c",
+     "page": 4,
+     "quote": "koma empat empat lima persen) dari Upah sebulan;"
+    },
+    {
+     "document": "PP-7-2025",
+     "provision": "Pasal 4 ayat (1) huruf d",
+     "page": 4,
+     "quote": "tiga lima persen) dari Upah sebulan; dan"
+    },
+    {
+     "document": "PP-7-2025",
+     "provision": "Pasal 4 ayat (1) huruf e",
+     "page": 4,
+     "quote": "diberikan keringanan sehingga menjadi 0,870% (nol"
+    },
+    {
+     "document": "PP-7-2025",
+     "provision": "Pasal 10",
+     "page": 6,
+     "quote": "sampai dengan Iuran JKK bulan Juli 2O25."
+    }
+   ],
+   "rows": [
+    {
+     "key": "very_low",
+     "value": "0.0012"
+    },
+    {
+     "key": "low",
+     "value": "0.0027"
+    },
+    {
+     "key": "medium",
+     "value": "0.00445"
+    },
+    {
+     "key": "high",
+     "value": "0.00635"
+    },
+    {
+     "key": "very_high",
+     "value": "0.0087"
+    }
+   ],
+   "recorded_on": "2025-02-07"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.BPJS.JKK_RATE.RELIEF",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "jkk_rate",
+   "condition": "employer('jkk_relief_eligible') == True",
+   "expression": "lookup('jkk_rates_relief', employer('jkk_risk_group'))",
+   "valid_from": "2025-02-01",
+   "valid_until": "2025-07-31",
+   "label": "tafsir K7: the relief rate is the premium of the contribution month",
+   "source": [
+    {
+     "document": "PP-7-2025",
+     "provision": "Pasal 4 ayat (1)",
+     "page": 4,
+     "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh"
+    },
+    {
+     "document": "PP-7-2025",
+     "provision": "Pasal 10",
+     "page": 6,
+     "quote": "sampai dengan Iuran JKK bulan Juli 2O25."
+    },
+    {
+     "document": "PP-7-2025",
+     "provision": "Pasal 3 ayat (1)",
+     "page": 3,
+     "quote": "Perusahaan industri padat karya tertentu."
+    },
+    {
+     "document": "PP-7-2025",
+     "provision": "Pasal 5 ayat (2)",
+     "page": 5,
+     "quote": "pada ayat (1) dilakukan melalui verifikasi terhadap"
+    }
+   ],
+   "recorded_on": "2025-02-07"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": ""
+}

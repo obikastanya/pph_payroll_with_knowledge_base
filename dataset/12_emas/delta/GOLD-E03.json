@@ -1,0 +1,266 @@
+{
+ "delta_id": "GOLD-E03",
+ "event_id": "E03",
+ "document": {
+  "id": "PP-58-2023",
+  "title": "PP 58/2023: Tarif pemotongan PPh 21: TER bulanan A/B/C dan TER harian",
+  "issued": "2023-12-27"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "ter_category",
+   "fact_type": "category",
+   "fact_scope": "year",
+   "output": false,
+   "label": "TER category",
+   "label_id": "kategori tarif efektif bulanan",
+   "source": [
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (3)",
+     "page": 4,
+     "quote": "huruf a dikategorikan berdasarkan besarnya Penghasilan"
+    },
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (4) huruf a",
+     "page": 4,
+     "quote": "kategori A diterapkan atas penghasilan bruto bulanan"
+    },
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (4) huruf b",
+     "page": 4,
+     "quote": "kategori B diterapkan atas penghasilan bruto bulanan"
+    },
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (4) huruf c",
+     "page": 4,
+     "quote": "dengan jumlah tanggungan sebanyak 3 (tiga) orang."
+    }
+   ],
+   "recorded_on": "2023-12-27"
+  },
+  {
+   "kind": "fact",
+   "id": "ter_rate",
+   "fact_type": "rate",
+   "fact_scope": "period",
+   "output": false,
+   "label": "monthly effective rate",
+   "label_id": "tarif efektif bulanan",
+   "source": [
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (5)",
+     "page": 5,
+     "quote": "tarif dimaksud sebagaimana tercantum dalam Lampiran"
+    }
+   ],
+   "recorded_on": "2023-12-27"
+  },
+  {
+   "kind": "table",
+   "id": "TAB.TER_CATEGORY.2024",
+   "name": "ter_category",
+   "table_kind": "lookup",
+   "valid_from": "2024-01-01",
+   "label_id": "kategori tarif efektif",
+   "source": [
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (3)",
+     "page": 4,
+     "quote": "huruf a dikategorikan berdasarkan besarnya Penghasilan"
+    },
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (4) huruf a",
+     "page": 4,
+     "quote": "kategori A diterapkan atas penghasilan bruto bulanan"
+    },
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (4) huruf b",
+     "page": 4,
+     "quote": "kategori B diterapkan atas penghasilan bruto bulanan"
+    },
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (4) huruf c",
+     "page": 4,
+     "quote": "dengan jumlah tanggungan sebanyak 3 (tiga) orang."
+    }
+   ],
+   "rows": [
+    {
+     "key": "TK/0",
+     "value": "A"
+    },
+    {
+     "key": "TK/1",
+     "value": "A"
+    },
+    {
+     "key": "K/0",
+     "value": "A"
+    },
+    {
+     "key": "TK/2",
+     "value": "B"
+    },
+    {
+     "key": "TK/3",
+     "value": "B"
+    },
+    {
+     "key": "K/1",
+     "value": "B"
+    },
+    {
+     "key": "K/2",
+     "value": "B"
+    },
+    {
+     "key": "K/3",
+     "value": "C"
+    }
+   ],
+   "recorded_on": "2023-12-27"
+  },
+  {
+   "kind": "table",
+   "id": "TAB.TER_MONTHLY.2024",
+   "name": "ter_monthly",
+   "table_kind": "bracket",
+   "valid_from": "2024-01-01",
+   "label_id": "tarif efektif bulanan",
+   "source": [
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (5)",
+     "page": 5,
+     "quote": "tarif dimaksud sebagaimana tercantum dalam Lampiran"
+    }
+   ],
+   "rows_ref": {
+    "extracted_table": "PP-58-2023/LAMPIRAN-ABC",
+    "columns": {
+     "key": "kategori",
+     "lower": "batas_bawah",
+     "upper": "batas_atas",
+     "value": "tarif_persen"
+    },
+    "value_scale": "percent"
+   },
+   "recorded_on": "2023-12-27"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.TER.CATEGORY",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "ter_category",
+   "expression": "lookup('ter_category', ptkp_status_effective)",
+   "valid_from": "2024-01-01",
+   "source": [
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (3)",
+     "page": 4,
+     "quote": "huruf a dikategorikan berdasarkan besarnya Penghasilan"
+    },
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (4) huruf a",
+     "page": 4,
+     "quote": "kategori A diterapkan atas penghasilan bruto bulanan"
+    },
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (4) huruf b",
+     "page": 4,
+     "quote": "kategori B diterapkan atas penghasilan bruto bulanan"
+    },
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (4) huruf c",
+     "page": 4,
+     "quote": "dengan jumlah tanggungan sebanyak 3 (tiga) orang."
+    }
+   ],
+   "recorded_on": "2023-12-27"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.TER.RATE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "ter_rate",
+   "condition": "not is_final_period",
+   "expression": "bracket('ter_monthly', ter_category, gross_income)",
+   "valid_from": "2024-01-01",
+   "source": [
+    {
+     "document": "PP-58-2023",
+     "provision": "Pasal 2 ayat (5)",
+     "page": 5,
+     "quote": "tarif dimaksud sebagaimana tercantum dalam Lampiran"
+    },
+    {
+     "document": "PP-58-2023",
+     "provision": "Penjelasan Pasal 2 ayat (1)",
+     "page": 8,
+     "quote": "sampai November 2024 dilakukan dengan menggunakan tarif"
+    },
+    {
+     "document": "PP-58-2023",
+     "provision": "Penjelasan Pasal 2 ayat (1)",
+     "page": 8,
+     "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024"
+    }
+   ],
+   "recorded_on": "2023-12-27"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.TER.RUNNING",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph21_running",
+   "condition": "not is_final_period",
+   "expression": "round(ter_rate * gross_income, 1, param('pph_round_mode'))",
+   "valid_from": "2024-01-01",
+   "source": [
+    {
+     "document": "PP-58-2023",
+     "provision": "Penjelasan Pasal 2 ayat (1)",
+     "page": 8,
+     "quote": "sampai November 2024 dilakukan dengan menggunakan tarif"
+    },
+    {
+     "document": "PP-58-2023",
+     "provision": "Penjelasan Pasal 2 ayat (1)",
+     "page": 8,
+     "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024"
+    },
+    {
+     "document": "PP-58-2023",
+     "provision": "Penjelasan Pasal 2 ayat (1)",
+     "page": 8,
+     "quote": "Januari sampai November 2024 adalah sebesar"
+    }
+   ],
+   "recorded_on": "2023-12-27"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": ""
+}

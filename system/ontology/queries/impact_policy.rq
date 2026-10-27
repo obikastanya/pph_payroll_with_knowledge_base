@@ -1,0 +1,40 @@
+# Impact of a Delta on the company rules of one policy (akuisisi.md 6, detector steps 3-5).
+# ?kind: "a" (a policy rule reads a fact in F_Delta downstream, validity overlaps an element of the Delta),
+#        "b" (a policy rule produces a fact a Delta rule also produces, validity overlaps),
+#        "c" (as "b" with a mandatory Delta rule, or a Delta constraint reads a fact a policy rule produces).
+# Supplied by the caller: ?policy (IRI of the policy document) and FILTER_AFFECTED, replaced by
+# FILTER(?fact IN (...)) over F_Delta downstream (result of impact_facts.rq).
+PREFIX pph: <https://w3id.org/pph21kbs/ontology#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT DISTINCT ?kind ?rule ?element ?fact WHERE {
+  GRAPH <https://w3id.org/pph21kbs/kb/graph/view> {
+    ?r pph:policy ?policy ; pph:elementId ?rule ; pph:validFrom ?pf .
+    OPTIONAL { ?r pph:validUntil ?pu0 }
+  }
+  BIND(COALESCE(?pu0, "9999-12-31"^^xsd:date) AS ?pu)
+  GRAPH <https://w3id.org/pph21kbs/kb/graph/delta> {
+    ?u pph:elementId ?element .
+    OPTIONAL { ?u pph:validFrom ?uf0 } OPTIONAL { ?u pph:validUntil ?uu0 }
+  }
+  BIND(COALESCE(?uf0, "0001-01-01"^^xsd:date) AS ?uf)
+  BIND(COALESCE(?uu0, "9999-12-31"^^xsd:date) AS ?uu)
+  FILTER(?pf <= ?uu && ?uf <= ?pu)
+  {
+    GRAPH <https://w3id.org/pph21kbs/kb/graph/view> { ?r pph:reads ?fact }
+    FILTER_AFFECTED
+    BIND("a" AS ?kind)
+  } UNION {
+    GRAPH <https://w3id.org/pph21kbs/kb/graph/view> { ?r pph:produces ?fact }
+    GRAPH <https://w3id.org/pph21kbs/kb/graph/delta> { ?u pph:produces ?fact ; a pph:Rule }
+    BIND("b" AS ?kind)
+  } UNION {
+    GRAPH <https://w3id.org/pph21kbs/kb/graph/view> { ?r pph:produces ?fact }
+    GRAPH <https://w3id.org/pph21kbs/kb/graph/delta> { ?u pph:produces ?fact ; pph:modality pph:Mandatory ;
+                                                          pph:layer pph:Regulation }
+    BIND("c" AS ?kind)
+  } UNION {
+    GRAPH <https://w3id.org/pph21kbs/kb/graph/view> { ?r pph:produces ?fact }
+    GRAPH <https://w3id.org/pph21kbs/kb/graph/delta> { ?u a pph:Constraint ; pph:reads ?fact }
+    BIND("c" AS ?kind)
+  }
+}

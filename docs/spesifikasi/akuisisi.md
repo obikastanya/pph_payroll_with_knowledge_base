@@ -117,7 +117,7 @@ Tanggal mulai efek pembaruan $s(\Delta) = \min_u s(u)$.
 ### G1 — struktur
 
 1. Keluaran valid terhadap skema keluaran LLM, lalu terhadap skema $\Delta$ lengkap ([format_data.md](format_data.md) §2).
-2. $\mathcal{K}' = \mathcal{K} \oplus \Delta$ valid terhadap *shape* SHACL (`system/kb/shapes.ttl`):
+2. $\mathcal{K}' = \mathcal{K} \oplus \Delta$ valid terhadap *shape* SHACL (`system/ontology/shapes.ttl`; validator `system/pph21kbs/kb/shacl.py`):
    - setiap `pph:KBElement` punya tepat satu `pph:elementId`, `pph:recordedOn`; unsur bermasa berlaku punya tepat satu `pph:validFrom` (tanggal 1 bulan) dan paling banyak satu `pph:validUntil` (hari terakhir bulan, ≥ `validFrom`);
    - `id` berawalan sesuai jenis dan lapisan (`REG.`/`PRS.`/`PAR.`/`TAB.`/`CON.`; fakta huruf kecil);
    - `pph:Rule`: tepat satu `layer`, `modality`, `scope`, `produces`, `expression`; paling banyak satu `condition`; lingkup aturan sama dengan lingkup fakta yang dihasilkan; aturan `Company` tidak boleh `Mandatory` dan wajib punya `policy`; `overrides` merujuk `elementId` yang ada;
@@ -196,7 +196,7 @@ Definisi (a) dibatasi ke fakta milik $P$; perubahan PPh pegawai karena peristiwa
 3. aturan $P$ yang membaca fakta di $F^\downarrow_\Delta$ dengan masa berlaku beririsan dengan masa berlaku unsur $\Delta$ → (a);
 4. aturan $P$ yang menghasilkan fakta yang juga dihasilkan aturan di $\Delta$ dengan masa berlaku beririsan → (b), dan bila aturan $\Delta$ itu `mandatory` → (c);
 5. batasan di $\Delta$ yang membaca fakta yang dihasilkan aturan $P$ → (c).
-Kueri SPARQL di `system/kb/queries/impact_*.rq`.
+Kueri SPARQL di `system/ontology/queries/impact_*.rq` (pemanggil `system/pph21kbs/impact.py`).
 
 **Pembanding B5.** (i) tandai semua kebijakan yang menyentuh fakta mana pun di $F^\downarrow_\Delta$ tanpa memeriksa masa berlaku; (ii) penelusuran dependensi datar tanpa graf (pemindaian teks ekspresi); (iii) penilaian LLM (*effort* `low`).
 

@@ -7,8 +7,8 @@ Tahap 4 [PANDUAN_PENELITIAN.md](../../PANDUAN_PENELITIAN.md). Versi 2, 2026-10-2
 | Isi | Lokasi |
 |---|---|
 | Skema JSON | `system/schemas/{delta,delta_llm,case,expected,llm_call,pipeline_result}.schema.json` |
-| Ontologi dan *shape* SHACL | `system/kb/ontology.ttl`, `system/kb/shapes.ttl` |
-| Kueri SPARQL bersama | `system/kb/queries/*.rq` |
+| Ontologi dan *shape* SHACL | `system/ontology/ontology.ttl`, `system/ontology/shapes.ttl` |
+| Kueri SPARQL bersama | `system/ontology/queries/*.rq` |
 | Rantai emas ($\Delta$ latar dan $\Delta^\star$) | `dataset/12_emas/delta/*.json`, urutan di `dataset/12_emas/rantai.csv` |
 | Teks dokumen terkunci, segmen, tabel terekstraksi | `dataset/13_teks/<dokumen>/{teks.txt, segmen.json, tabel/*.csv, MANIFEST.sha256}` |
 | Ruang uji $S^E$ dan nilai harapan | `dataset/14_ruang_uji/` (kasus JSONL, nilai harapan JSONL per peristiwa) |

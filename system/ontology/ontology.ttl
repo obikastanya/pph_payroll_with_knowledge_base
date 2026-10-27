@@ -1,0 +1,136 @@
+@prefix pph:     <https://w3id.org/pph21kbs/ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix time:    <http://www.w3.org/2006/time#> .
+@prefix eli:     <http://data.europa.eu/eli/ontology#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+# Ontology of the adaptive PPh 21 knowledge base (docs/spesifikasi/representasi.md section 5).
+# Records are immutable and bitemporal: valid time (pph:validFrom, pph:validUntil) and knowledge time
+# (pph:recordedOn). One named graph per update; versions are described in the graph kb:meta.
+
+<https://w3id.org/pph21kbs/ontology>
+    a owl:Ontology ;
+    rdfs:label "PPh 21 adaptive knowledge base ontology"@en ;
+    rdfs:comment "Versioned, bitemporal rules for Indonesian employee income tax (PPh 21) with legal provenance."@en ;
+    owl:imports <http://www.w3.org/ns/prov-o> , <http://www.w3.org/2006/time> ;
+    owl:versionInfo "1.0" .
+
+# ------------------------------------------------------------------ sources
+pph:LegalDocument a owl:Class ; rdfs:subClassOf eli:LegalResource ;
+    rdfs:label "legal document"@en , "dokumen hukum"@id ;
+    rdfs:comment "Law, regulation, ministerial rule, BPJS letter, collective agreement, or company regulation."@en .
+pph:CompanyPolicy a owl:Class ; rdfs:subClassOf pph:LegalDocument ;
+    rdfs:label "company policy"@en , "kebijakan perusahaan"@id .
+pph:Provision a owl:Class ; rdfs:subClassOf eli:LegalResourceSubdivision ;
+    rdfs:label "provision"@en , "pasal"@id ;
+    rdfs:comment "Article, paragraph, letter, number, or annex part of a legal document."@en .
+pph:Quote a owl:Class ; rdfs:subClassOf prov:Entity ;
+    rdfs:label "quote"@en , "kutipan"@id .
+
+# ------------------------------------------------------------------ knowledge base elements
+pph:KBElement a owl:Class ; rdfs:subClassOf prov:Entity ;
+    rdfs:label "knowledge base record"@en , "rekaman KB"@id ;
+    rdfs:comment "Abstract parent of immutable records. The effective record of an element id at knowledge date omega is the one with the latest (recordedOn, seq) not later than omega."@en .
+pph:Rule a owl:Class ; rdfs:subClassOf pph:KBElement ; rdfs:label "rule"@en , "aturan"@id .
+pph:Parameter a owl:Class ; rdfs:subClassOf pph:KBElement ; rdfs:label "parameter"@en , "parameter"@id .
+pph:TableVersion a owl:Class ; rdfs:subClassOf pph:KBElement ; rdfs:label "table version"@en , "versi tabel"@id .
+pph:TableRow a owl:Class ; rdfs:label "table row"@en , "baris tabel"@id .
+pph:Constraint a owl:Class ; rdfs:subClassOf pph:KBElement ; rdfs:label "mandatory constraint"@en , "batasan wajib"@id .
+pph:FactDefinition a owl:Class ; rdfs:subClassOf pph:KBElement ;
+    rdfs:label "fact definition"@en , "definisi fakta"@id ;
+    rdfs:comment "Record declaring a fact: type, scope (period or year), and whether it is an output (F_nilai)."@en .
+pph:Tombstone a owl:Class ; rdfs:subClassOf pph:KBElement ; rdfs:label "removal record"@en , "rekaman hapus"@id .
+
+pph:Fact a owl:Class ; rdfs:subClassOf skos:Concept ; rdfs:label "fact"@en , "fakta"@id .
+pph:InputFact a owl:Class ; rdfs:subClassOf pph:Fact ; rdfs:label "input fact"@en , "fakta masukan"@id .
+
+pph:Layer a owl:Class ; rdfs:subClassOf skos:Concept .
+pph:Modality a owl:Class ; rdfs:subClassOf skos:Concept .
+pph:Scope a owl:Class ; rdfs:subClassOf skos:Concept .
+pph:Regulation a pph:Layer ; rdfs:label "regulation layer"@en , "lapis regulasi"@id .
+pph:Company a pph:Layer ; rdfs:label "company layer"@en , "lapis perusahaan"@id .
+pph:Mandatory a pph:Modality ; rdfs:label "mandatory"@en , "wajib"@id .
+pph:Default a pph:Modality ; rdfs:label "default"@en , "bawaan"@id .
+pph:Optional a pph:Modality ; rdfs:label "optional"@en , "pilihan"@id .
+pph:Period a pph:Scope ; rdfs:label "tax period (month)"@en , "masa pajak"@id .
+pph:Year a pph:Scope ; rdfs:label "tax year"@en , "tahun pajak"@id .
+
+# ------------------------------------------------------------------ change and versions
+pph:ChangeEvent a owl:Class ; rdfs:subClassOf prov:Activity ; rdfs:label "change event"@en , "peristiwa perubahan"@id .
+pph:Update a owl:Class ; rdfs:subClassOf prov:Activity ;
+    rdfs:label "update (Delta)"@en , "pembaruan"@id ;
+    rdfs:comment "Application of one Delta = <add, change, remove>; its records live in the named graph kb:update/<id>."@en .
+pph:KBVersion a owl:Class ; rdfs:subClassOf prov:Entity ;
+    rdfs:label "knowledge base version"@en , "versi KB"@id .
+pph:ValidityInterval a owl:Class ; rdfs:subClassOf time:ProperInterval ;
+    rdfs:comment "pph:validFrom / pph:validUntil are the short form of time:hasBeginning / time:hasEnd."@en .
+
+# ------------------------------------------------------------------ datatypes
+pph:fraction a rdfs:Datatype ; rdfs:comment "Exact rational p/q whose decimal expansion is infinite."@en .
+pph:null a rdfs:Datatype ; rdfs:comment "Empty value of a table cell (open upper bound)."@en .
+
+# ------------------------------------------------------------------ properties of records
+pph:elementId a owl:DatatypeProperty , owl:FunctionalProperty ; rdfs:domain pph:KBElement ; rdfs:range xsd:string ;
+    rdfs:comment "Logical identity shared by all records of one element (REG., PRS., PAR., TAB., CON., or a lower-case fact name)."@en .
+pph:seq a owl:DatatypeProperty , owl:FunctionalProperty ; rdfs:domain pph:KBElement ; rdfs:range xsd:integer ;
+    rdfs:comment "Global application order; breaks ties on recordedOn."@en .
+pph:recordedOn a owl:DatatypeProperty , owl:FunctionalProperty ; rdfs:domain pph:KBElement ; rdfs:range xsd:date ;
+    rdfs:subPropertyOf prov:generatedAtTime ;
+    rdfs:comment "Knowledge time: issue date of the source document (legal date, not system time)."@en .
+pph:validFrom a owl:DatatypeProperty , owl:FunctionalProperty ; rdfs:range xsd:date ; rdfs:comment "First day of validity (first of a month)."@en .
+pph:validUntil a owl:DatatypeProperty , owl:FunctionalProperty ; rdfs:range xsd:date ; rdfs:comment "Last day of validity (last day of a month); open when absent."@en .
+pph:hasSource a owl:ObjectProperty ; rdfs:domain pph:KBElement ; rdfs:range pph:Quote .
+pph:quoteText a owl:DatatypeProperty ; rdfs:domain pph:Quote ; rdfs:range xsd:string .
+pph:page a owl:DatatypeProperty ; rdfs:domain pph:Quote ; rdfs:range xsd:integer ; rdfs:comment "PDF page of the quote."@en .
+pph:provision a owl:ObjectProperty ; rdfs:domain pph:Quote ; rdfs:range pph:Provision .
+pph:order a owl:DatatypeProperty ; rdfs:range xsd:integer ; rdfs:comment "Position in an ordered list."@en .
+
+pph:layer a owl:ObjectProperty , owl:FunctionalProperty ; rdfs:domain pph:Rule ; rdfs:range pph:Layer .
+pph:modality a owl:ObjectProperty , owl:FunctionalProperty ; rdfs:domain pph:Rule ; rdfs:range pph:Modality .
+pph:scope a owl:ObjectProperty , owl:FunctionalProperty ; rdfs:range pph:Scope .
+pph:produces a owl:ObjectProperty , owl:FunctionalProperty ; rdfs:domain pph:Rule ; rdfs:range pph:Fact .
+pph:reads a owl:ObjectProperty ; rdfs:range pph:Fact ; rdfs:comment "Derived from the expression and condition."@en .
+pph:usesParameter a owl:DatatypeProperty ; rdfs:comment "Parameter name read with param() (derived)."@en .
+pph:usesTable a owl:DatatypeProperty ; rdfs:comment "Table name read by a table function (derived)."@en .
+pph:condition a owl:DatatypeProperty ; rdfs:range xsd:string .
+pph:expression a owl:DatatypeProperty ; rdfs:domain pph:Rule ; rdfs:range xsd:string .
+pph:assertion a owl:DatatypeProperty ; rdfs:domain pph:Constraint ; rdfs:range xsd:string .
+pph:fixedPointLower a owl:DatatypeProperty ; rdfs:domain pph:Rule .
+pph:fixedPointUpper a owl:DatatypeProperty ; rdfs:domain pph:Rule .
+pph:overrides a owl:DatatypeProperty ; rdfs:domain pph:Rule ; rdfs:comment "Element id of a rule this rule overrides (lex specialis)."@en .
+pph:overridesEntry a owl:ObjectProperty ; rdfs:domain pph:Rule ; rdfs:comment "Ordered form of pph:overrides."@en .
+pph:targetId a owl:DatatypeProperty .
+pph:policy a owl:ObjectProperty ; rdfs:domain pph:Rule ; rdfs:range pph:LegalDocument ; rdfs:comment "Policy document of a company rule."@en .
+pph:conflictCode a owl:DatatypeProperty ; rdfs:comment "Conflict type C1-C10 (taksonomi.md)."@en .
+pph:name a owl:DatatypeProperty ; rdfs:comment "Name of a parameter or table."@en .
+pph:value a owl:DatatypeProperty .
+pph:valueType a owl:DatatypeProperty ; rdfs:domain pph:Parameter .
+pph:tableKind a owl:DatatypeProperty ; rdfs:domain pph:TableVersion .
+pph:rowsRef a owl:DatatypeProperty ; rdfs:domain pph:TableVersion ; rdfs:comment "JSON of the extracted table the rows were read from."@en .
+pph:hasRow a owl:ObjectProperty ; rdfs:domain pph:TableVersion ; rdfs:range pph:TableRow .
+pph:cell a owl:ObjectProperty ; rdfs:domain pph:TableRow .
+pph:column a owl:DatatypeProperty .
+pph:factType a owl:DatatypeProperty ; rdfs:domain pph:FactDefinition .
+pph:factScope a owl:ObjectProperty ; rdfs:domain pph:FactDefinition ; rdfs:range pph:Scope .
+pph:output a owl:DatatypeProperty ; rdfs:domain pph:FactDefinition ; rdfs:range xsd:boolean .
+pph:unit a owl:DatatypeProperty ; rdfs:domain pph:FactDefinition .
+pph:definesFact a owl:ObjectProperty ; rdfs:domain pph:FactDefinition ; rdfs:range pph:Fact .
+pph:conflictsWith a owl:ObjectProperty ; rdfs:comment "Statically detected conflict of a company rule (derived, RQ4)."@en .
+
+# ------------------------------------------------------------------ documents, updates, versions
+pph:issued a owl:DatatypeProperty ; rdfs:domain pph:LegalDocument ; rdfs:range xsd:date ;
+    rdfs:comment "t_terbit: date the document became known (recordedOn of its records)."@en .
+pph:adoptsEntry a owl:ObjectProperty ; rdfs:domain pph:LegalDocument ; rdfs:comment "Optional regulation rule adopted by a company policy."@en .
+pph:triggeredBy a owl:ObjectProperty ; rdfs:domain pph:Update ; rdfs:range pph:ChangeEvent .
+pph:document a owl:ObjectProperty ; rdfs:domain pph:Update ; rdfs:range pph:LegalDocument .
+pph:updateId a owl:DatatypeProperty ; rdfs:domain pph:Update .
+pph:deltaId a owl:DatatypeProperty ; rdfs:domain pph:Update .
+pph:firstSeq a owl:DatatypeProperty ; rdfs:domain pph:Update .
+pph:lastSeq a owl:DatatypeProperty ; rdfs:domain pph:Update .
+pph:hasMember a owl:ObjectProperty ; rdfs:domain pph:KBVersion ; rdfs:range pph:Update .
+pph:fingerprint a owl:DatatypeProperty ; rdfs:domain pph:KBVersion ; rdfs:comment "SHA-256 over the canonical serialisation of all records of the version."@en .

@@ -1,0 +1,20 @@
+# F_Delta (akuisisi.md 6, detector step 1-2): facts produced by elements of the Delta, facts produced by rules that
+# use a parameter or table changed by the Delta, and their downstream closure through pph:reads.
+# Graphs: <https://w3id.org/pph21kbs/kb/graph/view> (effective records of K_n (+) P),
+#         <https://w3id.org/pph21kbs/kb/graph/delta> (records of the Delta, including tombstones with their old kind).
+PREFIX pph: <https://w3id.org/pph21kbs/ontology#>
+SELECT DISTINCT ?fact WHERE {
+  {
+    SELECT DISTINCT ?seed WHERE {
+      { GRAPH <https://w3id.org/pph21kbs/kb/graph/delta> { ?u pph:produces ?seed } }
+      UNION
+      { GRAPH <https://w3id.org/pph21kbs/kb/graph/delta> { ?u pph:name ?n }
+        GRAPH <https://w3id.org/pph21kbs/kb/graph/view> {
+          { ?r pph:usesParameter ?n } UNION { ?r pph:usesTable ?n }
+          ?r pph:produces ?seed } }
+      UNION
+      { GRAPH <https://w3id.org/pph21kbs/kb/graph/delta> { ?u pph:definesFact ?seed } }
+    }
+  }
+  GRAPH <https://w3id.org/pph21kbs/kb/graph/view> { ?fact (^pph:produces/pph:reads)* ?seed }
+}

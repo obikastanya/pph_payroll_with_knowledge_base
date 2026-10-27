@@ -1,0 +1,164 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix pph:  <https://w3id.org/pph21kbs/ontology#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix eli:  <http://data.europa.eu/eli/ontology#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+
+# SHACL shapes of gate G1 item 2 (docs/spesifikasi/akuisisi.md section 4). Validated over all records of K' with the
+# metadata graph (pph21kbs.kb.rdf.records_graph). Each shape names the G1 condition it checks in sh:message.
+
+pph:Prefixes a owl:Ontology ;
+    sh:declare [ sh:prefix "pph" ; sh:namespace "https://w3id.org/pph21kbs/ontology#"^^xsd:anyURI ] ,
+               [ sh:prefix "eli" ; sh:namespace "http://data.europa.eu/eli/ontology#"^^xsd:anyURI ] ,
+               [ sh:prefix "rdf" ; sh:namespace "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xsd:anyURI ] ,
+               [ sh:prefix "xsd" ; sh:namespace "http://www.w3.org/2001/XMLSchema#"^^xsd:anyURI ] .
+
+# ------------------------------------------------------------------ every record
+pph:KBElementShape a sh:NodeShape ;
+    sh:targetClass pph:KBElement ;
+    sh:property [ sh:path pph:elementId ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
+                  sh:message "G1: record needs exactly one elementId" ] ;
+    sh:property [ sh:path pph:recordedOn ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:date ;
+                  sh:message "G1: record needs exactly one recordedOn date" ] ;
+    sh:property [ sh:path pph:seq ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ] ;
+    sh:property [ sh:path pph:validUntil ; sh:maxCount 1 ; sh:datatype xsd:date ;
+                  sh:message "G1: at most one validUntil" ] ;
+    sh:property [ sh:path pph:validFrom ; sh:maxCount 1 ; sh:datatype xsd:date ] ;
+    sh:property [ sh:path pph:hasSource ; sh:minCount 1 ; sh:class pph:Quote ;
+                  sh:message "G1: every record needs at least one source quote" ] ;
+    sh:sparql [ sh:prefixes pph:Prefixes ;
+        sh:message "G1: validFrom must be the first day of a month" ;
+        sh:select """SELECT $this ?value WHERE { $this pph:validFrom ?value . FILTER(DAY(?value) != 1) }""" ] ;
+    sh:sparql [ sh:prefixes pph:Prefixes ;
+        sh:message "G1: validUntil must not be before validFrom" ;
+        sh:select """SELECT $this ?value WHERE { $this pph:validFrom ?f ; pph:validUntil ?value . FILTER(?value < ?f) }""" ] ;
+    sh:sparql [ sh:prefixes pph:Prefixes ;
+        sh:message "G1: validUntil must be the last day of a month" ;
+        sh:select """SELECT $this ?value WHERE {
+            $this pph:validUntil ?value .
+            BIND(DAY(?value) AS ?d) BIND(MONTH(?value) AS ?m) BIND(YEAR(?value) AS ?y)
+            BIND((?y - 4 * FLOOR(?y / 4)) = 0 && ((?y - 100 * FLOOR(?y / 100)) != 0 || (?y - 400 * FLOOR(?y / 400)) = 0) AS ?leap)
+            BIND(IF(?m = 2, IF(?leap, 29, 28), IF(?m IN (4, 6, 9, 11), 30, 31)) AS ?last)
+            FILTER(?d != ?last) }""" ] .
+
+pph:DatedElementShape a sh:NodeShape ;
+    sh:targetClass pph:Rule , pph:Parameter , pph:TableVersion , pph:Constraint ;
+    sh:property [ sh:path pph:validFrom ; sh:minCount 1 ; sh:message "G1: element with validity needs validFrom" ] .
+
+pph:QuoteShape a sh:NodeShape ;
+    sh:targetClass pph:Quote ;
+    sh:property [ sh:path pph:quoteText ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ;
+                  sh:message "G1: quote text must not be empty" ] ;
+    sh:property [ sh:path pph:provision ; sh:minCount 1 ; sh:maxCount 1 ; sh:class pph:Provision ] .
+
+pph:ProvisionShape a sh:NodeShape ;
+    sh:targetClass pph:Provision ;
+    sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:message "G1: provision needs its article text" ] ;
+    sh:property [ sh:path eli:is_part_of ; sh:minCount 1 ; sh:maxCount 1 ; sh:class pph:LegalDocument ;
+                  sh:message "G1: provision must be part of a known document" ] .
+
+# ------------------------------------------------------------------ identifiers by kind
+pph:RuleIdShape a sh:NodeShape ;
+    sh:targetClass pph:Rule ;
+    sh:sparql [ sh:prefixes pph:Prefixes ;
+        sh:message "G1: regulation rule ids start with REG., company rule ids with PRS." ;
+        sh:select """SELECT $this ?value WHERE {
+            $this pph:elementId ?value ; pph:layer ?l .
+            FILTER((?l = pph:Regulation && !STRSTARTS(?value, "REG.")) || (?l = pph:Company && !STRSTARTS(?value, "PRS."))) }""" ] .
+pph:ParameterIdShape a sh:NodeShape ; sh:targetClass pph:Parameter ;
+    sh:property [ sh:path pph:elementId ; sh:pattern "^PAR\\." ; sh:message "G1: parameter ids start with PAR." ] .
+pph:TableIdShape a sh:NodeShape ; sh:targetClass pph:TableVersion ;
+    sh:property [ sh:path pph:elementId ; sh:pattern "^TAB\\." ; sh:message "G1: table ids start with TAB." ] .
+pph:ConstraintIdShape a sh:NodeShape ; sh:targetClass pph:Constraint ;
+    sh:property [ sh:path pph:elementId ; sh:pattern "^CON\\." ; sh:message "G1: constraint ids start with CON." ] .
+pph:FactIdShape a sh:NodeShape ; sh:targetClass pph:FactDefinition ;
+    sh:property [ sh:path pph:elementId ; sh:pattern "^[a-z][a-z0-9_]*$" ; sh:message "G1: fact names are lower case" ] .
+
+# ------------------------------------------------------------------ rules
+pph:RuleShape a sh:NodeShape ;
+    sh:targetClass pph:Rule ;
+    sh:property [ sh:path pph:layer ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( pph:Regulation pph:Company ) ] ;
+    sh:property [ sh:path pph:modality ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( pph:Mandatory pph:Default pph:Optional ) ] ;
+    sh:property [ sh:path pph:scope ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( pph:Period pph:Year ) ] ;
+    sh:property [ sh:path pph:produces ; sh:minCount 1 ; sh:maxCount 1 ; sh:class pph:Fact ;
+                  sh:message "G1: produces must name a fact of the vocabulary" ] ;
+    sh:property [ sh:path pph:expression ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+    sh:property [ sh:path pph:condition ; sh:maxCount 1 ] ;
+    sh:property [ sh:path pph:fixedPointLower ; sh:maxCount 1 ] ;
+    sh:property [ sh:path pph:fixedPointUpper ; sh:maxCount 1 ] ;
+    sh:property [ sh:path pph:policy ; sh:maxCount 1 ; sh:class pph:LegalDocument ] ;
+    sh:sparql [ sh:prefixes pph:Prefixes ;
+        sh:message "G1: a company rule must not be mandatory" ;
+        sh:select """SELECT $this WHERE { $this pph:layer pph:Company ; pph:modality pph:Mandatory . }""" ] ;
+    sh:sparql [ sh:prefixes pph:Prefixes ;
+        sh:message "G1: a company rule needs its policy document" ;
+        sh:select """SELECT $this WHERE { $this pph:layer pph:Company . FILTER NOT EXISTS { $this pph:policy ?p } }""" ] ;
+    sh:sparql [ sh:prefixes pph:Prefixes ;
+        sh:message "G1: rule scope must equal the scope of the fact it produces" ;
+        sh:select """SELECT $this ?value WHERE {
+            $this pph:produces ?value ; pph:scope ?s .
+            ?d pph:definesFact ?value ; pph:factScope ?fs . FILTER(?fs != ?s) }""" ] ;
+    sh:sparql [ sh:prefixes pph:Prefixes ;
+        sh:message "G1: overrides must name an existing element id" ;
+        sh:select """SELECT $this ?value WHERE {
+            $this pph:overrides ?value . FILTER NOT EXISTS { ?o pph:elementId ?value } }""" ] ;
+    sh:sparql [ sh:prefixes pph:Prefixes ;
+        sh:message "G1: fixed point needs both bounds" ;
+        sh:select """SELECT $this WHERE {
+            { $this pph:fixedPointLower ?l . FILTER NOT EXISTS { $this pph:fixedPointUpper ?u } } UNION
+            { $this pph:fixedPointUpper ?u . FILTER NOT EXISTS { $this pph:fixedPointLower ?l } } }""" ] .
+
+# ------------------------------------------------------------------ parameters
+pph:ParameterShape a sh:NodeShape ;
+    sh:targetClass pph:Parameter ;
+    sh:property [ sh:path pph:name ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path pph:value ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path pph:valueType ; sh:minCount 1 ; sh:maxCount 1 ;
+                  sh:in ( "money" "int" "rate" "exact" "bool" "category" "date" ) ] ;
+    sh:sparql [ sh:prefixes pph:Prefixes ;
+        sh:message "G1: parameter value does not have the type its valueType states" ;
+        sh:select """SELECT $this ?value WHERE {
+            $this pph:value ?value ; pph:valueType ?t . BIND(DATATYPE(?value) AS ?dt)
+            FILTER(
+              (?t IN ("money", "int") && ?dt != xsd:integer) ||
+              (?t IN ("rate", "exact") && !(?dt IN (xsd:integer, xsd:decimal, pph:fraction))) ||
+              (?t = "bool" && ?dt != xsd:boolean) ||
+              (?t = "category" && ?dt != xsd:string) ) }""" ] .
+
+# ------------------------------------------------------------------ tables
+pph:TableShape a sh:NodeShape ;
+    sh:targetClass pph:TableVersion ;
+    sh:property [ sh:path pph:name ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path pph:tableKind ; sh:minCount 1 ; sh:maxCount 1 ;
+                  sh:in ( "lookup" "bracket" "progressive" "set" ) ] ;
+    sh:property [ sh:path pph:hasRow ; sh:minCount 1 ; sh:message "G1: a table needs at least one row" ] ;
+    sh:sparql [ sh:prefixes pph:Prefixes ;
+        sh:message "G1: bracket or progressive row with upper <= lower" ;
+        sh:select """SELECT $this ?value WHERE {
+            $this pph:tableKind ?k ; pph:hasRow ?value . FILTER(?k IN ("bracket", "progressive"))
+            ?value pph:cell [ pph:column "lower" ; pph:value ?lo ] ; pph:cell [ pph:column "upper" ; pph:value ?up ] .
+            FILTER(DATATYPE(?up) != pph:null && ?up <= ?lo) }""" ] ;
+    sh:sparql [ sh:prefixes pph:Prefixes ;
+        sh:message "G1: progressive row without rate" ;
+        sh:select """SELECT $this ?value WHERE {
+            $this pph:tableKind "progressive" ; pph:hasRow ?value .
+            FILTER NOT EXISTS { ?value pph:cell [ pph:column "rate" ] } }""" ] .
+
+# ------------------------------------------------------------------ constraints
+pph:ConstraintShape a sh:NodeShape ;
+    sh:targetClass pph:Constraint ;
+    sh:property [ sh:path pph:assertion ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+    sh:property [ sh:path pph:conflictCode ; sh:minCount 1 ; sh:maxCount 1 ; sh:pattern "^C([1-9]|10)$" ;
+                  sh:message "G1: conflict code must be C1-C10" ] ;
+    sh:property [ sh:path pph:scope ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( pph:Period pph:Year ) ] .
+
+# ------------------------------------------------------------------ fact definitions
+pph:FactDefinitionShape a sh:NodeShape ;
+    sh:targetClass pph:FactDefinition ;
+    sh:property [ sh:path pph:factType ; sh:minCount 1 ; sh:maxCount 1 ;
+                  sh:in ( "money" "exact" "rate" "int" "bool" "category" "date" ) ] ;
+    sh:property [ sh:path pph:factScope ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( pph:Period pph:Year ) ] ;
+    sh:property [ sh:path pph:output ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:boolean ] .

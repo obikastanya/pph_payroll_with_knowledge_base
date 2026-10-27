@@ -5,7 +5,8 @@
 
 Updates are applied in chain order (recorded_on, then module order). Every Delta is validated against the JSON schema,
 applied strictly, and its quotes are checked against dataset/13_teks. Output: dataset/12_emas/delta/<id>.json,
-dataset/12_emas/rantai.csv, dataset/12_emas/kosakata.md, and the fingerprint of the final knowledge base.
+dataset/12_emas/rantai.csv, dataset/12_emas/kosakata.md, the knowledge graph dataset/12_emas/kb.trig (one named graph
+per update, read back by the engine through pph21kbs.kb.rdf), and the fingerprint of the final knowledge base.
 """
 import csv
 import importlib
@@ -16,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "system"))
 
-from pph21kbs.kb import apply_delta, empty_kb  # noqa: E402
+from pph21kbs.kb import apply_delta, empty_kb, rdf  # noqa: E402
 
 MODULES = ["bg_base", "bg_2015_2022", "ev_jp", "ev_natura", "ev_ter", "ev_dtp", "ev_jkk", "ev_rounding"]
 OUT = ROOT / "dataset" / "12_emas"
@@ -58,8 +59,14 @@ def build(check_only=False):
             w.writeheader()
             w.writerows(rows)
         write_vocabulary(kb)
+        rdf.write_trig(kb, OUT / "kb.trig")
     print(f"{len(rows)} updates, {len(kb.records)} records, fingerprint {kb.fingerprint()[:16]}")
     return kb
+
+
+def load_graph():
+    """The gold knowledge base read from the knowledge graph written by build()."""
+    return rdf.read_trig(OUT / "kb.trig", "K*")
 
 
 def write_vocabulary(kb):

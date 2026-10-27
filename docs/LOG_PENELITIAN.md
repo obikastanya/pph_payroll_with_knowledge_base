@@ -18,7 +18,7 @@ Dokumen terkait:
 | 6 | Korpus dan dataset | selesai (sebelum jurnal ini) | `02c3e01` |
 | 3 | Spesifikasi representasi | selesai (v2) | `d00fe74`, lihat Tahap 4 |
 | 4 | Spesifikasi akuisisi dan kontrak antarmuka | selesai (v2) | (commit Tahap 4) |
-| 5 | Representasi dan *engine* | berjalan (inti selesai) | `31c3d33` |
+| 5 | Representasi dan *engine* | selesai | `31c3d33`, (commit Tahap 5), *tag* `representasi-v1` |
 | 7 | Emas $\mathcal{K}^\star_n$, $\Delta^\star_n$ | berjalan (rantai regulasi selesai) | |
 | 8 | Ruang uji dan acuan | belum | |
 | 9 | Alur akuisisi | belum | |
@@ -110,6 +110,60 @@ Mulai: 2026-10-27. *Commit* awal `31c3d33`.
 ### Bahan paper
 
 - Bagian IV/VII: implementasi engine (memo, titik tetap, resolusi), aritmetika eksak; batas ekspresivitas yang ditemui (fungsi kumulatif harus ditambahkan, contoh bahwa bahasa ekspresi perlu primitif temporal).
+
+## Tahap 5. Representasi dan *engine* (bagian 2: graf, gerbang statis, kesetaraan)
+
+Selesai: 2026-10-27.
+
+### Hasil
+
+- **Knowledge graph.** [system/ontology/ontology.ttl](../system/ontology/ontology.ttl) (OWL; ELI, PROV-O, OWL-Time, SKOS), `system/pph21kbs/kb/rdf.py` (KB ↔ RDF: satu *named graph* per pembaruan, graf `kb:meta` berisi dokumen, urutan pembaruan, adopsi, dan sidik jari setiap versi). Bolak-balik KB → TriG → KB menjaga sidik jari dan setiap nilai (termasuk baris tabel dan pecahan eksak). KB emas: `dataset/12_emas/kb.trig`, 11.357 *triple*, 24 graf.
+- **Engine membaca graf.** `check_refs.py` dan `check_legacy.py` memuat KB dari `kb.trig`, bukan dari kode sumber emas. GraphDB 11.5 (repositori `pph21`) dimuat lewat `system/pph21kbs/kb/graphdb.py`; bolak-balik lewat GraphDB juga menjaga sidik jari.
+- **G1 (SHACL).** [system/ontology/shapes.ttl](../system/ontology/shapes.ttl): 15 *shape* inti dan 12 batasan SHACL-SPARQL untuk semua butir G1.2. Validator `system/pph21kbs/kb/shacl.py` menjalankan *shape* inti dengan pyshacl dan setiap batasan SPARQL sekali atas seluruh graf (pyshacl per *focus node* butuh beberapa menit; hasilnya setara karena `$this` hanya variabel yang diikat). KB emas: 0 pelanggaran, 0,8 detik. 16 mutasi uji, satu per syarat G1, semuanya tertangkap.
+- **G3 dan pemeriksa anomali.** `system/pph21kbs/static.py`: galat (siklus dependensi yang tidak melewati aturan titik tetap, siklus `overrides`, rujukan menggantung per bulan 2012–2027, nama tak dikenal) dan peringatan (potensi konflik, aturan mati, redundan, tercakup). Pengenalan kondisi eksklusif: X/¬X, perbandingan komplementer (`a > b`/`a <= b`), kesamaan dengan konstanta berbeda. KB emas pada ω 2022–2026: 0 galat; 1 peringatan "aturan mati" per versi (2022: `REG.INPUT.ZAKAT`, zakat belum menjadi pengurang sebelum PMK 168/2023; sesudah 2023: `REG.NATURA.EXCLUDED`, fakta pencatat natura yang dikecualikan). 11 uji mutasi.
+- ***Test suite* resolusi konflik.** `system/tests/test_conflict_resolution.py`: 12 uji dengan pemenang hukum yang diketahui (*lex superior* empat peringkat, adopsi aturan pilihan, kebijakan harus disebut kasus, konflik *override* hanya bila nilai berbeda, *lex specialis* termasuk transitif dan tidak menaikkan peringkat, *lex posterior* menurut `valid_from` dan $t_c^0$, revisi tidak membuat aturan lebih baru, `UnresolvedConflict` dan `RedundantRules`, masa berlaku aturan masa dan tahun, batasan menyebut aturan perusahaan).
+- **Kelengkapan jejak.** `system/pph21kbs/engine/trace.py`: 8.310 nilai keluaran dari 50 kasus GT3, semuanya berjejak lengkap sampai kutipan sumber (22.370 simpul jejak, 0 masalah).
+- **Analisis dampak (RQ4).** [system/ontology/queries/impact_facts.rq](../system/ontology/queries/impact_facts.rq) ($F_\Delta$ dan penutup hilir lewat jalur properti `(^pph:produces/pph:reads)*`) dan `impact_policy.rq` (label a/b/c), dipanggil `system/pph21kbs/impact.py`; pembanding B5(i) `flag_all`. 3 uji.
+- **Riwayat engine (E1).** `system/tools/export_engine_history.py` → [docs/hasil/riwayat_engine.csv](hasil/riwayat_engine.csv) (21 *commit*, 19 prototipe) dan [docs/hasil/fitur_engine.csv](hasil/fitur_engine.csv) (16 kemampuan engine dan regulasi pemicunya).
+- **Gambar ontologi:** [docs/gambar/ontologi.tex](gambar/ontologi.tex) (TikZ) dan `ontologi.pdf`.
+- **Uji:** 53 lulus (`env/Scripts/python -m pytest -q -c system/pytest.ini system/tests`).
+
+### Validasi terhadap acuan (engine membaca graf)
+
+| Acuan | Kasus sama | Observasi sama | Selisih |
+|---|---|---|---|
+| GT3 (50 kasus, 2023–2026) | 50/50 | 2107/2107 | — |
+| GT1 pengembangan (32 contoh resmi; *holdout* 14 tidak dibuka) | 22/26 dibandingkan | 665/679 | 14 observasi di 4 kasus, semuanya ralat contoh resmi yang sudah dicatat transkripsi (PER-16 I.1.3 plafon biaya jabatan, I.6.2.2 selisih Rp1, PMK 10/2025 B-3 metode biaya jabatan, PMK 168 B-I.6 dasar pengali); nilai engine sama dengan hitungan koreksi di catatan transkripsi |
+| GT2 kalkulator DJP, bulanan | 15/20 | — | 5 selisih Rp1: kalkulator membuang pecahan, PER-11/PJ/2025 Pasal 129 mewajibkan rupiah terdekat (putusan sebelumnya) |
+| GT2 kalkulator DJP, tahunan (A1) | — | 90/90 baris | — |
+
+6 contoh GT1 pengembangan di luar model kasus dan tidak dibandingkan: upah mingguan (2), upah harian, rapel masa lalu, mata uang asing, natura 2016 dari pemberi kerja *deemed profit*. Rincian per observasi: `docs/hasil/acuan_gt3.csv`, `acuan_gt1_pengembangan.csv`, `acuan_gt2.csv` (`check_refs.py all --write`).
+
+### Kesetaraan dengan engine prototipe
+
+`system/tools/check_legacy.py` menjalankan engine prototipe (`engine/` + `kb/`, *tag* `prototipe-akhir`, tidak diubah) pada kasus yang sama ([docs/hasil/kesetaraan_engine_lama.csv](hasil/kesetaraan_engine_lama.csv)):
+
+| Kasus | Nilai | Sama | Berbeda, dengan penjelasan |
+|---|---|---|---|
+| GT3 | 741 | 569 | 172: putusan adjudikasi GT3 yang sudah ada (natura PMK 66/2023 54, pembulatan TER 2025–2026 menurut PER-11 114, definisi bruto masa K14 4) |
+| GT1 pengembangan | 507 | 503 | 4: definisi bruto masa termasuk bonus (K14) 2, pembulatan PPh bulanan ke bawah (K2) 1, ralat contoh resmi 1 |
+
+Tidak ada selisih yang belum dijelaskan. Engine prototipe menolak GT3-005 dan GT3-012 (*gross-up* rezim PER-16 belum dimodelkan); engine baru menghitung keduanya sama dengan GT3. Kriteria selesai Tahap 5 terpenuhi; *tag* `representasi-v1`.
+
+### Keputusan dan penyimpangan
+
+1. Jalur berkas ontologi dan kueri menjadi `system/ontology/` (spesifikasi menyebut `system/kb/`); akuisisi.md dan format_data.md disesuaikan.
+2. GT1 dibandingkan dengan premi dan iuran sebagai masukan (`premiums_as_billed`), sesuai cara contoh resmi menyatakannya. Contoh satu masa ditempatkan dalam tahun penuh yang mengulang komponen teratur, supaya masa itu bukan masa pajak terakhir.
+3. Karyawati kawin yang diberi status K/ oleh contoh resmi dianggap memiliki keterangan suami tidak berpenghasilan (tafsir K16, contoh PER-16 I.1.3).
+4. "Berhak DTP" contoh PMK 72/2025 dibandingkan dengan gabungan kelayakan padat karya dan pariwisata, karena KB memisahkan keduanya per sektor.
+5. *Tag* `engine-v1` (A1) ditunda ke pembekuan alur (Tahap 11): kebijakan perusahaan di Tahap 7 mungkin masih menuntut kemampuan engine.
+
+### Bahan paper
+
+- Bagian IV: gambar ontologi, tabel kelas dan properti, contoh *named graph* per pembaruan, kueri dampak.
+- Bagian VII (E0, validitas instrumen): tabel validasi acuan dan tabel kesetaraan di atas; uji mutasi SHACL (16/16) dan G3 (11/11) sebagai bukti gerbang menangkap pelanggaran.
+- Bagian VIII (keterbatasan): enam contoh resmi di luar model kasus; peringatan aturan mati yang disengaja.
+- E1 (bias pandangan belakang): `fitur_engine.csv`, setiap kemampuan engine dipetakan ke peristiwa yang membutuhkannya; kedua engine ditulis setelah semua peristiwa uji terbit.
 
 ---
 

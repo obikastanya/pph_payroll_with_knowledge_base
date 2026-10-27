@@ -136,6 +136,7 @@ Fakta komponen yang dapat ditetapkan kebijakan perusahaan (misalnya `thr`, `over
 | `pph:TableVersion`, `pph:TableRow` | `pph:KBElement` | versi tabel dan barisnya |
 | `pph:Constraint` | `pph:KBElement` | rekaman batasan wajib |
 | `pph:Tombstone` | `pph:KBElement` | rekaman *remove* |
+| `pph:FactDefinition` | `pph:KBElement` | rekaman definisi fakta (tipe, lingkup, keluaran); `pph:definesFact` menunjuk konsep `pph:Fact` |
 | `pph:Fact` | `skos:Concept` | konsep fakta: nama, tipe, lingkup, keluaran atau antara |
 | `pph:InputFact` | `pph:Fact` | fakta dari data kasus |
 | `pph:IncomeKind`, `pph:BenefitKind` | `skos:Concept` | jenis penghasilan dan jenis natura |
@@ -196,7 +197,7 @@ Fakta komponen yang dapat ditetapkan kebijakan perusahaan (misalnya `thr`, `over
   atribut aturan: pph:layer ∈ {Regulation, Company}, pph:modality ∈ {Mandatory, Default, Optional}, pph:scope ∈ {Period, Year}
 ```
 
-Versi gambar untuk paper dibuat dari berkas ontologi di Tahap 5 (`docs/gambar/ontologi.*`).
+Versi gambar untuk paper: [docs/gambar/ontologi.tex](../gambar/ontologi.tex) (TikZ, dikompilasi ke `ontologi.pdf`). Berkas ontologi: `system/ontology/ontology.ttl`; *shape* SHACL: `system/ontology/shapes.ttl`.
 
 **Batasan SHACL (G1).** Daftar lengkap di [akuisisi.md](akuisisi.md) bagian G1. Ringkasnya: setiap rekaman punya tepat satu `elementId`, `recordedOn`, `validFrom`; `validUntil` ≥ `validFrom`; aturan punya tepat satu `layer`, `modality`, `scope`, `produces`, `expression`; aturan perusahaan tidak boleh `mandatory`; setiap rekaman punya minimal satu sumber dengan kutipan tak kosong dan pasal yang menjadi bagian dari dokumen; `produces` merujuk `pph:Fact` yang dikenal; tabel `bracket` punya `lower` < `upper`.
 
@@ -436,3 +437,4 @@ Daftar perubahan ini adalah masukan Tahap 5.
 |---|---|---|
 | 1 | 2026-10-27 | Draf pertama |
 | 2 | 2026-10-27 | Tanggapan atas tinjauan independen (41 temuan): lapisan perusahaan per kebijakan dan tidak disaring ω; *lex posterior* menurut `valid_from` dan $t_c^0$; pemilihan parameter/tabel bernama sama; aturan tahun dipilih menurut irisan dengan tahun kerja; fakta tahun diberi masa pajak terakhir; $F_\mathit{nilai}$ dibekukan; kunci stabil laporan konflik; konvensi masukan termasuk `withholding_method`; konvensi id dan tanggal batas bulan; kunci kanonik memuat `valid_from`; hierarki peraturan tidak dipakai; penyempitan titik tetap dicatat |
+| 3 | 2026-10-27 | Implementasi Tahap 5: rekaman fakta menjadi kelas `pph:FactDefinition` (konsep `pph:Fact` tetap `skos:Concept`); properti tambahan untuk serialisasi tanpa kehilangan (`pph:seq`, `pph:order`, `pph:overridesEntry`/`pph:targetId`, `pph:hasRow`/`pph:cell`/`pph:column`, `pph:rowsRef`, `pph:valueType`); tipe data `pph:fraction` (pecahan tak berhingga desimalnya) dan `pph:null` (batas atas terbuka); fungsi `cumulative`/`cumulative_before` (§6.3) |

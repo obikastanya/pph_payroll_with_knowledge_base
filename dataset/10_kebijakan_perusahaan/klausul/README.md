@@ -30,19 +30,19 @@ Ekstraksi klausul PKB yang memengaruhi upah atau PPh 21. Satu berkas CSV per dok
 
 | Id | Kode | Status | Regulasi pembanding | Peristiwa |
 |---|---|---|---|---|
-| WIKA-4-36 (juga WIKA-32-4, WIKA-89-2) | C8 (dasar upah iuran dipersempit); C10 untuk dasar pesangon | laten | PP 44/2015 Ps 19 hlm. 13; PP 46/2015 Ps 17 hlm. 11; PP 45/2015 Ps 29 ayat (1) hlm. 21; UU 13/2003 Ps 157 jo. UU 6/2023 | - |
+| WIKA-4-36 (juga WIKA-32-4, WIKA-89-2) | C8 (dasar upah iuran dipersempit); C10 untuk dasar pesangon | laten | PP 44/2015 Ps 19 hlm. 13; PP 46/2015 Ps 17 hlm. 11; PP 45/2015 Ps 29 ayat (1) hlm. 21; PP 36/2021 Ps 66 ayat (1) hlm. 42 (menyatakan ulang UU 13/2003 Ps 157 jo. UU 6/2023) | - |
 | WIKA-22-3, WIKA-P22-3 | C4 | laten | PMK 10/2025 Ps 5 ayat (1) hlm. 6; PMK 105/2025 Ps 5 ayat (1) hlm. 6 | - (E06, E10, E11 tidak mencakup konstruksi) |
-| WIKA-31-4 | C10 | laten | Permenaker 6/2016 Ps 2 ayat (1), Ps 3 ayat (1) | - |
-| WIKA-31-8 | C10 | laten | Permenaker 6/2016 Ps 7 ayat (1); PP 35/2021 Ps 36 | - |
+| WIKA-31-4 | C10 | laten | Permenaker 6/2016 Ps 2 ayat (1) hlm. 3, Ps 3 ayat (1) hlm. 4 | - |
+| WIKA-31-8 | C10 | laten | Permenaker 6/2016 Ps 7 ayat (1) hlm. 6; PP 35/2021 Ps 36 huruf i hlm. 23 | - |
 | CENTEX-33-3a | C6 | terpicu perubahan | PP 7/2025 Ps 4 ayat (1) huruf c hlm. 4; PP 36/2025 Ps 10A hlm. 4 | E07, E09 |
 | CENTEX-33-4 | C6 | laten | PP 44/2015 Ps 9 ayat (3) hlm. 7; PP 46/2015 Ps 10 ayat (3) hlm. 7; PP 45/2015 Ps 12 hlm. 9 | - |
-| TKG-53-3 | C10 | laten | Permenaker 6/2016 Ps 2 ayat (1), Ps 3 ayat (1) | - |
-| TKG-76 | C10 | laten | PP 35/2021 Ps 40 ayat (2) | - |
-| SANSAN-34-2 | C10 | laten | UU 13/2003 Ps 93 ayat (3) (dirujuk PKB sendiri) | - |
-| SANSAN-41-2 | C10 | laten | Permenaker 6/2016 Ps 2 ayat (1), Ps 3 ayat (1) | - |
-| SANSAN-92-2 | C10 | laten | UU 13/2003 Ps 157 ayat (1) jo. UU 6/2023; PP 35/2021 Ps 40 | - |
+| TKG-53-3 | C10 | laten | Permenaker 6/2016 Ps 2 ayat (1) hlm. 3, Ps 3 ayat (1) hlm. 4 | - |
+| TKG-76 | C10 | laten | PP 35/2021 Ps 40 ayat (2) hlm. 25-26 | - |
+| SANSAN-34-2 | C10 | laten | UU 13/2003 Ps 93 ayat (3) hlm. 37-38 (dirujuk PKB sendiri); PP 36/2021 Ps 41 ayat (1) hlm. 29 | - |
+| SANSAN-41-2 | C10 | laten | Permenaker 6/2016 Ps 2 ayat (1) hlm. 3, Ps 3 ayat (1) hlm. 4 | - |
+| SANSAN-92-2 | C10 | laten | PP 36/2021 Ps 66 ayat (1) hlm. 42 (menyatakan ulang UU 13/2003 Ps 157 ayat (1) jo. UU 6/2023); PP 35/2021 Ps 40 hlm. 25-27 | - |
 
-Satu-satunya konflik dengan aturan PPh 21/BPJS yang dipicu peristiwa uji adalah CENTEX-33-3a. WIKA menahan insentif pajak secara eksplisit tetapi sektornya tidak eligible. Regulasi ketenagakerjaan (Permenaker 6/2016, PP 35/2021, PP 36/2021, UU 13/2003 dan perubahannya) tidak disimpan di `dataset/01_regulasi/`; rujukannya tanpa halaman PDF.
+Satu-satunya konflik dengan aturan PPh 21/BPJS yang dipicu peristiwa uji adalah CENTEX-33-3a. WIKA menahan insentif pajak secara eksplisit tetapi sektornya tidak eligible. Regulasi ketenagakerjaan (Permenaker 6/2016, PP 35/2021, PP 36/2021, UU 13/2003) dan PP 68/2009 disimpan di `dataset/01_regulasi/pendukung/`; halaman PDF di atas mengikuti penomoran berkas di sana. Perubahan PP 36/2021 oleh PP 51/2023 (Ps 24-35, 81) dan PP 49/2025 (Ps 4, 5, 21, 25-35, 49, 69, 71) juga disimpan di sana dan tidak mengubah Ps 7, 41, dan 66 yang dirujuk. Perubahan UU 13/2003 oleh UU 6/2023 tidak disimpan; ketentuan UU 13/2003 yang diubah dirujuk lewat PP pelaksana yang menyatakannya ulang (dasar pesangon: PP 36/2021 Ps 66; upah sakit: PP 36/2021 Ps 41).
 
 Klausul yang tampak berkonflik tetapi diputuskan `tidak`:
 
@@ -57,7 +57,7 @@ Klausul yang tampak berkonflik tetapi diputuskan `tidak`:
 |---|---|---|
 | PPh ditanggung perusahaan (2024 dst.) | kenikmatan objek PPh 21, *full gross-up* | PMK 168/2023 Lampiran B Bagian Kedua I.4, PDF hlm. 44; tafsir K3-K4 |
 | DTP pada metode ditanggung atau *gross* | PPh DTP tidak menjadi beban perusahaan (tanpa *gross-up*); nilainya dibayar tunai dan bukan penghasilan | PMK 168/2023 Ps 7 huruf h, PDF hlm. 10; PMK 10/2025 dan PMK 105/2025 Ps 5 ayat (1)-(2), PDF hlm. 6 |
-| Uang pesangon, UPMK, uang penggantian hak, uang pisah, santunan karena pegawai meninggal | PPh 21 final PP 68/2009, di luar TER dan Pasal 17 | PP 68/2009 Ps 1-2 (di luar dataset); PER-16/PJ/2016 Ps 18, PDF hlm. 15 |
+| Uang pesangon, UPMK, uang penggantian hak, uang pisah, santunan karena pegawai meninggal | PPh 21 final PP 68/2009, di luar TER dan Pasal 17 | PP 68/2009 Ps 1 angka 4, Ps 2 ayat (1), Ps 4, PDF hlm. 2-4; PER-16/PJ/2016 Ps 18, PDF hlm. 15 |
 | THR yang dibayar setelah hubungan kerja berakhir | penghasilan Mantan Pegawai, tarif Pasal 17 x bruto | PMK 168/2023 Ps 5 ayat (1) huruf h, Ps 12 ayat (8), Ps 16 ayat (6), PDF hlm. 8, 14, 17 |
 | Potongan upah karena mangkir atau sanksi | mengurangi bruto | PMK 168/2023 Ps 8 ayat (2) huruf a, PDF hlm. 10 |
 | Upah/lembur bulan M yang dibayar awal bulan M+1 | Masa Pajak M | PMK 168/2023 Ps 19 ayat (1) huruf a, PDF hlm. 20 |

@@ -43,7 +43,7 @@ PT Wijaya Karya (konstruksi, BUMN), 2025-03-01 s.d. 2026-12-31
 | 3 | Premi JKM pemberi kerja 0,30% x 12000000 | 36.000 | PP 44/2015 Ps 18 ayat (1) (PDF hlm. 13) |
 | 4 | Premi JKN pemberi kerja 4% x min(12000000, 12.000.000) | 480.000 | Perpres 75/2019 Pasal I angka 2-3 (Ps 30 ayat (2), Ps 32 ayat (1)) (PDF hlm. 2-3); batas upah Rp12.000.000 |
 | 5 | Bruto teratur sebulan tanpa PPh ditanggung = THP + premi JKK + JKM + JKN | 18.668.400 | PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10) |
-| 6 | Masa kerja (bulan penuh sampai hari raya) | 6 | WIKA-31-4; Permenaker 6/2016 Ps 3 ayat (1) huruf b (tidak ada di dataset) |
+| 6 | Masa kerja (bulan penuh sampai hari raya) | 6 | WIKA-31-4; Permenaker 6/2016 Ps 3 ayat (1) huruf b (PDF hlm. 4) |
 | 7 | THR = masa kerja / 12 x THP | 9.000.000 | WIKA-31-4 |
 | 8 | Bruto Maret sebelum PPh ditanggung (X) = bruto teratur + THR | 27.668.400 | PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10) |
 | 9 | PPh 21 Maret ditanggung Perusahaan: titik tetap terkecil T = R(TER(X + T) x (X + T)) dengan X = 27668400; bruto X + T = 31802759 masuk lapisan TER kategori A di atas 30050000 s.d. 32400000 = 13% | 4.134.359 | PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); k… |
@@ -68,7 +68,7 @@ PT Wijaya Karya (konstruksi, BUMN), 2025-03-01 s.d. 2026-12-31
 
 1. Cara menghitung masa kerja: bulan penuh vs pecahan bulan (PKB tidak menjelaskan) - bagaimana praktik Anda?
 
-   Jawaban: Masa kerja dihitung dalam bulan penuh yang telah dilalui sampai hari raya (Permenaker 6/2016 Ps 3 ayat (1) huruf b: 'masa kerja/12 x 1 bulan upah'); pecahan bulan tidak dihitung.
+   Jawaban: Masa kerja dihitung dalam bulan penuh yang telah dilalui sampai hari raya (Permenaker 6/2016 Ps 3 ayat (1) huruf b, PDF hlm. 4: masa kerja/12 x 1 (satu) bulan upah, tanpa aturan pecahan bulan); pecahan bulan tidak dihitung.
 
 2. Apakah PPh yang ditanggung perusahaan harus ditambahkan ke bruto (gross-up) atau tidak (net); contoh memakai net - bagaimana praktik Anda?
 
@@ -217,7 +217,7 @@ Setuju? / koreksi (keseluruhan contoh): dikoreksi: gross-up. PPh Februari 7.763.
 - THR 1 x THP dibayar Maret 2025; uang cuti 1 x FP dibayar Juli (bulan tanggal masuk); tidak ada penghasilan lain
 - Pegawai tetap di Indonesia: neto tidak disetahunkan, PTKP penuh (PMK 168/2023 Ps 15 ayat (3) hanya untuk kewajiban subjektif yang mulai/berakhir)
 - Biaya jabatan bagian tahun = min(5% x bruto, 10 x Rp500.000) (tafsir K6)
-- Uang pisah dikenai PPh 21 final PP 68/2009 dan tidak masuk perhitungan TER/Pasal 17
+- Uang pisah dikenai PPh 21 final PP 68/2009 (Ps 1 angka 4, Ps 2 ayat (1), PDF hlm. 2-3) dan tidak masuk perhitungan TER/Pasal 17
 - Masa Pajak Terakhir (Oktober): PPh ditanggung = titik tetap PPh setahun - PPh Jan-Sep; bila lebih potong, PPh ditanggung Oktober = 0 dan kelebihan dikembalikan (tafsir K3 butir 2)
 
 <details><summary>Langkah hitung (setelah koreksi)</summary>
@@ -230,7 +230,7 @@ Setuju? / koreksi (keseluruhan contoh): dikoreksi: gross-up. PPh Februari 7.763.
 | 4 | Premi JKN pemberi kerja 4% x min(12000000, 12.000.000) | 480.000 | Perpres 75/2019 Pasal I angka 2-3 (Ps 30 ayat (2), Ps 32 ayat (1)) (PDF hlm. 2-3); batas upah Rp12.000.000 |
 | 5 | Bruto teratur sebulan tanpa PPh ditanggung | 18.668.400 | PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 10) |
 | 6 | Uang pisah masa kerja 7 tahun 4 bulan (pita >6 s.d. 9 tahun) = 3 x FP | 36.000.000 | WIKA-90-1 |
-| 7 | PPh 21 final uang pisah: lapisan 0% (s.d. Rp50.000.000) | 0 | PPh 21 final uang pesangon: PP 68/2009 Ps 1-2 (tidak ada di dataset/01_regulasi), lapisan 0% s.d. Rp50.000.000; dipisahkan dari TER dan Pasal 17 (PER… |
+| 7 | PPh 21 final uang pisah: lapisan 0% (s.d. Rp50.000.000) | 0 | PPh 21 final uang pesangon: PP 68/2009 Ps 1 angka 4 dan Ps 2 ayat (1) (PDF hlm. 2-3), lapisan 0% s.d. Rp50.000.000 (Ps 4 huruf a, PDF hlm. 4); dipisa… |
 | 8 | PPh 21 bulan tanpa penghasilan tidak teratur (ditanggung): titik tetap terkecil T = R(TER(X + T) x (X + T)) dengan X = 18668400; bruto X + T = 20514725 masuk lapisan TER kategori A di atas 19750000 s.d. 24150000 = 9% | 1.846.325 | PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); k… |
 | 9 | PPh 21 Maret, gaji + THR 18.000.000 (ditanggung): titik tetap terkecil T = R(TER(X + T) x (X + T)) dengan X = 36668400; bruto X + T = 43652857 masuk lapisan TER kategori A di atas 39100000 s.d. 43850000 = 16% | 6.984.457 | PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -4- (PDF hlm. 14); k… |
 | 10 | PPh 21 Juli, gaji + uang cuti 12.000.000 (ditanggung): titik tetap terkecil T = R(TER(X + T) x (X + T)) dengan X = 30668400; bruto X + T = 36080471 masuk lapisan TER kategori A di atas 35400000 s.d. 39100000 = 15% | 5.412.071 | PMK 168/2023 Ps 15 ayat (1) huruf a (PDF hlm. 15); PP 58/2023 Lampiran huruf A (Tarif Efektif Bulanan Kategori A), hlm. lampiran -3- (PDF hlm. 13); k… |
@@ -269,7 +269,7 @@ Setuju? / koreksi (keseluruhan contoh): dikoreksi: gross-up. PPh Februari 7.763.
 
 3. Perlakuan PPh uang pisah (PPh final pesangon atau PPh 21 tidak teratur) - bagaimana praktik Anda?
 
-   Jawaban: Uang pisah = uang pesangon dalam arti PP 68/2009 Ps 1 ('dengan nama dan dalam bentuk apa pun sehubungan dengan berakhirnya masa kerja'): PPh 21 final, 0% untuk Rp36.000.000.
+   Jawaban: Uang pisah = uang pesangon dalam arti PP 68/2009 Ps 1 angka 4, PDF hlm. 2 ('dengan nama dan dalam bentuk apapun, sehubungan dengan berakhirnya masa kerja'): PPh 21 final, 0% untuk Rp36.000.000 (Ps 4 huruf a, PDF hlm. 4).
 
 4. Sisa cuti: Ps 52 ayat 7 hanya untuk PHK huruf d-j; untuk pengunduran diri Ps 52 ayat 8 mengompensasikan dengan manfaat dana pensiun (tidak dihitung) - bagaimana praktik Anda?
 
@@ -442,7 +442,7 @@ Setuju? / koreksi (keseluruhan contoh): ya
 
 1. Ps 24 tidak memuat prorata dan merujuk 'Kesepakatan Bersama 26 Januari 2000' yang tidak tersedia; pembanding prorata 3.025.000 - bagaimana praktik Anda?
 
-   Jawaban: Ps 24 dibaca harfiah: 120% x satu bulan upah bagi masa kerja >= 1 bulan, tanpa prorata. Lebih tinggi dari minimum Permenaker 6/2016, jadi bukan konflik; isi Kesepakatan Bersama 26 Januari 2000 tidak tersedia dan tidak dipakai.
+   Jawaban: Ps 24 dibaca harfiah: 120% x satu bulan upah bagi masa kerja >= 1 bulan, tanpa prorata. Lebih tinggi dari minimum Permenaker 6/2016 (Ps 3 ayat (1), PDF hlm. 4; Ps 4, PDF hlm. 5), jadi bukan konflik; isi Kesepakatan Bersama 26 Januari 2000 tidak tersedia dan tidak dipakai.
 
 2. Komponen 'satu bulan upah' untuk THR tidak dirinci - bagaimana praktik Anda?
 
@@ -623,7 +623,7 @@ PT Airfast Aviation Facilities / AVCO (jasa penerbangan), 2024-04-01 s.d. 2026-0
 
 1. 'Upah bulanan' (Ps 22 ayat 3a) tidak didefinisikan - bagaimana praktik Anda?
 
-   Jawaban: 'Upah bulanan' = upah (Lampiran III angka 3; Ps 1 angka 83), dengan dasar lembur upah pokok + tunjangan tetap (PP 35/2021 Ps 32, di luar dataset); bagi Pratama = upah pokok.
+   Jawaban: 'Upah bulanan' = upah (Lampiran III angka 3; Ps 1 angka 83), dengan dasar lembur upah pokok + tunjangan tetap (PP 35/2021 Ps 32 ayat (1)-(3), PDF hlm. 20; dasar 75% dari keseluruhan upah menurut ayat (4) hanya bila upah pokok + tunjangan tetap < 75% upah, tidak terjadi pada contoh ini); bagi Pratama = upah pokok.
 
 2. Pola 5-2 di Lampiran III memakai pengali 2/3/4 untuk jam 1-7/8/9+ (lebih tinggi dari pola 5 hari umum); contoh mengikuti PKB - bagaimana praktik Anda?
 
@@ -681,7 +681,7 @@ Setuju? / koreksi (keseluruhan contoh): dikoreksi: pembulatan 2025: PPh Mei 942.
 
 1. Rumus prorata THR tidak ditulis di PKB - bagaimana praktik Anda?
 
-   Jawaban: 'Proporsional' = masa kerja (bulan penuh sampai hari raya)/12 x THR penuh (Permenaker 6/2016 Ps 3 ayat (1) huruf b).
+   Jawaban: 'Proporsional' = masa kerja (bulan penuh sampai hari raya)/12 x THR penuh (Permenaker 6/2016 Ps 3 ayat (1) huruf b, PDF hlm. 4).
 
 2. Pembulatan THR - bagaimana praktik Anda?
 
@@ -861,7 +861,7 @@ PT TKG Taekwang Indonesia (alas kaki), 2024-03 s.d. 2026-03-28
 
 1. Masa kerja tepat 1 bulan tidak tercakup ('lebih dari 1 bulan') - C10 laten - bagaimana praktik Anda?
 
-   Jawaban: Syarat 'lebih dari 1 bulan' (Ps 53 ayat 3) di bawah Permenaker 6/2016 Ps 2 ayat (1) untuk masa kerja tepat 1 bulan: C10 laten; pegawai B (5 bulan) tidak terdampak.
+   Jawaban: Syarat 'lebih dari 1 bulan' (Ps 53 ayat 3) di bawah Permenaker 6/2016 Ps 2 ayat (1) (PDF hlm. 3) untuk masa kerja tepat 1 bulan: C10 laten; pegawai B (5 bulan) tidak terdampak.
 
 2. Tingkat risiko JKK dan status keringanan perusahaan - bagaimana praktik Anda?
 
@@ -885,7 +885,7 @@ Setuju? / koreksi (keseluruhan contoh): ya untuk nilai; pembanding 'PPh dipotong
 - Dasar iuran BPJS = gaji pokok + tunjangan tetap
 - PPh 21 metode gross (Ps 46); KLU alas kaki eligible DTP 2025 dan 2026
 - PPh TER Masa 2025 dibulatkan ke rupiah terdekat (tafsir K1)
-- Jam ke-4 hari kerja dibayar 2x: Ps 44 ayat 1 merujuk peraturan perundang-undangan (PP 35/2021 Ps 31)
+- Jam ke-4 hari kerja dibayar 2x: Ps 44 ayat 1 merujuk peraturan perundang-undangan (PP 35/2021 Ps 31 ayat (1) huruf b, PDF hlm. 19)
 - Dibulatkan ke rupiah terdekat
 
 <details><summary>Langkah hitung (setelah koreksi)</summary>
@@ -893,7 +893,7 @@ Setuju? / koreksi (keseluruhan contoh): ya untuk nilai; pembanding 'PPh dipotong
 | No | Uraian | Hasil | Sumber |
 |---|---|---|---|
 | 1 | Upah lembur per jam = 3.700.000 / 173 | 21.387,28 | TKG-44-2 |
-| 2 | Hari kerja 4 jam: (1,5 + 2 + 2 + 2) x upah per jam | 160.405 | TKG-44-3a; jam ke-4 melalui Ps 44 ayat 1: PP 35/2021 Ps 31 (di luar dataset) |
+| 2 | Hari kerja 4 jam: (1,5 + 2 + 2 + 2) x upah per jam | 160.405 | TKG-44-3a; jam ke-4 melalui Ps 44 ayat 1: PP 35/2021 Ps 31 ayat (1) huruf b (PDF hlm. 19) |
 | 3 | Pembanding: bagian yang tertulis di Ps 44 ayat 3 huruf a (jam 1-3): 5,5 x upah per jam | 117.630 | TKG-44-3a |
 | 4 | Hari istirahat pola 5 hari, 10 jam: (8 x 2 + 3 + 4) x upah per jam | 491.908 | TKG-44-3b |
 
@@ -1050,7 +1050,7 @@ PT Sansan Saudaratex Jaya (garmen/tekstil), 2021-09-23 s.d. 2024-09-23
 |---|---|---|---|
 | 1 | THR pegawai A = 8/12 x 3.700.000 (dibulatkan) | 2.466.667 | SANSAN-41-2 |
 | 2 | THR pegawai B menurut PKB (masa kerja tidak 'lebih dari 1 bulan') | 0 | SANSAN-41-2 |
-| 3 | THR pegawai B menurut Permenaker 6/2016 = 1/12 x upah (dibulatkan) | 308.333 | Permenaker 6/2016 Ps 2-3 (tidak di dataset) |
+| 3 | THR pegawai B menurut Permenaker 6/2016 = 1/12 x upah (dibulatkan) | 308.333 | Permenaker 6/2016 Ps 2 ayat (1) dan Ps 3 ayat (1) huruf b (PDF hlm. 3-4) |
 | 4 | Premi hadir A (nilai yang ditetapkan, di bawah batas Ps 37 ayat 2) | 740.000 | SANSAN-37-2 |
 | 5 | Uang makan 22 x 15.000 | 330.000 | SANSAN-36-1 |
 | 6 | Premi JKK pemberi kerja 0.24% x 3700000 | 8.880 | SANSAN-52-2a; PP 44/2015 Ps 16 ayat (1) (PDF hlm. 12); masuk bruto: PMK 168/2023 Ps 5 ayat (3) huruf a-b, d-e (PDF hlm. 9); Ps 8 ayat (2) (PDF hlm. 1… |
@@ -1080,11 +1080,11 @@ PT Sansan Saudaratex Jaya (garmen/tekstil), 2021-09-23 s.d. 2024-09-23
 
 1. 'lebih dari 1 bulan' vs 'sekurang-kurangnya 1 bulan' (C10 laten) - bagaimana praktik Anda?
 
-   Jawaban: Syarat 'lebih dari 1 bulan' tidak mencakup masa kerja tepat 1 bulan, sedangkan Permenaker 6/2016 Ps 2 ayat (1) memberi hak sejak masa kerja 1 bulan: C10 laten; nilai yang wajib dibayar 308.333.
+   Jawaban: Syarat 'lebih dari 1 bulan' tidak mencakup masa kerja tepat 1 bulan, sedangkan Permenaker 6/2016 Ps 2 ayat (1) (PDF hlm. 3) memberi hak sejak masa kerja 1 bulan: C10 laten; nilai yang wajib dibayar 308.333.
 
 2. Masa kerja dihitung sampai hari raya atau sampai tanggal pembayaran - bagaimana praktik Anda?
 
-   Jawaban: Masa kerja dihitung sampai hari raya (Permenaker 6/2016 Ps 2 ayat (1) dan Ps 3 ayat (1)).
+   Jawaban: Masa kerja dihitung sampai hari raya: THR adalah pendapatan yang dibayarkan menjelang hari raya (Permenaker 6/2016 Ps 1 angka 1, PDF hlm. 2) dan besarnya ditentukan masa kerja (Ps 2 ayat (1) dan Ps 3 ayat (1), PDF hlm. 3-4); karena pasal tidak menyebut tanggal hitung, hari raya dipakai sebagai titik hitung.
 
 Setuju? / koreksi (keseluruhan contoh): ya (premi hadir 740.000 dicatat sebagai nilai yang ditetapkan, di bawah batas 925.000)
 
@@ -1129,7 +1129,7 @@ Setuju? / koreksi (keseluruhan contoh): ya (premi hadir 740.000 dicatat sebagai 
 
 1. Pembacaan mana yang dimaksud; contoh tidak memilih, keduanya dicatat sebagai nilai acuan bersyarat - bagaimana praktik Anda?
 
-   Jawaban: Dibaca harfiah: '20% dari upah pokok dan premi hadir' = 20% dari jumlah keduanya (pola rumusan '75% dari jumlah upah pokok dan tunjangan tetap', UU 13/2003 Ps 94), sehingga premi <= 25% x upah pokok = 925.000.
+   Jawaban: Dibaca harfiah: '20% dari upah pokok dan premi hadir' = 20% dari jumlah keduanya (pola rumusan '75% dari jumlah upah pokok dan tunjangan tetap', UU 13/2003 Ps 94, PDF hlm. 38), sehingga premi <= 25% x upah pokok = 925.000.
 
 Setuju? / koreksi (keseluruhan contoh): dikoreksi: pembacaan harfiah dipilih (batas 20% x (upah pokok + premi) = 925.000; absen 1 hari 462.500); pembacaan 20% x upah pokok dikeluarkan dari nilai harapan
 
@@ -1212,7 +1212,7 @@ Setuju? / koreksi (keseluruhan contoh): dikoreksi: klausul JP bukan konflik C8; 
 **Asumsi (setelah koreksi):**
 
 - UMK berjalan tidak ada di dataset; contoh memakai UMK ilustrasi Rp3.241.929 yang mereproduksi tujuh baris lain dengan pembulatan ke rupiah terdekat
-- Uang pisah dikenai PPh 21 final PP 68/2009 (uang pesangon dalam arti luas)
+- Uang pisah dikenai PPh 21 final PP 68/2009 (uang pesangon dalam arti luas, Ps 1 angka 4, PDF hlm. 2)
 
 <details><summary>Langkah hitung (setelah koreksi)</summary>
 
@@ -1224,11 +1224,11 @@ Setuju? / koreksi (keseluruhan contoh): dikoreksi: klausul JP bukan konflik C8; 
 | 4 | Uang pisah = 1,6 x UMK (dibulatkan ke rupiah) | 5.187.086 | SANSAN-L2 |
 | 5 | Angka tercetak di ilustrasi untuk faktor 1,6 | 5.192.086 | SANSAN-L2 |
 | 6 | Selisih angka tercetak - rumus (salah ketik) | 5.000 | SANSAN-L2 |
-| 7 | PPh 21 final uang pisah: lapisan 0% (s.d. Rp50.000.000) | 0 | PPh 21 final uang pesangon: PP 68/2009 Ps 1-2 (tidak ada di dataset/01_regulasi), lapisan 0% s.d. Rp50.000.000; dipisahkan dari TER dan Pasal 17 (PER… |
+| 7 | PPh 21 final uang pisah: lapisan 0% (s.d. Rp50.000.000) | 0 | PPh 21 final uang pesangon: PP 68/2009 Ps 1 angka 4 dan Ps 2 ayat (1) (PDF hlm. 2-3), lapisan 0% s.d. Rp50.000.000 (Ps 4 huruf a, PDF hlm. 4); dipisa… |
 
 </details>
 
-**Di mana PPh 21 masuk:** Tidak masuk TER/Pasal 17: uang pisah dikenai PPh 21 final PP 68/2009 (0% untuk nilai ini)
+**Di mana PPh 21 masuk:** Tidak masuk TER/Pasal 17: uang pisah dikenai PPh 21 final PP 68/2009 (0% untuk nilai ini, Ps 4 huruf a)
 
 | Nilai harapan | Rp | Setuju? / koreksi |
 |---|---|---|
@@ -1247,7 +1247,7 @@ Setuju? / koreksi (keseluruhan contoh): dikoreksi: klausul JP bukan konflik C8; 
 
    Jawaban: Saat dipakai, UMK yang berlaku adalah UMK tahun berjalan kota unit produksi (catatan Lampiran angka 2).
 
-Putusan tambahan: Uang pisah = uang pesangon dalam arti PP 68/2009 Ps 1: PPh 21 final, 0% s.d. Rp50 juta.
+Putusan tambahan: Uang pisah = uang pesangon dalam arti PP 68/2009 Ps 1 angka 4 (PDF hlm. 2): PPh 21 final, 0% s.d. Rp50 juta (Ps 4 huruf a, PDF hlm. 4).
 
 Setuju? / koreksi (keseluruhan contoh): dikoreksi: UMK ilustrasi Rp3.241.929 (bukan 1.945.157/0,6): uang pisah 5.187.085 -> 5.187.086, selisih ilustrasi 5.001 -> 5.000 (salah ketik); PPh final 0 ditambahkan
 
@@ -1267,7 +1267,7 @@ Setuju? / koreksi (keseluruhan contoh): dikoreksi: UMK ilustrasi Rp3.241.929 (bu
 
 4. **Pesangon dan uang pisah.** Apakah uang pisah dikenai PPh 21 final pesangon (PP 68/2009) atau PPh 21 biasa sebagai penghasilan tidak teratur?
 
-   Jawaban: PPh 21 final PP 68/2009. Uang pesangon didefinisikan sebagai penghasilan 'dengan nama dan dalam bentuk apa pun sehubungan dengan berakhirnya masa kerja atau terjadi pemutusan hubungan kerja', termasuk UPMK dan uang penggantian hak, sehingga uang pisah tercakup. Tarif 0% s.d. Rp50 juta, 5% di atas Rp50-100 juta, 15% di atas Rp100-500 juta, 25% di atasnya. Penghasilan ini dipisahkan dari TER dan Pasal 17 (PER-16/PJ/2016 Ps 18, PDF hlm. 15). Contoh WIKA-04 dan SANSAN-04 kini memuat PPh final 0.
+   Jawaban: PPh 21 final PP 68/2009 (Ps 2 ayat (1), PDF hlm. 3). Uang pesangon didefinisikan sebagai penghasilan 'dengan nama dan dalam bentuk apapun, sehubungan dengan berakhirnya masa kerja atau terjadi pemutusan hubungan kerja, termasuk uang penghargaan masa kerja dan uang penggantian hak' (Ps 1 angka 4, PDF hlm. 2), sehingga uang pisah tercakup. Tarif (Ps 4, PDF hlm. 4) 0% s.d. Rp50 juta, 5% di atas Rp50-100 juta, 15% di atas Rp100-500 juta, 25% di atasnya. Penghasilan ini dipisahkan dari TER dan Pasal 17 (PER-16/PJ/2016 Ps 18, PDF hlm. 15). Contoh WIKA-04 dan SANSAN-04 kini memuat PPh final 0.
 
 ## Hasil
 

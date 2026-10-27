@@ -1,6 +1,6 @@
 # Panduan pemeriksa: perubahan tak terlihat U01–U16
 
-Pemeriksa: pakar *payroll* · Status: **selesai** (2026-10-27)
+Status: **selesai** (2026-10-27)
 
 > **DOKUMEN FIKTIF UNTUK PENELITIAN.** Semua peraturan, surat keputusan, dan PKB dalam folder ini adalah rekaan. Dokumen-dokumen itu tidak berlaku dan tidak boleh dipakai untuk menghitung pajak sungguhan.
 

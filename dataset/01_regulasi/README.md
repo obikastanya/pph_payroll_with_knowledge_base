@@ -44,6 +44,8 @@ Disusun 2026-10-01. Semua berkas PDF diverifikasi: diawali `%PDF`, jumlah halama
 
 Berkas turunan lain: `ocr/PER_16_PJ_2016_ocr.txt` (OCR Tesseract bahasa Indonesia; teks mesin, bisa salah baca).
 
+Regulasi pendukung lapisan kebijakan perusahaan ada di `pendukung/` (diunduh `dataset/unduh_dataset.py`, manifes di `manifest_tambahan.csv`): PP 68/2009 (PPh 21 final pesangon), Permenaker 6/2016 (THR), PP 35/2021 (lembur, PHK, pesangon), PP 36/2021 (pengupahan; hasil pindai, teks OCR: `ocr/PP_36_2021_pengupahan_ocr.txt`) beserta perubahannya PP 51/2023 dan PP 49/2025, dan UU 13/2003 (ketenagakerjaan). Dipakai untuk klausul PKB dan GT5, bukan dokumen masukan akuisisi.
+
 ## 2. Tabel parameter (`tables/`, CSV UTF-8)
 
 | Berkas | Isi | Verifikasi |

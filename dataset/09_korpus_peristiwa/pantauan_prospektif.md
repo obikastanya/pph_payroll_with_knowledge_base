@@ -1,6 +1,6 @@
 # Pantauan peristiwa prospektif
 
-Disusun 2026-10-27 (RENCANA_DATASET.md, D26). Peristiwa prospektif adalah perubahan yang terbit **sesudah tanggal pra-registrasi**. Peristiwa ini bebas kontaminasi data latih, karena terbit setelah *cutoff* kedua model (Claude Opus 5.5: Juni 2026; GPT-6 Astra: 30 April 2026; lihat [model_cutoff.csv](model_cutoff.csv)), dan tidak pernah dilihat perancang sistem.
+Disusun 2026-10-27 (RENCANA_DATASET.md, D26). Peristiwa prospektif adalah perubahan yang terbit **sesudah tanggal pra-registrasi**. Peristiwa ini bebas kontaminasi data latih, karena terbit setelah *cutoff* kedua model (Claude Opus 5.5: Juni 2026; GPT-6.1 Sol: 30 April 2026; lihat [model_cutoff.csv](model_cutoff.csv)), dan tidak pernah dilihat perancang sistem.
 
 Saat ini **tidak ada peristiwa uji yang terbit sesudah kedua *cutoff***: peristiwa uji terakhir terbit 25 Februari 2026 (E12). Karena itu analisis kontaminasi bergantung pada dokumen kontrafaktual dan pada peristiwa di daftar ini.
 

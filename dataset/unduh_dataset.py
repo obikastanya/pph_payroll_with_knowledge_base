@@ -2,8 +2,8 @@
 
     env\\Scripts\\python dataset\\unduh_dataset.py
 
-- Regulasi resmi (JDIH BPK, JDIH Kemenkeu, pajak.go.id, BPJS) masuk ke 01_regulasi/pengecoh/ dan
-  01_regulasi/pengembangan/ dan di-commit: peraturan perundang-undangan tidak dilindungi hak cipta (UU 28/2014 Ps. 42).
+- Regulasi resmi (JDIH BPK, JDIH Kemenkeu, pajak.go.id, BPJS) masuk ke 01_regulasi/pengecoh/, pengembangan/, dan
+  pendukung/ dan di-commit: peraturan perundang-undangan tidak dilindungi hak cipta (UU 28/2014 Ps. 42).
 - Dokumen kebijakan perusahaan masuk ke 10_kebijakan_perusahaan/dokumen/ dan TIDAK di-commit (salinan pihak ketiga
   bertanda hak cipta). Yang di-commit hanya manifes: URL, tanggal akses, ukuran, dan SHA-256.
 Berkas yang sudah ada tidak diunduh ulang. Setiap PDF diperiksa: diawali %PDF dan jumlah halaman > 0.
@@ -51,6 +51,16 @@ REGULASI = {
         "PP_49_2020_relaksasi_BPJSTK.pdf": "https://www.bpjsketenagakerjaan.go.id/assets/uploads/peraturan/Salinan_PP_Nomor_49_Tahun_2020.pdf",
         "PMK_149_PMK03_2021.pdf": BPK + "178670/149_PMK.03_2021-compressed.pdf",
         "PMK_3_PMK03_2022.pdf": BPK + "206815/3_PMK.03_2022.pdf",
+    },
+    # Dirujuk lapisan kebijakan perusahaan (klausul PKB, GT5): pajak pesangon dan hak minimum ketenagakerjaan.
+    "pendukung": {
+        "PP_68_2009_PPh21_pesangon.pdf": BPK + "36688/PP_No_68_2009.pdf",
+        "Permenaker_6_2016_THR.pdf": BPK + "252116/Kemnaker%20No.%206%20Tahun%202016.pdf",
+        "PP_35_2021_PKWT_PHK.pdf": BPK + "154582/PP%20Nomor%2035%20Tahun%202021.pdf",
+        "PP_36_2021_pengupahan.pdf": BPK + "154587/PP%20Nomor%2036%20Tahun%202021.pdf",
+        "PP_51_2023_perubahan_pengupahan.pdf": BPK + "328142/PP%20Nomor%2051%20Tahun%202023.pdf",
+        "PP_49_2025_perubahan_kedua_pengupahan.pdf": BPK + "402111/PP%20Nomor%2049%20Tahun%202025.pdf",
+        "UU_13_2003_ketenagakerjaan.pdf": BPK + "31128/UU%20Nomor%2013%20Tahun%202003.pdf",
     },
 }
 

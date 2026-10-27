@@ -54,8 +54,8 @@ Asumsi yang dipakai di semua contoh:
 - Pembulatan hasil TER x bruto mengikuti tafsir K1 (`docs/spesifikasi/tafsir_perhitungan.md`): Masa 2024 pecahan dibuang; mulai Masa Januari 2025 dibulatkan ke rupiah penuh terdekat, 0,50 ke atas (PER-11/PJ/2025 Pasal 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106). Aturan yang sama dipakai untuk PPh DTP dan untuk persamaan *gross-up* (titik tetap terkecil, tafsir K3). Pembagian /12 pada metode disetahunkan 2023 dibulatkan ke bawah (tafsir K2). PKP dibulatkan ke bawah hingga ribuan (PMK 168/2023 Pasal 8 ayat (4), PDF hlm. 10).
 - Gross-up dan PPh ditanggung pemberi kerja dihitung *full gross-up* seperti PMK 168/2023 Lampiran huruf B Bagian Kedua contoh I.4 (PDF hlm. 44): PPh yang ditanggung pemberi kerja adalah kenikmatan dan objek PPh 21. Desember dicari dengan iterasi sampai tunjangan = PPh Masa Pajak Terakhir. Pada masa DTP, PPh 21 pegawai yang memenuhi syarat ditanggung pemerintah (PMK 168/2023 Pasal 7 huruf h, PDF hlm. 10) dan nilainya wajib dibayar tunai walaupun pemberi kerja memberi tunjangan PPh atau menanggung PPh (PMK 10/2025 Pasal 5 ayat (1)-(2), PDF hlm. 6).
 - Pegawai yang berhenti di tengah tahun: neto tidak disetahunkan, PTKP penuh, plafon biaya jabatan Rp500.000 x jumlah bulan.
-- THR: Permenaker 6/2016 Pasal 2 ayat (1), Pasal 3 ayat (1), dan Pasal 7 ayat (1) dirujuk tanpa halaman PDF karena teksnya tidak disimpan di `dataset/01_regulasi`.
-- Pesangon, uang pisah, UPMK, dan UPH dikenai PPh 21 final PP 68/2009 dan tidak masuk perhitungan TER/Pasal 17; tidak ada contoh SP yang menghitungnya.
+- THR: Permenaker 6/2016 (`dataset/01_regulasi/pendukung/`) Pasal 2 ayat (1) (PDF hlm. 3), Pasal 3 ayat (1)-(2) (PDF hlm. 4), dan Pasal 7 ayat (1) (PDF hlm. 6).
+- Pesangon, uang pisah, UPMK, dan UPH dikenai PPh 21 final PP 68/2009 (Pasal 1 angka 4, Pasal 2 ayat (1), Pasal 4, PDF hlm. 2-4) dan tidak masuk perhitungan TER/Pasal 17; tidak ada contoh SP yang menghitungnya.
 - Hari raya: Idulfitri 31 Maret 2025, Natal 25 Desember 2025.
 
 ## Putusan

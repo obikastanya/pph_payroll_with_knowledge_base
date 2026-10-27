@@ -119,7 +119,7 @@ Tanggal *cutoff* Claude Opus 5.5 dan GPT-6 dicatat dari dokumentasi resmi penyed
 | D10 | Katalog variasi kebijakan | selesai | `05_katalog_kebijakan/` (20 variasi) |
 | D11 | Studi kasus Perusahaan X | selesai (terbatas) | `02_studi_kasus/`; bukan dokumen masukan akuisisi |
 | D12 | GT1 contoh resmi + *holdout* | selesai | 32 pengembangan, 14 *holdout* disegel `07_kasus_uji_resmi/HOLDOUT.sha256` |
-| D13 | GT2 kalkulator DJP | selesai | `11_acuan/gt2_kalkulator_djp/`: 18 kasus rezim 2026, 36 tangkapan layar; kategori, tarif, dan gross-up cocok di 18/18; 4 selisih Rp1 karena kalkulator DJP membuang pecahan, sedangkan PER-11/PJ/2025 Ps. 129 mewajibkan rupiah terdekat |
+| D13 | GT2 kalkulator DJP | selesai | `11_acuan/gt2_kalkulator_djp/`: 20 kasus bulanan rezim 2026 (kategori, tarif, dan gross-up cocok 20/20; 5 selisih Rp1 karena kalkulator DJP membuang pecahan, sedangkan PER-11/PJ/2025 Ps. 129 mewajibkan rupiah terdekat) dan 15 kasus masa terakhir 2024–2026 lewat formulir A1 (90/90 angka sama dengan GT3); 71 tangkapan layar. Plafon biaya jabatan tidak teruji (isian di kalkulator) |
 | D14 | GT3 kasus bertingkat | siap dipakai | 50 kasus `11_acuan/gt3_kasus_bertingkat/`; diferensial terhadap engine lama 683/743 sama, selisih di 8 kasus sudah diadjudikasi (`11_acuan/diferensial_gt3.md`) |
 | D15 | GT4 pihak ketiga | selesai | `03_pembanding/` (7 repo, 22 kalkulator daring); hanya untuk uji diferensial |
 | D16 | GT5 contoh kebijakan | siap dipakai | 21 contoh `11_acuan/gt5_contoh_kebijakan/` |

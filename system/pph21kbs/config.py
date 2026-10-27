@@ -9,10 +9,10 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 ENV_FILE = REPO / ".env"
 
-# Decision log 2026-10-27: main model Claude Opus 5.5 at high effort; second model GPT-6 at high effort.
+# Decision log 2026-10-27: main model Claude Opus 5.5 at high effort; second model GPT-6.1 Sol at high effort.
 MAIN_MODEL = "claude-opus-5-5"
 MAIN_EFFORT = "high"
-SECOND_MODEL = os.environ.get("PPH21_SECOND_MODEL", "gpt-6")   # exact id confirmed by tools/check_setup.py
+SECOND_MODEL = os.environ.get("PPH21_SECOND_MODEL", "gpt-6.1-sol")
 SECOND_EFFORT = "high"
 BUDGET_USD = 15.0
 

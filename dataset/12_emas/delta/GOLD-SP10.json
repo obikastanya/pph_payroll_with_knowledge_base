@@ -1,0 +1,152 @@
+{
+ "delta_id": "GOLD-SP10",
+ "event_id": null,
+ "document": {
+  "id": "SP10",
+  "title": "PT Kemas Plastindo Jaya: Perjanjian Kerja Bersama",
+  "issued": "2024-04-01"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "rule",
+   "id": "PRS.SP10.JHT_EMPLOYEE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "jht_employee",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(dec('0.03') * bpjs_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2024-04-01",
+   "valid_until": "2026-03-31",
+   "label": "employee JHT share 3%",
+   "policy": "SP10",
+   "conflict_code": "C7",
+   "source": [
+    {
+     "document": "SP10",
+     "provision": "Pasal 41 ayat (1)",
+     "page": 1,
+     "quote": "dan oleh pekerja sebesar 3% (tiga persen)"
+    },
+    {
+     "document": "SP10",
+     "provision": "Pasal 41 ayat (5)",
+     "page": 1,
+     "quote": "merupakan kesepakatan para pihak dalam rangka program efisiensi"
+    },
+    {
+     "document": "SP10",
+     "provision": "Pasal 62 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026"
+    }
+   ],
+   "recorded_on": "2024-04-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP10.HEALTH_EMPLOYEE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "health_employee",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(dec('0.02') * min(bpjs_wage, 12000000), 1, param('bpjs_round_mode'))",
+   "valid_from": "2024-04-01",
+   "valid_until": "2026-03-31",
+   "label": "employee JKN share 2%",
+   "policy": "SP10",
+   "conflict_code": "C7",
+   "source": [
+    {
+     "document": "SP10",
+     "provision": "Pasal 41 ayat (3)",
+     "page": 1,
+     "quote": "dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen)"
+    },
+    {
+     "document": "SP10",
+     "provision": "Pasal 41 ayat (5)",
+     "page": 1,
+     "quote": "merupakan kesepakatan para pihak dalam rangka program efisiensi"
+    },
+    {
+     "document": "SP10",
+     "provision": "Pasal 62 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026"
+    }
+   ],
+   "recorded_on": "2024-04-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP10.HEALTH_EMPLOYER",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "health_premium_employer",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(dec('0.03') * min(bpjs_wage, 12000000), 1, param('bpjs_round_mode'))",
+   "valid_from": "2024-04-01",
+   "valid_until": "2026-03-31",
+   "label": "employer JKN share 3%",
+   "policy": "SP10",
+   "conflict_code": "C7",
+   "source": [
+    {
+     "document": "SP10",
+     "provision": "Pasal 41 ayat (3)",
+     "page": 1,
+     "quote": "dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen)"
+    },
+    {
+     "document": "SP10",
+     "provision": "Pasal 41 ayat (5)",
+     "page": 1,
+     "quote": "merupakan kesepakatan para pihak dalam rangka program efisiensi"
+    },
+    {
+     "document": "SP10",
+     "provision": "Pasal 62 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026"
+    }
+   ],
+   "recorded_on": "2024-04-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP10.JKK_RATE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "jkk_rate",
+   "expression": "dec('0.0054')",
+   "valid_from": "2024-04-01",
+   "valid_until": "2026-03-31",
+   "label": "JKK rate written as a fixed number",
+   "policy": "SP10",
+   "conflict_code": "C6",
+   "source": [
+    {
+     "document": "SP10",
+     "provision": "Pasal 41 ayat (4)",
+     "page": 1,
+     "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen)"
+    },
+    {
+     "document": "SP10",
+     "provision": "Pasal 62 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026"
+    }
+   ],
+   "recorded_on": "2024-04-01"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": ""
+}

@@ -1,0 +1,122 @@
+{
+ "delta_id": "GOLD-D04",
+ "event_id": "D04",
+ "document": {
+  "id": "PERPRES-19-2016",
+  "title": "Perpres 19/2016: Perubahan kedua Perpres 12/2013 tentang Jaminan Kesehatan",
+  "issued": "2016-03-01"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "parameter",
+   "id": "PAR.HEALTH_WAGE_CAP.2016",
+   "name": "health_wage_cap",
+   "value": 8000000,
+   "value_type": "money",
+   "valid_from": "2016-03-01",
+   "label_id": "batas upah jaminan kesehatan",
+   "source": [
+    {
+     "document": "PERPRES-19-2016",
+     "provision": "Pasal I angka 9, Pasal 16D",
+     "page": 14,
+     "quote": "Ketentuan Pasal 16D diubah sehingga berbunyi sebagai"
+    },
+    {
+     "document": "PERPRES-19-2016",
+     "provision": "Pasal I angka 9, Pasal 16D",
+     "page": 15,
+     "quote": "dalam Pasal 16B ayat (1) sebesar Rp 8.000.000,00 (delapan juta rupiah)."
+    },
+    {
+     "document": "PERPRES-19-2016",
+     "provision": "Pasal II",
+     "page": 44,
+     "quote": "Peraturan Presiden ini mulai berlaku pada tanggal diundangkan."
+    }
+   ],
+   "recorded_on": "2016-03-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.JKN.WAGE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "health_wage",
+   "expression": "min(bpjs_wage, param('health_wage_cap'))",
+   "valid_from": "2016-03-01",
+   "source": [
+    {
+     "document": "PERPRES-19-2016",
+     "provision": "Pasal I angka 9, Pasal 16D",
+     "page": 14,
+     "quote": "Ketentuan Pasal 16D diubah sehingga berbunyi sebagai"
+    },
+    {
+     "document": "PERPRES-19-2016",
+     "provision": "Pasal I angka 9, Pasal 16D",
+     "page": 15,
+     "quote": "dalam Pasal 16B ayat (1) sebesar Rp 8.000.000,00 (delapan juta rupiah)."
+    },
+    {
+     "document": "PERPRES-19-2016",
+     "provision": "Pasal II",
+     "page": 44,
+     "quote": "Peraturan Presiden ini mulai berlaku pada tanggal diundangkan."
+    }
+   ],
+   "recorded_on": "2016-03-01"
+  }
+ ],
+ "change": [
+  {
+   "kind": "rule",
+   "id": "REG.JKN.WAGE.2014",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "health_wage",
+   "expression": "min(base_salary + fixed_allowance, round(2 * lookup('ptkp', 'K/1') / 12, 1, 'down'))",
+   "valid_from": "2014-01-01",
+   "label": "Pasal 16D: monthly cap 2 x PTKP K/1 / 12 of the PTKP table valid in the month",
+   "source": [
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16D",
+     "page": 13,
+     "quote": "Batas paling tinggi Gaji atau Upah per bulan yang digunakan sebagai dasar perhitungan"
+    },
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16D",
+     "page": 13,
+     "quote": "kali Penghasilan Tidak Kena Pajak (PTKP) dengan status kawin dengan 1 (satu) orang anak."
+    },
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16E ayat (3)",
+     "page": 14,
+     "quote": "Jaminan Kesehatan sebagaimana dimaksud dalam Pasal 16C terdiri atas Gaji atau Upah pokok dan tunjangan tetap."
+    },
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16C ayat (1)",
+     "page": 12,
+     "quote": "dibayarkan mulai tanggal 1 Januari 2014 sampai dengan 30 Juni 2015 sebesar 4,5%"
+    },
+    {
+     "document": "PERPRES-19-2016",
+     "provision": "Pasal I angka 9, Pasal 16D",
+     "page": 14,
+     "quote": "Ketentuan Pasal 16D diubah sehingga berbunyi sebagai"
+    }
+   ],
+   "valid_until": "2016-02-29",
+   "recorded_on": "2016-03-01"
+  }
+ ],
+ "remove": [],
+ "note": ""
+}

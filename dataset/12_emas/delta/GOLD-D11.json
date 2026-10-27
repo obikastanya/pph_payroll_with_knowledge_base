@@ -1,0 +1,370 @@
+{
+ "delta_id": "GOLD-D11",
+ "event_id": "D11",
+ "document": {
+  "id": "PMK-82-PMK-03-2021",
+  "title": "PMK 82/PMK.03/2021: Perubahan PMK 9/2021",
+  "issued": "2021-07-01"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "table",
+   "id": "TAB.COVID_DTP_KLU.2021H2",
+   "name": "covid_dtp_klu",
+   "table_kind": "set",
+   "valid_from": "2021-07-01",
+   "valid_until": "2021-12-31",
+   "label_id": "KLU penerima PPh 21 DTP",
+   "source": [
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (5) huruf a angka 1",
+     "page": 6,
+     "quote": "1. kode Klasifikasi Lapangan U saha W ajib Pajak Yang Mendapatkan Insentif PPh Pasal 21"
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Lampiran A",
+     "page": 11,
+     "quote": "A. KODE KLASIFIKASI LAPANGAN USAHA WAJIB PAJAK YANG MENDAPATKAN INSENTIF PPh PASAL 21"
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (3)",
+     "page": 6,
+     "quote": "dimaksud pada ayat (1) diperpanjang sampai dengan Masa Pajak Desember 2021."
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (5)",
+     "page": 6,
+     "quote": "Perpanjangan jangka waktu sebagaimana dimaksud pada ayat (3) dan ayat (4) hanya berlaku untuk Pemberi Kerja"
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 2, Pasal 19B ayat (1)",
+     "page": 8,
+     "quote": "dalam Pasal 12 ayat (1) sejak Masa Pajak Juli 2021"
+    }
+   ],
+   "rows_ref": {
+    "extracted_table": "PMK-82-PMK-03-2021/LAMPIRAN-A",
+    "columns": {
+     "key": "klu"
+    }
+   },
+   "recorded_on": "2021-07-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.COVID_DTP.ELIGIBLE.2021H2",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "covid_dtp_eligible",
+   "expression": "in_table('covid_dtp_klu', employer('klu')) and covid_dtp_fixed_income * 12 <= param('covid_dtp_income_cap') and employee('tax_id_valid') != False",
+   "valid_from": "2021-07-01",
+   "valid_until": "2021-12-31",
+   "label": "from July 2021 only employers with a listed KLU (KITE and bonded zones no longer qualify)",
+   "source": [
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (5) huruf a angka 1",
+     "page": 6,
+     "quote": "1. kode Klasifikasi Lapangan U saha W ajib Pajak Yang Mendapatkan Insentif PPh Pasal 21"
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (3)",
+     "page": 6,
+     "quote": "dimaksud pada ayat (1) diperpanjang sampai dengan Masa Pajak Desember 2021."
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (5)",
+     "page": 6,
+     "quote": "Perpanjangan jangka waktu sebagaimana dimaksud pada ayat (3) dan ayat (4) hanya berlaku untuk Pemberi Kerja"
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 2, Pasal 19B ayat (1)",
+     "page": 8,
+     "quote": "dalam Pasal 12 ayat (1) sejak Masa Pajak Juli 2021"
+    }
+   ],
+   "recorded_on": "2021-07-01"
+  }
+ ],
+ "change": [
+  {
+   "kind": "parameter",
+   "id": "PAR.COVID_DTP_INCOME_CAP.2021",
+   "name": "covid_dtp_income_cap",
+   "value": 200000000,
+   "value_type": "money",
+   "valid_from": "2021-01-01",
+   "valid_until": "2021-12-31",
+   "label_id": "batas penghasilan bruto disetahunkan",
+   "source": [
+    {
+     "document": "PMK-9-PMK-03-2021",
+     "provision": "Pasal 2 ayat (3) huruf c",
+     "page": 10,
+     "quote": "Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp 200.000.000,00 (dua ratus juta rupiah)"
+    },
+    {
+     "document": "PMK-9-PMK-03-2021",
+     "provision": "Pasal 18 ayat (1)",
+     "page": 31,
+     "quote": "diberikan untuk Masa Pajak Januari 2021 sampai dengan Masa Pajak Juni 2021."
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (3)",
+     "page": 6,
+     "quote": "dimaksud pada ayat (1) diperpanjang sampai dengan Masa Pajak Desember 2021."
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (5)",
+     "page": 6,
+     "quote": "Perpanjangan jangka waktu sebagaimana dimaksud pada ayat (3) dan ayat (4) hanya berlaku untuk Pemberi Kerja"
+    }
+   ],
+   "recorded_on": "2021-07-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.COVID_DTP.FIXED_INCOME",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "covid_dtp_fixed_income",
+   "expression": "base_salary + fixed_allowance + other_regular_income + tax_allowance",
+   "valid_from": "2020-04-01",
+   "valid_until": "2021-12-31",
+   "source": [
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (1) huruf c",
+     "page": 6,
+     "quote": "Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000.000,00 (dua ratus juta rupiah)"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Lampiran huruf B angka III",
+     "page": 27,
+     "quote": "Tuan C yang dapat memperoleh insentif PPh Pasal 21 DTP hanya atas penghasilan gaji dan tunjangan bulanan."
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Lampiran huruf B angka IV",
+     "page": 29,
+     "quote": "Penghasilan bruto Tuan D yang disetahunkan Rp192.000.000,00"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (6)",
+     "page": 7,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+    },
+    {
+     "document": "PMK-86-PMK-03-2020",
+     "provision": "Pasal 2 ayat (9)",
+     "page": 10,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak Desember 2020."
+    },
+    {
+     "document": "PMK-9-PMK-03-2021",
+     "provision": "Pasal 18 ayat (1)",
+     "page": 31,
+     "quote": "diberikan untuk Masa Pajak Januari 2021 sampai dengan Masa Pajak Juni 2021."
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (3)",
+     "page": 6,
+     "quote": "dimaksud pada ayat (1) diperpanjang sampai dengan Masa Pajak Desember 2021."
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (5)",
+     "page": 6,
+     "quote": "Perpanjangan jangka waktu sebagaimana dimaksud pada ayat (3) dan ayat (4) hanya berlaku untuk Pemberi Kerja"
+    }
+   ],
+   "recorded_on": "2021-07-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.COVID_DTP.RUNNING",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph21_dtp",
+   "condition": "not is_final_period",
+   "expression": "pph_regular_month if covid_dtp_eligible else 0",
+   "valid_from": "2020-04-01",
+   "valid_until": "2021-12-31",
+   "label": "DTP covers the PPh 21 on regular income; tax on THR and bonus is withheld",
+   "source": [
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (2)",
+     "page": 6,
+     "quote": "sebagaimana dimaksud pada ayat (1), ditanggung Pemerintah."
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (6)",
+     "page": 7,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Lampiran huruf B angka III",
+     "page": 27,
+     "quote": "Tuan C yang dapat memperoleh insentif PPh Pasal 21 DTP hanya atas penghasilan gaji dan tunjangan bulanan."
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (4)",
+     "page": 7,
+     "quote": "dibayarkan secara tunai oleh pemberi kerja pada saat pembayaran penghasilan kepada Pegawai, termasuk dalam hal pemberi kerja memberikan tunjangan PPh Pasal 21"
+    },
+    {
+     "document": "PMK-86-PMK-03-2020",
+     "provision": "Pasal 2 ayat (9)",
+     "page": 10,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak Desember 2020."
+    },
+    {
+     "document": "PMK-9-PMK-03-2021",
+     "provision": "Pasal 18 ayat (1)",
+     "page": 31,
+     "quote": "diberikan untuk Masa Pajak Januari 2021 sampai dengan Masa Pajak Juni 2021."
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (3)",
+     "page": 6,
+     "quote": "dimaksud pada ayat (1) diperpanjang sampai dengan Masa Pajak Desember 2021."
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (5)",
+     "page": 6,
+     "quote": "Perpanjangan jangka waktu sebagaimana dimaksud pada ayat (3) dan ayat (4) hanya berlaku untuk Pemberi Kerja"
+    }
+   ],
+   "recorded_on": "2021-07-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.COVID_DTP.FINAL",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph21_dtp",
+   "condition": "is_final_period",
+   "expression": "max(0, final_period_tax) if covid_dtp_eligible else 0",
+   "valid_from": "2020-04-01",
+   "valid_until": "2021-12-31",
+   "label": "interpretation: DTP of the final period is its PPh 21 when positive",
+   "source": [
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (2)",
+     "page": 6,
+     "quote": "sebagaimana dimaksud pada ayat (1), ditanggung Pemerintah."
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (6)",
+     "page": 7,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+    },
+    {
+     "document": "PMK-86-PMK-03-2020",
+     "provision": "Pasal 2 ayat (9)",
+     "page": 10,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak Desember 2020."
+    },
+    {
+     "document": "PMK-9-PMK-03-2021",
+     "provision": "Pasal 18 ayat (1)",
+     "page": 31,
+     "quote": "diberikan untuk Masa Pajak Januari 2021 sampai dengan Masa Pajak Juni 2021."
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (3)",
+     "page": 6,
+     "quote": "dimaksud pada ayat (1) diperpanjang sampai dengan Masa Pajak Desember 2021."
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (5)",
+     "page": 6,
+     "quote": "Perpanjangan jangka waktu sebagaimana dimaksud pada ayat (3) dan ayat (4) hanya berlaku untuk Pemberi Kerja"
+    }
+   ],
+   "recorded_on": "2021-07-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.COVID_DTP.THP_CASH",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "employee_tax_burden",
+   "condition": "covid_dtp_eligible and withholding_method == 'employer_borne'",
+   "expression": "0 - pph21_dtp",
+   "valid_from": "2020-04-01",
+   "valid_until": "2021-12-31",
+   "label": "Pasal 2 ayat (4): the DTP is paid in cash also when the employer bears the tax",
+   "source": [
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (4)",
+     "page": 7,
+     "quote": "dibayarkan secara tunai oleh pemberi kerja pada saat pembayaran penghasilan kepada Pegawai, termasuk dalam hal pemberi kerja memberikan tunjangan PPh Pasal 21"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (6)",
+     "page": 7,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+    },
+    {
+     "document": "PMK-86-PMK-03-2020",
+     "provision": "Pasal 2 ayat (9)",
+     "page": 10,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak Desember 2020."
+    },
+    {
+     "document": "PMK-9-PMK-03-2021",
+     "provision": "Pasal 18 ayat (1)",
+     "page": 31,
+     "quote": "diberikan untuk Masa Pajak Januari 2021 sampai dengan Masa Pajak Juni 2021."
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (3)",
+     "page": 6,
+     "quote": "dimaksud pada ayat (1) diperpanjang sampai dengan Masa Pajak Desember 2021."
+    },
+    {
+     "document": "PMK-82-PMK-03-2021",
+     "provision": "Pasal I angka 1, Pasal 18 ayat (5)",
+     "page": 6,
+     "quote": "Perpanjangan jangka waktu sebagaimana dimaksud pada ayat (3) dan ayat (4) hanya berlaku untuk Pemberi Kerja"
+    }
+   ],
+   "recorded_on": "2021-07-01"
+  }
+ ],
+ "remove": [],
+ "note": "Extension to Masa Desember 2021 for employers with a KLU in the new Lampiran only (Pasal 18 ayat (5)); REG.COVID_DTP.ELIGIBLE keeps its end date 2021-06-30. Re-notification (Pasal 19B) not modelled."
+}

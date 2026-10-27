@@ -28,12 +28,13 @@ Dihasilkan oleh `system/tools/build_gold.py`. Fakta bertanda keluaran membentuk 
 | `taxable_income` | money | year | ya | taxable income (PKP) | penghasilan kena pajak |
 | `benefit_gift_other` | money | period |  | non-holiday gifts received this period | bingkisan selain hari raya |
 | `benefit_sports` | money | period |  | sports facility received this period | fasilitas olahraga |
-| `benefits_excluded` | money | period |  | benefits in kind excluded from the tax object | natura yang dikecualikan |
 | `benefits_taxable_irregular` | money | period |  | taxable benefits in kind, irregular | natura tidak teratur |
 | `benefits_taxable_regular` | money | period |  | taxable benefits in kind, regular | natura teratur |
 | `bpjs_wage` | money | period |  | monthly wage for social security contributions | upah sebulan iuran |
 | `cash_income` | money | period |  | cash income of the period | penghasilan tunai |
 | `company_deductions` | money | period |  | deductions by the employer | potongan perusahaan |
+| `covid_dtp_eligible` | bool | period |  | employee eligible for COVID DTP | pegawai penerima PPh 21 DTP |
+| `covid_dtp_fixed_income` | money | period |  | fixed regular income for the COVID DTP criterion | penghasilan bruto tetap dan teratur |
 | `dtp_facility` | bool | period |  | DTP facility applies in this period | masa pajak insentif |
 | `dtp_fixed_income` | money | period |  | fixed regular income for the DTP criterion | penghasilan bruto tetap dan teratur |
 | `employee_pension_contributions` | money | period |  | employee pension and old-age contributions | iuran pensiun pegawai |
@@ -58,6 +59,7 @@ Dihasilkan oleh `system/tools/build_gold.py`. Fakta bertanda keluaran membentuk 
 | `taxable_with_irregular` | money | period |  | annualised taxable income including irregular income | penghasilan kena pajak termasuk tidak teratur |
 | `taxable_without_irregular` | money | period |  | annualised taxable income without irregular income | penghasilan kena pajak tanpa tidak teratur |
 | `ter_rate` | rate | period |  | monthly effective rate | tarif efektif bulanan |
+| `thr_minimum` | money | period |  | minimum religious holiday allowance | THR keagamaan minimum |
 | `zakat_deductible` | money | period |  | zakat deductible in withholding | zakat pengurang |
 | `zakat_withheld` | money | period |  | zakat paid through the employer | zakat melalui pemberi kerja |
 | `annual_pension_contributions` | money | year |  | employee pension contributions of the year | iuran pensiun setahun |

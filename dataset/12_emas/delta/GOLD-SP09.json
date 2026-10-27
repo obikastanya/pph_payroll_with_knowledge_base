@@ -1,0 +1,101 @@
+{
+ "delta_id": "GOLD-SP09",
+ "event_id": null,
+ "document": {
+  "id": "SP09",
+  "title": "PT Cahaya Farmasi Sejahtera: Peraturan Perusahaan",
+  "issued": "2023-08-01"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "rule",
+   "id": "PRS.SP09.PREMIUMS_NOT_GROSS",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "employer_premiums_taxable",
+   "expression": "0",
+   "valid_from": "2023-08-01",
+   "valid_until": "2025-07-31",
+   "label": "employer JKK, JKM, and JKN premiums left out of gross income",
+   "policy": "SP09",
+   "conflict_code": "C2",
+   "source": [
+    {
+     "document": "SP09",
+     "provision": "Pasal 25 ayat (2)",
+     "page": 1,
+     "quote": "bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto"
+    },
+    {
+     "document": "SP09",
+     "provision": "Pasal 46 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025"
+    }
+   ],
+   "recorded_on": "2023-08-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP09.JKK_RATE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "jkk_rate",
+   "expression": "dec('0.0054')",
+   "valid_from": "2023-08-01",
+   "valid_until": "2025-07-31",
+   "label": "JKK rate written as a fixed number",
+   "policy": "SP09",
+   "conflict_code": "C6",
+   "source": [
+    {
+     "document": "SP09",
+     "provision": "Pasal 25 ayat (1)",
+     "page": 1,
+     "quote": "iuran JKK sebesar 0,54% (nol koma lima puluh empat persen)"
+    },
+    {
+     "document": "SP09",
+     "provision": "Pasal 46 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025"
+    }
+   ],
+   "recorded_on": "2023-08-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP09.METHOD",
+   "layer": "company",
+   "modality": "default",
+   "scope": "year",
+   "produces": "withholding_method",
+   "expression": "'gross'",
+   "valid_from": "2023-08-01",
+   "valid_until": "2025-07-31",
+   "label": "withholding method stated by the policy: gross",
+   "policy": "SP09",
+   "source": [
+    {
+     "document": "SP09",
+     "provision": "Pasal 26 ayat (1)",
+     "page": 1,
+     "quote": "dipotong dari penghasilan pekerja sesuai ketentuan perpajakan"
+    },
+    {
+     "document": "SP09",
+     "provision": "Pasal 46 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025"
+    }
+   ],
+   "recorded_on": "2023-08-01"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": ""
+}

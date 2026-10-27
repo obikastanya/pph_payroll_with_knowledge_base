@@ -1,0 +1,454 @@
+{
+ "delta_id": "GOLD-PKB-SANSAN",
+ "event_id": null,
+ "document": {
+  "id": "PKB-SANSAN-2021",
+  "title": "PKB PT Sansan Saudaratex Jaya 2021-2024",
+  "issued": "2021-01-01"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "sansan_wage",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "wage = base wage + position allowance",
+   "label_id": "upah",
+   "source": [
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 31 ayat (2-3)",
+     "page": 1,
+     "quote": "Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang memiliki jabatan"
+    }
+   ],
+   "recorded_on": "2021-01-01"
+  },
+  {
+   "kind": "fact",
+   "id": "sansan_pay_factor",
+   "fact_type": "exact",
+   "fact_scope": "period",
+   "output": false,
+   "label": "share of wage paid in long illness or detention",
+   "label_id": "persentase upah sakit atau ditahan",
+   "source": [
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 34 ayat (2)",
+     "page": 1,
+     "quote": "empat bulan pertama 100% x upah pokok sebulan b. empat bulan kedua 75% x upah pokok sebulan c. empat bulan ketiga 50% x upah pokok sebulan d. bulan selanjutnya 25% x upah pokok sebulan"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 82 ayat (2, 4)",
+     "page": 1,
+     "quote": "untuk 1 orang tanggungan : 25% x upah. b. untuk 2 orang tanggungan : 35% x upah. c. untuk 3 orang tanggungan : 45% x upah. d. untuk 4 orang tanggungan atau lebih : 50% x upah"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 82 ayat 4",
+     "page": 1,
+     "quote": "wajib membayar upah pekerja/buruh sekurang-kurangnya 75% (tujuh puluh lima persen) dan berlaku paling lama 6 (enam) bulan takwim"
+    }
+   ],
+   "recorded_on": "2021-01-01"
+  },
+  {
+   "kind": "fact",
+   "id": "sansan_attendance_premium",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "attendance premium",
+   "label_id": "premi hadir",
+   "source": [
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 37 ayat (2)",
+     "page": 1,
+     "quote": "besarnya premi hadir ditentukan maksimum 20% (dua puluh persen) dari upah pokok dan premi hadir. b. apabila pekerja/buruh tidak hadir selama 1 (satu) hari pada hari kerja perusahaan, maka premi hadir hilang sebesar 50% dan apabila tidak hadir selama 2 (dua) hari maka premi hadir hilang seluruhnya"
+    }
+   ],
+   "recorded_on": "2021-01-01"
+  },
+  {
+   "kind": "fact",
+   "id": "sansan_separation_pay",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "separation pay of operators and condolence money on death (final tax, PP 68/2009; not gross income)",
+   "label_id": "uang pisah operator dan sumbangan kedukaan",
+   "source": [
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Lampiran angka 2 huruf a",
+     "page": 1,
+     "quote": "masa kerja 3 (tiga) tahun atau lebih tetapi kurang dari 6 (enam) tahun 0.6 1,945,157 masa kerja 6 (enam) tahun atau lebih tetapi kurang dari 9 (sembilan) tahun 0.8 2,593,543 masa kerja 9 (sembilan) tahun atau lebih tetapi kurang dari 12 (dua belas) tahun 1.1 3,566,122 masa kerja 12 (dua belas) tahun atau lebih tetapi kurang dari 15 (lima belas) tahun 1.3 4,214,508 masa kerja 15 (lima belas) tahun atau lebih tetapi kurang dari 18 (delapan belas) tahun 1.6 5,192,086 masa kerja 18 (delapan belas) tahun atau lebih tetapi kurang dari 21 (dua puluh satu) tahun 1.8 5,835,472 masa kerja 21 (dua puluh satu) tahun atau lebih tetapi kurang dari 24 (dua puluh empat) tahun 2.1 6,808,051 masa kerja 24 (dua puluh empat) tahun atau lebih 2.3"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 47 ayat (1 huruf a, c)",
+     "page": 1,
+     "quote": "Apabila Pekerja/Buruh, meninggal dunia maka diberikan sumbangan kedukaan sebesar 1 x upah pokok per bulan"
+    }
+   ],
+   "recorded_on": "2021-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SANSAN.WAGE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "sansan_wage",
+   "expression": "income('base_salary') + income('fixed_allowance')",
+   "valid_from": "2021-09-01",
+   "valid_until": "2024-09-30",
+   "label": "SANSAN-31-3: wage = base wage + position allowance",
+   "policy": "PKB-SANSAN-2021",
+   "source": [
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 31 ayat (2-3)",
+     "page": 1,
+     "quote": "Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang memiliki jabatan"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal masa berlaku ayat 1",
+     "page": 1,
+     "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 september 2021 dan berakhir tanggal 23 september 2024"
+    }
+   ],
+   "recorded_on": "2021-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SANSAN.METHOD",
+   "layer": "company",
+   "modality": "default",
+   "scope": "year",
+   "produces": "withholding_method",
+   "expression": "'gross'",
+   "valid_from": "2021-09-01",
+   "valid_until": "2024-09-30",
+   "label": "SANSAN-31-8, 1-14: gross method",
+   "policy": "PKB-SANSAN-2021",
+   "source": [
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 31 ayat (8)",
+     "page": 1,
+     "quote": "Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai peraturan pemerintah"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 1 ayat (14-15)",
+     "page": 1,
+     "quote": "Adalah penerimaan kotor Pekerja/Buruh yang masih harus diperhitungkan pajaknya sesuai dengan Undang-undang Perpajakan yang berlaku"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal masa berlaku ayat 1",
+     "page": 1,
+     "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 september 2021 dan berakhir tanggal 23 september 2024"
+    }
+   ],
+   "recorded_on": "2021-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SANSAN.PAY_FACTOR",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "sansan_pay_factor",
+   "expression": "(dec('0.25') if hr('sick_month') > 12 else (dec('0.50') if hr('sick_month') > 8 else (dec('0.75') if hr('sick_month') > 4 else (1 if hr('sick_month') > 0 else (0 if hr('detained_month') > 6 else (dec('0.75') if hr('detained_month') > 0 and hr('detained_by_company_complaint') > 0 else (dec('0.50') if hr('detained_month') > 0 and hr('dependents') >= 4 else (dec('0.45') if hr('detained_month') > 0 and hr('dependents') >= 3 else (dec('0.35') if hr('detained_month') > 0 and hr('dependents') >= 2 else (dec('0.25') if hr('detained_month') > 0 and hr('dependents') >= 1 else (0 if hr('detained_month') > 0 else 1)))))))))))",
+   "valid_from": "2021-09-01",
+   "valid_until": "2024-09-30",
+   "label": "SANSAN-34-2 illness 100/75/50/25% of base wage; 82-2 detention aid 25-50%, at least 75% when detained on the company's complaint, at most 6 months",
+   "policy": "PKB-SANSAN-2021",
+   "source": [
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 34 ayat (2)",
+     "page": 1,
+     "quote": "empat bulan pertama 100% x upah pokok sebulan b. empat bulan kedua 75% x upah pokok sebulan c. empat bulan ketiga 50% x upah pokok sebulan d. bulan selanjutnya 25% x upah pokok sebulan"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 82 ayat (2, 4)",
+     "page": 1,
+     "quote": "untuk 1 orang tanggungan : 25% x upah. b. untuk 2 orang tanggungan : 35% x upah. c. untuk 3 orang tanggungan : 45% x upah. d. untuk 4 orang tanggungan atau lebih : 50% x upah"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 82 ayat 4",
+     "page": 1,
+     "quote": "wajib membayar upah pekerja/buruh sekurang-kurangnya 75% (tujuh puluh lima persen) dan berlaku paling lama 6 (enam) bulan takwim"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal masa berlaku ayat 1",
+     "page": 1,
+     "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 september 2021 dan berakhir tanggal 23 september 2024"
+    }
+   ],
+   "recorded_on": "2021-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SANSAN.BASE_SALARY",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "base_salary",
+   "expression": "round(income('base_salary') * sansan_pay_factor, 1, 'half_up')",
+   "valid_from": "2021-09-01",
+   "valid_until": "2024-09-30",
+   "label": "base wage paid this period",
+   "policy": "PKB-SANSAN-2021",
+   "source": [
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 34 ayat (2)",
+     "page": 1,
+     "quote": "empat bulan pertama 100% x upah pokok sebulan b. empat bulan kedua 75% x upah pokok sebulan c. empat bulan ketiga 50% x upah pokok sebulan d. bulan selanjutnya 25% x upah pokok sebulan"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 82 ayat (2, 4)",
+     "page": 1,
+     "quote": "untuk 1 orang tanggungan : 25% x upah. b. untuk 2 orang tanggungan : 35% x upah. c. untuk 3 orang tanggungan : 45% x upah. d. untuk 4 orang tanggungan atau lebih : 50% x upah"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 82 ayat 4",
+     "page": 1,
+     "quote": "wajib membayar upah pekerja/buruh sekurang-kurangnya 75% (tujuh puluh lima persen) dan berlaku paling lama 6 (enam) bulan takwim"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal masa berlaku ayat 1",
+     "page": 1,
+     "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 september 2021 dan berakhir tanggal 23 september 2024"
+    }
+   ],
+   "recorded_on": "2021-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SANSAN.THR",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "thr",
+   "condition": "hr('thr_holiday') > 0",
+   "expression": "sansan_wage if hr('months_of_service') >= 12 else (round(sansan_wage * hr('months_of_service') / 12, 1, 'half_up') if hr('months_of_service') > 1 else 0)",
+   "valid_from": "2021-09-01",
+   "valid_until": "2024-09-30",
+   "label": "SANSAN-41-1, 41-2, 41-4: one month wage after 12 months, proportional above 1 month (exactly 1 month: none, C10 latent); leaving within 30 days before payment keeps the right",
+   "policy": "PKB-SANSAN-2021",
+   "source": [
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 41 ayat (1)",
+     "page": 1,
+     "quote": "sebesar 1 bulan upah/proporsional bagi Pekerja/Buruh yang memiliki masa kerja 12 bulan (1 tahun) atau lebih"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 41 ayat (2)",
+     "page": 1,
+     "quote": "bagi pekerja/buruh yang mempunyai masa kerja kurang dari 12 bulan (1 tahun) tetapi lebih dari 1 bulan, maka thr diberikan secara proporsional yaitu : (masa kerja/12) x 1 bulan upah"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 41 ayat (4)",
+     "page": 1,
+     "quote": "bagi pekerja/buruh yang mengundurkan diri atau terkena pemutusan hubungan kerja (phk) 30 (tiga puluh) hari sebelum tanggal pembayaran, maka perusahaan tetap memberikan tunjangan hari raya"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal masa berlaku ayat 1",
+     "page": 1,
+     "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 september 2021 dan berakhir tanggal 23 september 2024"
+    }
+   ],
+   "recorded_on": "2021-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SANSAN.ATTENDANCE_PREMIUM",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "sansan_attendance_premium",
+   "expression": "0 if (employee('sansan_overtime_eligible') == False or hr('days_absent') >= 2) else round(min(income('attendance_premium'), income('base_salary') * dec('0.20') / (1 - dec('0.20'))) * (dec('0.50') if hr('days_absent') == 1 else 1), 1, 'half_up')",
+   "valid_from": "2021-09-01",
+   "valid_until": "2024-09-30",
+   "label": "SANSAN-37-2: premium <= 20% of (base wage + premium), i.e. 25% of base wage (GT5 putusan 10); -50% after one day absent, nothing after two; amount set by the company (input)",
+   "policy": "PKB-SANSAN-2021",
+   "source": [
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 37 ayat (2)",
+     "page": 1,
+     "quote": "besarnya premi hadir ditentukan maksimum 20% (dua puluh persen) dari upah pokok dan premi hadir. b. apabila pekerja/buruh tidak hadir selama 1 (satu) hari pada hari kerja perusahaan, maka premi hadir hilang sebesar 50% dan apabila tidak hadir selama 2 (dua) hari maka premi hadir hilang seluruhnya"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 37 ayat 2",
+     "page": 1,
+     "quote": "premi hadir diberikan kepada pekerja/buruh yang berhak atas perhitungan upah lembur"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal masa berlaku ayat 1",
+     "page": 1,
+     "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 september 2021 dan berakhir tanggal 23 september 2024"
+    }
+   ],
+   "recorded_on": "2021-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SANSAN.OTHER_REGULAR",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "other_regular_income",
+   "expression": "income('other_regular') + sansan_attendance_premium + (employer('meal_allowance_per_day') * (hr('days_present') + hr('ot_long_days')) if employer('meal_allowance_per_day') != None else 0)",
+   "valid_from": "2021-09-01",
+   "valid_until": "2024-09-30",
+   "label": "SANSAN-36-1: meal allowance per day present and per overtime day over 4 hours (rate outside the agreement: employer data)",
+   "policy": "PKB-SANSAN-2021",
+   "source": [
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 37 ayat (2)",
+     "page": 1,
+     "quote": "besarnya premi hadir ditentukan maksimum 20% (dua puluh persen) dari upah pokok dan premi hadir. b. apabila pekerja/buruh tidak hadir selama 1 (satu) hari pada hari kerja perusahaan, maka premi hadir hilang sebesar 50% dan apabila tidak hadir selama 2 (dua) hari maka premi hadir hilang seluruhnya"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 36 ayat (1-2)",
+     "page": 1,
+     "quote": "Perusahaan akan memberikan tunjangan makan kepada Pekerja/Buruh yang hadir dalam bentuk uang"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 36 ayat 2",
+     "page": 1,
+     "quote": "kompensasi tunjangan makan kepada pekerja/buruh yang bekerja lembur lebih dari 4 jam dengan nilai tunjangan makan sama seperti tunjangan makan siang"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal masa berlaku ayat 1",
+     "page": 1,
+     "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 september 2021 dan berakhir tanggal 23 september 2024"
+    }
+   ],
+   "recorded_on": "2021-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SANSAN.JKK_RATE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "jkk_rate",
+   "expression": "dec('0.0089') if employee('sansan_division') == 'textile' else dec('0.0024')",
+   "valid_from": "2021-09-01",
+   "valid_until": "2024-09-30",
+   "label": "SANSAN-52-2a: JKK 0.24% garment division, 0.89% textile division",
+   "policy": "PKB-SANSAN-2021",
+   "conflict_code": "C6",
+   "source": [
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 52 ayat (2 huruf a)",
+     "page": 1,
+     "quote": "ketentuan iuran divisi garmen= 0,24% x upah sebulan ditanggung oleh perusahaan. - ketentuan iuran divisi tekstil= 0,89% x upah sebulan"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal masa berlaku ayat 1",
+     "page": 1,
+     "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 september 2021 dan berakhir tanggal 23 september 2024"
+    }
+   ],
+   "recorded_on": "2021-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SANSAN.SEPARATION_PAY",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "sansan_separation_pay",
+   "condition": "hr('separation_paid') > 0",
+   "expression": "(round(employer('regional_minimum_wage') * (dec('2.3') if hr('service_years') >= 24 else (dec('2.1') if hr('service_years') >= 21 else (dec('1.8') if hr('service_years') >= 18 else (dec('1.6') if hr('service_years') >= 15 else (dec('1.3') if hr('service_years') >= 12 else (dec('1.1') if hr('service_years') >= 9 else (dec('0.8') if hr('service_years') >= 6 else (dec('0.6') if hr('service_years') >= 3 else 0)))))))), 1, 'half_up') if hr('separation_reason') == 'resign' and employee('sansan_operator') != False else 0) + (income('base_salary') if hr('separation_reason') == 'death' else 0)",
+   "valid_from": "2021-09-01",
+   "valid_until": "2024-09-30",
+   "label": "SANSAN-L2: separation pay of operators = city minimum wage x factor by service; 47-1 condolence 1 x base wage on death",
+   "policy": "PKB-SANSAN-2021",
+   "source": [
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Lampiran angka 2 huruf a",
+     "page": 1,
+     "quote": "masa kerja 3 (tiga) tahun atau lebih tetapi kurang dari 6 (enam) tahun 0.6 1,945,157 masa kerja 6 (enam) tahun atau lebih tetapi kurang dari 9 (sembilan) tahun 0.8 2,593,543 masa kerja 9 (sembilan) tahun atau lebih tetapi kurang dari 12 (dua belas) tahun 1.1 3,566,122 masa kerja 12 (dua belas) tahun atau lebih tetapi kurang dari 15 (lima belas) tahun 1.3 4,214,508 masa kerja 15 (lima belas) tahun atau lebih tetapi kurang dari 18 (delapan belas) tahun 1.6 5,192,086 masa kerja 18 (delapan belas) tahun atau lebih tetapi kurang dari 21 (dua puluh satu) tahun 1.8 5,835,472 masa kerja 21 (dua puluh satu) tahun atau lebih tetapi kurang dari 24 (dua puluh empat) tahun 2.1 6,808,051 masa kerja 24 (dua puluh empat) tahun atau lebih 2.3"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 47 ayat (1 huruf a, c)",
+     "page": 1,
+     "quote": "Apabila Pekerja/Buruh, meninggal dunia maka diberikan sumbangan kedukaan sebesar 1 x upah pokok per bulan"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal masa berlaku ayat 1",
+     "page": 1,
+     "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 september 2021 dan berakhir tanggal 23 september 2024"
+    }
+   ],
+   "recorded_on": "2021-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SANSAN.NO_SEPARATION_PAY",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "sansan_separation_pay",
+   "condition": "hr('separation_paid') <= 0",
+   "expression": "0",
+   "valid_from": "2021-09-01",
+   "valid_until": "2024-09-30",
+   "policy": "PKB-SANSAN-2021",
+   "source": [
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal 47 ayat (1 huruf a, c)",
+     "page": 1,
+     "quote": "Apabila Pekerja/Buruh, meninggal dunia maka diberikan sumbangan kedukaan sebesar 1 x upah pokok per bulan"
+    },
+    {
+     "document": "PKB-SANSAN-2021",
+     "provision": "Pasal masa berlaku ayat 1",
+     "page": 1,
+     "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 september 2021 dan berakhir tanggal 23 september 2024"
+    }
+   ],
+   "recorded_on": "2021-01-01"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "PKB PT Sansan Saudaratex Jaya 2021-2024. Not formalised: 29-6 (daily wage not defined), 33-1 (overtime follows PP 35/2021 Ps 31; the multipliers are the regulation's, overtime stays a case input; ayat 2 unclear), 36-1 meal rate (outside the agreement), 51-2b (cooperative instalments), 52-2d (restates PP 45/2015; not a conflict, GT5 putusan 11), 53-2 and 74-2 (full wage), 54-4 (no formula), 92-2 (severance under PP 35/2021, final tax), L1 (piece rates without cost per minute), 1-10 (same as the PTKP regulation), 31-5 (payment dates)."
+}

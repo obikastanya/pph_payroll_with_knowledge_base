@@ -1,0 +1,284 @@
+{
+ "delta_id": "GOLD-SP02",
+ "event_id": null,
+ "document": {
+  "id": "SP02",
+  "title": "PT Presisi Komponen Otomotif: Peraturan Perusahaan (Lampiran Sistem Penggajian)",
+  "issued": "2023-01-01"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "annualized_tax_regular",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "annual tax on regular income annualised by 12",
+   "label_id": "PPh setahun atas penghasilan teratur disetahunkan",
+   "source": [
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2)",
+     "page": 1,
+     "quote": "a. penghasilan bruto teratur sebulan dikalikan 12 (dua belas)"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2) huruf b",
+     "page": 1,
+     "quote": "dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2) huruf c",
+     "page": 1,
+     "quote": "dibulatkan ke bawah hingga ribuan rupiah penuh"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2) huruf e",
+     "page": 1,
+     "quote": "e. hasilnya dibagi 12 (dua belas)"
+    }
+   ],
+   "recorded_on": "2023-01-01"
+  },
+  {
+   "kind": "fact",
+   "id": "annualized_tax_irregular",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "tax on irregular income, difference method",
+   "label_id": "PPh atas penghasilan tidak teratur",
+   "source": [
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (3)",
+     "page": 1,
+     "quote": "sebesar selisih antara Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan ditambah penghasilan tidak teratur"
+    }
+   ],
+   "recorded_on": "2023-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP02.JKK_RATE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "jkk_rate",
+   "expression": "dec('0.0089')",
+   "valid_from": "2023-01-01",
+   "valid_until": "2024-12-31",
+   "label": "JKK rate written as a fixed number",
+   "policy": "SP02",
+   "conflict_code": "C6",
+   "source": [
+    {
+     "document": "SP02",
+     "provision": "Pasal 32 ayat (1)",
+     "page": 1,
+     "quote": "Iuran JKK sebesar 0,89% (nol koma delapan puluh sembilan persen)"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 52 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024"
+    }
+   ],
+   "recorded_on": "2023-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP02.TAX_REGULAR_ANNUAL",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "annualized_tax_regular",
+   "condition": "not is_final_period",
+   "expression": "round(progressive('pasal17', max(0, round(12 * regular_gross - min(round(dec('0.05') * (12 * regular_gross), 1, 'down'), 6000000) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))), 1, 'down')",
+   "valid_from": "2023-01-01",
+   "valid_until": "2024-12-31",
+   "policy": "SP02",
+   "source": [
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2)",
+     "page": 1,
+     "quote": "a. penghasilan bruto teratur sebulan dikalikan 12 (dua belas)"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2) huruf b",
+     "page": 1,
+     "quote": "dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2) huruf c",
+     "page": 1,
+     "quote": "dibulatkan ke bawah hingga ribuan rupiah penuh"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2) huruf e",
+     "page": 1,
+     "quote": "e. hasilnya dibagi 12 (dua belas)"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 52 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024"
+    }
+   ],
+   "recorded_on": "2023-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP02.TAX_IRREGULAR",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "annualized_tax_irregular",
+   "condition": "not is_final_period",
+   "expression": "(round(progressive('pasal17', max(0, round(12 * regular_gross + irregular_gross - min(round(dec('0.05') * (12 * regular_gross + irregular_gross), 1, 'down'), 6000000) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))), 1, 'down') - annualized_tax_regular) if irregular_gross > 0 else 0",
+   "valid_from": "2023-01-01",
+   "valid_until": "2024-12-31",
+   "policy": "SP02",
+   "source": [
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (3)",
+     "page": 1,
+     "quote": "sebesar selisih antara Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan ditambah penghasilan tidak teratur"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2)",
+     "page": 1,
+     "quote": "a. penghasilan bruto teratur sebulan dikalikan 12 (dua belas)"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2) huruf b",
+     "page": 1,
+     "quote": "dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2) huruf c",
+     "page": 1,
+     "quote": "dibulatkan ke bawah hingga ribuan rupiah penuh"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2) huruf e",
+     "page": 1,
+     "quote": "e. hasilnya dibagi 12 (dua belas)"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 52 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024"
+    }
+   ],
+   "recorded_on": "2023-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP02.RUNNING",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "pph21_running",
+   "condition": "not is_final_period",
+   "expression": "round(annualized_tax_regular / 12, 1, 'down') + annualized_tax_irregular",
+   "valid_from": "2023-01-01",
+   "valid_until": "2024-12-31",
+   "label": "annualised method locked for the policy term",
+   "policy": "SP02",
+   "conflict_code": "C5",
+   "source": [
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2)",
+     "page": 1,
+     "quote": "a. penghasilan bruto teratur sebulan dikalikan 12 (dua belas)"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2) huruf b",
+     "page": 1,
+     "quote": "dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2) huruf c",
+     "page": 1,
+     "quote": "dibulatkan ke bawah hingga ribuan rupiah penuh"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (2) huruf e",
+     "page": 1,
+     "quote": "e. hasilnya dibagi 12 (dua belas)"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (3)",
+     "page": 1,
+     "quote": "sebesar selisih antara Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan ditambah penghasilan tidak teratur"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (5)",
+     "page": 1,
+     "quote": "berlaku selama masa berlaku Peraturan Perusahaan ini"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 52 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024"
+    }
+   ],
+   "recorded_on": "2023-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP02.METHOD",
+   "layer": "company",
+   "modality": "default",
+   "scope": "year",
+   "produces": "withholding_method",
+   "expression": "'gross'",
+   "valid_from": "2023-01-01",
+   "valid_until": "2024-12-31",
+   "label": "withholding method stated by the policy: gross",
+   "policy": "SP02",
+   "source": [
+    {
+     "document": "SP02",
+     "provision": "Pasal 31 ayat (1)",
+     "page": 1,
+     "quote": "dipotong setiap bulan dari penghasilan pekerja"
+    },
+    {
+     "document": "SP02",
+     "provision": "Pasal 52 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024"
+    }
+   ],
+   "recorded_on": "2023-01-01"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": ""
+}

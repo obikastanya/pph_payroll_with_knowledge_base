@@ -226,3 +226,222 @@ def gt1_case(c):
         else:
             skipped.append(name)
     return case, expected, sorted(set(skipped))
+
+
+# ---------------------------------------------------------------------- GT5: company policy worked examples
+GT5_DIR = REPO / "dataset" / "11_acuan" / "gt5_contoh_kebijakan"
+GT5_POLICY = {"WIKA": ("PKB-WIKA-2025", "GOLD-PKB-WIKA"), "CENTEX": ("PKB-CENTEX-2024", "GOLD-PKB-CENTEX"),
+              "AVCO": ("PKB-AVCO-2024", "GOLD-PKB-AVCO"), "TKG": ("PKB-TAEKWANG-2024", "GOLD-PKB-TKG"),
+              "SANSAN": ("PKB-SANSAN-2021", "GOLD-PKB-SANSAN")}
+
+
+def _gt5_base(policy, year, ptkp, employer, income, employee=None, months=range(1, 13)):
+    return {"policy": policy, "year": year, "ptkp": ptkp, "employer": employer, "income": income,
+            "employee": employee or {}, "months": list(months), "hr": {}, "month_income": {}}
+
+
+_WIKA = dict(employer={"klu": "41011", "jkk_risk_group": "high"}, income={"base_salary": 12000000,
+                                                                          "other_regular": 6000000})
+_CENTEX = dict(employer={"klu": "13111", "jkk_risk_group": "medium", "jkk_relief_eligible": True},
+               income={"base_salary": 5400000, "fixed_allowance": 650000})
+_AVCO = dict(employer={"klu": "52230", "jkk_risk_group": "very_high"})
+_TKG = dict(employer={"klu": "15201", "jkk_risk_group": "low", "jkk_relief_eligible": True, "transport_per_day": 15000},
+            income={"base_salary": 3600000, "fixed_allowance": 100000, "attendance_allowance": 150000})
+_SANSAN = dict(employer={"klu": "14111", "jkk_risk_group": "very_low", "meal_allowance_per_day": 15000})
+
+# Conversion of each worked example (GT5 README "Asumsi umum" and the example's asumsi). One entry per employee in the
+# example: case attributes, HR data per month, and the expected observations as (observation key, nilai_harapan key).
+# ("conflict", month, code) observes whether the engine reports a conflict with that code in that month.
+GT5_SPECS = {
+    "GT5-WIKA-01": [dict(_WIKA, year=2025, ptkp="TK/0", hr={3: {"thr_holiday": 1, "months_of_service": 6}},
+                         expect=[(("period", 3, "thr"), "thr"), (("period", 3, "gross_income"), "bruto_maret"),
+                                 (("period", 3, "pph21_due"), "pph21_maret"),
+                                 (("period", 3, "take_home_pay"), "take_home")])],
+    "GT5-WIKA-02": [dict(_WIKA, year=2025, ptkp="TK/0", month_income={6: {"bonus": 20000000}},
+                         expect=[(("period", 6, "pph21_due"), "pph_total"),
+                                 (("period", 6, "tax_allowance"), "pph_perusahaan")])],
+    "GT5-WIKA-03": [dict(_WIKA, year=2025, ptkp="TK/0", hr={2: {"leave_pay_paid": 1, "service_years": 20},
+                                                           3: {"award_paid": 1, "service_years": 20}},
+                         expect=[(("period", 2, "gross_income"), "bruto_feb"), (("period", 2, "pph21_due"), "pph21_feb"),
+                                 (("period", 2, "jp_employee"), "iuran_jp"),
+                                 (("period", 2, "take_home_pay"), "take_home"),
+                                 (("period", 3, "wika_service_award"), "satya_karya")])],
+    "GT5-WIKA-04": [dict(_WIKA, year=2025, ptkp="TK/0", months=range(1, 11),
+                         hr={3: {"thr_holiday": 1, "months_of_service": 80}, 7: {"leave_pay_paid": 1, "service_years": 7},
+                             10: {"separation_paid": 1, "separation_reason": "resign", "months_of_service": 88}},
+                         expect=[(("period", 10, "wika_separation_pay"), "uang_pisah"),
+                                 (("year", "withheld_before_final"), "pph_jan_sep"),
+                                 (("year", "taxable_income"), "pkp"), (("year", "annual_pph21"), "pph_setahun"),
+                                 (("period", 10, "pph21_due"), "pph_oktober")])],
+    "GT5-WIKA-05": [dict(_WIKA, employer={"klu": "13111", "jkk_risk_group": "high"}, year=2025, ptkp="TK/0",
+                         income={"base_salary": 6000000, "other_regular": 3000000},
+                         expect=[(("period", 1, "gross_income"), "bruto_jan"), (("period", 1, "pph21_due"), "pph_jan"),
+                                 (("period", 1, "pph21_dtp"), "dtp_wajib_tunai"),
+                                 (("conflict", 1, "C4"), "selisih_konflik")])],
+    "GT5-CENTEX-01": [dict(_CENTEX, year=2025, ptkp="K/1",
+                           hr={5: {"ot_work_h1": 60, "ot_work_h2plus": 120, "ot_rest_h1_7": 420, "ot_rest_h8": 60,
+                                   "ot_rest_h9": 60, "night_shifts_4g3s": 1}},
+                           expect=[(("period", 5, "centex_ot_workday"), "lembur_biasa"),
+                                   (("period", 5, "centex_ot_restday"), "lembur_libur"),
+                                   (("period", 5, "centex_ot_scheduled"), "lembur_malam")])],
+    "GT5-CENTEX-02": [dict(_CENTEX, year=2025, ptkp="K/1", hr={3: {"thr_holiday": 1, "months_of_service": 5}},
+                           expect=[(("period", 3, "thr"), "thr"), (("period", 3, "gross_income"), "bruto_maret"),
+                                   (("period", 3, "pph21_due"), "pph_maret"), (("conflict", 3, "C6"), "pph_jkk_pkb"),
+                                   (("period", 3, "pph21_dtp"), "dtp_tunai"),
+                                   (("period", 3, "take_home_pay"), "take_home")])],
+    "GT5-CENTEX-03": [dict(_CENTEX, year=2026, ptkp="TK/0", hr={1: {"bonus_paid": 1, "months_of_service": 8}},
+                           expect=[(("period", 1, "bonus"), "bonus"), (("period", 1, "gross_income"), "bruto_jan"),
+                                   (("period", 1, "pph21_due"), "pph_jan"),
+                                   (("period", 1, "take_home_pay"), "take_home")])],
+    "GT5-CENTEX-04": [dict(_CENTEX, year=2025, ptkp="K/1",
+                           employee={"centex_four_group_three_shift": True, "service_years": 2,
+                                     "attendance_permille": 990},
+                           hr={2: {"days_absent_unpaid": 2}, 12: {"leave_days_paid": 4}},
+                           expect=[(("period", 2, "centex_absence_deduction"), "potongan_4g3s"),
+                                   (("period", 12, "centex_leave_compensation"), "sisa_cuti"),
+                                   (("period", 2, "gross_income"), "bruto_feb"), (("period", 2, "pph21_due"), "pph_feb")]),
+                      dict(_CENTEX, year=2025, ptkp="K/1",
+                           employee={"centex_four_group_three_shift": False, "service_years": 2,
+                                     "attendance_permille": 990},
+                           hr={2: {"days_absent_unpaid": 2}},
+                           expect=[(("period", 2, "centex_absence_deduction"), "potongan_non")])],
+    "GT5-AVCO-01": [dict(_AVCO, year=2025, ptkp="K/2", income={"base_salary": 12238300},
+                         employee={"avco_pratama": True, "avco_work_pattern": "5-2"},
+                         hr={5: {"ot_work_h1": 60, "ot_work_h2plus": 120, "ot_rest_h1_7": 420, "ot_rest_h8": 60,
+                                 "ot_rest_h9": 60, "ot_rest_h10plus": 60, "days_present": 21}},
+                         expect=[(("period", 5, "overtime_pay"), "lembur"), (("period", 5, "gross_income"), "bruto_mei"),
+                                 (("period", 5, "pph21_due"), "pph_mei"),
+                                 (("period", 5, "take_home_pay"), "take_home")])],
+    "GT5-AVCO-02": [dict(_AVCO, year=2025, ptkp="K/2", income={"base_salary": 10169300},
+                         employee={"avco_pratama": True, "avco_shift_location": "non_mine"},
+                         hr={3: {"thr_holiday": 1, "months_of_service": 7, "shift_days": 20, "days_present": 20}},
+                         expect=[(("period", 3, "thr"), "thr"), (("period", 3, "gross_income"), "bruto_maret"),
+                                 (("period", 3, "pph21_due"), "pph_maret"), (("period", 3, "jp_employee"), "iuran_jp"),
+                                 (("period", 3, "take_home_pay"), "take_home")])],
+    "GT5-AVCO-03": [dict(_AVCO, year=2025, ptkp="TK/0", income={"base_salary": 13367100},
+                         employee={"avco_pratama": True}, hr={6: {"radiation_net": 950000}},
+                         expect=[(("period", 6, "avco_radiation_allowance"), "radiasi_gross"),
+                                 (("period", 6, "pph21_due"), "pph_juni")])],
+    "GT5-AVCO-04": [dict(_AVCO, year=2025, ptkp="TK/0", income={"base_salary": 12238300},
+                         employee={"avco_pratama": True, "avco_work_pattern": "5-2"},
+                         hr={7: {"days_absent_unpaid": 1, "days_present": 20}},
+                         expect=[(("period", 7, "avco_absence_deduction"), "potongan_5_2"),
+                                 (("period", 7, "gross_income"), "bruto_juli"),
+                                 (("period", 7, "pph21_due"), "pph_juli")]),
+                    dict(_AVCO, year=2025, ptkp="TK/0", income={"base_salary": 12238300},
+                         employee={"avco_pratama": True, "avco_work_pattern": "6-1"},
+                         hr={7: {"days_absent_unpaid": 1, "days_present": 20}},
+                         expect=[(("period", 7, "avco_absence_deduction"), "potongan_6_1")])],
+    "GT5-TKG-01": [dict(_TKG, year=2025, ptkp="K/0",
+                        hr={3: {"thr_holiday": 1, "months_of_service": 50, "service_years": 4, "days_present": 22,
+                                "workdays_in_month": 22}},
+                        expect=[(("period", 3, "thr"), "thr_A"), (("period", 3, "gross_income"), "bruto_maret"),
+                                (("period", 3, "pph21_due"), "pph_maret"),
+                                (("period", 3, "take_home_pay"), "take_home")]),
+                   dict(_TKG, year=2025, ptkp="K/0",
+                        hr={3: {"thr_holiday": 1, "months_of_service": 5, "service_years": 0, "days_present": 22,
+                                "workdays_in_month": 22}},
+                        expect=[(("period", 3, "thr"), "thr_B")])],
+    "GT5-TKG-02": [dict(_TKG, year=2025, ptkp="K/0", employee={"tkg_work_pattern": "5"},
+                        hr={5: {"ot_work_h1": 60, "ot_work_h2plus": 180, "ot_rest_h1_7": 420, "ot_rest_h8": 60,
+                                "ot_rest_h9": 60, "ot_rest_h10plus": 60}},
+                        expect=[(("period", 5, "tkg_ot_workday"), "lembur_hari_kerja"),
+                                (("period", 5, "tkg_ot_restday"), "lembur_istirahat")])],
+    "GT5-TKG-03": [dict(_TKG, year=2025, ptkp="TK/0", months=range(6, 13),
+                        hr={6: {"calendar_days_worked": 21, "calendar_days_in_month": 30, "days_present": 15,
+                                "workdays_in_month": 21}},
+                        expect=[(("period", 6, "tkg_prorated_wage"), "upah_kalender"),
+                                (("period", 6, "gross_income"), "bruto_juni"), (("period", 6, "pph21_due"), "pph_juni")])],
+    "GT5-TKG-04": [dict(_TKG, year=2025, ptkp="TK/0",
+                        hr={7: {"days_absconded": 1, "days_present": 21, "workdays_in_month": 22}},
+                        expect=[(("period", 7, "tkg_attendance_allowance"), "kehadiran_kasus1"),
+                                (("period", 7, "tkg_transport"), "transport_kasus1")]),
+                   dict(_TKG, year=2025, ptkp="TK/0",
+                        hr={7: {"late_count": 2, "days_present": 22, "workdays_in_month": 22}},
+                        expect=[(("period", 7, "tkg_attendance_allowance"), "kehadiran_kasus2"),
+                                (("period", 7, "tkg_transport"), "transport_kasus2")])],
+    "GT5-SANSAN-01": [dict(_SANSAN, year=2024, ptkp="TK/0",
+                           income={"base_salary": 3700000, "attendance_premium": 740000},
+                           employee={"sansan_division": "garment"},
+                           hr={4: {"thr_holiday": 1, "months_of_service": 8, "days_present": 22}},
+                           expect=[(("period", 4, "thr"), "thr_A"), (("period", 4, "gross_income"), "bruto_april"),
+                                   (("period", 4, "pph21_due"), "pph_april"),
+                                   (("period", 4, "take_home_pay"), "take_home")]),
+                      dict(_SANSAN, year=2024, ptkp="TK/0", months=range(3, 13), income={"base_salary": 3700000},
+                           employee={"sansan_division": "garment"},
+                           hr={4: {"thr_holiday": 1, "months_of_service": 1}},
+                           expect=[(("period", 4, "thr"), "thr_B_pkb"), (("conflict", 4, "C10"), "thr_B_regulasi")])],
+    "GT5-SANSAN-02": [dict(_SANSAN, year=2024, ptkp="TK/0",
+                           income={"base_salary": 3700000, "attendance_premium": 1000000},
+                           employee={"sansan_division": "garment"},
+                           hr={1: {"days_absent": 0}, 2: {"days_absent": 1}, 3: {"days_absent": 2}},
+                           expect=[(("period", 1, "sansan_attendance_premium"), "premi_baca_B"),
+                                   (("period", 2, "sansan_attendance_premium"), "absen1_B"),
+                                   (("period", 3, "sansan_attendance_premium"), "absen2")])],
+    "GT5-SANSAN-03": [dict(_SANSAN, year=2024, ptkp="K/1", income={"base_salary": 9500000, "fixed_allowance": 1500000},
+                           employee={"sansan_division": "garment"},
+                           hr={4: {"thr_holiday": 1, "months_of_service": 24}},
+                           expect=[(("year", "withheld_before_final"), "pph_jan_nov"),
+                                   (("period", 12, "pph21_due"), "pph_desember_regulasi")])],
+    "GT5-SANSAN-04": [dict(_SANSAN, employer=dict(_SANSAN["employer"], regional_minimum_wage=3241929), year=2024,
+                           ptkp="TK/0", income={"base_salary": 3700000}, employee={"sansan_division": "garment"},
+                           hr={6: {"separation_paid": 1, "separation_reason": "resign", "service_years": 16}},
+                           expect=[(("period", 6, "sansan_separation_pay"), "uang_pisah")])],
+}
+
+
+def load_gt5():
+    out = []
+    for p in sorted(GT5_DIR.glob("PKB_*.json")):
+        out += json.loads(p.read_text(encoding="utf-8"))["contoh"]
+    return out
+
+
+def _gt5_value(v):
+    from fractions import Fraction
+    if isinstance(v, float):
+        return Fraction(str(v))
+    return v
+
+
+def gt5_cases(example):
+    """GT5 example -> list of (policy doc id, policy update id, case, expected). Expected keys as in compare(); the
+    value of a ("conflict", month, code) key is True."""
+    out = []
+    short = example["id"].split("-")[1]
+    doc_id, update_id = GT5_POLICY[short]
+    for spec in GT5_SPECS[example["id"]]:
+        months = list(spec.get("months", range(1, 13)))
+        periods = []
+        for m in months:
+            income = dict(spec.get("income", {}))
+            income.update(spec.get("month_income", {}).get(m, {}))
+            periods.append({"month": m, "income": income, "hr": dict(spec.get("hr", {}).get(m, {}))})
+        employer = {"jkk_risk_group": "very_low", "jkk_relief_eligible": False, "policy": doc_id}
+        employer.update(spec["employer"])
+        employee = {"ptkp_status": spec["ptkp"], "sex": "M", "tax_id_valid": True}
+        employee.update(spec.get("employee", {}))
+        case = {"case_id": example["id"], "tax_year": spec["year"], "employee": employee, "employer": employer,
+                "method": "gross", "employment": {"start_month": months[0], "end_month": months[-1]},
+                "periods": periods}
+        expected = {}
+        for key, name in spec["expect"]:
+            value = example["nilai_harapan"][name]
+            expected[key] = True if key[0] == "conflict" else _gt5_value(value)
+        out.append((doc_id, update_id, case, expected))
+    return out
+
+
+def observe_gt5(result, key):
+    if key[0] == "conflict":
+        return any(c.get("month") == key[1] and c.get("code") == key[2] for c in result.conflicts)
+    return observe(result, key)
+
+
+def compare_gt5(kb, case, expected, omega):
+    """Like compare(), with conflict observations."""
+    view = kb.view(omega)
+    names = {f.id for f in view.facts.values() if f.output} | {k[-1] for k in expected if k[0] != "conflict"}
+    r = evaluate_case(view, case, outputs=sorted(n for n in names if n in view.facts))
+    diffs = [(k, observe_gt5(r, k), v) for k, v in expected.items() if observe_gt5(r, k) != v]
+    return r, diffs

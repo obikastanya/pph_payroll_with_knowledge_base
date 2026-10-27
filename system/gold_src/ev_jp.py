@@ -27,5 +27,6 @@ UPDATES = [
         ("angka 6", "berlaku per 1 Maret 2025.")])]),
     Update("GOLD-E12", E12, "event", event_id="E12", add=[cap(E12, 2026, 11086300, [
         ("angka 5", "Batas upah paling tinggi sebagai dasar perhitungan iuran Jaminan Pensiun mulai Maret"),
-        ("angka 5", "Dibulatkan menjadi Rp11.086.300,00")])]),
+        ("angka 5", "Dibulatkan menjadi Rp11.086.300,00"),
+        ("angka 6", "menyesuaikan perubahan batas upah tertinggi Jaminan Pensiun per 1 Maret 2026.")])]),
 ]

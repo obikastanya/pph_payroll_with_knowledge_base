@@ -277,10 +277,14 @@ class Evaluator:
         for r in active:
             if self._rank(r) != top:
                 losers.append((r.id, "lex superior"))
-        if top == 4:
-            for r in active:
-                if r.layer == "company":
-                    self._record_override(r, remaining, key)
+        overridden = [r for r in active if r.layer == "company"] if top == 4 else []
+        winner, losers = self._resolve_top(remaining, losers, key)
+        for r in overridden:
+            self._record_override(r, [winner], key)
+        return winner, losers
+
+    def _resolve_top(self, remaining, losers, key):
+        """Winner among the rules of the highest rank: lex specialis, lex posterior, then equal values."""
         if len(remaining) > 1:
             beaten = set()
             for r in remaining:
@@ -335,6 +339,8 @@ class Evaluator:
         lower = self._eval(rule.fixed_point[0], ctx, rule, key)
         upper = self._eval(rule.fixed_point[1], ctx, rule, key)
         t = lower
+        history = []                     # (t, f(t)) of every round
+        settle = None
         for _ in range(MAX_FIXED_POINT_ROUNDS):
             before = set(self.memo)
             before_w = set(self.winners)
@@ -349,7 +355,8 @@ class Evaluator:
             finally:
                 self.fp_level -= 1
                 del self.fixed[key]
-            if new == t:
+            if new == t or (settle is not None and t == settle):
+                # converged, or the round that recomputes the chosen value of a cycle (memo now consistent with t)
                 return t
             for k in set(self.memo) - before:
                 del self.memo[k]
@@ -358,6 +365,21 @@ class Evaluator:
             check_number(new, "fixed point iterate")
             if new < lower or new > upper:
                 raise FixedPointError(f"iterate {new} left [{lower}, {upper}]", fact=name, month=ctx, rule=rule.id)
+            history.append((t, new))
+            seen = [x for x, _ in history]
+            if new in seen and settle is None:
+                # The iteration cycles: f is not monotone (rounding inside the difference method of PER-16 can make
+                # a larger allowance give a smaller tax), so no fixed point is reached. Tafsir K3 item 4: take the
+                # smallest value of the cycle whose tax it covers, f(T) <= T, and evaluate once more at that value.
+                cycle = history[seen.index(new):]
+                covering = [x for x, fx in cycle if fx <= x]
+                if not covering:
+                    raise FixedPointError(f"iteration cycles without a covering value: {[x for x, _ in cycle]}",
+                                          fact=name, month=ctx, rule=rule.id)
+                settle = min(covering)
+                self.warnings.append(f"FixedPointCycle({name}@{ctx}): {[x for x, _ in cycle]} -> {settle}")
+                t = settle
+                continue
             t = new
         raise FixedPointError(f"no convergence in {MAX_FIXED_POINT_ROUNDS} rounds", fact=name, month=ctx,
                               rule=rule.id)

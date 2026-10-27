@@ -10,13 +10,22 @@ from . import Doc, Update, fact, param, rule, table
 
 P10, P72, P105 = Doc("PMK-10-2025"), Doc("PMK-72-2025"), Doc("PMK-105-2025")
 VF, VU = "2025-01-01", "2025-12-31"
-GROSSUP_RULES = ["REG.GROSSUP.RUNNING", "REG.GROSSUP.FINAL", "REG.BORNE.GROSSUP.RUNNING", "REG.BORNE.GROSSUP.FINAL"]
+def _dated(elements, *quotes):
+    """Every element with a validity also cites the provision that sets its period (gate G2 grounds dates per
+    element)."""
+    for e in elements:
+        if e.get("valid_from") or e.get("valid_until"):
+            e["source"] = list(e["source"]) + [q for q in quotes if q not in e["source"]]
+    return elements
+
+
+BORNE_RULES = ["REG.BORNE.GROSSUP.RUNNING", "REG.BORNE.GROSSUP.FINAL"]
 
 
 def _e06():
     q = P10.q
     period = q("Pasal 2 ayat (3)", "Pasal 21 ditanggung pemerintah sebagaimana dimaksud")
-    period2 = q("Pasal 2 ayat (3)", "pada ayat (2) diberikan untuk Masa Pajak Januari 2025")
+    period2 = q("Pasal 2 ayat (3)", "pada ayat (2) diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025.")
     klu = [q("Pasal 3 ayat (1) huruf b", "b. memiliki kode klasifikasi lapangan usaha"),
            q("Pasal 3 ayat (1) huruf a", "melakukan kegiatan usaha pada bidang industri:")]
     crit = [q("Pasal 4 ayat (2) huruf b", "bersifat tetap dan teratur tidak lebih dari"),
@@ -30,8 +39,8 @@ def _e06():
            q("Pasal 5 ayat (1)", "insentif yang harus dibayarkan secara tunai oleh Pemberi")]
     refund = q("Pasal 5 ayat (5)", "pemerintah tidak dikembalikan kepada Pegawai Tetap")
     no_gu = [q("Pasal 5 ayat (1)", "tunjangan Pajak Penghasilan Pasal 21 atau menanggung"),
-             q("Pasal 5 ayat (2)", "dikenakan pajak.")]
-    return [
+             q("Pasal 5 ayat (2)", "diperhitungkan sebagai penghasilan yang dikenakan pajak.")]
+    return _dated([
         fact("dtp_fixed_income", "money", "period", fixed, label="fixed regular income for the DTP criterion",
              label_id="penghasilan bruto tetap dan teratur"),
         fact("dtp_income_test", "money", "year", crit, label="fixed regular income in January or the first month",
@@ -61,23 +70,28 @@ def _e06():
              "max(0, 0 - final_period_tax - sum_periods_before_final('pph21_dtp'))", refund, VF, vu=VU,
              scope="year", cond="dtp_eligible", overrides=["REG.YEAR.REFUND"],
              label="tafsir K13: over-withholding that came from DTP is not refunded"),
+        rule("REG.DTP.THP_CASH", "employee_tax_burden", "0 - pph21_dtp", dtp, VF, vu=VU,
+             cond="dtp_facility and withholding_method == 'employer_borne'",
+             label="Pasal 5 ayat (1): the DTP is paid in cash also when the employer bears the tax, so it is cash "
+                   "the employee receives on top (negative tax burden)"),
         rule("REG.DTP.NO_GROSSUP", "tax_allowance", "0", no_gu, VF, vu=VU,
-             cond="dtp_facility and withholding_method in ('gross_up', 'employer_borne')",
-             overrides=GROSSUP_RULES,
-             label="DTP is paid in cash and is not income; the employer bears no tax to gross up"),
-    ]
+             cond="dtp_facility and withholding_method == 'employer_borne'",
+             overrides=BORNE_RULES,
+             label="tafsir K18: under DTP the employer bears no tax, so a borne tax is no benefit to gross up; "
+                   "a tax allowance (gross_up method) stays income and the DTP is paid in cash on top"),
+    ], period2)
 
 
 def _e10():
     q = P72.q
-    tour_period = [q("Pasal I angka 4, Pasal 4A huruf b", "b. Masa Pajak Oktober 2025 sampai dengan Masa Pajak"),
-                   q("Pasal I angka 4, Pasal 4A huruf b", "Desember 2025, bagi Pegawai tertentu dari Pemberi")]
-    klu = [q("Pasal I angka 2, Pasal 3 ayat (1) huruf a angka 5", "5. pariwisata; dan"),
+    tour_period = [q("Pasal I angka 4, Pasal 4A huruf b",
+                     "b. Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu")]
+    klu = [q("Pasal I angka 2, Pasal 3 ayat (1) huruf a angka 5", "4. kulit dan barang dari kulit; atau 5. pariwisata; dan"),
            q("Pasal I angka 2, Pasal 3 ayat (1) huruf b", "b. memiliki kode klasifikasi lapangan usaha")]
     refund = [q("Pasal I angka 5, Pasal 5 ayat (5a)", "(5a) Dikecualikan dari ketentuan ayat (5), untuk Pegawai"),
               q("Pasal I angka 5, Pasal 5 ayat (5a)", "kelebihan pemotongan pajak yang tidak")]
     vf = "2025-10-01"
-    return [
+    return _dated([
         fact("dtp_eligible_tourism", "bool", "year", klu + tour_period, label="employee eligible for tourism DTP",
              label_id="pegawai tertentu sektor pariwisata"),
         table("TAB.DTP_KLU_TOURISM.2025", "dtp_klu_tourism", "set", klu, vf, vu=VU,
@@ -89,7 +103,7 @@ def _e10():
              " and employee('tax_id_valid') != False", klu + tour_period, vf, vu=VU, scope="year"),
         rule("REG.DTP.FACILITY.TOURISM", "dtp_facility", "dtp_eligible or dtp_eligible_tourism", tour_period, vf,
              vu=VU, overrides=["REG.DTP.FACILITY"]),
-    ], [
+    ], *tour_period), [
         rule("REG.DTP.REFUND", "refund_to_employee",
              "max(0, 0 - final_period_tax - sum_periods_before_final('pph21_dtp'))",
              [P10.q("Pasal 5 ayat (5)", "pemerintah tidak dikembalikan kepada Pegawai Tetap")] + refund, VF, vu=VU,
@@ -104,19 +118,19 @@ def _e11(e06_rules):
     vf, vu = "2026-01-01", "2026-12-31"
     period = [q("Pasal 2 ayat (3)", "pada ayat (2) diberikan untuk Masa Pajak Januari 2026"),
               q("Pasal 2 ayat (3)", "sampai dengan Masa Pajak Desember 2026.")]
-    klu = [q("Pasal 3 ayat (1) huruf a angka 5", "5. pariwisata; dan"),
+    klu = [q("Pasal 3 ayat (1) huruf a angka 5", "4. kulit dan barang dari kulit; atau 5. pariwisata; dan"),
            q("Pasal 3 ayat (1) huruf b", "b. memiliki kode klasifikasi lapangan usaha")]
     crit = [q("Pasal 4 ayat (2) huruf b", "Rp10.000.000,00 (sepuluh juta rupiah) pada:"),
             q("Pasal 4 ayat (2) huruf b angka 1", "1. Masa Pajak Januari 2026, untuk Pegawai tertentu")]
-    add = [
+    add = _dated([
         param("PAR.DTP_FIXED_INCOME_CAP.2026", "dtp_fixed_income_cap", 10000000, "money", crit, vf, vu=vu,
               label_id="batas penghasilan tetap dan teratur"),
         table("TAB.DTP_KLU.2026", "dtp_klu", "set", klu, vf, vu=vu, label_id="kode klasifikasi lapangan usaha",
               rows_ref={"extracted_table": "PMK-105-2025/LAMPIRAN-A", "columns": {"key": "klu", "sector": "sektor"}}),
-    ]
+    ], *period)
     change = []
     for rid in ["REG.DTP.FIXED_INCOME", "REG.DTP.INCOME_TEST", "REG.DTP.ELIGIBLE", "REG.DTP.FACILITY",
-                "REG.DTP.RUNNING", "REG.DTP.FINAL", "REG.DTP.REFUND", "REG.DTP.NO_GROSSUP"]:
+                "REG.DTP.RUNNING", "REG.DTP.FINAL", "REG.DTP.REFUND", "REG.DTP.NO_GROSSUP", "REG.DTP.THP_CASH"]:
         r = dict(e06_rules[rid])
         r["valid_until"] = vu
         r["source"] = list(r["source"]) + period

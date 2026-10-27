@@ -1,0 +1,240 @@
+{
+ "delta_id": "GOLD-SP11",
+ "event_id": null,
+ "document": {
+  "id": "SP11",
+  "title": "PT Bumi Konstruksi Persada: Perjanjian Kerja Bersama",
+  "issued": "2025-01-01"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "rule",
+   "id": "PRS.SP11.JP_EMPLOYEE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "jp_employee",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(dec('0.01') * bpjs_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2025-01-01",
+   "valid_until": "2026-12-31",
+   "label": "JP on the whole wage, no cap",
+   "policy": "SP11",
+   "conflict_code": "C8",
+   "source": [
+    {
+     "document": "SP11",
+     "provision": "Pasal 50 ayat (1)",
+     "page": 1,
+     "quote": "terdiri atas 2% (dua persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja"
+    },
+    {
+     "document": "SP11",
+     "provision": "Pasal 50 ayat (1)",
+     "page": 1,
+     "quote": "dihitung dari seluruh upah sebulan (gaji pokok dan tunjangan tetap) tanpa batas upah"
+    },
+    {
+     "document": "SP11",
+     "provision": "Pasal 71 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+    }
+   ],
+   "recorded_on": "2025-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP11.HEALTH_EMPLOYEE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "health_employee",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(dec('0.01') * bpjs_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2025-01-01",
+   "valid_until": "2026-12-31",
+   "label": "JKN on the whole wage, no cap",
+   "policy": "SP11",
+   "conflict_code": "C8",
+   "source": [
+    {
+     "document": "SP11",
+     "provision": "Pasal 50 ayat (2)",
+     "page": 1,
+     "quote": "terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja"
+    },
+    {
+     "document": "SP11",
+     "provision": "Pasal 50 ayat (2)",
+     "page": 1,
+     "quote": "dihitung dari seluruh upah sebulan tanpa batas upah"
+    },
+    {
+     "document": "SP11",
+     "provision": "Pasal 71 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+    }
+   ],
+   "recorded_on": "2025-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP11.HEALTH_EMPLOYER",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "health_premium_employer",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(dec('0.04') * bpjs_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2025-01-01",
+   "valid_until": "2026-12-31",
+   "label": "JKN on the whole wage, no cap",
+   "policy": "SP11",
+   "conflict_code": "C8",
+   "source": [
+    {
+     "document": "SP11",
+     "provision": "Pasal 50 ayat (2)",
+     "page": 1,
+     "quote": "terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja"
+    },
+    {
+     "document": "SP11",
+     "provision": "Pasal 50 ayat (2)",
+     "page": 1,
+     "quote": "dihitung dari seluruh upah sebulan tanpa batas upah"
+    },
+    {
+     "document": "SP11",
+     "provision": "Pasal 71 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+    }
+   ],
+   "recorded_on": "2025-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP11.JKK_RATE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "jkk_rate",
+   "expression": "dec('0.0127')",
+   "valid_from": "2025-01-01",
+   "valid_until": "2026-12-31",
+   "label": "JKK rate written as a fixed number",
+   "policy": "SP11",
+   "conflict_code": "C6",
+   "source": [
+    {
+     "document": "SP11",
+     "provision": "Pasal 50 ayat (3)",
+     "page": 1,
+     "quote": "Iuran JKK sebesar 1,27% (satu koma dua puluh tujuh persen)"
+    },
+    {
+     "document": "SP11",
+     "provision": "Pasal 71 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+    }
+   ],
+   "recorded_on": "2025-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP11.LEAVER_TAX",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "pph21_due",
+   "condition": "is_final_period and final_month < 12",
+   "expression": "round(bracket('ter_monthly', ter_category, gross_income) * gross_income, 1, param('pph_round_mode'))",
+   "valid_from": "2025-01-01",
+   "valid_until": "2026-12-31",
+   "label": "leaver's last month at the monthly effective rate",
+   "policy": "SP11",
+   "conflict_code": "C5",
+   "source": [
+    {
+     "document": "SP11",
+     "provision": "Pasal 51 ayat (2)",
+     "page": 1,
+     "quote": "dihitung dengan tarif efektif bulanan sebagaimana bulan-bulan sebelumnya, dan kekurangan atau kelebihan Pajak Penghasilan Pasal 21 diselesaikan sendiri oleh pekerja"
+    },
+    {
+     "document": "SP11",
+     "provision": "Pasal 71 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+    }
+   ],
+   "recorded_on": "2025-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP11.LEAVER_REFUND",
+   "layer": "company",
+   "modality": "default",
+   "scope": "year",
+   "produces": "refund_to_employee",
+   "condition": "final_month < 12",
+   "expression": "0",
+   "valid_from": "2025-01-01",
+   "valid_until": "2026-12-31",
+   "label": "over-withholding of a leaver settled by the employee",
+   "policy": "SP11",
+   "conflict_code": "C5",
+   "source": [
+    {
+     "document": "SP11",
+     "provision": "Pasal 51 ayat (2)",
+     "page": 1,
+     "quote": "dihitung dengan tarif efektif bulanan sebagaimana bulan-bulan sebelumnya, dan kekurangan atau kelebihan Pajak Penghasilan Pasal 21 diselesaikan sendiri oleh pekerja"
+    },
+    {
+     "document": "SP11",
+     "provision": "Pasal 71 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+    }
+   ],
+   "recorded_on": "2025-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP11.METHOD",
+   "layer": "company",
+   "modality": "default",
+   "scope": "year",
+   "produces": "withholding_method",
+   "expression": "'gross'",
+   "valid_from": "2025-01-01",
+   "valid_until": "2026-12-31",
+   "label": "withholding method stated by the policy: gross",
+   "policy": "SP11",
+   "source": [
+    {
+     "document": "SP11",
+     "provision": "Pasal 51 ayat (1)",
+     "page": 1,
+     "quote": "dipotong setiap bulan dengan tarif efektif bulanan"
+    },
+    {
+     "document": "SP11",
+     "provision": "Pasal 71 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+    }
+   ],
+   "recorded_on": "2025-01-01"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": ""
+}

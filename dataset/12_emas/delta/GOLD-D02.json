@@ -1,0 +1,190 @@
+{
+ "delta_id": "GOLD-D02",
+ "event_id": "D02",
+ "document": {
+  "id": "PERPRES-111-2013",
+  "title": "Perpres 111/2013: Perubahan Perpres 12/2013 tentang Jaminan Kesehatan",
+  "issued": "2013-12-27"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "parameter",
+   "id": "PAR.HEALTH_EMPLOYER_RATE.2014",
+   "name": "health_employer_rate",
+   "value": "0.04",
+   "value_type": "rate",
+   "valid_from": "2014-01-01",
+   "label_id": "iuran jaminan kesehatan pemberi kerja",
+   "source": [
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16C ayat (1)",
+     "page": 12,
+     "quote": "dibayarkan mulai tanggal 1 Januari 2014 sampai dengan 30 Juni 2015 sebesar 4,5%"
+    },
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16C ayat (1) huruf a",
+     "page": 12,
+     "quote": "a. 4% (empat persen) dibayar oleh Pemberi Kerja;"
+    }
+   ],
+   "recorded_on": "2013-12-27"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.HEALTH_EMPLOYEE_RATE.2014",
+   "name": "health_employee_rate",
+   "value": "0.005",
+   "value_type": "rate",
+   "valid_from": "2014-01-01",
+   "valid_until": "2015-06-30",
+   "label_id": "iuran jaminan kesehatan pegawai",
+   "source": [
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16C ayat (1)",
+     "page": 12,
+     "quote": "dibayarkan mulai tanggal 1 Januari 2014 sampai dengan 30 Juni 2015 sebesar 4,5%"
+    },
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16C ayat (1) huruf b",
+     "page": 12,
+     "quote": "b. 0,5% (nol koma lima persen) dibayar oleh Peserta."
+    }
+   ],
+   "recorded_on": "2013-12-27"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.HEALTH_EMPLOYEE_RATE.2015",
+   "name": "health_employee_rate",
+   "value": "0.01",
+   "value_type": "rate",
+   "valid_from": "2015-07-01",
+   "label_id": "iuran jaminan kesehatan pegawai",
+   "source": [
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16C ayat (2)",
+     "page": 12,
+     "quote": "dibayarkan mulai tanggal 1 Juli 2015 sebesar 5%"
+    },
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16C ayat (2) huruf b",
+     "page": 12,
+     "quote": "b. 1% (satu persen) dibayar oleh Peserta."
+    },
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16C ayat (1)",
+     "page": 12,
+     "quote": "dibayarkan mulai tanggal 1 Januari 2014 sampai dengan 30 Juni 2015 sebesar 4,5%"
+    }
+   ],
+   "recorded_on": "2013-12-27"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.JKN.WAGE.2014",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "health_wage",
+   "expression": "min(base_salary + fixed_allowance, round(2 * lookup('ptkp', 'K/1') / 12, 1, 'down'))",
+   "valid_from": "2014-01-01",
+   "label": "Pasal 16D: monthly cap 2 x PTKP K/1 / 12 of the PTKP table valid in the month",
+   "source": [
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16D",
+     "page": 13,
+     "quote": "Batas paling tinggi Gaji atau Upah per bulan yang digunakan sebagai dasar perhitungan"
+    },
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16D",
+     "page": 13,
+     "quote": "kali Penghasilan Tidak Kena Pajak (PTKP) dengan status kawin dengan 1 (satu) orang anak."
+    },
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16E ayat (3)",
+     "page": 14,
+     "quote": "Jaminan Kesehatan sebagaimana dimaksud dalam Pasal 16C terdiri atas Gaji atau Upah pokok dan tunjangan tetap."
+    },
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16C ayat (1)",
+     "page": 12,
+     "quote": "dibayarkan mulai tanggal 1 Januari 2014 sampai dengan 30 Juni 2015 sebesar 4,5%"
+    }
+   ],
+   "recorded_on": "2013-12-27"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.JKN.EMPLOYER",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "health_premium_employer",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(param('health_employer_rate') * health_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2014-01-01",
+   "source": [
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16C ayat (1)",
+     "page": 12,
+     "quote": "dibayarkan mulai tanggal 1 Januari 2014 sampai dengan 30 Juni 2015 sebesar 4,5%"
+    },
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16C ayat (1) huruf a",
+     "page": 12,
+     "quote": "a. 4% (empat persen) dibayar oleh Pemberi Kerja;"
+    }
+   ],
+   "recorded_on": "2013-12-27"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.JKN.EMPLOYEE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "health_employee",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(param('health_employee_rate') * health_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2014-01-01",
+   "source": [
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16C ayat (1) huruf b",
+     "page": 12,
+     "quote": "b. 0,5% (nol koma lima persen) dibayar oleh Peserta."
+    },
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16C ayat (2) huruf b",
+     "page": 12,
+     "quote": "b. 1% (satu persen) dibayar oleh Peserta."
+    },
+    {
+     "document": "PERPRES-111-2013",
+     "provision": "Pasal 16C ayat (1)",
+     "page": 12,
+     "quote": "dibayarkan mulai tanggal 1 Januari 2014 sampai dengan 30 Juni 2015 sebesar 4,5%"
+    }
+   ],
+   "recorded_on": "2013-12-27"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": ""
+}

@@ -202,3 +202,95 @@ GT1 *holdout* (14 kasus) tidak dipakai.
 - Bagian VI (dataset): tabel rantai emas (`dataset/12_emas/rantai.csv`), jumlah rekaman per jenis, prosedur kutipan terverifikasi otomatis.
 - Bagian VII (E0, validitas instrumen): tabel validasi GT3 di atas.
 - Contoh berjalan untuk paper: E10 (pariwisata) memperlihatkan pengecualian (*lex specialis*) dan nilai surut; E13 memperlihatkan perubahan parameter berlaku surut.
+
+---
+
+## Tahap 7. Emas (bagian 2: pengembangan, fiktif, kebijakan)
+
+Selesai disusun: 2026-10-27. Dikerjakan paralel oleh empat *fork* (A: D01–D13; B: FR01–FR05; C: pendukung ketenagakerjaan dan SP01–SP14; D: lima PKB dan Koja), masing-masing dengan validasi sendiri; diintegrasikan dan diperiksa ulang oleh penyusun.
+
+### Hasil
+
+| Bagian | Modul | Isi | Validasi |
+|---|---|---|---|
+| Peristiwa pengembangan D01–D13 | `dev_ptkp_jkn.py`, `dev_covid.py` | PTKP 2013/2015 (berlaku surut), JKN 2014/2016, keringanan iuran 2020, DTP COVID 2020–2021 dengan tabel KLU 440/1062/1189 terekstraksi; D08, D12, D13 kosong | 11 uji hitungan tangan termasuk contoh resmi lampiran PMK 23/2020 (Tuan A, C, D) |
+| Regulasi fiktif FR01–FR05 | `fr_fiktif.py` (pembaruan sisi) | TER fiktif 2020, pembulatan PKP 2021, pencabutan biaya jabatan gilir malam (dengan latar fiktif BG-FR03), komisi 2019, plafon biaya jabatan 2022 (dua dokumen) | 17/17 contoh hitung sebelum dan sesudah sama (`check_fiktif.py`) |
+| Pendukung ketenagakerjaan | `bg_support.py` (BG-010) | THR minimum Permenaker 6/2016 sebagai aturan dan batasan C10 | GT1–GT3 tidak berubah |
+| Kebijakan sintetis SP01–SP14 | `pol_sintetis.py` (pembaruan sisi) | aturan perusahaan per klausul; kode konflik C1–C10 sesuai INDEX; tiga kontrol negatif tanpa konflik | 37/38 contoh (sisa: SP08-3, lihat keterbatasan) (`check_policies.py`) |
+| PKB nyata | `pol_pkb.py` (pembaruan sisi) | WIKA 25/2/16, CENTEX 20/2/12, AVCO 29/5/10, TKG 17/3/14, SANSAN 12/1/11, KOJA 12/2/8 klausul (formal/sebagian/tidak, alasan di catatan pembaruan) | GT5: 67/79 observasi sama, 12/12 selisih dijelaskan (`check_refs.py gt5`) |
+
+Rantai utama: **37 pembaruan, 278 rekaman**; pembaruan sisi: **27** (7 fiktif, 20 kebijakan). Semua GT tetap: GT3 50/50 (2107/2107), GT1 pengembangan 22/26 (14 selisih = ralat contoh resmi), GT2 15/20 (5 pembulatan) dan 90/90. Uji: 71 lulus. Tabel peristiwa kebijakan: `dataset/10_kebijakan_perusahaan/peristiwa_kebijakan.csv` (20 baris).
+
+### Gerbang terhadap emas (laju penolakan keliru)
+
+Setiap $\Delta^\star$ diperiksa G1–G5 terhadap basisnya (`system/tools/check_gates_gold.py`, `docs/hasil/gerbang_emas.csv`). Pemeriksaan pertama menolak banyak emas; setiap penolakan dianalisis dan diputuskan apakah emasnya salah atau gerbangnya terlalu sempit:
+
+- **Emas salah atau kurang** (diperbaiki di emas): kutipan < 20 karakter; tanggal berlaku tidak dikutip oleh unsur itu sendiri; aturan pencatat natura yang dikecualikan tanpa efek (E02); perpanjangan aturan lingkup tahun dalam tahun yang sama tanpa efek (D07, D11); pengulangan aturan wajib oleh kebijakan (AVCO JHT 2%).
+- **Gerbang terlalu sempit** (spesifikasi akuisisi versi 3): angka turunan yang dinyatakan peraturan dengan kata (PTKP = diri + kawin + tanggungan; tarif keringanan 50%), angka dan tarif yang ditulis dengan kata, desimal pendek, huruf OCR dalam angka dan tahun; pola "(sampai) dengan <Bulan> <Tahun>"; galat *engine* yang sudah ada di basis; aturan A3 yang tidak berlaku bagi lapisan perusahaan; ω evaluasi kebijakan; definisi fakta; fakta milik kebijakan sebagai keluaran kebijakan; cakupan $S^G$ (kombinasi 3–4 nilai, atribut aturan pesaing, baris masa terakhir).
+
+### Temuan dan koreksi emas
+
+1. **K18 (DTP dan *gross-up*):** emas E06 semula menolkan tunjangan pajak juga pada metode *gross-up*; PMK 10/2025 Ps 5 ayat (1) mewajibkan DTP dibayar tunai "termasuk dalam hal ... memberikan tunjangan PPh 21". Dikoreksi; aturan gaji bersih DTP tunai pada metode ditanggung ditambahkan (E06, E11, D05). Ditemukan oleh contoh SP06 dan GT5-CENTEX.
+2. **K3 butir 4:** *gross-up* dengan metode selisih PER-16 bisa tanpa titik tetap (siklus); *engine* memilih nilai terkecil yang menutup pajaknya sendiri.
+3. **Perbaikan *engine*:** konflik *override* dibandingkan dengan pemenang wajib yang sebenarnya; rekaman pembaruan kebijakan tidak disaring ω.
+
+### RQ1 (adaptivitas representasional)
+
+- Semua peristiwa nyata (E01–E13, D01–D13) dan fiktif (FR01–FR05) dapat dinyatakan tanpa mengubah *engine*.
+- Kebijakan: klausul yang tidak diformalkan dicatat per PKB beserta alasannya. Batas representasi yang ditemukan: (i) penanggungan pajak sebagian (WIKA-22-2) tidak dapat dinyatakan terhadap aturan wajib *gross-up* penuh; (ii) tidak ada iterasi per hari (lembur harian dari data kasus); (iii) tidak ada fungsi hari kalender; (iv) aturan perusahaan tidak dapat menyatakan "paling sedikit sebesar ketentuan" (kelebihan yang sah terbaca konflik C8); (v) konvensi pembulatan 2024 sebagai parameter yang dibaca aturan wajib membuat pembulatan perusahaan 2024 terbaca C9 (SP08-3); (vi) fakta lingkup tahun milik kebijakan berlaku sepanjang tahun pajak; (vii) perubahan satuan pembulatan yang tertulis sebagai literal (FR02) butuh enam versi aturan.
+
+### Keterbatasan dan hal terbuka
+
+- SP08-3 dan label dampak manual vs eksekusi (134/168 pasangan sepakat; sebagian besar perbedaan pada tipe (a) karena kebijakan merujuk nilai wajib secara dinamis tanpa aturan) dibahas di Tahap 8/10 sebagai validitas label.
+- GT5-WIKA-03/05 memakai bulan sebelum masa berlaku PKB; dilaporkan apa adanya.
+- Pembaca kedua dan Krippendorff α: berikutnya (bagian 3).
+
+### Bahan paper
+
+- Bagian VI: tabel korpus emas (pengembangan, uji, fiktif, kebijakan) dengan jumlah rekaman; prosedur "emas sebagai kode" dengan kutipan terverifikasi.
+- Bagian VII: laju penolakan keliru gerbang atas emas sebelum dan sesudah penyesuaian; daftar penyesuaian sebagai bukti bahwa gerbang dikalibrasi pada emas pengembangan (bukan pada keluaran LLM uji).
+- RQ1: daftar batas representasi di atas; klausul kebijakan yang tidak dapat diformalkan.
+- Diskusi: koreksi K18 contoh bahwa contoh hitung kebijakan menguji emas regulasi (validasi silang antarlapis).
+
+---
+
+## Tahap 9. Alur akuisisi (bagian 1: komponen dan klien tiruan)
+
+Mulai: 2026-10-27, dikerjakan sejajar dengan Tahap 7 (emas menjadi bahan kalibrasi gerbang).
+
+### Hasil
+
+Paket `system/pph21kbs/pipeline/`:
+
+| Modul | Isi |
+|---|---|
+| `select.py` | pemilihan segmen: skor leksikal per akar panjang segmen dari leksikon KB + istilah tetap; pembuka/penutup selalu (dipotong 3.000 token), lampiran bertabel terekstraksi diganti deskripsi tabel; anggaran 14.000 token |
+| `context.py` | konteks KB dari graf: kosakata, katalog fungsi, nama parameter dan tabel, rekaman relevan + tetangga satu langkah lewat SPARQL |
+| `prompts.py` | prompt relevansi, penyusunan, perbaikan (contoh generik, bukan dari peristiwa uji) |
+| `llm.py` | klien Anthropic (`output_config.format` JSON *schema*, `effort`, *prompt caching*), OpenAI (Responses API, *strict*), tiruan; log JSONL per panggilan, berkas *prompt* per SHA-256, penjaga anggaran USD 15 total |
+| `convert.py` | keluaran datar LLM ↔ $\Delta$; bolak-balik semua emas utuh |
+| `gates.py` | G1 (skema, penerapan ketat, SHACL), G2 (kutipan, pendaratan angka dan tanggal), G3 (statis), G4 (regresi, galat baru), G5 (non-vakuitas, tanggal dan subjek tercermin), tanggal mulai efek $s(u)$ |
+| `sg.py` | generator $S^G$ (lihat spesifikasi versi 3) |
+| `consensus.py` | pengelompokan perilaku atas gabungan $S^G$, seri → *abstain* |
+| `run.py` | satu dokumen: relevansi → $m$ kandidat → gerbang → satu perbaikan → konsensus → rekaman hasil |
+
+Tambahan: `system/pph21kbs/corpus.py` (tabel peristiwa regulasi, fiktif, kebijakan), `system/tools/kb_context.py` (tampilan yang dilihat LLM, untuk pembaca kedua). Uji klien tiruan (`system/tests/test_pipeline.py`, 7): emas sebagai keluaran diterima, pengecoh dengan kutipan sah → $\Delta$ kosong (kutipan palsu → *abstain*), kutipan palsu gagal G2 lalu diperbaiki, seri → *abstain*, penjaga anggaran, isolasi kode alur dari emas dan acuan.
+
+### Penyimpangan
+
+- Pemeriksaan pertama pemilihan segmen dilakukan pada beberapa dokumen uji (PMK 10/2025, PP 58/2023, PMK 168/2023, PER-11/PJ/2025, PMK 81/2024) sebelum disadari; perubahan yang dibuat bersifat umum (semua segmen bila muat, kepadatan skor, batas panjang penutup, istilah "pembulatan", "klasifikasi lapangan usaha", "insentif" yang juga ada di dokumen pengembangan D05–D11 dan FR02). Pemeriksaan selanjutnya hanya pada dokumen pengembangan. Dicatat sebagai ancaman validitas kecil (kebocoran desain), bukan penyetelan pada hasil.
+
+### Uji dengan LLM sungguhan (kriteria selesai Tahap 9)
+
+Jalan `dev-smoke`, peristiwa pengembangan D01 (PMK 162/2012), Claude Opus 5.5, $m = 1$ (`system/tools/run_event.py dev-smoke D01 --m 1`; log `experiments/dev-smoke/`):
+
+1. Percobaan pertama: relevansi berhasil; penyusunan ditolak API dengan galat 400 "The compiled grammar is too large" karena skema keluaran LLM versi 1 terlalu besar. Skema diganti versi 2 (atribut khusus jenis unsur sebagai pasangan nama–nilai; format_data.md §2.3); bolak-balik 64 $\Delta^\star$ melalui bentuk baru utuh.
+2. Percobaan kedua: kandidat pertama lolos G1–G4 dan gagal G5 (parameter tambahan kawin yang nilainya sama dengan tambahan tanggungan, tidak berefek); putaran perbaikan menghapusnya; hasil lolos G1–G5 dan diterapkan. LLM memilih representasi PTKP berkomponen (diri + tambahan × jumlah dari tabel status) yang berbeda bentuk dari emas (tabel PTKP lengkap) tetapi setara perilakunya. Contoh nyata mengapa konsensus dan penilaian berdasar perilaku, bukan bentuk.
+3. Biaya: relevansi USD 0,012; penyusunan USD 0,144 (tulis *cache* 12.863 token, keluaran 3.950 token); perbaikan USD 0,129. Total semua jalan sejauh ini USD 0,32 dari 15.
+4. Perbaikan sesudahnya: putaran perbaikan memakai *system prompt* yang sama dengan penyusunan (instruksi perbaikan dipindah ke pesan pengguna) agar awalan ber-*cache* dibaca, bukan ditulis ulang; *prompt* yang memuat teks PKB disimpan di `prompts_private/` yang tidak di-*commit*.
+
+### Bahan paper
+
+- Bagian V: alur delapan tahap sebagaimana diimplementasikan; skema keluaran LLM dan alasannya (batas tata bahasa keluaran terstruktur).
+- Bagian VI/VII: biaya per panggilan terukur sebagai dasar perkiraan anggaran (Tahap 11).
+- Contoh kualitatif: D01, representasi berbeda tetapi setara perilaku.

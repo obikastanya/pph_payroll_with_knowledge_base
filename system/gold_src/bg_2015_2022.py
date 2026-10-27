@@ -92,14 +92,6 @@ def _jkn82():
         param("PAR.HEALTH_WAGE_CAP.2018", "health_wage_cap", 8000000, "money",
               q("Pasal 32 ayat (1)", "Rp8.000.000,00 (delapan juta rupiah)."), start,
               label_id="batas upah jaminan kesehatan"),
-        rule("REG.JKN.WAGE", "health_wage", "min(bpjs_wage, param('health_wage_cap'))",
-             [q("Pasal 33 ayat (3)", "(3) Gaji atau Upah yang digunakan sebagai dasar"),
-              q("Pasal 33 ayat (4)", "(4) Tunjangan tetap sebagaimana dimaksud pada ayat")], start),
-        rule("REG.JKN.EMPLOYER", "health_premium_employer",
-             f"round(param('health_employer_rate') * health_wage, 1, {ROUND})", rates, start, cond=NOT_BILLED),
-        rule("REG.JKN.EMPLOYEE", "health_employee",
-             f"round(param('health_employee_rate') * health_wage, 1, {ROUND})",
-             q("Pasal 30 ayat (2) huruf b", "b. 1 % (satu persen) dibayar oleh Peserta."), start, cond=NOT_BILLED),
     ]
 
 
@@ -140,8 +132,9 @@ UPDATES = [
     Update("BG-004", P45, "background", add=_pp45()),
     Update("BG-005", PMK101, "background", add=_pmk101()),
     Update("BG-006", JKN82, "background", add=_jkn82(),
-           note="JKN rates and wage cap as restated by Perpres 82/2018; earlier JKN changes are development events "
-                "D02 and D04. valid_from set to the first full month after promulgation."),
+           note="JKN rates and wage cap as restated by Perpres 82/2018 (same values as before). The JKN rules come "
+                "from development events D02 (Perpres 111/2013) and D04 (Perpres 19/2016). valid_from set to the "
+                "first full month after promulgation."),
     Update("BG-007", JKN75, "background", add=_jkn75()),
     Update("BG-008", HPP, "background", add=_hpp()),
     Update("BG-009", JP23, "background", add=_jp2022(), recorded_on="2022-03-01",

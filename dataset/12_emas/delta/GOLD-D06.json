@@ -1,0 +1,132 @@
+{
+ "delta_id": "GOLD-D06",
+ "event_id": "D06",
+ "document": {
+  "id": "PMK-44-PMK-03-2020",
+  "title": "PMK 44/PMK.03/2020: Insentif pajak COVID-19, mengganti PMK 23/2020",
+  "issued": "2020-04-27"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "rule",
+   "id": "REG.COVID_DTP.REFUND",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "refund_to_employee",
+   "expression": "max(0, 0 - final_period_tax - sum_periods_before_final('pph21_dtp'))",
+   "valid_from": "2020-04-01",
+   "valid_until": "2020-09-30",
+   "overrides": [
+    "REG.YEAR.REFUND"
+   ],
+   "label": "over-withholding that came from DTP periods is not refunded (as tafsir K13)",
+   "source": [
+    {
+     "document": "PMK-44-PMK-03-2020",
+     "provision": "Pasal 2 ayat (8)",
+     "page": 9,
+     "quote": "kelebihan pembayaran yang berasal dari PPh Pasal 21 ditanggung Pemerintah tidak dapat dikembalikan."
+    },
+    {
+     "document": "PMK-44-PMK-03-2020",
+     "provision": "Pasal 2 ayat (9)",
+     "page": 9,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+    }
+   ],
+   "recorded_on": "2020-04-27"
+  }
+ ],
+ "change": [
+  {
+   "kind": "table",
+   "id": "TAB.COVID_DTP_KLU.2020",
+   "name": "covid_dtp_klu",
+   "table_kind": "set",
+   "valid_from": "2020-04-01",
+   "valid_until": "2020-09-30",
+   "label_id": "KLU penerima PPh 21 DTP",
+   "source": [
+    {
+     "document": "PMK-44-PMK-03-2020",
+     "provision": "Pasal 2 ayat (3) huruf a angka 1",
+     "page": 8,
+     "quote": "memiliki kode Klasifikasi Lapangan U saha sebagaimana tercantum dalam Lampiran huruf A"
+    },
+    {
+     "document": "PMK-44-PMK-03-2020",
+     "provision": "Lampiran huruf A",
+     "page": 24,
+     "quote": "A. KODE KLASIFIKASI LAPANGAN USAHA (KLU) WAJIB PAJAK YANG"
+    },
+    {
+     "document": "PMK-44-PMK-03-2020",
+     "provision": "Pasal 16",
+     "page": 22,
+     "quote": "Nomor 277), dicabut dan dinyatakan tidak berlaku."
+    }
+   ],
+   "rows_ref": {
+    "extracted_table": "PMK-44-PMK-03-2020/LAMPIRAN-A",
+    "columns": {
+     "key": "klu"
+    }
+   },
+   "recorded_on": "2020-04-27"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.COVID_DTP.ELIGIBLE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "covid_dtp_eligible",
+   "expression": "(in_table('covid_dtp_klu', employer('klu')) or employer('kite') == True or employer('bonded_zone') == True) and covid_dtp_fixed_income * 12 <= param('covid_dtp_income_cap') and employee('tax_id_valid') != False",
+   "valid_from": "2020-04-01",
+   "valid_until": "2020-09-30",
+   "source": [
+    {
+     "document": "PMK-44-PMK-03-2020",
+     "provision": "Pasal 2 ayat (3) huruf a angka 1",
+     "page": 8,
+     "quote": "memiliki kode Klasifikasi Lapangan U saha sebagaimana tercantum dalam Lampiran huruf A"
+    },
+    {
+     "document": "PMK-44-PMK-03-2020",
+     "provision": "Pasal 2 ayat (3) huruf a angka 2",
+     "page": 8,
+     "quote": "telah ditetapkan sebagai Perusahaan KITE"
+    },
+    {
+     "document": "PMK-44-PMK-03-2020",
+     "provision": "Pasal 2 ayat (3) huruf a angka 3",
+     "page": 8,
+     "quote": "telah mendapatkan izin Penyelenggara Kawasan Berikat, izin Pengusaha Kawasan Berikat, atau izin PDKB"
+    },
+    {
+     "document": "PMK-44-PMK-03-2020",
+     "provision": "Pasal 2 ayat (3) huruf c",
+     "page": 8,
+     "quote": "Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000.000,00 (dua ratus juta rupiah)"
+    },
+    {
+     "document": "PMK-44-PMK-03-2020",
+     "provision": "Pasal 2 ayat (9)",
+     "page": 9,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+    },
+    {
+     "document": "PMK-44-PMK-03-2020",
+     "provision": "Pasal 16",
+     "page": 22,
+     "quote": "Nomor 277), dicabut dan dinyatakan tidak berlaku."
+    }
+   ],
+   "recorded_on": "2020-04-27"
+  }
+ ],
+ "remove": [],
+ "note": "Replaces PMK 23/2020 from Masa April 2020 (retroactive): KLU list 1.062 codes, bonded zones, DTP over-withholding not refunded."
+}

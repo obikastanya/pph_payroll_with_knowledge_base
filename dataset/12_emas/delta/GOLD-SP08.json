@@ -1,0 +1,174 @@
+{
+ "delta_id": "GOLD-SP08",
+ "event_id": null,
+ "document": {
+  "id": "SP08",
+  "title": "PT Kreasi Digital Nusantara: Peraturan Perusahaan (Lampiran Prosedur Penggajian)",
+  "issued": "2024-02-01"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "rule",
+   "id": "PRS.SP08.RUNNING",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "pph21_running",
+   "condition": "not is_final_period",
+   "expression": "round(ter_rate * gross_income, 100, 'up')",
+   "valid_from": "2024-02-01",
+   "valid_until": "2025-12-31",
+   "label": "monthly PPh rounded up to hundreds",
+   "policy": "SP08",
+   "conflict_code": "C9",
+   "source": [
+    {
+     "document": "SP08",
+     "provision": "Pasal 18 ayat (1)",
+     "page": 1,
+     "quote": "dihitung dengan tarif efektif bulanan sesuai ketentuan perpajakan"
+    },
+    {
+     "document": "SP08",
+     "provision": "Pasal 18 ayat (3)",
+     "page": 1,
+     "quote": "dibulatkan ke atas hingga ratusan rupiah penuh"
+    },
+    {
+     "document": "SP08",
+     "provision": "Pasal 39 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+    }
+   ],
+   "recorded_on": "2024-02-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP08.JOB_EXPENSE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "year",
+   "produces": "job_expense",
+   "expression": "round(dec('0.05') * annual_gross, 1, 'down')",
+   "valid_from": "2024-02-01",
+   "valid_until": "2025-12-31",
+   "label": "job expense without the cap",
+   "policy": "SP08",
+   "conflict_code": "C3",
+   "source": [
+    {
+     "document": "SP08",
+     "provision": "Pasal 18 ayat (2) huruf b",
+     "page": 1,
+     "quote": "mengurangkan biaya jabatan sebesar 5% (lima persen) dari penghasilan bruto setahun"
+    },
+    {
+     "document": "SP08",
+     "provision": "Pasal 39 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+    }
+   ],
+   "recorded_on": "2024-02-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP08.DEDUCTIONS",
+   "layer": "company",
+   "modality": "default",
+   "scope": "year",
+   "produces": "annual_deductions",
+   "expression": "job_expense + annual_pension_contributions + sum_periods('health_employee')",
+   "valid_from": "2024-02-01",
+   "valid_until": "2025-12-31",
+   "label": "employee health contributions deducted",
+   "policy": "SP08",
+   "conflict_code": "C3",
+   "source": [
+    {
+     "document": "SP08",
+     "provision": "Pasal 18 ayat (2) huruf c",
+     "page": 1,
+     "quote": "mengurangkan iuran JHT, iuran JP, dan iuran Jaminan Kesehatan bagian pekerja setahun"
+    },
+    {
+     "document": "SP08",
+     "provision": "Pasal 39 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+    }
+   ],
+   "recorded_on": "2024-02-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP08.TAXABLE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "year",
+   "produces": "taxable_income",
+   "expression": "max(0, round(annual_net - ptkp_amount, 1000, 'half_up'))",
+   "valid_from": "2024-02-01",
+   "valid_until": "2025-12-31",
+   "label": "PKP rounded to the nearest thousand",
+   "policy": "SP08",
+   "conflict_code": "C9",
+   "source": [
+    {
+     "document": "SP08",
+     "provision": "Pasal 18 ayat (2) huruf e",
+     "page": 1,
+     "quote": "membulatkan Penghasilan Kena Pajak ke ribuan rupiah terdekat, dengan sisa Rp500,00 (lima ratus rupiah) atau lebih dibulatkan ke atas"
+    },
+    {
+     "document": "SP08",
+     "provision": "Pasal 39 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+    }
+   ],
+   "recorded_on": "2024-02-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP08.FINAL",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "pph21_due",
+   "condition": "is_final_period",
+   "expression": "round(final_period_tax, 100, 'up')",
+   "valid_from": "2024-02-01",
+   "valid_until": "2025-12-31",
+   "label": "final-period PPh rounded up to hundreds",
+   "policy": "SP08",
+   "conflict_code": "C9",
+   "source": [
+    {
+     "document": "SP08",
+     "provision": "Pasal 18 ayat (2) huruf g",
+     "page": 1,
+     "quote": "mengurangkan Pajak Penghasilan Pasal 21 yang telah dipotong"
+    },
+    {
+     "document": "SP08",
+     "provision": "Pasal 18 ayat (3)",
+     "page": 1,
+     "quote": "dibulatkan ke atas hingga ratusan rupiah penuh"
+    },
+    {
+     "document": "SP08",
+     "provision": "Pasal 39 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+    }
+   ],
+   "recorded_on": "2024-02-01"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": ""
+}

@@ -1,7 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://w3id.org/pph21kbs/schemas/delta_llm.schema.json",
-  "title": "Delta as produced by the LLM (flat form for structured outputs; converted to delta.schema.json)",
+  "title": "Delta as produced by the LLM (compact form for structured outputs; converted to delta.schema.json)",
+  "description": "Version 2 (Tahap 9): kind-specific attributes are name/value pairs, because the first flat form with every attribute as a nullable typed property compiled to a grammar the API rejects as too large. Field names: layer, modality, scope, produces, condition, expression, assertion, conflict_code, fixed_point_lower, fixed_point_upper, overrides (ids separated by commas), policy, name, value, value_type, table_kind, rows (JSON array), rows_ref (JSON object), fact_type, fact_scope, output (true/false), unit.",
   "type": "object",
   "additionalProperties": false,
   "required": ["relevant", "add", "change", "remove", "adopts", "note"],
@@ -25,83 +26,35 @@
         "quote": {"type": "string"}
       }
     },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value"],
+      "properties": {"name": {"type": "string"}, "value": {"type": "string"}}
+    },
     "removal": {
       "type": "object",
       "additionalProperties": false,
       "required": ["id", "recorded_on", "source"],
       "properties": {
         "id": {"type": "string"},
-        "recorded_on": {"type": "string", "format": "date"},
+        "recorded_on": {"type": "string"},
         "source": {"type": "array", "items": {"$ref": "#/$defs/source"}}
-      }
-    },
-    "pair": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["name", "value"],
-      "properties": {"name": {"type": "string"}, "value": {"type": "string"}}
-    },
-    "row": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["key", "lower", "upper", "value", "attrs"],
-      "properties": {
-        "key": {"type": ["string", "null"]},
-        "lower": {"type": ["string", "null"]},
-        "upper": {"type": ["string", "null"]},
-        "value": {"type": ["string", "null"]},
-        "attrs": {"type": "array", "items": {"$ref": "#/$defs/pair"}}
-      }
-    },
-    "rows_ref": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["extracted_table", "columns", "value_scale", "filter"],
-      "properties": {
-        "extracted_table": {"type": "string"},
-        "columns": {"type": "array", "items": {"$ref": "#/$defs/pair"}},
-        "value_scale": {"enum": ["unit", "percent"]},
-        "filter": {"type": "array", "items": {"$ref": "#/$defs/pair"}}
       }
     },
     "element": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "id", "label", "label_id", "layer", "modality", "scope", "produces", "condition",
-                   "expression", "assertion", "conflict_code", "fixed_point_lower", "fixed_point_upper",
-                   "overrides", "policy", "name", "value", "value_type", "table_kind", "rows", "rows_ref",
-                   "fact_type", "fact_scope", "output", "unit", "valid_from", "valid_until", "recorded_on",
-                   "source"],
+      "required": ["kind", "id", "label", "label_id", "valid_from", "valid_until", "recorded_on", "fields", "source"],
       "properties": {
-        "kind": {"enum": ["rule", "parameter", "table", "constraint", "fact"]},
+        "kind": {"type": "string"},
         "id": {"type": "string"},
-        "label": {"type": ["string", "null"]},
-        "label_id": {"type": ["string", "null"]},
-        "layer": {"enum": ["regulation", "company", null]},
-        "modality": {"enum": ["mandatory", "default", "optional", null]},
-        "scope": {"enum": ["period", "year", null]},
-        "produces": {"type": ["string", "null"]},
-        "condition": {"type": ["string", "null"]},
-        "expression": {"type": ["string", "null"]},
-        "assertion": {"type": ["string", "null"]},
-        "conflict_code": {"type": ["string", "null"]},
-        "fixed_point_lower": {"type": ["string", "null"]},
-        "fixed_point_upper": {"type": ["string", "null"]},
-        "overrides": {"type": "array", "items": {"type": "string"}},
-        "policy": {"type": ["string", "null"]},
-        "name": {"type": ["string", "null"]},
-        "value": {"type": ["string", "null"]},
-        "value_type": {"enum": ["money", "exact", "rate", "int", "bool", "category", null]},
-        "table_kind": {"enum": ["lookup", "bracket", "progressive", "set", null]},
-        "rows": {"type": "array", "items": {"$ref": "#/$defs/row"}},
-        "rows_ref": {"anyOf": [{"$ref": "#/$defs/rows_ref"}, {"type": "null"}]},
-        "fact_type": {"enum": ["money", "exact", "rate", "int", "bool", "category", "date", null]},
-        "fact_scope": {"enum": ["period", "year", null]},
-        "output": {"type": ["boolean", "null"]},
-        "unit": {"type": ["string", "null"]},
+        "label": {"type": "string"},
+        "label_id": {"type": "string"},
         "valid_from": {"type": ["string", "null"]},
         "valid_until": {"type": ["string", "null"]},
         "recorded_on": {"type": "string"},
+        "fields": {"type": "array", "items": {"$ref": "#/$defs/field"}},
         "source": {"type": "array", "items": {"$ref": "#/$defs/source"}}
       }
     }

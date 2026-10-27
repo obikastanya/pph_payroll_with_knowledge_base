@@ -108,9 +108,13 @@ class View:
     def __init__(self, kb, omega):
         self.kb = kb
         self.omega = omega
+        # every record of a policy update (one that contains company rules) belongs to the company layer, including
+        # the facts and parameters the policy defines for its own rules
+        policy_updates = {r.update_id for r in kb.records if getattr(r, "layer", None) == "company"}
         latest = {}
         for r in kb.records:
-            company = getattr(r, "layer", None) == "company" or r.id.startswith("PRS.")
+            company = (getattr(r, "layer", None) == "company" or r.id.startswith("PRS.")
+                       or r.update_id in policy_updates)
             if company or r.recorded_on <= omega:
                 prev = latest.get(r.id)
                 if prev is None or r.key > prev.key:

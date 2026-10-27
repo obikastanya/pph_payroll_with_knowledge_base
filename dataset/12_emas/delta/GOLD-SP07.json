@@ -1,0 +1,90 @@
+{
+ "delta_id": "GOLD-SP07",
+ "event_id": null,
+ "document": {
+  "id": "SP07",
+  "title": "PT Sentosa Ritel Prima: Perjanjian Kerja Bersama",
+  "issued": "2024-02-01"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "rule",
+   "id": "PRS.SP07.THR",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "thr",
+   "expression": "(round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') == 0 else 0) if hr('thr_holiday') == 1 else income('thr')",
+   "valid_from": "2024-02-01",
+   "valid_until": "2025-12-31",
+   "label": "THR of the policy in the holiday period; other periods keep the THR recorded in the case",
+   "policy": "SP07",
+   "conflict_code": "C10",
+   "source": [
+    {
+     "document": "SP07",
+     "provision": "Pasal 52 ayat (2)",
+     "page": 1,
+     "quote": "diberikan THR sebesar 1 (satu) bulan upah"
+    },
+    {
+     "document": "SP07",
+     "provision": "Pasal 52 ayat (3)",
+     "page": 1,
+     "quote": "dengan perhitungan masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan upah"
+    },
+    {
+     "document": "SP07",
+     "provision": "Pasal 52 ayat (4)",
+     "page": 1,
+     "quote": "terdiri atas gaji pokok dan tunjangan tetap"
+    },
+    {
+     "document": "SP07",
+     "provision": "Pasal 52 ayat (6)",
+     "page": 1,
+     "quote": "berakhir sebelum hari raya keagamaan, karena sebab apa pun, tidak berhak atas THR"
+    },
+    {
+     "document": "SP07",
+     "provision": "Pasal 73 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+    }
+   ],
+   "recorded_on": "2024-02-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP07.METHOD",
+   "layer": "company",
+   "modality": "default",
+   "scope": "year",
+   "produces": "withholding_method",
+   "expression": "'gross'",
+   "valid_from": "2024-02-01",
+   "valid_until": "2025-12-31",
+   "label": "withholding method stated by the policy: gross",
+   "policy": "SP07",
+   "source": [
+    {
+     "document": "SP07",
+     "provision": "Pasal 53",
+     "page": 1,
+     "quote": "dipotong Pajak Penghasilan Pasal 21 pada bulan dibayarkan"
+    },
+    {
+     "document": "SP07",
+     "provision": "Pasal 73 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+    }
+   ],
+   "recorded_on": "2024-02-01"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": ""
+}

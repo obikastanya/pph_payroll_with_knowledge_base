@@ -1,0 +1,90 @@
+{
+ "delta_id": "GOLD-SP14",
+ "event_id": null,
+ "document": {
+  "id": "SP14",
+  "title": "PT Rajut Indah Garmenindo: Perjanjian Kerja Bersama",
+  "issued": "2025-01-01"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "rule",
+   "id": "PRS.SP14.THR",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "thr",
+   "expression": "(round(dec('1.5') * (base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0) if hr('thr_holiday') == 1 else income('thr')",
+   "valid_from": "2025-01-01",
+   "valid_until": "2026-12-31",
+   "label": "THR of the policy in the holiday period; other periods keep the THR recorded in the case",
+   "policy": "SP14",
+   "conflict_code": "C10",
+   "source": [
+    {
+     "document": "SP14",
+     "provision": "Pasal 60 ayat (2)",
+     "page": 1,
+     "quote": "menerima THR sebesar 1,5 (satu koma lima) kali upah sebulan"
+    },
+    {
+     "document": "SP14",
+     "provision": "Pasal 60 ayat (3)",
+     "page": 1,
+     "quote": "sebesar masa kerja dibagi 12 (dua belas) dikali 1,5 (satu koma lima) kali upah sebulan"
+    },
+    {
+     "document": "SP14",
+     "provision": "Pasal 60 ayat (4)",
+     "page": 1,
+     "quote": "Upah sebulan terdiri atas gaji pokok dan tunjangan tetap"
+    },
+    {
+     "document": "SP14",
+     "provision": "Pasal 60 ayat (5)",
+     "page": 1,
+     "quote": "berakhir terhitung sejak 30 (tiga puluh) hari sebelum hari raya keagamaan tetap berhak atas THR"
+    },
+    {
+     "document": "SP14",
+     "provision": "Pasal 81 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+    }
+   ],
+   "recorded_on": "2025-01-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP14.METHOD",
+   "layer": "company",
+   "modality": "default",
+   "scope": "year",
+   "produces": "withholding_method",
+   "expression": "'gross'",
+   "valid_from": "2025-01-01",
+   "valid_until": "2026-12-31",
+   "label": "withholding method stated by the policy: gross",
+   "policy": "SP14",
+   "source": [
+    {
+     "document": "SP14",
+     "provision": "Pasal 61 ayat (1)",
+     "page": 1,
+     "quote": "termasuk THR, dipotong sesuai ketentuan perpajakan yang berlaku"
+    },
+    {
+     "document": "SP14",
+     "provision": "Pasal 81 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+    }
+   ],
+   "recorded_on": "2025-01-01"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "Pasal 61 ayat (3) (DTP paid in cash, not income) restates PMK 10/2025 Pasal 5 and is not encoded."
+}

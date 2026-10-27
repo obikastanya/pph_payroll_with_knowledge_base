@@ -13,6 +13,8 @@ Warnings (reported, do not fail):
   redundant           two rules with the same fact, condition, and expression and overlapping validity
   subsumed            rule whose validity lies inside that of a rule with the same fact and expression, at least
                       the same rank, and a weaker condition
+  overridden          company rule whose validity is covered by an unconditional mandatory rule for the same fact:
+                      an active conflict whenever the values differ (reported, not an error)
 
 Dependency edges follow what is read in the same period or year: names in the expression and condition, and the
 fact arguments of sum_periods, sum_to_date, cumulative, and year_value. Reads of earlier periods (sum_before,
@@ -309,15 +311,25 @@ def check(kb, omega, policies=(), adopted=()):
                 and r.id not in view.overrides_closure(b.id) and b.id not in view.overrides_closure(r.id)
                 and _covers(b, r) and (b.valid_from or RANGE[0]) <= _span(r)[0])
             if beats:
-                add(Finding("dead", "warning", (r.id, b.id), r.produces, f"always beaten by {b.id}"))
+                if r.layer == "company" and b.rank == 4:
+                    # a company rule overridden by a mandatory rule is an active conflict, not a dead rule
+                    add(Finding("overridden", "warning", (r.id, b.id), r.produces,
+                                f"company rule always loses to mandatory {b.id} (conflict {r.conflict_code or 'C?'})"))
+                else:
+                    add(Finding("dead", "warning", (r.id, b.id), r.produces, f"always beaten by {b.id}"))
                 break
     report.findings.sort(key=lambda x: (x.severity, x.kind, x.ids, x.fact))
     return report
 
 
 def _needed(view, by_fact):
-    """Facts some output fact depends on, through any read (including earlier periods and optional reads)."""
+    """Facts some output fact or some constraint depends on, through any read (including earlier periods and
+    optional reads)."""
     out = {f.id for f in view.facts.values() if f.output}
+    for c in view.constraints:
+        for e in (c.assertion, c.condition):
+            if e is not None:
+                out |= e.dependencies()
     stack = list(out)
     while stack:
         f = stack.pop()

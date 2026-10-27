@@ -1,0 +1,300 @@
+{
+ "delta_id": "BG-FR03",
+ "event_id": null,
+ "document": {
+  "id": "FR03",
+  "title": "PMK FIKTIF 903/PMK.03/2021: Pencabutan PMK FIKTIF 455/PMK.03/2017 tentang Tambahan Biaya Jabatan bagi Pegawai Tetap yang Bekerja Gilir Malam",
+  "issued": "2021-11-24"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "night_shift_job_expense_month",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "additional job expense for night shift work",
+   "label_id": "tambahan biaya jabatan gilir malam sebulan",
+   "source": [
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "menetapkan tambahan biaya jabatan bagi Pegawai Tetap yang bekerja gilir malam"
+    },
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "paling sedikit 10 (sepuluh) hari dalam sebulan sebesar 2% (dua persen) dari penghasilan bruto"
+    },
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "paling banyak Rp100.000,00 (seratus ribu rupiah) sebulan atau Rp1.200.000,00 (satu juta dua ratus ribu rupiah) setahun"
+    }
+   ],
+   "recorded_on": "2017-12-29"
+  },
+  {
+   "kind": "fact",
+   "id": "night_shift_job_expense",
+   "fact_type": "money",
+   "fact_scope": "year",
+   "output": false,
+   "label": "additional night-shift job expense of the year",
+   "label_id": "tambahan biaya jabatan gilir malam setahun",
+   "source": [
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "menetapkan tambahan biaya jabatan bagi Pegawai Tetap yang bekerja gilir malam"
+    },
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "paling banyak Rp100.000,00 (seratus ribu rupiah) sebulan atau Rp1.200.000,00 (satu juta dua ratus ribu rupiah) setahun"
+    }
+   ],
+   "recorded_on": "2017-12-29"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.NIGHT_SHIFT_RATE.2018",
+   "name": "night_shift_rate",
+   "value": "0.02",
+   "value_type": "rate",
+   "valid_from": "2018-01-01",
+   "label_id": "tarif tambahan biaya jabatan gilir malam",
+   "source": [
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "paling sedikit 10 (sepuluh) hari dalam sebulan sebesar 2% (dua persen) dari penghasilan bruto"
+    }
+   ],
+   "recorded_on": "2017-12-29"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.NIGHT_SHIFT_MAX_MONTH.2018",
+   "name": "night_shift_max_month",
+   "value": 100000,
+   "value_type": "money",
+   "valid_from": "2018-01-01",
+   "label_id": "batas sebulan",
+   "source": [
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "paling banyak Rp100.000,00 (seratus ribu rupiah) sebulan atau Rp1.200.000,00 (satu juta dua ratus ribu rupiah) setahun"
+    }
+   ],
+   "recorded_on": "2017-12-29"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.NIGHT_SHIFT_MAX_YEAR.2018",
+   "name": "night_shift_max_year",
+   "value": 1200000,
+   "value_type": "money",
+   "valid_from": "2018-01-01",
+   "label_id": "batas setahun",
+   "source": [
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "paling banyak Rp100.000,00 (seratus ribu rupiah) sebulan atau Rp1.200.000,00 (satu juta dua ratus ribu rupiah) setahun"
+    }
+   ],
+   "recorded_on": "2017-12-29"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.NIGHT_SHIFT_MIN_DAYS.2018",
+   "name": "night_shift_min_days",
+   "value": 10,
+   "value_type": "int",
+   "valid_from": "2018-01-01",
+   "label_id": "hari gilir malam paling sedikit",
+   "source": [
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "paling sedikit 10 (sepuluh) hari dalam sebulan sebesar 2% (dua persen) dari penghasilan bruto"
+    }
+   ],
+   "recorded_on": "2017-12-29"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.NIGHT_SHIFT.MONTH",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "night_shift_job_expense_month",
+   "expression": "(min(round(param('night_shift_rate') * regular_gross, 1, 'down'), param('night_shift_max_month')) if hr('night_shift_days') >= param('night_shift_min_days') else 0)",
+   "valid_from": "2018-01-01",
+   "source": [
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "menetapkan tambahan biaya jabatan bagi Pegawai Tetap yang bekerja gilir malam"
+    },
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "paling sedikit 10 (sepuluh) hari dalam sebulan sebesar 2% (dua persen) dari penghasilan bruto"
+    },
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "paling banyak Rp100.000,00 (seratus ribu rupiah) sebulan atau Rp1.200.000,00 (satu juta dua ratus ribu rupiah) setahun"
+    }
+   ],
+   "recorded_on": "2017-12-29"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.NIGHT_SHIFT.YEAR",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "night_shift_job_expense",
+   "expression": "min(sum_periods('night_shift_job_expense_month'), param('night_shift_max_year'))",
+   "valid_from": "2018-01-01",
+   "source": [
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "menetapkan tambahan biaya jabatan bagi Pegawai Tetap yang bekerja gilir malam"
+    },
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "paling banyak Rp100.000,00 (seratus ribu rupiah) sebulan atau Rp1.200.000,00 (satu juta dua ratus ribu rupiah) setahun"
+    }
+   ],
+   "recorded_on": "2017-12-29"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.NIGHT_SHIFT.NET_MONTH",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "net_regular_month",
+   "condition": "not is_final_period",
+   "expression": "regular_gross - job_expense_month - employee_pension_contributions - night_shift_job_expense_month",
+   "valid_from": "2018-01-01",
+   "source": [
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "menetapkan tambahan biaya jabatan bagi Pegawai Tetap yang bekerja gilir malam"
+    },
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "di luar biaya jabatan sebagaimana diatur dalam Peraturan Menteri Keuangan Nomor 250/PMK.03/2008"
+    }
+   ],
+   "recorded_on": "2017-12-29"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.NIGHT_SHIFT.TAXABLE_WITH_IRREGULAR",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "taxable_with_irregular",
+   "condition": "not is_final_period and irregular_gross > 0",
+   "expression": "max(0, round((annualization_factor * regular_gross + irregular_gross) - min(round(param('job_expense_rate') * (annualization_factor * regular_gross + irregular_gross), 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - annualization_factor * night_shift_job_expense_month - ptkp_amount, 1000, 'down'))",
+   "valid_from": "2018-01-01",
+   "source": [
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "menetapkan tambahan biaya jabatan bagi Pegawai Tetap yang bekerja gilir malam"
+    },
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "di luar biaya jabatan sebagaimana diatur dalam Peraturan Menteri Keuangan Nomor 250/PMK.03/2008"
+    }
+   ],
+   "recorded_on": "2017-12-29"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.NIGHT_SHIFT.TAXABLE_WITHOUT_IRREGULAR",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "taxable_without_irregular",
+   "condition": "not is_final_period and irregular_gross > 0",
+   "expression": "max(0, round(annualization_factor * regular_gross - min(round(param('job_expense_rate') * annualization_factor * regular_gross, 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - annualization_factor * night_shift_job_expense_month - ptkp_amount, 1000, 'down'))",
+   "valid_from": "2018-01-01",
+   "source": [
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "menetapkan tambahan biaya jabatan bagi Pegawai Tetap yang bekerja gilir malam"
+    },
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "di luar biaya jabatan sebagaimana diatur dalam Peraturan Menteri Keuangan Nomor 250/PMK.03/2008"
+    }
+   ],
+   "recorded_on": "2017-12-29"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.NIGHT_SHIFT.DEDUCTIONS",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "annual_deductions",
+   "expression": "job_expense + annual_pension_contributions + annual_zakat_deduction + night_shift_job_expense",
+   "valid_from": "2018-01-01",
+   "source": [
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "menetapkan tambahan biaya jabatan bagi Pegawai Tetap yang bekerja gilir malam"
+    },
+    {
+     "document": "FR03",
+     "provision": "Menimbang huruf a",
+     "page": 1,
+     "quote": "di luar biaya jabatan sebagaimana diatur dalam Peraturan Menteri Keuangan Nomor 250/PMK.03/2008"
+    }
+   ],
+   "recorded_on": "2017-12-29"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "FICTIVE background: PMK FIKTIF 455/PMK.03/2017 as summarised in FR03 consideration a; issue date not stated (assumed 2017-12-29, valid from 2018-01-01). Base of GOLD-FR03 only."
+}

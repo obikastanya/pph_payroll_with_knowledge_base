@@ -24,7 +24,7 @@ sys.path.insert(0, str(ROOT / "system"))
 
 from pph21kbs.kb import apply_delta, empty_kb, rdf  # noqa: E402
 
-MODULES = ["bg_base", "bg_2015_2022", "dev_ptkp_jkn", "dev_covid", "ev_jp", "ev_natura", "ev_ter", "ev_dtp",
+MODULES = ["bg_base", "bg_2015_2022", "bg_support", "dev_ptkp_jkn", "dev_covid", "ev_jp", "ev_natura", "ev_ter", "ev_dtp",
            "ev_jkk", "ev_rounding", "fr_fiktif", "pol_sintetis", "pol_pkb"]
 OUT = ROOT / "dataset" / "12_emas"
 
@@ -73,6 +73,9 @@ def apply_side(kb, u):
     prefix at their issue date."""
     d = u.to_json()
     base = kb if u.kind == "policy" else prefix_at(kb, u.recorded_on or u.doc.issued)
+    # a side update may name other side updates it is applied on top of (base_side), e.g. a fictive background
+    for sid in getattr(u, "base_side", ()):
+        base = apply_delta(base, side_update(sid).to_json())
     base_id = base.updates[-1].update_id if base.updates else ""
     return base_id, apply_delta(base, d)
 

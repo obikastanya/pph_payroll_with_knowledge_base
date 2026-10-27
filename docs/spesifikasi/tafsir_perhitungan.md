@@ -25,6 +25,7 @@ Ditetapkan 2026-10-27 dari tinjauan GT3 (`dataset/11_acuan/gt3_kasus_bertingkat/
 | K15 | Lembur pada metode lama | penghasilan teratur (disetahunkan) | tidak ada |
 | K16 | PTKP karyawati kawin berstatus K/x | butuh keterangan kecamatan bahwa suami tidak berpenghasilan; tanpa itu PTKP diri sendiri | 048 (asumsi ditambahkan, angka tetap) |
 | K17 | Pembulatan premi dan iuran BPJS | rupiah penuh terdekat (0,50 ke atas) per program per pihak | tidak ada (GT3 memakai upah yang menghasilkan premi bulat) |
+| K18 | DTP pada metode *gross-up* dan ditanggung | *gross-up*: tunjangan pajak tetap dihitung dan DTP dibayar tunai di atasnya; ditanggung: PPh DTP bukan beban pemberi kerja (tanpa *gross-up*), DTP tunai masuk gaji bersih | tidak ada (GT3 tidak punya kasus DTP dengan *gross-up*) |
 
 ---
 
@@ -75,6 +76,7 @@ Bruto setahun, PKP, dan PPh setahun tidak berubah di kasus mana pun. Pembanding 
 1. T = **titik tetap terkecil** dari T = R(tarif(X + T) × (X + T)), dengan R aturan pembulatan K1/K2 untuk masa itu. Titik ini diperoleh dengan iterasi mulai T = 0.
 2. Di Masa Pajak Terakhir, T = PPh setahun (bruto termasuk T) − PPh masa sebelumnya, juga titik tetap terkecil. Bila hasilnya lebih potong, T = 0.
 3. Rumus tertutup PPh ÷ (1 − tarif) tidak dipakai karena bisa melompati titik tetap terkecil.
+4. (Ditambahkan Tahap 9.) Bila iterasi masuk siklus tanpa titik tetap (pembulatan di dalam metode selisih PER-16 untuk penghasilan tidak teratur dapat membuat tunjangan lebih besar menghasilkan pajak lebih kecil, sehingga fungsi tidak monoton), T = nilai terkecil dalam siklus yang menutup pajaknya sendiri, PPh(X + T) ≤ T; *engine* mencatat peringatan `FixedPointCycle`. Selisih yang teramati beberapa puluh rupiah (contoh: siklus 5.004.244 → 5.004.127 → 5.004.111; T = 5.004.127, PPh 5.004.111). Ditemukan oleh generator $S^G$ pada kasus *gross-up* 2020 dengan THR dan bonus; tidak ada kasus GT yang terkena.
 
 **Dasar.** Regulasi tidak mengatur cara iterasi. PMK 168/2023 Lampiran B Bagian Kedua I.5, PDF hlm. 45 (pengembangan) menunjukkan bahwa besarnya tunjangan pajak ditentukan kebijakan pemberi kerja (tunjangan tetap Rp300.000 tidak sama dengan PPh Rp34.000), jadi "T = PPh" adalah kebijakan, bukan kewajiban. Untuk kebijakan itu, kalkulator DJP (GT2-06: bruto 15.561.000, TER A 7%) memilih 1.171.257, titik tetap terkecil dari dua solusi di bawah pembulatan ke bawah (1.171.257 dan 1.171.258). Dengan pembulatan 2025+ solusi kasus itu tunggal (1.171.258).
 
@@ -234,6 +236,19 @@ Bruto setahun, PKP, dan PPh setahun tidak berubah di kasus mana pun. Pembanding 
 **Dasar.** Tidak ada aturan tertulis; prototipe lama memakai mode yang sama (`BULAT-BPJS-01`, mengikuti fungsi ROUND di lembar kerja kantor). Kasus GT3 sengaja memakai upah yang menghasilkan premi bulat, sehingga putusan ini tidak mengubah acuan; kasus $S^E$ memakai putusan ini secara konsisten untuk emas dan kandidat. Dinyatakan di dokumen konvensi masukan.
 
 **Dampak.** Tidak ada perubahan GT.
+
+## K18. DTP pada metode *gross-up* dan PPh ditanggung (baru, Tahap 7)
+
+**Pertanyaan.** PMK 10/2025 Pasal 5 ayat (1) mewajibkan PPh 21 DTP dibayar tunai "termasuk dalam hal Pemberi Kerja memberikan tunjangan Pajak Penghasilan Pasal 21 atau menanggung Pajak Penghasilan Pasal 21". Apakah tunjangan pajak (*gross-up*) dan PPh yang ditanggung pemberi kerja tetap dihitung selama masa DTP?
+
+**Putusan.**
+1. Metode *gross-up*: tunjangan pajak adalah penghasilan tunai yang diberikan pemberi kerja dan tetap dihitung (titik tetap K3); PPh terutang atas bruto itu ditanggung pemerintah dan dibayar tunai di atas tunjangan.
+2. Metode ditanggung: PPh yang ditanggung pemerintah bukan beban pemberi kerja, sehingga tidak ada kenikmatan PPh ditanggung yang di-*gross-up* (K4 tidak berlaku selama masa DTP); DTP yang dibayar tunai masuk gaji bersih pegawai.
+3. DTP bukan penghasilan (Pasal 5 ayat (2)).
+
+**Dasar.** PMK 10/2025 Pasal 5 ayat (1)–(2), PDF hlm. 6; PMK 105/2025 Pasal 5 ayat (1)–(2); PMK 168/2023 Pasal 7 huruf h; putusan perlakuan pajak di `dataset/10_kebijakan_perusahaan/klausul/README.md` dan GT5 putusan 5. Sama untuk DTP masa COVID (PMK 23/2020 Pasal 2 ayat (4)).
+
+**Dampak.** Emas E06/E11: `REG.DTP.NO_GROSSUP` hanya untuk metode ditanggung (sebelumnya juga *gross-up*, keliru); aturan baru `REG.DTP.THP_CASH` (dan `REG.COVID_DTP.THP_CASH` di D05). Ditemukan lewat pemeriksaan silang contoh kebijakan SP06 dan GT5-CENTEX; GT3 tidak berubah.
 
 ## Hal yang tidak diputuskan di sini
 

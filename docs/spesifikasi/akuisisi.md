@@ -1,6 +1,6 @@
 # Spesifikasi akuisisi pengetahuan, adaptivitas, dan dampak lintas lapis
 
-Tahap 4 [PANDUAN_PENELITIAN.md](../../PANDUAN_PENELITIAN.md); *skeleton* Bagian V. Versi 2, 2026-10-27: revisi atas tinjauan independen ([review/specs/spesifikasi.review.md](../../review/specs/spesifikasi.review.md), tanggapan di [spesifikasi.tanggapan.md](../../review/specs/spesifikasi.tanggapan.md)). Bergantung pada [representasi.md](representasi.md) (Definisi 1–3). Format data dan skema JSON di [format_data.md](format_data.md).
+Tahap 4 [PANDUAN_PENELITIAN.md](../../PANDUAN_PENELITIAN.md); *skeleton* Bagian V. Versi 3, 2026-10-27 (versi 2: revisi atas tinjauan independen ([review/specs/spesifikasi.review.md](../../review/specs/spesifikasi.review.md), tanggapan di [spesifikasi.tanggapan.md](../../review/specs/spesifikasi.tanggapan.md))). Bergantung pada [representasi.md](representasi.md) (Definisi 1–3). Format data dan skema JSON di [format_data.md](format_data.md).
 
 ---
 
@@ -131,14 +131,15 @@ Tanggal mulai efek pembaruan $s(\Delta) = \min_u s(u)$.
 ### G2 — kutipan, nilai, dan tanggal
 
 1. **Kutipan.** Kutipan dan teks dokumen dinormalisasi sama (huruf kecil; spasi dan baris baru dirapatkan; pemenggalan akhir baris disambung; tanda kutip dan tanda hubung diseragamkan; spasi di sekitar tanda baca dalam bilangan dihapus). Kutipan ≥ 20 karakter dan harus *substring* teks dokumen.
-2. **Pendaratan nilai.** Konstanta di ekspresi, kondisi, nilai parameter, dan baris tabel tertulis dinormalisasi ke bentuk kanonik. Setiap bilangan bulat ≥ 100 dan setiap pecahan harus muncul di kutipan unsur itu dalam salah satu bentuk penulisan Indonesia: `9.559.600`, `9.559.600,00`, `Rp9.559.600`, `Rp 9.559.600,00`; pecahan $p/100$ sebagai `p%`, `p %`, `p persen` (dengan koma desimal, misalnya `0,24%`); pecahan lain sebagai desimal berkoma. Bilangan bulat < 100 (bulan, faktor, satuan pembulatan kecil) dibebaskan, demikian juga 1.000 sebagai satuan pembulatan dan bilangan yang sama dengan konstanta di rekaman lama yang diubah. Baris dari tabel terekstraksi tidak perlu didaratkan.
+2. **Pendaratan nilai.** Konstanta di ekspresi, kondisi, nilai parameter, dan baris tabel tertulis dinormalisasi ke bentuk kanonik. Setiap bilangan bulat ≥ 100 dan setiap pecahan harus muncul di kutipan unsur itu dalam salah satu bentuk penulisan Indonesia: `9.559.600`, `9.559.600,00`, `Rp9.559.600`, `Rp 9.559.600,00`; pecahan $p/100$ sebagai `p%`, `p %`, `p persen` (dengan koma desimal, misalnya `0,24%`); pecahan lain sebagai desimal berkoma. Bilangan bulat < 100 (bulan, faktor, satuan pembulatan kecil) dibebaskan, demikian juga 1.000 sebagai satuan pembulatan dan bilangan yang sama dengan konstanta di rekaman lama yang diubah. Baris dari tabel terekstraksi tidak perlu didaratkan. Versi 3 (Tahap 9, dari pemeriksaan emas pengembangan): (i) nilai turunan diterima bila sama dengan $a + k b$ atau $a + b + k c$ ($a, b, c$ bilangan yang tertulis di kutipan, $k \le 12$; misalnya baris tabel PTKP = diri + kawin + $k$ × tanggungan), tarif $r_1 r_2$ atau $1 - r$ (misalnya keringanan 50% atas 0,24%); (ii) tarif yang ditulis dengan kata digit ("nol koma dua empat persen"), jumlah yang ditulis dengan kata ("dua puluh tiga ribu rupiah"), dan faktor berdesimal pendek ("1.6", "1,125"; bukan kelompok ribuan) dikenali; (iii) huruf OCR di dalam angka (`Rpl.500.000`, `2O25`, `202t`) dibaca sebagai digit.
 3. **Pendaratan tanggal** (perluasan G2, Log keputusan). Hanya tanggal yang baru atau berubah pada rekaman yang diperiksa. Tanggal $d$ didaratkan bila kutipan unsur memuat salah satu pola tertutup:
    - tanggal lengkap ("1 Juli 2023");
    - "Masa Pajak <Bulan> <Tahun>", "bulan <Bulan> <Tahun>", "Iuran JKK bulan <Bulan> <Tahun>", atau "<Bulan> <Tahun>" → tanggal 1 bulan itu (`valid_from`) atau hari terakhirnya (`valid_until`);
    - "Tahun Pajak <Tahun>", "Tahun Anggaran <Tahun>" → 1 Januari (`valid_from`) atau 31 Desember (`valid_until`);
    - nama bulan tanpa tahun bila tahunnya ada di kutipan lain unsur yang sama;
    - `valid_until` boleh hari sebelum tanggal yang didaratkan pada unsur lain di $\Delta$ yang sama (penutupan ketentuan lama oleh ketentuan baru);
-   - "berlaku pada tanggal diundangkan/ditetapkan" → $t_\mathit{terbit}$ (dibulatkan ke tanggal 1 bulan itu atau bulan berikutnya sesuai kutipan).
+   - "berlaku pada tanggal diundangkan/ditetapkan" → $t_\mathit{terbit}$ (dibulatkan ke tanggal 1 bulan itu atau bulan berikutnya sesuai kutipan);
+   - "(sampai) dengan [Masa Pajak/bulan] <Bulan> <Tahun>" → tanggal 1 bulan sesudahnya sebagai `valid_from` (ketentuan lama berlaku sampai bulan itu, ketentuan baru sesudahnya; versi 3).
    `recorded_on` setiap rekaman harus **sama dengan** $t_\mathit{terbit}$ dari metadata dokumen.
 
 ### G3 — konsistensi statis
@@ -153,11 +154,13 @@ Tanggal mulai efek pembaruan $s(\Delta) = \min_u s(u)$.
 Untuk setiap tupel $S^G$:
 1. observasi dengan masa $t < s(\Delta)$: $\mathit{hasil}(\mathcal{K}', \cdot) = \mathit{hasil}(\mathcal{K}, \cdot)$ pada ω = $t_\mathit{terbit}$ (A3$_t$);
 2. dengan ω = $t_\mathit{terbit}$ − 1 hari: semua observasi sama (A3$_\omega$);
-3. evaluasi $\mathcal{K}'$ pada ω = $t_\mathit{terbit}$ tidak menghasilkan galat *engine* pada observasi mana pun.
+3. evaluasi $\mathcal{K}'$ pada ω = $t_\mathit{terbit}$ tidak menghasilkan galat *engine* baru pada observasi mana pun (galat yang sudah ada di $\mathcal{K}$ pada tupel yang sama, misalnya *gross-up* tanpa titik tetap pada metode selisih, tidak dibebankan ke $\Delta$; versi 3).
+
+**Lapisan perusahaan (versi 3).** Untuk $\Delta$ kebijakan, lapisan perusahaan tidak disaring ω dan kebijakan hanya berlaku bagi kasus yang menyebutnya, sehingga butir 1–2 (A3) tidak diterapkan; hanya butir 3. Evaluasi $S^G$ kebijakan memakai ω = 2026-10-27, tanggal basis akuisisi kebijakan ($\mathcal{K}^\star_\mathit{reg}$ lengkap, bagian 1), bukan tanggal dokumen kebijakan; tanpa itu konflik yang baru terpicu oleh regulasi sesudah tanggal kebijakan tidak terlihat dan G5 keliru menolak aturan kebijakan. Fakta lingkup tahun milik kebijakan (misalnya metode pemotongan) berlaku untuk seluruh tahun pajak kasus, termasuk bulan sebelum kebijakan mulai berlaku; ini batas representasi yang dicatat.
 
 ### G5 — non-vakuitas (hanya untuk $\Delta$ tidak kosong)
 
-1. Setiap unsur $u$ yang ditambah atau diubah isinya harus **berefek**: ada tupel $S^G$ dengan observasi $t \ge s(u)$ yang hasil $F_\mathit{nilai}$ atau laporan konfliknya berbeda antara $\mathcal{K}'$ dan $\mathcal{K}' \ominus u$ ($u$ dikembalikan: *add* dihapus, *change* dipulihkan ke rekaman sebelumnya). Bila $\mathcal{K}' \ominus u$ gagal dievaluasi karena unsur lain bergantung pada $u$, itu dihitung berefek. Efek berupa laporan konflik saja diterima.
+1. Setiap unsur $u$ (selain definisi fakta, yang hanya memberi nama) yang ditambah atau diubah isinya harus **berefek**: ada tupel $S^G$ dengan observasi $t \ge s(u)$ yang hasil $F_\mathit{nilai}$ atau laporan konfliknya berbeda antara $\mathcal{K}'$ dan $\mathcal{K}' \ominus u$ ($u$ dikembalikan: *add* dihapus, *change* dipulihkan ke rekaman sebelumnya). Bila $\mathcal{K}' \ominus u$ gagal dievaluasi karena unsur lain bergantung pada $u$, itu dihitung berefek. Efek berupa laporan konflik saja diterima.
 2. *Change* yang hanya memendekkan masa berlaku (penutupan) dibebaskan dari syarat efek, asalkan masa berlaku baru tidak berakhir sebelum $s(\Delta)$ − 1 hari.
 3. Setiap `id` di $\Delta^{-}$ harus pernah menyala di $\mathcal{K}$ pada suatu tupel $S^G$, atau merupakan aturan mati di $\mathcal{K}$ (pencabutan aturan pembantu bersifat opsional, Log keputusan).
 4. **Tanggal tercermin.** Bila penilaian relevansi menyebut `effective_from`, harus ada tupel $S^G$ pada bulan itu yang hasilnya berubah dari $\mathcal{K}$ ke $\mathcal{K}'$.
@@ -176,7 +179,7 @@ $S^G$ dibangkitkan untuk satu kandidat dari $\mathcal{K} \oplus \hat{\Delta}$ da
 3. **Atribut kasus di kondisi.** Setiap atribut `employee(...)`, `employer(...)`, `case(...)`, dan `hr(...)` yang muncul di kondisi atau ekspresi unsur divariasikan: boolean → keduanya; kategori/teks → setiap literal pembanding ditambah satu nilai lain; bilangan → ambang seperti butir 2. Status PTKP: literal yang muncul atau kedelapan status. KLU: setiap kunci tabel `set` yang ditambah/diubah ditambah satu KLU di luar tabel. Metode: ketiga nilai.
 4. **Pola kerja.** Setahun penuh; masuk pada bulan $s(u)$; berhenti sebulan sesudah $s(u)$.
 5. **Komponen.** Gaji pokok + tunjangan tetap; varian dengan THR dan bonus di bulan $s(u)$; natura untuk setiap jenis yang dirujuk unsur; zakat.
-6. **Ukuran.** Kombinasi dengan cakupan 2-arah atas dimensi di atas, maksimal 300 kasus per kandidat; ω ∈ {$t_\mathit{terbit}$ − 1 hari, $t_\mathit{terbit}$}.
+6. **Ukuran.** Versi 3 (implementasi `system/pph21kbs/pipeline/sg.py`): cakupan 3-arah atas dimensi kecil bila jumlah kombinasinya ≤ 6.000 (selain itu 2-arah), ditambah cakupan 2-arah atas semua dimensi termasuk dimensi besar (gaji di ambang, kunci tabel), ditambah baris terarah untuk aturan masa pajak terakhir (pegawai berhenti sebulan sesudah $s(u)$ dengan penghasilan tidak teratur besar di bulan terakhir, untuk setiap gaji dan setiap nilai atribut terlebar), lalu kombinasi acak ber-*seed* sampai 250 kasus; maksimal 300. Kunci tabel `set` yang ditambah atau dihapus $\Delta$ diutamakan. Atribut `hr(...)` tanpa literal divariasikan 0, 3, 12, 40. Kasus kebijakan menyebut kebijakan itu. ω ∈ {$t_\mathit{terbit}$ − 1 hari, $t_\mathit{terbit}$} untuk regulasi; untuk kebijakan lihat G4.
 7. **Keterpisahan dari $S^E$.** Setiap kasus $S^G$ memuat komponen penanda `income.other_regular` = 7 rupiah (ikut dihitung saat mencari ambang), dan $S^E$ tidak pernah memakai komponen itu. Keterpisahan juga diperiksa langsung atas kunci kanonik tupel. Irisan harus kosong.
 
 ---
@@ -263,4 +266,5 @@ Setiap panggilan dicatat (JSONL, format_data.md §6): waktu, model diminta dan d
 | Versi | Tanggal | Perubahan |
 |---|---|---|
 | 1 | 2026-10-27 | Draf pertama |
+| 3 | 2026-10-27 | Implementasi Tahap 9 dan pemeriksaan gerbang atas emas pengembangan dan uji (laju penolakan keliru nol): pendaratan nilai turunan, kata bilangan, desimal pendek, huruf OCR; pola tanggal "(sampai) dengan"; G4 hanya galat baru dan aturan lapisan perusahaan; G5 membebaskan definisi fakta; ω evaluasi kebijakan; rincian ukuran $S^G$ |
 | 2 | 2026-10-27 | Tanggapan atas tinjauan independen: peristiwa kebijakan dan basisnya; penerapan longgar untuk mode berantai; satuan tupel/observasi, mode berantai, $H_n$; tanggal mulai efek untuk G4/G5; penutupan dibebaskan dari G5; `recorded_on` = $t_\mathit{terbit}$; pola tertutup pendaratan tanggal dan nilai; G3.4 menjadi peringatan; definisi (a) dibatasi ke fakta milik kebijakan; RA peristiwa nyata diukur dengan acuan independen; skema keluaran LLM terpisah; B4 dari kandidat awal; penanda $S^G$; variasi atribut kasus di $S^G$; A1 mencakup paket `kb/`; anggaran dan harga dicatat |

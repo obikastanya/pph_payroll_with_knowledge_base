@@ -180,6 +180,61 @@ def gt2(verbose=True, kb=None, rows=None):
     return m_ok, m_ok + m_bad, a_ok, a_all
 
 
+# Differences between the engine on K* (+) policy and GT5 that have been examined; key: (example id, observation).
+_K17 = ("tafsir K17: KB rounds each premium to the rupiah; GT5 keeps the fractions of JKK/JKM premiums (PPh 21 is "
+        "equal)")
+_THP_DTP = ("gold regulation: REG.THP.TAX_BURDEN gives no DTP cash under employer_borne, GT5 putusan 5 adds DTP paid in "
+            "cash (PMK 10/2025 and 105/2025 Ps 5 ayat (1)); open point for the regulation gold")
+_WIKA_VALID = "example month is before the PKB WIKA validity (from 1 March 2025); the policy is not in force"
+_WIKA_SHARE = ("WIKA-22-2 partial bearing (production bonus taxed on the employee) not formalised: the regulation rule "
+               "REG.BORNE.GROSSUP fixes the borne tax as the whole tax of the period (RQ1 finding)")
+GT5_EXPLAINED = {
+    ("GT5-AVCO-01", "5:gross_income"): _K17, ("GT5-AVCO-02", "3:gross_income"): _K17,
+    ("GT5-AVCO-04", "7:gross_income"): _K17, ("GT5-CENTEX-02", "3:gross_income"): _K17,
+    ("GT5-CENTEX-03", "1:gross_income"): _K17, ("GT5-CENTEX-04", "2:gross_income"): _K17,
+    ("GT5-CENTEX-02", "3:take_home_pay"): _THP_DTP, ("GT5-CENTEX-03", "1:take_home_pay"): _THP_DTP,
+    ("GT5-WIKA-02", "6:pph21_due"): _WIKA_SHARE, ("GT5-WIKA-02", "6:tax_allowance"): _WIKA_SHARE,
+    ("GT5-WIKA-03", "2:gross_income"): _WIKA_VALID, ("GT5-WIKA-03", "2:pph21_due"): _WIKA_VALID,
+    ("GT5-WIKA-03", "2:take_home_pay"): _WIKA_VALID, ("GT5-WIKA-05", "konflik:1:C4"): _WIKA_VALID,
+}
+
+
+def gt5(verbose=True, kb=None, rows=None):
+    """GT5: worked examples of the real company policies, engine on the gold chain with the policy installed."""
+    from pph21kbs.refs import compare_gt5, gt5_cases, load_gt5, observe_gt5
+    kb = kb or _kb()
+    installed = {}
+    ok = total = obs = bad = explained = 0
+    for ex in load_gt5():
+        for doc_id, update_id, case, exp in gt5_cases(ex):
+            if update_id not in installed:
+                installed[update_id] = build_gold.apply_side(kb, build_gold.side_update(update_id))[1]
+            r, diffs = compare_gt5(installed[update_id], case, exp, OMEGA)
+            total += 1
+            obs += len(exp)
+            bad += len(diffs)
+            wrong = {k for k, _, _ in diffs}
+            for k, v in exp.items():
+                why = GT5_EXPLAINED.get((ex["id"], _key_text(k) if k[0] != "conflict" else f"konflik:{k[1]}:{k[2]}"),
+                                        "") if k in wrong else ""
+                explained += bool(why)
+                if rows is not None:
+                    rows.append({"kasus": ex["id"], "tahun": case["tax_year"],
+                                 "observasi": _key_text(k) if k[0] != "conflict" else f"konflik:{k[1]}:{k[2]}",
+                                 "engine": observe_gt5(r, k), "acuan": v, "sama": k not in wrong, "penjelasan": why})
+            if not diffs and not r.errors:
+                ok += 1
+            elif verbose:
+                print(ex["id"], case["tax_year"], ex["judul"][:70])
+                if r.errors:
+                    print("   errors", r.errors[:3])
+                for k, got, want in diffs:
+                    print(f"   {k}: engine {got} reference {want}")
+    print(f"GT5: {ok}/{total} employees equal; {obs - bad}/{obs} observations equal; {explained}/{bad} differences "
+          "explained")
+    return ok, total, obs - bad, obs
+
+
 if __name__ == "__main__":
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     which = args[0] if args else "gt3"
@@ -202,3 +257,8 @@ if __name__ == "__main__":
         gt2(kb=kb, rows=rows)
         if write:
             _write("gt2", rows)
+    if which in ("gt5", "all"):
+        rows = [] if write else None
+        gt5(kb=kb, rows=rows)
+        if write:
+            _write("gt5", rows)

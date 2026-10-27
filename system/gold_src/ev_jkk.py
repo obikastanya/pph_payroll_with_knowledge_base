@@ -17,12 +17,12 @@ ELIGIBLE = "employer('jkk_relief_eligible') == True"
 def _e07():
     q = PP7.q
     rates = [q("Pasal 4 ayat (1)", "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh"),
-             q("Pasal 4 ayat (1) huruf a", "(nol koma satu"),
-             q("Pasal 4 ayat (1) huruf b", "tujuh nol persen) dari Upah sebulan;"),
-             q("Pasal 4 ayat (1) huruf c", "koma empat empat lima persen) dari Upah sebulan;"),
-             q("Pasal 4 ayat (1) huruf d", "tiga lima persen) dari Upah sebulan; dan"),
+             q("Pasal 4 ayat (1) huruf a", "(nol koma satu dua nol persen) dari Upah sebulan;"),
+             q("Pasal 4 ayat (1) huruf b", "(nol koma dua tujuh nol persen) dari Upah sebulan;"),
+             q("Pasal 4 ayat (1) huruf c", "(nol koma empat empat lima persen) dari Upah sebulan;"),
+             q("Pasal 4 ayat (1) huruf d", "(nol koma enam tiga lima persen) dari Upah sebulan; dan"),
              q("Pasal 4 ayat (1) huruf e", "diberikan keringanan sehingga menjadi 0,870% (nol")]
-    period = q("Pasal 10", "sampai dengan Iuran JKK bulan Juli 2O25.")
+    period = q("Pasal 10", "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25.")
     who = [q("Pasal 3 ayat (1)", "Perusahaan industri padat karya tertentu."),
            q("Pasal 5 ayat (2)", "pada ayat (1) dilakukan melalui verifikasi terhadap")]
     return [
@@ -40,7 +40,7 @@ def _e07():
 def _e09(e07):
     q = PP36.q
     ext = [q("Pasal I angka 2, Pasal 10A", "dilakukan perpanjangan sampai dengan Iuran JKK"),
-           q("Pasal I angka 2, Pasal 10A", "bulan Januari 2026.")]
+           q("Pasal I angka 2, Pasal 10A", "perpanjangan sampai dengan Iuran JKK bulan Januari 2026.")]
     change = []
     for rec in e07:
         r = dict(rec)

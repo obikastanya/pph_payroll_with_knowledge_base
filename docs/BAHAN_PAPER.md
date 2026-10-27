@@ -56,8 +56,9 @@ habis. Anggaran LLM: USD 15,016 dari 15 (lebih 1,6 sen karena permintaan *batch*
 
 - Acuan pengembangan: GT3 50/50 kasus (2.107/2.107 observasi); GT1 22/26 (14 selisih = ralat contoh resmi);
   GT2 15/20 bulanan (5 selisih pembulatan) + 90/90 tahunan; GT5 67/79 (12 dijelaskan). `docs/hasil/acuan_*.csv`.
-- GT1 *holdout* sekali pakai: 6/10 kasus, 221/235 observasi; sesudah satu koreksi emas 7/10, 226/235
-  (`acuan_gt1_holdout*.csv`). Tabel adjudikasi di log Tahap 13.
+- GT1 *holdout* sekali pakai: 6/10 kasus, 221/235 observasi; sesudah koreksi 7/10, 226/235
+  (`acuan_gt1_holdout*.csv`): koreksi emas DTP memulihkan 1 observasi (PMK10-B-4), perbaikan pengonversi acuan 4
+  (PER16-I.1.4). Tabel adjudikasi di log Tahap 13.
 - *Mutation score*: 290 mutan; 0,54 mentah; 116 kemungkinan setara; non-setara 0,90 → 1,00 sesudah 17 kasus
   terarah (`docs/hasil/mutasi_ringkasan.json`).
 
@@ -88,7 +89,7 @@ dari Tahap 7: semua 13 perubahan nyata dan 20 kebijakan dapat dinyatakan tanpa m
 0,760 ≥ θ₃ = 0,75); OAR regulasi 12/13. Kesalahan baru hanya di E02 (15 tupel) dan P01 (264 tupel); P01 bertahan
 sampai akhir rantai, sehingga *drift* akhir 579 tupel salah (sampel 150 kasus per tahun). Varian peninjau sempurna
 sama, karena E04 dan E06 (*abstain*) hanya menyentuh tupel yang sudah salah. 9 pengecoh tidak dijalankan (anggaran)
-dan tidak dihitung.
+dan tidak dihitung, sehingga H3a diuji pada $N = 24$, bukan 33 seperti di pra-registrasi.
 
 ### RQ4 (E4)
 
@@ -104,9 +105,11 @@ dijalankan di GraphDB). 134 pasangan kebijakan uji × peristiwa uji, 33 positif 
 | Tandai semuanya (rujukan) | 0,25 | 1,00 | 0,620 |
 
 H4a diterima (batas bawah *recall* 0,75 ≥ θ₄ = 0,70). H4b tidak: selisih $F_2$ terhadap B5(ii) +0,193 (CI 0,062–0,400),
-terhadap B5(i) −0,006 (CI −0,110–0,058). Detektor melewatkan 3 pasangan (SP01×E05, SP01×E08, SP03×E10; semua label
-(a); dua di antaranya peristiwa batas upah JP. Mekanismenya belum dianalisis: periksa jalur baca SP01/SP03 ke fakta
-yang diubah E05, E08, E10). κ label eksekusi terhadap label
+terhadap B5(i) −0,006 (CI −0,110–0,058). Detektor melewatkan 3 pasangan (SP01×E05 dan SP03×E10 berlabel a+c, SP01×E08 berlabel a; dua di antaranya peristiwa batas upah JP. Mekanisme: aturan kebijakan *menghasilkan* fakta yang ada di
+$F_\Delta$ (SP01.JP_EMPLOYEE → `jp_employee`; SP03.DTP_WITHHELD → `pph21_dtp`) dan bersaing dengan aturan regulasi
+yang nilainya berubah lewat parameter (batas upah JP) atau lewat aturan lain, tetapi tidak membaca fakta $F_\Delta$ dan
+tidak ada aturan $\Delta$ yang menghasilkan fakta yang sama. Jenis (b) detektor hanya memeriksa aturan di dalam
+$\Delta$; celah ini dicatat untuk versi detektor berikutnya, detektor beku tidak diubah). κ label eksekusi terhadap label
 manual kebijakan buatan ≈ 0 (88 pasangan): label manual menandai "membaca fakta yang berubah" (46), label eksekusi
 menuntut nilai benar-benar berubah pada kasus sampel (13 dari 46): dua pengertian dampak yang berbeda.
 

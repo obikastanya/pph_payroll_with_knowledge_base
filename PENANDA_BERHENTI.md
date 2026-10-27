@@ -14,14 +14,24 @@ Dibuat 2026-10-28 00:36 WIB atas permintaan peneliti (besok berangkat perjalanan
 
 ## Status saat berhenti
 
-Checkpoint 02:30 WIB (diperbarui setiap *commit*).
+Checkpoint akhir 03:45 WIB 2026-10-28. Penelitian berhenti pada titik ini karena anggaran LLM habis (USD 15,016 dari 15),
+bukan karena batas waktu.
 
-Selesai: Tahap 3–13 (emas, gerbang, $S^E$ + mutasi, alat analisis, kalibrasi, pembekuan `alur-beku`/`engine-v1`,
-pra-registrasi `prareg`, `emas-v1`, E0 *holdout* + satu koreksi emas), E2 dijalankan untuk 13 regulasi ($m = 3$) dan 5 PKB
-($m = 2$). Anggaran LLM terpakai ~USD 12,6 dari 15.
+Selesai (lihat `docs/BAHAN_PAPER.md` untuk peta lengkap):
+- Tahap 3–13: spesifikasi, emas, gerbang, $S^E$ + *mutation score* (non-setara 1,00), alat analisis, kalibrasi,
+  pembekuan (`alur-beku`, `engine-v1`), pra-registrasi (`prareg`), `emas-v1`, E0 (*holdout* GT1 + satu koreksi emas).
+- E2: 13 regulasi ($m = 3$), 5 PKB ($m = 2$), 11 dari 20 pengecoh. H2a tidak diterima; H2b CAR tidak diterima;
+  non-inferioritas SER terhadap B3 terpenuhi, terhadap B4 tidak.
+- E3: OAR 22/24 (H3a diterima, $N = 24$); kesalahan P01 bertahan sampai akhir rantai.
+- E4: H4a diterima, H4b tidak.
+- Angka diperiksa ulang oleh agen peninjau independen; temuan sudah diperbaiki.
 
-Sedang berjalan: penilaian E2 regulasi, pengecoh E2 (sinkron), label RQ4 (GraphDB).
-
-Belum: E3 (`run_chain.py` dengan `--iso e2-regulasi,e2-pengecoh`), ringkasan RQ4, E1 (perubahan tersegel: harus dibuka
-oleh peneliti/kolaborator, Claude tidak membukanya), E5 (model kedua: tidak ada sisa anggaran), `docs/BAHAN_PAPER.md`.
-Pendaftaran OSF dokumen `docs/PRAREGISTRASI.md` dilakukan peneliti.
+Belum dan perlu keputusan peneliti:
+1. E1 (H1): buka `review/unseen_changes/sealed/` (Claude tidak membukanya), cocokkan hash, susun Δ, hitung RA.
+2. Daftarkan `docs/PRAREGISTRASI.md` ke OSF/AsPredicted (stempel waktu pihak ketiga).
+3. Anggaran tambahan bila ingin: 9 pengecoh tersisa, kebijakan buatan dan kontrafaktual di E2, model kedua (E5),
+   pembangkitan ulang E3 (komponen kontekstual, H3b), ablasi AB1/AB2/AB5.
+4. Kesalahan emas latar 2016 (PER16-II.1.1, pegawai pensiun yang bulan kerjanya diketahui): perbaikannya menyentuh
+   daftar aturan P16 yang diakhiri E03/E04 dan FR01; putuskan apakah dikoreksi.
+5. Celah detektor dampak (kebijakan *menghasilkan* fakta di $F_\Delta$ tanpa aturan Δ yang sama) untuk versi berikutnya.
+6. Menulis ulang paper dari `docs/BAHAN_PAPER.md` dan `docs/LOG_PENELITIAN.md`.

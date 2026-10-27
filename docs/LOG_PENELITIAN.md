@@ -481,7 +481,7 @@ USD 15,016 dari 15 (selisih 1,6 sen dari permintaan *batch* yang selesai saat di
 | AB4 seleksi sempurna (batas atas) | 0 / 8 / 5 | 0 / 0 / 5 | 0 / 8 |
 
 - H2a: batas atas satu sisi SER usulan 3/18 = 0,377 > θ₂ = 0,25 → **tidak diterima**.
-- H2b CAR: usulan 8/18 sama dengan B3, satu di bawah B4 (McNemar satu sisi p = 0,5; Holm 1,0) → **tidak diterima**.
+- H2b CAR: usulan 8/18 sama dengan B3, satu di bawah B4 (McNemar satu sisi p = 0,75 terhadap B3 dan 1,0 terhadap B4; Holm 1,0) → **tidak diterima**.
 - H2b non-inferioritas SER (δ_S = 0,10): terhadap B3 terpenuhi (selisih −0,222, CI Newcombe −0,428–0,004);
   terhadap B4 tidak (0, CI −0,153–0,153).
 - Kesalahan senyap usulan: E02 (nilai natura bingkisan/perumahan pada bruto, 52 tupel), E07 (premi JKK keringanan
@@ -502,8 +502,8 @@ $\hat{\Delta}_n$ (tanpa pembangkitan ulang: anggaran habis). OAR 22/24 = 0,917 (
 0,760) → **H3a diterima** (θ₃ = 0,75). Kesalahan baru: E02 (15 tupel), P01 (264). Kesalahan bertahan sampai akhir:
 579 tupel salah pada peristiwa terakhir (hampir seluruh sampel), terutama dari P01. Varian peninjau sempurna sama
 persis karena E04 dan E06 hanya menyentuh tupel yang sudah salah. Komponen mekanis = kesalahan baru (tidak ada
-pembangkitan ulang sehingga komponen kontekstual dan H3b tidak diukur). E09 dan E10 diterapkan secara longgar
-(Δ terisolasi tidak berlaku ketat pada $\mathcal{K}^{\mathrm{sis}}$).
+pembangkitan ulang sehingga komponen kontekstual dan H3b tidak diukur). E09 (dan E10 pada varian tetap) diterapkan secara
+longgar (Δ terisolasi tidak berlaku ketat pada $\mathcal{K}^{\mathrm{sis}}$).
 
 ### E4 (`docs/hasil/rq4_label.csv`, `rq4_ringkasan.json`)
 

@@ -21,21 +21,21 @@ Acuan independen dari otoritas pajak (RENCANA_DATASET.md, D13). Alamat: https://
 
 ## Hasil (2026-10-27, 18:54–19:09 WIB)
 
-18 kasus dijalankan dan dicatat di [hasil.csv](hasil.csv); setiap kasus punya dua tangkapan layar di `bukti/` (formulir terisi dan hasil). Perbandingan dengan [bandingkan.py](bandingkan.py) menghasilkan [perbandingan.csv](perbandingan.csv):
+18 kasus dijalankan dan dicatat di [hasil.csv](hasil.csv); setiap kasus punya dua tangkapan layar di `bukti/` (formulir terisi dan hasil). Perbandingan dengan [bandingkan.py](bandingkan.py) menghasilkan [perbandingan.csv](perbandingan.csv). Acuan memakai aturan pembulatan yang ditetapkan di [tafsir_perhitungan.md](../../../docs/spesifikasi/tafsir_perhitungan.md) (K1).
 
-| Pembanding | Kasus | Sama |
-|---|---|---|
-| GT3 (hitungan manual dari teks regulasi) | 10 (GT2-01 s.d. 06, 08 s.d. 10, 12) | 10 |
-| Tabel TER `dataset/01_regulasi/tables/ter_bulanan.csv` (batas lapisan b dan b+1) | 6 (GT2-13 s.d. 18) | 6 |
-| *Gross-up* dari tabel TER atas bruto yang diisikan | 2 (GT2-07, GT2-11) | 2 |
-| **Jumlah** | **18** | **18** |
+| Pembanding | Kasus | Sama | Beda |
+|---|---|---|---|
+| GT3 (hitungan dari teks regulasi) | 10 (GT2-01 s.d. 06, 08 s.d. 10, 12) | 7 | 3 (GT2-06, 09, 10: Rp1) |
+| Tabel TER (batas lapisan b dan b+1) | 6 (GT2-13 s.d. 18) | 6 | 0 |
+| *Gross-up* dari tabel TER atas bruto yang diisikan | 2 (GT2-07, 11) | 1 | 1 (GT2-07: Rp1) |
+| **Jumlah** | **18** | **14** | **4** |
 
-Yang terkonfirmasi oleh kalkulator resmi:
+Terkonfirmasi oleh kalkulator resmi di semua 18 kasus:
 - pemetaan status PTKP ke kategori TER A, B, C;
-- batas lapisan TER: tarif berubah tepat di atas batas (6.600.000 → 6.600.001 kategori C; 5.400.000 → 5.400.001 kategori A; 6.200.000 → 6.200.001 kategori B; 10.050.000 → 10.050.001 kategori A);
-- *gross-up* metode TER: DPP = bruto + tunjangan pajak, dan tunjangan pajak = PPh 21.
+- tarif lapisan TER, termasuk tepat di batas lapisan (6.600.000/6.600.001 kategori C; 5.400.000/5.400.001 dan 10.050.000/10.050.001 kategori A; 6.200.000/6.200.001 kategori B);
+- mekanisme *gross-up* TER: DPP = bruto + tunjangan pajak, dan tunjangan pajak = PPh 21.
 
-Yang **tidak** terkonfirmasi: pembulatan ke bawah PPh bulanan (ambiguitas K1 GT3). Semua hasil kalkulator kebetulan memiliki pecahan di bawah setengah rupiah, sehingga pembulatan ke bawah dan ke terdekat memberi hasil sama.
+**Pembulatan berbeda.** Kalkulator DJP membuang pecahan rupiah, termasuk pecahan tepat 0,5: GT2-09 9.950.775 × 2% = 199.015,5 ditampilkan 199.015; GT2-10 9.411.300 × 1,5% = 141.169,5 ditampilkan 141.169. PER-11/PJ/2025 Pasal 129 ayat (1) huruf a dan ayat (3) (PDF hlm. 106) mewajibkan PPh pada bukti pemotongan PPh 21 dibulatkan ke rupiah penuh: kurang dari 0,50 ke bawah, 0,50 atau lebih ke atas. Acuan mengikuti peraturan, sehingga keempat selisih Rp1 diberi putusan "pembulatan" di `perbandingan.csv`. Untuk pembulatan, kalkulator DJP bukan acuan.
 
 ## Catatan
 

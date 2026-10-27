@@ -1,7 +1,7 @@
 # Tinjauan GT3 — 50 kasus PPh 21 dihitung manual
 
 Berkas yang diperiksa: [dataset/11_acuan/gt3_kasus_bertingkat/](../../dataset/11_acuan/gt3_kasus_bertingkat/) (`GT3-001.json` … `GT3-050.json`, `README.md`)
-Pemeriksa: pakar *payroll* (staf keuangan) · Nama: ………………………… · Tanggal: 2026-10-27
+Tanggal: 2026-10-27
 
 ## Pengantar
 

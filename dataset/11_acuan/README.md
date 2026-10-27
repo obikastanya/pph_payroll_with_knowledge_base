@@ -4,7 +4,7 @@ Acuan dipakai untuk memvalidasi KB emas (E0) sebelum KB emas dipakai menilai sis
 
 | Folder / berkas | Acuan | Isi |
 |---|---|---|
-| [gt2_kalkulator_djp/](gt2_kalkulator_djp/README.md) | GT2 | 18 kasus dihitung dengan kalkulator resmi DJP (rezim 2026), tangkapan layar formulir dan hasil, perbandingan dengan GT3 dan tabel TER (18/18 sama) |
+| [gt2_kalkulator_djp/](gt2_kalkulator_djp/README.md) | GT2 | 18 kasus dihitung dengan kalkulator resmi DJP (rezim 2026), tangkapan layar formulir dan hasil, perbandingan dengan GT3 dan tabel TER (kategori, tarif, dan *gross-up* cocok 18/18; pembulatan berbeda Rp1 di 4 kasus) |
 | [gt3_kasus_bertingkat/](gt3_kasus_bertingkat/README.md) | GT3 | 50 kasus bertingkat 2023–2026 dihitung dari teks regulasi, langkah hitung beserta pasal dan halaman |
 | [gt5_contoh_kebijakan/](gt5_contoh_kebijakan/README.md) | GT5 | 21 contoh hitungan yang ditentukan kebijakan perusahaan (5 PKB nyata) |
 | [diferensial_gt3.md](diferensial_gt3.md) | uji diferensial | GT3 dibandingkan dengan kalkulator prototipe lama; putusan atas setiap selisih |

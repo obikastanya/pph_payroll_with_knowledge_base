@@ -21,11 +21,17 @@ def ter(kategori, bruto):
     return Fraction(0)
 
 
+def bulat(x):
+    """Pembulatan PPh mulai Masa Januari 2025 (rezim kalkulator DJP 2026): rupiah terdekat, 0,50 ke atas
+    (PER-11/PJ/2025 Pasal 129 ayat (1) huruf a dan ayat (3); docs/spesifikasi/tafsir_perhitungan.md K1)."""
+    return int(x + Fraction(1, 2))
+
+
 def gross_up(kategori, dasar):
     """Tunjangan pajak T terkecil dengan T = floor(tarif(dasar + T) x (dasar + T)), dari tabel TER (iterasi titik tetap)."""
     t = 0
     for _ in range(100):
-        baru = int(ter(kategori, dasar + t) * (dasar + t))
+        baru = bulat(ter(kategori, dasar + t) * (dasar + t))
         if baru == t:
             return t
         t = baru
@@ -50,10 +56,12 @@ for r in csv.DictReader(open(HERE / "hasil.csv", encoding="utf-8")):
         acuan, nama = pm["pph21"], f"GT3 {m.group(1)} bulan {m.group(2)}"
     else:
         bruto = int(r["bruto_diisi"])
-        acuan, nama = int(ter(KATEGORI[r["ptkp"]], bruto) * bruto), "tabel TER (dataset/01_regulasi/tables)"
+        acuan, nama = bulat(ter(KATEGORI[r["ptkp"]], bruto) * bruto), "tabel TER (dataset/01_regulasi/tables)"
+    selisih = pph_djp - acuan
     rows.append({"gt2_id": r["gt2_id"], "skema": r["skema"], "ptkp": r["ptkp"], "bruto": r["bruto_diisi"],
-                 "pph21_djp": pph_djp, "acuan": nama, "pph21_acuan": acuan, "selisih": pph_djp - acuan,
-                 "sama": pph_djp == acuan})
+                 "pph21_djp": pph_djp, "acuan": nama, "pph21_acuan": acuan, "selisih": selisih, "sama": selisih == 0,
+                 "putusan": "" if selisih == 0 else ("pembulatan: kalkulator DJP membuang pecahan, PER-11/PJ/2025 Ps. 129 "
+                                                      "mewajibkan rupiah terdekat" if abs(selisih) == 1 else "perlu diselidiki")})
 with open(HERE / "perbandingan.csv", "w", encoding="utf-8", newline="") as f:
     w = csv.DictWriter(f, list(rows[0])); w.writeheader(); w.writerows(rows)
 for x in rows:

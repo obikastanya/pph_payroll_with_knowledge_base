@@ -28,7 +28,10 @@ def load_gz(path):
 
 def se_cases(dev=False):
     root = SE_DIR / "pengembangan" if dev else SE_DIR
-    return {c["case_id"]: c for c in load_gz(root / "kasus.jsonl.gz")}
+    out = {c["case_id"]: c for c in load_gz(root / "kasus.jsonl.gz")}
+    if (root / "kasus_kebijakan.jsonl.gz").exists():       # cases of the test policies (company KLU, HR items)
+        out.update({c["case_id"]: c for c in load_gz(root / "kasus_kebijakan.jsonl.gz")})
+    return out
 
 
 def se_expected(event_id, dev=False):

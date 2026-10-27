@@ -124,3 +124,63 @@ def test_pipeline_does_not_read_gold_or_references():
         for line in text.splitlines():
             if line.strip().startswith(("import", "from")):
                 assert not any(f in line for f in forbidden), f"{path.name}: {line}"
+
+
+class _FakeBatches:
+    """messages.batches of the Anthropic SDK: every request succeeds with its custom_id echoed as JSON."""
+
+    def __init__(self):
+        self.created = []
+
+    def create(self, requests):
+        from types import SimpleNamespace as NS
+        self.created.append([r["custom_id"] for r in requests])
+        return NS(id=f"batch{len(self.created)}", processing_status="in_progress")
+
+    def retrieve(self, batch_id):
+        from types import SimpleNamespace as NS
+        return NS(processing_status="ended", request_counts={"succeeded": len(self.created[-1])})
+
+    def results(self, batch_id):
+        from types import SimpleNamespace as NS
+        for cid in self.created[int(batch_id[5:]) - 1]:
+            msg = NS(content=[NS(type="text", text=json.dumps({"id": cid}))], stop_reason="end_turn",
+                     model="claude-opus-5-5", usage=NS(input_tokens=1000, output_tokens=100,
+                                                       cache_read_input_tokens=0, cache_creation_input_tokens=0))
+            yield NS(custom_id=cid, result=NS(type="succeeded", message=msg))
+
+
+def test_batch_dispatcher_pools_documents(tmp_path):
+    """Requests of documents processed in parallel threads go out as one batch; each thread gets its own results
+    and the call log records half-price costs."""
+    import threading
+    from types import SimpleNamespace as NS
+    ledger = llm.Ledger("batch-test", root=tmp_path)
+    api = NS(messages=NS(batches=_FakeBatches()))
+    disp = llm.BatchDispatcher(api, ledger, poll_seconds=0, log=lambda *_: None)
+    client = llm.AnthropicBatchClient.__new__(llm.AnthropicBatchClient)
+    client.ledger, client.batch, client.model, client.dispatcher = ledger, True, "claude-opus-5-5", disp
+    got = {}
+
+    def work(doc):
+        try:
+            outs = client.complete_many([dict(system="s", prefix=["p"], user=f"u{k}", schema={}, schema_name="x",
+                                              effort="low", step="draft", document=doc, event=doc,
+                                              call_id=f"run-{doc}-cand{k}") for k in (1, 2)])
+            got[doc] = [parsed["id"] for _, parsed, _ in outs]
+        finally:
+            disp.leave()
+
+    threads = [threading.Thread(target=work, args=(d,)) for d in ("E01", "E02", "E03")]
+    for t in threads:                    # every document is registered before any thread can submit
+        disp.enter()
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join(timeout=60)
+    assert len(api.messages.batches.created) == 1 and len(api.messages.batches.created[0]) == 6
+    assert got == {d: [f"run-{d}-cand1", f"run-{d}-cand2"] for d in ("E01", "E02", "E03")}
+    entries = [json.loads(line) for line in ledger.calls.read_text(encoding="utf-8").splitlines()]
+    assert all(e["batch"] and e["batch_id"] == "batch1" for e in entries)
+    assert abs(entries[0]["cost_usd"] - (1000 * 4.0 + 100 * 20.0) / 1e6 / 2) < 1e-9
+    assert ledger.spent_prefix("run-E01-") == round(2 * entries[0]["cost_usd"], 6)

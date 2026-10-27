@@ -6,11 +6,14 @@ experiments/<run>/prompts/<sha256>.json. The budget guard sums the cost of every
 run's own limit. Keys come from .env through config; they are never logged.
 
 Clients: AnthropicClient (main model, structured output through output_config.format, effort through
-output_config.effort, prompt caching on the shared prefix), OpenAIClient (second model, Responses API with a strict
-JSON schema), MockClient (tests and dry runs; returns prepared outputs and logs zero cost).
+output_config.effort, prompt caching on the shared prefix), AnthropicBatchClient (the same requests through the
+Message Batches API at half price: complete_many() calls of documents run in parallel threads are pooled by a
+BatchDispatcher into one batch), OpenAIClient (second model, Responses API with a strict JSON schema), MockClient
+(tests and dry runs; returns prepared outputs and logs zero cost).
 """
 import hashlib
 import json
+import threading
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -101,9 +104,23 @@ class Ledger:
             path.write_text(text, encoding="utf-8")
         return sha, f"{folder}/{sha}.json"
 
+    _lock = threading.Lock()
+
     def log(self, entry):
-        with open(self.calls, "a", encoding="utf-8") as f:
+        with self._lock, open(self.calls, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
+    def spent_prefix(self, call_prefix):
+        """Cost of this run's calls whose call_id starts with call_prefix (one document when runs share a ledger)."""
+        if not self.calls.exists():
+            return 0.0
+        total = 0.0
+        for line in self.calls.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                e = json.loads(line)
+                if str(e.get("call_id") or "").startswith(call_prefix):
+                    total += e.get("cost_usd") or 0.0
+        return round(total, 6)
 
 
 class Client:
@@ -118,32 +135,47 @@ class Client:
                  candidate=None, order_seed=None, call_id=None, max_tokens=32000):
         """system: text; prefix: list of text blocks shared by the candidates of one document (cached);
         user: final text block. Returns (Reply, parsed JSON or None, log entry)."""
-        self.ledger.check()
-        prompt = {"model": self.model, "effort": effort, "system": system, "prefix": prefix, "user": user,
-                  "schema_name": schema_name}
-        sha, pfile = self.ledger.save_prompt(prompt, private=str(document).startswith("PKB-"))
+        req = dict(system=system, prefix=prefix, user=user, schema=schema, schema_name=schema_name, effort=effort,
+                   step=step, document=document, event=event, candidate=candidate, order_seed=order_seed,
+                   call_id=call_id, max_tokens=max_tokens)
+        meta = self._begin(req)
         t0 = time.time()
         try:
             reply = self._call(system, prefix, user, schema, schema_name, effort, max_tokens)
             error = None
         except Exception as e:  # noqa: BLE001 - a refusal or API error is a failed candidate, recorded
-            reply = Reply("", "error", self.model, {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0})
-            error = f"{type(e).__name__}: {e}"[:500]
+            reply, error = _failed(self.model), f"{type(e).__name__}: {e}"[:500]
         reply.seconds = round(time.time() - t0, 2)
+        return self._end(req, meta, reply, error)
+
+    def complete_many(self, requests):
+        """Independent requests (keyword dicts of complete()); results in the same order."""
+        return [self.complete(**r) for r in requests]
+
+    def _begin(self, req):
+        self.ledger.check()
+        prompt = {"model": self.model, "effort": req["effort"], "system": req["system"], "prefix": req["prefix"],
+                  "user": req["user"], "schema_name": req["schema_name"]}
+        return self.ledger.save_prompt(prompt, private=str(req["document"]).startswith("PKB-"))
+
+    def _end(self, req, meta, reply, error):
+        sha, pfile = meta
         parsed = None
         if reply.text:
             try:
                 parsed = json.loads(reply.text)
             except json.JSONDecodeError as e:
                 error = error or f"JSONDecodeError: {e}"
-        entry = {"call_id": call_id, "run": self.ledger.run,
+        entry = {"call_id": req["call_id"], "run": self.ledger.run,
                  "time": datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds"),
                  "model_requested": self.model, "model_reported": reply.model, "provider": self.provider,
-                 "effort": effort, "step": step, "document": document, "event": event, "candidate": candidate,
-                 "order_seed": order_seed, "prompt_sha256": sha, "prompt_file": pfile, "output_raw": reply.text,
-                 "stop_reason": reply.stop_reason, "usage": reply.usage,
-                 "cost_usd": cost(self.model, reply.usage, self.batch), "batch": self.batch,
+                 "effort": req["effort"], "step": req["step"], "document": req["document"], "event": req["event"],
+                 "candidate": req["candidate"], "order_seed": req["order_seed"], "prompt_sha256": sha,
+                 "prompt_file": pfile, "output_raw": reply.text, "stop_reason": reply.stop_reason,
+                 "usage": reply.usage, "cost_usd": cost(self.model, reply.usage, self.batch), "batch": self.batch,
                  "seconds": reply.seconds, "error": error, "gates": {}}
+        if reply.raw.get("batch_id"):
+            entry["batch_id"] = reply.raw["batch_id"]
         self.ledger.log(entry)
         return reply, parsed, entry
 
@@ -179,13 +211,173 @@ class AnthropicClient(Client):
             msg = stream.get_final_message()
         return self.reply_of(msg)
 
-    def reply_of(self, msg):
+    def reply_of(self, msg):  # also called unbound (self None) by BatchDispatcher
         text = next((b.text for b in msg.content if b.type == "text"), "")
         u = msg.usage
         usage = {"input": u.input_tokens or 0, "output": u.output_tokens or 0,
                  "cache_read": getattr(u, "cache_read_input_tokens", 0) or 0,
                  "cache_write": getattr(u, "cache_creation_input_tokens", 0) or 0}
         return Reply(text, msg.stop_reason or "", msg.model, usage)
+
+
+class AnthropicBatchClient(AnthropicClient):
+    """AnthropicClient through the Message Batches API (half price). complete_many() hands its requests to the shared
+    dispatcher; complete() is a batch of one."""
+
+    def __init__(self, ledger, dispatcher=None, model=MAIN_MODEL, poll_seconds=30, log=print):
+        super().__init__(ledger, model=model, batch=True)
+        self.dispatcher = dispatcher or BatchDispatcher(self.api, ledger, poll_seconds, log)
+
+    def complete(self, **req):
+        return self.complete_many([req])[0]
+
+    def complete_many(self, requests):
+        reqs = [dict({"candidate": None, "order_seed": None, "call_id": None, "max_tokens": 32000, "document": "",
+                      "event": ""}, **r) for r in requests]
+        metas = [self._begin(r) for r in reqs]
+        items = []
+        for i, r in enumerate(reqs):
+            cid = "".join(ch if ch.isalnum() or ch in "_-" else "_" for ch in str(r["call_id"] or f"req{i}"))[:64]
+            params = self.request_params(r["system"], r["prefix"], r["user"], r["schema"], r["effort"],
+                                         r["max_tokens"])
+            items.append((cid, params, self.model))
+        if len({cid for cid, _, _ in items}) != len(items):
+            raise LLMError("duplicate call ids in one batch")
+        results = self.dispatcher.submit(items)
+        return [self._end(r, m, reply, err) for r, m, (reply, err) in zip(reqs, metas, results)]
+
+
+def _failed(model):
+    return Reply("", "error", model, {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0})
+
+
+class BatchDispatcher:
+    """Pools the requests of documents processed in parallel threads into one Message Batch.
+
+    The runner calls enter() once per document before starting any thread, and each thread calls leave() when its
+    document is done. The document threads do their own work (gates, S^G, consensus) under the dispatcher's cpu lock
+    (with dispatcher.cpu(): ...), released only while waiting for a batch: the SPARQL parser of rdflib is not
+    thread-safe, and under the GIL parallel threads would gain nothing. A thread that needs LLM output submits its
+    requests and waits; when every active thread is waiting, the pooled requests are sent as one batch, polled until
+    it ends, and the results handed back. Before sending, the cost of the batch is bounded from above (all prompt
+    text as uncached input at 4 characters per token, max_tokens/4 output per request) and the batch is refused when
+    that bound would cross the total budget."""
+
+    def __init__(self, api, ledger, poll_seconds=30, log=print):
+        self.api = api
+        self.ledger = ledger
+        self.poll = poll_seconds
+        self.cv = threading.Condition()
+        self.active = 0
+        self.waiting = []
+        self.log = log
+        self.batches = []
+        self._cpu = threading.Lock()
+        self._held = threading.local()
+
+    def cpu(self):
+        dispatcher = self
+
+        class _Hold:
+            def __enter__(self):
+                dispatcher._cpu.acquire()
+                dispatcher._held.on = True
+
+            def __exit__(self, *exc):
+                dispatcher._held.on = False
+                dispatcher._cpu.release()
+        return _Hold()
+
+    def enter(self):
+        with self.cv:
+            self.active += 1
+
+    def leave(self):
+        with self.cv:
+            self.active -= 1
+            self.cv.notify_all()
+
+    def submit(self, items):
+        """items: [(custom_id, params, model)]. Returns [(Reply, error)] in the same order."""
+        slot = {"done": False, "results": None, "error": None, "items": items}
+        held = getattr(self._held, "on", False)
+        if held:                                # let the other documents work while this one waits
+            self._held.on = False
+            self._cpu.release()
+        try:
+            return self._wait(slot)
+        finally:
+            if held:
+                self._cpu.acquire()
+                self._held.on = True
+
+    def _wait(self, slot):
+        with self.cv:
+            self.waiting.append(slot)
+            self.cv.notify_all()
+            while not slot["done"]:
+                if self.waiting and slot is self.waiting[0] and len(self.waiting) >= max(self.active, 1):
+                    pool, self.waiting = self.waiting, []
+                    self.cv.release()
+                    try:
+                        self._send(pool)
+                    finally:
+                        self.cv.acquire()
+                        self.cv.notify_all()
+                else:
+                    self.cv.wait(timeout=5)
+        if slot["error"] is not None:
+            raise slot["error"]
+        return slot["results"]
+
+    def _bound(self, items):
+        usd = 0.0
+        for _, params, model in items:
+            chars = len(json.dumps(params.get("system"))) + len(json.dumps(params.get("messages")))
+            usd += cost(model, {"input": chars / 4, "output": params["max_tokens"] / 4}, batch=True)
+        return usd
+
+    def _send(self, pool):
+        items = [it for slot in pool for it in slot["items"]]
+        try:
+            bound = self._bound(items)
+            total = spent_total(self.ledger.root)
+            if total + bound > self.ledger.total_limit:
+                raise BudgetExceeded(f"batch of {len(items)} requests may cost up to {bound:.2f} USD; spent "
+                                     f"{total:.4f} of {self.ledger.total_limit} USD")
+            if self.ledger.run_limit is not None and self.ledger.spent_run() + bound > self.ledger.run_limit:
+                raise BudgetExceeded(f"batch of {len(items)} requests may cost up to {bound:.2f} USD; run "
+                                     f"{self.ledger.run} spent {self.ledger.spent_run():.4f} of its limit "
+                                     f"{self.ledger.run_limit} USD")
+            batch = self.api.messages.batches.create(
+                requests=[{"custom_id": cid, "params": params} for cid, params, _ in items])
+            self.batches.append(batch.id)
+            self.log(f"batch {batch.id}: {len(items)} requests (cost bound {bound:.2f} USD)")
+            t0 = time.time()
+            while True:
+                b = self.api.messages.batches.retrieve(batch.id)
+                if b.processing_status == "ended":
+                    break
+                time.sleep(self.poll)
+            seconds = round(time.time() - t0, 1)
+            self.log(f"batch {batch.id} ended after {seconds}s: {b.request_counts}")
+            got = {}
+            for r in self.api.messages.batches.results(batch.id):
+                if r.result.type == "succeeded":
+                    reply = AnthropicClient.reply_of(None, r.result.message)
+                    reply.raw = {"batch_id": batch.id}
+                    reply.seconds = seconds
+                    got[r.custom_id] = (reply, None)
+                else:
+                    err = getattr(r.result, "error", None)
+                    got[r.custom_id] = (_failed(""), f"batch {r.result.type}: {err}"[:500])
+            for slot in pool:
+                slot["results"] = [got.get(cid, (_failed(""), "batch: no result")) for cid, _, _ in slot["items"]]
+        except Exception as e:  # noqa: BLE001 - handed to every waiting thread
+            for slot in pool:
+                slot["error"] = e
+        for slot in pool:
+            slot["done"] = True
 
 
 class OpenAIClient(Client):

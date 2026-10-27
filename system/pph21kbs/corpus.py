@@ -12,6 +12,7 @@ from .text import registry
 EVENTS = REPO / "dataset" / "09_korpus_peristiwa" / "peristiwa.csv"
 FICTIVE = REPO / "dataset" / "09_korpus_peristiwa" / "fiktif" / "INDEX.csv"
 POLICY_EVENTS = REPO / "dataset" / "10_kebijakan_perusahaan" / "peristiwa_kebijakan.csv"
+COUNTERFACTUAL = REPO / "dataset" / "09_korpus_peristiwa" / "kontrafaktual" / "INDEX.csv"
 
 
 @dataclass(frozen=True)
@@ -82,13 +83,29 @@ def policy_events():
     return tuple(out)
 
 
+@lru_cache(maxsize=1)
+def counterfactual_events():
+    """Counterfactual variants of test events (system/tools/build_counterfactual.py): the source event's dates and
+    layer, the counterfactual document; extra holds the source id and the original and replaced values."""
+    if not COUNTERFACTUAL.exists():
+        return ()
+    src = {e.id: e for e in regulation_events()}
+    out = []
+    with open(COUNTERFACTUAL, encoding="utf-8", newline="") as f:
+        for i, r in enumerate(csv.DictReader(f)):
+            s = src[r["sumber"]]
+            out.append(Event(r["id"], "kontrafaktual", True, (r["dokumen"],), s.issued, s.effective_from,
+                             s.effective_until, s.change_types, "regulation", s.title, s.order, extra=dict(r)))
+    return tuple(out)
+
+
 def chain_order(events):
     """Regulation sequence order: issue date, then table row order (akuisisi.md Definition 4)."""
     return sorted(events, key=lambda e: (e.issued, e.order))
 
 
 def event(event_id):
-    for e in regulation_events() + fictive_events() + policy_events():
+    for e in regulation_events() + fictive_events() + policy_events() + counterfactual_events():
         if e.id == event_id:
             return e
     raise KeyError(event_id)

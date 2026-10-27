@@ -23,7 +23,16 @@ from pph21kbs.text import pages  # noqa: E402
 def base_for(event, chain):
     if event.layer == "company":
         return chain, date(2026, 10, 27)
+    if event.part == "kontrafaktual":     # the base of the source event
+        return base_for(corpus.event(event.extra["sumber"]), chain)
     ids = [u.update_id for u in chain.updates]
+    side = next((u for u in build_gold.collect_side() if u.event_id == event.id and u.kind != "policy"), None)
+    if side is not None:                # a fictive regulation: the chain prefix at its date plus its background
+        from pph21kbs.kb import apply_delta
+        base = build_gold.prefix_at(chain, side.recorded_on or event.issued.isoformat())
+        for sid in getattr(side, "base_side", ()):
+            base = apply_delta(base, build_gold.side_update(sid).to_json())
+        return base, event.issued
     gold = next((u for u in build_gold.collect() if u.event_id == event.id), None)
     if gold is not None:
         i = ids.index(gold.delta_id)

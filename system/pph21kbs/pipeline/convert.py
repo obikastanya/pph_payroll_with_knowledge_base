@@ -156,6 +156,11 @@ def _element(e, doc_id):
 def to_delta(llm, delta_id, event_id, document):
     """document: {"id", "title", "issued"}. Returns a Delta that follows delta.schema.json."""
     try:
+        missing = [k for k in ("add", "change", "remove") if k not in llm]
+        if missing:
+            raise ConversionError(f"malformed output: missing {', '.join(missing)}")
+        if not (llm["add"] or llm["change"] or llm["remove"]) and llm.get("relevant", True):
+            raise ConversionError("empty update for a document judged relevant (state relevant=false instead)")
         doc_id = document["id"]
         delta = {"delta_id": delta_id, "event_id": event_id, "document": dict(document),
                  "relevant": bool(llm.get("relevant", True)),

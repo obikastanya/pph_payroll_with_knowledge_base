@@ -122,7 +122,7 @@ def run_document(event, base, client, ledger, cfg=None, run_id="dev", out_dir=No
     result = {"run": run_id, "event": event.id, "condition": "proposed", "documents": [d["id"] for d in docs],
               "selection": {s.document: {"tokens": s.tokens, "dropped": s.dropped} for s in selections},
               "candidates": [], "groups": [], "selected": None, "status": None, "delta": None, "cost_usd": 0.0}
-    spent0 = ledger.spent_run()
+    call_prefix = f"{run_id}-{event.id}-"           # cost = this document's calls (documents may share a ledger)
     try:
         # relevance
         _, rel, entry = client.complete(system=prompts.SYSTEM_RELEVANCE, prefix=[doc_text],
@@ -138,37 +138,44 @@ def run_document(event, base, client, ledger, cfg=None, run_id="dev", out_dir=No
                                    "relevant": False, "add": [], "change": [], "remove": [], "note": rel.get("reason", "")}
             else:
                 result["status"] = "abstain"
-            return _finish(result, ledger, spent0, out_dir)
+            return _finish(result, ledger, call_prefix, out_dir)
         # candidates
         rng = random.Random(cfg.seed + hash(event.id) % 1000)
         order = list(range(1, cfg.m + 1))
         rng.shuffle(order)
         prefix = [doc_text, ctx]
-        cands = []
-        for n in range(1, cfg.m + 1):
-            c = Candidate(n, order.index(n))
-            _, out, entry = client.complete(system=prompts.SYSTEM_DRAFT, prefix=prefix,
-                                            user=prompts.draft_user(event, docs, rel), schema=_schema(),
-                                            schema_name="delta", effort=cfg.draft_effort, step="draft",
-                                            document=event.document, event=event.id, candidate=n,
-                                            order_seed=cfg.seed, call_id=f"{run_id}-{event.id}-cand{n}")
+        # the m drafts are independent requests (one round; one batch with the batch client), then the repairs of
+        # the candidates that failed a gate (a second round); a repair sees only its own candidate and gate messages
+        cands = [Candidate(n, order.index(n)) for n in range(1, cfg.m + 1)]
+        outs = client.complete_many([dict(system=prompts.SYSTEM_DRAFT, prefix=prefix,
+                                          user=prompts.draft_user(event, docs, rel), schema=_schema(),
+                                          schema_name="delta", effort=cfg.draft_effort, step="draft",
+                                          document=event.document, event=event.id, candidate=c.n,
+                                          order_seed=cfg.seed, call_id=f"{run_id}-{event.id}-cand{c.n}")
+                                     for c in cands])
+        for c, (_, out, _) in zip(cands, outs):
             c.llm = out
             _evaluate(c, base, event, issued, rel, cfg, docs, run_id, policies)
             c.passed_before_repair = c.passed
             c.first_gate_log = dict(c.gate_log)
             c.initial_llm, c.initial_delta = c.llm, c.delta
-            for r in range(cfg.repair_rounds if not c.passed and c.llm is not None else 0):
-                msgs = _messages(c.gate_log) or [c.error]
-                # same system prompt and prefix as the drafts, so the cached prefix is read, not written again
-                _, out2, _ = client.complete(system=prompts.SYSTEM_DRAFT,
-                                             prefix=prefix, user=prompts.repair_user(event, docs, c.llm, msgs),
-                                             schema=_schema(), schema_name="delta", effort=cfg.draft_effort,
-                                             step="repair", document=event.document, event=event.id, candidate=n,
-                                             order_seed=cfg.seed, call_id=f"{run_id}-{event.id}-cand{n}-rep{r + 1}")
+        for r in range(cfg.repair_rounds):
+            todo = [c for c in cands if not c.passed and c.llm is not None]
+            if not todo:
+                break
+            # same system prompt and prefix as the drafts, so the cached prefix is read, not written again
+            outs = client.complete_many([dict(system=prompts.SYSTEM_DRAFT, prefix=prefix,
+                                              user=prompts.repair_user(event, docs, c.llm,
+                                                                       _messages(c.gate_log) or [c.error]),
+                                              schema=_schema(), schema_name="delta", effort=cfg.draft_effort,
+                                              step="repair", document=event.document, event=event.id,
+                                              candidate=c.n, order_seed=cfg.seed,
+                                              call_id=f"{run_id}-{event.id}-cand{c.n}-rep{r + 1}")
+                                         for c in todo])
+            for c, (_, out2, _) in zip(todo, outs):
                 if out2 is not None:
                     c.llm, c.repaired = out2, True
                     _evaluate(c, base, event, issued, rel, cfg, docs, run_id, policies)
-            cands.append(c)
         passing = {c.n: c._k2_sg for c in cands if c.passed}
         sel, groups, status = consensus.choose(passing, sorted(passing, key=lambda n: order.index(n)))
         result.update(groups=groups, selected=sel, status=status)
@@ -182,7 +189,7 @@ def run_document(event, base, client, ledger, cfg=None, run_id="dev", out_dir=No
     except BudgetExceeded as e:
         result["status"] = "budget"
         result["error"] = str(e)
-    return _finish(result, ledger, spent0, out_dir)
+    return _finish(result, ledger, call_prefix, out_dir)
 
 
 def _evaluate(c, base, event, issued, rel, cfg, docs, run_id, policies):
@@ -205,8 +212,8 @@ def _evaluate(c, base, event, issued, rel, cfg, docs, run_id, policies):
         c._k2_sg = (kb2, sgs.cases, sgs.omegas)
 
 
-def _finish(result, ledger, spent0, out_dir):
-    result["cost_usd"] = round(ledger.spent_run() - spent0, 6)
+def _finish(result, ledger, call_prefix, out_dir):
+    result["cost_usd"] = ledger.spent_prefix(call_prefix)
     d = out_dir or ledger.dir / "results"
     d.mkdir(parents=True, exist_ok=True)
     (d / f"{result['event']}.json").write_text(json.dumps(result, ensure_ascii=False, indent=1, default=str),

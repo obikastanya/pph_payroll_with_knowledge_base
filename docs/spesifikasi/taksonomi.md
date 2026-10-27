@@ -21,7 +21,7 @@ Setiap peristiwa diberi satu **jenis utama** dan nol atau lebih **sifat**.
 | T2 | Tabel tarif: lapisan atau tarif berubah atau dibentuk | E03 (TER) | tabel berversi baru |
 | T3 | Klasifikasi penghasilan: suatu penerimaan menjadi atau berhenti menjadi objek, teratur atau tidak teratur, pengurang atau bukan | E02 (natura) | aturan klasifikasi baru |
 | T4 | Fasilitas baru: insentif atau pengecualian dengan kriteria | E06, E11 (DTP); D05, D10 | aturan baru dengan kondisi |
-| T5 | Perubahan cakupan: kriteria fasilitas atau aturan diperluas atau dipersempit | E10 (sektor pariwisata); D06, D08 | aturan baru menggantikan kondisi lama |
+| T5 | Perubahan cakupan: kriteria fasilitas atau aturan diperluas atau dipersempit | E10 (sektor pariwisata); D06 | aturan baru menggantikan kondisi lama |
 | T6 | Perubahan masa: perpanjangan atau pengakhiran lebih awal | E09; D07, D11 | rekaman berversi atau aturan pengganti |
 | T7 | Pergantian metode perhitungan | E03 + E04 (TER) | sekumpulan aturan baru dan pencabutan aturan lama |
 | T8 | Pencabutan tanpa pengganti | D13 (DTP COVID berakhir) | `remove` atau pencabutan |
@@ -32,7 +32,7 @@ Setiap peristiwa diberi satu **jenis utama** dan nol atau lebih **sifat**.
 
 | Kode | Sifat | Contoh |
 |---|---|---|
-| S1 | Berlaku surut ($t_{berlaku} < t_{terbit}$) | E06, E09, E10; D03, D10 |
+| S1 | Berlaku surut ($t_{berlaku} < t_{terbit}$) | E06, E07, E09, E10; D03, D06, D07, D09, D10 |
 | S2 | Bersyarat: berlaku hanya untuk sektor, KLU, kriteria penghasilan, atau tanggal tertentu | E06, E07, E09, E10, E11 |
 | S3 | Sementara: punya `berlaku_sampai` | E06, E07, E09–E11 |
 | S4 | Terdiri dari beberapa dokumen | E03 + E04 |
@@ -46,8 +46,8 @@ Setiap peristiwa diberi satu **jenis utama** dan nol atau lebih **sifat**.
 | X1 | Administrasi atau pelaporan | P02, P05, P07, P19, P21 |
 | X2 | Subjek di luar lingkup (ASN, magang, IKN, bukan penerima upah) | P03, P08, P14, P18 |
 | X3 | Mengubah iuran atau upah tanpa mengubah PPh 21 | P01, P06, P10 |
-| X4 | Menyatakan ulang ketentuan tanpa perubahan nilai | P04 |
-| X5 | Mengganti dasar hukum tanpa mengubah rumus | P15, P20 (perlu keputusan) |
+| X4 | Menyatakan ulang ketentuan tanpa perubahan nilai | P04, D08, D12 |
+| X5 | Mengganti dasar hukum tanpa mengubah rumus | P15, P20 |
 
 ## 2. Jenis konflik kebijakan perusahaan dengan aturan wajib
 

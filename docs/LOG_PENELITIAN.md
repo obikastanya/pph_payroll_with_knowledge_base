@@ -462,3 +462,56 @@ terpenuhi (tidak ada selisih "emas salah" yang belum diselesaikan pada tahun 202
 
 - Bagian VII (keandalan instrumen): tabel mutasi dan tabel adjudikasi *holdout*; contoh nyata protokol koreksi emas
   (kesalahan yang lolos semua acuan pengembangan dan pembaca kedua, ditemukan oleh *holdout*).
+
+---
+
+## Tahap 15–17. E2 (akuisisi terisolasi), E3 (berantai), E4 (dampak lintas lapis)
+
+Dijalankan 2026-10-28 01:50–03:30 WIB dengan alur beku (`alur-beku`), emas sesudah koreksi E0. Anggaran habis:
+USD 15,016 dari 15 (selisih 1,6 sen dari permintaan *batch* yang selesai saat dibatalkan; tercatat di
+`experiments/batal-batch/`).
+
+### E2 (`experiments/e2-regulasi`, `e2-pkb`, `e2-pengecoh`; `docs/hasil/e2_ringkasan.json`)
+
+| Kondisi | Regulasi (13) SER / CAR / ABS | PKB (5) SER / CAR / ABS | Gabungan (18) SER / CAR |
+|---|---|---|---|
+| Usulan | 3 / 8 / 2 | 0 / 0 / 5 | 3 / 8 |
+| B3 (pertama lolos G1–G2) | 4 / 8 / 1 | 3 / 0 / 2 | 7 / 8 |
+| B4 (mayoritas tanpa gerbang) | 3 / 9 / 1 | 0 / 0 / 5 | 3 / 9 |
+| AB4 seleksi sempurna (batas atas) | 0 / 8 / 5 | 0 / 0 / 5 | 0 / 8 |
+
+- H2a: batas atas satu sisi SER usulan 3/18 = 0,377 > θ₂ = 0,25 → **tidak diterima**.
+- H2b CAR: usulan 8/18 sama dengan B3, satu di bawah B4 (McNemar satu sisi p = 0,5; Holm 1,0) → **tidak diterima**.
+- H2b non-inferioritas SER (δ_S = 0,10): terhadap B3 terpenuhi (selisih −0,222, CI Newcombe −0,428–0,004);
+  terhadap B4 tidak (0, CI −0,153–0,153).
+- Kesalahan senyap usulan: E02 (nilai natura bingkisan/perumahan pada bruto, 52 tupel), E07 (premi JKK keringanan
+  untuk sebagian kelompok risiko, 42), E11 (natura kendaraan tidak masuk uji penghasilan tetap DTP, 2). *Abstain*:
+  E04 (tidak ada kandidat lolos), E06 (tiga kandidat lolos, tiga perilaku).
+- *pass@1* 0,667, *pass@m* 0,692, *1@m* 0,615 (regulasi).
+- Koreksi emas E0 tidak mengubah hasil usulan mana pun (kesalahan E11 ada di kasus $S^E$ biasa).
+- Pengecoh: 11 dijalankan (sisanya terhenti anggaran), positif palsu 5/11 (CI 0,17–0,77), salah diterapkan 1/11
+  (P01 PP 49/2023: LLM menurunkan premi JKK di bruto karena rekomposisi JKP; tafsir_korpus A1 menyatakan Δ kosong).
+  Empat keluaran *batch* yang selesai saat dibatalkan juga menilai P13, P14, P17, P21 tidak relevan (tambahan,
+  tidak dipakai dalam angka utama).
+- Biaya per dokumen: regulasi USD 0,12–1,87 (E04 dengan tabel TER termahal), PKB 0,47–0,90, pengecoh 0,04–0,45.
+
+### E3 (`experiments/e3-tetap`, `e3-sempurna`)
+
+Mode berantai dari $\mathcal{K}^\star_0$ (rekaman sampai 2022), 150 kasus $S^E$ per tahun, hasil terisolasi E2 sebagai
+$\hat{\Delta}_n$ (tanpa pembangkitan ulang: anggaran habis). OAR 22/24 = 0,917 (CI 0,730–0,990; batas bawah satu sisi
+0,760) → **H3a diterima** (θ₃ = 0,75). Kesalahan baru: E02 (15 tupel), P01 (264). Kesalahan bertahan sampai akhir:
+579 tupel salah pada peristiwa terakhir (hampir seluruh sampel), terutama dari P01. Varian peninjau sempurna sama
+persis karena E04 dan E06 hanya menyentuh tupel yang sudah salah. Komponen mekanis = kesalahan baru (tidak ada
+pembangkitan ulang sehingga komponen kontekstual dan H3b tidak diukur). E09 dan E10 diterapkan secara longgar
+(Δ terisolasi tidak berlaku ketat pada $\mathcal{K}^{\mathrm{sis}}$).
+
+### E4 (`docs/hasil/rq4_label.csv`, `rq4_ringkasan.json`)
+
+134 pasangan, 33 positif. Detektor: presisi 0,71, *recall* 0,91 (CI 0,75–1,00), $F_2$ 0,862. B5(i) $F_2$ 0,868, B5(ii)
+0,669. **H4a diterima, H4b tidak** (selisih terhadap B5(i) −0,006, CI −0,110–0,058; terhadap B5(ii) +0,193, CI
+0,062–0,400). κ terhadap label manual ≈ 0 (pengertian dampak berbeda; lihat `docs/BAHAN_PAPER.md`). Evaluasi memakai
+query yang sama di GraphDB karena rdflib ~10 menit per pasangan; kesetaraan diuji (`test_impact.py`).
+
+### Bahan paper
+
+Seluruh angka di atas dan tafsirnya ada di `docs/BAHAN_PAPER.md` bagian VI–VIII.

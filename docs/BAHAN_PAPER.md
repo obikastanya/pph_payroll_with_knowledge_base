@@ -69,7 +69,13 @@ dari Tahap 7: semua 13 perubahan nyata dan 20 kebijakan dapat dinyatakan tanpa m
 
 ### RQ2 (E2)
 
-- Regulasi ($m = 3$): [diisi dari `experiments/e2-regulasi/summary.json`]
+- Regulasi ($m = 3$): usulan SER 3/13, CAR 8/13, ABS 2/13; B3 4/8/1; B4 3/9/1; AB4 seleksi sempurna 0/8/5
+  (`experiments/e2-regulasi/summary.json`, `scores.csv`). *pass@1* 0,667, *pass@m* 0,692, *1@m* 0,615.
+- Gabungan 18 dokumen nyata (`docs/hasil/e2_ringkasan.json`): SER usulan 3/18, batas atas 0,377 → H2a tidak
+  diterima; CAR 8/18 vs B3 8/18 vs B4 9/18 → H2b CAR tidak diterima; non-inferioritas SER terhadap B3 terpenuhi
+  (batas atas selisih 0,004), terhadap B4 tidak (0,153).
+- Kesalahan senyap: E02 natura pada bruto (52 tupel), E07 premi JKK keringanan (42), E11 natura kendaraan dalam uji
+  DTP (2). *Abstain*: E04, E06.
 - PKB ($m = 2$): usulan *abstain* 5/5 (SER 0, CAR 0); B3 SER 3/5 = 0,6 (semua salah di hampir semua tupel);
   `experiments/e2-pkb/summary.json`.
 - Pengecoh: 11 dijalankan, positif palsu 5/11 = 0,45 (CI 0,17–0,77), salah diterapkan 1/11 (P01, PP 49/2023,

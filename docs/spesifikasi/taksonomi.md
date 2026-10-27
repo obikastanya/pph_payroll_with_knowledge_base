@@ -25,14 +25,14 @@ Setiap peristiwa diberi satu **jenis utama** dan nol atau lebih **sifat**.
 | T6 | Perubahan masa: perpanjangan atau pengakhiran lebih awal | E09; D07, D11 | rekaman berversi atau aturan pengganti |
 | T7 | Pergantian metode perhitungan | E03 + E04 (TER) | sekumpulan aturan baru dan pencabutan aturan lama |
 | T8 | Pencabutan tanpa pengganti | D13 (DTP COVID berakhir) | `remove` atau pencabutan |
-| T9 | Perubahan prosedur hitung: pembulatan, urutan, dasar pengenaan | (belum ada di korpus nyata) | aturan baru atau registri pembulatan |
+| T9 | Perubahan prosedur hitung: pembulatan, urutan, dasar pengenaan | E13 (pembulatan PPh 21 ke rupiah terdekat, PER-11/PJ/2025) | aturan baru atau registri pembulatan |
 | T10 | Perubahan kebijakan perusahaan | K1 di mini demo; dokumen PKB | aturan lapisan perusahaan |
 
 ### 1.2 Sifat tambahan
 
 | Kode | Sifat | Contoh |
 |---|---|---|
-| S1 | Berlaku surut ($t_{berlaku} < t_{terbit}$) | E06, E07, E09, E10; D03, D06, D07, D09, D10 |
+| S1 | Berlaku surut ($t_{berlaku} < t_{terbit}$) | E06, E07, E09, E10, E13; D03, D06, D07, D09, D10 |
 | S2 | Bersyarat: berlaku hanya untuk sektor, KLU, kriteria penghasilan, atau tanggal tertentu | E06, E07, E09, E10, E11 |
 | S3 | Sementara: punya `berlaku_sampai` | E06, E07, E09–E11 |
 | S4 | Terdiri dari beberapa dokumen | E03 + E04 |
@@ -43,7 +43,7 @@ Setiap peristiwa diberi satu **jenis utama** dan nol atau lebih **sifat**.
 
 | Kode | Jenis pengecoh | Contoh |
 |---|---|---|
-| X1 | Administrasi atau pelaporan | P02, P05, P07, P19, P21 |
+| X1 | Administrasi atau pelaporan | P02, P05, P19, P21 |
 | X2 | Subjek di luar lingkup (ASN, magang, IKN, bukan penerima upah) | P03, P08, P14, P18 |
 | X3 | Mengubah iuran atau upah tanpa mengubah PPh 21 | P01, P06, P10 |
 | X4 | Menyatakan ulang ketentuan tanpa perubahan nilai | P04, D08, D12 |
@@ -92,4 +92,4 @@ Dipakai untuk melabeli kandidat Δ yang salah. Satu kandidat bisa punya beberapa
 
 ## 4. Pemetaan korpus
 
-Pemetaan per peristiwa ada di kolom `jenis_perubahan` di [peristiwa.csv](../../dataset/09_korpus_peristiwa/peristiwa.csv). Jenis yang belum punya contoh nyata di rentang uji, yaitu T8 dan T9, ditutup oleh perubahan tak terlihat (RQ1) dan data pengembangan.
+Pemetaan per peristiwa ada di kolom `jenis_perubahan` di [peristiwa.csv](../../dataset/09_korpus_peristiwa/peristiwa.csv). Jenis yang belum punya contoh nyata di rentang uji, yaitu T8, ditutup oleh perubahan tak terlihat (RQ1) dan data pengembangan.

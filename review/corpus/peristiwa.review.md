@@ -32,6 +32,8 @@ Seluruh 46 baris dicek ke teks PDF (tanggal, masa berlaku, relevansi, jenis, sif
    - E09: premi JKK Agustus memakai tarif keringanan; kelebihan iuran yang sudah dibayar diperhitungkan ke iuran bulan berikutnya (PP 36/2025 Pasal II). Selisih PPh 21 Agustus tidak dibetulkan per masa, melainkan terserap di perhitungan Desember karena PPh setahun dihitung dari bruto setahun dengan premi keringanan.
    - E10: sama dengan E06 untuk Masa Oktober (DTP dibayar tunai pada penggajian November, dilaporkan di SPT Masa Oktober). Di Desember berlaku aturan khusus pariwisata: lebih potong dikembalikan hanya sebesar bagian yang bukan DTP Oktober–November, dan pemberi kerja dapat mengompensasikannya dengan kertas kerja dan bukti potong tambahan (PMK 72/2025 Pasal 5 ayat (5a), (6a), (6b)).
 
+**Koreksi sesudah tinjauan (Tahap 3, 2026-10-27).** P07 PER-11/PJ/2025 dipindah menjadi peristiwa uji E13 (T9, S1): Pasal 129 ayat (1) huruf a dan ayat (3) (PDF hlm. 106) mengubah pembulatan PPh pada bukti potong PPh 21 ke rupiah terdekat, dan Pasal 130 huruf a (PDF hlm. 107) membuatnya berlaku untuk Masa Januari 2025 dst. Ini sama dengan dasar tafsir K1. Jumlah baris uji menjadi 13 dan pengecoh 20.
+
 ## Hasil
 
 - [ ] Disetujui tanpa perubahan

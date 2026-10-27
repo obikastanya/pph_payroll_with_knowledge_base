@@ -108,8 +108,8 @@ Tanggal *cutoff* Claude Opus 5.5 dan GPT-6 dicatat dari dokumentasi resmi penyed
 | ID | Dataset | Status | Lokasi / catatan |
 |---|---|---|---|
 | D01 | PDF regulasi peristiwa nyata | selesai | `01_regulasi/` (37 PDF) |
-| D02 | Tabel peristiwa | siap dipakai | `09_korpus_peristiwa/peristiwa.csv`: 12 uji, 21 pengecoh, 13 pengembangan; tanggal dari PDF dan metadata JDIH |
-| D03 | Pengecoh | siap dipakai | 21 pengecoh; 12 PDF baru di `01_regulasi/pengecoh/` |
+| D02 | Tabel peristiwa | siap dipakai | `09_korpus_peristiwa/peristiwa.csv`: 13 uji, 20 pengecoh, 13 pengembangan (P07 dipindah menjadi E13 di Tahap 3); tanggal dari PDF dan metadata JDIH |
+| D03 | Pengecoh | siap dipakai | 20 pengecoh; 12 PDF baru di `01_regulasi/pengecoh/` |
 | D04 | Data pengembangan nyata | siap dipakai | 13 peristiwa sebelum 2023, `01_regulasi/pengembangan/`; masa berlaku dicek ke pasal; PMK 149/2021 ternyata perubahan cakupan, PMK 3/2022 pengecoh |
 | D05 | Regulasi fiktif | siap dipakai | 5 dokumen (FR01–FR05) di `09_korpus_peristiwa/fiktif/` |
 | D06 | Kontrafaktual | spesifikasi selesai | 21 varian (12 tanggal, 9 nilai/ambang) di `09_korpus_peristiwa/kontrafaktual_spesifikasi.csv`; teks dan Δ* dibangkitkan setelah Δ* ada (Tahap 7–8) |

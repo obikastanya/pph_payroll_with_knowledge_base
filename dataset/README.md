@@ -12,7 +12,7 @@ Pemetaan setiap kebutuhan dataset penelitian (D01–D26) ke asal dan statusnya a
 | `06_kasus_uji_sintetis/` | Pembangkit kasus (strata S1–S8) + 2.600 profil | `bangkitkan_kasus.py` (docstring) |
 | `07_kasus_uji_resmi/` | GT1: 46 contoh resmi dalam lingkup (PMK 168, PP 58, PER-16, PMK DTP); 32 pengembangan, 14 *holdout* disegel | [07_kasus_uji_resmi/README.md](07_kasus_uji_resmi/README.md) |
 | `08_pegawai_sintetis/` | 8 pegawai sintetis berbasis UMP | [08_pegawai_sintetis/README.md](08_pegawai_sintetis/README.md) |
-| `09_korpus_peristiwa/` | Korpus untuk alur akuisisi: 12 peristiwa uji, 21 pengecoh, 13 peristiwa pengembangan, 5 regulasi fiktif; spesifikasi 21 kontrafaktual; *cutoff* model; pantauan peristiwa prospektif | [09_korpus_peristiwa/README.md](09_korpus_peristiwa/README.md) |
+| `09_korpus_peristiwa/` | Korpus untuk alur akuisisi: 13 peristiwa uji, 20 pengecoh, 13 peristiwa pengembangan, 5 regulasi fiktif; spesifikasi 21 kontrafaktual; *cutoff* model; pantauan peristiwa prospektif | [09_korpus_peristiwa/README.md](09_korpus_peristiwa/README.md) |
 | `10_kebijakan_perusahaan/` | 5 PKB nyata untuk uji + 1 untuk pengembangan (salinan lokal, hanya manifes yang di-commit), 201 klausul terekstrak, 14 kebijakan sintetis dengan label konflik dan dampak | `kandidat.csv`, [klausul/README.md](10_kebijakan_perusahaan/klausul/README.md), [sintetis/README.md](10_kebijakan_perusahaan/sintetis/README.md) |
 | `11_acuan/` | Acuan kebenaran: GT2 kalkulator DJP, GT3 kasus bertingkat, GT5 contoh kebijakan, uji diferensial GT3, kasus B2 | [11_acuan/README.md](11_acuan/README.md) |
 

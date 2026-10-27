@@ -156,3 +156,141 @@ Kebaruannya terletak pada pertanyaan yang belum dijawab: **apakah *knowledge bas
 ### Status
 
 Klaim *novelty* ini baru dapat dipertahankan setelah eksperimen pemutaran ulang perubahan regulasi (*regulation replay*) dijalankan. Saat ini asisten LLM baru diuji satu kali dengan PDF peraturan fiktif. Karya pembanding di atas dibaca dari abstrak dan ringkasannya; naskah lengkapnya masih harus dibaca sebelum masuk ke tinjauan pustaka.
+
+## 4. *Ground truth* untuk semua lapisan pajak (feedback no. 3)
+
+> Feedback: "Ground truth harus mencangkup semua level pajak, ada berapa skema yang diuji(5%, 15%, 25%, 35%, dst)"
+
+### Tanggapan
+
+Ruang uji mencakup semua lapisan tarif dan semua kombinasi yang menentukan besarnya pajak. Tarif Pasal 17 sesudah UU HPP punya lima lapisan, yaitu 5%, 15%, 25%, **30%**, dan 35%. Lapisan 30% berlaku untuk PKP Rp500 juta sampai Rp5 miliar dan ikut diuji.
+
+Rancangan lengkapnya ada di `paper/draft/skeleton.tex`, Bagian VI (subbagian Ruang uji dan Rantai kepercayaan).
+
+### Dimensi yang diuji
+
+| Dimensi | Nilai |
+|---|---|
+| Rezim | Disetahunkan (sampai 2023), TER (sejak 2024), TER dengan fasilitas DTP (2025–2026) |
+| Lapisan Pasal 17 | 5%, 15%, 25%, 30%, 35% |
+| Kategori TER | A, B, C, dengan 125 lapisan tarif bulanan (A 44, B 40, C 41) |
+| Status PTKP | TK/0–TK/3 dan K/0–K/3, yang sekaligus menentukan kategori TER |
+| Metode | *Gross*, *gross-up*, ditanggung pemberi kerja |
+| Pola kerja | Setahun penuh, masuk di tengah tahun, keluar di tengah tahun |
+| Penghasilan | Teratur, dan tidak teratur seperti THR dan bonus |
+
+### Jumlah skema yang diuji
+
+Setiap batas lapisan diuji di tiga titik, yaitu tepat di batas, satu rupiah di bawahnya, dan satu rupiah di atasnya. Di titik-titik inilah kesalahan pembulatan dan pemilihan lapisan paling sering terjadi.
+
+| Kriteria | Jumlah titik uji | Keterangan |
+|---|---|---|
+| Batas lapisan Pasal 17 | 4 batas × 3 titik × 4 tahun pajak = **48** | Batas ada pada PKP sesudah pembulatan, sehingga kasus dibangkitkan terbalik dari PKP ke penghasilan bruto |
+| Batas lapisan TER | 122 batas × 3 titik = **366** | 125 lapisan di tiga kategori memberi 122 batas |
+| Kombinasi 2-arah semua dimensi | Dihitung oleh generator | Setiap pasangan nilai dari dua dimensi muncul di minimal satu kasus, hanya atas kombinasi yang sah (misalnya DTP hanya sejak 2025) |
+| Kombinasi 3-arah | Dilaporkan cakupannya | Sebagai pelengkap |
+| Sampel operasional acak | ±3.000 kasus pegawai-tahun | Diambil dari distribusi upah dan status PTKP menurut data BPS. Bila 2.995 kasus acak lulus tanpa kesalahan, laju kesalahan dapat diklaim di bawah 0,1% dengan keyakinan 95% |
+
+Jumlah lapisan TER berasal dari tabel di repositori yang sudah diekstraksi dua kali secara independen. Angka ini masih akan dicek ulang ke lampiran PP 58/2023.
+
+### Sumber kebenaran
+
+| Kode | Acuan | Keterangan |
+|---|---|---|
+| GT1 | Contoh perhitungan resmi di PMK, PP, dan PER | Sebagian disimpan sebagai *holdout* yang tidak pernah dipakai selama pengembangan |
+| GT2 | Kalkulator DJP | Bila tersedia untuk rezim yang diuji |
+| GT3 | Perhitungan manual oleh penghitung independen | Sampel bertingkat per lapisan |
+| GT4 | Kalkulator pihak ketiga (*open source* dan publik) | Versi dan tanggal dicatat |
+
+Semua selisih dilaporkan beserta hasil adjudikasinya, yaitu *knowledge base* salah, acuan salah, atau hukum ambigu. Sampel acak diadjudikasi ulang secara buta oleh orang kedua.
+
+### Status
+
+Rancangan. Generator ruang uji belum dibangun, sehingga jumlah kasus kombinasi 2-arah dan 3-arah belum diketahui.
+
+## 5. Metrik evaluasi (feedback no. 4)
+
+> Feedback: "Matrix evaluasi apa yang digunakan?"
+
+### Tanggapan
+
+Setiap pertanyaan penelitian punya satu metrik utama yang langsung mengukur klaimnya. Kebenaran diukur dari hasil perhitungan, sampai rupiah, bukan dari kemiripan bentuk aturan buatan LLM dengan aturan acuan. Rata-rata selisih seperti MAE tidak dipakai, karena rata-rata yang kecil dapat menyembunyikan kasus yang salah.
+
+| RQ | Pertanyaan | Metrik utama | Arti |
+|---|---|---|---|
+| RQ1 | Dapatkah representasi menyatakan perubahan regulasi, termasuk yang belum diketahui saat dirancang, tanpa mengubah kode? | **RA** (*representational adaptability*) | Proporsi perubahan yang dapat dinyatakan tanpa mengubah *engine*, diuji pada perubahan yang ditulis orang lain |
+| RQ2 | Seberapa sering LLM menerapkan pembaruan yang benar, dan seberapa sering salah tanpa terdeteksi? | **SER** dan **CAR** | SER adalah laju pembaruan salah yang lolos tanpa terdeteksi (keamanan). CAR adalah laju pembaruan benar yang diterapkan (kegunaan). Keduanya dilaporkan bersama, karena sistem yang selalu menolak bekerja punya SER nol tetapi tidak berguna |
+| RQ3 | Pada rangkaian perubahan nyata, berapa yang berhasil, dan apakah kesalahan merambat? | **OAR** dan **kesalahan terpicu** | OAR adalah proporsi peristiwa yang tidak memperkenalkan kesalahan baru. Kesalahan terpicu adalah kesalahan yang muncul hanya karena pembaruan sebelumnya sudah salah |
+| RQ4 | Seberapa lengkap sistem menemukan kebijakan perusahaan yang terdampak? | ***Recall*** dan ***F2*** | *Recall* diutamakan, karena kebijakan terdampak yang terlewat lebih berbahaya daripada peringatan palsu. F2 memberi bobot *recall* dua kali *precision* |
+
+Metrik pendukung dipakai untuk menjelaskan hasil, antara lain:
+- *exact match* per angka;
+- *mutation score*, untuk mengukur apakah kasus uji cukup tajam menangkap kesalahan;
+- *pass@k*, dari evaluasi kode buatan LLM;
+- matriks konfusi dan MCC untuk setiap gerbang verifikasi;
+- laju hafalan pada dokumen kontrafaktual, untuk memeriksa apakah LLM membaca dokumen atau mengingat regulasi dari data latihnya;
+- jumlah anomali *knowledge base* setelah pembaruan berulang;
+- selisih akhir dalam rupiah.
+
+### Analisis statistik
+
+| Jenis data | Cara analisis |
+|---|---|
+| Ketepatan perhitungan pajak (deterministik) | Hitungan eksak tanpa uji hipotesis, karena satu angka salah sudah membantah klaim. Untuk sampel acak dilaporkan batas atas laju kesalahan (Clopper–Pearson) |
+| Keluaran LLM (berubah-ubah antarjalan) | Selang kepercayaan eksak. Perbandingan antarkondisi memakai selisih risiko berpasangan (Newcombe) dan uji non-inferioritas, dengan koreksi Holm |
+| Label manusia | Cohen's κ dan Krippendorff's α |
+
+Jumlah peristiwa perubahan nyata kecil, sekitar sepuluh. Karena itu hasil dilaporkan sebagai estimasi dengan selang kepercayaan, bukan sebagai keputusan signifikan atau tidak. Ambang setiap hipotesis disesuaikan dengan batas yang dapat dicapai jumlah data itu.
+
+### Status
+
+Metrik dan uji sudah ditetapkan di `skeleton.tex`. Ambang setiap hipotesis masih termasuk keputusan terbuka dan akan dikunci lewat pra-registrasi sebelum eksperimen.
+
+## 6. Bukti bahwa perubahan regulasi dapat langsung diterapkan (feedback no. 5)
+
+> Feedback: "Perlu pembuktian bahwa perubahan regulasi bisa langsung diterapkan ke sistem."
+
+### Tanggapan
+
+Pembuktiannya adalah eksperimen ***regulation replay***. Sistem dimulai dari *knowledge base* yang hanya mengenal hukum awal 2023. Setiap regulasi yang terbit sesudahnya diberikan secara berurutan, dalam bentuk dokumen aslinya, ke alur akuisisi LLM. Sesudah setiap regulasi, sistem diperiksa dengan empat syarat:
+
+| Syarat | Pemeriksaan |
+|---|---|
+| A1 | Kode *engine* tidak berubah |
+| A2 | Hasil perhitungan untuk masa sesudah regulasi berlaku sama dengan acuan |
+| A3 | Hasil perhitungan untuk masa sebelum regulasi berlaku tidak berubah |
+| A4 | Kebijakan perusahaan yang menjadi berkonflik dengan aturan wajib dilaporkan |
+
+### Kandidat rangkaian peristiwa
+
+Daftar ini masih kandidat dan akan diverifikasi saat korpus disusun.
+
+| Dokumen | Berlaku | Jenis perubahan |
+|---|---|---|
+| Batas upah iuran pensiun BPJS (tahunan) | Maret 2023–2026 | Parameter |
+| PMK 66/2023 | Juli 2023 | Klasifikasi (natura) |
+| PP 58/2023 dan PMK 168/2023 | Januari 2024 | Pergantian metode (disetahunkan ke TER) |
+| PMK 10/2025 | Januari 2025, terbit Februari | Fasilitas baru (DTP), berlaku surut |
+| PMK 72/2025 | 2025 | Perubahan fasilitas DTP |
+| PMK 105/2025 | 2026 | Perpanjangan fasilitas DTP |
+
+Korpus juga memuat dokumen pengecoh, yaitu regulasi yang terbit pada periode yang sama tetapi tidak mengubah perhitungan PPh 21 pegawai tetap. Contohnya PMK 6/2026 (DTP untuk peserta pemagangan), PMK 81/2024 dan PER-11/PJ/2025 (administrasi Coretax), serta PP 20/2026 (PPh final UMKM). Jawaban yang benar untuk dokumen pengecoh adalah tidak mengubah apa pun.
+
+### Ukuran keberhasilan
+
+- jumlah regulasi yang dapat diterapkan **tanpa suntingan manusia** sama sekali;
+- jumlah regulasi yang diterapkan dengan sedikit suntingan;
+- waktu dari dokumen tersedia sampai sistem menghitung dengan benar;
+- OAR dan kesalahan terpicu (bagian 5).
+
+Sebagai pembanding, penelitian ini mengukur praktik saat ini dari riwayat perubahan kode kalkulator PPh 21 *open source* di sekitar pergantian ke TER, yaitu berapa lama sampai diperbarui, berapa baris kode yang diubah, dan berapa *bug* yang muncul.
+
+### Menghindari bias pandangan belakang
+
+*Engine* yang ada dikembangkan ketika perubahan 2023–2026 sudah diketahui. Karena itu klaim "tanpa mengubah kode" untuk perubahan tersebut lemah bila berdiri sendiri. Dua cara dipakai untuk menguatkannya:
+1. **Perubahan tak terlihat.** Rekan peneliti menulis perubahan regulasi sintetis beserta contoh perhitungannya, sebelum peneliti melihatnya.
+2. **Peristiwa prospektif.** Regulasi PPh 21 yang terbit sesudah rancangan eksperimen didaftarkan ikut diuji. Regulasi ini belum pernah dilihat perancang maupun LLM.
+
+### Status
+
+Rancangan. Eksperimen belum dijalankan. Asisten LLM yang ada baru diuji satu kali dengan PDF peraturan fiktif.

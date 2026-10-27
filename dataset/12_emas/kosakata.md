@@ -27,6 +27,7 @@ Dihasilkan oleh `system/tools/build_gold.py`. Fakta bertanda keluaran membentuk 
 | `refund_to_employee` | money | year | ya | over-withholding refunded to the employee | kelebihan potong dikembalikan |
 | `taxable_income` | money | year | ya | taxable income (PKP) | penghasilan kena pajak |
 | `benefit_gift_other` | money | period |  | non-holiday gifts received this period | bingkisan selain hari raya |
+| `benefit_housing_taxable` | money | period |  | taxable part of individual housing | natura rumah yang menjadi objek pajak |
 | `benefit_sports` | money | period |  | sports facility received this period | fasilitas olahraga |
 | `benefits_taxable_irregular` | money | period |  | taxable benefits in kind, irregular | natura tidak teratur |
 | `benefits_taxable_regular` | money | period |  | taxable benefits in kind, regular | natura teratur |

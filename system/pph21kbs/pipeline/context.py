@@ -9,6 +9,8 @@
 AB2 (ablation) uses part (1) only.
 """
 import json
+import re
+from datetime import timedelta
 from fractions import Fraction
 
 from rdflib import Graph
@@ -65,12 +67,29 @@ def _record_line(r):
     return d
 
 
+GENERIC_ID_TOKENS = {"reg", "prs", "par", "tab", "con", "input", "default", "billed"}
+
+
+def _id_tokens(record_id):
+    """Abbreviations in an element id (REG.BPJS.JKK_RATE -> bpjs, jkk, rate), used to match documents that write
+    JKK, JP, JHT instead of the full labels."""
+    parts = re.split(r"[._]", record_id.lower())
+    return {p for p in parts if p.isalpha() and len(p) >= 2 and p not in GENERIC_ID_TOKENS}
+
+
 def relevant_records(view, segment_text, limit=220):
     text = normalize(segment_text)
+    words = set(re.findall(r"[a-z]{2,}", text))
+    oldest = view.omega - timedelta(days=365)
+    current = [r for r in view.records if r.valid_until is None or r.valid_until >= oldest]
     seeds = []
-    for r in view.records:
+    for r in current:
         labels = [normalize(x) for x in (getattr(r, "label_id", ""), getattr(r, "label", "")) if x]
         if any(len(lab) >= 5 and lab in text for lab in labels):
+            seeds.append(r)
+        elif not isinstance(r, FactDef) and (_id_tokens(r.id) & words) - {"rate", "wage", "cap", "year", "month",
+                                                                           "amount", "status", "value", "final",
+                                                                           "running", "gross", "net", "tax"}:
             seeds.append(r)
     facts = set()
     for r in seeds:
@@ -92,7 +111,7 @@ def relevant_records(view, segment_text, limit=220):
                 rdf.record_triples(g, r)
         values = " ".join(f"<{rdf.fact_iri(f)}>" for f in sorted(facts))
         ids |= {str(row.id) for row in g.query(NEIGHBOURS % values)}
-    chosen = [r for r in view.records if r.id in ids and not isinstance(r, FactDef)]
+    chosen = [r for r in current if r.id in ids and not isinstance(r, FactDef)]
     chosen.sort(key=lambda r: (r.kind, r.id))
     return chosen[:limit]
 

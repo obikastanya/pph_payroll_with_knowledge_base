@@ -234,8 +234,11 @@ def _wika():
         prs("BPJS_WAGE", "bpjs_wage",
             "max(wika_fixed_pay, employer('regional_minimum_wage') if employer('regional_minimum_wage') != None else 0)",
             [bpjs, c.q("WIKA-4-36")], code="C8",
+            cond="max(wika_fixed_pay, employer('regional_minimum_wage') if employer('regional_minimum_wage') != None"
+                 " else 0) < base_salary + fixed_allowance",
             label="WIKA-32-4, 4-36: contribution base = last Fixed Pay, at least the DKI minimum wage; the grade "
-                  "allowance is excluded (C8 latent: a conflict only if the grade allowance is a fixed allowance)"),
+                  "allowance is excluded. Active only when that base is narrower than the statutory base (C8); a "
+                  "wider base is allowed and is not a conflict (second reader, pkb.cek.csv item 2)"),
     ]
 
 
@@ -549,9 +552,10 @@ def _avco():
             cond="hr('radiation_net') > 0 and is_final_period"),
         prs("NO_RADIATION", "avco_radiation_allowance", "0", radiation, cond="hr('radiation_net') <= 0"),
         prs("ABSENCE", "avco_absence_deduction",
-            f"round({base} * hr('days_absent_unpaid') * (7 if employee('avco_work_pattern') == '6-1' else 8) / 173,"
-            " 1, 'half_up')", absence,
-            label="AVCO-24-3: base wage / 173 x regular hours of the day (7 or 8)"),
+            f"round({base} * (hr('days_absent_unpaid') * (7 if employee('avco_work_pattern') == '6-1' else 8)"
+            " + hr('days_absent_unpaid_sixth_day') * 5) / 173, 1, 'half_up')", absence,
+            label="AVCO-24-3: base wage / 173 x regular hours of the day (7 or 8; 5 on the sixth day of the 6-1 "
+                  "pattern, counted in hr('days_absent_unpaid_sixth_day'))"),
         prs("SAVINGS", "avco_savings_employer",
             "0 if (employer('avco_savings_plan_pension_fund') == True or hr('savings_employee_contribution') <= 0) else"
             " min(hr('savings_employee_contribution'), "
@@ -569,7 +573,7 @@ def _avco():
             f" + ({base} if hr('travel_allowance_paid') > 0 else 0)"
             " + 2 * (500000 * hr('bereavement_adults') + 250000 * hr('bereavement_children'))"
             " + (4 * 500000 if hr('pilgrimage') > 0 else 0)"
-            " + min(hr('glasses_claim'), 1400000) + min(hr('lens_claim'), 600000)"
+            " + (min(hr('glasses_claim'), 1400000) if hr('glasses_claim') > 0 else min(hr('lens_claim'), 600000))"
             " + 500000 * hr('medivac_adult_days') + 250000 * hr('medivac_child_days')"
             " + min(hr('dental_claim'), 1000000 * hr('dental_visits')) + min(hr('special_needs_claim'), 2000000)"
             " + 2960000 * hr('edu_paud') + 5330000 * hr('edu_tk') + 10650000 * hr('edu_sd') + 12420000 * hr('edu_sltp')"

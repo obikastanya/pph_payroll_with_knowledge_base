@@ -13,8 +13,10 @@ S^E never uses the S^G marker income.other_regular (akuisisi.md 5 item 7). Cases
 """
 import csv
 import itertools
+import json
 import random
 from datetime import date
+from fractions import Fraction
 
 from .config import REPO
 from .engine import evaluate_case
@@ -226,3 +228,70 @@ def event_years(event, years=YEARS):
     start = event.effective_from or event.issued
     end = event.effective_until or date(min(start.year + 1, years[-1]), 12, 31)
     return [y for y in years if start.year - 1 <= y <= end.year]
+
+
+# ---------------------------------------------------------------------- cases with a company policy (RQ4, E2 policy)
+JKK_GROUPS = {Fraction(24, 10000): "very_low", Fraction(54, 10000): "low", Fraction(89, 10000): "medium",
+              Fraction(127, 10000): "high", Fraction(174, 10000): "very_high"}
+PKB_PROFILE = {"PKB-WIKA-2025": ("41011", "high"), "PKB-CENTEX-2024": ("13111", "medium"),
+               "PKB-AVCO-2024": ("52230", "very_high"), "PKB-TAEKWANG-2024": ("15201", "low"),
+               "PKB-SANSAN-2021": ("14111", "very_low"), "PKB-KOJA-2012": ("52221", "medium")}
+
+
+def policy_profile(event, delta):
+    """(KLU, JKK risk group) of the company of a policy: the KLU from the policy table (or the GT5 profile of a PKB);
+    the risk group whose statutory rate equals a rate the policy fixes, else very_low."""
+    import ast as _ast
+    from .expr.numbers import decimal_value
+    klu, risk = PKB_PROFILE.get(event.document, (event.extra.get("klu") or None, None))
+    if risk is None:
+        risk = "very_low"
+        for e in delta["add"]:
+            if e.get("kind") == "rule" and e.get("produces") == "jkk_rate":
+                for n in _ast.walk(_ast.parse(e["expression"], mode="eval")):
+                    if (isinstance(n, _ast.Call) and getattr(n.func, "id", "") == "dec" and n.args
+                            and isinstance(n.args[0], _ast.Constant)):
+                        risk = JKK_GROUPS.get(Fraction(decimal_value(n.args[0].value)), risk)
+    return klu, risk
+
+
+def _hr_items(delta):
+    import ast as _ast
+    out = set()
+    for e in delta["add"] + delta["change"]:
+        for k in ("expression", "condition", "assertion"):
+            if e.get(k):
+                for n in _ast.walk(_ast.parse(e[k], mode="eval")):
+                    if (isinstance(n, _ast.Call) and getattr(n.func, "id", "") == "hr" and n.args
+                            and isinstance(n.args[0], _ast.Constant)):
+                        out.add(n.args[0].value)
+    return sorted(out)
+
+
+HR_VALUES = (0, 2, 8, 20)
+
+
+def policy_cases(event, delta, cases_by_year, rng, per_year=60):
+    """Cases of the policy's validity years with employer.policy set, the company's KLU and risk group, and the HR
+    items its rules read varied over 0, 2, 8, 20 (round robin). Taken from the combinatorial and operational cases."""
+    klu, risk = policy_profile(event, delta)
+    items = _hr_items(delta)
+    start = event.effective_from or event.issued
+    end = event.effective_until or date(YEARS[-1], 12, 31)
+    out = []
+    for y in YEARS:
+        if not (start.year <= y <= end.year):
+            continue
+        pool = [c for c in cases_by_year.get(y, []) if c.get("criterion") in ("combinatorial", "operational")]
+        for i, c in enumerate(rng.sample(pool, min(per_year, len(pool)))):
+            c = json.loads(json.dumps(c))
+            c["case_id"] = f"{c['case_id']}-{event.id}"
+            c["employer"].update(policy=event.document, jkk_risk_group=risk)
+            if klu:
+                c["employer"]["klu"] = klu
+            hr = {name: HR_VALUES[(i + j) % len(HR_VALUES)] for j, name in enumerate(items)}
+            for p in c["periods"]:
+                p["hr"] = dict(hr)
+            c["criterion"] = "policy"
+            out.append(c)
+    return out

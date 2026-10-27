@@ -73,6 +73,14 @@ def _attrs(expr_texts, tables=None, numeric=None, none_compared=None):
                         and a.func.id in ("employee", "employer", "case", "hr") and a.args
                         and isinstance(a.args[0], ast.Constant)):
                     tables[(a.func.id, a.args[0].value)] = (n.func.id, n.args[0].value)
+            if (isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id in ("startswith", "endswith")
+                    and len(n.args) == 2 and isinstance(n.args[1], ast.Constant)):
+                # a text prefix test: the attribute is text and takes the prefix as a value (e.g. a grade 'A')
+                for s in ast.walk(n.args[0]):
+                    if (isinstance(s, ast.Call) and isinstance(s.func, ast.Name)
+                            and s.func.id in ("employee", "employer", "case") and s.args
+                            and isinstance(s.args[0], ast.Constant)):
+                        out.setdefault((s.func.id, s.args[0].value), set()).add(n.args[1].value)
             if isinstance(n, ast.Compare):
                 sides = [n.left] + list(n.comparators)
                 calls = [s for s in sides if isinstance(s, ast.Call) and isinstance(s.func, ast.Name)

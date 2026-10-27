@@ -1,0 +1,47 @@
+policy,gold_id,reviewer_unit,present_gold,present_reviewer,value_same,conflict_gold,conflict_reviewer,verdict,reason
+SP01,PRS.SP01.ATTENDANCE_ALLOWANCE,SP01-U1,ya,ya,ya,-,none,sama,Ps. 14 ayat (2): (35.000+25.000) x hr hari hadir; gold memakai fakta antara attendance_allowance
+SP01,PRS.SP01.OTHER_REGULAR,SP01-U1,ya,ya,ya,-,none,sama,"Ps. 14 ayat (2): masuk other_regular_income. Catatan bersama: ikut dtp_fixed_income Jan-Mar 2025 (K5), lihat review"
+SP01,PRS.SP01.JKK_RATE,SP01-U2,ya,ya,ya,C6,none,emas_benar,Ps. 22 ayat (2). jkk_rate tetap; nilai sama. Kode hanya anotasi yang dipakai bila aturan kalah dari REG.BPJS.JKK_RATE(.RELIEF) dengan nilai berbeda; C6 (parameter usang/menyimpang dari kelompok risiko) tepat. Peninjau menulis none karena kelas risiko kasus diasumsikan cocok
+SP01,PRS.SP01.JP_EMPLOYEE,SP01-U3,ya,ya,"ya (target beda: jp_employee vs jp_wage, hasil sama)",C6,C6,sama,Ps. 22 ayat (4)-(5): batas 9.559.600 dikunci; konflik sejak Mar 2024
+SP01,PRS.SP01.METHOD,SP01-U4,ya,ya,ya,-,none,sama,"Ps. 24 ayat (1): beban pekerja, dipotong"
+SP02,PRS.SP02.JKK_RATE,SP02-U1,ya,ya,ya,C6,none,emas_benar,Ps. 32 ayat (1). jkk_rate tetap; nilai sama. Kode hanya anotasi yang dipakai bila aturan kalah dari REG.BPJS.JKK_RATE(.RELIEF) dengan nilai berbeda; C6 (parameter usang/menyimpang dari kelompok risiko) tepat. Peninjau menulis none karena kelas risiko kasus diasumsikan cocok
+SP02,PRS.SP02.TAX_REGULAR_ANNUAL,SP02-U2,ya,ya,ya,-,C5,sama,"Ps. 31 ayat (2): x12, BJ 5% maks 6 jt, PKP bulat ribuan ke bawah; kode C5 hanya di RUNNING"
+SP02,PRS.SP02.TAX_IRREGULAR,SP02-U2,ya,ya,ya,-,C5,sama,Ps. 31 ayat (3): metode selisih
+SP02,PRS.SP02.RUNNING,SP02-U2,ya,ya,ya,C5,C5,sama,"Ps. 31 ayat (5): metode disetahunkan dikunci sampai Des 2024; konflik dengan TER 2024 (dan 2023 untuk pegawai baru, faktor 12)"
+SP02,PRS.SP02.METHOD,SP02-U3,ya,ya,ya,-,none,sama,Ps. 31 ayat (1): dipotong dari penghasilan pekerja
+SP03,PRS.SP03.DTP_WITHHELD,SP03-U2,ya,ya,tidak (target beda: pph21_dtp=0 vs employee_tax_burden=pph21_due),C4,C4,emas_benar,Ps. 40 ayat (3). Target gold bersaing dengan REG.DTP.RUNNING/FINAL (mandatory) sehingga C4 terdeteksi bila dtp_facility; target peninjau hanya bersaing dengan aturan default REG.THP.TAX_BURDEN sehingga tidak pernah dilaporkan
+SP03,PRS.SP03.METHOD,SP03-U1,ya,ya,ya,-,none,sama,Ps. 40 ayat (1)
+SP04,PRS.SP04.BENEFITS_NOT_INCOME,SP04-U1,ya,ya,ya,C1,C1,ragu,"Ps. 27 ayat (2), Ps. 28. Nilai sama (0), tetapi keduanya meniadakan seluruh benefits_taxable_regular, termasuk natura di luar Ps. 27 (kendaraan, other_benefit); Ps. 28 hanya mencakup fasilitas Ps. 27. Konflik C1 akan juga dilaporkan untuk natura yang tidak disebut kebijakan"
+SP04,PRS.SP04.METHOD,SP04-X2,ya,tidak,-,-,none,tafsir,"Ps. 29 ayat (1) hanya 'dipotong ... sesuai ketentuan'; tidak menyebut siapa menanggung. Gross wajar sebagai bacaan, tetapi metode gross-up juga 'dipotong'. Berdampak bila data kasus memakai metode lain"
+SP05,PRS.SP05.JKK_RATE,SP05-U1,ya,ya,ya,C6,C6,sama,"Ps. 45 ayat (2): 0,54% tetap; terpicu keringanan JKK PP 7/2025 (tekstil, Feb 2025-Jan 2026)"
+SP05,PRS.SP05.METHOD,SP05-U2,ya,ya,ya,-,none,sama,Ps. 47
+SP06,PRS.SP06.METHOD,SP06-U1,ya,ya,ya,-,none,sama,Ps. 33 ayat (1)-(2)
+SP06,PRS.SP06.DTP_AS_ALLOWANCE,SP06-U2,ya,ya,tidak (target beda: pph21_dtp=0 vs employee_tax_burden),C4,C4,emas_benar,"Ps. 33 ayat (3). Sama dengan SP03: target gold dapat dideteksi engine, target peninjau tidak"
+SP07,PRS.SP07.THR,SP07-U1,ya,ya,ya,C10,C10,sama,"Ps. 52 ayat (2)-(4), (6); konflik lewat CON.THR.MINIMUM (days_terminated_before_holiday 1-30)"
+SP07,PRS.SP07.METHOD,SP07-X1,ya,tidak,-,-,none,tafsir,Ps. 53 hanya mengatur saat pemotongan PPh atas THR; tidak menyebut siapa menanggung. Gross dibaca dari 'dipotong'
+SP08,PRS.SP08.RUNNING,SP08-U4,ya,ya,ya,C9,C9,sama,Ps. 18 ayat (3)
+SP08,PRS.SP08.JOB_EXPENSE,SP08-U1,ya,ya,ya,C3,C3,sama,Ps. 18 ayat (2) huruf b
+SP08,PRS.SP08.DEDUCTIONS,SP08-U2,ya,ya,tidak (gold menghilangkan annual_zakat_deduction),C3,C3,peninjau_benar,"Ps. 18 ayat (2) huruf c hanya MENAMBAH iuran JKN; ekspresi gold 'job_expense + annual_pension_contributions + sum_periods(health_employee)' membuang annual_zakat_deduction dari REG.YEAR.DEDUCTIONS. Kebijakan diam soal zakat (Ps. 39 ayat (2): hal lain mengikuti peraturan), sehingga pada kasus ber-zakat gold melapor C3 palsu dan nilai kandidat yang benar dianggap berbeda. Peninjau menaruh perubahan di employee_pension_contributions yang tidak menyentuh zakat"
+SP08,PRS.SP08.TAXABLE,SP08-U3,ya,ya,ya,C9,C9,sama,Ps. 18 ayat (2) huruf e
+SP08,PRS.SP08.FINAL,SP08-U5,ya,ya,ya,C9,C9,sama,Ps. 18 ayat (3) 'setiap Masa Pajak'
+SP09,PRS.SP09.PREMIUMS_NOT_GROSS,SP09-U1,ya,ya,ya,C2,C2,sama,Ps. 25 ayat (2)
+SP09,PRS.SP09.JKK_RATE,SP09-U2,ya,ya,ya,C6,none,emas_benar,Ps. 25 ayat (1). jkk_rate tetap; nilai sama. Kode hanya anotasi yang dipakai bila aturan kalah dari REG.BPJS.JKK_RATE(.RELIEF) dengan nilai berbeda; C6 (parameter usang/menyimpang dari kelompok risiko) tepat. Peninjau menulis none karena kelas risiko kasus diasumsikan cocok
+SP09,PRS.SP09.METHOD,SP09-U3,ya,ya,ya,-,none,sama,Ps. 26 ayat (1)
+SP10,PRS.SP10.JHT_EMPLOYEE,SP10-U1,ya,ya,ya,C7,C7,sama,Ps. 41 ayat (1)
+SP10,PRS.SP10.HEALTH_EMPLOYEE,SP10-U2,ya,ya,ya,C7,C7,sama,Ps. 41 ayat (3)
+SP10,PRS.SP10.HEALTH_EMPLOYER,SP10-U3,ya,ya,ya,C7,C7,sama,Ps. 41 ayat (3)
+SP10,PRS.SP10.JKK_RATE,SP10-U4,ya,ya,ya,C6,none,emas_benar,Ps. 41 ayat (4). jkk_rate tetap; nilai sama. Kode hanya anotasi yang dipakai bila aturan kalah dari REG.BPJS.JKK_RATE(.RELIEF) dengan nilai berbeda; C6 (parameter usang/menyimpang dari kelompok risiko) tepat. Peninjau menulis none karena kelas risiko kasus diasumsikan cocok
+SP11,PRS.SP11.JP_EMPLOYEE,SP11-U1,ya,ya,ya (target beda: jp_employee vs jp_wage),C8,C8,sama,Ps. 50 ayat (1)
+SP11,PRS.SP11.HEALTH_EMPLOYEE,SP11-U2,ya,ya,ya (target beda: health_employee vs health_wage),C8,C8,sama,Ps. 50 ayat (2)
+SP11,PRS.SP11.HEALTH_EMPLOYER,SP11-U2,ya,ya,ya (target beda: health_premium_employer vs health_wage),C8,C8,sama,Ps. 50 ayat (2)
+SP11,PRS.SP11.JKK_RATE,SP11-U3,ya,ya,ya,C6,none,emas_benar,Ps. 50 ayat (3). jkk_rate tetap; nilai sama. Kode hanya anotasi yang dipakai bila aturan kalah dari REG.BPJS.JKK_RATE(.RELIEF) dengan nilai berbeda; C6 (parameter usang/menyimpang dari kelompok risiko) tepat. Peninjau menulis none karena kelas risiko kasus diasumsikan cocok
+SP11,PRS.SP11.LEAVER_TAX,SP11-U4,ya,ya,ya,C5,C5,sama,Ps. 51 ayat (2)
+SP11,PRS.SP11.LEAVER_REFUND,SP11-U5,ya,ya,ya,C5,C5,sama,Ps. 51 ayat (2)
+SP11,PRS.SP11.METHOD,SP11-X1,ya,tidak,-,-,none,tafsir,Ps. 51 ayat (1) hanya 'dipotong setiap bulan dengan tarif efektif'; gross dibaca dari 'dipotong'
+SP12,PRS.SP12.METHOD,SP12-U1,ya,ya,ya,-,none,sama,Ps. 20 ayat (1)-(3)
+SP13,PRS.SP13.METHOD,SP13-U1,ya,ya,ya,-,none,sama,Ps. 61 ayat (1)
+SP13,PRS.SP13.JKK_RATE,SP13-U2,ya,ya,ya,C6,none,emas_benar,Ps. 62. jkk_rate tetap; nilai sama. Kode hanya anotasi yang dipakai bila aturan kalah dari REG.BPJS.JKK_RATE(.RELIEF) dengan nilai berbeda; C6 (parameter usang/menyimpang dari kelompok risiko) tepat. Peninjau menulis none karena kelas risiko kasus diasumsikan cocok
+SP13,"(catatan, tidak dikodekan)",SP13-X1,tidak,tidak,-,-,none,sama,Ps. 60 mes awak kapal 'sepanjang sesuai ketentuan perpajakan': keduanya tidak membuat unsur
+SP14,PRS.SP14.THR,SP14-U1,ya,ya,ya,C10,none,tafsir,"Ps. 60: 1,5 x upah, prorata, berhak bila berakhir <= 30 hari. Tidak pernah di bawah thr_minimum dan tidak ada aturan wajib yang menghasilkan thr, jadi anotasi C10 tidak pernah terpakai; tidak berdampak"
+SP14,PRS.SP14.METHOD,SP14-X1,ya,tidak,-,-,none,tafsir,Ps. 61 ayat (1) 'dipotong sesuai ketentuan'; gross dibaca dari 'dipotong'
+SP14,"(catatan, tidak dikodekan)",SP14-X1,tidak,tidak,-,-,none,sama,Ps. 61 ayat (3) DTP tunai: keduanya menganggap menyatakan ulang PMK 10/2025 Ps. 5

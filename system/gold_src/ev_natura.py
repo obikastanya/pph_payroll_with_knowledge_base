@@ -10,6 +10,7 @@ from . import Doc, Update, fact, param, rule
 
 D = Doc("PMK-66-2023")
 VF = "2023-07-01"
+H1 = "2023-01-01"
 UPPER = "1000000000000"
 
 
@@ -29,7 +30,8 @@ def _delta():
     excl_h1 = q("Pasal 23 ayat (4)", "Januari 2023 sampai dengan Masa Pajak Juni 2023")
     housing = [q("Lampiran A angka 7", "perseorangan (individual) antara"), q("Lampiran A angka 7", "Rp2.000.000,00 (dua juta")]
     coupon = [q("Pasal 5 ayat (4) huruf a", "a. Rp2.000.000,00 (dua juta rupiah) untuk tiap Pegawai"),
-              q("Pasal 5 ayat (1) huruf b", "kupon makanan dan/atau minuman bagi Pegawai")]
+              q("Pasal 5 ayat (1) huruf b", "kupon makanan dan/atau minuman bagi Pegawai"),
+              q("Pasal 5 ayat (4) huruf b", "b. nilai pengeluaran penyediaan makanan dan/atau")]
     gift = [q("Lampiran A angka 2", "yang diberikan selain dalam"), q("Lampiran A angka 2", "Rp3.000.000,00 (tiga juta")]
     sports = [q("Lampiran A angka 5", "Fasilitas olahraga dari pemberi"), q("Lampiran A angka 5", "Rpl.500.000,00 (satu juta")]
     vehicle = [q("Lampiran A angka 8", "Fasilitas kendaraan dari pemberi"),
@@ -46,6 +48,8 @@ def _delta():
              label_id="bingkisan selain hari raya"),
         fact("benefit_sports", "money", "period", obj, label="sports facility received this period",
              label_id="fasilitas olahraga"),
+        fact("benefit_housing_taxable", "money", "period", housing, label="taxable part of individual housing",
+             label_id="natura rumah yang menjadi objek pajak"),
         param("PAR.NATURA_HOUSING_CAP.2023", "natura_housing_individual_cap", 2000000, "money", housing, VF,
               label_id="batas fasilitas tempat tinggal individual"),
         param("PAR.NATURA_COUPON_CAP.2023", "natura_meal_coupon_cap", 2000000, "money", coupon, VF,
@@ -56,11 +60,18 @@ def _delta():
               label_id="batas fasilitas olahraga"),
         param("PAR.NATURA_VEHICLE_GROSS_CAP.2023", "natura_vehicle_gross_cap", 100000000, "money", vehicle, VF,
               label_id="batas penghasilan bruto fasilitas kendaraan"),
-        rule("REG.NATURA.GIFT_VALUE", "benefit_gift_other", "benefit('gift_other')", gift, VF),
-        rule("REG.NATURA.SPORTS_VALUE", "benefit_sports", "benefit('sports_facility')", sports, VF),
+        # gifts and sports facilities of January-June 2023 are not withheld but count toward the yearly caps
+        # (Lampiran A angka 2 and 5 "dalam jangka waktu 1 Tahun Pajak"; tafsir K12 item 3): their value rules start
+        # in January, the taxable-excess rule in July
+        rule("REG.NATURA.GIFT_VALUE", "benefit_gift_other", "benefit('gift_other')", gift + [excl_h1], H1),
+        rule("REG.NATURA.SPORTS_VALUE", "benefit_sports", "benefit('sports_facility')", sports + [excl_h1], H1),
+        rule("REG.NATURA.HOUSING", "benefit_housing_taxable",
+             "max(0, benefit('housing_individual') - param('natura_housing_individual_cap'))", [obj, start] + housing,
+             VF, label="housing above the individual cap is income (its own fact so that a policy can treat it apart)"),
         rule("REG.NATURA.REGULAR", "benefits_taxable_regular",
-             "max(0, benefit('housing_individual') - param('natura_housing_individual_cap'))"
-             " + max(0, benefit('meal_coupon_field_duty') - param('natura_meal_coupon_cap'))"
+             "benefit_housing_taxable"
+             " + max(0, benefit('meal_coupon_field_duty') - max(param('natura_meal_coupon_cap'),"
+             " (employer('workplace_meal_value') if employer('workplace_meal_value') != None else 0)))"
              f" + {vehicle_taxable} + benefit('other_benefit')",
              [obj, start] + housing + coupon + vehicle, VF, label="tafsir K12: monthly benefits are regular income"),
         rule("REG.NATURA.IRREGULAR", "benefits_taxable_irregular",

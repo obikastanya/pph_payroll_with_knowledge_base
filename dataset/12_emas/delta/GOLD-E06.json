@@ -209,10 +209,10 @@
    "modality": "mandatory",
    "scope": "period",
    "produces": "dtp_fixed_income",
-   "expression": "base_salary + fixed_allowance + other_regular_income",
+   "expression": "base_salary + fixed_allowance + other_regular_income + benefit('housing_individual') + benefit('company_vehicle')",
    "valid_from": "2025-01-01",
    "valid_until": "2025-12-31",
-   "label": "tafsir K5: without employer premiums, incidental overtime, THR, bonus",
+   "label": "tafsir K5: fixed and regular pay including fixed benefits in kind; without employer premiums, incidental overtime, THR, bonus",
    "source": [
     {
      "document": "PMK-10-2025",
@@ -225,6 +225,12 @@
      "provision": "Pasal 4 ayat (3) huruf b",
      "page": 5,
      "quote": "b. imbalan sejenis yang bersifat tetap dan teratur,"
+    },
+    {
+     "document": "PMK-10-2025",
+     "provision": "Pasal 4 ayat (4)",
+     "page": 5,
+     "quote": "termasuk penerimaan dalam bentuk natura dan/atau kenikmatan"
     },
     {
      "document": "PMK-10-2025",
@@ -286,7 +292,7 @@
    "modality": "mandatory",
    "scope": "year",
    "produces": "dtp_eligible",
-   "expression": "in_table('dtp_klu', employer('klu')) and dtp_income_test <= param('dtp_fixed_income_cap') and employee('tax_id_valid') != False",
+   "expression": "in_table('dtp_klu', employer('klu')) and dtp_income_test <= param('dtp_fixed_income_cap') and employee('tax_id_valid') != False and employee('other_dtp_incentive') != True",
    "valid_from": "2025-01-01",
    "valid_until": "2025-12-31",
    "source": [
@@ -331,6 +337,12 @@
      "provision": "Pasal 4 ayat (2) huruf a",
      "page": 5,
      "quote": "a. memiliki Nomor Pokok Wajib Pajak dan/atau Nomor"
+    },
+    {
+     "document": "PMK-10-2025",
+     "provision": "Pasal 4 ayat (2) huruf c",
+     "page": 5,
+     "quote": "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya"
     },
     {
      "document": "PMK-10-2025",

@@ -21,6 +21,7 @@ Ditetapkan 2026-10-27 dari tinjauan korpus peristiwa (`dataset/09_korpus_peristi
 | B3 | E10 PMK 72/2025, Masa Oktober 2025 | PPh 21 Oktober DTP; mekanisme seperti B1; Desember diatur Ps. 5 ayat (5a), (6a), (6b) |
 | B4 | E02 PMK 66/2023, natura Jan–Jun 2023 | tidak dipotong sama sekali; pegawai menghitung sendiri di SPT Tahunan |
 | B5 | E13 PER-11/PJ/2025, pembulatan Masa Januari–April 2025 | nilai seharusnya = pembulatan ke rupiah terdekat; selisih paling banyak Rp1 per masa terserap di Masa Pajak Terakhir |
+| B6 | DTP Masa Pajak Terakhir yang lebih potong (E06, E10, E11) | `pph21_dtp` masa terakhir = PPh masa terakhir (negatif) ditambah bagian yang dikembalikan; penyajian contoh 3 PMK 10/2025, berlaku juga bagi pegawai pariwisata |
 
 ---
 
@@ -212,3 +213,14 @@ Ditambahkan di Tahap 3 bersama pemindahan P07 menjadi E13.
 
 **Dampak.** GT dengan ω < 2025-05-22 untuk masa 2025: desimal dibuang. GT dengan ω ≥ 2025-05-22: rupiah terdekat. GT3 kasus 2025–2026 (dihitung dengan K1) sama dengan nilai ω ≥ 2025-05-22.
 
+### B6. DTP Masa Pajak Terakhir yang lebih potong (E06, E10, E11)
+
+Ditambahkan 2026-10-28 atas temuan pembaca kedua (review/gold/regulasi.tanggapan.md).
+
+**Pertanyaan.** Contoh 3 PMK 10/2025 (Lampiran B, padat karya) menyajikan DTP Desember negatif (277.500) ketika Masa Pajak Terakhir lebih potong; contoh 7 PMK 72/2025 (pariwisata) menyajikan "-" di kolom DTP Desember dengan PPh Desember (80.000) dan total DTP 240.000. Berapa nilai `pph21_dtp` Desember?
+
+**Putusan.** `pph21_dtp` masa terakhir = PPh masa terakhir bila positif; bila negatif, PPh masa terakhir ditambah bagian lebih potong yang dikembalikan kepada pegawai (Pasal 5 ayat (5) dan (5a)). Untuk padat karya hasilnya sama dengan contoh 3. Untuk pariwisata dalam contoh 7, lebih potong 80.000 tidak melebihi DTP Oktober–November 240.000, sehingga tidak ada yang dikembalikan dan `pph21_dtp` Desember = (80.000). Kedua contoh menggambarkan perlakuan yang sama (lebih potong yang berasal dari DTP tidak dikembalikan) dengan penyajian berbeda; satu konvensi dipakai untuk semua penerima DTP.
+
+**Dasar.** PMK 10/2025 Pasal 5 ayat (5), Lampiran B contoh 3 (PDF hlm. 21); PMK 72/2025 Pasal 5 ayat (5a), Lampiran B contoh 7 (PDF hlm. 45–47).
+
+**Dampak.** Tidak ada perubahan emas; GT1 pengembangan PMK72-B-7 tidak memuat DTP Desember sehingga tidak terpengaruh.

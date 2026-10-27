@@ -131,8 +131,9 @@ def _sp04():
     src = [p.q("Pasal 27 ayat (2)", "diberikan fasilitas tempat tinggal berupa satu unit apartemen yang disewa Perusahaan"),
            p.q("Pasal 28", "tidak diperhitungkan sebagai penghasilan pekerja dalam penghitungan Pajak Penghasilan Pasal 21")]
     return p.update([
-        p.rule("BENEFITS_NOT_INCOME", "benefits_taxable_regular", "0", src, code="C1",
-               label="facilities of Pasal 27 (lunch, apartment, work clothes) are not income"),
+        p.rule("BENEFITS_NOT_INCOME", "benefit_housing_taxable", "0", src, code="C1",
+               label="the apartment of Pasal 27 is treated as no income; other benefits in kind keep their "
+                     "treatment (second reader, kebijakan.review.md)"),
         p.method("gross", p.q("Pasal 29 ayat (1)", "dipotong oleh Perusahaan sesuai ketentuan perpajakan yang berlaku")),
     ])
 
@@ -194,7 +195,7 @@ def _sp08():
                p.q("Pasal 18 ayat (2) huruf b", "mengurangkan biaya jabatan sebesar 5% (lima persen) dari penghasilan bruto setahun"),
                scope="year", code="C3", label="job expense without the cap"),
         p.rule("DEDUCTIONS", "annual_deductions",
-               "job_expense + annual_pension_contributions + sum_periods('health_employee')",
+               "job_expense + annual_pension_contributions + annual_zakat_deduction + sum_periods('health_employee')",
                p.q("Pasal 18 ayat (2) huruf c", "mengurangkan iuran JHT, iuran JP, dan iuran Jaminan Kesehatan bagian pekerja setahun"),
                scope="year", code="C3", label="employee health contributions deducted"),
         p.rule("TAXABLE", "taxable_income", "max(0, round(annual_net - ptkp_amount, 1000, 'half_up'))",

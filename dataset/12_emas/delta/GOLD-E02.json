@@ -45,6 +45,30 @@
    "recorded_on": "2023-06-27"
   },
   {
+   "kind": "fact",
+   "id": "benefit_housing_taxable",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "taxable part of individual housing",
+   "label_id": "natura rumah yang menjadi objek pajak",
+   "source": [
+    {
+     "document": "PMK-66-2023",
+     "provision": "Lampiran A angka 7",
+     "page": 22,
+     "quote": "perseorangan (individual) antara"
+    },
+    {
+     "document": "PMK-66-2023",
+     "provision": "Lampiran A angka 7",
+     "page": 6,
+     "quote": "Rp2.000.000,00 (dua juta"
+    }
+   ],
+   "recorded_on": "2023-06-27"
+  },
+  {
    "kind": "parameter",
    "id": "PAR.NATURA_HOUSING_CAP.2023",
    "name": "natura_housing_individual_cap",
@@ -94,6 +118,12 @@
      "provision": "Pasal 5 ayat (1) huruf b",
      "page": 6,
      "quote": "kupon makanan dan/atau minuman bagi Pegawai"
+    },
+    {
+     "document": "PMK-66-2023",
+     "provision": "Pasal 5 ayat (4) huruf b",
+     "page": 6,
+     "quote": "b. nilai pengeluaran penyediaan makanan dan/atau"
     },
     {
      "document": "PMK-66-2023",
@@ -208,7 +238,7 @@
    "scope": "period",
    "produces": "benefit_gift_other",
    "expression": "benefit('gift_other')",
-   "valid_from": "2023-07-01",
+   "valid_from": "2023-01-01",
    "source": [
     {
      "document": "PMK-66-2023",
@@ -221,6 +251,12 @@
      "provision": "Lampiran A angka 2",
      "page": 21,
      "quote": "Rp3.000.000,00 (tiga juta"
+    },
+    {
+     "document": "PMK-66-2023",
+     "provision": "Pasal 23 ayat (4)",
+     "page": 18,
+     "quote": "Januari 2023 sampai dengan Masa Pajak Juni 2023"
     },
     {
      "document": "PMK-66-2023",
@@ -239,7 +275,7 @@
    "scope": "period",
    "produces": "benefit_sports",
    "expression": "benefit('sports_facility')",
-   "valid_from": "2023-07-01",
+   "valid_from": "2023-01-01",
    "source": [
     {
      "document": "PMK-66-2023",
@@ -255,9 +291,53 @@
     },
     {
      "document": "PMK-66-2023",
+     "provision": "Pasal 23 ayat (4)",
+     "page": 18,
+     "quote": "Januari 2023 sampai dengan Masa Pajak Juni 2023"
+    },
+    {
+     "document": "PMK-66-2023",
      "provision": "Pasal 27",
      "page": 19,
      "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023."
+    }
+   ],
+   "recorded_on": "2023-06-27"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.NATURA.HOUSING",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "benefit_housing_taxable",
+   "expression": "max(0, benefit('housing_individual') - param('natura_housing_individual_cap'))",
+   "valid_from": "2023-07-01",
+   "label": "housing above the individual cap is income (its own fact so that a policy can treat it apart)",
+   "source": [
+    {
+     "document": "PMK-66-2023",
+     "provision": "Pasal 23 ayat (1)",
+     "page": 17,
+     "quote": "dalam bentuk natura dan/atau kenikmatan wajib"
+    },
+    {
+     "document": "PMK-66-2023",
+     "provision": "Pasal 27",
+     "page": 19,
+     "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023."
+    },
+    {
+     "document": "PMK-66-2023",
+     "provision": "Lampiran A angka 7",
+     "page": 22,
+     "quote": "perseorangan (individual) antara"
+    },
+    {
+     "document": "PMK-66-2023",
+     "provision": "Lampiran A angka 7",
+     "page": 6,
+     "quote": "Rp2.000.000,00 (dua juta"
     }
    ],
    "recorded_on": "2023-06-27"
@@ -269,7 +349,7 @@
    "modality": "mandatory",
    "scope": "period",
    "produces": "benefits_taxable_regular",
-   "expression": "max(0, benefit('housing_individual') - param('natura_housing_individual_cap')) + max(0, benefit('meal_coupon_field_duty') - param('natura_meal_coupon_cap')) + (benefit('company_vehicle') if (employee('has_equity_in_employer') == True or (employee('avg_monthly_gross_12m') if employee('avg_monthly_gross_12m') != None else base_salary + fixed_allowance) > param('natura_vehicle_gross_cap')) else 0) + benefit('other_benefit')",
+   "expression": "benefit_housing_taxable + max(0, benefit('meal_coupon_field_duty') - max(param('natura_meal_coupon_cap'), (employer('workplace_meal_value') if employer('workplace_meal_value') != None else 0))) + (benefit('company_vehicle') if (employee('has_equity_in_employer') == True or (employee('avg_monthly_gross_12m') if employee('avg_monthly_gross_12m') != None else base_salary + fixed_allowance) > param('natura_vehicle_gross_cap')) else 0) + benefit('other_benefit')",
    "valid_from": "2023-07-01",
    "label": "tafsir K12: monthly benefits are regular income",
    "source": [
@@ -308,6 +388,12 @@
      "provision": "Pasal 5 ayat (1) huruf b",
      "page": 6,
      "quote": "kupon makanan dan/atau minuman bagi Pegawai"
+    },
+    {
+     "document": "PMK-66-2023",
+     "provision": "Pasal 5 ayat (4) huruf b",
+     "page": 6,
+     "quote": "b. nilai pengeluaran penyediaan makanan dan/atau"
     },
     {
      "document": "PMK-66-2023",

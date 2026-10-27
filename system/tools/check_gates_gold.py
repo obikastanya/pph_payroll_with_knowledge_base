@@ -79,6 +79,10 @@ def main(write=False, only=()):
     print(f"{n_ok}/{len(rows)} gold Deltas pass all gates")
     if write:
         out = ROOT / "docs" / "hasil" / "gerbang_emas.csv"
+        if only and out.exists():               # a selection replaces its own rows of the full table
+            new = {r["update"]: r for r in rows}
+            old = list(csv.DictReader(open(out, encoding="utf-8")))
+            rows = [new.pop(r["update"], r) for r in old] + list(new.values())
         with open(out, "w", encoding="utf-8", newline="") as f:
             w = csv.DictWriter(f, list(rows[0]), lineterminator="\n")
             w.writeheader()

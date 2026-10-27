@@ -254,6 +254,43 @@ Setiap $\Delta^\star$ diperiksa G1–G5 terhadap basisnya (`system/tools/check_g
 
 ---
 
+## Tahap 7. Emas (bagian 3: pembaca kedua dan kesepakatan)
+
+Dikerjakan 2026-10-27/28. Dua agen peninjau independen (bukan *fork*, tanpa konteks penyusun) dengan prosedur dua tahap: (1) pengodean buta dari teks dokumen dan basis KB (`system/tools/kb_context.py`), ditulis dan tidak diubah lagi; (2) perbandingan dengan emas. Regulasi: E01–E13. Kebijakan: SP01–SP14 buta, lima PKB diperiksa tidak buta.
+
+### Hasil
+
+| | Regulasi E01–E13 | Kebijakan SP01–SP14 |
+|---|---|---|
+| Unsur emas / unit pembaca | 73 / 73 | 44 aturan / 50 baris |
+| Putusan | sama 55, tafsir 18, peninjau benar 8, ragu 2 | sama 31, emas benar 8, tafsir 5, peninjau benar 1, ragu 1 |
+| Kesepakatan kehadiran unsur | 82% | 91% |
+| α `valid_from` (unsur tambahan, 29) | 0,79 | — |
+| α `valid_until` | 1,00 | — |
+| Kesepakatan nilai | 90% | 100% |
+| α kode konflik (κ) | — | 0,73 (0,73) |
+
+`docs/hasil/kesepakatan_emas.json` (`system/tools/review_agreement.py`; α Krippendorff nominal di `system/pph21kbs/analysis/agreement.py`, diuji pada contoh Krippendorff 2011, α = 0,743). α kehadiran tidak dilaporkan karena paradoks prevalensi (tidak ada satuan "keduanya tidak membuat unsur").
+
+### Koreksi emas dari pembacaan kedua
+
+Regulasi (8 + 2): natura bingkisan/olahraga Januari–Juni ikut batas setahun (K12.3); batas kupon makan Pasal 5 ayat (4) huruf b; natura tetap dalam uji DTP Rp10 jt (K5); syarat "tidak menerima DTP lain"; pembulatan PPh tahunan sebagian tahun sejak 2025; putusan baru tafsir_korpus B6 (penyajian DTP Desember lebih potong). Kebijakan: SP08 zakat, SP04 dipersempit ke apartemen (E02 kini memisahkan fakta natura rumah), WIKA dasar iuran hanya bila lebih sempit, AVCO kacamata dan potongan mangkir hari keenam. Masalah PKB lain dicatat sebagai keterbatasan (tanggapan: `review/gold/regulasi.tanggapan.md`, `review/gold/kebijakan.tanggapan.md`). Semua acuan tetap: GT3 50/50, GT1 22/26 (ralat resmi), GT2 15/20 + 90/90, GT5 67/79 (12 dijelaskan), contoh SP 37/38.
+
+### Perbaikan alur dari pembacaan kedua
+
+Konteks LLM tidak memuat aturan yang diubah kebijakan bila dokumen memakai singkatan (JKK, JP, JHT): `context.py` kini mencocokkan token id rekaman dan menyembunyikan rekaman yang berakhir lebih dari setahun sebelum tanggal dokumen.
+
+### Ancaman validitas
+
+Penjangkaran pada emas peristiwa sebelumnya (basis yang sama dengan LLM), E13 tidak sepenuhnya buta, tafsir K/B bersama, satuan tidak satu-satu. Semuanya dilaporkan; α dibaca sebagai kesepakatan di bawah basis dan tafsir yang sama.
+
+### Bahan paper
+
+- Bagian VII (keandalan $\Delta^\star$): tabel di atas, prosedur dua tahap, daftar koreksi sebagai bukti protokol koreksi emas (*skeleton* butir "Protokol koreksi emas").
+- Diskusi: pembaca kedua menemukan kesalahan yang lolos semua acuan independen (GT1–GT5 tidak punya kasus yang menyentuhnya), contoh keterbatasan validasi berbasis contoh.
+
+---
+
 ## Tahap 9. Alur akuisisi (bagian 1: komponen dan klien tiruan)
 
 Mulai: 2026-10-27, dikerjakan sejajar dengan Tahap 7 (emas menjadi bahan kalibrasi gerbang).

@@ -51,6 +51,8 @@ class Candidate:
     repaired: bool = False
     gate_log: dict = field(default_factory=dict)
     first_gate_log: dict = field(default_factory=dict)
+    initial_llm: dict | None = None        # output before repair (B4 votes over the initial candidates)
+    initial_delta: dict | None = None
     sg_size: int = 0
     error: str = ""
 
@@ -154,6 +156,7 @@ def run_document(event, base, client, ledger, cfg=None, run_id="dev", out_dir=No
             _evaluate(c, base, event, issued, rel, cfg, docs, run_id, policies)
             c.passed_before_repair = c.passed
             c.first_gate_log = dict(c.gate_log)
+            c.initial_llm, c.initial_delta = c.llm, c.delta
             for r in range(cfg.repair_rounds if not c.passed and c.llm is not None else 0):
                 msgs = _messages(c.gate_log) or [c.error]
                 # same system prompt and prefix as the drafts, so the cached prefix is read, not written again
@@ -174,7 +177,8 @@ def run_document(event, base, client, ledger, cfg=None, run_id="dev", out_dir=No
         result["candidates"] = [{"n": c.n, "order": c.order, "passed": c.passed,
                                  "passed_before_repair": c.passed_before_repair, "repaired": c.repaired,
                                  "gate_log": c.gate_log, "first_gate_log": c.first_gate_log, "sg_size": c.sg_size,
-                                 "error": c.error, "llm": c.llm, "delta": c.delta} for c in cands]
+                                 "error": c.error, "llm": c.llm, "delta": c.delta,
+                                 "initial_delta": c.initial_delta if c.repaired else None} for c in cands]
     except BudgetExceeded as e:
         result["status"] = "budget"
         result["error"] = str(e)

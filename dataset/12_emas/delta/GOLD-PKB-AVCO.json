@@ -736,10 +736,10 @@
    "modality": "default",
    "scope": "period",
    "produces": "avco_absence_deduction",
-   "expression": "round(income('base_salary') * hr('days_absent_unpaid') * (7 if employee('avco_work_pattern') == '6-1' else 8) / 173, 1, 'half_up')",
+   "expression": "round(income('base_salary') * (hr('days_absent_unpaid') * (7 if employee('avco_work_pattern') == '6-1' else 8) + hr('days_absent_unpaid_sixth_day') * 5) / 173, 1, 'half_up')",
    "valid_from": "2024-04-01",
    "valid_until": "2026-03-31",
-   "label": "AVCO-24-3: base wage / 173 x regular hours of the day (7 or 8)",
+   "label": "AVCO-24-3: base wage / 173 x regular hours of the day (7 or 8; 5 on the sixth day of the 6-1 pattern, counted in hr('days_absent_unpaid_sixth_day'))",
    "policy": "PKB-AVCO-2024",
    "source": [
     {
@@ -862,7 +862,7 @@
    "modality": "default",
    "scope": "period",
    "produces": "avco_irregular",
-   "expression": "(income('base_salary') if hr('leave_allowance_paid') > 0 and hr('service_days') >= 90 else 0) + (income('base_salary') if hr('travel_allowance_paid') > 0 else 0) + 2 * (500000 * hr('bereavement_adults') + 250000 * hr('bereavement_children')) + (4 * 500000 if hr('pilgrimage') > 0 else 0) + min(hr('glasses_claim'), 1400000) + min(hr('lens_claim'), 600000) + 500000 * hr('medivac_adult_days') + 250000 * hr('medivac_child_days') + min(hr('dental_claim'), 1000000 * hr('dental_visits')) + min(hr('special_needs_claim'), 2000000) + 2960000 * hr('edu_paud') + 5330000 * hr('edu_tk') + 10650000 * hr('edu_sd') + 12420000 * hr('edu_sltp') + 14190000 * hr('edu_slta') + 17750000 * (hr('edu_slb') + hr('edu_pt')) + (25000000 if hr('housing_grant_paid') > 0 else 0) + ((7000000 if employee('avco_living_status') == 'single_outside' else (8700000 if employee('avco_living_status') == 'married_inside' else (10400000 if employee('avco_living_status') == 'married_outside' else 0))) if hr('living_aid_paid') > 0 else 0) + (2000000 if hr('savings_one_time') > 0 and employer('avco_savings_plan_pension_fund') != True else 0) + round(hr('travel_allowance_unused') / 2, 1, 'half_up')",
+   "expression": "(income('base_salary') if hr('leave_allowance_paid') > 0 and hr('service_days') >= 90 else 0) + (income('base_salary') if hr('travel_allowance_paid') > 0 else 0) + 2 * (500000 * hr('bereavement_adults') + 250000 * hr('bereavement_children')) + (4 * 500000 if hr('pilgrimage') > 0 else 0) + (min(hr('glasses_claim'), 1400000) if hr('glasses_claim') > 0 else min(hr('lens_claim'), 600000)) + 500000 * hr('medivac_adult_days') + 250000 * hr('medivac_child_days') + min(hr('dental_claim'), 1000000 * hr('dental_visits')) + min(hr('special_needs_claim'), 2000000) + 2960000 * hr('edu_paud') + 5330000 * hr('edu_tk') + 10650000 * hr('edu_sd') + 12420000 * hr('edu_sltp') + 14190000 * hr('edu_slta') + 17750000 * (hr('edu_slb') + hr('edu_pt')) + (25000000 if hr('housing_grant_paid') > 0 else 0) + ((7000000 if employee('avco_living_status') == 'single_outside' else (8700000 if employee('avco_living_status') == 'married_inside' else (10400000 if employee('avco_living_status') == 'married_outside' else 0))) if hr('living_aid_paid') > 0 else 0) + (2000000 if hr('savings_one_time') > 0 and employer('avco_savings_plan_pension_fund') != True else 0) + round(hr('travel_allowance_unused') / 2, 1, 'half_up')",
    "valid_from": "2024-04-01",
    "valid_until": "2026-03-31",
    "label": "AVCO-23-4 leave allowance (service >= 90 days), 26-1e travel allowance, 28-4 bereavement per diem, 30-6c pilgrimage, 32-2 glasses, 33-1d medivac, 34-8 dental and special needs, 36-1 education (per child by level), 44-1a housing grant, 44-4 living aid, 42-4 one-time savings payment, LX-3d unused travel allowance at most 50%",

@@ -282,7 +282,7 @@ def _method():
     out.append(rule("REG.YEAR.PPH", "annual_pph21", "round(progressive('pasal17', taxable_income), 1, 'down')",
                     q16("Pasal 14 ayat (1)", "Tarif berdasarkan Pasal 17 ayat (1) huruf a"), START, scope="year"))
     out.append(rule("REG.YEAR.PPH.PART_YEAR", "annual_pph21",
-                    "round(progressive('pasal17', taxable_income) * subjective_months / 12, 1, 'down')",
+                    "round(progressive('pasal17', taxable_income) * subjective_months / 12, 1, param('pph_round_mode'))",
                     [p6, q16("Pasal 14 ayat (6)", "sebanding dengan jumlah bulan dalam bagian tahun")], START,
                     scope="year", cond="subjective_months < 12", overrides=["REG.YEAR.PPH"]))
     out.append(rule("REG.YEAR.WITHHELD", "withheld_before_final", "sum_periods_before_final('pph21_due')",

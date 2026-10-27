@@ -35,6 +35,8 @@ def _e06():
     fixed = [q("Pasal 4 ayat (3) huruf a", "a. gaji dan tunjangan yang sifatnya tetap dan teratur"),
              q("Pasal 4 ayat (3) huruf b", "b. imbalan sejenis yang bersifat tetap dan teratur,")]
     npwp = q("Pasal 4 ayat (2) huruf a", "a. memiliki Nomor Pokok Wajib Pajak dan/atau Nomor")
+    other = q("Pasal 4 ayat (2) huruf c", "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya")
+    natura = q("Pasal 4 ayat (4)", "termasuk penerimaan dalam bentuk natura dan/atau kenikmatan")
     dtp = [q("Pasal 2 ayat (2)", "Pemberi Kerja dengan kriteria tertentu diberikan insentif"),
            q("Pasal 5 ayat (1)", "insentif yang harus dibayarkan secara tunai oleh Pemberi")]
     refund = q("Pasal 5 ayat (5)", "pemerintah tidak dikembalikan kepada Pegawai Tetap")
@@ -53,13 +55,17 @@ def _e06():
               label_id="batas penghasilan tetap dan teratur"),
         table("TAB.DTP_KLU.2025", "dtp_klu", "set", klu, VF, vu=VU, label_id="kode klasifikasi lapangan usaha",
               rows_ref={"extracted_table": "PMK-10-2025/LAMPIRAN-A", "columns": {"key": "klu", "sector": "sektor"}}),
-        rule("REG.DTP.FIXED_INCOME", "dtp_fixed_income", "base_salary + fixed_allowance + other_regular_income",
-             fixed, VF, vu=VU, label="tafsir K5: without employer premiums, incidental overtime, THR, bonus"),
+        rule("REG.DTP.FIXED_INCOME", "dtp_fixed_income",
+             "base_salary + fixed_allowance + other_regular_income + benefit('housing_individual')"
+             " + benefit('company_vehicle')", fixed + [natura], VF, vu=VU,
+             label="tafsir K5: fixed and regular pay including fixed benefits in kind; without employer premiums, "
+                   "incidental overtime, THR, bonus"),
         rule("REG.DTP.INCOME_TEST", "dtp_income_test", "value_in('dtp_fixed_income', first_month)", crit, VF,
              vu=VU, scope="year"),
         rule("REG.DTP.ELIGIBLE", "dtp_eligible",
              "in_table('dtp_klu', employer('klu')) and dtp_income_test <= param('dtp_fixed_income_cap')"
-             " and employee('tax_id_valid') != False", klu + crit + [npwp], VF, vu=VU, scope="year"),
+             " and employee('tax_id_valid') != False and employee('other_dtp_incentive') != True",
+             klu + crit + [npwp, other], VF, vu=VU, scope="year"),
         rule("REG.DTP.FACILITY", "dtp_facility", "dtp_eligible", [period, period2], VF, vu=VU),
         rule("REG.DTP.RUNNING", "pph21_dtp", "pph21_due if dtp_facility else 0", dtp, VF, vu=VU,
              cond="not is_final_period"),
@@ -100,7 +106,10 @@ def _e10():
                         "filter": {"sektor": "pariwisata"}}),
         rule("REG.DTP.ELIGIBLE.TOURISM", "dtp_eligible_tourism",
              "in_table('dtp_klu_tourism', employer('klu')) and dtp_income_test <= param('dtp_fixed_income_cap')"
-             " and employee('tax_id_valid') != False", klu + tour_period, vf, vu=VU, scope="year"),
+             " and employee('tax_id_valid') != False and employee('other_dtp_incentive') != True",
+             klu + tour_period + [P10.q("Pasal 4 ayat (2) huruf c", "tidak menerima insentif Pajak Penghasilan Pasal 21"
+                                                                    " ditanggung pemerintah lainnya")], vf, vu=VU,
+             scope="year"),
         rule("REG.DTP.FACILITY.TOURISM", "dtp_facility", "dtp_eligible or dtp_eligible_tourism", tour_period, vf,
              vu=VU, overrides=["REG.DTP.FACILITY"]),
     ], *tour_period), [

@@ -904,10 +904,11 @@
    "modality": "default",
    "scope": "period",
    "produces": "bpjs_wage",
+   "condition": "max(wika_fixed_pay, employer('regional_minimum_wage') if employer('regional_minimum_wage') != None else 0) < base_salary + fixed_allowance",
    "expression": "max(wika_fixed_pay, employer('regional_minimum_wage') if employer('regional_minimum_wage') != None else 0)",
    "valid_from": "2025-03-01",
    "valid_until": "2026-12-31",
-   "label": "WIKA-32-4, 4-36: contribution base = last Fixed Pay, at least the DKI minimum wage; the grade allowance is excluded (C8 latent: a conflict only if the grade allowance is a fixed allowance)",
+   "label": "WIKA-32-4, 4-36: contribution base = last Fixed Pay, at least the DKI minimum wage; the grade allowance is excluded. Active only when that base is narrower than the statutory base (C8); a wider base is allowed and is not a conflict (second reader, pkb.cek.csv item 2)",
    "policy": "PKB-WIKA-2025",
    "conflict_code": "C8",
    "source": [

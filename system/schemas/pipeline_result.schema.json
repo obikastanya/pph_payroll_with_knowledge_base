@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3id.org/pph21kbs/schemas/pipeline_result.schema.json",
+  "title": "Acquisition pipeline result for one document and one condition",
+  "type": "object",
+  "required": [
+    "run",
+    "event",
+    "condition",
+    "status"
+  ],
+  "properties": {
+    "run": {
+      "type": "string"
+    },
+    "event": {
+      "type": "string"
+    },
+    "condition": {
+      "type": "string"
+    },
+    "relevance": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "n",
+          "order",
+          "passed_before_repair",
+          "passed",
+          "repaired"
+        ],
+        "properties": {
+          "n": {
+            "type": "integer"
+          },
+          "order": {
+            "type": "integer"
+          },
+          "passed_before_repair": {
+            "type": "boolean"
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "repaired": {
+            "type": "boolean"
+          },
+          "gate_log": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "groups": {
+      "type": "array"
+    },
+    "selected": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "status": {
+      "enum": [
+        "applied",
+        "empty",
+        "abstain"
+      ]
+    },
+    "delta": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "sg_size": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "sg_overlap_se": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "cost_usd": {
+      "type": "number"
+    }
+  }
+}

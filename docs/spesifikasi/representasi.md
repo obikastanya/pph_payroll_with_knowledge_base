@@ -1,6 +1,6 @@
 # Spesifikasi representasi pengetahuan dan *inference engine*
 
-Tahap 3 [PANDUAN_PENELITIAN.md](../../PANDUAN_PENELITIAN.md); *skeleton* Bagian IV (Representasi pengetahuan dan *inference engine*). Versi 1, 2026-10-27.
+Tahap 3 [PANDUAN_PENELITIAN.md](../../PANDUAN_PENELITIAN.md); *skeleton* Bagian IV (Representasi pengetahuan dan *inference engine*). Versi 2, 2026-10-27: revisi atas tinjauan independen [review/specs/spesifikasi.review.md](../../review/specs/spesifikasi.review.md); tanggapan per temuan di [review/specs/spesifikasi.tanggapan.md](../../review/specs/spesifikasi.tanggapan.md) dan ringkasan perubahan di bagian 14.
 
 Dokumen ini menetapkan bentuk *knowledge base* (KB), arti hasil perhitungan, ontologi, bahasa ekspresi, semantik waktu, resolusi konflik, bentuk kanonik, batas ekspresivitas, dan algoritma inferensi. Implementasinya di `system/pph21kbs/` (Tahap 5). Semua nama di dalam KB berbahasa Inggris; penjelasan berbahasa Indonesia.
 
@@ -34,12 +34,16 @@ Alasan pembagian:
 
 Setiap unsur $\mathcal{R}$, $\mathcal{P}$, $\mathcal{T}$, $\mathcal{C}$ berada pada lapisan $\ell \in \{\mathit{reg}, \mathit{prs}\}$ (regulasi, perusahaan). Parameter, tabel, dan batasan hanya ada di lapisan regulasi pada versi ini; kebijakan perusahaan menyatakan nilainya sendiri lewat aturan.
 
+**Lapisan perusahaan per kebijakan.** Setiap aturan perusahaan milik tepat satu kebijakan (`policy` = id dokumen kebijakan, misalnya `PKB-WIKA-2025`). $\mathcal{K} = \mathcal{K}_\mathit{reg} \oplus \bigcup_j P_j$, dan untuk kasus $x$ hanya lapisan $P(x)$ yang dipasang, yaitu kebijakan yang disebut di data kasus (`employer.policy`, satu id atau daftar id). Kebijakan juga dapat mengadopsi aturan regulasi `optional` (`adopts` di tingkat dokumen kebijakan).
+
 **Rekaman dan identitas.** Unsur KB punya identitas logis (`id`, misalnya `REG.PTKP.AMOUNT`) dan satu atau lebih **rekaman**. Rekaman tidak pernah disunting di tempat. Operasi pembaruan menambah rekaman baru:
 - *add*: rekaman pertama untuk `id` baru;
 - *change*: rekaman baru untuk `id` yang sudah ada, menggantikan rekaman sebelumnya sejak tanggal pencatatannya;
 - *remove*: rekaman nisan (*tombstone*) untuk `id`, yang menghapus unsur itu sejak tanggal pencatatannya.
 
 Rekaman yang berlaku untuk `id` pada tanggal pengetahuan ω adalah rekaman dengan tanggal pencatatan $t_c \le \omega$ terbesar; bila beberapa rekaman punya $t_c$ sama, yang terakhir diterapkan (urutan penerapan dicatat). Bila rekaman itu nisan, unsur tidak ada pada ω. Inilah yang membuat $\mathcal{K}$ bitemporal dan menjamin A3$_\omega$: rekaman yang dicatat pada $t_\mathit{terbit}$ tidak terlihat oleh pertanyaan dengan $\omega < t_\mathit{terbit}$.
+
+**ω menyaring lapisan regulasi saja.** Lapisan perusahaan $P(x)$ adalah masukan kasus: kebijakan yang berlaku bagi pegawai itu, dalam versi yang dicatat. Rekamannya dipilih menurut masa berlaku, tidak menurut ω. Dengan begitu pertanyaan "bagaimana kebijakan ini berinteraksi dengan regulasi sebagaimana diketahui pada ω" terdefinisi walaupun dokumen kebijakan terbit sesudah ω (misalnya PKB AVCO 2024 terhadap E03 yang terbit Desember 2023).
 
 Pencabutan hukum biasa (aturan lama tidak berlaku lagi mulai suatu masa) bukan *remove*, melainkan *change* yang mengisi `valid_until`. Dengan begitu hasil masa lampau tetap dihitung dengan aturan lama (A3$_t$). *Remove* dipakai untuk unsur yang dianggap tidak pernah benar sejak ω tertentu, misalnya aturan pembantu yang tidak dibutuhkan lagi.
 
@@ -64,10 +68,16 @@ $$r = \langle \mathit{id}, \ell, \sigma, \kappa, [t_s, t_e], t_c, \varphi, f \co
 | $\mathit{fp}$ | `fixed_point` | opsional: `{lower, upper}`, ekspresi batas titik tetap (bagian 11.4) |
 | $\mathit{ov}$ | `overrides` | daftar `id` aturan yang dikalahkan aturan ini (*lex specialis*, bagian 8) |
 | $\mathit{src}$ | `source` | `{document, provision, quote}`: dokumen, pasal/ayat/huruf/halaman, dan kutipan teks pendukung |
+| $\pi$ | `policy` | khusus aturan perusahaan: id dokumen kebijakan pemiliknya |
+| $\kappa_c$ | `conflict_code` | khusus aturan perusahaan, anotasi opsional: jenis konflik C1–C10 bila aturan ini dikalahkan aturan wajib (untuk laporan; tidak dipakai saat membandingkan laporan) |
 
-Atribut tambahan yang tidak memengaruhi hasil: `label` (uraian singkat), `adopts` (khusus aturan perusahaan: `id` aturan `optional` yang diadopsi), `note`.
+Atribut tambahan yang tidak memengaruhi hasil: `label` (uraian singkat), `note`.
 
-**Parameter.** $p = \langle \mathit{id}, \mathit{name}, v, [t_s, t_e], t_c, \mathit{src} \rangle$. Nilai $v$ berupa bilangan bulat (rupiah atau hitungan), pecahan eksak yang ditulis sebagai teks desimal (`"0.0024"`), boolean, atau teks (misalnya mode pembulatan `"half_up"`). Satu nama parameter bisa punya banyak rekaman dengan masa berlaku berbeda (misalnya `jp_wage_cap`).
+**Konvensi identitas dan tanggal.** `id` aturan berawalan `REG.` atau `PRS.` sesuai lapisan; parameter `PAR.`, tabel `TAB.`, batasan `CON.`; `id` fakta = nama fakta (huruf kecil). `valid_from` selalu tanggal 1 sebuah bulan dan `valid_until` selalu hari terakhir sebuah bulan, karena masa pajak dan bulan iuran adalah satuan waktu terkecil; G1 menolak tanggal lain.
+
+**Identitas tahun berlaku.** Untuk resolusi konflik dibutuhkan tanggal yang tidak berubah ketika rekaman direvisi: $t_c^0(\mathit{id})$, tanggal pencatatan rekaman **pertama** unsur itu.
+
+**Parameter.** $p = \langle \mathit{id}, \mathit{name}, v, [t_s, t_e], t_c, \mathit{src} \rangle$. Nilai $v$ berupa bilangan bulat (rupiah atau hitungan), pecahan eksak yang ditulis sebagai teks desimal (`"0.0024"`), boolean, atau teks (misalnya mode pembulatan `"half_up"`). Satu nama parameter bisa punya banyak unsur dengan masa berlaku berbeda (misalnya `jp_wage_cap`, satu unsur per tahun). Bila beberapa unsur bernama sama berlaku pada tanggal evaluasi, yang dipakai adalah unsur dengan `valid_from` paling akhir, lalu $t_c^0$ paling akhir, lalu urutan penerapan; jadi nilai baru tidak perlu menutup nilai lama. Aturan yang sama berlaku untuk versi tabel.
 
 **Versi tabel.** $\tau = \langle \mathit{id}, \mathit{name}, \mathit{kind}, [t_s, t_e], t_c, \mathit{rows}, \mathit{src} \rangle$ dengan `kind`:
 - `lookup`: baris `{key, value}`, misalnya PTKP per status, kategori TER per status;
@@ -81,7 +91,7 @@ Atribut tambahan yang tidak memengaruhi hasil: `label` (uraian singkat), `adopts
 
 ## 4. Hasil perhitungan
 
-**Definisi 3 (Hasil perhitungan).** $\mathit{hasil}(\mathcal{K}, x, t, \omega)$ adalah nilai fakta keluaran untuk kasus $x$ pada masa pajak $t$, dihitung dengan $\mathcal{K}$ sebagaimana diketahui pada tanggal ω. Dalam implementasi, *engine* menghitung satu kasus untuk seluruh tahun pajaknya sekaligus, dan $\mathit{hasil}$ untuk masa $t$ adalah proyeksi ke masa itu. Selain nilai, *engine* mengeluarkan **laporan konflik** $\mathit{konflik}(\mathcal{K}, x, \omega)$ dan **jejak** setiap fakta sampai sumber hukum.
+**Definisi 3 (Hasil perhitungan).** $\mathit{hasil}(\mathcal{K}, x, t, \omega)$ adalah nilai fakta keluaran untuk kasus $x$ pada masa pajak $t$, dihitung dengan $\mathcal{K}_\mathit{reg}$ sebagaimana diketahui pada tanggal ω ditambah lapisan kebijakan $P(x)$. Dalam implementasi, *engine* menghitung satu kasus untuk seluruh tahun pajaknya sekaligus, dan $\mathit{hasil}$ untuk masa $t$ adalah proyeksi ke masa itu. Fakta lingkup tahun dihitung di masa pajak terakhir dan diberi masa itu sebagai $t$ (dipakai untuk membagi A2 dan A3$_t$). Selain nilai, *engine* mengeluarkan **laporan konflik** $\mathit{konflik}(\mathcal{K}, x, \omega)$ dan **jejak** setiap fakta sampai sumber hukum.
 
 **Kasus.** $x$ adalah satu pegawai tetap pada satu pemberi kerja untuk satu tahun pajak: data pegawai (status PTKP awal tahun, jenis kelamin, keterangan suami tidak berpenghasilan, NPWP/NIK, awal/akhir kewajiban subjektif), data pemberi kerja (KLU, kelompok risiko JKK, kelayakan keringanan iuran), metode (`gross`, `gross_up`, `employer_borne`), bulan masuk dan keluar, dan per masa: komponen penghasilan, natura menurut jenis, zakat lewat pemberi kerja, serta data SDM (jam lembur, hari kerja, dan sebagainya) bila kebijakan perusahaan menghitungnya. Format JSON di [format_data.md](format_data.md).
 
@@ -101,7 +111,9 @@ Atribut tambahan yang tidak memengaruhi hasil: `label` (uraian singkat), `adopts
 | `annual_gross`, `job_expense`, `annual_deductions`, `annual_net`, `ptkp_amount`, `taxable_income`, `annual_pph21` | tahun | perhitungan masa pajak terakhir |
 | `refund_to_employee` | tahun | kelebihan potong yang dikembalikan kepada pegawai |
 
-Fakta lapisan perusahaan (misalnya `thr`, `overtime_pay`, `base_salary`) juga dinilai bila kasus memuat kebijakan perusahaan. Daftar lengkap fakta, tipe, dan satuannya ada di kosakata KB (`system/kb/vocabulary.ttl`) dan dihasilkan sebagai tabel di [format_data.md](format_data.md).
+Fakta komponen yang dapat ditetapkan kebijakan perusahaan (misalnya `thr`, `overtime_pay`, `base_salary`) juga termasuk $F_\mathit{nilai}$.
+
+**$F_\mathit{nilai}$ dibekukan.** Daftar fakta yang dinilai ditetapkan di $\mathcal{K}^\star_0$ (pembaruan latar kosakata) dan dibekukan bersama penilai sebelum eksperimen. Semua fakta $F_\mathit{nilai}$ punya aturan bawaan sejak awal rentang (misalnya `pph21_dtp` = 0 sebelum ada fasilitas DTP), sehingga pembaruan hanya mengubah nilainya. Fakta baru yang ditambahkan pembaruan (oleh peneliti atau LLM) adalah fakta antara dan tidak dinilai, kecuali untuk perubahan tak terlihat yang dinilai dengan contoh hitungan penulisnya. Daftar dihasilkan dari rantai emas sebagai `dataset/12_emas/kosakata.md`.
 
 **Mekanisme penyelesaian berlaku surut tidak dinilai.** Sesuai B0, nilai yang dihitung untuk masa $t$ dengan ω ≥ $t_\mathit{terbit}$ adalah *nilai seharusnya*; perhitungan masa pajak terakhir memakai jumlah nilai seharusnya. Entri penyelesaian (misalnya pembayaran tunai DTP Januari pada penggajian Februari) dicatat di jejak sebagai catatan, bukan fakta yang dinilai.
 
@@ -243,7 +255,9 @@ Semua aritmetika eksak. Pembagian menghasilkan pecahan. Pembulatan hanya terjadi
 | `defined(fakta)` | semua | apakah ada aturan aktif yang menghasilkan fakta itu |
 | `value_or(fakta, cadangan)` | semua | nilai fakta, atau cadangan bila tidak ada aturan aktif |
 
-Fakta konteks bawaan (selalu tersedia): `month`, `tax_year`, `is_final_period`, `first_month` (bulan kerja pertama tahun itu), `final_month`, `months_employed` (jumlah masa kerja tahun itu), `method`. Fakta lingkup tahun dapat dibaca langsung dari aturan masa dengan namanya; `year_value` hanya untuk keterbacaan.
+Fakta konteks bawaan (selalu tersedia): `month`, `tax_year`, `is_final_period`, `first_month` (bulan kerja pertama tahun itu), `final_month`, `months_employed` (jumlah masa kerja tahun itu). Fakta lingkup tahun dapat dibaca langsung dari aturan masa dengan namanya; `year_value` hanya untuk keterbacaan.
+
+**Konvensi masukan.** Data kasus masuk ke KB lewat aturan regulasi `default` bersumber dokumen `INPUT-CONVENTION`, misalnya `base_salary := income("base_salary")` dan `withholding_method := case("method")`. Karena `default`, kebijakan perusahaan dapat menggantinya (misalnya PKB yang menetapkan PPh ditanggung perusahaan, atau menghitung lembur dari jam kerja). Metode pemotongan sengaja tidak menjadi fakta bawaan *engine* agar dapat diatur kebijakan. *Engine* memberi peringatan untuk komponen data kasus (`income`, `benefits`, `hr`) yang tidak dibaca aturan mana pun, supaya penghasilan baru yang belum dikenal KB tidak hilang diam-diam.
 
 ### 6.4 Verifikasi statis
 
@@ -256,9 +270,9 @@ Saat sebuah rekaman masuk (G1/G3) dan saat KB dimuat: ekspresi di-*parse*; nama 
 Ada dua sumbu waktu.
 
 1. **Waktu berlaku** (*valid time*) $[t_s, t_e]$: masa hukum yang dicakup ketentuan. Sumbu ini dibandingkan dengan **tanggal evaluasi** $d$:
-   - aturan lingkup masa: $d$ = tanggal 1 bulan masa itu;
-   - aturan lingkup tahun: $d$ = tanggal 1 bulan masa pajak terakhir tahun itu;
-   - `param`, `lookup`, `bracket`, `progressive`, `in_table` memakai $d$ dari konteks pemanggilnya.
+   - aturan lingkup masa: $d$ = tanggal 1 bulan masa itu; rekaman berlaku bila $t_s \le d \le t_e$;
+   - aturan lingkup tahun: rekaman berlaku bila $[t_s, t_e]$ beririsan dengan rentang kerja tahun itu (tanggal 1 bulan kerja pertama sampai hari terakhir masa pajak terakhir). Dengan ini fasilitas sementara yang berakhir sebelum Desember (misalnya DTP April–September 2020) tetap punya aturan perhitungan akhir tahunnya. Bila beberapa rekaman untuk fakta yang sama beririsan, resolusi konflik memilih (bagian 8, *posterior* menurut `valid_from`);
+   - `param`, `lookup`, `bracket`, `progressive`, `in_table` dalam konteks masa memakai $d$ masa itu; dalam konteks tahun memakai irisan yang sama seperti aturan tahun, dengan pilihan `valid_from` paling akhir (bagian 3).
    Bulan iuran BPJS disamakan dengan bulan upah, sehingga batas upah JP yang berlaku "mulai iuran Maret" dibaca pada masa Maret.
 2. **Waktu pengetahuan** $t_c$: tanggal terbit dokumen. Pertanyaan pada ω hanya melihat rekaman dengan $t_c \le \omega$ (bagian 2).
 
@@ -268,7 +282,7 @@ Aturan **aktif** adalah kandidat yang kondisinya benar. Parameter dan tabel dipi
 
 **Berlaku surut.** Untuk $t_s < t_c$, pertanyaan dengan $\omega < t_c$ melihat keadaan lama dan pertanyaan dengan $\omega \ge t_c$ melihat *nilai seharusnya* (B0). Perhitungan masa pajak terakhir dengan ω ≥ $t_c$ menjumlahkan nilai seharusnya semua masa.
 
-**Konsekuensi untuk A3.** Rekaman baru dengan $t_s$ tertentu hanya dapat mengubah hasil masa $t \ge t_s$, kecuali lewat fakta lingkup tahun dan agregat yang membaca masa sesudah $t_s$; G4 memeriksa masa sebelum $t_s$ (bukan sebelum $t_c$), sesuai A3$_t$.
+**Konsekuensi untuk A3.** Rekaman baru dengan $t_s$ tertentu hanya dapat mengubah hasil masa $t \ge t_s$, kecuali lewat fakta lingkup tahun dan agregat yang membaca masa sesudah $t_s$; G4 memeriksa masa sebelum **tanggal mulai efek** pembaruan (akuisisi.md bagian 4), bukan sebelum $t_c$, sesuai A3$_t$.
 
 ---
 
@@ -279,16 +293,20 @@ Bila lebih dari satu aturan aktif untuk fakta yang sama pada konteks yang sama, 
 1. ***Lex superior*** (peringkat). Peringkat aturan:
    - 4: regulasi `mandatory`;
    - 3: perusahaan (semua `modality`);
-   - 2: regulasi `optional` yang diadopsi (`pph:adopts` dari aturan perusahaan yang berlaku pada konteks itu); aturan `optional` yang tidak diadopsi tidak pernah aktif;
+   - 2: regulasi `optional` yang diadopsi oleh kebijakan $P(x)$ (`adopts` di tingkat dokumen kebijakan); aturan `optional` yang tidak diadopsi tidak pernah aktif;
    - 1: regulasi `default`.
-   Hanya aturan berperingkat tertinggi yang lanjut. Bila sebuah aturan perusahaan aktif kalah dari aturan regulasi `mandatory` untuk fakta yang sama **dan nilainya berbeda**, *engine* mencatat konflik (A4) dengan kode C dari atribut aturan perusahaan bila ada, atau `C?` bila tidak.
-2. ***Lex specialis*** (relasi eksplisit). Di antara aturan sisa, aturan $a$ mengalahkan $b$ bila $b$ ada dalam penutup transitif `overrides` milik $a$. Aturan yang dikalahkan aturan sisa lain disingkirkan. Ukuran "lebih spesifik" tidak dihitung dari sintaks kondisi (Log keputusan "*Lex specialis*").
-3. ***Lex posterior***. Di antara aturan sisa, yang bertanggal terbit ($t_c$) paling akhir menang; bila sama, yang `valid_from`-nya paling akhir.
+   Hanya aturan berperingkat tertinggi yang lanjut. Bila sebuah aturan perusahaan aktif kalah dari aturan regulasi `mandatory` untuk fakta yang sama **dan nilainya berbeda**, *engine* mencatat konflik (A4); kodenya diambil dari anotasi `conflict_code` aturan perusahaan bila ada, atau `C?` bila tidak.
+   Hierarki peraturan (UU > PP > PMK > PER) tidak dipakai *engine*: semua aturan regulasi `mandatory` berperingkat sama, dan pertentangan antartingkat harus dinyatakan dengan `overrides` di pembaruan. Ini keputusan desain (KB menyimpan ketentuan yang sudah diharmonisasi, bukan menalar keabsahan peraturan) dan dicatat sebagai batas.
+2. ***Lex specialis*** (relasi eksplisit). Di antara aturan sisa, aturan $a$ mengalahkan $b$ bila $b$ ada dalam penutup transitif `overrides` milik $a$. Aturan yang dikalahkan aturan sisa lain disingkirkan. Ukuran "lebih spesifik" tidak dihitung dari sintaks kondisi (Log keputusan "*Lex specialis*"). Relasi `overrides` harus asiklik (G3).
+3. ***Lex posterior***. Di antara aturan sisa, yang `valid_from`-nya paling akhir menang; bila sama, yang $t_c^0$-nya (tanggal pencatatan rekaman pertama unsur) paling akhir. Tanggal pencatatan rekaman terakhir tidak dipakai, supaya revisi metadata aturan lama (misalnya penutupan masa berlaku) tidak membuatnya "lebih baru" dan menang kembali untuk masa lampau.
 4. **Tidak ada pemenang tunggal.** Bila masih lebih dari satu aturan dan nilai ekspresinya berbeda, fakta itu dinyatakan **tidak terdefinisi** dengan kesalahan `UnresolvedConflict` yang menyebut semua aturan yang tersisa. Bila nilainya sama, salah satunya dipakai dan peringatan `RedundantRules` dicatat. Kasus yang menghasilkan kesalahan dinilai salah pada semua fakta yang bergantung pada fakta itu.
 
 **Batasan.** Setelah semua fakta dihitung, setiap batasan yang berlaku pada konteks itu dievaluasi; pelanggaran dicatat sebagai konflik.
 
-**Laporan konflik** $\mathit{konflik}(\mathcal{K}, x, \omega)$ adalah himpunan tupel (sumber konflik, fakta atau batasan, masa, kode). Laporan ini yang dinilai untuk A4 dan label dampak (c).
+**Laporan konflik** $\mathit{konflik}(\mathcal{K}, x, \omega)$ berisi entri dengan atribut jenis (`override` atau `constraint`), aturan perusahaan yang terlibat, aturan atau batasan regulasi yang terlibat, fakta, masa, dan kode. Untuk membandingkan dua laporan (A4, konsensus, label (c)), yang dipakai adalah **kunci stabil** yang tidak bergantung pada nama unsur regulasi pilihan penyusun $\Delta$:
+- `override`: (jenis, `id` aturan perusahaan, fakta, masa);
+- `constraint`: (jenis, himpunan `id` aturan perusahaan yang menghasilkan fakta yang dibaca batasan, masa, kode batasan).
+Aturan perusahaan berasal dari emas kebijakan, sehingga `id`-nya stabil pada eksperimen regulasi; pada eksperimen kebijakan, `id` aturan perusahaan kandidat diselaraskan dengan emas lewat bentuk kanonik (bagian 9) sebelum dibandingkan.
 
 ---
 
@@ -298,10 +316,10 @@ Dipakai untuk mencocokkan unsur kandidat dengan unsur emas pada metrik diagnosti
 
 1. **Ekspresi kanonik**: AST dicetak ulang dengan spasi tetap; operan operator komutatif (`+`, `*`, `and`, `or`, `==`, `min`, `max`) diurutkan leksikografis; konstanta dilipat (`5 / 100` → `1/20`); `dec("0.05")` → `1/20`; perbandingan dinormalisasi ke `<`/`<=` dengan menukar sisi; kondisi kosong → `True`.
 2. **Kunci unsur**:
-   - aturan: (`layer`, `produces`, `scope`, kondisi kanonik);
+   - aturan: (`layer`, `produces`, `scope`, kondisi kanonik, `valid_from`);
    - parameter: (`name`, `valid_from`);
    - tabel: (`name`, `valid_from`);
-   - batasan: (`code`, asersi kanonik).
+   - batasan: (`code`, asersi kanonik, `valid_from`).
 3. **Atribut yang dibandingkan** setelah kunci cocok: `modality`, `valid_from`, `valid_until`, `recorded_on`, ekspresi kanonik, `overrides`, nilai, baris tabel (sebagai himpunan), dokumen sumber dan pasal.
 4. **Penyelarasan** kandidat dengan emas: pencocokan bipartit (*Hungarian*) dengan biaya = jumlah atribut berbeda, kunci tidak cocok = biaya maksimum. Operasi sunting = jumlah atribut yang harus diubah ditambah unsur yang harus ditambah atau dihapus.
 
@@ -313,7 +331,7 @@ Yang sengaja **tidak** dapat dinyatakan tanpa mengubah *engine* (pelanggaran A1 
 1. hubungan antarpegawai atau antar-pemberi kerja (misalnya penghasilan dari pemberi kerja lain, pindah cabang dengan pemotong berbeda);
 2. perhitungan lintas tahun pajak (misalnya rapel tahun lalu, kompensasi lebih bayar ke tahun berikutnya);
 3. satuan masa selain bulan (gaji harian/mingguan dinyatakan sebagai komponen bulanan di data kasus);
-4. iterasi selain titik tetap terkecil satu fakta (persamaan simultan beberapa fakta);
+4. iterasi selain titik tetap terkecil satu fakta (persamaan simultan beberapa fakta). Ini penyempitan dibanding prototipe, yang mendukung iterasi Kleene atas komponen terhubung kuat beranggota banyak; seluruh *gross-up* di korpus cukup dengan satu fakta titik tetap per konteks;
 5. kewajiban prosedural tanpa angka (tenggat setor/lapor, bentuk bukti potong, sanksi administrasi);
 6. pertimbangan yang tidak dapat ditentukan dari data kasus (misalnya "kenikmatan yang tidak dapat dimanfaatkan secara khusus oleh pegawai" tanpa atribut yang menyatakannya); untuk hal ini data kasus harus memuat atributnya;
 7. kurs valas (komponen valas dinyatakan dalam rupiah di data kasus).
@@ -362,7 +380,9 @@ Semantik mode untuk bilangan negatif: `down` ke −∞, `up` ke +∞, `truncate`
 
 ### 11.4 Titik tetap
 
-Aturan bertanda `fixed_point` dengan batas `lower` dan `upper` menghitung titik tetap terkecil $T = e(T)$ dengan iterasi $T_0 = \mathit{lower}$, $T_{k+1} = e(T_k)$ sampai $T_{k+1} = T_k$ (tafsir K3: titik tetap terkecil, iterasi dari 0). Selama iterasi, pembacaan fakta itu di dalam ekspresinya sendiri (langsung atau lewat fakta lain) mengembalikan $T_k$, dan memo fakta yang bergantung padanya dihapus setiap putaran. Bila $T_k$ keluar dari $[\mathit{lower}, \mathit{upper}]$ atau tidak konvergen dalam 200 putaran, *engine* gagal dengan `FixedPointError`. Fungsi PPh atas bruto monoton tidak turun, sehingga iterasi dari batas bawah konvergen ke titik tetap terkecil (Tarski).
+Aturan bertanda `fixed_point` dengan batas `lower` dan `upper` menghitung titik tetap terkecil $T = e(T)$ dengan iterasi $T_0 = \mathit{lower}$, $T_{k+1} = e(T_k)$ sampai $T_{k+1} = T_k$ (tafsir K3: titik tetap terkecil, iterasi dari 0). Selama iterasi, pembacaan fakta itu di dalam ekspresinya sendiri (langsung atau lewat fakta lain) mengembalikan $T_k$, dan memo fakta yang bergantung padanya dihapus setiap putaran. Bila $T_k$ keluar dari $[\mathit{lower}, \mathit{upper}]$ atau tidak konvergen dalam 200 putaran, *engine* gagal dengan `FixedPointError`. Fungsi PPh atas bruto monoton tidak turun, sehingga iterasi dari batas bawah konvergen ke titik tetap terkecil (Tarski); monotonisitas tidak diperiksa saat *runtime*, tetapi kegagalannya muncul sebagai `FixedPointError` atau nilai yang berbeda dari acuan.
+
+Fakta yang sedang dievaluasi di luar iterasi (misalnya `gross_income` masa itu ketika `tax_allowance` sedang diiterasi) boleh dievaluasi ulang di dalam iterasi, karena ketergantungannya pada fakta titik tetap dipenuhi oleh nilai iterasi; siklus lain tetap `CircularDefinition`. Memo yang dibuat selama satu putaran dihapus bila putaran itu belum konvergen, termasuk memo fakta lingkup tahun (siklus Desember: tunjangan pajak masa terakhir ↔ PPh setahun).
 
 ### 11.5 Jejak penjelasan
 
@@ -405,3 +425,12 @@ Daftar perubahan ini adalah masukan Tahap 5.
 | Bentuk kanonik unsur | 9 |
 | Batas ekspresivitas | 10 |
 | Algoritma inferensi, aritmetika eksak, pembulatan, definisi melingkar, jejak | 11 |
+
+---
+
+## 14. Riwayat revisi
+
+| Versi | Tanggal | Perubahan |
+|---|---|---|
+| 1 | 2026-10-27 | Draf pertama |
+| 2 | 2026-10-27 | Tanggapan atas tinjauan independen (41 temuan): lapisan perusahaan per kebijakan dan tidak disaring ω; *lex posterior* menurut `valid_from` dan $t_c^0$; pemilihan parameter/tabel bernama sama; aturan tahun dipilih menurut irisan dengan tahun kerja; fakta tahun diberi masa pajak terakhir; $F_\mathit{nilai}$ dibekukan; kunci stabil laporan konflik; konvensi masukan termasuk `withholding_method`; konvensi id dan tanggal batas bulan; kunci kanonik memuat `valid_from`; hierarki peraturan tidak dipakai; penyempitan titik tetap dicatat |

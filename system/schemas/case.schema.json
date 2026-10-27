@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3id.org/pph21kbs/schemas/case.schema.json",
+  "title": "Case: one permanent employee, one employer, one tax year",
+  "type": "object",
+  "required": [
+    "case_id",
+    "tax_year",
+    "employee",
+    "employer",
+    "method",
+    "employment",
+    "periods"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "type": "string"
+    },
+    "tax_year": {
+      "type": "integer",
+      "minimum": 2009,
+      "maximum": 2030
+    },
+    "employee": {
+      "type": "object",
+      "required": [
+        "ptkp_status"
+      ],
+      "properties": {
+        "ptkp_status": {
+          "type": "string",
+          "pattern": "^(TK|K)/[0-9]+$"
+        },
+        "sex": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "husband_no_income_certified": {
+          "type": "boolean"
+        },
+        "tax_id_valid": {
+          "type": "boolean"
+        },
+        "subjective_start_month": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 12
+        },
+        "subjective_end_month": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 12
+        }
+      }
+    },
+    "employer": {
+      "type": "object",
+      "properties": {
+        "klu": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "jkk_risk_group": {
+          "type": "string"
+        },
+        "jkk_relief_eligible": {
+          "type": "boolean"
+        },
+        "policy": {
+          "type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "method": {
+      "type": "string"
+    },
+    "employment": {
+      "type": "object",
+      "required": [
+        "start_month",
+        "end_month"
+      ],
+      "properties": {
+        "start_month": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        },
+        "end_month": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        }
+      }
+    },
+    "periods": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "month"
+        ],
+        "properties": {
+          "month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "income": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "benefits": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "zakat": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "hr": {
+            "type": "object",
+            "additionalProperties": {
+              "type": [
+                "integer",
+                "string",
+                "boolean"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}

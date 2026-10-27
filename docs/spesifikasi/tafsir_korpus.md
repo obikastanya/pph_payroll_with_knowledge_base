@@ -20,6 +20,7 @@ Ditetapkan 2026-10-27 dari tinjauan korpus peristiwa (`dataset/09_korpus_peristi
 | B2 | E07/E09 keringanan JKK sebelum terbit | bruto memakai tarif keringanan; kelebihan iuran diperhitungkan ke iuran berikutnya; selisih PPh 21 diserap Masa Pajak Terakhir |
 | B3 | E10 PMK 72/2025, Masa Oktober 2025 | PPh 21 Oktober DTP; mekanisme seperti B1; Desember diatur Ps. 5 ayat (5a), (6a), (6b) |
 | B4 | E02 PMK 66/2023, natura Jan–Jun 2023 | tidak dipotong sama sekali; pegawai menghitung sendiri di SPT Tahunan |
+| B5 | E13 PER-11/PJ/2025, pembulatan Masa Januari–April 2025 | nilai seharusnya = pembulatan ke rupiah terdekat; selisih paling banyak Rp1 per masa terserap di Masa Pajak Terakhir |
 
 ---
 
@@ -195,3 +196,19 @@ Selisih keduanya tidak boleh ditulis ulang ke masa m. Selisih itu diselesaikan d
 - PP 55/2022 Pasal 73 ayat (2) huruf a, PDF hlm. 68: kewajiban pemotongan natura berlaku untuk penghasilan "sejak tanggal 1 Januari 2023"; PMK 66/2023 mengecualikan semester pertama dari pemotongan itu.
 
 **Dampak.** Untuk E02 nilai seperti diketahui saat itu dan nilai seharusnya sama di semua masa pemotongan; peristiwa ini menguji klasifikasi (T3) dan pengecualian masa (L5), bukan penyelesaian surut. Kandidat Δ yang memasukkan natura Januari–Juni ke perhitungan Desember 2023 dilabeli L2 dan L5.
+
+### B5. E13 PER-11/PJ/2025, pembulatan Masa Januari–April 2025
+
+Ditambahkan di Tahap 3 bersama pemindahan P07 menjadi E13.
+
+**Pertanyaan.** PER-11/PJ/2025 terbit 22 Mei 2025, tetapi Pasal 129–130 membuat pembulatan ke rupiah terdekat berlaku untuk bukti potong Masa Januari 2025 dan sesudahnya. Bukti potong Masa Januari–April 2025 mungkin sudah dibuat dengan membuang desimal. Berapa nilai seharusnya dan bagaimana selisihnya diselesaikan?
+
+**Putusan.**
+1. Nilai seharusnya PPh 21 Masa Januari–April 2025 (ω ≥ 2025-05-22): TER × bruto dibulatkan ke rupiah terdekat (0,50 ke atas), sama dengan masa sesudahnya (tafsir K1).
+2. Nilai seperti diketahui saat itu (ω < 2025-05-22): desimal dibuang, melanjutkan konvensi PER-2/PJ/2024 dan K2.
+3. Mekanisme: PER-11 tidak mengatur pembetulan bukti potong yang sudah dibuat. Selisih paling banyak Rp1 per masa tidak wajib dibetulkan; selisih itu terserap di Masa Pajak Terakhir, karena PPh setahun dihitung dengan tarif Pasal 17 atas PKP yang dibulatkan ke ribuan, lalu dikurangi PPh masa sebelumnya. Konvensi acuan (B0) memakai jumlah nilai seharusnya, sehingga entri penyelesaian tidak dinilai.
+
+**Dasar.** PER-11/PJ/2025 Pasal 129 ayat (1) huruf a dan ayat (3), PDF hlm. 106; Pasal 130 huruf a, PDF hlm. 107; Pasal 147: berlaku pada tanggal ditetapkan; tafsir_perhitungan.md K1.
+
+**Dampak.** GT dengan ω < 2025-05-22 untuk masa 2025: desimal dibuang. GT dengan ω ≥ 2025-05-22: rupiah terdekat. GT3 kasus 2025–2026 (dihitung dengan K1) sama dengan nilai ω ≥ 2025-05-22.
+

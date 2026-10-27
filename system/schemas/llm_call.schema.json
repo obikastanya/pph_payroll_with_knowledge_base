@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3id.org/pph21kbs/schemas/llm_call.schema.json",
+  "title": "One logged LLM call",
+  "type": "object",
+  "required": [
+    "call_id",
+    "run",
+    "time",
+    "model_requested",
+    "provider",
+    "step",
+    "prompt_sha256",
+    "usage",
+    "cost_usd"
+  ],
+  "properties": {
+    "call_id": {
+      "type": "string"
+    },
+    "run": {
+      "type": "string"
+    },
+    "time": {
+      "type": "string"
+    },
+    "model_requested": {
+      "type": "string"
+    },
+    "model_reported": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "provider": {
+      "enum": [
+        "anthropic",
+        "openai"
+      ]
+    },
+    "effort": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "step": {
+      "enum": [
+        "relevance",
+        "draft",
+        "repair",
+        "b2",
+        "b5",
+        "calibration",
+        "probe"
+      ]
+    },
+    "document": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "event": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "candidate": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "order_seed": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "prompt_sha256": {
+      "type": "string"
+    },
+    "prompt_file": {
+      "type": "string"
+    },
+    "output_raw": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "stop_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "usage": {
+      "type": "object"
+    },
+    "cost_usd": {
+      "type": "number"
+    },
+    "batch": {
+      "type": "boolean"
+    },
+    "seconds": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "gates": {
+      "type": "object"
+    }
+  }
+}

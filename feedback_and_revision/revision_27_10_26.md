@@ -23,7 +23,7 @@ Judul lama menonjolkan bentuk *knowledge base*-nya ("dua lapis berversi waktu") 
 | *Knowledge-Based System* | Wujudnya perangkat lunak KBS (*knowledge base* + *inference engine*), bukan rumus *spreadsheet* | No. 1 |
 | Adaptif | Perubahan regulasi diterapkan lewat pembaruan *knowledge base*, tanpa mengubah kode *engine* | No. 2, no. 5 |
 | Akuisisi Pengetahuan Berbantuan LLM | LLM mengubah teks peraturan menjadi rancangan aturan; *engine* deterministik yang menghitung | No. 2 |
-| Regulasi dan Kebijakan Perusahaan | Dua lapis pengetahuan beserta deteksi konflik antarlapis | — |
+| Regulasi dan Kebijakan Perusahaan | Dua lapis pengetahuan beserta deteksi konflik antarlapis | No. 2 |
 
 ### Unsur judul lama yang dipindahkan
 
@@ -201,6 +201,7 @@ Jumlah lapisan TER berasal dari tabel di repositori yang sudah diekstraksi dua k
 | GT2 | Kalkulator DJP | Bila tersedia untuk rezim yang diuji |
 | GT3 | Perhitungan manual oleh penghitung independen | Sampel bertingkat per lapisan |
 | GT4 | Kalkulator pihak ketiga (*open source* dan publik) | Versi dan tanggal dicatat |
+| GT5 | Contoh perhitungan untuk kebijakan perusahaan | Ditulis rekan peneliti dari teks kebijakan sebelum peneliti menyusun aturannya, ditambah contoh di dokumen kebijakan itu sendiri. Dipakai untuk angka seperti gaji prorata, THR, dan *take home pay* |
 
 Semua selisih dilaporkan beserta hasil adjudikasinya, yaitu *knowledge base* salah, acuan salah, atau hukum ambigu. Sampel acak diadjudikasi ulang secara buta oleh orang kedua.
 
@@ -218,8 +219,8 @@ Setiap pertanyaan penelitian punya satu metrik utama yang langsung mengukur klai
 
 | RQ | Pertanyaan | Metrik utama | Arti |
 |---|---|---|---|
-| RQ1 | Dapatkah representasi menyatakan perubahan regulasi, termasuk yang belum diketahui saat dirancang, tanpa mengubah kode? | **RA** (*representational adaptability*) | Proporsi perubahan yang dapat dinyatakan tanpa mengubah *engine*, diuji pada perubahan yang ditulis orang lain |
-| RQ2 | Seberapa sering LLM menerapkan pembaruan yang benar, dan seberapa sering salah tanpa terdeteksi? | **SER** dan **CAR** | SER adalah laju pembaruan salah yang lolos tanpa terdeteksi (keamanan). CAR adalah laju pembaruan benar yang diterapkan (kegunaan). Keduanya dilaporkan bersama, karena sistem yang selalu menolak bekerja punya SER nol tetapi tidak berguna |
+| RQ1 | Dapatkah representasi menyatakan perubahan regulasi dan kebijakan perusahaan, termasuk yang belum diketahui saat dirancang, tanpa mengubah kode? | **RA** (*representational adaptability*) | Proporsi perubahan yang dapat dinyatakan tanpa mengubah *engine*, diuji pada perubahan yang ditulis orang lain dan pada korpus kebijakan perusahaan |
+| RQ2 | Seberapa sering LLM menerapkan pembaruan yang benar, dan seberapa sering salah tanpa terdeteksi? | **SER** dan **CAR** | SER adalah laju pembaruan salah yang lolos tanpa terdeteksi (keamanan). CAR adalah laju pembaruan benar yang diterapkan (kegunaan). Keduanya dilaporkan bersama, karena sistem yang selalu menolak bekerja punya SER nol tetapi tidak berguna. Masukannya dokumen regulasi dan dokumen kebijakan perusahaan, dan hasilnya dilaporkan per lapisan |
 | RQ3 | Pada rangkaian perubahan nyata, berapa yang berhasil, dan apakah kesalahan merambat? | **OAR** dan **kesalahan terpicu** | OAR adalah proporsi peristiwa yang tidak memperkenalkan kesalahan baru. Kesalahan terpicu adalah kesalahan yang muncul hanya karena pembaruan sebelumnya sudah salah |
 | RQ4 | Seberapa lengkap sistem menemukan kebijakan perusahaan yang terdampak? | ***Recall*** dan ***F2*** | *Recall* diutamakan, karena kebijakan terdampak yang terlewat lebih berbahaya daripada peringatan palsu. F2 memberi bobot *recall* dua kali *precision* |
 

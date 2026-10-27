@@ -389,7 +389,7 @@ G5 & Non-vakuitas, hanya untuk $\Delta$ yang tidak kosong. Setiap unsur yang dit
 \label{subsec:pembagian}
 \isian{
 \begin{itemize}[leftmargin=*,nosep]
-  \item \textbf{Pengembangan.} Regulasi fiktif dan perubahan historis sebelum rentang penelitian, misalnya perubahan PTKP dan lapisan Pasal 17 sebelum 2023. Peneliti memakainya untuk merancang \en{prompt}, gerbang, dan aturan pemilihan, lalu membekukan ketiganya.
+  \item \textbf{Pengembangan.} Regulasi fiktif, perubahan historis sebelum rentang penelitian (misalnya perubahan PTKP dan lapisan Pasal 17 sebelum 2023), dan sebagian kecil dokumen kebijakan buatan. Peneliti memakainya untuk merancang \en{prompt}, gerbang, dan aturan pemilihan, lalu membekukan ketiganya.
   \item \textbf{Uji.} Seluruh peristiwa nyata dalam rentang penelitian, termasuk pergantian ke TER. Peneliti tidak melihat peristiwa uji selama mengembangkan alur LLM, yaitu \en{prompt}, gerbang, dan aturan pemilihan. Representasi, \en{engine}, dan $\K^{\emas}$ memang disusun dengan mengetahui peristiwa ini, dan akibatnya ditangani di Bagian~\ref{subsec:hindsight}.
   \item \textbf{Uji prospektif.} Setiap regulasi PPh 21 yang terbit sesudah tanggal pra-registrasi. Peristiwa ini bebas kontaminasi data latih LLM dan tidak pernah dilihat perancang.
 \end{itemize}}
@@ -407,7 +407,7 @@ Untuk perubahan tak terlihat, penulisnya menyerahkan teks perubahan beserta 5--1
 
 \isian{Gambar~\ref{fig:rantai} menunjukkan rantainya. Acuan independen memvalidasi $\K^{\emas}_n$, lalu $\K^{\emas}_n$ menghasilkan nilai harapan $\SE$, dan $\SE$ menilai pembaruan dari LLM.
 \begin{enumerate}[leftmargin=*,nosep]
-  \item \textbf{Acuan.} Ada empat sumber. GT1 adalah contoh perhitungan resmi, dibagi menjadi contoh yang sudah dipakai selama pengembangan dan subset \en{holdout} yang tidak pernah dipakai. GT2 adalah kalkulator otoritas pajak, bila tersedia untuk rezim tersebut. GT3 adalah perhitungan manual oleh penghitung independen. GT4 adalah implementasi pihak ketiga, yaitu kalkulator \en{open source} dan kalkulator publik, dengan versi dan tanggal yang dicatat.
+  \item \textbf{Acuan.} Ada lima sumber. GT1 adalah contoh perhitungan resmi, dibagi menjadi contoh yang sudah dipakai selama pengembangan dan subset \en{holdout} yang tidak pernah dipakai. GT2 adalah kalkulator otoritas pajak, bila tersedia untuk rezim tersebut. GT3 adalah perhitungan manual oleh penghitung independen. GT4 adalah implementasi pihak ketiga, yaitu kalkulator \en{open source} dan kalkulator publik, dengan versi dan tanggal yang dicatat. GT5 adalah acuan untuk angka yang ditentukan kebijakan perusahaan, seperti gaji prorata, THR, dan \en{take home pay}. Isinya contoh perhitungan yang ditulis kolaborator dari teks kebijakan sebelum peneliti menyusun $\Delta^{\emas}$, ditambah contoh yang tercantum di dokumen kebijakan itu sendiri.
   \item \textbf{Pelaporan selisih.} Peneliti melaporkan semua selisih menurut hasil adjudikasi, yaitu \en{knowledge base} salah, acuan salah, atau hukum ambigu. Pengadjudikasi kedua memeriksa ulang sampel acak secara buta.
   \item \textbf{Matriks acuan dan sel ruang uji.} Matriks ini menunjukkan sel yang punya acuan independen dan sel yang tidak.
   \item \textbf{Uji \en{engine}.} \en{Engine} diuji terpisah dari \en{knowledge base} dengan uji unit terhadap aritmetika yang diperiksa tangan, karena $\SE$ juga dihitung dengan \en{engine} yang sama.
@@ -419,7 +419,7 @@ Untuk perubahan tak terlihat, penulisnya menyerahkan teks perubahan beserta 5--1
 
 \begin{figure}[t]
 \centering
-\gambar{GT1 (\en{holdout}), GT2, GT3, dan GT4 pihak ketiga memvalidasi $\K^{\emas}_n$. $\K^{\emas}_n$ menghasilkan nilai harapan $\SE$, yang kecukupannya diukur dengan \en{mutation score}. $\SE$ menilai $\hat{\Delta}$. $\SG$ terpisah dan hanya dipakai gerbang.}
+\gambar{GT1 (\en{holdout}), GT2, GT3, GT4 pihak ketiga, dan GT5 untuk lapisan perusahaan memvalidasi $\K^{\emas}_n$. $\K^{\emas}_n$ menghasilkan nilai harapan $\SE$, yang kecukupannya diukur dengan \en{mutation score}. $\SE$ menilai $\hat{\Delta}$. $\SG$ terpisah dan hanya dipakai gerbang.}
 \caption{Rantai kepercayaan \en{ground truth}.}
 \label{fig:rantai}
 \end{figure}
@@ -490,7 +490,7 @@ P1 & \isian{pengecoh} & -- & tidak relevan & 0 & uji \\
 \isian{Perubahan struktural sintetis dari penulis lain (Bagian~\ref{subsec:hindsight}), misalnya kategori TER keempat, jenis pengurang baru, tunjangan berplafon, aturan pembulatan baru, atau tarif harian.}
 
 \subsubsection{Kebijakan perusahaan}
-\isian{Intinya diambil dari dokumen nyata yang terbuka untuk umum, misalnya perjanjian kerja bersama atau peraturan perusahaan yang dipublikasikan. Kebijakan buatan melengkapi jenis konflik yang tidak muncul di dokumen nyata. Orang lain menulis konflik buatan dari taksonomi konflik sebelum detektor dibekukan. Kedua kelompok dilaporkan terpisah.}
+\isian{Intinya diambil dari dokumen nyata yang terbuka untuk umum, misalnya perjanjian kerja bersama atau peraturan perusahaan yang dipublikasikan. Kebijakan buatan melengkapi jenis konflik yang tidak muncul di dokumen nyata. Orang lain menulis konflik buatan dari taksonomi konflik sebelum detektor dibekukan. Kedua kelompok dilaporkan terpisah. Setiap dokumen kebijakan juga menjadi masukan akuisisi (E2) dan diuji ekspresivitasnya (E1), dengan $\Delta^{\emas}$ yang disusun dan diperiksa dengan cara yang sama seperti dokumen regulasi.}
 
 \subsection{Mode evaluasi dan hasil per dokumen}
 \isian{
@@ -549,8 +549,8 @@ AB5 & Validasi skema biasa dibanding \en{shape constraint} graf, dan pemindaian 
 \textbf{RQ} & \textbf{Hipotesis} & \textbf{Metrik utama} & \textbf{Analisis} & \textbf{Eksperimen} \\
 \midrule
 -- & Invarian A1 dan A3$_\omega$ tanpa pelanggaran selama evaluasi & jumlah pelanggaran & pemeriksaan & semua \\
-RQ1 & H1: laju adaptivitas representasional pada perubahan tak terlihat $\geq$ \isian{$\theta_1$} & RA, yaitu proporsi perubahan yang dapat dinyatakan tanpa mengubah \en{engine} & proporsi dengan CI eksak Clopper--Pearson & E1 \\
-RQ2 & H2a: batas atas laju kesalahan senyap usulan $\leq$ \isian{$\theta_2$}. H2b: CAR usulan lebih tinggi daripada B3 dan B4, dan SER usulan tidak lebih buruk dari keduanya dengan margin $\delta_S$ & SER dan CAR atas dokumen sumber nyata & CI eksak; selisih risiko berpasangan dengan CI Newcombe; non-inferioritas SER & E2 \\
+RQ1 & H1: laju adaptivitas representasional pada perubahan tak terlihat $\geq$ \isian{$\theta_1$} & RA, yaitu proporsi perubahan yang dapat dinyatakan tanpa mengubah \en{engine}; dilaporkan juga untuk korpus kebijakan & proporsi dengan CI eksak Clopper--Pearson & E1 \\
+RQ2 & H2a: batas atas laju kesalahan senyap usulan $\leq$ \isian{$\theta_2$}. H2b: CAR usulan lebih tinggi daripada B3 dan B4, dan SER usulan tidak lebih buruk dari keduanya dengan margin $\delta_S$ & SER dan CAR atas dokumen sumber nyata, per lapisan & CI eksak; selisih risiko berpasangan dengan CI Newcombe; non-inferioritas SER & E2 \\
 RQ3 & H3a: laju adaptivitas operasional berantai $\geq$ \isian{$\theta_3$}. H3b: kesalahan terpicu tidak melebihi batas derau pembangkitan & OAR, dihitung dari kesalahan yang diperkenalkan setiap langkah; kesalahan terpicu $I$ & CI eksak; deskriptif atas $R$ pengulangan, dibanding batas derau & E3 \\
 RQ4 & H4a: \en{recall} $\geq$ \isian{$\theta_4$}. H4b: $F_2$ usulan lebih tinggi daripada setiap pembanding B5 & \en{Recall} dan $F_2$ & \en{bootstrap} klaster per peristiwa; batas Clopper--Pearson tingkat pasangan sebagai pelengkap & E4 \\
 \bottomrule
@@ -560,8 +560,8 @@ RQ4 & H4a: \en{recall} $\geq$ \isian{$\theta_4$}. H4b: $F_2$ usulan lebih tinggi
 \subsubsection{Definisi metrik utama}
 \isian{
 \begin{itemize}[leftmargin=*,nosep]
-  \item \textbf{RA (RQ1).} Untuk setiap perubahan nyata dan tak terlihat, RA mencatat apakah ada $\Delta$ dalam bahasa representasi yang memenuhi A1--A4. Perubahan nyata dan tak terlihat dilaporkan terpisah, dan hanya perubahan tak terlihat yang menguji H1.
-  \item \textbf{SER dan CAR (RQ2).} Keduanya dihitung atas himpunan $D$ dokumen sumber nyata yang relevan, satu hasil per dokumen. Varian kontrafaktual dan pengecoh tidak termasuk. $\mathrm{SER} = \frac{1}{|D|}\sum_{d} \mathbb{1}[\text{salah-diterapkan}]$, $\mathrm{CAR} = \frac{1}{|D|}\sum_{d} \mathbb{1}[\text{benar-diterapkan}]$, dan $\mathrm{ABS} = 1 - \mathrm{SER} - \mathrm{CAR}$. SER mengukur keamanan, dan CAR mengukur kegunaan. Keduanya dilaporkan bersama karena sistem yang selalu \en{abstain} punya SER nol tetapi tidak berguna. Batas atas eksak untuk $f$ kesalahan dari $|D|$ dokumen adalah kuantil Beta $(1-\alpha;\, f+1,\, |D|-f)$, yang untuk $f=0$ menjadi $1-\alpha^{1/|D|}$.
+  \item \textbf{RA (RQ1).} Untuk setiap perubahan nyata, perubahan tak terlihat, dan kebijakan dalam korpus kebijakan, RA mencatat apakah ada $\Delta$ dalam bahasa representasi yang memenuhi A1--A4. Ketiganya dilaporkan terpisah, dan hanya perubahan tak terlihat yang menguji H1.
+  \item \textbf{SER dan CAR (RQ2).} Keduanya dihitung atas himpunan $D$ dokumen sumber nyata yang relevan, yaitu dokumen regulasi dan dokumen kebijakan nyata, satu hasil per dokumen, dan dilaporkan per lapisan. Varian kontrafaktual, pengecoh, dan kebijakan buatan tidak termasuk. $\mathrm{SER} = \frac{1}{|D|}\sum_{d} \mathbb{1}[\text{salah-diterapkan}]$, $\mathrm{CAR} = \frac{1}{|D|}\sum_{d} \mathbb{1}[\text{benar-diterapkan}]$, dan $\mathrm{ABS} = 1 - \mathrm{SER} - \mathrm{CAR}$. SER mengukur keamanan, dan CAR mengukur kegunaan. Keduanya dilaporkan bersama karena sistem yang selalu \en{abstain} punya SER nol tetapi tidak berguna. Batas atas eksak untuk $f$ kesalahan dari $|D|$ dokumen adalah kuantil Beta $(1-\alpha;\, f+1,\, |D|-f)$, yang untuk $f=0$ menjadi $1-\alpha^{1/|D|}$.
   \item \textbf{OAR (RQ3).} Proporsi peristiwa yang tidak memperkenalkan kesalahan baru dalam mode berantai. A2, A3$_t$, dan A4 dinilai pada $\SE_{\leq n}$, yaitu gabungan kasus seluruh keadaan sampai peristiwa $n$ termasuk masa lampau, di luar tupel $H_n$ yang sudah salah sebelumnya. Tanpa pengecualian $H_n$, satu kesalahan lama terhitung ulang di setiap peristiwa berikutnya. Keadaan kumulatif dilaporkan terpisah lewat \en{drift} akhir $D_N$.
   \item \textbf{Kesalahan terpicu (RQ3).} Untuk peristiwa $n$, $E^{\mathrm{ber}}_n$ dan $E^{\mathrm{iso}}_n$ adalah tupel salah pada mode berantai dan mode terisolasi, dan $H_n$ adalah tupel yang sudah salah di $\K^{\mathrm{sis}}_{n-1}$. Kesalahan terpicu $I_n = E^{\mathrm{ber}}_n \setminus (E^{\mathrm{iso}}_n \cup H_n)$ dipecah menjadi dua komponen. Komponen mekanis diperoleh dengan menerapkan $\hat{\Delta}_n$ dari mode terisolasi pada $\K^{\mathrm{sis}}_{n-1}$, sehingga yang terukur hanya perambatan lewat basis yang salah. Komponen kontekstual diperoleh dengan membangkitkan ulang $\hat{\Delta}_n$ memakai $\K^{\mathrm{sis}}_{n-1}$ sebagai konteks. Pembangkitan ulang memuat derau acak, sehingga batas derau diperkirakan dari selisih dua jalan terisolasi yang independen. H3b diuji terhadap batas itu, bukan terhadap nol.
   \item \textbf{\en{Recall} dan $F_2$ (RQ4).} Keduanya dihitung atas pasangan kebijakan dan peristiwa, dengan $F_2 = 5PR/(4P+R)$. \en{Recall} diutamakan karena kebijakan terdampak yang terlewat lebih berbahaya daripada peringatan palsu. Bila semua $n_+$ positif terdeteksi, batas bawah eksak \en{recall} adalah $\alpha^{1/n_+}$, misalnya $0{,}905$ untuk $n_+ = 30$. Pembanding \emph{tandai semua} menghasilkan $F_2 = 5\pi/(4\pi+1)$ untuk prevalensi $\pi$, sehingga $F_2$ baru bermakna di atas angka itu.
@@ -581,7 +581,7 @@ RQ4 & H4a: \en{recall} $\geq$ \isian{$\theta_4$}. H4b: $F_2$ usulan lebih tinggi
 \toprule
 \textbf{RQ} & \textbf{Metrik} & \textbf{Definisi} & \textbf{Pertanyaan yang dijawab} \\
 \midrule
-Instrumen & Selisih per hasil adjudikasi; batas atas laju kegagalan & semua selisih $\K^{\emas}$ terhadap GT1--GT4; untuk $n$ kasus operasional tanpa kegagalan, $p_U = 1-\alpha^{1/n}$, sehingga $n \geq 2.995$ dibutuhkan untuk $<0{,}1\%$ pada $\alpha=0{,}05$ & seberapa dapat dipercaya \en{ground truth} \\
+Instrumen & Selisih per hasil adjudikasi; batas atas laju kegagalan & semua selisih $\K^{\emas}$ terhadap GT1--GT5; untuk $n$ kasus operasional tanpa kegagalan, $p_U = 1-\alpha^{1/n}$, sehingga $n \geq 2.995$ dibutuhkan untuk $<0{,}1\%$ pada $\alpha=0{,}05$ & seberapa dapat dipercaya \en{ground truth} \\
 Instrumen & \en{Mutation score} global dan terfokus-$\Delta$ & mutan terdeteksi dibagi mutan tak setara & apakah $\SE$ cukup tajam \\
 RQ1 & Akurasi resolusi konflik & pasangan aturan dengan pemenang hukum yang diketahui per asas, dinilai benar atau salah & apakah resolusi konflik bekerja \\
 RQ1 & Kelengkapan jejak & fakta keluaran yang jejaknya sampai ke sumber hukum, dibagi seluruh fakta keluaran & kelengkapan fasilitas penjelasan \\
@@ -593,7 +593,7 @@ RQ2 & Kesepakatan perilaku dan kebenaran per unsur & proporsi tupel $\SE$ yang s
 RQ2 & Laju hafalan dan kesetiaan kontrafaktual & proporsi nilai yang diubah di mana $\hat{\Delta}$ memuat nilai asli, dan proporsi yang memuat nilai kontrafaktual & apakah LLM membaca dokumen atau mengingat \\
 RQ2 & Kontaminasi & SER dan CAR untuk peristiwa sebelum dan sesudah \en{training cutoff} model & pengaruh data latih \\
 RQ2 & Penilaian relevansi & laju \en{false positive}, yaitu pengecoh yang dinilai relevan, dan laju pembaruan terlewat, yaitu dokumen relevan yang dinilai tidak relevan & perubahan tanpa alasan dan perubahan yang terlewat \\
-RQ2 & Strata kontrafaktual & SER dan CAR pada varian kontrafaktual, dengan CI \en{bootstrap} klaster per dokumen sumber & ketahanan terhadap nilai yang tidak dikenal LLM \\
+RQ2 & Strata kontrafaktual dan kebijakan buatan & SER dan CAR pada varian kontrafaktual dan pada kebijakan buatan, dengan CI \en{bootstrap} klaster per dokumen sumber & ketahanan terhadap nilai yang tidak dikenal LLM, dan terhadap jenis kebijakan yang tidak muncul di dokumen nyata \\
 RQ2 & Ketepatan kutipan & unsur yang kutipannya ada dan mendukung unsur itu & dasar hukum karangan \\
 RQ2 & Upaya koreksi & operasi sunting atribut dari $\hat{\Delta}$ ke $\Delta^{\emas}$ setelah penyelarasan unsur (Hungarian), hanya pada unsur yang salah secara perilaku; penghematan $= 1 - \text{sunting}/\text{operasi untuk menyusun } \Delta^{\emas} \text{ dari kosong}$, dan nilainya boleh negatif & pekerjaan manusia yang dihemat \\
 RQ2 & Kurva biaya dan akurasi & CAR terhadap biaya per peristiwa & kelayakan praktis \\
@@ -652,8 +652,8 @@ Kesepakatan & label RQ4 dan $\Delta^{\emas}$ & Cohen's $\kappa$; Krippendorff's 
 \subsection{Prosedur eksperimen}
 \begin{itemize}[leftmargin=*,nosep]
   \item \textbf{E0, validasi instrumen.} \isian{Lihat Bagian~\ref{subsec:instrumen}. E0 menjadi prasyarat semua eksperimen lain.}
-  \item \textbf{E1, adaptivitas representasi (RQ1).} \isian{RA pada perubahan nyata dan tak terlihat, akurasi resolusi konflik, dan pemetaan riwayat \en{engine}.}
-  \item \textbf{E2, akuisisi terisolasi (RQ2).} \isian{Setiap dokumen uji dijalankan pada setiap kondisi, yaitu usulan, B3, B4, dan AB2--AB5. AB1 dijalankan pada keadaan hukum terpilih. Model utama dipakai untuk semua kondisi, dan model kedua (\en{open-weight}) hanya untuk usulan dan B3. Satu jalan terisolasi tambahan dipakai untuk batas derau.}
+  \item \textbf{E1, adaptivitas representasi (RQ1).} \isian{RA pada perubahan nyata, perubahan tak terlihat, dan korpus kebijakan, akurasi resolusi konflik, dan pemetaan riwayat \en{engine}.}
+  \item \textbf{E2, akuisisi terisolasi (RQ2).} \isian{Setiap dokumen uji, baik regulasi maupun kebijakan, dijalankan pada setiap kondisi, yaitu usulan, B3, B4, dan AB2--AB5. AB1 dijalankan pada keadaan hukum terpilih. Model utama dipakai untuk semua kondisi, dan model kedua (\en{open-weight}) hanya untuk usulan dan B3. Satu jalan terisolasi tambahan dipakai untuk batas derau.}
   \item \textbf{E3, \en{regulation replay} (RQ3).} \isian{Mode berantai dari \en{knowledge base} awal sampai peristiwa terakhir, dalam dua varian \en{abstain} dan $R$ pengulangan. Kesalahan didekomposisi menjadi bawaan, baru, terpicu mekanis, dan terpicu kontekstual. B1 menjadi pembanding praktik, dan peristiwa prospektif ditambahkan begitu terbit. Ini bukti utama untuk feedback no. 5.}
   \item \textbf{E4, analisis dampak (RQ4).} \isian{Dua masukan, yaitu $\Delta^{\emas}$ dan $\hat{\Delta}$, dibandingkan dengan pembanding B5.}
   \item \textbf{E5, motivasi.} \isian{B2 pada $\pm$100 kasus operasional.}
@@ -672,7 +672,7 @@ Kesepakatan & label RQ4 dan $\Delta^{\emas}$ & Cohen's $\kappa$; Krippendorff's 
 Total panggilan dikalikan rata-rata token masuk dan keluar serta harga model, lalu dicantumkan dalam rupiah di pra-registrasi. Biaya ditekan dengan memotong dokumen per pasal, memakai \en{prompt caching}, membangkitkan kontrafaktual secara otomatis, dan menjalankan ablasi pada satu model.}
 
 \subsection{Kolaborator dan rencana cadangan}
-\isian{Beberapa langkah membutuhkan orang selain peneliti, yaitu penulis perubahan tak terlihat dan konflik buatan, pembaca kedua $\Delta^{\emas}$, pengadjudikasi kedua, pelabel kedua RQ4, dan praktisi pajak. Peran-peran ini digabung ke paling banyak dua kolaborator bernama, dan jam kerjanya dicatat. Untuk setiap peran yang tidak terisi, pra-registrasi mencantumkan apa yang dihapus dan bagaimana hal itu dilaporkan sebagai keterbatasan. Contohnya, tanpa penulis perubahan tak terlihat, RQ1 hanya melaporkan perubahan nyata, dan klaimnya turun menjadi kemampuan menyatakan perubahan yang sudah diketahui.}
+\isian{Beberapa langkah membutuhkan orang selain peneliti, yaitu penulis perubahan tak terlihat dan konflik buatan, penulis contoh perhitungan kebijakan (GT5), pembaca kedua $\Delta^{\emas}$, pengadjudikasi kedua, pelabel kedua RQ4, dan praktisi pajak. Peran-peran ini digabung ke paling banyak dua kolaborator bernama, dan jam kerjanya dicatat. Untuk setiap peran yang tidak terisi, pra-registrasi mencantumkan apa yang dihapus dan bagaimana hal itu dilaporkan sebagai keterbatasan. Contohnya, tanpa penulis perubahan tak terlihat, RQ1 hanya melaporkan perubahan nyata, dan klaimnya turun menjadi kemampuan menyatakan perubahan yang sudah diketahui.}
 
 \subsection{Reproduksibilitas}
 \isian{Catat versi perangkat lunak dan model serta tanggal akses, dan arsipkan seluruh \en{prompt} dan keluaran LLM, sehingga semua analisis dapat diulang tanpa memanggil LLM lagi.}
@@ -687,10 +687,10 @@ Total panggilan dikalikan rata-rata token masuk dan keluar serta harga model, la
 \isian{Selisih per hasil adjudikasi, matriks acuan dan sel, Tabel~\ref{tab:cakupan} yang sudah terisi, \en{mutation score}, dan Krippendorff's $\alpha$ untuk $\Delta^{\emas}$.}
 
 \subsection{Adaptivitas representasi (RQ1)}
-\isian{RA nyata dan tak terlihat dengan CI, perubahan yang gagal beserta alasannya, riwayat \en{engine}, dan akurasi resolusi konflik.}
+\isian{RA untuk perubahan nyata, perubahan tak terlihat, dan korpus kebijakan dengan CI, perubahan dan kebijakan yang gagal beserta alasannya, riwayat \en{engine}, dan akurasi resolusi konflik.}
 
 \subsection{Akuisisi satu langkah (RQ2)}
-\isian{SER, CAR, dan ABS per kondisi dan per jenis perubahan dengan CI; selisih CAR dan non-inferioritas SER terhadap B3 dan B4; penilaian relevansi; strata kontrafaktual; \en{pass@1}, \en{1@m}, dan \en{pass@m}; dan metrik diagnostik.}
+\isian{SER, CAR, dan ABS per kondisi, per lapisan, dan per jenis perubahan dengan CI; selisih CAR dan non-inferioritas SER terhadap B3 dan B4; penilaian relevansi; strata kontrafaktual; \en{pass@1}, \en{1@m}, dan \en{pass@m}; dan metrik diagnostik.}
 
 \begin{figure}[t]
 \centering
@@ -773,7 +773,7 @@ Total panggilan dikalikan rata-rata token masuk dan keluar serta harga model, la
   \item Korpus peristiwa nyata, pengecoh termasuk pengecoh sulit, kontrafaktual otomatis, perubahan tak terlihat dari penulis lain, serta kebijakan perusahaan nyata dan buatan.
   \item $\K^{\emas}_n$ dan $\Delta^{\emas}_n$, diperiksa pembaca kedua.
   \item Generator ruang uji untuk $\SE$, yaitu kombinatorial berbatasan, batas terbalik dari PKP, dan operasional, serta generator $\SG$ otomatis yang menyasar kondisi unsur yang berubah. Keduanya tidak beririsan.
-  \item Acuan berupa \en{holdout} contoh resmi, implementasi pihak ketiga, dan perhitungan manual.
+  \item Acuan berupa \en{holdout} contoh resmi, implementasi pihak ketiga, perhitungan manual, dan contoh perhitungan kebijakan (GT5).
   \item Pembanding B1--B5 dan ablasi AB1--AB5.
   \item Pencatat eksperimen untuk seluruh \en{prompt}, keluaran, biaya, dan waktu.
 \end{enumerate}
@@ -802,7 +802,7 @@ Total panggilan dikalikan rata-rata token masuk dan keluar serta harga model, la
   \item Model utama, model kedua, dan anggaran API.
   \item Apakah pembanding B2 (LLM menghitung langsung) disertakan.
   \item Apakah LLM boleh memakai alat ekstraksi tabel.
-  \item Kolaborator, paling banyak dua, untuk perubahan tak terlihat, konflik buatan, pembaca kedua, dan pelabel kedua, beserta rencana cadangan bila tidak ada.
+  \item Kolaborator, paling banyak dua, untuk perubahan tak terlihat, konflik buatan, contoh perhitungan kebijakan, pembaca kedua, dan pelabel kedua, beserta rencana cadangan bila tidak ada.
   \item Ambang hipotesis yang dapat dicapai oleh jumlah dokumen dan peristiwa yang tersedia.
   \item Pembaca kedua $\Delta^{\emas}$ dan praktisi pajak.
 \end{enumerate}

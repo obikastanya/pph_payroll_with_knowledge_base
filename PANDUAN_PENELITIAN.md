@@ -18,8 +18,8 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
 2. **Data untuk sistem terpisah dari data untuk menilai sistem.** Kasus uji gerbang ($S^G$) dan kasus uji evaluasi ($S^E$) tidak boleh beririsan, dan kode alur akuisisi tidak boleh membaca $S^E$.
 3. **Instrumen divalidasi sebelum dipakai.** *Knowledge base* emas dan $S^E$ harus lulus validasi (E0) sebelum eksperimen utama.
 4. **Rancangan dikunci sebelum eksperimen.** Hipotesis, metrik, ambang, dan pembagian data didaftarkan ke layanan pra-registrasi sebelum data uji disentuh. Hipotesis yang terbantah dilaporkan sebagai terbantah.
-5. **Materi tersembunyi tidak masuk repo publik.** Perubahan tak terlihat, konflik buatan, subset *holdout* contoh resmi, dan nilai harapan $S^E$ disimpan di repo privat. Hash SHA-256 berkasnya di-*commit* ke repo ini sebagai bukti waktu.
-6. **Istilah.** Karya ini disebut "penelitian", bukan "makalah". Sumber kebenaran disebut "acuan" (GT1–GT4), bukan "oracle". Istilah teknis bahasa Inggris tidak diterjemahkan dan ditulis miring.
+5. **Materi tersembunyi tidak masuk repo publik.** Perubahan tak terlihat, konflik buatan, contoh perhitungan kebijakan (GT5), subset *holdout* contoh resmi, dan nilai harapan $S^E$ disimpan di repo privat. Hash SHA-256 berkasnya di-*commit* ke repo ini sebagai bukti waktu.
+6. **Istilah.** Karya ini disebut "penelitian", bukan "makalah". Sumber kebenaran disebut "acuan" (GT1–GT5), bukan "oracle". Istilah teknis bahasa Inggris tidak diterjemahkan dan ditulis miring.
 7. **Penggunaan AI dicatat.** Setiap pemakaian asisten AI untuk menulis kode atau teks dicatat di [journal.md](journal.md), karena IEEE mewajibkan pengungkapannya.
 
 ## Peta tahap
@@ -34,7 +34,7 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
 | 5 | Pembangunan representasi dan *engine* | IV | *Knowledge graph*, *engine* baru |
 | 6 | Penyusunan korpus | VI (Korpus) | Korpus peristiwa, pengecoh, kontrafaktual, kebijakan, perubahan tak terlihat |
 | 7 | Penyusunan emas | VI (Rantai kepercayaan) | $\mathcal{K}^\star_n$, $\Delta^\star_n$ |
-| 8 | Ruang uji dan acuan | VI (Ruang uji, Rantai kepercayaan) | $S^E$, GT1–GT4, operator mutasi |
+| 8 | Ruang uji dan acuan | VI (Ruang uji, Rantai kepercayaan) | $S^E$, GT1–GT5, operator mutasi |
 | 9 | Pembangunan alur akuisisi | V | Alur LLM dengan gerbang G1–G5 |
 | 10 | Pembanding, ablasi, dan skrip analisis | VI (Pembanding, Analisis statistik) | B1–B5, AB1–AB5, skrip statistik |
 | 11 | Kalibrasi pada data pengembangan | VI (Pembagian data) | Alur yang dibekukan, perkiraan biaya |
@@ -71,7 +71,7 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
   - [ ] kolaborator untuk peran independen (lihat langkah berikut);
   - [ ] ambang hipotesis (diputuskan final di Tahap 12, tetapi arahnya ditetapkan di sini);
   - [ ] pembaca kedua $\Delta^\star$ dan praktisi pajak.
-- [ ] Cari kolaborator, paling banyak dua orang, untuk peran yang menuntut independensi. Peran itu adalah penulis perubahan tak terlihat, penulis konflik buatan, pembaca kedua $\Delta^\star$, pengadjudikasi kedua, pelabel kedua RQ4, dan bila ada, praktisi pajak. Catat nama dan perkiraan jam kerjanya.
+- [ ] Cari kolaborator, paling banyak dua orang, untuk peran yang menuntut independensi. Peran itu adalah penulis perubahan tak terlihat, penulis konflik buatan, penulis contoh perhitungan kebijakan (GT5), pembaca kedua $\Delta^\star$, pengadjudikasi kedua, pelabel kedua RQ4, dan bila ada, praktisi pajak. Catat nama dan perkiraan jam kerjanya.
 - [ ] Untuk setiap peran yang tidak terisi, tulis rencana cadangan dan cara melaporkannya sebagai keterbatasan (*skeleton* Bagian VI, Kolaborator dan rencana cadangan).
 - [ ] Buat repo privat untuk materi tersembunyi, lalu siapkan skrip yang menghitung hash SHA-256 setiap berkas di dalamnya.
 - [ ] Tetapkan konvensi *tag* git (Lampiran C) dan format pesan *commit*.
@@ -258,6 +258,7 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
 
 **Langkah: korpus pengembangan**
 - [ ] Susun regulasi fiktif dan perubahan historis sebelum rentang penelitian, misalnya perubahan PTKP dan lapisan Pasal 17 sebelum 2023.
+- [ ] Sisihkan sebagian kecil dokumen kebijakan buatan untuk pengembangan, agar *prompt* juga disetel untuk dokumen kebijakan.
 - [ ] Pastikan tidak ada peristiwa uji di korpus pengembangan.
 
 **Langkah: dokumen kontrafaktual**
@@ -273,6 +274,8 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
 - [ ] Kumpulkan dokumen kebijakan nyata yang terbuka untuk umum, misalnya perjanjian kerja bersama atau peraturan perusahaan yang dipublikasikan.
 - [ ] Lengkapi dengan kebijakan buatan untuk jenis konflik yang tidak muncul di dokumen nyata. [dataset/05_katalog_kebijakan/](dataset/05_katalog_kebijakan/) bisa menjadi bahan awal.
 - [ ] Tandai kebijakan nyata dan buatan agar dapat dilaporkan terpisah.
+- [ ] Siapkan setiap dokumen kebijakan sebagai masukan akuisisi (E2), dengan *checksum* dan pemotongan per pasal seperti dokumen regulasi.
+- [ ] Kolaborator menulis 5–10 contoh perhitungan untuk setiap dokumen kebijakan (GT5), sebelum peneliti menyusun $\Delta^\star$-nya. Contoh ini disimpan di repo privat dan hash-nya di-*commit*.
 
 **Perubahan pada proyek.** Korpus baru di folder terpisah, misalnya `korpus/`. Dokumen regulasi di [dataset/01_regulasi/](dataset/01_regulasi/) dipakai ulang.
 
@@ -292,13 +295,14 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
 - [ ] Pecah *knowledge base* yang ada, yang saat ini mencakup 2023–2026 sekaligus, menjadi keadaan awal (awal rentang penelitian) dan rangkaian $\Delta^\star_n$ per peristiwa. Pastikan $\mathcal{K}^\star_0 \oplus \Delta^\star_1 \oplus \dots \oplus \Delta^\star_N$ menghasilkan perilaku yang sama dengan *knowledge base* lengkap.
 - [ ] Susun keadaan awal dan $\Delta^\star$ untuk peristiwa pengembangan, termasuk perubahan historis sebelum 2023.
 - [ ] Susun $\Delta^\star$ untuk setiap peristiwa uji dari teks sumbernya.
+- [ ] Susun $\Delta^\star$ untuk setiap dokumen kebijakan, yaitu pembaruan pada lapisan perusahaan.
 - [ ] Pembaca kedua memeriksa setiap $\Delta^\star$ terhadap teks yang sama. Catat ketidaksepakatan dan keputusannya.
 - [ ] Hitung kesepakatan atas keputusan unsur dengan Krippendorff's $\alpha$.
 - [ ] Untuk regulasi berlaku surut, susun emas sesuai semantik mekanisme hukum dari Tahap 4.
 - [ ] Turunkan $\Delta^\star$ kontrafaktual dengan generator Tahap 6.
 - [ ] Kunci semua $\Delta^\star$ uji dengan stempel waktu (hash di-*commit*) sebelum LLM dijalankan pada data uji.
 - [ ] Isi kolom $|\Delta^\star|$ di Tabel korpus.
-- [ ] Untuk RQ1, nilai adaptivitas representasional setiap peristiwa nyata: apakah $\Delta^\star$-nya dapat dinyatakan tanpa mengubah *engine*.
+- [ ] Untuk RQ1, nilai adaptivitas representasional setiap peristiwa nyata dan setiap dokumen kebijakan: apakah $\Delta^\star$-nya dapat dinyatakan tanpa mengubah *engine*.
 
 **Keluaran.** $\mathcal{K}^\star_n$, $\Delta^\star_n$, log pemeriksaan, nilai $\alpha$, hash emas.
 
@@ -326,6 +330,7 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
 - [ ] GT2: kalkulator DJP untuk sampel kasus, bila tersedia untuk rezim yang diuji. Catat tanggal dan hasilnya.
 - [ ] GT3: protokol perhitungan manual oleh penghitung independen pada sampel bertingkat per lapisan, termasuk siapa, berapa kasus, dan cara memutuskan selisih.
 - [ ] GT4: kalkulator pihak ketiga (*open source* dan publik), dengan versi dan tanggal. [dataset/03_pembanding/](dataset/03_pembanding/) bisa menjadi bahan awal.
+- [ ] GT5: acuan untuk angka yang ditentukan kebijakan perusahaan, seperti gaji prorata, THR, dan *take home pay*. Isinya contoh perhitungan dari kolaborator (Tahap 6) ditambah contoh yang tercantum di dokumen kebijakan. Kalkulator xlsx Perusahaan X hanya referensi dan bukan acuan, karena diketahui mengandung kesalahan.
 - [ ] Susun matriks acuan terhadap sel ruang uji, yang menunjukkan sel yang punya acuan independen dan sel yang tidak.
 
 **Langkah: alat ukur ketajaman**
@@ -335,7 +340,7 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
 
 **Perubahan pada proyek.** Generator di [dataset/06_kasus_uji_sintetis/](dataset/06_kasus_uji_sintetis/) dan data di [dataset/08_pegawai_sintetis/](dataset/08_pegawai_sintetis/) menjadi bahan awal, lalu diperluas dengan kombinatorial berbatasan dan batas terbalik. Operator mutasi lama di [eksperimen/mutasi.py](eksperimen/mutasi.py) disesuaikan dengan graf.
 
-**Keluaran.** Generator $S^E$, nilai harapan, acuan GT1–GT4, matriks acuan, penghitung *mutation score*, Tabel ruang uji terisi.
+**Keluaran.** Generator $S^E$, nilai harapan, acuan GT1–GT5, matriks acuan, penghitung *mutation score*, Tabel ruang uji terisi.
 
 **Kriteria selesai.** Jumlah titik uji setiap kriteria diketahui, dan setiap sel punya minimal satu acuan.
 
@@ -474,7 +479,7 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
 **Prasyarat.** Tahap 12.
 
 **Langkah**
-- [ ] Bandingkan hasil $\mathcal{K}^\star$ dengan GT1 (termasuk *holdout*), GT2, GT3, dan GT4 pada semua sel ruang uji.
+- [ ] Bandingkan hasil $\mathcal{K}^\star$ dengan GT1 (termasuk *holdout*), GT2, GT3, dan GT4 pada semua sel ruang uji, dan dengan GT5 untuk angka lapisan perusahaan.
 - [ ] Adjudikasi setiap selisih: *knowledge base* salah, acuan salah, atau hukum ambigu. Catat dasar pasalnya. Contoh resmi yang keliru dicatat sebagai erratum.
 - [ ] Pengadjudikasi kedua memeriksa ulang sampel acak secara buta.
 - [ ] Jalankan uji unit *engine*.
@@ -497,7 +502,7 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
 **Prasyarat.** Tahap 13.
 
 **Langkah**
-- [ ] Laporkan RA perubahan nyata dari Tahap 7.
+- [ ] Laporkan RA perubahan nyata dan RA korpus kebijakan dari Tahap 7, secara terpisah. Untuk kebijakan, keberhasilan berarti $\Delta^\star$ mereproduksi contoh GT5.
 - [ ] Laporkan riwayat pengembangan *engine* dan jumlah perubahan *engine* yang dipicu regulasi.
 - [ ] Buka perubahan tak terlihat dari repo privat, dan cocokkan hash-nya dengan yang di-*commit*.
 - [ ] Untuk setiap perubahan tak terlihat, susun $\Delta$ dalam batas waktu yang ditetapkan, tanpa mengubah *engine*.
@@ -518,7 +523,7 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
 **Prasyarat.** Tahap 13.
 
 **Langkah**
-- [ ] Jalankan setiap dokumen uji pada kondisi usulan, B3, B4, dan AB2–AB5 dengan model utama.
+- [ ] Jalankan setiap dokumen uji, baik regulasi maupun kebijakan, pada kondisi usulan, B3, B4, dan AB2–AB5 dengan model utama.
 - [ ] Jalankan usulan dan B3 dengan model kedua.
 - [ ] Jalankan AB1 pada keadaan hukum terpilih.
 - [ ] Jalankan satu jalan terisolasi tambahan untuk batas derau.
@@ -526,7 +531,7 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
 - [ ] Periksa invarian A1 dan A3$_\omega$ pada setiap pembaruan yang diterapkan. Pelanggarannya harus nol.
 - [ ] Nilai setiap dokumen sumber nyata dengan satu hasil per dokumen dari jalan pertama.
 - [ ] Bila keluaran LLM menyingkap kesalahan emas, terapkan protokol koreksi emas dan nilai ulang semua kondisi.
-- [ ] Hitung SER, CAR, dan ABS dengan selang kepercayaan eksak. Uji H2a dan H2b, termasuk non-inferioritas SER.
+- [ ] Hitung SER, CAR, dan ABS dengan selang kepercayaan eksak, per lapisan (regulasi dan perusahaan). Uji H2a dan H2b, termasuk non-inferioritas SER. Kebijakan buatan dilaporkan sebagai strata terpisah.
 - [ ] Hitung semua metrik diagnostik RQ2, termasuk kontaminasi dengan membandingkan peristiwa sebelum dan sesudah *training cutoff* model.
 - [ ] Beri label ketepatan kutipan pada sampel unsur.
 
@@ -749,7 +754,8 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
 | [dataset/07_kasus_uji_resmi/](dataset/07_kasus_uji_resmi/) | GT1 bagian pengembangan | Sudah dipakai selama pengembangan, jadi tidak dapat menjadi *holdout* | 8 |
 | [dataset/06_kasus_uji_sintetis/](dataset/06_kasus_uji_sintetis/) | Dasar generator $S^E$ | Ditambah kombinatorial berbatasan dan batas terbalik | 8 |
 | [dataset/08_pegawai_sintetis/](dataset/08_pegawai_sintetis/), [dataset/04_data_publik/](dataset/04_data_publik/) | Sampel operasional | Distribusi upah dan PTKP dari data BPS | 8 |
-| [dataset/05_katalog_kebijakan/](dataset/05_katalog_kebijakan/) | Bahan kebijakan buatan | Ditulis sebagai dokumen kebijakan | 6 |
+| [dataset/05_katalog_kebijakan/](dataset/05_katalog_kebijakan/) | Bahan kebijakan buatan | Ditulis sebagai dokumen kebijakan, sebagian untuk pengembangan | 6 |
+| `payroll_calculator.xlsx` (Perusahaan X) | Referensi kebijakan | Bukan acuan GT5 karena mengandung kesalahan; tidak di-*commit* karena berisi data pribadi | 6, 8 |
 | [dataset/03_pembanding/](dataset/03_pembanding/) | Kandidat GT4 dan B1 | Dipilih yang punya riwayat *commit* di sekitar TER | 8, 10 |
 | [baselines/](baselines/) | Pemeriksaan selisih tambahan | Bukan acuan pihak ketiga | 10 |
 | [eksperimen/](eksperimen/) | Bahan skrip evaluasi | Diganti dengan skrip metrik baru; operator mutasi disesuaikan | 8, 10 |
@@ -767,7 +773,7 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
 - [ ] Setiap metrik utama dilaporkan dengan selang kepercayaan.
 - [ ] Hipotesis yang terbantah dilaporkan sebagai terbantah.
 - [ ] Analisis di luar pra-registrasi diberi label eksploratori.
-- [ ] Hasil dilaporkan per jenis perubahan.
+- [ ] Hasil dilaporkan per jenis perubahan dan per lapisan (regulasi dan perusahaan).
 - [ ] Peristiwa prospektif dilaporkan terpisah.
 - [ ] Setiap peran yang tidak terisi dilaporkan sebagai keterbatasan.
 - [ ] Ancaman validitas mencakup internal, bias pandangan belakang, konstruk, eksternal, kesimpulan, dan kontaminasi.
@@ -799,4 +805,5 @@ Judul penelitian: *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 deng
 |---|---|---|---|
 | 2026-10-27 | Judul penelitian | *Knowledge-Based System* Adaptif untuk Perhitungan PPh 21 dengan Akuisisi Pengetahuan Berbantuan LLM dari Regulasi dan Kebijakan Perusahaan | Feedback dosen no. 2 |
 | 2026-10-27 | Representasi final | *Legal knowledge graph* (RDF/OWL, SHACL, SPARQL) dengan aturan yang dijalankan *engine* | Feedback dosen no. 1 |
+| 2026-10-27 | Cakupan kebijakan perusahaan | Dokumen kebijakan diuji di E1 (RA) dan E2 (SER/CAR per lapisan), dengan acuan GT5. Perubahan kebijakan tidak disisipkan ke rangkaian *regulation replay* | Judul menjanjikan akuisisi dari kebijakan perusahaan. Perubahan kebijakan di *replay* bersifat opsional dan menambah biaya |
 | | | | |

@@ -12,9 +12,9 @@
     "Upah sebulan dasar iuran BPJS = gaji pokok + tunjangan tetap (PP 44/2015 Pasal 19 ayat (2)), tidak di bawah upah minimum; lembur, THR, bonus, dan natura bukan dasar iuran.",
     "Ikut seluruh program: JKK & JKM (dibayar pemberi kerja, objek PPh 21), JHT 3,7% pemberi kerja / 2% pegawai, JP 2% / 1% dengan batas upah JP sesuai bulan iuran, BPJS Kesehatan 4% pemberi kerja / 1% pegawai dengan batas Rp12.000.000. Iuran pegawai dipotong dari gaji; iuran JHT/JP pemberi kerja dicantumkan di input untuk menguji bahwa keduanya bukan objek.",
     "Nilai premi/iuran sudah bulat rupiah (tidak perlu pembulatan).",
-    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur.",
-    "PPh 21 masa selain Masa Pajak Terakhir = tarif efektif bulanan x bruto masa, dibulatkan ke bawah ke rupiah penuh (asumsi A1; pembulatan tidak diatur).",
-    "Biaya jabatan pada Masa Pajak Terakhir = min(5% x bruto, jumlah bulan bekerja x Rp500.000), sesuai pola contoh PMK 168/2023 Lampiran B.",
+    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur (PER-16 Lampiran I.1.a.1 angka 1 huruf a dan I.1.b angka 1, PDF hlm. 20 dan 23; PMK 168/2023 Pasal 5 ayat (3) huruf a-b, PDF hlm. 9; tafsir K12/K15).",
+    "PPh 21 masa selain Masa Pajak Terakhir = tarif efektif bulanan x bruto masa, pecahan rupiah dibuang/dibulatkan ke bawah (PER-2/PJ/2024 Lampiran I huruf B Petunjuk Umum angka 7; tafsir K1).",
+    "Biaya jabatan pada Masa Pajak Terakhir = min(5% x bruto, jumlah bulan bekerja x Rp500.000), sesuai contoh resmi PMK 168/2023 Lampiran B I.2.1.1 dan PMK 105/2025 Lampiran B nomor 3 (tafsir K6).",
     "Zakat dibayar melalui pemberi kerja ke BAZNAS (lembaga yang disahkan pemerintah); hanya mengurangi neto pada Masa Pajak Terakhir."
   ],
   "input": {
@@ -389,7 +389,7 @@
       "text": "Januari: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp20.000.000",
       "formula": "0.0024 * 20000000",
       "value": 48000,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 4,
@@ -410,7 +410,7 @@
       "text": "Januari: iuran JP pegawai 1% x min(upah Rp20.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(20000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 7,
@@ -435,7 +435,7 @@
     },
     {
       "no": 10,
-      "text": "Januari: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040; dibulatkan ke bawah ke rupiah penuh",
+      "text": "Januari: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040",
       "formula": "floor(0.08 * 20588000)",
       "value": 1647040,
       "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28"
@@ -445,7 +445,7 @@
       "text": "Februari: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp20.000.000",
       "formula": "0.0024 * 20000000",
       "value": 48000,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 12,
@@ -466,7 +466,7 @@
       "text": "Februari: iuran JP pegawai 1% x min(upah Rp20.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(20000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 15,
@@ -491,7 +491,7 @@
     },
     {
       "no": 18,
-      "text": "Februari: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040; dibulatkan ke bawah ke rupiah penuh",
+      "text": "Februari: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040",
       "formula": "floor(0.08 * 20588000)",
       "value": 1647040,
       "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28"
@@ -501,7 +501,7 @@
       "text": "Maret: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp20.000.000",
       "formula": "0.0024 * 20000000",
       "value": 48000,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 20,
@@ -522,7 +522,7 @@
       "text": "Maret: iuran JP pegawai 1% x min(upah Rp20.000.000, batas upah JP Rp10.042.300) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(20000000, 10042300)",
       "value": 100423,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 23,
@@ -547,7 +547,7 @@
     },
     {
       "no": 26,
-      "text": "Maret: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040; dibulatkan ke bawah ke rupiah penuh",
+      "text": "Maret: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040",
       "formula": "floor(0.08 * 20588000)",
       "value": 1647040,
       "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28"
@@ -557,7 +557,7 @@
       "text": "April: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp20.000.000",
       "formula": "0.0024 * 20000000",
       "value": 48000,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 28,
@@ -578,7 +578,7 @@
       "text": "April: iuran JP pegawai 1% x min(upah Rp20.000.000, batas upah JP Rp10.042.300) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(20000000, 10042300)",
       "value": 100423,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 31,
@@ -603,7 +603,7 @@
     },
     {
       "no": 34,
-      "text": "April: PPh 21 = 15% x Rp40.588.000 = Rp6.088.200; dibulatkan ke bawah ke rupiah penuh",
+      "text": "April: PPh 21 = 15% x Rp40.588.000 = Rp6.088.200",
       "formula": "floor(0.15 * 40588000)",
       "value": 6088200,
       "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28"
@@ -613,7 +613,7 @@
       "text": "Mei: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp20.000.000",
       "formula": "0.0024 * 20000000",
       "value": 48000,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 36,
@@ -634,7 +634,7 @@
       "text": "Mei: iuran JP pegawai 1% x min(upah Rp20.000.000, batas upah JP Rp10.042.300) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(20000000, 10042300)",
       "value": 100423,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 39,
@@ -659,7 +659,7 @@
     },
     {
       "no": 42,
-      "text": "Mei: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040; dibulatkan ke bawah ke rupiah penuh",
+      "text": "Mei: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040",
       "formula": "floor(0.08 * 20588000)",
       "value": 1647040,
       "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28"
@@ -669,7 +669,7 @@
       "text": "Juni: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp20.000.000",
       "formula": "0.0024 * 20000000",
       "value": 48000,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 44,
@@ -690,7 +690,7 @@
       "text": "Juni: iuran JP pegawai 1% x min(upah Rp20.000.000, batas upah JP Rp10.042.300) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(20000000, 10042300)",
       "value": 100423,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 47,
@@ -715,7 +715,7 @@
     },
     {
       "no": 50,
-      "text": "Juni: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040; dibulatkan ke bawah ke rupiah penuh",
+      "text": "Juni: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040",
       "formula": "floor(0.08 * 20588000)",
       "value": 1647040,
       "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28"
@@ -725,7 +725,7 @@
       "text": "Juli: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp20.000.000",
       "formula": "0.0024 * 20000000",
       "value": 48000,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 52,
@@ -746,7 +746,7 @@
       "text": "Juli: iuran JP pegawai 1% x min(upah Rp20.000.000, batas upah JP Rp10.042.300) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(20000000, 10042300)",
       "value": 100423,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 55,
@@ -771,7 +771,7 @@
     },
     {
       "no": 58,
-      "text": "Juli: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040; dibulatkan ke bawah ke rupiah penuh",
+      "text": "Juli: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040",
       "formula": "floor(0.08 * 20588000)",
       "value": 1647040,
       "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28"
@@ -781,7 +781,7 @@
       "text": "Agustus: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp20.000.000",
       "formula": "0.0024 * 20000000",
       "value": 48000,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 60,
@@ -802,7 +802,7 @@
       "text": "Agustus: iuran JP pegawai 1% x min(upah Rp20.000.000, batas upah JP Rp10.042.300) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(20000000, 10042300)",
       "value": 100423,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 63,
@@ -827,7 +827,7 @@
     },
     {
       "no": 66,
-      "text": "Agustus: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040; dibulatkan ke bawah ke rupiah penuh",
+      "text": "Agustus: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040",
       "formula": "floor(0.08 * 20588000)",
       "value": 1647040,
       "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28"
@@ -837,7 +837,7 @@
       "text": "September: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp20.000.000",
       "formula": "0.0024 * 20000000",
       "value": 48000,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 68,
@@ -858,7 +858,7 @@
       "text": "September: iuran JP pegawai 1% x min(upah Rp20.000.000, batas upah JP Rp10.042.300) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(20000000, 10042300)",
       "value": 100423,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 71,
@@ -883,7 +883,7 @@
     },
     {
       "no": 74,
-      "text": "September: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040; dibulatkan ke bawah ke rupiah penuh",
+      "text": "September: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040",
       "formula": "floor(0.08 * 20588000)",
       "value": 1647040,
       "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28"
@@ -893,7 +893,7 @@
       "text": "Oktober: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp20.000.000",
       "formula": "0.0024 * 20000000",
       "value": 48000,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 76,
@@ -914,7 +914,7 @@
       "text": "Oktober: iuran JP pegawai 1% x min(upah Rp20.000.000, batas upah JP Rp10.042.300) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(20000000, 10042300)",
       "value": 100423,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 79,
@@ -939,7 +939,7 @@
     },
     {
       "no": 82,
-      "text": "Oktober: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040; dibulatkan ke bawah ke rupiah penuh",
+      "text": "Oktober: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040",
       "formula": "floor(0.08 * 20588000)",
       "value": 1647040,
       "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28"
@@ -949,7 +949,7 @@
       "text": "November: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp20.000.000",
       "formula": "0.0024 * 20000000",
       "value": 48000,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 84,
@@ -970,7 +970,7 @@
       "text": "November: iuran JP pegawai 1% x min(upah Rp20.000.000, batas upah JP Rp10.042.300) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(20000000, 10042300)",
       "value": 100423,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 87,
@@ -995,7 +995,7 @@
     },
     {
       "no": 90,
-      "text": "November: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040; dibulatkan ke bawah ke rupiah penuh",
+      "text": "November: PPh 21 = 8% x Rp20.588.000 = Rp1.647.040",
       "formula": "floor(0.08 * 20588000)",
       "value": 1647040,
       "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28"
@@ -1005,7 +1005,7 @@
       "text": "Desember: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp20.000.000",
       "formula": "0.0024 * 20000000",
       "value": 48000,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 92,
@@ -1026,7 +1026,7 @@
       "text": "Desember: iuran JP pegawai 1% x min(upah Rp20.000.000, batas upah JP Rp10.042.300) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(20000000, 10042300)",
       "value": 100423,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 95,
@@ -1061,7 +1061,7 @@
       "text": "Biaya jabatan = min(5% x bruto, 12 x Rp500.000)",
       "formula": "min(0.05 * 330995422, 6000000)",
       "value": 6000000,
-      "sumber": "PMK 168/2023 Pasal 10 ayat (1) huruf a dan ayat (2), PDF hlm. 11-12"
+      "sumber": "PMK 168/2023 Pasal 10 ayat (1) huruf a dan ayat (2), PDF hlm. 11-12; bagian tahun: plafon n x Rp500.000 (contoh resmi PMK 168/2023 Lampiran B I.2.1.1, PDF hlm. 35-36; PMK 105/2025 Lampiran B nomor 3, PDF hlm. 41-43; tafsir K6)"
     },
     {
       "no": 100,

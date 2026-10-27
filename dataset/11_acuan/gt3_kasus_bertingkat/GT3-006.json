@@ -12,11 +12,11 @@
     "Upah sebulan dasar iuran BPJS = gaji pokok + tunjangan tetap (PP 44/2015 Pasal 19 ayat (2)), tidak di bawah upah minimum; lembur, THR, bonus, dan natura bukan dasar iuran.",
     "Ikut seluruh program: JKK & JKM (dibayar pemberi kerja, objek PPh 21), JHT 3,7% pemberi kerja / 2% pegawai, JP 2% / 1% dengan batas upah JP sesuai bulan iuran, BPJS Kesehatan 4% pemberi kerja / 1% pegawai dengan batas Rp12.000.000. Iuran pegawai dipotong dari gaji; iuran JHT/JP pemberi kerja dicantumkan di input untuk menguji bahwa keduanya bukan objek.",
     "Nilai premi/iuran sudah bulat rupiah (tidak perlu pembulatan).",
-    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur.",
-    "Tahun 2023 memakai metode PER-16/PJ/2016 (penghasilan disetahunkan setiap masa) dengan lapisan tarif Pasal 17 UU HPP; PPh sebulan dibulatkan ke bawah ke rupiah penuh (asumsi A2).",
-    "Iuran JP 1% pegawai ke BPJS Ketenagakerjaan diperlakukan sebagai pengurang (PER-16 Lampiran I.1.a.1 angka 1 huruf c, PDF hlm. 21).",
+    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur (PER-16 Lampiran I.1.a.1 angka 1 huruf a dan I.1.b angka 1, PDF hlm. 20 dan 23; PMK 168/2023 Pasal 5 ayat (3) huruf a-b, PDF hlm. 9; tafsir K12/K15).",
+    "Tahun 2023 memakai metode PER-16/PJ/2016 (penghasilan disetahunkan setiap masa) dengan lapisan tarif Pasal 17 UU HPP; PPh sebulan dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16 Lampiran I.6.2.2 (tafsir K2).",
+    "Iuran JP 1% pegawai ke BPJS Ketenagakerjaan diperlakukan sebagai pengurang (PER-16 Lampiran I.1.a.1 angka 1 huruf c, PDF hlm. 21; tafsir K9).",
     "Natura dinilai dengan biaya yang dikeluarkan pemberi kerja per bulan (PMK 66/2023 Pasal 22); rumah dinas individual (bukan mes komunal); kupon makan hanya untuk pegawai pemasaran/dinas luar dan pemberi kerja tidak menyediakan makan di kantor senilai > Rp2.000.000; kendaraan dinas diberikan kepada pegawai tanpa penyertaan modal dengan rata-rata bruto <= Rp100.000.000/bulan; bingkisan selain hari raya keagamaan.",
-    "Natura yang diterima Januari-Juni 2023 tidak dipotong pemberi kerja (PMK 66/2023 Pasal 23 ayat (4)); pemotongan natura mulai Masa Juli 2023."
+    "Natura yang diterima Januari-Juni 2023 tidak dipotong pemberi kerja dan tidak masuk perhitungan Masa Pajak Terakhir (PMK 66/2023 Pasal 23 ayat (4) dan Pasal 24); pemotongan natura mulai Masa Juli 2023. Pada metode lama, natura bulanan (rumah) = penghasilan teratur, bingkisan = penghasilan tidak teratur (tafsir K12)."
   ],
   "input": {
     "status_ptkp": "K/0",
@@ -86,7 +86,7 @@
       "text": "Agustus: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp13.500.000",
       "formula": "0.0024 * 13500000",
       "value": 32400,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 3,
@@ -107,7 +107,7 @@
       "text": "Agustus: iuran JP pegawai 1% x min(upah Rp13.500.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(13500000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 6,
@@ -149,14 +149,14 @@
       "text": "Agustus: iuran JHT + JP dibayar pegawai",
       "formula": "365596",
       "value": 365596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 12,
       "text": "Agustus: penghasilan neto sebulan",
       "formula": "15052900 - 500000 - 365596",
       "value": 14187304,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 13,
@@ -184,7 +184,7 @@
       "text": "Agustus: PPh 21 atas penghasilan teratur = PPh setahun / 12",
       "formula": "floor(10762050 / 12)",
       "value": 896837,
-      "sumber": "PER-16/PJ/2016 Pasal 14 ayat (3) huruf a, PDF hlm. 13; Lampiran I.1.a.1 angka 2 huruf d, PDF hlm. 21; Asumsi GT3 A2: pembulatan PPh sebulan metode lama tidak diatur tegas (PER-16/PJ/2016 Pasal 14 ayat (3), PDF hlm. 13) -> dibulatkan ke bawah ke rupiah penuh"
+      "sumber": "PER-16/PJ/2016 Pasal 14 ayat (3) huruf a, PDF hlm. 13; Lampiran I.1.a.1 angka 2 huruf d, PDF hlm. 21; Tafsir K2: PPh sebulan metode lama dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16/PJ/2016 Lampiran I.6.2.2 (5/12 x 17.500.000 = 7.291.666), PDF hlm. 43-45"
     },
     {
       "no": 17,

@@ -2,13 +2,13 @@
 
 Disusun 2026-10-27. Folder ini berisi 50 kasus PPh 21 pegawai tetap (tahun pajak 2023–2026) yang hasilnya dihitung langkah demi langkah langsung dari teks regulasi dan tabel parameter terverifikasi. GT3 adalah salah satu sumber *ground truth* (acuan) penelitian, terpisah dari GT1 (contoh resmi di `dataset/07_kasus_uji_resmi/`).
 
-**Status:** menunggu tinjauan ahli *payroll* (`review/gold_cases/gt3.review.md`). Sampai tinjauan selesai, angka di sini adalah hitungan penyusun, belum hitungan yang disetujui.
+**Status:** sudah ditinjau (2026-10-27, `review/gold_cases/gt3.review.md`). Titik tafsir diputuskan di [docs/spesifikasi/tafsir_perhitungan.md](../../../docs/spesifikasi/tafsir_perhitungan.md) (K1–K16). Tinjauan mengoreksi angka 10 kasus 2025–2026 karena aturan pembulatan (K1) dan menambah asumsi di GT3-029 dan GT3-048; angka lain dihitung ulang secara independen dan tidak berubah.
 
 ## 1. Tujuan
 
 1. Menguji sistem pada kombinasi yang tidak ada di contoh resmi: batas lapisan TER dan Pasal 17 sampai satuan rupiah, premi BPJS dengan batas upah, natura, zakat, DTP dengan kriteria sektor dan Rp10 juta, keringanan JKK, pegawai masuk/keluar di tengah tahun, serta metode *gross*, *gross-up*, dan ditanggung pemberi kerja.
 2. Memberi jejak hitung per langkah dengan rujukan pasal dan halaman PDF, sehingga setiap selisih antara keluaran sistem dan acuan bisa ditelusuri ke satu aturan.
-3. Mencatat titik yang regulasinya diam atau ambigu (bagian 7), supaya tidak diam-diam menjadi "kebenaran".
+3. Mencatat titik yang regulasinya diam atau ambigu beserta putusan tafsirnya (bagian 8), supaya tidak diam-diam menjadi "kebenaran".
 
 ## 2. Isi folder
 
@@ -56,9 +56,9 @@ Arti kolom yang perlu dijelaskan:
 
 ## 4. Cara menghitung (ringkas)
 
-**2024–2026 (TER).** Bruto masa = gaji + tunjangan + lembur + THR/bonus + premi JKK, JKM, dan BPJS Kesehatan yang dibayar pemberi kerja + natura objek (PMK 168/2023 Pasal 5 ayat (3), PDF hlm. 9; iuran JHT/JP pemberi kerja bukan objek, Pasal 7 huruf c, PDF hlm. 10). Kategori TER dari status PTKP awal tahun (PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4); tarif dari Lampiran A/B/C (PDF hlm. 11–24; `batas_bawah` eksklusif, `batas_atas` inklusif). PPh masa = tarif × bruto (PMK 168 Pasal 15 ayat (1) huruf a, PDF hlm. 15), dibulatkan ke bawah ke rupiah (asumsi A1). Masa Pajak Terakhir (PMK 168 Pasal 1 angka 18, PDF hlm. 4): bruto setahun − biaya jabatan min(5%, n × Rp500.000) − iuran JHT+JP pegawai − zakat lewat pemberi kerja (Pasal 10, PDF hlm. 11–12) − PTKP; PKP dibulatkan ke bawah ke ribuan (Pasal 8 ayat (4), PDF hlm. 10); tarif Pasal 17 UU HPP (PDF hlm. 56); dikurangi PPh masa sebelumnya (Pasal 15 ayat (1) huruf b, PDF hlm. 15). Pegawai masuk/keluar tengah tahun yang Subjek Pajak dalam negeri sejak awal tahun: tidak disetahunkan, PTKP penuh (Lampiran B Bagian Pertama I.2 angka 6 huruf a, PDF hlm. 29). Lebih potong dikembalikan (angka 7, PDF hlm. 30), kecuali yang berasal dari DTP (angka 8).
+**2024–2026 (TER).** Bruto masa = gaji + tunjangan + lembur + THR/bonus + premi JKK, JKM, dan BPJS Kesehatan yang dibayar pemberi kerja + natura objek (PMK 168/2023 Pasal 5 ayat (3), PDF hlm. 9; iuran JHT/JP pemberi kerja bukan objek, Pasal 7 huruf c, PDF hlm. 10). Kategori TER dari status PTKP awal tahun (PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4); tarif dari Lampiran A/B/C (PDF hlm. 11–24; `batas_bawah` eksklusif, `batas_atas` inklusif). PPh masa = tarif × bruto (PMK 168 Pasal 15 ayat (1) huruf a, PDF hlm. 15), dibulatkan ke rupiah penuh: masa 2024 desimal dibuang (PER-2/PJ/2024 Lampiran I huruf B angka 7), mulai Masa Januari 2025 ke terdekat dengan 0,50 ke atas (PER-11/PJ/2025 Pasal 129) (tafsir K1). Masa Pajak Terakhir (PMK 168 Pasal 1 angka 18, PDF hlm. 4): bruto setahun − biaya jabatan min(5% × bruto, n × Rp500.000) (tafsir K6) − iuran JHT+JP pegawai − zakat lewat pemberi kerja (Pasal 10, PDF hlm. 11–12) − PTKP; PKP dibulatkan ke bawah ke ribuan (Pasal 8 ayat (4), PDF hlm. 10); tarif Pasal 17 UU HPP (PDF hlm. 56); dikurangi PPh masa sebelumnya (Pasal 15 ayat (1) huruf b, PDF hlm. 15). Pegawai masuk/keluar tengah tahun yang Subjek Pajak dalam negeri sejak awal tahun: tidak disetahunkan, PTKP penuh (Lampiran B Bagian Pertama I.2 angka 6 huruf a, PDF hlm. 29). Lebih potong dikembalikan (angka 7, PDF hlm. 30), kecuali yang berasal dari DTP (angka 8).
 
-**2023 (PER-16/PJ/2016).** Penghasilan teratur sebulan − biaya jabatan min(5%, Rp500.000) − iuran JHT+JP pegawai, dikali 12 (atau sisa bulan sejak mulai bekerja), − PTKP, PKP dibulatkan ke bawah ribuan, tarif Pasal 17 UU HPP, dibagi 12 (atau faktor yang sama) (Pasal 14 ayat (2)-(4) dan (8), PDF hlm. 13–14; Lampiran I.1.a.1, PDF hlm. 20–21). Penghasilan tidak teratur: selisih PPh setahun dengan dan tanpa penghasilan tidak teratur (Pasal 14 ayat (3) huruf b; Lampiran I.1.b, PDF hlm. 23). Masa terakhir: PPh setahun atas penghasilan sebenarnya − PPh yang telah dipotong (Pasal 14 ayat (5); Lampiran I.2, PDF hlm. 24). Zakat bukan pengurang (Pasal 10 ayat (3), PDF hlm. 10). Natura dipotong mulai Masa Juli 2023 (PMK 66/2023 Pasal 23 ayat (4) dan Pasal 24, PDF hlm. 18).
+**2023 (PER-16/PJ/2016).** Penghasilan teratur sebulan − biaya jabatan min(5%, Rp500.000) − iuran JHT+JP pegawai, dikali 12 (atau sisa bulan sejak mulai bekerja), − PTKP, PKP dibulatkan ke bawah ribuan, tarif Pasal 17 UU HPP, dibagi 12 (atau faktor yang sama) dan dibulatkan ke bawah (Pasal 14 ayat (2)-(4) dan (8), PDF hlm. 13–14; Lampiran I.1.a.1, PDF hlm. 20–21; contoh I.6.2.2; tafsir K2). Penghasilan tidak teratur: selisih PPh setahun dengan dan tanpa penghasilan tidak teratur (Pasal 14 ayat (3) huruf b; Lampiran I.1.b, PDF hlm. 23). Masa terakhir: PPh setahun atas penghasilan sebenarnya − PPh yang telah dipotong (Pasal 14 ayat (5); Lampiran I.2, PDF hlm. 24). Zakat bukan pengurang (Pasal 10 ayat (3), PDF hlm. 10). Natura dipotong mulai Masa Juli 2023 (PMK 66/2023 Pasal 23 ayat (4) dan Pasal 24, PDF hlm. 18).
 
 **Natura (Juli 2023+).** Objek PPh (PMK 66/2023 Pasal 3 ayat (1), PDF hlm. 5) kecuali yang dikecualikan; yang dipakai di kasus: rumah individual maks. Rp2.000.000/bulan (Lampiran A angka 7, PDF hlm. 22), kupon makan dinas luar maks. Rp2.000.000/bulan (Pasal 5 ayat (4)-(5), PDF hlm. 6–7), bingkisan selain hari raya maks. Rp3.000.000/tahun (Lampiran A angka 2, PDF hlm. 21), kendaraan dinas dikecualikan untuk pegawai tanpa penyertaan modal dengan rata-rata bruto ≤ Rp100 juta/bulan (Lampiran A angka 8, PDF hlm. 22). Hanya selisih lebih yang masuk bruto (Pasal 7 ayat (4), PDF hlm. 8).
 
@@ -66,7 +66,7 @@ Arti kolom yang perlu dijelaskan:
 
 **DTP.** 2025: PMK 10/2025 (sektor alas kaki, tekstil & pakaian jadi, furnitur, kulit; KLU Lampiran A; Pasal 3–5, PDF hlm. 4–6) jo. PMK 72/2025 (pariwisata hanya Masa Oktober–Desember 2025, Pasal 4A, PDF hlm. 4). 2026: PMK 105/2025 (lima sektor termasuk pariwisata, sepanjang 2026). Kriteria pegawai: bruto tetap dan teratur Masa Januari (atau bulan pertama bekerja) ≤ Rp10.000.000; status ini berlaku setahun walaupun gaji naik. Seluruh PPh 21 masa itu DTP, dibayar tunai dan bukan penghasilan (PMK 168 Pasal 7 huruf h, PDF hlm. 10); kelebihan DTP tidak dikembalikan (PMK 10/2025 dan PMK 105/2025 Pasal 5 ayat (5), PDF hlm. 6). KLU dicek di `tables/klu_dtp.csv` dan dicocokkan lagi dengan teks PDF Lampiran A.
 
-**Metode.** *Gross-up*: tunjangan pajak tunai = PPh 21 masa yang sama (titik tetap). Ditanggung pemberi kerja: 2023 (PER-16 Pasal 8 ayat (2), PDF hlm. 9) PPh yang ditanggung adalah kenikmatan bukan objek, jadi tanpa *gross-up*; 2024+ (PMK 168 Lampiran B Bagian Kedua I.4, PDF hlm. 44) PPh yang ditanggung adalah kenikmatan dan objek, dihitung *full gross-up* (angka sama dengan *gross-up*, tetapi tidak dipotong dari gaji).
+**Metode.** *Gross-up*: tunjangan pajak tunai = PPh 21 masa yang sama (titik tetap terkecil, tafsir K3). Ditanggung pemberi kerja: 2023 (PER-16 Pasal 8 ayat (2), PDF hlm. 9) PPh yang ditanggung adalah kenikmatan bukan objek, jadi tanpa *gross-up*; 2024+ (PMK 168 Lampiran B Bagian Kedua I.4, PDF hlm. 44) PPh yang ditanggung adalah kenikmatan dan objek, dihitung *full gross-up* (angka sama dengan *gross-up*, tetapi tidak dipotong dari gaji).
 
 ## 5. Aturan independensi yang dipatuhi
 
@@ -74,6 +74,7 @@ Arti kolom yang perlu dijelaskan:
 - Di `dataset/07_kasus_uji_resmi/` hanya dibaca berkas yang barisnya di `pembagian_holdout.csv` bertanda `pengembangan` (untuk mempelajari cara hitung dan format): PER16_I.1.1, I.1.3, I.4.1, I.4.2, I.6.1.1, I.6.2.1, I.8, I.9; PMK168_B_I.2.1.1, I.2.2.2a, I.2.2.3, I.5; PMK10_B_1, B_2, B_3; PMK72_B_6, B_7; PMK105_B_1, B_3 (sebagian hanya ringkasan `uraian`-nya). Berkas `holdout`, `README.md`, `index.csv`, dan berkas yang tidak tercantum di `pembagian_holdout.csv` tidak dibuka.
 - Sumber yang dibaca: PDF di `dataset/01_regulasi/` (PMK 168/2023, PP 58/2023, PMK 10/2025, PMK 72/2025, PMK 105/2025, PMK 66/2023, PP 7/2025, PP 36/2025, PP 44/2015, PP 45/2015, PP 46/2015, Perpres 75/2019, UU HPP), `ocr/PER_16_PJ_2016_ocr.txt`, `tables/*.csv`, `dataset/01_regulasi/README.md`, `docs/spesifikasi/taksonomi.md` bagian 0.
 - **Pengungkapan.** Saat membaca teks PMK 168/2023 (sumber yang diizinkan) terlihat sebagian halaman contoh yang transkripsinya berstatus *holdout* (Lampiran B I.1, PDF hlm. 33–34, dan I.4, PDF hlm. 44). Dari I.4 hanya dipakai kaidah perlakuannya ("PPh 21 yang ditanggung … merupakan kenikmatan … objek … *full gross up*"). Tidak ada angka contoh *holdout* yang dipakai; semua masukan GT3 dipilih sendiri dan tidak meniru skenario contoh resmi.
+- **Tinjauan.** Peninjau memakai sumber yang sama dan menghitung ulang ke-50 kasus dengan skrip sendiri (tidak mengimpor `tools/`). Saat memastikan kaidah I.4 di PMK 168/2023 PDF hlm. 44, peninjau melihat satu kalimat contoh yang memuat satu angka hasil; angka itu tidak dipakai.
 - Pemeriksa `tools/check_gt3.py` ditulis terpisah dari `tools/calculator.py` (membaca tabel dan menghitung ulang dengan kode sendiri), sehingga kesalahan logika di satu tempat tidak otomatis tersalin ke tempat lain. Keduanya tetap ditulis oleh penyusun yang sama; karena itu tinjauan ahli tetap diperlukan.
 
 ## 6. Cakupan
@@ -133,26 +134,33 @@ Arti kolom yang perlu dijelaskan:
 1. **2.646 langkah numerik** dari 50 kasus dievaluasi ulang dari string `formula` dan dibandingkan dengan `value`: **0 tidak cocok**.
 2. **2.813 item hitung ulang independen** (premi/iuran dari tarif, bruto, kategori dan tarif TER, PPh masa, sifat titik tetap *gross-up*, kelayakan DTP, seluruh angka tahunan): **0 tidak cocok**.
 
+Setelah tinjauan, peninjau menghitung ulang seluruh `expected` (komponen premi/iuran dari tarif, bruto, TER, *gross-up*, DTP, dan perhitungan Masa Pajak Terakhir) dengan skrip terpisah dari `input`: 0 selisih terhadap berkas yang sekarang. Dengan aturan pembulatan lama (semua ke bawah) skrip yang sama juga mereproduksi angka penyusun sebelum koreksi tanpa selisih, sehingga koreksi hanya berasal dari putusan K1.
+
 Pemeriksa sudah diuji dengan menyuntikkan 6 kesalahan buatan (PPh, PKP, bruto, tunjangan pajak, DTP, satu `value` langkah); keenamnya tertangkap. Hasil per kasus tertulis di `cek_aritmetika` dan `cek_aritmetika_rinci`.
 
-## 8. Ketidakpastian
+## 8. Tafsir yang dipakai
 
-Pilihan GT3 di bawah dicatat juga di `asumsi` kasus terkait. K1, K3, K4, K5, K6, K7, K8, dan K10 diajukan sebagai pertanyaan kepada peninjau.
+Semua titik yang sebelumnya dicatat sebagai ketidakpastian sudah diputuskan di [docs/spesifikasi/tafsir_perhitungan.md](../../../docs/spesifikasi/tafsir_perhitungan.md); rujukan "tafsir Kn" di `asumsi` dan `langkah.sumber` menunjuk ke bagian dokumen itu.
 
-| Kode | Masalah | Pilihan GT3 | Kasus terdampak / alternatif |
-|---|---|---|---|
-| K1 | Pembulatan PPh TER bulanan tidak diatur (PP 58/2023; PMK 168/2023 Pasal 15 ayat (1) huruf a) | dibulatkan **ke bawah** ke rupiah penuh (A1) | 19 kasus punya hasil pecahan: 014, 017, 018, 022, 025, 027, 028, 030, 034, 036, 037, 038, 040, 042, 044, 045, 047, 048, 049. Pembulatan biasa bisa menaikkan Rp1 (mis. 028: 224.999,98 → 225.000). |
-| K2 | Pembulatan PPh sebulan metode lama (PPh setahun / 12) | ke bawah ke rupiah (A2) | 001, 005, 006, 007, 008, 010. Contoh resmi PER-16 yang dibaca tidak menyatakan aturan pembulatannya (mis. I.1.3: 4.090.000 / 12 → 340.833, cocok dengan pembulatan ke bawah maupun pembulatan biasa). |
-| K3 | *Gross-up*: cara iterasi tidak diatur; dengan pembulatan ke bawah persamaan T = floor(tarif × (X + T)) bisa punya dua solusi | ambil titik tetap **terkecil** (A3) | 24 masa di 017, 022, 025, 038, 044 juga punya solusi T+1 (mis. 017: 522.699 atau 522.700). |
-| K4 | PPh ditanggung pemberi kerja tahun 2023: PER-16 Pasal 8 ayat (2) menyebutnya kenikmatan yang bukan objek, sedangkan UU HPP/PMK 66/2023 menjadikan kenikmatan objek (pemotongan mulai Juli 2023) | kasus 2023 ditaruh di semester I (004, Maret) dan dihitung tanpa *gross-up*; semester II 2023 sengaja tidak dibuat | 004. Untuk 2024+ dipakai PMK 168 Lampiran B I.4 (*full gross-up*). |
-| K5 | Isi "penghasilan bruto tetap dan teratur" untuk kriteria DTP Rp10 juta (PMK 10/2025 Pasal 4 ayat (3); PMK 105/2025 Pasal 4 ayat (4)) | hanya gaji + tunjangan tetap; premi JKK/JKM/BPJS Kesehatan pemberi kerja, lembur, THR tidak dihitung | 029 menjadi layak (gaji + tunjangan tepat Rp10.000.000, bruto Rp12.019.000). Bila premi ikut dihitung, 029 tidak layak (DTP 0). Kasus DTP lain (031, 033, 034, 037, 042, 043, 047, 048) tetap layak di kedua pembacaan. |
-| K6 | Plafon biaya jabatan untuk bagian tahun: agregat n × Rp500.000 (contoh PMK 168 dan PMK 105/2025) atau plafon per bulan (contoh 3 PMK 10/2025) | agregat min(5% × bruto, n × Rp500.000) | Berbeda hanya di 037 (alternatif: biaya jabatan 3.985.232,5; PPh setahun 892.000; masa terakhir −630.613) dan 048 (alternatif: 4.273.025; PPh setahun 1.209.650; masa terakhir −1.071.215). |
-| K7 | Keringanan JKK Agustus 2025–Januari 2026 berasal dari PP 36/2025 yang ditetapkan 4 September 2025; perusahaan juga harus diverifikasi BPJS | premi JKK yang dibayar = tarif keringanan untuk iuran Februari 2025 s.d. Januari 2026 | 034, 036, 037 (Agt–Des 2025), 042, 047, 048 (Jan 2026). Bila Agustus 2025 dihitung tarif normal (penggajian sebelum PP 36 terbit), bruto Agustus naik sebesar setengah premi JKK. |
-| K8 | Rekomposisi sebagian iuran JKK untuk JKP (PP 37/2021, PP 49/2023, PP 6/2025, PP 7/2025 Pasal 9): perlakuan PPh porsi itu tidak diatur | seluruh tarif nominal JKK dimasukkan ke bruto | semua kasus (selisih maks. 0,14% upah per bulan). |
-| K9 | Iuran JP pegawai sebagai pengurang tahun 2023: PER-16 Pasal 10 ayat (3) huruf b tidak menyebut JP BPJS secara eksplisit | pengurang, berdasarkan Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun … kepada BPJS Ketenagakerjaan, PDF hlm. 21) | semua kasus 2023. |
-| K10 | Zakat lewat pemberi kerja tahun 2023 | bukan pengurang pemotongan (PER-16 Pasal 10 ayat (3)); baru pengurang mulai PMK 168/2023 | 008. |
-| K11 | Batas upah JP Jan–Feb 2023 (Rp9.077.600) berasal dari surat BPJS TK yang menyebut "batas upah tahun 2022"; tanggal berlakunya disimpulkan | dipakai untuk iuran Januari–Februari 2023 | 009, 010, 012 (iuran JP Januari–Februari 2023; pada 001 dan 008 upah di bawah batas sehingga tidak terdampak). |
-| K12 | Penggolongan natura dalam metode lama 2023: rumah bulanan dianggap penghasilan teratur, bingkisan dianggap tidak teratur; nilai natura = biaya pemberi kerja | sesuai pilihan di kiri | 006, 009. |
-| K13 | DTP pegawai yang berhenti di tengah tahun: PMK 105/2025 Pasal 5 ayat (5) berbicara tentang "1 (satu) Tahun Pajak" | lebih potong yang berasal dari DTP pada masa terakhir (September) tidak dikembalikan, sama seperti Desember | 048. |
+| Kode | Putusan singkat | Kasus terkait |
+|---|---|---|
+| K1 | PPh TER masa 2024: desimal dibuang; Masa Januari 2025 dst.: ke rupiah terdekat, 0,50 ke atas (PER-2/PJ/2024 Lampiran I huruf B angka 7; PER-11/PJ/2025 Pasal 129) | dikoreksi: 028, 030, 034, 036, 037, 038, 044, 047, 048, 049 |
+| K2 | PPh sebulan metode lama dibulatkan ke bawah (contoh PER-16 I.6.2.2) | 001, 005–008, 010 |
+| K3 | *Gross-up*/PPh ditanggung = titik tetap terkecil dengan pembulatan masa itu; Desember = kekurangan PPh Desember | 005, 012, 017, 018, 022, 025, 038, 044, 045, 049 |
+| K4 | PPh ditanggung: Jan–Jun 2023 tanpa *gross-up*; Jul 2023 dst. kenikmatan objek, *full gross-up* | 004, 018, 025, 045, 049 |
+| K5 | Kriteria DTP Rp10 juta: gaji + tunjangan tetap (+ imbalan/natura tetap menurut kontrak); tanpa premi BPJS pemberi kerja, lembur insidental, THR, bonus | 029–034, 036, 037, 042, 043, 047, 048 |
+| K6 | Biaya jabatan bagian tahun: min(5% × bruto, n × Rp500.000) | 010, 011, 023, 024, 037, 048 |
+| K7 | Iuran JKK Agustus 2025 s.d. Januari 2026 memakai tarif keringanan | 034, 036, 037, 042, 047, 048 |
+| K8 | Seluruh tarif nominal JKK masuk bruto walaupun sebagian direkomposisi ke JKP | semua |
+| K9 | Iuran JP pegawai 2023 adalah pengurang | semua kasus 2023 |
+| K10 | Zakat 2023 bukan pengurang pemotongan; 2024+ hanya di Masa Pajak Terakhir | 008, 020, 021, 038, 050 |
+| K11 | Batas upah JP baru berlaku mulai iuran Maret; Jan–Feb 2023 = Rp9.077.600 | 009, 010, 012 |
+| K12 | Natura 2023: rumah = teratur, bingkisan = tidak teratur; batas bingkisan kumulatif setahun | 006, 009 |
+| K13 | Lebih potong yang berasal dari DTP tidak dikembalikan, juga di bulan berhenti bekerja | 034, 037, 048 |
+| K14 | Bruto masa metode lama = teratur + tidak teratur | 003, 008, 009, 010 |
+| K15 | Lembur 2023 = penghasilan teratur | 002, 007, 011 |
+| K16 | Karyawati kawin K/x hanya dengan keterangan kecamatan bahwa suami tidak berpenghasilan | 007, 048 |
 
-Hal lain yang dipilih penyusun dan dicatat di `asumsi`: bulan pembayaran THR (April 2023, April 2024, Maret 2025, Maret 2026), status PTKP tidak berubah dalam tahun, semua pegawai ber-NIK/NPWP valid, dan lembur sebagai penghasilan teratur.
+Hal lain yang dipilih penyusun dan dicatat di `asumsi`: bulan pembayaran THR (April 2023, April 2024, Maret 2025, Maret 2026, sesuai bulan Idulfitri), status PTKP tidak berubah dalam tahun, dan semua pegawai ber-NIK/NPWP valid.
+
+**Catatan GT2.** Kalkulator PPh 21 DJP memotong desimal (GT2-09 dan GT2-10 tepat ,5 dibulatkan ke bawah; GT2-06 memilih titik tetap terkecil di bawah pemotongan desimal). Karena GT3 mengikuti PER-11/PJ/2025 untuk masa 2025+, GT3-044 (GT2-06), GT3-047 Januari (GT2-09), dan GT3-048 Januari (GT2-10) kini berbeda Rp1 dari kalkulator. Selisih ini adalah perbedaan pembulatan kalkulator, bukan kesalahan kategori, lapisan, atau metode *gross-up*.

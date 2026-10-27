@@ -12,9 +12,9 @@
     "Upah sebulan dasar iuran BPJS = gaji pokok + tunjangan tetap (PP 44/2015 Pasal 19 ayat (2)), tidak di bawah upah minimum; lembur, THR, bonus, dan natura bukan dasar iuran.",
     "Ikut seluruh program: JKK & JKM (dibayar pemberi kerja, objek PPh 21), JHT 3,7% pemberi kerja / 2% pegawai, JP 2% / 1% dengan batas upah JP sesuai bulan iuran, BPJS Kesehatan 4% pemberi kerja / 1% pegawai dengan batas Rp12.000.000. Iuran pegawai dipotong dari gaji; iuran JHT/JP pemberi kerja dicantumkan di input untuk menguji bahwa keduanya bukan objek.",
     "Nilai premi/iuran sudah bulat rupiah (tidak perlu pembulatan).",
-    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur.",
-    "Tahun 2023 memakai metode PER-16/PJ/2016 (penghasilan disetahunkan setiap masa) dengan lapisan tarif Pasal 17 UU HPP; PPh sebulan dibulatkan ke bawah ke rupiah penuh (asumsi A2).",
-    "Iuran JP 1% pegawai ke BPJS Ketenagakerjaan diperlakukan sebagai pengurang (PER-16 Lampiran I.1.a.1 angka 1 huruf c, PDF hlm. 21).",
+    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur (PER-16 Lampiran I.1.a.1 angka 1 huruf a dan I.1.b angka 1, PDF hlm. 20 dan 23; PMK 168/2023 Pasal 5 ayat (3) huruf a-b, PDF hlm. 9; tafsir K12/K15).",
+    "Tahun 2023 memakai metode PER-16/PJ/2016 (penghasilan disetahunkan setiap masa) dengan lapisan tarif Pasal 17 UU HPP; PPh sebulan dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16 Lampiran I.6.2.2 (tafsir K2).",
+    "Iuran JP 1% pegawai ke BPJS Ketenagakerjaan diperlakukan sebagai pengurang (PER-16 Lampiran I.1.a.1 angka 1 huruf c, PDF hlm. 21; tafsir K9).",
     "Mulai bekerja 1 Mei 2023; sebelumnya tidak bekerja pada pemberi kerja lain di tahun ini (tidak ada bukti potong lain)."
   ],
   "input": {
@@ -318,7 +318,7 @@
       "text": "Mei: premi JKK dibayar pemberi kerja = 0,54% x upah sebulan Rp13.000.000",
       "formula": "0.0054 * 13000000",
       "value": 70200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 3,
@@ -339,7 +339,7 @@
       "text": "Mei: iuran JP pegawai 1% x min(upah Rp13.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(13000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 6,
@@ -367,14 +367,14 @@
       "text": "Mei: iuran JHT + JP dibayar pegawai",
       "formula": "355596",
       "value": 355596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 10,
       "text": "Mei: penghasilan neto sebulan",
       "formula": "13589200 - 500000 - 355596",
       "value": 12733604,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 11,
@@ -416,7 +416,7 @@
       "text": "Juni: premi JKK dibayar pemberi kerja = 0,54% x upah sebulan Rp13.000.000",
       "formula": "0.0054 * 13000000",
       "value": 70200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 17,
@@ -437,7 +437,7 @@
       "text": "Juni: iuran JP pegawai 1% x min(upah Rp13.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(13000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 20,
@@ -465,14 +465,14 @@
       "text": "Juni: iuran JHT + JP dibayar pegawai",
       "formula": "355596",
       "value": 355596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 24,
       "text": "Juni: penghasilan neto sebulan",
       "formula": "13589200 - 500000 - 355596",
       "value": 12733604,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 25,
@@ -514,7 +514,7 @@
       "text": "Juli: premi JKK dibayar pemberi kerja = 0,54% x upah sebulan Rp13.000.000",
       "formula": "0.0054 * 13000000",
       "value": 70200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 31,
@@ -535,7 +535,7 @@
       "text": "Juli: iuran JP pegawai 1% x min(upah Rp13.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(13000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 34,
@@ -563,14 +563,14 @@
       "text": "Juli: iuran JHT + JP dibayar pegawai",
       "formula": "355596",
       "value": 355596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 38,
       "text": "Juli: penghasilan neto sebulan",
       "formula": "14339200 - 500000 - 355596",
       "value": 13483604,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 39,
@@ -612,7 +612,7 @@
       "text": "Agustus: premi JKK dibayar pemberi kerja = 0,54% x upah sebulan Rp13.000.000",
       "formula": "0.0054 * 13000000",
       "value": 70200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 45,
@@ -633,7 +633,7 @@
       "text": "Agustus: iuran JP pegawai 1% x min(upah Rp13.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(13000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 48,
@@ -661,14 +661,14 @@
       "text": "Agustus: iuran JHT + JP dibayar pegawai",
       "formula": "355596",
       "value": 355596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 52,
       "text": "Agustus: penghasilan neto sebulan",
       "formula": "13589200 - 500000 - 355596",
       "value": 12733604,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 53,
@@ -710,7 +710,7 @@
       "text": "September: premi JKK dibayar pemberi kerja = 0,54% x upah sebulan Rp13.000.000",
       "formula": "0.0054 * 13000000",
       "value": 70200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 59,
@@ -731,7 +731,7 @@
       "text": "September: iuran JP pegawai 1% x min(upah Rp13.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(13000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 62,
@@ -759,14 +759,14 @@
       "text": "September: iuran JHT + JP dibayar pegawai",
       "formula": "355596",
       "value": 355596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 66,
       "text": "September: penghasilan neto sebulan",
       "formula": "13589200 - 500000 - 355596",
       "value": 12733604,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 67,
@@ -808,7 +808,7 @@
       "text": "Oktober: premi JKK dibayar pemberi kerja = 0,54% x upah sebulan Rp13.000.000",
       "formula": "0.0054 * 13000000",
       "value": 70200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 73,
@@ -829,7 +829,7 @@
       "text": "Oktober: iuran JP pegawai 1% x min(upah Rp13.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(13000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 76,
@@ -857,14 +857,14 @@
       "text": "Oktober: iuran JHT + JP dibayar pegawai",
       "formula": "355596",
       "value": 355596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 80,
       "text": "Oktober: penghasilan neto sebulan",
       "formula": "13589200 - 500000 - 355596",
       "value": 12733604,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 81,
@@ -906,7 +906,7 @@
       "text": "November: premi JKK dibayar pemberi kerja = 0,54% x upah sebulan Rp13.000.000",
       "formula": "0.0054 * 13000000",
       "value": 70200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 87,
@@ -927,7 +927,7 @@
       "text": "November: iuran JP pegawai 1% x min(upah Rp13.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(13000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 90,
@@ -955,14 +955,14 @@
       "text": "November: iuran JHT + JP dibayar pegawai",
       "formula": "355596",
       "value": 355596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 94,
       "text": "November: penghasilan neto sebulan",
       "formula": "13589200 - 500000 - 355596",
       "value": 12733604,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 95,
@@ -1004,7 +1004,7 @@
       "text": "Desember: premi JKK dibayar pemberi kerja = 0,54% x upah sebulan Rp13.000.000",
       "formula": "0.0054 * 13000000",
       "value": 70200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 101,
@@ -1025,7 +1025,7 @@
       "text": "Desember: iuran JP pegawai 1% x min(upah Rp13.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(13000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 104,
@@ -1067,7 +1067,7 @@
       "text": "Iuran JHT + JP dibayar pegawai setahun",
       "formula": "355596 + 355596 + 355596 + 355596 + 355596 + 355596 + 355596 + 355596",
       "value": 2844768,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 110,

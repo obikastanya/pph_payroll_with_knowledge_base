@@ -12,10 +12,10 @@
     "Upah sebulan dasar iuran BPJS = gaji pokok + tunjangan tetap (PP 44/2015 Pasal 19 ayat (2)), tidak di bawah upah minimum; lembur, THR, bonus, dan natura bukan dasar iuran.",
     "Ikut seluruh program: JKK & JKM (dibayar pemberi kerja, objek PPh 21), JHT 3,7% pemberi kerja / 2% pegawai, JP 2% / 1% dengan batas upah JP sesuai bulan iuran, BPJS Kesehatan 4% pemberi kerja / 1% pegawai dengan batas Rp12.000.000. Iuran pegawai dipotong dari gaji; iuran JHT/JP pemberi kerja dicantumkan di input untuk menguji bahwa keduanya bukan objek.",
     "Nilai premi/iuran sudah bulat rupiah (tidak perlu pembulatan).",
-    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur.",
-    "Tahun 2023 memakai metode PER-16/PJ/2016 (penghasilan disetahunkan setiap masa) dengan lapisan tarif Pasal 17 UU HPP; PPh sebulan dibulatkan ke bawah ke rupiah penuh (asumsi A2).",
-    "Iuran JP 1% pegawai ke BPJS Ketenagakerjaan diperlakukan sebagai pengurang (PER-16 Lampiran I.1.a.1 angka 1 huruf c, PDF hlm. 21).",
-    "Metode gross-up: pemberi kerja membayar tunjangan pajak tunai sebesar PPh 21 terutang pada masa yang sama; tunjangan pajak = titik tetap terkecil (rupiah penuh) dari persamaan T = PPh21(bruto tanpa T + T) (asumsi A3)."
+    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur (PER-16 Lampiran I.1.a.1 angka 1 huruf a dan I.1.b angka 1, PDF hlm. 20 dan 23; PMK 168/2023 Pasal 5 ayat (3) huruf a-b, PDF hlm. 9; tafsir K12/K15).",
+    "Tahun 2023 memakai metode PER-16/PJ/2016 (penghasilan disetahunkan setiap masa) dengan lapisan tarif Pasal 17 UU HPP; PPh sebulan dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16 Lampiran I.6.2.2 (tafsir K2).",
+    "Iuran JP 1% pegawai ke BPJS Ketenagakerjaan diperlakukan sebagai pengurang (PER-16 Lampiran I.1.a.1 angka 1 huruf c, PDF hlm. 21; tafsir K9).",
+    "Metode gross-up: pemberi kerja membayar tunjangan pajak tunai sebesar PPh 21 terutang pada masa yang sama; tunjangan pajak = titik tetap terkecil (rupiah penuh, dengan aturan pembulatan masa itu) dari persamaan T = PPh21(bruto tanpa T + T) (tafsir K3)."
   ],
   "input": {
     "status_ptkp": "K/3",
@@ -457,7 +457,7 @@
       "text": "Januari: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp18.000.000",
       "formula": "0.0024 * 18000000",
       "value": 43200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 3,
@@ -478,7 +478,7 @@
       "text": "Januari: iuran JP pegawai 1% x min(upah Rp18.000.000, batas upah JP Rp9.077.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(18000000, 9077600)",
       "value": 90776,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 6,
@@ -499,7 +499,7 @@
       "text": "Januari: tunjangan pajak T dicari sehingga T = PPh 21 sebulan atas penghasilan teratur termasuk T; hasil T = Rp1.463.475 (titik tetap terkecil; dibuktikan pada langkah PPh 21 masa di bawah yang harus sama dengan T)",
       "formula": "1463475",
       "value": 1463475,
-      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Tafsir K3: tunjangan pajak/PPh ditanggung = titik tetap terkecil T = PPh21(bruto tanpa T + T) dengan aturan pembulatan masa itu (perilaku kalkulator PPh 21 DJP, GT2-06); cara iterasi tidak diatur regulasi; Tafsir K2: PPh sebulan metode lama dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16/PJ/2016 Lampiran I.6.2.2 (5/12 x 17.500.000 = 7.291.666), PDF hlm. 43-45"
     },
     {
       "no": 9,
@@ -520,14 +520,14 @@
       "text": "Januari: iuran JHT + JP dibayar pegawai",
       "formula": "450776",
       "value": 450776,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 12,
       "text": "Januari: penghasilan neto sebulan",
       "formula": "20040675 - 500000 - 450776",
       "value": 19089899,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 13,
@@ -569,7 +569,7 @@
       "text": "Februari: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp18.000.000",
       "formula": "0.0024 * 18000000",
       "value": 43200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 19,
@@ -590,7 +590,7 @@
       "text": "Februari: iuran JP pegawai 1% x min(upah Rp18.000.000, batas upah JP Rp9.077.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(18000000, 9077600)",
       "value": 90776,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 22,
@@ -611,7 +611,7 @@
       "text": "Februari: tunjangan pajak T dicari sehingga T = PPh 21 sebulan atas penghasilan teratur termasuk T; hasil T = Rp1.463.475 (titik tetap terkecil; dibuktikan pada langkah PPh 21 masa di bawah yang harus sama dengan T)",
       "formula": "1463475",
       "value": 1463475,
-      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Tafsir K3: tunjangan pajak/PPh ditanggung = titik tetap terkecil T = PPh21(bruto tanpa T + T) dengan aturan pembulatan masa itu (perilaku kalkulator PPh 21 DJP, GT2-06); cara iterasi tidak diatur regulasi; Tafsir K2: PPh sebulan metode lama dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16/PJ/2016 Lampiran I.6.2.2 (5/12 x 17.500.000 = 7.291.666), PDF hlm. 43-45"
     },
     {
       "no": 25,
@@ -632,14 +632,14 @@
       "text": "Februari: iuran JHT + JP dibayar pegawai",
       "formula": "450776",
       "value": 450776,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 28,
       "text": "Februari: penghasilan neto sebulan",
       "formula": "20040675 - 500000 - 450776",
       "value": 19089899,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 29,
@@ -681,7 +681,7 @@
       "text": "Maret: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp18.000.000",
       "formula": "0.0024 * 18000000",
       "value": 43200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 35,
@@ -702,7 +702,7 @@
       "text": "Maret: iuran JP pegawai 1% x min(upah Rp18.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(18000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 38,
@@ -723,7 +723,7 @@
       "text": "Maret: tunjangan pajak T dicari sehingga T = PPh 21 sebulan atas penghasilan teratur termasuk T; hasil T = Rp1.462.625 (titik tetap terkecil; dibuktikan pada langkah PPh 21 masa di bawah yang harus sama dengan T)",
       "formula": "1462625",
       "value": 1462625,
-      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Tafsir K3: tunjangan pajak/PPh ditanggung = titik tetap terkecil T = PPh21(bruto tanpa T + T) dengan aturan pembulatan masa itu (perilaku kalkulator PPh 21 DJP, GT2-06); cara iterasi tidak diatur regulasi; Tafsir K2: PPh sebulan metode lama dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16/PJ/2016 Lampiran I.6.2.2 (5/12 x 17.500.000 = 7.291.666), PDF hlm. 43-45"
     },
     {
       "no": 41,
@@ -744,14 +744,14 @@
       "text": "Maret: iuran JHT + JP dibayar pegawai",
       "formula": "455596",
       "value": 455596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 44,
       "text": "Maret: penghasilan neto sebulan",
       "formula": "20039825 - 500000 - 455596",
       "value": 19084229,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 45,
@@ -793,7 +793,7 @@
       "text": "April: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp18.000.000",
       "formula": "0.0024 * 18000000",
       "value": 43200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 51,
@@ -814,7 +814,7 @@
       "text": "April: iuran JP pegawai 1% x min(upah Rp18.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(18000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 54,
@@ -835,7 +835,7 @@
       "text": "April: tunjangan pajak T dicari sehingga T = PPh 21 sebulan atas penghasilan teratur termasuk T; hasil T = Rp1.462.625 (titik tetap terkecil; dibuktikan pada langkah PPh 21 masa di bawah yang harus sama dengan T)",
       "formula": "1462625",
       "value": 1462625,
-      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Tafsir K3: tunjangan pajak/PPh ditanggung = titik tetap terkecil T = PPh21(bruto tanpa T + T) dengan aturan pembulatan masa itu (perilaku kalkulator PPh 21 DJP, GT2-06); cara iterasi tidak diatur regulasi; Tafsir K2: PPh sebulan metode lama dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16/PJ/2016 Lampiran I.6.2.2 (5/12 x 17.500.000 = 7.291.666), PDF hlm. 43-45"
     },
     {
       "no": 57,
@@ -856,14 +856,14 @@
       "text": "April: iuran JHT + JP dibayar pegawai",
       "formula": "455596",
       "value": 455596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 60,
       "text": "April: penghasilan neto sebulan",
       "formula": "20039825 - 500000 - 455596",
       "value": 19084229,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 61,
@@ -905,7 +905,7 @@
       "text": "Mei: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp18.000.000",
       "formula": "0.0024 * 18000000",
       "value": 43200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 67,
@@ -926,7 +926,7 @@
       "text": "Mei: iuran JP pegawai 1% x min(upah Rp18.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(18000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 70,
@@ -947,7 +947,7 @@
       "text": "Mei: tunjangan pajak T dicari sehingga T = PPh 21 sebulan atas penghasilan teratur termasuk T; hasil T = Rp1.462.625 (titik tetap terkecil; dibuktikan pada langkah PPh 21 masa di bawah yang harus sama dengan T)",
       "formula": "1462625",
       "value": 1462625,
-      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Tafsir K3: tunjangan pajak/PPh ditanggung = titik tetap terkecil T = PPh21(bruto tanpa T + T) dengan aturan pembulatan masa itu (perilaku kalkulator PPh 21 DJP, GT2-06); cara iterasi tidak diatur regulasi; Tafsir K2: PPh sebulan metode lama dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16/PJ/2016 Lampiran I.6.2.2 (5/12 x 17.500.000 = 7.291.666), PDF hlm. 43-45"
     },
     {
       "no": 73,
@@ -968,14 +968,14 @@
       "text": "Mei: iuran JHT + JP dibayar pegawai",
       "formula": "455596",
       "value": 455596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 76,
       "text": "Mei: penghasilan neto sebulan",
       "formula": "20039825 - 500000 - 455596",
       "value": 19084229,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 77,
@@ -1017,7 +1017,7 @@
       "text": "Juni: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp18.000.000",
       "formula": "0.0024 * 18000000",
       "value": 43200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 83,
@@ -1038,7 +1038,7 @@
       "text": "Juni: iuran JP pegawai 1% x min(upah Rp18.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(18000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 86,
@@ -1059,7 +1059,7 @@
       "text": "Juni: tunjangan pajak T dicari sehingga T = PPh 21 sebulan atas penghasilan teratur termasuk T; hasil T = Rp1.462.625 (titik tetap terkecil; dibuktikan pada langkah PPh 21 masa di bawah yang harus sama dengan T)",
       "formula": "1462625",
       "value": 1462625,
-      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Tafsir K3: tunjangan pajak/PPh ditanggung = titik tetap terkecil T = PPh21(bruto tanpa T + T) dengan aturan pembulatan masa itu (perilaku kalkulator PPh 21 DJP, GT2-06); cara iterasi tidak diatur regulasi; Tafsir K2: PPh sebulan metode lama dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16/PJ/2016 Lampiran I.6.2.2 (5/12 x 17.500.000 = 7.291.666), PDF hlm. 43-45"
     },
     {
       "no": 89,
@@ -1080,14 +1080,14 @@
       "text": "Juni: iuran JHT + JP dibayar pegawai",
       "formula": "455596",
       "value": 455596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 92,
       "text": "Juni: penghasilan neto sebulan",
       "formula": "20039825 - 500000 - 455596",
       "value": 19084229,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 93,
@@ -1129,7 +1129,7 @@
       "text": "Juli: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp18.000.000",
       "formula": "0.0024 * 18000000",
       "value": 43200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 99,
@@ -1150,7 +1150,7 @@
       "text": "Juli: iuran JP pegawai 1% x min(upah Rp18.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(18000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 102,
@@ -1171,7 +1171,7 @@
       "text": "Juli: tunjangan pajak T dicari sehingga T = PPh 21 sebulan atas penghasilan teratur termasuk T; hasil T = Rp1.462.625 (titik tetap terkecil; dibuktikan pada langkah PPh 21 masa di bawah yang harus sama dengan T)",
       "formula": "1462625",
       "value": 1462625,
-      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Tafsir K3: tunjangan pajak/PPh ditanggung = titik tetap terkecil T = PPh21(bruto tanpa T + T) dengan aturan pembulatan masa itu (perilaku kalkulator PPh 21 DJP, GT2-06); cara iterasi tidak diatur regulasi; Tafsir K2: PPh sebulan metode lama dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16/PJ/2016 Lampiran I.6.2.2 (5/12 x 17.500.000 = 7.291.666), PDF hlm. 43-45"
     },
     {
       "no": 105,
@@ -1192,14 +1192,14 @@
       "text": "Juli: iuran JHT + JP dibayar pegawai",
       "formula": "455596",
       "value": 455596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 108,
       "text": "Juli: penghasilan neto sebulan",
       "formula": "20039825 - 500000 - 455596",
       "value": 19084229,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 109,
@@ -1241,7 +1241,7 @@
       "text": "Agustus: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp18.000.000",
       "formula": "0.0024 * 18000000",
       "value": 43200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 115,
@@ -1262,7 +1262,7 @@
       "text": "Agustus: iuran JP pegawai 1% x min(upah Rp18.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(18000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 118,
@@ -1283,7 +1283,7 @@
       "text": "Agustus: tunjangan pajak T dicari sehingga T = PPh 21 sebulan atas penghasilan teratur termasuk T; hasil T = Rp1.462.625 (titik tetap terkecil; dibuktikan pada langkah PPh 21 masa di bawah yang harus sama dengan T)",
       "formula": "1462625",
       "value": 1462625,
-      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Tafsir K3: tunjangan pajak/PPh ditanggung = titik tetap terkecil T = PPh21(bruto tanpa T + T) dengan aturan pembulatan masa itu (perilaku kalkulator PPh 21 DJP, GT2-06); cara iterasi tidak diatur regulasi; Tafsir K2: PPh sebulan metode lama dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16/PJ/2016 Lampiran I.6.2.2 (5/12 x 17.500.000 = 7.291.666), PDF hlm. 43-45"
     },
     {
       "no": 121,
@@ -1304,14 +1304,14 @@
       "text": "Agustus: iuran JHT + JP dibayar pegawai",
       "formula": "455596",
       "value": 455596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 124,
       "text": "Agustus: penghasilan neto sebulan",
       "formula": "20039825 - 500000 - 455596",
       "value": 19084229,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 125,
@@ -1353,7 +1353,7 @@
       "text": "September: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp18.000.000",
       "formula": "0.0024 * 18000000",
       "value": 43200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 131,
@@ -1374,7 +1374,7 @@
       "text": "September: iuran JP pegawai 1% x min(upah Rp18.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(18000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 134,
@@ -1395,7 +1395,7 @@
       "text": "September: tunjangan pajak T dicari sehingga T = PPh 21 sebulan atas penghasilan teratur termasuk T; hasil T = Rp1.462.625 (titik tetap terkecil; dibuktikan pada langkah PPh 21 masa di bawah yang harus sama dengan T)",
       "formula": "1462625",
       "value": 1462625,
-      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Tafsir K3: tunjangan pajak/PPh ditanggung = titik tetap terkecil T = PPh21(bruto tanpa T + T) dengan aturan pembulatan masa itu (perilaku kalkulator PPh 21 DJP, GT2-06); cara iterasi tidak diatur regulasi; Tafsir K2: PPh sebulan metode lama dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16/PJ/2016 Lampiran I.6.2.2 (5/12 x 17.500.000 = 7.291.666), PDF hlm. 43-45"
     },
     {
       "no": 137,
@@ -1416,14 +1416,14 @@
       "text": "September: iuran JHT + JP dibayar pegawai",
       "formula": "455596",
       "value": 455596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 140,
       "text": "September: penghasilan neto sebulan",
       "formula": "20039825 - 500000 - 455596",
       "value": 19084229,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 141,
@@ -1465,7 +1465,7 @@
       "text": "Oktober: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp18.000.000",
       "formula": "0.0024 * 18000000",
       "value": 43200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 147,
@@ -1486,7 +1486,7 @@
       "text": "Oktober: iuran JP pegawai 1% x min(upah Rp18.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(18000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 150,
@@ -1507,7 +1507,7 @@
       "text": "Oktober: tunjangan pajak T dicari sehingga T = PPh 21 sebulan atas penghasilan teratur termasuk T; hasil T = Rp1.462.625 (titik tetap terkecil; dibuktikan pada langkah PPh 21 masa di bawah yang harus sama dengan T)",
       "formula": "1462625",
       "value": 1462625,
-      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Tafsir K3: tunjangan pajak/PPh ditanggung = titik tetap terkecil T = PPh21(bruto tanpa T + T) dengan aturan pembulatan masa itu (perilaku kalkulator PPh 21 DJP, GT2-06); cara iterasi tidak diatur regulasi; Tafsir K2: PPh sebulan metode lama dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16/PJ/2016 Lampiran I.6.2.2 (5/12 x 17.500.000 = 7.291.666), PDF hlm. 43-45"
     },
     {
       "no": 153,
@@ -1528,14 +1528,14 @@
       "text": "Oktober: iuran JHT + JP dibayar pegawai",
       "formula": "455596",
       "value": 455596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 156,
       "text": "Oktober: penghasilan neto sebulan",
       "formula": "20039825 - 500000 - 455596",
       "value": 19084229,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 157,
@@ -1577,7 +1577,7 @@
       "text": "November: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp18.000.000",
       "formula": "0.0024 * 18000000",
       "value": 43200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 163,
@@ -1598,7 +1598,7 @@
       "text": "November: iuran JP pegawai 1% x min(upah Rp18.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(18000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 166,
@@ -1619,7 +1619,7 @@
       "text": "November: tunjangan pajak T dicari sehingga T = PPh 21 sebulan atas penghasilan teratur termasuk T; hasil T = Rp1.462.625 (titik tetap terkecil; dibuktikan pada langkah PPh 21 masa di bawah yang harus sama dengan T)",
       "formula": "1462625",
       "value": 1462625,
-      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Tafsir K3: tunjangan pajak/PPh ditanggung = titik tetap terkecil T = PPh21(bruto tanpa T + T) dengan aturan pembulatan masa itu (perilaku kalkulator PPh 21 DJP, GT2-06); cara iterasi tidak diatur regulasi; Tafsir K2: PPh sebulan metode lama dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16/PJ/2016 Lampiran I.6.2.2 (5/12 x 17.500.000 = 7.291.666), PDF hlm. 43-45"
     },
     {
       "no": 169,
@@ -1640,14 +1640,14 @@
       "text": "November: iuran JHT + JP dibayar pegawai",
       "formula": "455596",
       "value": 455596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 172,
       "text": "November: penghasilan neto sebulan",
       "formula": "20039825 - 500000 - 455596",
       "value": 19084229,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 173,
@@ -1689,7 +1689,7 @@
       "text": "Desember: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp18.000.000",
       "formula": "0.0024 * 18000000",
       "value": 43200,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 179,
@@ -1710,7 +1710,7 @@
       "text": "Desember: iuran JP pegawai 1% x min(upah Rp18.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(18000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 182,
@@ -1738,7 +1738,7 @@
       "text": "Desember: tunjangan pajak T Masa Pajak Terakhir dicari sehingga T = PPh 21 setahun (bruto termasuk T) - PPh 21 masa sebelumnya; hasil T = Rp1.462.725 (titik tetap terkecil; dibuktikan pada langkah PPh Masa Pajak Terakhir di bawah yang harus sama dengan T)",
       "formula": "1462725",
       "value": 1462725,
-      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a (segala jenis tunjangan), PDF hlm. 20; Tafsir K3: tunjangan pajak/PPh ditanggung = titik tetap terkecil T = PPh21(bruto tanpa T + T) dengan aturan pembulatan masa itu (perilaku kalkulator PPh 21 DJP, GT2-06); cara iterasi tidak diatur regulasi"
     },
     {
       "no": 186,
@@ -1766,7 +1766,7 @@
       "text": "Iuran JHT + JP dibayar pegawai setahun",
       "formula": "450776 + 450776 + 455596 + 455596 + 455596 + 455596 + 455596 + 455596 + 455596 + 455596 + 455596 + 455596",
       "value": 5457512,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 190,

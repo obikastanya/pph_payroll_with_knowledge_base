@@ -12,10 +12,10 @@
     "Upah sebulan dasar iuran BPJS = gaji pokok + tunjangan tetap (PP 44/2015 Pasal 19 ayat (2)), tidak di bawah upah minimum; lembur, THR, bonus, dan natura bukan dasar iuran.",
     "Ikut seluruh program: JKK & JKM (dibayar pemberi kerja, objek PPh 21), JHT 3,7% pemberi kerja / 2% pegawai, JP 2% / 1% dengan batas upah JP sesuai bulan iuran, BPJS Kesehatan 4% pemberi kerja / 1% pegawai dengan batas Rp12.000.000. Iuran pegawai dipotong dari gaji; iuran JHT/JP pemberi kerja dicantumkan di input untuk menguji bahwa keduanya bukan objek.",
     "Nilai premi/iuran sudah bulat rupiah (tidak perlu pembulatan).",
-    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur.",
-    "Tahun 2023 memakai metode PER-16/PJ/2016 (penghasilan disetahunkan setiap masa) dengan lapisan tarif Pasal 17 UU HPP; PPh sebulan dibulatkan ke bawah ke rupiah penuh (asumsi A2).",
-    "Iuran JP 1% pegawai ke BPJS Ketenagakerjaan diperlakukan sebagai pengurang (PER-16 Lampiran I.1.a.1 angka 1 huruf c, PDF hlm. 21).",
-    "Metode ditanggung pemberi kerja (2023, semester I): PPh 21 yang ditanggung adalah kenikmatan yang dikecualikan dari pemotongan (PER-16 Pasal 8 ayat (2)); tidak ditambahkan ke bruto."
+    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur (PER-16 Lampiran I.1.a.1 angka 1 huruf a dan I.1.b angka 1, PDF hlm. 20 dan 23; PMK 168/2023 Pasal 5 ayat (3) huruf a-b, PDF hlm. 9; tafsir K12/K15).",
+    "Tahun 2023 memakai metode PER-16/PJ/2016 (penghasilan disetahunkan setiap masa) dengan lapisan tarif Pasal 17 UU HPP; PPh sebulan dibulatkan ke bawah ke rupiah penuh, mengikuti contoh resmi PER-16 Lampiran I.6.2.2 (tafsir K2).",
+    "Iuran JP 1% pegawai ke BPJS Ketenagakerjaan diperlakukan sebagai pengurang (PER-16 Lampiran I.1.a.1 angka 1 huruf c, PDF hlm. 21; tafsir K9).",
+    "Metode ditanggung pemberi kerja (2023, semester I): PPh 21 yang ditanggung adalah kenikmatan (PER-16 Pasal 8 ayat (2); contoh resmi PER-16 Lampiran I.8) dan kenikmatan Januari-Juni 2023 dikecualikan dari pemotongan (PMK 66/2023 Pasal 23 ayat (4)); tidak ditambahkan ke bruto (tafsir K4)."
   ],
   "input": {
     "status_ptkp": "K/3",
@@ -84,7 +84,7 @@
       "text": "Maret: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp20.000.000",
       "formula": "0.0024 * 20000000",
       "value": 48000,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 3,
@@ -105,7 +105,7 @@
       "text": "Maret: iuran JP pegawai 1% x min(upah Rp20.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(20000000, 9559600)",
       "value": 95596,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 6,
@@ -133,14 +133,14 @@
       "text": "Maret: iuran JHT + JP dibayar pegawai",
       "formula": "495596",
       "value": 495596,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 10,
       "text": "Maret: penghasilan neto sebulan",
       "formula": "20588000 - 500000 - 495596",
       "value": 19592404,
-      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran pensiun/JHT ke BPJS Ketenagakerjaan), PDF hlm. 21; tafsir K9"
     },
     {
       "no": 11,
@@ -179,10 +179,10 @@
     },
     {
       "no": 16,
-      "text": "Maret: PPh 21 Rp1.538.850 ditanggung pemberi kerja; merupakan kenikmatan yang bukan objek pemotongan, sehingga tidak ditambahkan ke bruto (tanpa gross-up)",
+      "text": "Maret: PPh 21 Rp1.538.850 ditanggung pemberi kerja; merupakan kenikmatan (PER-16 Pasal 8 ayat (2)) yang untuk Masa Januari-Juni 2023 dikecualikan dari pemotongan, sehingga tidak ditambahkan ke bruto (tanpa gross-up)",
       "formula": "1538850",
       "value": 1538850,
-      "sumber": "PER-16/PJ/2016 Pasal 8 ayat (1) huruf b dan ayat (2), PDF hlm. 9"
+      "sumber": "PER-16/PJ/2016 Pasal 8 ayat (1) huruf b dan ayat (2), PDF hlm. 9; contoh resmi PER-16 Lampiran I.8, PDF hlm. 46; PMK 66/2023 Pasal 23 ayat (4) dan Pasal 24 (kenikmatan Januari-Juni 2023 dikecualikan dari pemotongan), PDF hlm. 18; tafsir K4"
     }
   ],
   "cek_aritmetika": "cocok",

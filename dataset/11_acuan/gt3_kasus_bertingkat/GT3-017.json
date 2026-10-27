@@ -12,10 +12,10 @@
     "Upah sebulan dasar iuran BPJS = gaji pokok + tunjangan tetap (PP 44/2015 Pasal 19 ayat (2)), tidak di bawah upah minimum; lembur, THR, bonus, dan natura bukan dasar iuran.",
     "Ikut seluruh program: JKK & JKM (dibayar pemberi kerja, objek PPh 21), JHT 3,7% pemberi kerja / 2% pegawai, JP 2% / 1% dengan batas upah JP sesuai bulan iuran, BPJS Kesehatan 4% pemberi kerja / 1% pegawai dengan batas Rp12.000.000. Iuran pegawai dipotong dari gaji; iuran JHT/JP pemberi kerja dicantumkan di input untuk menguji bahwa keduanya bukan objek.",
     "Nilai premi/iuran sudah bulat rupiah (tidak perlu pembulatan).",
-    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur.",
-    "PPh 21 masa selain Masa Pajak Terakhir = tarif efektif bulanan x bruto masa, dibulatkan ke bawah ke rupiah penuh (asumsi A1; pembulatan tidak diatur).",
-    "Biaya jabatan pada Masa Pajak Terakhir = min(5% x bruto, jumlah bulan bekerja x Rp500.000), sesuai pola contoh PMK 168/2023 Lampiran B.",
-    "Metode gross-up: pemberi kerja membayar tunjangan pajak tunai sebesar PPh 21 terutang pada masa yang sama; tunjangan pajak = titik tetap terkecil (rupiah penuh) dari persamaan T = PPh21(bruto tanpa T + T) (asumsi A3)."
+    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur (PER-16 Lampiran I.1.a.1 angka 1 huruf a dan I.1.b angka 1, PDF hlm. 20 dan 23; PMK 168/2023 Pasal 5 ayat (3) huruf a-b, PDF hlm. 9; tafsir K12/K15).",
+    "PPh 21 masa selain Masa Pajak Terakhir = tarif efektif bulanan x bruto masa, pecahan rupiah dibuang/dibulatkan ke bawah (PER-2/PJ/2024 Lampiran I huruf B Petunjuk Umum angka 7; tafsir K1).",
+    "Biaya jabatan pada Masa Pajak Terakhir = min(5% x bruto, jumlah bulan bekerja x Rp500.000), sesuai contoh resmi PMK 168/2023 Lampiran B I.2.1.1 dan PMK 105/2025 Lampiran B nomor 3 (tafsir K6).",
+    "Metode gross-up: pemberi kerja membayar tunjangan pajak tunai sebesar PPh 21 terutang pada masa yang sama; tunjangan pajak = titik tetap terkecil (rupiah penuh, dengan aturan pembulatan masa itu) dari persamaan T = PPh21(bruto tanpa T + T) (tafsir K3)."
   ],
   "input": {
     "status_ptkp": "K/2",
@@ -84,7 +84,7 @@
       "text": "Juni: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp12.000.000",
       "formula": "0.0024 * 12000000",
       "value": 28800,
-      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13; seluruh tarif nominal masuk bruto walaupun sebagian direkomposisi untuk JKP (tafsir K8)"
     },
     {
       "no": 4,
@@ -105,7 +105,7 @@
       "text": "Juni: iuran JP pegawai 1% x min(upah Rp12.000.000, batas upah JP Rp10.042.300) (pengurang neto; JP 2% pemberi kerja bukan objek)",
       "formula": "0.01 * min(12000000, 10042300)",
       "value": 100423,
-      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK; berlaku mulai iuran Maret, sebelumnya batas tahun lalu, tafsir K11)"
     },
     {
       "no": 7,
@@ -123,10 +123,10 @@
     },
     {
       "no": 9,
-      "text": "Juni: tunjangan pajak T dicari sehingga T = floor(tarif TER(bruto) x (bruto sebelum T + T)); hasil T = Rp522.699 (tarif 4%; titik tetap terkecil)",
+      "text": "Juni: tunjangan pajak T dicari sehingga T = PPh 21 TER atas (bruto sebelum T + T), dibulatkan ke bawah; hasil T = Rp522.699 (tarif 4%; titik tetap terkecil)",
       "formula": "floor(0.04 * (12544800 + 522699))",
       "value": 522699,
-      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a (segala jenis tunjangan), PDF hlm. 9; Lampiran B Bagian Kedua I.5, PDF hlm. 45; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a (segala jenis tunjangan), PDF hlm. 9; Lampiran B Bagian Kedua I.5, PDF hlm. 45; Tafsir K3: tunjangan pajak/PPh ditanggung = titik tetap terkecil T = PPh21(bruto tanpa T + T) dengan aturan pembulatan masa itu (perilaku kalkulator PPh 21 DJP, GT2-06); cara iterasi tidak diatur regulasi; Tafsir K1: Masa Pajak s.d. Desember 2024 -> pecahan rupiah dibuang (dibulatkan ke bawah): PER-2/PJ/2024 Lampiran I huruf B Petunjuk Umum angka 7 ('harus tanpa nilai desimal ... 125 (bukan 125,50)'), PDF Lampiran hlm. 5"
     },
     {
       "no": 10,
@@ -147,7 +147,7 @@
       "text": "Juni: PPh 21 = 4% x Rp13.067.499 = Rp522.699,96; dibulatkan ke bawah ke rupiah penuh",
       "formula": "floor(0.04 * 13067499)",
       "value": 522699,
-      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28; Asumsi GT3 A1: pembulatan PPh TER bulanan tidak diatur (PP 58/2023; PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15) -> dibulatkan ke bawah ke rupiah penuh"
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28; Tafsir K1: Masa Pajak s.d. Desember 2024 -> pecahan rupiah dibuang (dibulatkan ke bawah): PER-2/PJ/2024 Lampiran I huruf B Petunjuk Umum angka 7 ('harus tanpa nilai desimal ... 125 (bukan 125,50)'), PDF Lampiran hlm. 5"
     }
   ],
   "cek_aritmetika": "cocok",

@@ -80,7 +80,8 @@ def natura(y, m, k, cum):
     """Return (regular taxable, irregular taxable, cum)."""
     reg = irr = 0
     if (y, m) < (2023, 7):
-        return 0, 0, cum
+        # tidak dipotong pemberi kerja, tetapi bingkisan tetap dihitung dalam batas Rp3 juta setahun
+        return 0, 0, cum + k.get("bingkisan_non_hari_raya", 0)
     if k.get("natura_rumah_individual"):
         reg += max(0, k["natura_rumah_individual"] - 2000000)
     if k.get("kupon_makan_dinas_luar"):
@@ -148,7 +149,8 @@ def recompute(case, ck):
                 ck.eq(f"{m}: kategori", 1, int(r["kategori_ter"] == cat))
                 rt = ter_rate(cat, b)
                 ck.eq(f"{m}: tarif TER", r["tarif_ter"], rt)
-                p = math.floor(rt * b)
+                # tafsir K1: s.d. 2024 dibuang desimalnya; mulai Masa Januari 2025 pembulatan 0,50 ke atas
+                p = math.floor(rt * b) if y <= 2024 else math.floor(rt * b + Fr(1, 2))
                 if T:
                     ck.eq(f"{m}: titik tetap T = PPh", T, p)
             else:

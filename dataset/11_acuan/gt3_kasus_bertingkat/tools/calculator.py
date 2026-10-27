@@ -7,8 +7,8 @@ import math
 from fractions import Fraction as F
 
 from rules import (SRC, JKK_NORMAL, dec, floor_thousand, jkk_relief_active, jp_cap,
-                    klu_info, pasal17_layers, pct, ptkp, rp, ter_category, ter_lookup,
-                    ter_page)
+                    klu_info, pasal17_layers, pct, ptkp, round_formula, round_pph, round_src, rp,
+                    ter_category, ter_lookup, ter_page)
 
 REGULAR_KEYS = ["gaji", "tunjangan_tetap", "lembur"]
 IRREGULAR_KEYS = ["thr", "bonus"]
@@ -174,7 +174,7 @@ class Builder:
     # ------------------------------------------------------------ TER helpers
     def ter_pph(self, cat, bruto):
         rate, row = ter_lookup(cat, bruto)
-        return rate, row, math.floor(rate * bruto)
+        return rate, row, round_pph(rate * bruto, self.year)
 
     def solve_ter_gross_up(self, cat, x):
         t = 0
@@ -401,9 +401,10 @@ class Builder:
             b = x + t
             rate, row, p = self.ter_pph(cat, b)
             label = "tunjangan pajak" if self.metode == "gross_up" else "PPh 21 ditanggung pemberi kerja (kenikmatan, objek)"
-            src_t = (SRC["tunj_pajak"] if self.metode == "gross_up" else SRC["kenikmatan_pph"]) + "; " + SRC["asumsi_gross_up"]
-            self.step(f"{tag}: {label} T dicari sehingga T = floor(tarif TER(bruto) x (bruto sebelum T + T)); "
-                      f"hasil T = {rp(t)} (tarif {pct(rate)}; titik tetap terkecil)", f"floor({dec(rate)} * ({x} + {t}))", t, src_t)
+            src_t = (SRC["tunj_pajak"] if self.metode == "gross_up" else SRC["kenikmatan_pph"]) + "; " + SRC["gross_up"] + "; " + round_src(self.year)
+            rnote = "dibulatkan ke bawah" if self.year <= 2024 else "dibulatkan ke rupiah terdekat"
+            self.step(f"{tag}: {label} T dicari sehingga T = PPh 21 TER atas (bruto sebelum T + T), {rnote}; "
+                      f"hasil T = {rp(t)} (tarif {pct(rate)}; titik tetap terkecil)", round_formula(f"{dec(rate)} * ({x} + {t})", self.year), t, src_t)
             self.step(f"{tag}: penghasilan bruto masa = {rp(x)} + {rp(t)}", f"{x} + {t}", b, src_b)
             if self.metode == "gross_up":
                 out["tunjangan_pajak"] = t
@@ -419,8 +420,9 @@ class Builder:
         self.step(f"{tag}: tarif efektif bulanan kategori {cat} untuk bruto {rp(b)} (lapisan {rng})", None,
                   float(dec(rate)), f"PP 58/2023 Lampiran huruf {cat}, PDF hlm. {ter_page(row)}; " + SRC["ter_kat"])
         exact = rate * b
-        self.step(f"{tag}: PPh 21 = {pct(rate)} x {rp(b)} = {rp(exact)}; dibulatkan ke bawah ke rupiah penuh",
-                  f"floor({dec(rate)} * {b})", p, SRC["ter_masa"] + ("; " + SRC["asumsi_bulat_ter"] if exact.denominator != 1 else ""))
+        rtext = "dibulatkan ke bawah ke rupiah penuh" if self.year <= 2024 else "dibulatkan ke rupiah penuh terdekat (0,50 ke atas)"
+        self.step(f"{tag}: PPh 21 = {pct(rate)} x {rp(b)} = {rp(exact)}" + (f"; {rtext}" if exact.denominator != 1 else ""),
+                  round_formula(f"{dec(rate)} * {b}", self.year), p, SRC["ter_masa"] + ("; " + round_src(self.year) if exact.denominator != 1 else ""))
         out.update({"bruto": b, "kategori_ter": cat, "tarif_ter": float(dec(rate)), "pph21": p})
         return out
 
@@ -435,7 +437,7 @@ class Builder:
             reg_t = reg + t
             *_, tax_t = self.p16_regular_tax(reg_t, iuran, n)
             self.step(f"{tag}: tunjangan pajak T dicari sehingga T = PPh 21 sebulan atas penghasilan teratur termasuk T; "
-                      f"hasil T = {rp(t)} (titik tetap terkecil; dibuktikan pada langkah PPh 21 masa di bawah yang harus sama dengan T)", f"{t}", t, SRC["p16_tunj"] + "; " + SRC["asumsi_gross_up"])
+                      f"hasil T = {rp(t)} (titik tetap terkecil; dibuktikan pada langkah PPh 21 masa di bawah yang harus sama dengan T)", f"{t}", t, SRC["p16_tunj"] + "; " + SRC["gross_up"] + "; " + SRC["bulat_p16"])
             out["tunjangan_pajak"] = t
             reg = reg_t
             self.step(f"{tag}: penghasilan teratur termasuk tunjangan pajak", f"{reg - t} + {t}", reg, src_b)
@@ -454,7 +456,7 @@ class Builder:
         p_reg = math.floor(F(tax) / n)
         exact = F(tax) / n
         self.step(f"{tag}: PPh 21 atas penghasilan teratur = PPh setahun / {n}", f"floor({tax} / {n})", p_reg,
-                  (SRC["p16_bulan"] if n == 12 else SRC["p16_joiner"]) + ("; " + SRC["asumsi_bulat_p16"] if exact.denominator != 1 else ""))
+                  (SRC["p16_bulan"] if n == 12 else SRC["p16_joiner"]) + ("; " + SRC["bulat_p16"] if exact.denominator != 1 else ""))
         p_irr = 0
         rincian = {"faktor_pengali": n, "neto_disetahunkan": _int(neto_a, "neto"), "pkp_teratur": pkp, "pph_setahun_teratur": int(tax)}
         if irr:
@@ -480,8 +482,9 @@ class Builder:
         b = reg + irr
         self.step(f"{tag}: penghasilan bruto masa (teratur + tidak teratur)", f"{reg} + {irr}", b, SRC["p16_bruto"])
         if self.metode == "ditanggung":
-            self.step(f"{tag}: PPh 21 {rp(total)} ditanggung pemberi kerja; merupakan kenikmatan yang bukan objek "
-                      f"pemotongan, sehingga tidak ditambahkan ke bruto (tanpa gross-up)", f"{total}", total, SRC["p16_ditanggung"])
+            self.step(f"{tag}: PPh 21 {rp(total)} ditanggung pemberi kerja; merupakan kenikmatan (PER-16 Pasal 8 ayat (2)) yang "
+                      f"untuk Masa Januari-Juni 2023 dikecualikan dari pemotongan, sehingga tidak ditambahkan ke bruto (tanpa gross-up)",
+                      f"{total}", total, SRC["p16_ditanggung"])
             out["pph21_ditanggung_pemberi_kerja"] = total
         rincian["pph21_teratur"] = p_reg
         out.update({"bruto": b, "kategori_ter": None, "tarif_ter": None, "pph21": total, "rincian_metode_lama": rincian})
@@ -513,7 +516,7 @@ class Builder:
             b = x + t
             label = "tunjangan pajak" if self.metode == "gross_up" else "PPh 21 ditanggung pemberi kerja (kenikmatan)"
             src_t = (SRC["tunj_pajak"] if (ter and self.metode == "gross_up") else SRC["p16_tunj"] if not ter
-                     else SRC["kenikmatan_pph"]) + "; " + SRC["asumsi_gross_up"]
+                     else SRC["kenikmatan_pph"]) + "; " + SRC["gross_up"]
             self.step(f"{tag}: {label} T Masa Pajak Terakhir dicari sehingga T = PPh 21 setahun (bruto termasuk T) - "
                       f"PPh 21 masa sebelumnya; hasil T = {rp(t)} (titik tetap terkecil; dibuktikan pada langkah PPh Masa Pajak Terakhir di bawah yang harus sama dengan T)", f"{t}", t, src_t)
             self.step(f"{tag}: bruto masa termasuk T", f"{x} + {t}", b, src_b)

@@ -1,6 +1,6 @@
 # Kebijakan perusahaan sintetis (SP01–SP14)
 
-> **DOKUMEN FIKTIF UNTUK PENELITIAN.** Semua perusahaan, nomor dokumen, nomor pengesahan, dan penanda tangan rekaan. Disusun 2026-10-27 sebagai materi sintetis GT5 untuk mengisi jenis konflik yang tidak ada di dokumen nyata (`../kandidat.csv`). Status tinjauan: **menunggu** ([review/company_policies/sintetis.review.md](../../../review/company_policies/sintetis.review.md)).
+> **DOKUMEN FIKTIF UNTUK PENELITIAN.** Semua perusahaan, nomor dokumen, nomor pengesahan, dan penanda tangan rekaan. Disusun 2026-10-27 sebagai materi sintetis GT5 untuk mengisi jenis konflik yang tidak ada di dokumen nyata (`../kandidat.csv`). Hasil tinjauan dan putusan tercatat di [review/company_policies/sintetis.review.md](../../../review/company_policies/sintetis.review.md) dan bagian *Putusan* di bawah.
 
 ## Isi
 
@@ -31,34 +31,37 @@
 
 Jumlah per jenis: C1 1, C2 1, C3 1, C4 2, C5 2, C6 2, C7 1, C8 1, C9 1, C10 1 (13 konflik). Per status: aktif 5, laten 3, terpicu 5. Kontrol negatif 3. Bersama konflik nyata (PKB WIKA C4 laten, Perusahaan X/K1 C1 dan C6), setiap kode C1–C10 punya paling sedikit satu contoh.
 
-Beberapa kebijakan sengaja memuat klausul yang **tampak** berkonflik tetapi tidak: makan siang seluruh pekerja (SP04), pembulatan PPh bulanan ke atas ratusan (SP08 Pasal 18 ayat (3), tidak diatur regulasi), mes awak kapal (SP13).
+Beberapa kebijakan sengaja memuat klausul yang **tampak** berkonflik tetapi tidak: makan siang seluruh pekerja (SP04), pembulatan PPh bulanan Januari–November ke atas ratusan (SP08 Pasal 18 ayat (3), tidak diatur regulasi; lihat *Putusan* butir 3 untuk Masa Pajak Terakhir), mes awak kapal (SP13). Konflik nyata PKB yang tersisa setelah tinjauan klausul dicatat di `../klausul/README.md`.
 
 ## Label dampak (RQ4)
 
 Untuk setiap peristiwa uji E01–E12, `label_dampak[]` berisi `terdampak` (`ya`/`tidak`), `tipe`, dan `alasan`:
 
-- **a — nilai fakta berubah:** nilai yang dipakai atau diatur kebijakan berubah menurut aturan wajib (misalnya batas JP yang dirujuk secara dinamis), dan kebijakan tetap sah;
+- **a — nilai fakta berubah:** nilai yang dipakai atau diatur kebijakan berubah menurut aturan wajib (misalnya batas JP yang dirujuk secara dinamis). Termasuk di sini peristiwa yang hanya mengubah nilai wajib bagi fakta yang sudah berkonflik sebelumnya (misalnya SP01/E08, SP11/E08): konfliknya tidak baru, hanya besar selisihnya;
 - **b — aturan pemenang berubah:** untuk fakta yang diatur kebijakan, aturan yang menentukan nilai akhir berpindah (misalnya DTP mengambil alih beban PPh 21), tanpa konflik;
-- **c — menjadi berkonflik:** kebijakan menetapkan nilai yang dilarang aturan wajib setelah peristiwa itu.
+- **c — menjadi berkonflik:** kebijakan menetapkan nilai yang dilarang aturan wajib setelah peristiwa itu, padahal sebelum peristiwa tidak berkonflik (termasuk konflik yang muncul lagi setelah sempat berakhir, misalnya SP05/E09 dan SP03/E11). Perpindahan aturan pemenang yang terjadi bersamaan sudah tercakup di tipe c, sehingga tidak diberi tipe b.
 
-Aturan pelabelan: peristiwa dihitung hanya bila tanggal mulai berlakunya jatuh di dalam masa berlaku kebijakan. Peristiwa yang berlaku sebelum kebijakan mulai dianggap keadaan awal saat kebijakan disusun (`tidak`). Label hanya menilai klausul kebijakan, bukan seluruh penggajian perusahaan. Total label `ya`: 46 dari 168 (tipe a 32, b 6, c 9; label SP02/E04 bertipe b dan c sekaligus).
+Aturan pelabelan: peristiwa dihitung hanya bila tanggal mulai berlakunya jatuh di dalam masa berlaku kebijakan. Peristiwa yang berlaku sebelum kebijakan mulai dianggap keadaan awal saat kebijakan disusun (`tidak`). Label hanya menilai klausul kebijakan, bukan seluruh penggajian perusahaan. Total label `ya`: 46 dari 168 (tipe a 34, b 5, c 8; label SP13/E02 bertipe a dan b sekaligus).
 
 ## Contoh hitung
 
-38 contoh (2–3 per kebijakan). Setiap contoh memuat `input`, `hasil_menurut_kebijakan`, `hasil_menurut_aturan_wajib`, `langkah` (setiap langkah dengan rujukan pasal dan halaman PDF), dan `cek_aritmetika` (ekspresi yang dapat dievaluasi ulang). 435 ekspresi dihitung ulang dengan pecahan eksak: **0 selisih**.
+38 contoh (2–3 per kebijakan). Setiap contoh memuat `input`, `hasil_menurut_kebijakan`, `hasil_menurut_aturan_wajib`, `langkah` (setiap langkah dengan rujukan pasal dan halaman PDF), dan `cek_aritmetika` (ekspresi yang dapat dievaluasi ulang). 439 ekspresi dihitung ulang dengan pecahan eksak: **0 selisih**; setiap tarif TER yang disebut di `langkah` dicocokkan ulang dengan `tables/ter_bulanan.csv` (28 penyebutan, semua cocok), dan setiap hasil gross-up serta perhitungan Masa Pajak Terakhir dihitung ulang dengan iterasi tersendiri.
 
 Asumsi yang dipakai di semua contoh:
 
 - Bruto = upah + premi JKK + premi JKM + iuran JKN bagian pemberi kerja (+ penghasilan lain). Pengurang Masa Pajak Terakhir = biaya jabatan + iuran JHT 2% + JP 1% bagian pekerja.
 - Tingkat risiko JKK per perusahaan tertulis di kebijakan atau di `input`. JKN dibatasi Rp12.000.000; JP mengikuti batas per Maret dari `tables/bpjs.csv`.
-- Hasil TER x bruto dibulatkan ke bawah ke rupiah penuh. Pembulatan ini **tidak diatur** PP 58/2023 maupun PMK 168/2023 (asumsi implementasi). Pembagian /12 pada metode disetahunkan juga dibulatkan ke bawah.
-- Gross-up dan PPh ditanggung pemberi kerja dihitung *full gross-up* seperti PMK 168/2023 Lampiran B contoh I.4 (PDF hlm. 44). Desember dicari dengan iterasi sampai tunjangan = PPh Masa Pajak Terakhir.
+- Hasil TER x bruto dibulatkan ke bawah ke rupiah penuh. Pembulatan ini tidak diatur PP 58/2023 maupun PMK 168/2023; dipakai sebagai konvensi implementasi. Pembagian /12 pada metode disetahunkan juga dibulatkan ke bawah. PKP dibulatkan ke bawah hingga ribuan (PMK 168/2023 Pasal 8 ayat (4), PDF hlm. 10).
+- Gross-up dan PPh ditanggung pemberi kerja dihitung *full gross-up* seperti PMK 168/2023 Lampiran huruf B Bagian Kedua contoh I.4 (PDF hlm. 44): PPh yang ditanggung pemberi kerja adalah kenikmatan dan objek PPh 21. Desember dicari dengan iterasi sampai tunjangan = PPh Masa Pajak Terakhir. Pada masa DTP, PPh 21 pegawai yang memenuhi syarat ditanggung pemerintah (PMK 168/2023 Pasal 7 huruf h, PDF hlm. 10) dan nilainya wajib dibayar tunai walaupun pemberi kerja memberi tunjangan PPh atau menanggung PPh (PMK 10/2025 Pasal 5 ayat (1)-(2), PDF hlm. 6).
 - Pegawai yang berhenti di tengah tahun: neto tidak disetahunkan, PTKP penuh, plafon biaya jabatan Rp500.000 x jumlah bulan.
-- THR: Permenaker 6/2016 (Pasal 3 dan Pasal 7) **tidak ada** di `dataset/01_regulasi`, jadi rujukannya tanpa halaman PDF.
+- THR: Permenaker 6/2016 Pasal 2 ayat (1), Pasal 3 ayat (1), dan Pasal 7 ayat (1) dirujuk tanpa halaman PDF karena teksnya tidak disimpan di `dataset/01_regulasi`.
+- Pesangon, uang pisah, UPMK, dan UPH dikenai PPh 21 final PP 68/2009 dan tidak masuk perhitungan TER/Pasal 17; tidak ada contoh SP yang menghitungnya.
 - Hari raya: Idulfitri 31 Maret 2025, Natal 25 Desember 2025.
 
-## Hal yang perlu diputuskan pakar
+## Putusan
 
-1. Perlakuan PPh ditanggung pemberi kerja sebagai kenikmatan untuk Juli–Desember 2023 (SP13, E02).
-2. Apakah keringanan JKK (E07/E09) memang menurunkan bruto PPh 21 dalam praktik (SP05, SP14).
-3. Apakah pembulatan PPh bulanan ke atas ratusan (SP08) dianggap pilihan sah.
+1. **PPh ditanggung pemberi kerja sebagai kenikmatan, Juli–Desember 2023 (SP13, E02).** Pemotongan atas natura dan kenikmatan berlaku mulai Masa Pajak Juli 2023; natura/kenikmatan Januari–Juni 2023 dikecualikan dari pemotongan dan dilaporkan sendiri oleh penerima (PMK 66/2023 Pasal 23 ayat (1) dan (4), Pasal 24, PDF hlm. 17-18). PPh 21 yang ditanggung pemberi kerja adalah kenikmatan (PMK 168/2023 Lampiran huruf B contoh I.4, PDF hlm. 44), jadi untuk SP13 masuk bruto dengan *full gross-up* mulai Masa Juli 2023, masih dengan metode disetahunkan sampai Desember 2023 dan dengan TER mulai Januari 2024. Karena itu label SP13/E02 menjadi tipe a dan b.
+2. **Keringanan JKK menurunkan bruto (SP05, SP14).** Ya. Yang masuk bruto adalah iuran JKK yang dibayarkan pemberi kerja (PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9), dan besarnya iuran itu ditetapkan PP 7/2025 Pasal 4 ayat (1) (PDF hlm. 4; iuran Februari–Juli 2025) dan PP 36/2025 Pasal 10A (PDF hlm. 4; diperpanjang sampai iuran Januari 2026, surut sejak Agustus 2025). Syaratnya: industri padat karya tertentu (Pasal 3 ayat (4)), paling sedikit 50 peserta aktif (Pasal 3 ayat (3)), lolos verifikasi BPJS Ketenagakerjaan (Pasal 5 ayat (1)-(2)), dan iuran sampai Januari 2025 sudah lunas (Pasal 6 ayat (2)). SP05 (1.350 pekerja) dan SP14 (2.400 pekerja) memenuhinya.
+3. **Pembulatan PPh bulanan ke atas ratusan (SP08 Pasal 18 ayat (3)).** Untuk Masa Januari–November bukan konflik: PP 58/2023 dan PMK 168/2023 tidak mengatur pembulatan hasil TER x bruto, selisihnya di bawah Rp100, dan terkoreksi di Masa Pajak Terakhir. Untuk Masa Pajak Terakhir, PPh adalah selisih eksak (PMK 168/2023 Pasal 15 ayat (1) huruf b, PDF hlm. 15); pembulatan ke atas dapat menambah paling banyak Rp50 yang wajib dikembalikan (Pasal 21 ayat (1), PDF hlm. 21). Bagian itu dicatat di bawah label C9 SP08 yang sudah ada. Hasil kebijakan SP08-1 dan SP08-2 kini memakai PPh bulanan yang sudah dibulatkan (Rp2.305.400 dan Rp164.700).
+4. **Kelebihan potong saat PPh ditanggung pemberi kerja.** Dengan *full gross-up*, kenikmatan di Masa Pajak Terakhir menjadi negatif dan kelebihan kembali kepada pemberi kerja melalui pemindahbukuan ke setoran berikutnya (PMK 168/2023 Pasal 21 ayat (3), PDF hlm. 21), bukan dibayar tunai kepada pegawai. Pada metode *gross* (misalnya SP11), kelebihan wajib dikembalikan kepada pegawai (Pasal 21 ayat (1)).
+5. **Koreksi label setelah pemeriksaan.** SP01/E08 c menjadi a (konflik C6 sudah ada sejak E05); SP02/E04 b,c menjadi c (tipe b didefinisikan tanpa konflik); SP13/E02 b menjadi a,b (lihat butir 1).

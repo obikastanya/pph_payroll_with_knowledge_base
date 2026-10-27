@@ -132,13 +132,14 @@ def main():
             except (UpdateError, ValueError, KeyError):
                 k_next = None
         abstained = k_next is None
+        not_run = iso is None or iso.get("status") in ("budget", "crash")
         if abstained:
             if args.variant == "perfect" and gold is not None:
                 k_next = apply_delta(k_sis, dict(gold.to_json(), delta_id=f"{args.run}-{ev.id}-gold"), lenient=True)
                 source = "perfect reviewer"
             else:
                 k_next = k_sis
-                source = "abstain (kept)"
+                source = "not run (kept)" if not_run else "abstain (kept)"
         wrong = wrong_set(k_next, f"now-{ev.id}", k_star, cases, ev.issued, oracle)
         new = wrong - h_n
         mech = set()
@@ -148,7 +149,8 @@ def main():
                 mech = wrong_set(k_mech, f"now-{ev.id}", k_star, cases, ev.issued, oracle) - h_n
             except (UpdateError, ValueError, KeyError):
                 mech = set()
-        rows.append({"event": ev.id, "part": ev.part, "source": source, "abstain": abstained, "cases": len(cases),
+        rows.append({"event": ev.id, "part": ev.part, "source": source, "abstain": abstained, "not_run": not_run,
+                     "cases": len(cases),
                      "H_n": len(h_n), "wrong": len(wrong), "new_errors": len(new), "mechanical": len(mech)})
         print(f"{ev.id:4s} {source:22s} H={len(h_n):4d} wrong={len(wrong):4d} new={len(new):4d} "
               f"mech={len(mech):4d}", flush=True)
@@ -157,8 +159,13 @@ def main():
         w = csv.DictWriter(f, list(rows[0]), lineterminator="\n")
         w.writeheader()
         w.writerows(rows)
-    ok = sum(r["new_errors"] == 0 for r in rows)
-    summary = {"events": len(rows), "OAR": ok / len(rows), "OAR_CI": stats.clopper_pearson(ok, len(rows)),
+    run = [r for r in rows if not r["not_run"]]            # events without an isolated result are not counted
+    ok = sum(r["new_errors"] == 0 for r in run)
+    summary = {"events": len(run), "not_run": len(rows) - len(run), "OAR": ok / len(run),
+               "OAR_CI": stats.clopper_pearson(ok, len(run)), "OAR_lower_one_sided": 1 - stats.upper_bound(len(run) - ok, len(run)),
+               "regulation_events": sum(r["part"] == "uji" for r in run),
+               "OAR_regulation": sum(r["new_errors"] == 0 for r in run if r["part"] == "uji")
+               / max(1, sum(r["part"] == "uji" for r in run)),
                "final_wrong_tuples": rows[-1]["wrong"], "variant": args.variant, "iso_run": args.iso}
     (out_dir / "chain_summary.json").write_text(json.dumps(summary, indent=1, default=str) + "\n", encoding="utf-8")
     print(json.dumps(summary, indent=1, default=str))

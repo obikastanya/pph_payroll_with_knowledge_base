@@ -1,0 +1,383 @@
+{
+ "run": "e2-pengecoh",
+ "event": "P10",
+ "condition": "proposed",
+ "documents": [
+  "PERMENAKER-5-2023"
+ ],
+ "selection": {
+  "PERMENAKER-5-2023": {
+   "tokens": 3263,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "fail: REG.BPJS.WAGE.PADAT_KARYA: valid_until 2023-09-30 is not supported by a quote of this element"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.WAGE.PADAT_KARYA",
+      "label": "social security wage base uses the last wage before the wage adjustment (export-oriented labour-intensive industry)",
+      "label_id": "dasar upah iuran jaminan sosial menggunakan upah terakhir sebelum penyesuaian upah (industri padat karya berorientasi ekspor)",
+      "valid_from": "2023-03-01",
+      "valid_until": null,
+      "recorded_on": "2023-03-08",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "bpjs_wage"
+       },
+       {
+        "name": "condition",
+        "value": "hr('wage_before_adjustment') > 0"
+       },
+       {
+        "name": "expression",
+        "value": "round(hr('wage_before_adjustment'), 1, 'half_up')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "Pasal 12 ayat (1)",
+        "page": 6,
+        "quote": "Besaran Upah yang dibayarkan kepada Pekerja/Buruh sebagaimana dimaksud dalam Pasal 8 ayat (1) tidak berlaku sebagai dasar perhitungan iuran dan pembayaran manfaat jaminan sosial"
+       },
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "Pasal 12 ayat (2)",
+        "page": 6,
+        "quote": "menggunakan nilai Upah terakhir sebelum penyesuaian Upah berdasarkan kesepakatan."
+       },
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "Pasal 8 ayat (3)",
+        "page": 4,
+        "quote": "berlaku selama 6 (enam) bulan terhitung sejak Peraturan Menteri ini mulai berlaku."
+       },
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "Pasal 9 ayat (4)",
+        "page": 5,
+        "quote": "Jangka waktu berlakunya kesepakatan sebagaimana dimaksud pada ayat (3) huruf c tidak melebihi jangka waktu penyesuaian waktu kerja dan Upah"
+       },
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "Pasal 13",
+        "page": 6,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal diundangkan."
+       },
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "penutup",
+        "page": 7,
+        "quote": "Diundangkan di Jakarta pada tanggal 8 Maret 2023"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Only Pasal 12 changes the computation: when HR supplies the last wage before the agreed adjustment (hr('wage_before_adjustment')), the social security wage base uses it, prevailing over the general bpjs_wage rule by its later valid_from. The six-month window (from promulgation on 8 March 2023) has no explicit end date in the text, so valid_until is left open and the window is enforced through the condition, since the agreement (and thus the adjusted wage input) cannot exceed the six-month adjustment period (Pasal 9 ayat (4))."
+   },
+   "delta": {
+    "delta_id": "e2-pengecoh-P10-cand1",
+    "event_id": "P10",
+    "document": {
+     "id": "PERMENAKER-5-2023",
+     "title": "Permenaker 5/2023: Penyesuaian waktu kerja dan pengupahan industri padat karya berorientasi ekspor",
+     "issued": "2023-03-08"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.WAGE.PADAT_KARYA",
+      "recorded_on": "2023-03-08",
+      "label": "social security wage base uses the last wage before the wage adjustment (export-oriented labour-intensive industry)",
+      "label_id": "dasar upah iuran jaminan sosial menggunakan upah terakhir sebelum penyesuaian upah (industri padat karya berorientasi ekspor)",
+      "valid_from": "2023-03-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "bpjs_wage",
+      "condition": "hr('wage_before_adjustment') > 0",
+      "expression": "round(hr('wage_before_adjustment'), 1, 'half_up')",
+      "source": [
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "Pasal 12 ayat (1)",
+        "quote": "Besaran Upah yang dibayarkan kepada Pekerja/Buruh sebagaimana dimaksud dalam Pasal 8 ayat (1) tidak berlaku sebagai dasar perhitungan iuran dan pembayaran manfaat jaminan sosial",
+        "page": 6
+       },
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "Pasal 12 ayat (2)",
+        "quote": "menggunakan nilai Upah terakhir sebelum penyesuaian Upah berdasarkan kesepakatan.",
+        "page": 6
+       },
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "Pasal 8 ayat (3)",
+        "quote": "berlaku selama 6 (enam) bulan terhitung sejak Peraturan Menteri ini mulai berlaku.",
+        "page": 4
+       },
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "Pasal 9 ayat (4)",
+        "quote": "Jangka waktu berlakunya kesepakatan sebagaimana dimaksud pada ayat (3) huruf c tidak melebihi jangka waktu penyesuaian waktu kerja dan Upah",
+        "page": 5
+       },
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "Pasal 13",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal diundangkan.",
+        "page": 6
+       },
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "penutup",
+        "quote": "Diundangkan di Jakarta pada tanggal 8 Maret 2023",
+        "page": 7
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only Pasal 12 changes the computation: when HR supplies the last wage before the agreed adjustment (hr('wage_before_adjustment')), the social security wage base uses it, prevailing over the general bpjs_wage rule by its later valid_from. The six-month window (from promulgation on 8 March 2023) has no explicit end date in the text, so valid_until is left open and the window is enforced through the condition, since the agreement (and thus the adjusted wage input) cannot exceed the six-month adjustment period (Pasal 9 ayat (4))."
+   },
+   "initial_delta": {
+    "delta_id": "e2-pengecoh-P10-cand1",
+    "event_id": "P10",
+    "document": {
+     "id": "PERMENAKER-5-2023",
+     "title": "Permenaker 5/2023: Penyesuaian waktu kerja dan pengupahan industri padat karya berorientasi ekspor",
+     "issued": "2023-03-08"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.WAGE.PADAT_KARYA",
+      "recorded_on": "2023-03-08",
+      "label": "social security wage base uses the last wage before the wage adjustment (export-oriented labour-intensive industry)",
+      "label_id": "dasar upah iuran jaminan sosial menggunakan upah terakhir sebelum penyesuaian upah (industri padat karya berorientasi ekspor)",
+      "valid_from": "2023-03-01",
+      "valid_until": "2023-09-30",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "bpjs_wage",
+      "condition": "hr('wage_before_adjustment') > 0",
+      "expression": "round(hr('wage_before_adjustment'), 1, 'half_up')",
+      "source": [
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "Pasal 12 ayat (1)",
+        "quote": "Besaran Upah yang dibayarkan kepada Pekerja/Buruh sebagaimana dimaksud dalam Pasal 8 ayat (1) tidak berlaku sebagai dasar perhitungan iuran dan pembayaran manfaat jaminan sosial",
+        "page": 6
+       },
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "Pasal 12 ayat (2)",
+        "quote": "menggunakan nilai Upah terakhir sebelum penyesuaian Upah berdasarkan kesepakatan.",
+        "page": 6
+       },
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "Pasal 8 ayat (3)",
+        "quote": "berlaku selama 6 (enam) bulan terhitung sejak Peraturan Menteri ini mulai berlaku.",
+        "page": 4
+       },
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "Pasal 13",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal diundangkan.",
+        "page": 6
+       },
+       {
+        "document": "PERMENAKER-5-2023",
+        "provision": "penutup",
+        "quote": "Diundangkan di Jakarta pada tanggal 8 Maret 2023",
+        "page": 7
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The reduced wage (at least 75% of the usual wage) is a case input, not a rule; only Pasal 12 changes the computation, so when HR supplies the last wage before the agreed adjustment (hr('wage_before_adjustment')), the social security wage base uses it and the later valid_from makes it prevail over the general bpjs_wage rule. The window runs from the March 2023 period (promulgated 8 March 2023) through September 2023 to cover the six months."
+   }
+  }
+ ],
+ "groups": [
+  [
+   1
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-pengecoh-P10-cand1",
+  "event_id": "P10",
+  "document": {
+   "id": "PERMENAKER-5-2023",
+   "title": "Permenaker 5/2023: Penyesuaian waktu kerja dan pengupahan industri padat karya berorientasi ekspor",
+   "issued": "2023-03-08"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.WAGE.PADAT_KARYA",
+    "recorded_on": "2023-03-08",
+    "label": "social security wage base uses the last wage before the wage adjustment (export-oriented labour-intensive industry)",
+    "label_id": "dasar upah iuran jaminan sosial menggunakan upah terakhir sebelum penyesuaian upah (industri padat karya berorientasi ekspor)",
+    "valid_from": "2023-03-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "bpjs_wage",
+    "condition": "hr('wage_before_adjustment') > 0",
+    "expression": "round(hr('wage_before_adjustment'), 1, 'half_up')",
+    "source": [
+     {
+      "document": "PERMENAKER-5-2023",
+      "provision": "Pasal 12 ayat (1)",
+      "quote": "Besaran Upah yang dibayarkan kepada Pekerja/Buruh sebagaimana dimaksud dalam Pasal 8 ayat (1) tidak berlaku sebagai dasar perhitungan iuran dan pembayaran manfaat jaminan sosial",
+      "page": 6
+     },
+     {
+      "document": "PERMENAKER-5-2023",
+      "provision": "Pasal 12 ayat (2)",
+      "quote": "menggunakan nilai Upah terakhir sebelum penyesuaian Upah berdasarkan kesepakatan.",
+      "page": 6
+     },
+     {
+      "document": "PERMENAKER-5-2023",
+      "provision": "Pasal 8 ayat (3)",
+      "quote": "berlaku selama 6 (enam) bulan terhitung sejak Peraturan Menteri ini mulai berlaku.",
+      "page": 4
+     },
+     {
+      "document": "PERMENAKER-5-2023",
+      "provision": "Pasal 9 ayat (4)",
+      "quote": "Jangka waktu berlakunya kesepakatan sebagaimana dimaksud pada ayat (3) huruf c tidak melebihi jangka waktu penyesuaian waktu kerja dan Upah",
+      "page": 5
+     },
+     {
+      "document": "PERMENAKER-5-2023",
+      "provision": "Pasal 13",
+      "quote": "Peraturan Menteri ini mulai berlaku pada tanggal diundangkan.",
+      "page": 6
+     },
+     {
+      "document": "PERMENAKER-5-2023",
+      "provision": "penutup",
+      "quote": "Diundangkan di Jakarta pada tanggal 8 Maret 2023",
+      "page": 7
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "Only Pasal 12 changes the computation: when HR supplies the last wage before the agreed adjustment (hr('wage_before_adjustment')), the social security wage base uses it, prevailing over the general bpjs_wage rule by its later valid_from. The six-month window (from promulgation on 8 March 2023) has no explicit end date in the text, so valid_until is left open and the window is enforced through the condition, since the agreement (and thus the adjusted wage input) cannot exceed the six-month adjustment period (Pasal 9 ayat (4))."
+ },
+ "cost_usd": 0.204776,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "Covered export-oriented labour-intensive companies may cut wages to as little as 75% of the usual wage for six months. This lowers the regular gross income of affected permanent employees. Pasal 12 also requires social security contributions to keep using the last wage before the cut. So employer-paid JKK/JKM/JKN premiums included in gross income, and employee JHT/JP deductions, stay on the old wage rather than the reduced one. Both points change PPh 21 calculation inputs for affected permanent employees during the period.",
+   "quotes": [
+    {
+     "provision": "Pasal 8 ayat (1)",
+     "quote": "dapat melakukan penyesuaian besaran Upah\nPekerja/Buruh dengan ketentuan Upah yang\ndibayarkan kepada Pekerja/Buruh paling sedikit 75%\n(tujuh puluh lima persen) dari Upah yang biasa\nditerima."
+    },
+    {
+     "provision": "Pasal 12 ayat (1)",
+     "quote": "tidak\nberlaku sebagai dasar perhitungan iuran dan\npembayaran manfaat jaminan sosial, kompensasi\npemutusan hubungan kerja, dan hak-hak lain"
+    },
+    {
+     "provision": "Pasal 12 ayat (2)",
+     "quote": "menggunakan nilai Upah terakhir sebelum\npenyesuaian Upah berdasarkan kesepakatan."
+    }
+   ],
+   "effective_from": "2023-03-01",
+   "effective_from_quote": "Diundangkan di Jakarta\npada tanggal 8 Maret 2023",
+   "effective_until": "2023-09-30",
+   "effective_until_quote": "(1) dan ayat (2) berlaku selama 6 (enam) bulan terhitung\nsejak Peraturan Menteri ini mulai berlaku.",
+   "subjects": [
+    {
+     "kind": "sector",
+     "value": "Industri tekstil dan pakaian jadi",
+     "quote": "a. industri tekstil dan pakaian jadi;"
+    },
+    {
+     "kind": "sector",
+     "value": "Industri alas kaki",
+     "quote": "b. industri alas kaki;"
+    },
+    {
+     "kind": "sector",
+     "value": "Industri kulit dan barang kulit",
+     "quote": "c. industri kulit dan barang kulit;"
+    },
+    {
+     "kind": "sector",
+     "value": "Industri furnitur",
+     "quote": "d. industri furnitur; dan"
+    },
+    {
+     "kind": "sector",
+     "value": "Industri mainan anak",
+     "quote": "e. industri mainan anak."
+    },
+    {
+     "kind": "employer_group",
+     "value": "Export-oriented labour-intensive companies with at least 200 workers, labour cost at least 15% of production cost, dependent on US/European orders, affected by global economic change",
+     "quote": "a. Pekerja/Buruh paling sedikit 200 (dua ratus)\norang;"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

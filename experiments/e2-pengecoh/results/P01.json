@@ -1,0 +1,720 @@
+{
+ "run": "e2-pengecoh",
+ "event": "P01",
+ "condition": "proposed",
+ "documents": [
+  "PP-49-2023"
+ ],
+ "selection": {
+  "PP-49-2023": {
+   "tokens": 6768,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "fail: TAB.JKK_RATES_RECOMPOSED.2023: number 0.001 is not in a quote of this element; TAB.JKK_RATES_RECOMPOSED.2023: number 0.004 is not in a quote of this element; TAB.JKK_RATES_RECOMPOSED.2023: number 0.0075 is not in a quote of this element; PAR.JKM_RATE_RECOMPOSED.2023: number 0.002 is not in a quote of this element"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "parameter",
+      "id": "PAR.JKK_JKP_RECOMPOSITION_RATE.2023",
+      "label": "part of the JKK contribution recomposed to the JKP contribution",
+      "label_id": "bagian iuran JKK yang direkomposisi untuk iuran JKP",
+      "valid_from": "2023-10-01",
+      "valid_until": null,
+      "recorded_on": "2023-10-06",
+      "fields": [
+       {
+        "name": "name",
+        "value": "jkk_jkp_recomposition_rate"
+       },
+       {
+        "name": "value",
+        "value": "0.0014"
+       },
+       {
+        "name": "value_type",
+        "value": "rate"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (1)",
+        "page": 5,
+        "quote": "direkomposisi untuk luran jaminan kehilangan pekerjaan sebesar 0,14% (nol koma empat belas persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko menjadi:"
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal II",
+        "page": 12,
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada tanggal diundangkan."
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "penutup",
+        "page": 13,
+        "quote": "Ditetapkan di Jakarta pada tanggal 6 Oktober 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.JKP",
+      "label": "recomposed JKK rate for participants registered in JKP",
+      "label_id": "tarif iuran JKK rekomposisi bagi peserta terdaftar JKP",
+      "valid_from": "2023-10-01",
+      "valid_until": null,
+      "recorded_on": "2023-10-06",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "lookup('jkk_rates', employer('jkk_risk_group')) - param('jkk_jkp_recomposition_rate')"
+       },
+       {
+        "name": "condition",
+        "value": "employee('jkp_registered') != False and employer('jkk_jkm_arrears') != True"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.BPJS.JKK_RATE"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (2)",
+        "page": 6,
+        "quote": "Besaran Iuran JKK sebagaimana dimaksud pada ayat (1) berlaku untuk Peserta penerima Upah yang wajib dan telah terdaftar sebagai Peserta dalam program jaminan kehilangan pekerjaan."
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (3)",
+        "page": 6,
+        "quote": "Besaran Iuran JKK sebagaimana dimaksud dalam Pasal 16 ayat (1) tidak direkomposisi dan tetap berlaku bagi:"
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (1) huruf e",
+        "page": 6,
+        "quote": "tingkat risiko sangat tinggi sebesar 1,60% (satu koma enam puluh persen) dari Upah sebulan."
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "penutup",
+        "page": 13,
+        "quote": "Ditetapkan di Jakarta pada tanggal 6 Oktober 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKM.JKP",
+      "label": "recomposed JKM premium for participants registered in JKP",
+      "label_id": "iuran JKM rekomposisi bagi peserta terdaftar JKP",
+      "valid_from": "2023-10-01",
+      "valid_until": null,
+      "recorded_on": "2023-10-06",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkm_premium"
+       },
+       {
+        "name": "expression",
+        "value": "round(param('jkm_rate') * 2 / 3 * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True and employee('jkp_registered') != False and employer('jkk_jkm_arrears') != True"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.BPJS.JKM"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 4, Pasal 18A ayat (1)",
+        "page": 6,
+        "quote": "sehingga Iuran JKM menjadi O,2Oo/o (nol koma dua puluh persen) dari Upah sebulan."
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 4, Pasal 18A ayat (2)",
+        "page": 6,
+        "quote": "Besaran Iuran JKM sebagaimana dimaksud pada ayat (1) berlaku untuk Peserta penerima Upah yang wajib dan telah terdaftar sebagai Peserta dalam program jaminan kehilangan pekerjaan."
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 4, Pasal 18A ayat (3)",
+        "page": 6,
+        "quote": "Besaran Iuran JKM sebagaimana dimaksud dalam Pasal 18 ayat (1) tidak direkomposisi dan tetap berlaku bagi:"
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "penutup",
+        "page": 13,
+        "quote": "Ditetapkan di Jakarta pada tanggal 6 Oktober 2023"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Recomposed JKK rates are computed as the PP 44/2015 table rate minus the 0,14% shifted to JKP (giving 0,10/0,40/0,75/1,13/1,60%), and the recomposed JKM rate 0,20% as two thirds of the existing 0,30% jkm_rate (the OCR of the percentages was unreadable for the gate). Both apply only to participants registered in JKP without contribution arrears (employee('jkp_registered') assumed true unless False), from the October 2023 contribution month."
+   },
+   "delta": {
+    "delta_id": "e2-pengecoh-P01-cand1",
+    "event_id": "P01",
+    "document": {
+     "id": "PP-49-2023",
+     "title": "PP 49/2023: Rekomposisi iuran JKK untuk JKP",
+     "issued": "2023-10-06"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "parameter",
+      "id": "PAR.JKK_JKP_RECOMPOSITION_RATE.2023",
+      "recorded_on": "2023-10-06",
+      "label": "part of the JKK contribution recomposed to the JKP contribution",
+      "label_id": "bagian iuran JKK yang direkomposisi untuk iuran JKP",
+      "valid_from": "2023-10-01",
+      "name": "jkk_jkp_recomposition_rate",
+      "value_type": "rate",
+      "value": "0.0014",
+      "source": [
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (1)",
+        "quote": "direkomposisi untuk luran jaminan kehilangan pekerjaan sebesar 0,14% (nol koma empat belas persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko menjadi:",
+        "page": 5
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal II",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada tanggal diundangkan.",
+        "page": 12
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "penutup",
+        "quote": "Ditetapkan di Jakarta pada tanggal 6 Oktober 2023",
+        "page": 13
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.JKP",
+      "recorded_on": "2023-10-06",
+      "label": "recomposed JKK rate for participants registered in JKP",
+      "label_id": "tarif iuran JKK rekomposisi bagi peserta terdaftar JKP",
+      "valid_from": "2023-10-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employee('jkp_registered') != False and employer('jkk_jkm_arrears') != True",
+      "expression": "lookup('jkk_rates', employer('jkk_risk_group')) - param('jkk_jkp_recomposition_rate')",
+      "overrides": [
+       "REG.BPJS.JKK_RATE"
+      ],
+      "source": [
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (2)",
+        "quote": "Besaran Iuran JKK sebagaimana dimaksud pada ayat (1) berlaku untuk Peserta penerima Upah yang wajib dan telah terdaftar sebagai Peserta dalam program jaminan kehilangan pekerjaan.",
+        "page": 6
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (3)",
+        "quote": "Besaran Iuran JKK sebagaimana dimaksud dalam Pasal 16 ayat (1) tidak direkomposisi dan tetap berlaku bagi:",
+        "page": 6
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (1) huruf e",
+        "quote": "tingkat risiko sangat tinggi sebesar 1,60% (satu koma enam puluh persen) dari Upah sebulan.",
+        "page": 6
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "penutup",
+        "quote": "Ditetapkan di Jakarta pada tanggal 6 Oktober 2023",
+        "page": 13
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKM.JKP",
+      "recorded_on": "2023-10-06",
+      "label": "recomposed JKM premium for participants registered in JKP",
+      "label_id": "iuran JKM rekomposisi bagi peserta terdaftar JKP",
+      "valid_from": "2023-10-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkm_premium",
+      "condition": "employer('premiums_as_billed') != True and employee('jkp_registered') != False and employer('jkk_jkm_arrears') != True",
+      "expression": "round(param('jkm_rate') * 2 / 3 * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "overrides": [
+       "REG.BPJS.JKM"
+      ],
+      "source": [
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 4, Pasal 18A ayat (1)",
+        "quote": "sehingga Iuran JKM menjadi O,2Oo/o (nol koma dua puluh persen) dari Upah sebulan.",
+        "page": 6
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 4, Pasal 18A ayat (2)",
+        "quote": "Besaran Iuran JKM sebagaimana dimaksud pada ayat (1) berlaku untuk Peserta penerima Upah yang wajib dan telah terdaftar sebagai Peserta dalam program jaminan kehilangan pekerjaan.",
+        "page": 6
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 4, Pasal 18A ayat (3)",
+        "quote": "Besaran Iuran JKM sebagaimana dimaksud dalam Pasal 18 ayat (1) tidak direkomposisi dan tetap berlaku bagi:",
+        "page": 6
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "penutup",
+        "quote": "Ditetapkan di Jakarta pada tanggal 6 Oktober 2023",
+        "page": 13
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Recomposed JKK rates are computed as the PP 44/2015 table rate minus the 0,14% shifted to JKP (giving 0,10/0,40/0,75/1,13/1,60%), and the recomposed JKM rate 0,20% as two thirds of the existing 0,30% jkm_rate (the OCR of the percentages was unreadable for the gate). Both apply only to participants registered in JKP without contribution arrears (employee('jkp_registered') assumed true unless False), from the October 2023 contribution month."
+   },
+   "initial_delta": {
+    "delta_id": "e2-pengecoh-P01-cand1",
+    "event_id": "P01",
+    "document": {
+     "id": "PP-49-2023",
+     "title": "PP 49/2023: Rekomposisi iuran JKK untuk JKP",
+     "issued": "2023-10-06"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.JKK_RATES_RECOMPOSED.2023",
+      "recorded_on": "2023-10-06",
+      "label": "recomposed JKK contribution rates by risk group (participants registered in JKP)",
+      "label_id": "tarif iuran JKK setelah rekomposisi menurut tingkat risiko",
+      "valid_from": "2023-10-01",
+      "name": "jkk_rates_recomposed",
+      "table_kind": "lookup",
+      "rows": [
+       {
+        "key": "very_low",
+        "value": "0.001"
+       },
+       {
+        "key": "low",
+        "value": "0.004"
+       },
+       {
+        "key": "medium",
+        "value": "0.0075"
+       },
+       {
+        "key": "high",
+        "value": "0.0113"
+       },
+       {
+        "key": "very_high",
+        "value": "0.016"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (1) huruf a-d",
+        "quote": "tingkat risiko sangat rendah sebesar 0,10olo (nol koma sepuluh persen) dari Upah sebulan;",
+        "page": 5
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (1) huruf b",
+        "quote": "tingkat risiko rendah sebesar O,40% (nol koma empat puluh persen) dari Upah sebulan;",
+        "page": 5
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (1) huruf c",
+        "quote": "tingkat risiko sedang sebesar 0,75olo (nol koma tujuh puluh lima persen) dari Upah sebulan;",
+        "page": 5
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (1) huruf d",
+        "quote": "tingkat risiko tinggi sebesar 1,13% (satu koma tiga. belas persen) dari Upah sebulan;",
+        "page": 5
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (1) huruf e",
+        "quote": "tingkat risiko sangat tinggi sebesar 1,60% (satu koma enam puluh persen) dari Upah sebulan.",
+        "page": 6
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal II",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada tanggal diundangkan.",
+        "page": 12
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "penutup",
+        "quote": "Ditetapkan di Jakarta pada tanggal 6 Oktober 2023",
+        "page": 13
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.JKP",
+      "recorded_on": "2023-10-06",
+      "label": "recomposed JKK rate for participants registered in JKP",
+      "label_id": "tarif iuran JKK rekomposisi bagi peserta terdaftar JKP",
+      "valid_from": "2023-10-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employee('jkp_registered') != False and employer('jkk_jkm_arrears') != True",
+      "expression": "lookup('jkk_rates_recomposed', employer('jkk_risk_group'))",
+      "overrides": [
+       "REG.BPJS.JKK_RATE"
+      ],
+      "source": [
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (2)",
+        "quote": "Besaran Iuran JKK sebagaimana dimaksud pada ayat (1) berlaku untuk Peserta penerima Upah yang wajib dan telah terdaftar sebagai Peserta dalam program jaminan kehilangan pekerjaan.",
+        "page": 6
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 3, Pasal 16A ayat (3)",
+        "quote": "Besaran Iuran JKK sebagaimana dimaksud dalam Pasal 16 ayat (1) tidak direkomposisi dan tetap berlaku bagi:",
+        "page": 6
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "penutup",
+        "quote": "Ditetapkan di Jakarta pada tanggal 6 Oktober 2023",
+        "page": 13
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.JKM_RATE_RECOMPOSED.2023",
+      "recorded_on": "2023-10-06",
+      "label": "recomposed JKM contribution rate (participants registered in JKP)",
+      "label_id": "iuran JKM setelah rekomposisi",
+      "valid_from": "2023-10-01",
+      "name": "jkm_rate_recomposed",
+      "value_type": "rate",
+      "value": "0.002",
+      "source": [
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 4, Pasal 18A ayat (1)",
+        "quote": "sehingga Iuran JKM menjadi O,2Oo/o (nol koma dua puluh persen) dari Upah sebulan.",
+        "page": 6
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "penutup",
+        "quote": "Ditetapkan di Jakarta pada tanggal 6 Oktober 2023",
+        "page": 13
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKM.JKP",
+      "recorded_on": "2023-10-06",
+      "label": "recomposed JKM premium for participants registered in JKP",
+      "label_id": "iuran JKM rekomposisi bagi peserta terdaftar JKP",
+      "valid_from": "2023-10-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkm_premium",
+      "condition": "employer('premiums_as_billed') != True and employee('jkp_registered') != False and employer('jkk_jkm_arrears') != True",
+      "expression": "round(param('jkm_rate_recomposed') * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "overrides": [
+       "REG.BPJS.JKM"
+      ],
+      "source": [
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 4, Pasal 18A ayat (2)",
+        "quote": "Besaran Iuran JKM sebagaimana dimaksud pada ayat (1) berlaku untuk Peserta penerima Upah yang wajib dan telah terdaftar sebagai Peserta dalam program jaminan kehilangan pekerjaan.",
+        "page": 6
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "Pasal I angka 4, Pasal 18A ayat (3)",
+        "quote": "Besaran Iuran JKM sebagaimana dimaksud dalam Pasal 18 ayat (1) tidak direkomposisi dan tetap berlaku bagi:",
+        "page": 6
+       },
+       {
+        "document": "PP-49-2023",
+        "provision": "penutup",
+        "quote": "Ditetapkan di Jakarta pada tanggal 6 Oktober 2023",
+        "page": 13
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The recomposed JKK/JKM rates are modelled as separate table/parameter names applied by overriding rules only for participants registered in JKP without contribution arrears (employee('jkp_registered') assumed true unless set to False), so the old PP 44/2015 rates remain for the excepted participants; validity starts with the October 2023 contribution month as the PP takes effect on promulgation in October 2023."
+   }
+  }
+ ],
+ "groups": [
+  [
+   1
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-pengecoh-P01-cand1",
+  "event_id": "P01",
+  "document": {
+   "id": "PP-49-2023",
+   "title": "PP 49/2023: Rekomposisi iuran JKK untuk JKP",
+   "issued": "2023-10-06"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "parameter",
+    "id": "PAR.JKK_JKP_RECOMPOSITION_RATE.2023",
+    "recorded_on": "2023-10-06",
+    "label": "part of the JKK contribution recomposed to the JKP contribution",
+    "label_id": "bagian iuran JKK yang direkomposisi untuk iuran JKP",
+    "valid_from": "2023-10-01",
+    "name": "jkk_jkp_recomposition_rate",
+    "value_type": "rate",
+    "value": "0.0014",
+    "source": [
+     {
+      "document": "PP-49-2023",
+      "provision": "Pasal I angka 3, Pasal 16A ayat (1)",
+      "quote": "direkomposisi untuk luran jaminan kehilangan pekerjaan sebesar 0,14% (nol koma empat belas persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko menjadi:",
+      "page": 5
+     },
+     {
+      "document": "PP-49-2023",
+      "provision": "Pasal II",
+      "quote": "Peraturan Pemerintah ini mulai berlaku pada tanggal diundangkan.",
+      "page": 12
+     },
+     {
+      "document": "PP-49-2023",
+      "provision": "penutup",
+      "quote": "Ditetapkan di Jakarta pada tanggal 6 Oktober 2023",
+      "page": 13
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.JKK_RATE.JKP",
+    "recorded_on": "2023-10-06",
+    "label": "recomposed JKK rate for participants registered in JKP",
+    "label_id": "tarif iuran JKK rekomposisi bagi peserta terdaftar JKP",
+    "valid_from": "2023-10-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "jkk_rate",
+    "condition": "employee('jkp_registered') != False and employer('jkk_jkm_arrears') != True",
+    "expression": "lookup('jkk_rates', employer('jkk_risk_group')) - param('jkk_jkp_recomposition_rate')",
+    "overrides": [
+     "REG.BPJS.JKK_RATE"
+    ],
+    "source": [
+     {
+      "document": "PP-49-2023",
+      "provision": "Pasal I angka 3, Pasal 16A ayat (2)",
+      "quote": "Besaran Iuran JKK sebagaimana dimaksud pada ayat (1) berlaku untuk Peserta penerima Upah yang wajib dan telah terdaftar sebagai Peserta dalam program jaminan kehilangan pekerjaan.",
+      "page": 6
+     },
+     {
+      "document": "PP-49-2023",
+      "provision": "Pasal I angka 3, Pasal 16A ayat (3)",
+      "quote": "Besaran Iuran JKK sebagaimana dimaksud dalam Pasal 16 ayat (1) tidak direkomposisi dan tetap berlaku bagi:",
+      "page": 6
+     },
+     {
+      "document": "PP-49-2023",
+      "provision": "Pasal I angka 3, Pasal 16A ayat (1) huruf e",
+      "quote": "tingkat risiko sangat tinggi sebesar 1,60% (satu koma enam puluh persen) dari Upah sebulan.",
+      "page": 6
+     },
+     {
+      "document": "PP-49-2023",
+      "provision": "penutup",
+      "quote": "Ditetapkan di Jakarta pada tanggal 6 Oktober 2023",
+      "page": 13
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.JKM.JKP",
+    "recorded_on": "2023-10-06",
+    "label": "recomposed JKM premium for participants registered in JKP",
+    "label_id": "iuran JKM rekomposisi bagi peserta terdaftar JKP",
+    "valid_from": "2023-10-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "jkm_premium",
+    "condition": "employer('premiums_as_billed') != True and employee('jkp_registered') != False and employer('jkk_jkm_arrears') != True",
+    "expression": "round(param('jkm_rate') * 2 / 3 * bpjs_wage, 1, param('bpjs_round_mode'))",
+    "overrides": [
+     "REG.BPJS.JKM"
+    ],
+    "source": [
+     {
+      "document": "PP-49-2023",
+      "provision": "Pasal I angka 4, Pasal 18A ayat (1)",
+      "quote": "sehingga Iuran JKM menjadi O,2Oo/o (nol koma dua puluh persen) dari Upah sebulan.",
+      "page": 6
+     },
+     {
+      "document": "PP-49-2023",
+      "provision": "Pasal I angka 4, Pasal 18A ayat (2)",
+      "quote": "Besaran Iuran JKM sebagaimana dimaksud pada ayat (1) berlaku untuk Peserta penerima Upah yang wajib dan telah terdaftar sebagai Peserta dalam program jaminan kehilangan pekerjaan.",
+      "page": 6
+     },
+     {
+      "document": "PP-49-2023",
+      "provision": "Pasal I angka 4, Pasal 18A ayat (3)",
+      "quote": "Besaran Iuran JKM sebagaimana dimaksud dalam Pasal 18 ayat (1) tidak direkomposisi dan tetap berlaku bagi:",
+      "page": 6
+     },
+     {
+      "document": "PP-49-2023",
+      "provision": "penutup",
+      "quote": "Ditetapkan di Jakarta pada tanggal 6 Oktober 2023",
+      "page": 13
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "Recomposed JKK rates are computed as the PP 44/2015 table rate minus the 0,14% shifted to JKP (giving 0,10/0,40/0,75/1,13/1,60%), and the recomposed JKM rate 0,20% as two thirds of the existing 0,30% jkm_rate (the OCR of the percentages was unreadable for the gate). Both apply only to participants registered in JKP without contribution arrears (employee('jkp_registered') assumed true unless False), from the October 2023 contribution month."
+ },
+ "cost_usd": 0.41913,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "The regulation recomposes the employer-paid JKK and JKM contribution rates by shifting part to JKP. JKK falls to 0.10%–1.60% of monthly wage by risk group and JKM to 0.20%. Employer-paid JKK and JKM premiums are part of a permanent employee's gross income for PPh 21, so these rate changes alter the PPh 21 base for employees registered in JKP. Unregistered employees and those with contribution arrears keep the old rates.",
+   "quotes": [
+    {
+     "provision": "Pasal 16A ayat (1)",
+     "quote": "direkomposisi untuk luran jaminan\nkehilangan pekerjaan sebesar 0,14% (nol koma\nempat belas persen), sehingga Iuran JKK untuk\nsetiap kelompok tingkat risiko menjadi:"
+    },
+    {
+     "provision": "Pasal 16A ayat (1) huruf e",
+     "quote": "e. tingkat risiko sangat tinggi sebesar 1,60%\n(satu koma enam puluh persen) dari Upah\nsebulan."
+    },
+    {
+     "provision": "Pasal 18A ayat (1)",
+     "quote": "Iuran JKM sebagaimana dimaksud dalam Pasal\n18 ayat (1) direkomposisi untuk Iuran jaminan\nkehilangan pekerjaan"
+    },
+    {
+     "provision": "Pasal 16A ayat (3)",
+     "quote": "tidak direkomposisi dan\ntetap berlaku bagi:"
+    }
+   ],
+   "effective_from": "2023-10-01",
+   "effective_from_quote": "Peraturan Pemerintah ini mulai berlaku pada tanggal\ndiundangkan.",
+   "effective_until": null,
+   "effective_until_quote": null,
+   "subjects": [
+    {
+     "kind": "employee_group",
+     "value": "Wage-earning participants who are mandatory and registered in the JKP program",
+     "quote": "berlaku untuk Peserta penerima Upah\nyang wajib dan telah terdaftar sebagai Peserta\ndalam program jaminan kehilangan pekerjaan."
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

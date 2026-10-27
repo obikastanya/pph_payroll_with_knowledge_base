@@ -1,0 +1,178 @@
+{
+ "run": "e2-pengecoh",
+ "event": "P04",
+ "condition": "proposed",
+ "documents": [
+  "PERPRES-59-2024"
+ ],
+ "selection": {
+  "PERPRES-59-2024": {
+   "tokens": 13600,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "fail: REG.JKN.WAGE.2024: no effect on any S^G case (vacuous element); stated effective date 2024-05-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": false,
+    "add": [],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Perpres 59/2024 mainly covers KRIS, FKTP, benefits and fines. The Pasal 32 amendment keeps the Rp12.000.000,00 health wage cap already held in param('health_wage_cap'). It only restates the minimum-wage floor, which also existed before, and adds an exemption for micro and small enterprises. The floor is not modelled in the KB, and a floor rule has no effect on any case, so the PPh 21 computation is unchanged."
+   },
+   "delta": {
+    "delta_id": "e2-pengecoh-P04-cand1",
+    "event_id": "P04",
+    "document": {
+     "id": "PERPRES-59-2024",
+     "title": "Perpres 59/2024: Perubahan ketiga Perpres 82/2018 (KRIS)",
+     "issued": "2024-05-08"
+    },
+    "relevant": false,
+    "add": [],
+    "change": [],
+    "remove": [],
+    "note": "Perpres 59/2024 mainly covers KRIS, FKTP, benefits and fines. The Pasal 32 amendment keeps the Rp12.000.000,00 health wage cap already held in param('health_wage_cap'). It only restates the minimum-wage floor, which also existed before, and adds an exemption for micro and small enterprises. The floor is not modelled in the KB, and a floor rule has no effect on any case, so the PPh 21 computation is unchanged."
+   },
+   "initial_delta": {
+    "delta_id": "e2-pengecoh-P04-cand1",
+    "event_id": "P04",
+    "document": {
+     "id": "PERPRES-59-2024",
+     "title": "Perpres 59/2024: Perubahan ketiga Perpres 82/2018 (KRIS)",
+     "issued": "2024-05-08"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.JKN.WAGE.2024",
+      "recorded_on": "2024-05-08",
+      "label": "health insurance wage base with minimum wage floor (micro and small enterprises excluded)",
+      "label_id": "dasar upah iuran jaminan kesehatan dengan batas paling rendah upah minimum (kecuali usaha mikro dan kecil)",
+      "valid_from": "2024-05-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "health_wage",
+      "expression": "min(max(bpjs_wage, employer('minimum_wage') if employer('minimum_wage') != None and employer('micro_small_enterprise') != True else 0), param('health_wage_cap'))",
+      "source": [
+       {
+        "document": "PERPRES-59-2024",
+        "provision": "Pasal I angka 7, Pasal 32 ayat (2)",
+        "quote": "Batas paling rendah Gaji atau Upah per bulan yang digunakan sebagai dasar perhitungan besaran Iuran bagi Peserta PPU sebagaimana dimaksud dalam Pasal 3O ayat (1) yaitu sebesar upah minimum provinsi.",
+        "page": 11
+       },
+       {
+        "document": "PERPRES-59-2024",
+        "provision": "Pasal I angka 7, Pasal 32 ayat (3)",
+        "quote": "maka yang menjadi dasar perhitungan besaran luran sebagaimana dimaksud pada ayat l2l yaitu sebesar upah minimum kabupaten/kota.",
+        "page": 12
+       },
+       {
+        "document": "PERPRES-59-2024",
+        "provision": "Pasal I angka 7, Pasal 32 ayat (4)",
+        "quote": "dimaksud pada ayat (2) dan ayat (3) dikecualikan bagi Peserta PPU pada usaha mikro dan kecil.",
+        "page": 12
+       },
+       {
+        "document": "PERPRES-59-2024",
+        "provision": "Pasal II",
+        "quote": "Peraturan Presiden ini mulai berlaku pada tanggal diundangkan.",
+        "page": 32
+       },
+       {
+        "document": "PERPRES-59-2024",
+        "provision": "penutup",
+        "quote": "Diundangkan di Jakarta pada tanggal 8 Mei 2024",
+        "page": 33
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The existing health wage rule has only the cap. This adds a later version that applies the applicable minimum wage as a floor. The floor is read from employer('minimum_wage'), which is the district/city minimum wage where one is set, otherwise the provincial one. It is skipped when employer('micro_small_enterprise') is True, because the separate floor for micro and small enterprises has not been set yet. The new rule starts with the May 2024 contribution month (promulgated 8 May 2024) and wins over REG.JKN.WAGE by lex posterior; the unchanged cap stays in param('health_wage_cap')."
+   }
+  }
+ ],
+ "groups": [
+  [
+   1
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-pengecoh-P04-cand1",
+  "event_id": "P04",
+  "document": {
+   "id": "PERPRES-59-2024",
+   "title": "Perpres 59/2024: Perubahan ketiga Perpres 82/2018 (KRIS)",
+   "issued": "2024-05-08"
+  },
+  "relevant": false,
+  "add": [],
+  "change": [],
+  "remove": [],
+  "note": "Perpres 59/2024 mainly covers KRIS, FKTP, benefits and fines. The Pasal 32 amendment keeps the Rp12.000.000,00 health wage cap already held in param('health_wage_cap'). It only restates the minimum-wage floor, which also existed before, and adds an exemption for micro and small enterprises. The floor is not modelled in the KB, and a floor rule has no effect on any case, so the PPh 21 computation is unchanged."
+ },
+ "cost_usd": 0.40801,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "This is mostly a JKN (BPJS Kesehatan) benefit and administration amendment (KRIS, FKTP, screening, payment systems), which does not affect PPh 21. The exception is amended Pasal 32. It changes the minimum wage base for the BPJS Kesehatan contribution of wage-earning participants (PPU): the floor is the provincial minimum wage, or the district/city minimum wage where one is set. Workers at micro and small enterprises are excluded from this floor, and their own floor is left to be set after an actuarial study. The employer-paid BPJS Kesehatan premium enters a permanent employee's gross income for PPh 21. A change in the contribution base for micro and small enterprise employees therefore changes that gross income component. The Rp12,000,000 upper cap is unchanged. The new micro/small enterprise floor is not yet quantified, so this is a borderline case.",
+   "quotes": [
+    {
+     "provision": "Pasal 32 ayat (2)",
+     "quote": "Batas paling rendah Gaji atau Upah per bulan yang\ndigunakan sebagai dasar perhitungan besaran Iuran\nbagi Peserta PPU sebagaimana dimaksud dalam Pasal\n3O ayat (1) yaitu sebesar upah minimum provinsi."
+    },
+    {
+     "provision": "Pasal 32 ayat (4)",
+     "quote": "dimaksud pada ayat (2) dan ayat (3) dikecualikan bagi\nPeserta PPU pada usaha mikro dan kecil."
+    },
+    {
+     "provision": "Pasal 32 ayat (5)",
+     "quote": "bagi Peserta PPU pada usaha mikro dan kecil\nditetapkan setelah dilakukan kajian aktuaria oleh\nKementerian Keuangan,"
+    }
+   ],
+   "effective_from": "2024-05-01",
+   "effective_from_quote": "Peraturan Presiden ini mulai berlaku pada tanggal\ndiundangkan.",
+   "effective_until": null,
+   "effective_until_quote": null,
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "Usaha mikro dan kecil (micro and small enterprises) – exception to minimum contribution base",
+     "quote": "Peserta PPU pada usaha mikro dan kecil."
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

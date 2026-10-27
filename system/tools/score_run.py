@@ -83,11 +83,14 @@ def main():
                 "n": n, "SER": ser / n, "SER_CI": stats.clopper_pearson(ser, n),
                 "SER_upper": stats.upper_bound(ser, n), "CAR": car / n, "CAR_CI": stats.clopper_pearson(car, n),
                 "ABS": 1 - (ser + car) / n}
-        dis = [r for r in rs if not r["relevant"]]
-        if dis:
-            fp = sum(r["status"] not in ("empty", "abstain") for r in dis)
-            summary[f"{name}/distractors"] = {"n": len(dis), "false_positive": fp / len(dis),
-                                              "wrong_applied": sum(r["outcome"] == "salah" for r in dis)}
+        dis = [r for r in rs if not r["relevant"] and r["status"] not in ("budget", "crash", None)]
+        if dis:                         # distractors that were run (the budget guard stopped the rest)
+            fp = sum(r["status"] == "applied" for r in dis)
+            summary[f"{name}/distractors"] = {
+                "n": len(dis), "not_run": sum(1 for r in rs if not r["relevant"]) - len(dis),
+                "false_positive": fp / len(dis), "false_positive_CI": stats.clopper_pearson(fp, len(dis)),
+                "wrong_applied": sum(r["outcome"] == "salah" for r in dis),
+                "wrong_applied_CI": stats.clopper_pearson(sum(r["outcome"] == "salah" for r in dis), len(dis))}
     if pass1:
         p1, pm, o = sum(pass1) / len(pass1), sum(passm) / len(passm), sum(onem) / len(onem)
         summary["selection"] = {"pass@1": p1, "pass@m": pm, "1@m": o, "eta": stats.selection_efficiency(o, p1, pm)}

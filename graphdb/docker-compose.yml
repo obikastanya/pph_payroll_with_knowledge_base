@@ -1,0 +1,22 @@
+# GraphDB Free for the knowledge graph of the full system (decision log, 2026-10-27).
+#
+#   1. Put the free license from Ontotext in this folder as graphdb.license (not committed).
+#   2. docker compose -f graphdb/docker-compose.yml up -d
+#   3. Workbench and SPARQL endpoint: http://localhost:7200
+#
+# Repository data lives in graphdb/home/ (not committed); the system rebuilds it from the Delta log.
+services:
+  graphdb:
+    image: ontotext/graphdb:11.5.1
+    container_name: pph21-graphdb
+    ports:
+      - "7200:7200"
+    environment:
+      GDB_JAVA_OPTS: >-
+        -Xmx2g
+        -Dgraphdb.home=/opt/graphdb/home
+        -Dgraphdb.license.file=/opt/graphdb/license/graphdb.license
+    volumes:
+      - ./home:/opt/graphdb/home
+      - ./graphdb.license:/opt/graphdb/license/graphdb.license:ro
+    restart: unless-stopped

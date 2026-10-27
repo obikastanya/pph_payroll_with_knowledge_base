@@ -1,0 +1,188 @@
+{
+  "id": "GT3-002",
+  "stratum": "bulanan",
+  "tahun_pajak": 2023,
+  "rezim": "PER16_2023",
+  "uraian": "Pegawai K/2 Maret 2023 di perusahaan konstruksi (JKK risiko sangat tinggi 1,74%), lembur; upah di atas batas upah JP (Rp9.559.600 mulai Maret 2023) dan di atas batas BPJS Kesehatan.",
+  "asumsi": [
+    "Pegawai tetap, Wajib Pajak orang pribadi dalam negeri sejak awal tahun (kewajiban subjektif sepanjang tahun), hanya satu pemberi kerja, tidak menerima penghasilan lain dari pemberi kerja ini selain yang tercantum.",
+    "Memiliki NPWP/NIK yang valid dan terintegrasi; tarif lebih tinggi 20% tanpa NPWP tidak berlaku (di luar lingkup, taksonomi.md bagian 0).",
+    "Status PTKP K/2 pada 1 Januari 2023 dan tidak berubah sepanjang tahun.",
+    "Pemberi kerja: konstruksi gedung hunian (bukan sektor DTP), KLU utama 41011 (per 1 Januari 2023). Kelompok risiko JKK: sangat tinggi (1,74% dari upah sebulan).",
+    "Upah sebulan dasar iuran BPJS = gaji pokok + tunjangan tetap (PP 44/2015 Pasal 19 ayat (2)), tidak di bawah upah minimum; lembur, THR, bonus, dan natura bukan dasar iuran.",
+    "Ikut seluruh program: JKK & JKM (dibayar pemberi kerja, objek PPh 21), JHT 3,7% pemberi kerja / 2% pegawai, JP 2% / 1% dengan batas upah JP sesuai bulan iuran, BPJS Kesehatan 4% pemberi kerja / 1% pegawai dengan batas Rp12.000.000. Iuran pegawai dipotong dari gaji; iuran JHT/JP pemberi kerja dicantumkan di input untuk menguji bahwa keduanya bukan objek.",
+    "Nilai premi/iuran sudah bulat rupiah (tidak perlu pembulatan).",
+    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur.",
+    "Tahun 2023 memakai metode PER-16/PJ/2016 (penghasilan disetahunkan setiap masa) dengan lapisan tarif Pasal 17 UU HPP; PPh sebulan dibulatkan ke bawah ke rupiah penuh (asumsi A2).",
+    "Iuran JP 1% pegawai ke BPJS Ketenagakerjaan diperlakukan sebagai pengurang (PER-16 Lampiran I.1.a.1 angka 1 huruf c, PDF hlm. 21)."
+  ],
+  "input": {
+    "status_ptkp": "K/2",
+    "jenis_kelamin": "L",
+    "karyawati_kawin_suami_berpenghasilan": false,
+    "npwp_nik_valid": true,
+    "metode": "gross",
+    "sektor": {
+      "klu": "41011",
+      "uraian": "konstruksi gedung hunian (bukan sektor DTP)",
+      "kelompok_risiko_jkk": "sangat tinggi",
+      "padat_karya_pp7_2025": false
+    },
+    "bulan_masuk": null,
+    "bulan_keluar": null,
+    "masa": [
+      {
+        "bulan": 3,
+        "komponen": {
+          "gaji": 13000000,
+          "tunjangan_tetap": 2000000,
+          "lembur": 1250000,
+          "premi_jkk": 261000,
+          "premi_jkm": 45000,
+          "iuran_jht_pemberi_kerja": 555000,
+          "iuran_jp_pemberi_kerja": 191192,
+          "iuran_jht_pegawai": 300000,
+          "iuran_jp_pegawai": 95596,
+          "premi_bpjs_kesehatan_pemberi_kerja": 480000,
+          "iuran_bpjs_kesehatan_pegawai": 120000
+        }
+      }
+    ]
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 3,
+        "bruto": 17036000,
+        "kategori_ter": null,
+        "tarif_ter": null,
+        "pph21": 1077300,
+        "pph21_dtp": 0,
+        "pph21_dipotong": 1077300,
+        "rincian_metode_lama": {
+          "faktor_pengali": 12,
+          "neto_disetahunkan": 193684848,
+          "pkp_teratur": 126184000,
+          "pph_setahun_teratur": 12927600,
+          "pph21_teratur": 1077300
+        }
+      }
+    ],
+    "tahunan": null
+  },
+  "langkah": [
+    {
+      "no": 1,
+      "text": "PTKP setahun status K/2 (keadaan awal tahun 2023)",
+      "formula": "54000000 + 4500000 + 2 * 4500000",
+      "value": 67500000,
+      "sumber": "UU 7/2021 (HPP) Pasal 3 angka 3 (Pasal 7 ayat (1) UU PPh), PDF hlm. 48; PMK 101/PMK.010/2016 Pasal 1, PDF hlm. 2-3; PER-16/PJ/2016 Pasal 11 ayat (1) dan (5), PDF hlm. 11"
+    },
+    {
+      "no": 2,
+      "text": "Maret: premi JKK dibayar pemberi kerja = 1,74% x upah sebulan Rp15.000.000",
+      "formula": "0.0174 * 15000000",
+      "value": 261000,
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 3,
+      "text": "Maret: premi JKM dibayar pemberi kerja = 0,3% x Rp15.000.000",
+      "formula": "0.003 * 15000000",
+      "value": 45000,
+      "sumber": "PP 44/2015 Pasal 18 ayat (1), PDF hlm. 13; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 4,
+      "text": "Maret: iuran JHT pegawai 2% x Rp15.000.000 (pengurang neto; JHT 3,7% pemberi kerja bukan objek)",
+      "formula": "0.02 * 15000000",
+      "value": 300000,
+      "sumber": "PP 46/2015 Pasal 16 ayat (1)-(2), PDF hlm. 11"
+    },
+    {
+      "no": 5,
+      "text": "Maret: iuran JP pegawai 1% x min(upah Rp15.000.000, batas upah JP Rp9.559.600) (pengurang neto; JP 2% pemberi kerja bukan objek)",
+      "formula": "0.01 * min(15000000, 9559600)",
+      "value": 95596,
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+    },
+    {
+      "no": 6,
+      "text": "Maret: premi BPJS Kesehatan pemberi kerja 4% x min(Rp15.000.000, Rp12.000.000) (objek); iuran 1% pegawai Rp120.000 bukan pengurang",
+      "formula": "0.04 * min(15000000, 12000000)",
+      "value": 480000,
+      "sumber": "Perpres 82/2018 Pasal 31 (4% pemberi kerja, 1% peserta), PDF hlm. 22; batas Rp12.000.000: Perpres 75/2019 Pasal I angka 3 (Pasal 32 ayat (1)), PDF hlm. 3; PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a-b (gaji, tunjangan, lembur, premi JKK/JKM/JPK), PDF hlm. 20-21; PMK 168/2023 Pasal 10 ayat (1), PDF hlm. 11-12; PER-16/PJ/2016 Pasal 10 ayat (3), PDF hlm. 10 (iuran JKN pegawai bukan pengurang)"
+    },
+    {
+      "no": 7,
+      "text": "Maret: penghasilan bruto teratur sebulan (gaji, tunjangan, lembur, premi JKK/JKM/BPJS Kesehatan, natura teratur objek)",
+      "formula": "13000000 + 2000000 + 1250000 + 261000 + 45000 + 480000",
+      "value": 17036000,
+      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a-b (gaji, tunjangan, lembur, premi JKK/JKM/JPK), PDF hlm. 20-21; PER-16/PJ/2016 Pasal 8 ayat (1) huruf c, PDF hlm. 9"
+    },
+    {
+      "no": 8,
+      "text": "Maret: biaya jabatan sebulan = min(5% x Rp17.036.000, Rp500.000)",
+      "formula": "min(0.05 * 17036000, 500000)",
+      "value": 500000,
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10"
+    },
+    {
+      "no": 9,
+      "text": "Maret: iuran JHT + JP dibayar pegawai",
+      "formula": "395596",
+      "value": 395596,
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+    },
+    {
+      "no": 10,
+      "text": "Maret: penghasilan neto sebulan",
+      "formula": "17036000 - 500000 - 395596",
+      "value": 16140404,
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (3) huruf a, PDF hlm. 10; PER-16/PJ/2016 Pasal 10 ayat (3) huruf b, PDF hlm. 10; Lampiran I.1.a.1 angka 1 huruf c (iuran ke BPJS Ketenagakerjaan), PDF hlm. 21"
+    },
+    {
+      "no": 11,
+      "text": "Maret: penghasilan neto disetahunkan (12 x neto sebulan)",
+      "formula": "12 * (17036000 - 500000 - 395596)",
+      "value": 193684848,
+      "sumber": "PER-16/PJ/2016 Pasal 14 ayat (2) huruf a, PDF hlm. 13; Lampiran I.1.a.1 angka 2 huruf a, PDF hlm. 21"
+    },
+    {
+      "no": 12,
+      "text": "Maret: PKP = neto setahun - PTKP Rp67.500.000, dibulatkan ke bawah hingga ribuan",
+      "formula": "max(0, floor((193684848 - 67500000) / 1000) * 1000)",
+      "value": 126184000,
+      "sumber": "PER-16/PJ/2016 Pasal 10 ayat (2) huruf a, PDF hlm. 10; Pasal 14 ayat (8), PDF hlm. 14"
+    },
+    {
+      "no": 13,
+      "text": "Maret: PPh 21 setahun atas penghasilan teratur (tarif Pasal 17)",
+      "formula": "0.05 * 60000000 + 0.15 * 66184000",
+      "value": 12927600,
+      "sumber": "UU 7/2021 (HPP) Pasal 3 angka 7 (Pasal 17 ayat (1) huruf a UU PPh), PDF hlm. 56; PMK 168/2023 Pasal 15 ayat (2), PDF hlm. 16"
+    },
+    {
+      "no": 14,
+      "text": "Maret: PPh 21 atas penghasilan teratur = PPh setahun / 12",
+      "formula": "floor(12927600 / 12)",
+      "value": 1077300,
+      "sumber": "PER-16/PJ/2016 Pasal 14 ayat (3) huruf a, PDF hlm. 13; Lampiran I.1.a.1 angka 2 huruf d, PDF hlm. 21"
+    },
+    {
+      "no": 15,
+      "text": "Maret: penghasilan bruto masa (teratur + tidak teratur)",
+      "formula": "17036000 + 0",
+      "value": 17036000,
+      "sumber": "PER-16/PJ/2016 Lampiran Bagian Pertama I.1.a.1 angka 1 huruf a-b (gaji, tunjangan, lembur, premi JKK/JKM/JPK), PDF hlm. 20-21"
+    }
+  ],
+  "cek_aritmetika": "cocok",
+  "cek_aritmetika_rinci": {
+    "alat": "tools/check_gt3.py (pecahan eksak, terpisah dari tools/calculator.py)",
+    "langkah_numerik_dievaluasi_ulang": 15,
+    "langkah_tidak_cocok": 0,
+    "hitung_ulang_independen_item": 9,
+    "hitung_ulang_independen_tidak_cocok": 0
+  }
+}

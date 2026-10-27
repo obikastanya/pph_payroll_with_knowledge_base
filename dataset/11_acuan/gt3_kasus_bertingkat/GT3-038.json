@@ -1,0 +1,1419 @@
+{
+  "id": "GT3-038",
+  "stratum": "tahunan",
+  "tahun_pajak": 2025,
+  "rezim": "TER_DTP_2025",
+  "uraian": "Pegawai K/1 sepanjang 2025 (bukan sektor DTP) dengan tunjangan pajak (gross-up) tiap masa, THR Maret, dan zakat bulanan lewat pemberi kerja yang dikurangkan di Desember.",
+  "asumsi": [
+    "Pegawai tetap, Wajib Pajak orang pribadi dalam negeri sejak awal tahun (kewajiban subjektif sepanjang tahun), hanya satu pemberi kerja, tidak menerima penghasilan lain dari pemberi kerja ini selain yang tercantum.",
+    "Memiliki NPWP/NIK yang valid dan terintegrasi; tarif lebih tinggi 20% tanpa NPWP tidak berlaku (di luar lingkup, taksonomi.md bagian 0).",
+    "Status PTKP K/1 pada 1 Januari 2025 dan tidak berubah sepanjang tahun.",
+    "Pemberi kerja: aktivitas pemrograman komputer lainnya (bukan sektor DTP), KLU utama 62019 (per 1 Januari 2025). Kelompok risiko JKK: sangat rendah (0,24% dari upah sebulan).",
+    "Upah sebulan dasar iuran BPJS = gaji pokok + tunjangan tetap (PP 44/2015 Pasal 19 ayat (2)), tidak di bawah upah minimum; lembur, THR, bonus, dan natura bukan dasar iuran.",
+    "Ikut seluruh program: JKK & JKM (dibayar pemberi kerja, objek PPh 21), JHT 3,7% pemberi kerja / 2% pegawai, JP 2% / 1% dengan batas upah JP sesuai bulan iuran, BPJS Kesehatan 4% pemberi kerja / 1% pegawai dengan batas Rp12.000.000. Iuran pegawai dipotong dari gaji; iuran JHT/JP pemberi kerja dicantumkan di input untuk menguji bahwa keduanya bukan objek.",
+    "Nilai premi/iuran sudah bulat rupiah (tidak perlu pembulatan).",
+    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur.",
+    "PPh 21 masa selain Masa Pajak Terakhir = tarif efektif bulanan x bruto masa, dibulatkan ke bawah ke rupiah penuh (asumsi A1; pembulatan tidak diatur).",
+    "Biaya jabatan pada Masa Pajak Terakhir = min(5% x bruto, jumlah bulan bekerja x Rp500.000), sesuai pola contoh PMK 168/2023 Lampiran B.",
+    "Metode gross-up: pemberi kerja membayar tunjangan pajak tunai sebesar PPh 21 terutang pada masa yang sama; tunjangan pajak = titik tetap terkecil (rupiah penuh) dari persamaan T = PPh21(bruto tanpa T + T) (asumsi A3).",
+    "Zakat dibayar melalui pemberi kerja ke BAZNAS (lembaga yang disahkan pemerintah); hanya mengurangi neto pada Masa Pajak Terakhir.",
+    "Penghasilan bruto tetap dan teratur untuk kriteria DTP Rp10.000.000 = gaji + tunjangan tetap saja; lembur, premi JKK/JKM/BPJS Kesehatan yang dibayar pemberi kerja, THR, dan bonus tidak dihitung (pembacaan GT3 atas PMK 10/2025 Pasal 4 ayat (3) / PMK 105/2025 Pasal 4 ayat (4); lihat ketidakpastian K5).",
+    "Pegawai tidak menerima insentif PPh 21 DTP lain; pemberi kerja melaporkan pemanfaatan DTP tepat waktu."
+  ],
+  "input": {
+    "status_ptkp": "K/1",
+    "jenis_kelamin": "L",
+    "karyawati_kawin_suami_berpenghasilan": false,
+    "npwp_nik_valid": true,
+    "metode": "gross_up",
+    "sektor": {
+      "klu": "62019",
+      "uraian": "aktivitas pemrograman komputer lainnya (bukan sektor DTP)",
+      "kelompok_risiko_jkk": "sangat rendah",
+      "padat_karya_pp7_2025": false
+    },
+    "bulan_masuk": null,
+    "bulan_keluar": null,
+    "masa": [
+      {
+        "bulan": 1,
+        "komponen": {
+          "gaji": 11000000,
+          "tunjangan_tetap": 1000000,
+          "premi_jkk": 28800,
+          "premi_jkm": 36000,
+          "iuran_jht_pemberi_kerja": 444000,
+          "iuran_jp_pemberi_kerja": 200846,
+          "iuran_jht_pegawai": 240000,
+          "iuran_jp_pegawai": 100423,
+          "premi_bpjs_kesehatan_pemberi_kerja": 480000,
+          "iuran_bpjs_kesehatan_pegawai": 120000,
+          "zakat": 300000
+        }
+      },
+      {
+        "bulan": 2,
+        "komponen": {
+          "gaji": 11000000,
+          "tunjangan_tetap": 1000000,
+          "premi_jkk": 28800,
+          "premi_jkm": 36000,
+          "iuran_jht_pemberi_kerja": 444000,
+          "iuran_jp_pemberi_kerja": 200846,
+          "iuran_jht_pegawai": 240000,
+          "iuran_jp_pegawai": 100423,
+          "premi_bpjs_kesehatan_pemberi_kerja": 480000,
+          "iuran_bpjs_kesehatan_pegawai": 120000,
+          "zakat": 300000
+        }
+      },
+      {
+        "bulan": 3,
+        "komponen": {
+          "gaji": 11000000,
+          "tunjangan_tetap": 1000000,
+          "thr": 12000000,
+          "premi_jkk": 28800,
+          "premi_jkm": 36000,
+          "iuran_jht_pemberi_kerja": 444000,
+          "iuran_jp_pemberi_kerja": 210948,
+          "iuran_jht_pegawai": 240000,
+          "iuran_jp_pegawai": 105474,
+          "premi_bpjs_kesehatan_pemberi_kerja": 480000,
+          "iuran_bpjs_kesehatan_pegawai": 120000,
+          "zakat": 300000
+        }
+      },
+      {
+        "bulan": 4,
+        "komponen": {
+          "gaji": 11000000,
+          "tunjangan_tetap": 1000000,
+          "premi_jkk": 28800,
+          "premi_jkm": 36000,
+          "iuran_jht_pemberi_kerja": 444000,
+          "iuran_jp_pemberi_kerja": 210948,
+          "iuran_jht_pegawai": 240000,
+          "iuran_jp_pegawai": 105474,
+          "premi_bpjs_kesehatan_pemberi_kerja": 480000,
+          "iuran_bpjs_kesehatan_pegawai": 120000,
+          "zakat": 300000
+        }
+      },
+      {
+        "bulan": 5,
+        "komponen": {
+          "gaji": 11000000,
+          "tunjangan_tetap": 1000000,
+          "premi_jkk": 28800,
+          "premi_jkm": 36000,
+          "iuran_jht_pemberi_kerja": 444000,
+          "iuran_jp_pemberi_kerja": 210948,
+          "iuran_jht_pegawai": 240000,
+          "iuran_jp_pegawai": 105474,
+          "premi_bpjs_kesehatan_pemberi_kerja": 480000,
+          "iuran_bpjs_kesehatan_pegawai": 120000,
+          "zakat": 300000
+        }
+      },
+      {
+        "bulan": 6,
+        "komponen": {
+          "gaji": 11000000,
+          "tunjangan_tetap": 1000000,
+          "premi_jkk": 28800,
+          "premi_jkm": 36000,
+          "iuran_jht_pemberi_kerja": 444000,
+          "iuran_jp_pemberi_kerja": 210948,
+          "iuran_jht_pegawai": 240000,
+          "iuran_jp_pegawai": 105474,
+          "premi_bpjs_kesehatan_pemberi_kerja": 480000,
+          "iuran_bpjs_kesehatan_pegawai": 120000,
+          "zakat": 300000
+        }
+      },
+      {
+        "bulan": 7,
+        "komponen": {
+          "gaji": 11000000,
+          "tunjangan_tetap": 1000000,
+          "premi_jkk": 28800,
+          "premi_jkm": 36000,
+          "iuran_jht_pemberi_kerja": 444000,
+          "iuran_jp_pemberi_kerja": 210948,
+          "iuran_jht_pegawai": 240000,
+          "iuran_jp_pegawai": 105474,
+          "premi_bpjs_kesehatan_pemberi_kerja": 480000,
+          "iuran_bpjs_kesehatan_pegawai": 120000,
+          "zakat": 300000
+        }
+      },
+      {
+        "bulan": 8,
+        "komponen": {
+          "gaji": 11000000,
+          "tunjangan_tetap": 1000000,
+          "premi_jkk": 28800,
+          "premi_jkm": 36000,
+          "iuran_jht_pemberi_kerja": 444000,
+          "iuran_jp_pemberi_kerja": 210948,
+          "iuran_jht_pegawai": 240000,
+          "iuran_jp_pegawai": 105474,
+          "premi_bpjs_kesehatan_pemberi_kerja": 480000,
+          "iuran_bpjs_kesehatan_pegawai": 120000,
+          "zakat": 300000
+        }
+      },
+      {
+        "bulan": 9,
+        "komponen": {
+          "gaji": 11000000,
+          "tunjangan_tetap": 1000000,
+          "premi_jkk": 28800,
+          "premi_jkm": 36000,
+          "iuran_jht_pemberi_kerja": 444000,
+          "iuran_jp_pemberi_kerja": 210948,
+          "iuran_jht_pegawai": 240000,
+          "iuran_jp_pegawai": 105474,
+          "premi_bpjs_kesehatan_pemberi_kerja": 480000,
+          "iuran_bpjs_kesehatan_pegawai": 120000,
+          "zakat": 300000
+        }
+      },
+      {
+        "bulan": 10,
+        "komponen": {
+          "gaji": 11000000,
+          "tunjangan_tetap": 1000000,
+          "premi_jkk": 28800,
+          "premi_jkm": 36000,
+          "iuran_jht_pemberi_kerja": 444000,
+          "iuran_jp_pemberi_kerja": 210948,
+          "iuran_jht_pegawai": 240000,
+          "iuran_jp_pegawai": 105474,
+          "premi_bpjs_kesehatan_pemberi_kerja": 480000,
+          "iuran_bpjs_kesehatan_pegawai": 120000,
+          "zakat": 300000
+        }
+      },
+      {
+        "bulan": 11,
+        "komponen": {
+          "gaji": 11000000,
+          "tunjangan_tetap": 1000000,
+          "premi_jkk": 28800,
+          "premi_jkm": 36000,
+          "iuran_jht_pemberi_kerja": 444000,
+          "iuran_jp_pemberi_kerja": 210948,
+          "iuran_jht_pegawai": 240000,
+          "iuran_jp_pegawai": 105474,
+          "premi_bpjs_kesehatan_pemberi_kerja": 480000,
+          "iuran_bpjs_kesehatan_pegawai": 120000,
+          "zakat": 300000
+        }
+      },
+      {
+        "bulan": 12,
+        "komponen": {
+          "gaji": 11000000,
+          "tunjangan_tetap": 1000000,
+          "premi_jkk": 28800,
+          "premi_jkm": 36000,
+          "iuran_jht_pemberi_kerja": 444000,
+          "iuran_jp_pemberi_kerja": 210948,
+          "iuran_jht_pegawai": 240000,
+          "iuran_jp_pegawai": 105474,
+          "premi_bpjs_kesehatan_pemberi_kerja": 480000,
+          "iuran_bpjs_kesehatan_pegawai": 120000,
+          "zakat": 300000
+        }
+      }
+    ]
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 1,
+        "bruto": 13067499,
+        "kategori_ter": "B",
+        "tarif_ter": 0.04,
+        "pph21": 522699,
+        "pph21_dtp": 0,
+        "pph21_dipotong": 522699,
+        "tunjangan_pajak": 522699
+      },
+      {
+        "bulan": 2,
+        "bruto": 13067499,
+        "kategori_ter": "B",
+        "tarif_ter": 0.04,
+        "pph21": 522699,
+        "pph21_dtp": 0,
+        "pph21_dipotong": 522699,
+        "tunjangan_pajak": 522699
+      },
+      {
+        "bulan": 3,
+        "bruto": 27271999,
+        "kategori_ter": "B",
+        "tarif_ter": 0.1,
+        "pph21": 2727199,
+        "pph21_dtp": 0,
+        "pph21_dipotong": 2727199,
+        "tunjangan_pajak": 2727199
+      },
+      {
+        "bulan": 4,
+        "bruto": 13067499,
+        "kategori_ter": "B",
+        "tarif_ter": 0.04,
+        "pph21": 522699,
+        "pph21_dtp": 0,
+        "pph21_dipotong": 522699,
+        "tunjangan_pajak": 522699
+      },
+      {
+        "bulan": 5,
+        "bruto": 13067499,
+        "kategori_ter": "B",
+        "tarif_ter": 0.04,
+        "pph21": 522699,
+        "pph21_dtp": 0,
+        "pph21_dipotong": 522699,
+        "tunjangan_pajak": 522699
+      },
+      {
+        "bulan": 6,
+        "bruto": 13067499,
+        "kategori_ter": "B",
+        "tarif_ter": 0.04,
+        "pph21": 522699,
+        "pph21_dtp": 0,
+        "pph21_dipotong": 522699,
+        "tunjangan_pajak": 522699
+      },
+      {
+        "bulan": 7,
+        "bruto": 13067499,
+        "kategori_ter": "B",
+        "tarif_ter": 0.04,
+        "pph21": 522699,
+        "pph21_dtp": 0,
+        "pph21_dipotong": 522699,
+        "tunjangan_pajak": 522699
+      },
+      {
+        "bulan": 8,
+        "bruto": 13067499,
+        "kategori_ter": "B",
+        "tarif_ter": 0.04,
+        "pph21": 522699,
+        "pph21_dtp": 0,
+        "pph21_dipotong": 522699,
+        "tunjangan_pajak": 522699
+      },
+      {
+        "bulan": 9,
+        "bruto": 13067499,
+        "kategori_ter": "B",
+        "tarif_ter": 0.04,
+        "pph21": 522699,
+        "pph21_dtp": 0,
+        "pph21_dipotong": 522699,
+        "tunjangan_pajak": 522699
+      },
+      {
+        "bulan": 10,
+        "bruto": 13067499,
+        "kategori_ter": "B",
+        "tarif_ter": 0.04,
+        "pph21": 522699,
+        "pph21_dtp": 0,
+        "pph21_dipotong": 522699,
+        "tunjangan_pajak": 522699
+      },
+      {
+        "bulan": 11,
+        "bruto": 13067499,
+        "kategori_ter": "B",
+        "tarif_ter": 0.04,
+        "pph21": 522699,
+        "pph21_dtp": 0,
+        "pph21_dipotong": 522699,
+        "tunjangan_pajak": 522699
+      },
+      {
+        "bulan": 12,
+        "bruto": 12673211,
+        "kategori_ter": null,
+        "tarif_ter": null,
+        "pph21": 128411,
+        "pph21_dtp": 0,
+        "pph21_dipotong": 128411,
+        "tunjangan_pajak": 128411,
+        "keterangan": "Masa Pajak Terakhir (tarif Pasal 17)"
+      }
+    ],
+    "tahunan": {
+      "bulan_masa_terakhir": 12,
+      "jumlah_bulan": 12,
+      "bruto_setahun": 170620200,
+      "biaya_jabatan": 6000000,
+      "iuran_jht_jp_pegawai": 4135586,
+      "zakat": 3600000,
+      "neto_setahun": 156884614,
+      "ptkp": 63000000,
+      "pkp": 93884000,
+      "pph21_lapisan": [
+        {
+          "tarif": 0.05,
+          "dasar": 60000000,
+          "pph": 3000000
+        },
+        {
+          "tarif": 0.15,
+          "dasar": 33884000,
+          "pph": 5082600
+        }
+      ],
+      "pph21_setahun": 8082600,
+      "pph21_dipotong_sebelumnya": 7954189,
+      "pph21_masa_terakhir": 128411,
+      "pph21_dtp_setahun": 0,
+      "kelebihan_dikembalikan_ke_pegawai": 0
+    },
+    "berhak_dtp": false
+  },
+  "langkah": [
+    {
+      "no": 1,
+      "text": "PTKP setahun status K/1 (keadaan awal tahun 2025)",
+      "formula": "54000000 + 4500000 + 1 * 4500000",
+      "value": 63000000,
+      "sumber": "UU 7/2021 (HPP) Pasal 3 angka 3 (Pasal 7 ayat (1) UU PPh), PDF hlm. 48; PMK 101/PMK.010/2016 Pasal 1, PDF hlm. 2-3; PMK 168/2023 Pasal 9 ayat (4), PDF hlm. 11; PP 58/2023 Pasal 2 ayat (3), PDF hlm. 4"
+    },
+    {
+      "no": 2,
+      "text": "Kategori TER untuk status PTKP K/1",
+      "formula": null,
+      "value": "B",
+      "sumber": "PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4"
+    },
+    {
+      "no": 3,
+      "text": "Kriteria pegawai DTP: penghasilan bruto tetap dan teratur (gaji + tunjangan tetap) Masa Januari 2025 = Rp12.000.000 > Rp10.000.000; NPWP/NIK terintegrasi; tidak menerima DTP lain",
+      "formula": null,
+      "value": "tidak memenuhi",
+      "sumber": "PMK 10/2025 Pasal 4 ayat (2)-(3), PDF hlm. 5"
+    },
+    {
+      "no": 4,
+      "text": "Januari: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp12.000.000",
+      "formula": "0.0024 * 12000000",
+      "value": 28800,
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 5,
+      "text": "Januari: premi JKM dibayar pemberi kerja = 0,3% x Rp12.000.000",
+      "formula": "0.003 * 12000000",
+      "value": 36000,
+      "sumber": "PP 44/2015 Pasal 18 ayat (1), PDF hlm. 13; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 6,
+      "text": "Januari: iuran JHT pegawai 2% x Rp12.000.000 (pengurang neto; JHT 3,7% pemberi kerja bukan objek)",
+      "formula": "0.02 * 12000000",
+      "value": 240000,
+      "sumber": "PP 46/2015 Pasal 16 ayat (1)-(2), PDF hlm. 11"
+    },
+    {
+      "no": 7,
+      "text": "Januari: iuran JP pegawai 1% x min(upah Rp12.000.000, batas upah JP Rp10.042.300) (pengurang neto; JP 2% pemberi kerja bukan objek)",
+      "formula": "0.01 * min(12000000, 10042300)",
+      "value": 100423,
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+    },
+    {
+      "no": 8,
+      "text": "Januari: premi BPJS Kesehatan pemberi kerja 4% x min(Rp12.000.000, Rp12.000.000) (objek); iuran 1% pegawai Rp120.000 bukan pengurang",
+      "formula": "0.04 * min(12000000, 12000000)",
+      "value": 480000,
+      "sumber": "Perpres 82/2018 Pasal 31 (4% pemberi kerja, 1% peserta), PDF hlm. 22; batas Rp12.000.000: Perpres 75/2019 Pasal I angka 3 (Pasal 32 ayat (1)), PDF hlm. 3; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 10 ayat (1), PDF hlm. 11-12; PER-16/PJ/2016 Pasal 10 ayat (3), PDF hlm. 10 (iuran JKN pegawai bukan pengurang)"
+    },
+    {
+      "no": 9,
+      "text": "Kelayakan DTP Januari 2025: KLU 62019 tidak tercantum di Lampiran A yang berlaku untuk masa ini",
+      "formula": null,
+      "value": "sektor tidak layak",
+      "sumber": "PMK 10/2025 Pasal 3 ayat (1)-(2), PDF hlm. 4; PMK 72/2025 Pasal I angka 4 (Pasal 4A huruf b: pariwisata Masa Oktober-Desember 2025), PDF hlm. 4"
+    },
+    {
+      "no": 10,
+      "text": "Januari: bruto sebelum tunjangan/PPh ditanggung (gaji, tunjangan, lembur, THR/bonus, premi JKK/JKM/BPJS Kesehatan pemberi kerja, natura objek)",
+      "formula": "11000000 + 1000000 + 28800 + 36000 + 480000",
+      "value": 12544800,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 11,
+      "text": "Januari: tunjangan pajak T dicari sehingga T = floor(tarif TER(bruto) x (bruto sebelum T + T)); hasil T = Rp522.699 (tarif 4%; titik tetap terkecil)",
+      "formula": "floor(0.04 * (12544800 + 522699))",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a (segala jenis tunjangan), PDF hlm. 9; Lampiran B Bagian Kedua I.5, PDF hlm. 45; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+    },
+    {
+      "no": 12,
+      "text": "Januari: penghasilan bruto masa = Rp12.544.800 + Rp522.699",
+      "formula": "12544800 + 522699",
+      "value": 13067499,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 13,
+      "text": "Januari: tarif efektif bulanan kategori B untuk bruto Rp13.067.499 (lapisan di atas Rp12.600.000 s.d. Rp13.600.000)",
+      "formula": null,
+      "value": 0.04,
+      "sumber": "PP 58/2023 Lampiran huruf B, PDF hlm. 17; PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4"
+    },
+    {
+      "no": 14,
+      "text": "Januari: PPh 21 = 4% x Rp13.067.499 = Rp522.699,96; dibulatkan ke bawah ke rupiah penuh",
+      "formula": "floor(0.04 * 13067499)",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28; Asumsi GT3 A1: pembulatan PPh TER bulanan tidak diatur (PP 58/2023; PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15) -> dibulatkan ke bawah ke rupiah penuh"
+    },
+    {
+      "no": 15,
+      "text": "Januari: tidak ada PPh 21 DTP masa ini; seluruh PPh 21 dipotong/disetor",
+      "formula": "0",
+      "value": 0,
+      "sumber": "PMK 10/2025 Pasal 4 ayat (2)-(3), PDF hlm. 5; PMK 10/2025 Pasal 3 ayat (1)-(2), PDF hlm. 4"
+    },
+    {
+      "no": 16,
+      "text": "Februari: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp12.000.000",
+      "formula": "0.0024 * 12000000",
+      "value": 28800,
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 17,
+      "text": "Februari: premi JKM dibayar pemberi kerja = 0,3% x Rp12.000.000",
+      "formula": "0.003 * 12000000",
+      "value": 36000,
+      "sumber": "PP 44/2015 Pasal 18 ayat (1), PDF hlm. 13; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 18,
+      "text": "Februari: iuran JHT pegawai 2% x Rp12.000.000 (pengurang neto; JHT 3,7% pemberi kerja bukan objek)",
+      "formula": "0.02 * 12000000",
+      "value": 240000,
+      "sumber": "PP 46/2015 Pasal 16 ayat (1)-(2), PDF hlm. 11"
+    },
+    {
+      "no": 19,
+      "text": "Februari: iuran JP pegawai 1% x min(upah Rp12.000.000, batas upah JP Rp10.042.300) (pengurang neto; JP 2% pemberi kerja bukan objek)",
+      "formula": "0.01 * min(12000000, 10042300)",
+      "value": 100423,
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+    },
+    {
+      "no": 20,
+      "text": "Februari: premi BPJS Kesehatan pemberi kerja 4% x min(Rp12.000.000, Rp12.000.000) (objek); iuran 1% pegawai Rp120.000 bukan pengurang",
+      "formula": "0.04 * min(12000000, 12000000)",
+      "value": 480000,
+      "sumber": "Perpres 82/2018 Pasal 31 (4% pemberi kerja, 1% peserta), PDF hlm. 22; batas Rp12.000.000: Perpres 75/2019 Pasal I angka 3 (Pasal 32 ayat (1)), PDF hlm. 3; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 10 ayat (1), PDF hlm. 11-12; PER-16/PJ/2016 Pasal 10 ayat (3), PDF hlm. 10 (iuran JKN pegawai bukan pengurang)"
+    },
+    {
+      "no": 21,
+      "text": "Februari: bruto sebelum tunjangan/PPh ditanggung (gaji, tunjangan, lembur, THR/bonus, premi JKK/JKM/BPJS Kesehatan pemberi kerja, natura objek)",
+      "formula": "11000000 + 1000000 + 28800 + 36000 + 480000",
+      "value": 12544800,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 22,
+      "text": "Februari: tunjangan pajak T dicari sehingga T = floor(tarif TER(bruto) x (bruto sebelum T + T)); hasil T = Rp522.699 (tarif 4%; titik tetap terkecil)",
+      "formula": "floor(0.04 * (12544800 + 522699))",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a (segala jenis tunjangan), PDF hlm. 9; Lampiran B Bagian Kedua I.5, PDF hlm. 45; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+    },
+    {
+      "no": 23,
+      "text": "Februari: penghasilan bruto masa = Rp12.544.800 + Rp522.699",
+      "formula": "12544800 + 522699",
+      "value": 13067499,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 24,
+      "text": "Februari: tarif efektif bulanan kategori B untuk bruto Rp13.067.499 (lapisan di atas Rp12.600.000 s.d. Rp13.600.000)",
+      "formula": null,
+      "value": 0.04,
+      "sumber": "PP 58/2023 Lampiran huruf B, PDF hlm. 17; PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4"
+    },
+    {
+      "no": 25,
+      "text": "Februari: PPh 21 = 4% x Rp13.067.499 = Rp522.699,96; dibulatkan ke bawah ke rupiah penuh",
+      "formula": "floor(0.04 * 13067499)",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28; Asumsi GT3 A1: pembulatan PPh TER bulanan tidak diatur (PP 58/2023; PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15) -> dibulatkan ke bawah ke rupiah penuh"
+    },
+    {
+      "no": 26,
+      "text": "Februari: tidak ada PPh 21 DTP masa ini; seluruh PPh 21 dipotong/disetor",
+      "formula": "0",
+      "value": 0,
+      "sumber": "PMK 10/2025 Pasal 4 ayat (2)-(3), PDF hlm. 5; PMK 10/2025 Pasal 3 ayat (1)-(2), PDF hlm. 4"
+    },
+    {
+      "no": 27,
+      "text": "Maret: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp12.000.000",
+      "formula": "0.0024 * 12000000",
+      "value": 28800,
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 28,
+      "text": "Maret: premi JKM dibayar pemberi kerja = 0,3% x Rp12.000.000",
+      "formula": "0.003 * 12000000",
+      "value": 36000,
+      "sumber": "PP 44/2015 Pasal 18 ayat (1), PDF hlm. 13; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 29,
+      "text": "Maret: iuran JHT pegawai 2% x Rp12.000.000 (pengurang neto; JHT 3,7% pemberi kerja bukan objek)",
+      "formula": "0.02 * 12000000",
+      "value": 240000,
+      "sumber": "PP 46/2015 Pasal 16 ayat (1)-(2), PDF hlm. 11"
+    },
+    {
+      "no": 30,
+      "text": "Maret: iuran JP pegawai 1% x min(upah Rp12.000.000, batas upah JP Rp10.547.400) (pengurang neto; JP 2% pemberi kerja bukan objek)",
+      "formula": "0.01 * min(12000000, 10547400)",
+      "value": 105474,
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+    },
+    {
+      "no": 31,
+      "text": "Maret: premi BPJS Kesehatan pemberi kerja 4% x min(Rp12.000.000, Rp12.000.000) (objek); iuran 1% pegawai Rp120.000 bukan pengurang",
+      "formula": "0.04 * min(12000000, 12000000)",
+      "value": 480000,
+      "sumber": "Perpres 82/2018 Pasal 31 (4% pemberi kerja, 1% peserta), PDF hlm. 22; batas Rp12.000.000: Perpres 75/2019 Pasal I angka 3 (Pasal 32 ayat (1)), PDF hlm. 3; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 10 ayat (1), PDF hlm. 11-12; PER-16/PJ/2016 Pasal 10 ayat (3), PDF hlm. 10 (iuran JKN pegawai bukan pengurang)"
+    },
+    {
+      "no": 32,
+      "text": "Maret: bruto sebelum tunjangan/PPh ditanggung (gaji, tunjangan, lembur, THR/bonus, premi JKK/JKM/BPJS Kesehatan pemberi kerja, natura objek)",
+      "formula": "11000000 + 1000000 + 28800 + 36000 + 480000 + 12000000",
+      "value": 24544800,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 33,
+      "text": "Maret: tunjangan pajak T dicari sehingga T = floor(tarif TER(bruto) x (bruto sebelum T + T)); hasil T = Rp2.727.199 (tarif 10%; titik tetap terkecil)",
+      "formula": "floor(0.1 * (24544800 + 2727199))",
+      "value": 2727199,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a (segala jenis tunjangan), PDF hlm. 9; Lampiran B Bagian Kedua I.5, PDF hlm. 45; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+    },
+    {
+      "no": 34,
+      "text": "Maret: penghasilan bruto masa = Rp24.544.800 + Rp2.727.199",
+      "formula": "24544800 + 2727199",
+      "value": 27271999,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 35,
+      "text": "Maret: tarif efektif bulanan kategori B untuk bruto Rp27.271.999 (lapisan di atas Rp26.000.000 s.d. Rp27.700.000)",
+      "formula": null,
+      "value": 0.1,
+      "sumber": "PP 58/2023 Lampiran huruf B, PDF hlm. 17; PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4"
+    },
+    {
+      "no": 36,
+      "text": "Maret: PPh 21 = 10% x Rp27.271.999 = Rp2.727.199,9; dibulatkan ke bawah ke rupiah penuh",
+      "formula": "floor(0.1 * 27271999)",
+      "value": 2727199,
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28; Asumsi GT3 A1: pembulatan PPh TER bulanan tidak diatur (PP 58/2023; PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15) -> dibulatkan ke bawah ke rupiah penuh"
+    },
+    {
+      "no": 37,
+      "text": "Maret: tidak ada PPh 21 DTP masa ini; seluruh PPh 21 dipotong/disetor",
+      "formula": "0",
+      "value": 0,
+      "sumber": "PMK 10/2025 Pasal 4 ayat (2)-(3), PDF hlm. 5; PMK 10/2025 Pasal 3 ayat (1)-(2), PDF hlm. 4"
+    },
+    {
+      "no": 38,
+      "text": "April: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp12.000.000",
+      "formula": "0.0024 * 12000000",
+      "value": 28800,
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 39,
+      "text": "April: premi JKM dibayar pemberi kerja = 0,3% x Rp12.000.000",
+      "formula": "0.003 * 12000000",
+      "value": 36000,
+      "sumber": "PP 44/2015 Pasal 18 ayat (1), PDF hlm. 13; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 40,
+      "text": "April: iuran JHT pegawai 2% x Rp12.000.000 (pengurang neto; JHT 3,7% pemberi kerja bukan objek)",
+      "formula": "0.02 * 12000000",
+      "value": 240000,
+      "sumber": "PP 46/2015 Pasal 16 ayat (1)-(2), PDF hlm. 11"
+    },
+    {
+      "no": 41,
+      "text": "April: iuran JP pegawai 1% x min(upah Rp12.000.000, batas upah JP Rp10.547.400) (pengurang neto; JP 2% pemberi kerja bukan objek)",
+      "formula": "0.01 * min(12000000, 10547400)",
+      "value": 105474,
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+    },
+    {
+      "no": 42,
+      "text": "April: premi BPJS Kesehatan pemberi kerja 4% x min(Rp12.000.000, Rp12.000.000) (objek); iuran 1% pegawai Rp120.000 bukan pengurang",
+      "formula": "0.04 * min(12000000, 12000000)",
+      "value": 480000,
+      "sumber": "Perpres 82/2018 Pasal 31 (4% pemberi kerja, 1% peserta), PDF hlm. 22; batas Rp12.000.000: Perpres 75/2019 Pasal I angka 3 (Pasal 32 ayat (1)), PDF hlm. 3; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 10 ayat (1), PDF hlm. 11-12; PER-16/PJ/2016 Pasal 10 ayat (3), PDF hlm. 10 (iuran JKN pegawai bukan pengurang)"
+    },
+    {
+      "no": 43,
+      "text": "April: bruto sebelum tunjangan/PPh ditanggung (gaji, tunjangan, lembur, THR/bonus, premi JKK/JKM/BPJS Kesehatan pemberi kerja, natura objek)",
+      "formula": "11000000 + 1000000 + 28800 + 36000 + 480000",
+      "value": 12544800,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 44,
+      "text": "April: tunjangan pajak T dicari sehingga T = floor(tarif TER(bruto) x (bruto sebelum T + T)); hasil T = Rp522.699 (tarif 4%; titik tetap terkecil)",
+      "formula": "floor(0.04 * (12544800 + 522699))",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a (segala jenis tunjangan), PDF hlm. 9; Lampiran B Bagian Kedua I.5, PDF hlm. 45; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+    },
+    {
+      "no": 45,
+      "text": "April: penghasilan bruto masa = Rp12.544.800 + Rp522.699",
+      "formula": "12544800 + 522699",
+      "value": 13067499,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 46,
+      "text": "April: tarif efektif bulanan kategori B untuk bruto Rp13.067.499 (lapisan di atas Rp12.600.000 s.d. Rp13.600.000)",
+      "formula": null,
+      "value": 0.04,
+      "sumber": "PP 58/2023 Lampiran huruf B, PDF hlm. 17; PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4"
+    },
+    {
+      "no": 47,
+      "text": "April: PPh 21 = 4% x Rp13.067.499 = Rp522.699,96; dibulatkan ke bawah ke rupiah penuh",
+      "formula": "floor(0.04 * 13067499)",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28; Asumsi GT3 A1: pembulatan PPh TER bulanan tidak diatur (PP 58/2023; PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15) -> dibulatkan ke bawah ke rupiah penuh"
+    },
+    {
+      "no": 48,
+      "text": "April: tidak ada PPh 21 DTP masa ini; seluruh PPh 21 dipotong/disetor",
+      "formula": "0",
+      "value": 0,
+      "sumber": "PMK 10/2025 Pasal 4 ayat (2)-(3), PDF hlm. 5; PMK 10/2025 Pasal 3 ayat (1)-(2), PDF hlm. 4"
+    },
+    {
+      "no": 49,
+      "text": "Mei: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp12.000.000",
+      "formula": "0.0024 * 12000000",
+      "value": 28800,
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 50,
+      "text": "Mei: premi JKM dibayar pemberi kerja = 0,3% x Rp12.000.000",
+      "formula": "0.003 * 12000000",
+      "value": 36000,
+      "sumber": "PP 44/2015 Pasal 18 ayat (1), PDF hlm. 13; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 51,
+      "text": "Mei: iuran JHT pegawai 2% x Rp12.000.000 (pengurang neto; JHT 3,7% pemberi kerja bukan objek)",
+      "formula": "0.02 * 12000000",
+      "value": 240000,
+      "sumber": "PP 46/2015 Pasal 16 ayat (1)-(2), PDF hlm. 11"
+    },
+    {
+      "no": 52,
+      "text": "Mei: iuran JP pegawai 1% x min(upah Rp12.000.000, batas upah JP Rp10.547.400) (pengurang neto; JP 2% pemberi kerja bukan objek)",
+      "formula": "0.01 * min(12000000, 10547400)",
+      "value": 105474,
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+    },
+    {
+      "no": 53,
+      "text": "Mei: premi BPJS Kesehatan pemberi kerja 4% x min(Rp12.000.000, Rp12.000.000) (objek); iuran 1% pegawai Rp120.000 bukan pengurang",
+      "formula": "0.04 * min(12000000, 12000000)",
+      "value": 480000,
+      "sumber": "Perpres 82/2018 Pasal 31 (4% pemberi kerja, 1% peserta), PDF hlm. 22; batas Rp12.000.000: Perpres 75/2019 Pasal I angka 3 (Pasal 32 ayat (1)), PDF hlm. 3; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 10 ayat (1), PDF hlm. 11-12; PER-16/PJ/2016 Pasal 10 ayat (3), PDF hlm. 10 (iuran JKN pegawai bukan pengurang)"
+    },
+    {
+      "no": 54,
+      "text": "Mei: bruto sebelum tunjangan/PPh ditanggung (gaji, tunjangan, lembur, THR/bonus, premi JKK/JKM/BPJS Kesehatan pemberi kerja, natura objek)",
+      "formula": "11000000 + 1000000 + 28800 + 36000 + 480000",
+      "value": 12544800,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 55,
+      "text": "Mei: tunjangan pajak T dicari sehingga T = floor(tarif TER(bruto) x (bruto sebelum T + T)); hasil T = Rp522.699 (tarif 4%; titik tetap terkecil)",
+      "formula": "floor(0.04 * (12544800 + 522699))",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a (segala jenis tunjangan), PDF hlm. 9; Lampiran B Bagian Kedua I.5, PDF hlm. 45; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+    },
+    {
+      "no": 56,
+      "text": "Mei: penghasilan bruto masa = Rp12.544.800 + Rp522.699",
+      "formula": "12544800 + 522699",
+      "value": 13067499,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 57,
+      "text": "Mei: tarif efektif bulanan kategori B untuk bruto Rp13.067.499 (lapisan di atas Rp12.600.000 s.d. Rp13.600.000)",
+      "formula": null,
+      "value": 0.04,
+      "sumber": "PP 58/2023 Lampiran huruf B, PDF hlm. 17; PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4"
+    },
+    {
+      "no": 58,
+      "text": "Mei: PPh 21 = 4% x Rp13.067.499 = Rp522.699,96; dibulatkan ke bawah ke rupiah penuh",
+      "formula": "floor(0.04 * 13067499)",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28; Asumsi GT3 A1: pembulatan PPh TER bulanan tidak diatur (PP 58/2023; PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15) -> dibulatkan ke bawah ke rupiah penuh"
+    },
+    {
+      "no": 59,
+      "text": "Mei: tidak ada PPh 21 DTP masa ini; seluruh PPh 21 dipotong/disetor",
+      "formula": "0",
+      "value": 0,
+      "sumber": "PMK 10/2025 Pasal 4 ayat (2)-(3), PDF hlm. 5; PMK 10/2025 Pasal 3 ayat (1)-(2), PDF hlm. 4"
+    },
+    {
+      "no": 60,
+      "text": "Juni: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp12.000.000",
+      "formula": "0.0024 * 12000000",
+      "value": 28800,
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 61,
+      "text": "Juni: premi JKM dibayar pemberi kerja = 0,3% x Rp12.000.000",
+      "formula": "0.003 * 12000000",
+      "value": 36000,
+      "sumber": "PP 44/2015 Pasal 18 ayat (1), PDF hlm. 13; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 62,
+      "text": "Juni: iuran JHT pegawai 2% x Rp12.000.000 (pengurang neto; JHT 3,7% pemberi kerja bukan objek)",
+      "formula": "0.02 * 12000000",
+      "value": 240000,
+      "sumber": "PP 46/2015 Pasal 16 ayat (1)-(2), PDF hlm. 11"
+    },
+    {
+      "no": 63,
+      "text": "Juni: iuran JP pegawai 1% x min(upah Rp12.000.000, batas upah JP Rp10.547.400) (pengurang neto; JP 2% pemberi kerja bukan objek)",
+      "formula": "0.01 * min(12000000, 10547400)",
+      "value": 105474,
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+    },
+    {
+      "no": 64,
+      "text": "Juni: premi BPJS Kesehatan pemberi kerja 4% x min(Rp12.000.000, Rp12.000.000) (objek); iuran 1% pegawai Rp120.000 bukan pengurang",
+      "formula": "0.04 * min(12000000, 12000000)",
+      "value": 480000,
+      "sumber": "Perpres 82/2018 Pasal 31 (4% pemberi kerja, 1% peserta), PDF hlm. 22; batas Rp12.000.000: Perpres 75/2019 Pasal I angka 3 (Pasal 32 ayat (1)), PDF hlm. 3; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 10 ayat (1), PDF hlm. 11-12; PER-16/PJ/2016 Pasal 10 ayat (3), PDF hlm. 10 (iuran JKN pegawai bukan pengurang)"
+    },
+    {
+      "no": 65,
+      "text": "Juni: bruto sebelum tunjangan/PPh ditanggung (gaji, tunjangan, lembur, THR/bonus, premi JKK/JKM/BPJS Kesehatan pemberi kerja, natura objek)",
+      "formula": "11000000 + 1000000 + 28800 + 36000 + 480000",
+      "value": 12544800,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 66,
+      "text": "Juni: tunjangan pajak T dicari sehingga T = floor(tarif TER(bruto) x (bruto sebelum T + T)); hasil T = Rp522.699 (tarif 4%; titik tetap terkecil)",
+      "formula": "floor(0.04 * (12544800 + 522699))",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a (segala jenis tunjangan), PDF hlm. 9; Lampiran B Bagian Kedua I.5, PDF hlm. 45; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+    },
+    {
+      "no": 67,
+      "text": "Juni: penghasilan bruto masa = Rp12.544.800 + Rp522.699",
+      "formula": "12544800 + 522699",
+      "value": 13067499,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 68,
+      "text": "Juni: tarif efektif bulanan kategori B untuk bruto Rp13.067.499 (lapisan di atas Rp12.600.000 s.d. Rp13.600.000)",
+      "formula": null,
+      "value": 0.04,
+      "sumber": "PP 58/2023 Lampiran huruf B, PDF hlm. 17; PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4"
+    },
+    {
+      "no": 69,
+      "text": "Juni: PPh 21 = 4% x Rp13.067.499 = Rp522.699,96; dibulatkan ke bawah ke rupiah penuh",
+      "formula": "floor(0.04 * 13067499)",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28; Asumsi GT3 A1: pembulatan PPh TER bulanan tidak diatur (PP 58/2023; PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15) -> dibulatkan ke bawah ke rupiah penuh"
+    },
+    {
+      "no": 70,
+      "text": "Juni: tidak ada PPh 21 DTP masa ini; seluruh PPh 21 dipotong/disetor",
+      "formula": "0",
+      "value": 0,
+      "sumber": "PMK 10/2025 Pasal 4 ayat (2)-(3), PDF hlm. 5; PMK 10/2025 Pasal 3 ayat (1)-(2), PDF hlm. 4"
+    },
+    {
+      "no": 71,
+      "text": "Juli: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp12.000.000",
+      "formula": "0.0024 * 12000000",
+      "value": 28800,
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 72,
+      "text": "Juli: premi JKM dibayar pemberi kerja = 0,3% x Rp12.000.000",
+      "formula": "0.003 * 12000000",
+      "value": 36000,
+      "sumber": "PP 44/2015 Pasal 18 ayat (1), PDF hlm. 13; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 73,
+      "text": "Juli: iuran JHT pegawai 2% x Rp12.000.000 (pengurang neto; JHT 3,7% pemberi kerja bukan objek)",
+      "formula": "0.02 * 12000000",
+      "value": 240000,
+      "sumber": "PP 46/2015 Pasal 16 ayat (1)-(2), PDF hlm. 11"
+    },
+    {
+      "no": 74,
+      "text": "Juli: iuran JP pegawai 1% x min(upah Rp12.000.000, batas upah JP Rp10.547.400) (pengurang neto; JP 2% pemberi kerja bukan objek)",
+      "formula": "0.01 * min(12000000, 10547400)",
+      "value": 105474,
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+    },
+    {
+      "no": 75,
+      "text": "Juli: premi BPJS Kesehatan pemberi kerja 4% x min(Rp12.000.000, Rp12.000.000) (objek); iuran 1% pegawai Rp120.000 bukan pengurang",
+      "formula": "0.04 * min(12000000, 12000000)",
+      "value": 480000,
+      "sumber": "Perpres 82/2018 Pasal 31 (4% pemberi kerja, 1% peserta), PDF hlm. 22; batas Rp12.000.000: Perpres 75/2019 Pasal I angka 3 (Pasal 32 ayat (1)), PDF hlm. 3; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 10 ayat (1), PDF hlm. 11-12; PER-16/PJ/2016 Pasal 10 ayat (3), PDF hlm. 10 (iuran JKN pegawai bukan pengurang)"
+    },
+    {
+      "no": 76,
+      "text": "Juli: bruto sebelum tunjangan/PPh ditanggung (gaji, tunjangan, lembur, THR/bonus, premi JKK/JKM/BPJS Kesehatan pemberi kerja, natura objek)",
+      "formula": "11000000 + 1000000 + 28800 + 36000 + 480000",
+      "value": 12544800,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 77,
+      "text": "Juli: tunjangan pajak T dicari sehingga T = floor(tarif TER(bruto) x (bruto sebelum T + T)); hasil T = Rp522.699 (tarif 4%; titik tetap terkecil)",
+      "formula": "floor(0.04 * (12544800 + 522699))",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a (segala jenis tunjangan), PDF hlm. 9; Lampiran B Bagian Kedua I.5, PDF hlm. 45; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+    },
+    {
+      "no": 78,
+      "text": "Juli: penghasilan bruto masa = Rp12.544.800 + Rp522.699",
+      "formula": "12544800 + 522699",
+      "value": 13067499,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 79,
+      "text": "Juli: tarif efektif bulanan kategori B untuk bruto Rp13.067.499 (lapisan di atas Rp12.600.000 s.d. Rp13.600.000)",
+      "formula": null,
+      "value": 0.04,
+      "sumber": "PP 58/2023 Lampiran huruf B, PDF hlm. 17; PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4"
+    },
+    {
+      "no": 80,
+      "text": "Juli: PPh 21 = 4% x Rp13.067.499 = Rp522.699,96; dibulatkan ke bawah ke rupiah penuh",
+      "formula": "floor(0.04 * 13067499)",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28; Asumsi GT3 A1: pembulatan PPh TER bulanan tidak diatur (PP 58/2023; PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15) -> dibulatkan ke bawah ke rupiah penuh"
+    },
+    {
+      "no": 81,
+      "text": "Juli: tidak ada PPh 21 DTP masa ini; seluruh PPh 21 dipotong/disetor",
+      "formula": "0",
+      "value": 0,
+      "sumber": "PMK 10/2025 Pasal 4 ayat (2)-(3), PDF hlm. 5; PMK 10/2025 Pasal 3 ayat (1)-(2), PDF hlm. 4"
+    },
+    {
+      "no": 82,
+      "text": "Agustus: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp12.000.000",
+      "formula": "0.0024 * 12000000",
+      "value": 28800,
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 83,
+      "text": "Agustus: premi JKM dibayar pemberi kerja = 0,3% x Rp12.000.000",
+      "formula": "0.003 * 12000000",
+      "value": 36000,
+      "sumber": "PP 44/2015 Pasal 18 ayat (1), PDF hlm. 13; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 84,
+      "text": "Agustus: iuran JHT pegawai 2% x Rp12.000.000 (pengurang neto; JHT 3,7% pemberi kerja bukan objek)",
+      "formula": "0.02 * 12000000",
+      "value": 240000,
+      "sumber": "PP 46/2015 Pasal 16 ayat (1)-(2), PDF hlm. 11"
+    },
+    {
+      "no": 85,
+      "text": "Agustus: iuran JP pegawai 1% x min(upah Rp12.000.000, batas upah JP Rp10.547.400) (pengurang neto; JP 2% pemberi kerja bukan objek)",
+      "formula": "0.01 * min(12000000, 10547400)",
+      "value": 105474,
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+    },
+    {
+      "no": 86,
+      "text": "Agustus: premi BPJS Kesehatan pemberi kerja 4% x min(Rp12.000.000, Rp12.000.000) (objek); iuran 1% pegawai Rp120.000 bukan pengurang",
+      "formula": "0.04 * min(12000000, 12000000)",
+      "value": 480000,
+      "sumber": "Perpres 82/2018 Pasal 31 (4% pemberi kerja, 1% peserta), PDF hlm. 22; batas Rp12.000.000: Perpres 75/2019 Pasal I angka 3 (Pasal 32 ayat (1)), PDF hlm. 3; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 10 ayat (1), PDF hlm. 11-12; PER-16/PJ/2016 Pasal 10 ayat (3), PDF hlm. 10 (iuran JKN pegawai bukan pengurang)"
+    },
+    {
+      "no": 87,
+      "text": "Agustus: bruto sebelum tunjangan/PPh ditanggung (gaji, tunjangan, lembur, THR/bonus, premi JKK/JKM/BPJS Kesehatan pemberi kerja, natura objek)",
+      "formula": "11000000 + 1000000 + 28800 + 36000 + 480000",
+      "value": 12544800,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 88,
+      "text": "Agustus: tunjangan pajak T dicari sehingga T = floor(tarif TER(bruto) x (bruto sebelum T + T)); hasil T = Rp522.699 (tarif 4%; titik tetap terkecil)",
+      "formula": "floor(0.04 * (12544800 + 522699))",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a (segala jenis tunjangan), PDF hlm. 9; Lampiran B Bagian Kedua I.5, PDF hlm. 45; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+    },
+    {
+      "no": 89,
+      "text": "Agustus: penghasilan bruto masa = Rp12.544.800 + Rp522.699",
+      "formula": "12544800 + 522699",
+      "value": 13067499,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 90,
+      "text": "Agustus: tarif efektif bulanan kategori B untuk bruto Rp13.067.499 (lapisan di atas Rp12.600.000 s.d. Rp13.600.000)",
+      "formula": null,
+      "value": 0.04,
+      "sumber": "PP 58/2023 Lampiran huruf B, PDF hlm. 17; PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4"
+    },
+    {
+      "no": 91,
+      "text": "Agustus: PPh 21 = 4% x Rp13.067.499 = Rp522.699,96; dibulatkan ke bawah ke rupiah penuh",
+      "formula": "floor(0.04 * 13067499)",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28; Asumsi GT3 A1: pembulatan PPh TER bulanan tidak diatur (PP 58/2023; PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15) -> dibulatkan ke bawah ke rupiah penuh"
+    },
+    {
+      "no": 92,
+      "text": "Agustus: tidak ada PPh 21 DTP masa ini; seluruh PPh 21 dipotong/disetor",
+      "formula": "0",
+      "value": 0,
+      "sumber": "PMK 10/2025 Pasal 4 ayat (2)-(3), PDF hlm. 5; PMK 10/2025 Pasal 3 ayat (1)-(2), PDF hlm. 4"
+    },
+    {
+      "no": 93,
+      "text": "September: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp12.000.000",
+      "formula": "0.0024 * 12000000",
+      "value": 28800,
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 94,
+      "text": "September: premi JKM dibayar pemberi kerja = 0,3% x Rp12.000.000",
+      "formula": "0.003 * 12000000",
+      "value": 36000,
+      "sumber": "PP 44/2015 Pasal 18 ayat (1), PDF hlm. 13; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 95,
+      "text": "September: iuran JHT pegawai 2% x Rp12.000.000 (pengurang neto; JHT 3,7% pemberi kerja bukan objek)",
+      "formula": "0.02 * 12000000",
+      "value": 240000,
+      "sumber": "PP 46/2015 Pasal 16 ayat (1)-(2), PDF hlm. 11"
+    },
+    {
+      "no": 96,
+      "text": "September: iuran JP pegawai 1% x min(upah Rp12.000.000, batas upah JP Rp10.547.400) (pengurang neto; JP 2% pemberi kerja bukan objek)",
+      "formula": "0.01 * min(12000000, 10547400)",
+      "value": 105474,
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+    },
+    {
+      "no": 97,
+      "text": "September: premi BPJS Kesehatan pemberi kerja 4% x min(Rp12.000.000, Rp12.000.000) (objek); iuran 1% pegawai Rp120.000 bukan pengurang",
+      "formula": "0.04 * min(12000000, 12000000)",
+      "value": 480000,
+      "sumber": "Perpres 82/2018 Pasal 31 (4% pemberi kerja, 1% peserta), PDF hlm. 22; batas Rp12.000.000: Perpres 75/2019 Pasal I angka 3 (Pasal 32 ayat (1)), PDF hlm. 3; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 10 ayat (1), PDF hlm. 11-12; PER-16/PJ/2016 Pasal 10 ayat (3), PDF hlm. 10 (iuran JKN pegawai bukan pengurang)"
+    },
+    {
+      "no": 98,
+      "text": "September: bruto sebelum tunjangan/PPh ditanggung (gaji, tunjangan, lembur, THR/bonus, premi JKK/JKM/BPJS Kesehatan pemberi kerja, natura objek)",
+      "formula": "11000000 + 1000000 + 28800 + 36000 + 480000",
+      "value": 12544800,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 99,
+      "text": "September: tunjangan pajak T dicari sehingga T = floor(tarif TER(bruto) x (bruto sebelum T + T)); hasil T = Rp522.699 (tarif 4%; titik tetap terkecil)",
+      "formula": "floor(0.04 * (12544800 + 522699))",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a (segala jenis tunjangan), PDF hlm. 9; Lampiran B Bagian Kedua I.5, PDF hlm. 45; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+    },
+    {
+      "no": 100,
+      "text": "September: penghasilan bruto masa = Rp12.544.800 + Rp522.699",
+      "formula": "12544800 + 522699",
+      "value": 13067499,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 101,
+      "text": "September: tarif efektif bulanan kategori B untuk bruto Rp13.067.499 (lapisan di atas Rp12.600.000 s.d. Rp13.600.000)",
+      "formula": null,
+      "value": 0.04,
+      "sumber": "PP 58/2023 Lampiran huruf B, PDF hlm. 17; PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4"
+    },
+    {
+      "no": 102,
+      "text": "September: PPh 21 = 4% x Rp13.067.499 = Rp522.699,96; dibulatkan ke bawah ke rupiah penuh",
+      "formula": "floor(0.04 * 13067499)",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28; Asumsi GT3 A1: pembulatan PPh TER bulanan tidak diatur (PP 58/2023; PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15) -> dibulatkan ke bawah ke rupiah penuh"
+    },
+    {
+      "no": 103,
+      "text": "September: tidak ada PPh 21 DTP masa ini; seluruh PPh 21 dipotong/disetor",
+      "formula": "0",
+      "value": 0,
+      "sumber": "PMK 10/2025 Pasal 4 ayat (2)-(3), PDF hlm. 5; PMK 10/2025 Pasal 3 ayat (1)-(2), PDF hlm. 4"
+    },
+    {
+      "no": 104,
+      "text": "Oktober: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp12.000.000",
+      "formula": "0.0024 * 12000000",
+      "value": 28800,
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 105,
+      "text": "Oktober: premi JKM dibayar pemberi kerja = 0,3% x Rp12.000.000",
+      "formula": "0.003 * 12000000",
+      "value": 36000,
+      "sumber": "PP 44/2015 Pasal 18 ayat (1), PDF hlm. 13; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 106,
+      "text": "Oktober: iuran JHT pegawai 2% x Rp12.000.000 (pengurang neto; JHT 3,7% pemberi kerja bukan objek)",
+      "formula": "0.02 * 12000000",
+      "value": 240000,
+      "sumber": "PP 46/2015 Pasal 16 ayat (1)-(2), PDF hlm. 11"
+    },
+    {
+      "no": 107,
+      "text": "Oktober: iuran JP pegawai 1% x min(upah Rp12.000.000, batas upah JP Rp10.547.400) (pengurang neto; JP 2% pemberi kerja bukan objek)",
+      "formula": "0.01 * min(12000000, 10547400)",
+      "value": 105474,
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+    },
+    {
+      "no": 108,
+      "text": "Oktober: premi BPJS Kesehatan pemberi kerja 4% x min(Rp12.000.000, Rp12.000.000) (objek); iuran 1% pegawai Rp120.000 bukan pengurang",
+      "formula": "0.04 * min(12000000, 12000000)",
+      "value": 480000,
+      "sumber": "Perpres 82/2018 Pasal 31 (4% pemberi kerja, 1% peserta), PDF hlm. 22; batas Rp12.000.000: Perpres 75/2019 Pasal I angka 3 (Pasal 32 ayat (1)), PDF hlm. 3; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 10 ayat (1), PDF hlm. 11-12; PER-16/PJ/2016 Pasal 10 ayat (3), PDF hlm. 10 (iuran JKN pegawai bukan pengurang)"
+    },
+    {
+      "no": 109,
+      "text": "Oktober: bruto sebelum tunjangan/PPh ditanggung (gaji, tunjangan, lembur, THR/bonus, premi JKK/JKM/BPJS Kesehatan pemberi kerja, natura objek)",
+      "formula": "11000000 + 1000000 + 28800 + 36000 + 480000",
+      "value": 12544800,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 110,
+      "text": "Oktober: tunjangan pajak T dicari sehingga T = floor(tarif TER(bruto) x (bruto sebelum T + T)); hasil T = Rp522.699 (tarif 4%; titik tetap terkecil)",
+      "formula": "floor(0.04 * (12544800 + 522699))",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a (segala jenis tunjangan), PDF hlm. 9; Lampiran B Bagian Kedua I.5, PDF hlm. 45; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+    },
+    {
+      "no": 111,
+      "text": "Oktober: penghasilan bruto masa = Rp12.544.800 + Rp522.699",
+      "formula": "12544800 + 522699",
+      "value": 13067499,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 112,
+      "text": "Oktober: tarif efektif bulanan kategori B untuk bruto Rp13.067.499 (lapisan di atas Rp12.600.000 s.d. Rp13.600.000)",
+      "formula": null,
+      "value": 0.04,
+      "sumber": "PP 58/2023 Lampiran huruf B, PDF hlm. 17; PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4"
+    },
+    {
+      "no": 113,
+      "text": "Oktober: PPh 21 = 4% x Rp13.067.499 = Rp522.699,96; dibulatkan ke bawah ke rupiah penuh",
+      "formula": "floor(0.04 * 13067499)",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28; Asumsi GT3 A1: pembulatan PPh TER bulanan tidak diatur (PP 58/2023; PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15) -> dibulatkan ke bawah ke rupiah penuh"
+    },
+    {
+      "no": 114,
+      "text": "Oktober: tidak ada PPh 21 DTP masa ini; seluruh PPh 21 dipotong/disetor",
+      "formula": "0",
+      "value": 0,
+      "sumber": "PMK 10/2025 Pasal 4 ayat (2)-(3), PDF hlm. 5; PMK 10/2025 Pasal 3 ayat (1)-(2), PDF hlm. 4"
+    },
+    {
+      "no": 115,
+      "text": "November: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp12.000.000",
+      "formula": "0.0024 * 12000000",
+      "value": 28800,
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 116,
+      "text": "November: premi JKM dibayar pemberi kerja = 0,3% x Rp12.000.000",
+      "formula": "0.003 * 12000000",
+      "value": 36000,
+      "sumber": "PP 44/2015 Pasal 18 ayat (1), PDF hlm. 13; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 117,
+      "text": "November: iuran JHT pegawai 2% x Rp12.000.000 (pengurang neto; JHT 3,7% pemberi kerja bukan objek)",
+      "formula": "0.02 * 12000000",
+      "value": 240000,
+      "sumber": "PP 46/2015 Pasal 16 ayat (1)-(2), PDF hlm. 11"
+    },
+    {
+      "no": 118,
+      "text": "November: iuran JP pegawai 1% x min(upah Rp12.000.000, batas upah JP Rp10.547.400) (pengurang neto; JP 2% pemberi kerja bukan objek)",
+      "formula": "0.01 * min(12000000, 10547400)",
+      "value": 105474,
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+    },
+    {
+      "no": 119,
+      "text": "November: premi BPJS Kesehatan pemberi kerja 4% x min(Rp12.000.000, Rp12.000.000) (objek); iuran 1% pegawai Rp120.000 bukan pengurang",
+      "formula": "0.04 * min(12000000, 12000000)",
+      "value": 480000,
+      "sumber": "Perpres 82/2018 Pasal 31 (4% pemberi kerja, 1% peserta), PDF hlm. 22; batas Rp12.000.000: Perpres 75/2019 Pasal I angka 3 (Pasal 32 ayat (1)), PDF hlm. 3; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 10 ayat (1), PDF hlm. 11-12; PER-16/PJ/2016 Pasal 10 ayat (3), PDF hlm. 10 (iuran JKN pegawai bukan pengurang)"
+    },
+    {
+      "no": 120,
+      "text": "November: bruto sebelum tunjangan/PPh ditanggung (gaji, tunjangan, lembur, THR/bonus, premi JKK/JKM/BPJS Kesehatan pemberi kerja, natura objek)",
+      "formula": "11000000 + 1000000 + 28800 + 36000 + 480000",
+      "value": 12544800,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 121,
+      "text": "November: tunjangan pajak T dicari sehingga T = floor(tarif TER(bruto) x (bruto sebelum T + T)); hasil T = Rp522.699 (tarif 4%; titik tetap terkecil)",
+      "formula": "floor(0.04 * (12544800 + 522699))",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a (segala jenis tunjangan), PDF hlm. 9; Lampiran B Bagian Kedua I.5, PDF hlm. 45; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+    },
+    {
+      "no": 122,
+      "text": "November: penghasilan bruto masa = Rp12.544.800 + Rp522.699",
+      "formula": "12544800 + 522699",
+      "value": 13067499,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 123,
+      "text": "November: tarif efektif bulanan kategori B untuk bruto Rp13.067.499 (lapisan di atas Rp12.600.000 s.d. Rp13.600.000)",
+      "formula": null,
+      "value": 0.04,
+      "sumber": "PP 58/2023 Lampiran huruf B, PDF hlm. 17; PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4"
+    },
+    {
+      "no": 124,
+      "text": "November: PPh 21 = 4% x Rp13.067.499 = Rp522.699,96; dibulatkan ke bawah ke rupiah penuh",
+      "formula": "floor(0.04 * 13067499)",
+      "value": 522699,
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28; Asumsi GT3 A1: pembulatan PPh TER bulanan tidak diatur (PP 58/2023; PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15) -> dibulatkan ke bawah ke rupiah penuh"
+    },
+    {
+      "no": 125,
+      "text": "November: tidak ada PPh 21 DTP masa ini; seluruh PPh 21 dipotong/disetor",
+      "formula": "0",
+      "value": 0,
+      "sumber": "PMK 10/2025 Pasal 4 ayat (2)-(3), PDF hlm. 5; PMK 10/2025 Pasal 3 ayat (1)-(2), PDF hlm. 4"
+    },
+    {
+      "no": 126,
+      "text": "Desember: premi JKK dibayar pemberi kerja = 0,24% x upah sebulan Rp12.000.000",
+      "formula": "0.0024 * 12000000",
+      "value": 28800,
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 127,
+      "text": "Desember: premi JKM dibayar pemberi kerja = 0,3% x Rp12.000.000",
+      "formula": "0.003 * 12000000",
+      "value": 36000,
+      "sumber": "PP 44/2015 Pasal 18 ayat (1), PDF hlm. 13; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 128,
+      "text": "Desember: iuran JHT pegawai 2% x Rp12.000.000 (pengurang neto; JHT 3,7% pemberi kerja bukan objek)",
+      "formula": "0.02 * 12000000",
+      "value": 240000,
+      "sumber": "PP 46/2015 Pasal 16 ayat (1)-(2), PDF hlm. 11"
+    },
+    {
+      "no": 129,
+      "text": "Desember: iuran JP pegawai 1% x min(upah Rp12.000.000, batas upah JP Rp10.547.400) (pengurang neto; JP 2% pemberi kerja bukan objek)",
+      "formula": "0.01 * min(12000000, 10547400)",
+      "value": 105474,
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+    },
+    {
+      "no": 130,
+      "text": "Desember: premi BPJS Kesehatan pemberi kerja 4% x min(Rp12.000.000, Rp12.000.000) (objek); iuran 1% pegawai Rp120.000 bukan pengurang",
+      "formula": "0.04 * min(12000000, 12000000)",
+      "value": 480000,
+      "sumber": "Perpres 82/2018 Pasal 31 (4% pemberi kerja, 1% peserta), PDF hlm. 22; batas Rp12.000.000: Perpres 75/2019 Pasal I angka 3 (Pasal 32 ayat (1)), PDF hlm. 3; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 10 ayat (1), PDF hlm. 11-12; PER-16/PJ/2016 Pasal 10 ayat (3), PDF hlm. 10 (iuran JKN pegawai bukan pengurang)"
+    },
+    {
+      "no": 131,
+      "text": "Desember adalah Masa Pajak Terakhir (Desember): PPh 21 dihitung ulang setahun dengan tarif Pasal 17",
+      "formula": null,
+      "value": "masa terakhir",
+      "sumber": "PMK 168/2023 Pasal 1 angka 18, PDF hlm. 4; PMK 168/2023 Pasal 15 ayat (1) huruf b, PDF hlm. 15; Lampiran B Bagian Pertama I.2 angka 1, PDF hlm. 28-29"
+    },
+    {
+      "no": 132,
+      "text": "Desember: bruto masa sebelum tunjangan pajak/PPh ditanggung",
+      "formula": "11000000 + 1000000 + 28800 + 36000 + 480000",
+      "value": 12544800,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9"
+    },
+    {
+      "no": 133,
+      "text": "Desember: tunjangan pajak T Masa Pajak Terakhir dicari sehingga T = PPh 21 setahun (bruto termasuk T) - PPh 21 masa sebelumnya; hasil T = Rp128.411 (titik tetap terkecil; dibuktikan pada langkah PPh Masa Pajak Terakhir di bawah yang harus sama dengan T)",
+      "formula": "128411",
+      "value": 128411,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a (segala jenis tunjangan), PDF hlm. 9; Lampiran B Bagian Kedua I.5, PDF hlm. 45; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+    },
+    {
+      "no": 134,
+      "text": "Desember: bruto masa termasuk T",
+      "formula": "12544800 + 128411",
+      "value": 12673211,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9"
+    },
+    {
+      "no": 135,
+      "text": "Penghasilan bruto setahun (jumlah bruto seluruh masa)",
+      "formula": "13067499 + 13067499 + 27271999 + 13067499 + 13067499 + 13067499 + 13067499 + 13067499 + 13067499 + 13067499 + 13067499 + 12673211",
+      "value": 170620200,
+      "sumber": "PMK 168/2023 Pasal 8 ayat (5), PDF hlm. 11; Lampiran B Bagian Pertama I.2 angka 4-5, PDF hlm. 29"
+    },
+    {
+      "no": 136,
+      "text": "Biaya jabatan = min(5% x bruto, 12 x Rp500.000)",
+      "formula": "min(0.05 * 170620200, 6000000)",
+      "value": 6000000,
+      "sumber": "PMK 168/2023 Pasal 10 ayat (1) huruf a dan ayat (2), PDF hlm. 11-12"
+    },
+    {
+      "no": 137,
+      "text": "Iuran JHT + JP dibayar pegawai setahun",
+      "formula": "340423 + 340423 + 345474 + 345474 + 345474 + 345474 + 345474 + 345474 + 345474 + 345474 + 345474 + 345474",
+      "value": 4135586,
+      "sumber": "PMK 168/2023 Pasal 10 ayat (1) huruf b, PDF hlm. 11-12"
+    },
+    {
+      "no": 138,
+      "text": "Zakat melalui pemberi kerja setahun (pengurang)",
+      "formula": "300000 + 300000 + 300000 + 300000 + 300000 + 300000 + 300000 + 300000 + 300000 + 300000 + 300000 + 300000",
+      "value": 3600000,
+      "sumber": "PMK 168/2023 Pasal 10 ayat (1) huruf c, PDF hlm. 12; Lampiran B Bagian Pertama I.2 angka 5 huruf a, PDF hlm. 29"
+    },
+    {
+      "no": 139,
+      "text": "Penghasilan neto",
+      "formula": "170620200 - 6000000 - 4135586 - 3600000",
+      "value": 156884614,
+      "sumber": "PMK 168/2023 Pasal 8 ayat (5), PDF hlm. 11; Lampiran B Bagian Pertama I.2 angka 4-5, PDF hlm. 29"
+    },
+    {
+      "no": 140,
+      "text": "PKP sebelum pembulatan = neto - PTKP Rp63.000.000",
+      "formula": "156884614 - 63000000",
+      "value": 93884614,
+      "sumber": "PMK 168/2023 Pasal 8 ayat (3)-(4), PDF hlm. 10; Lampiran B Bagian Pertama I.2 angka 3, PDF hlm. 29"
+    },
+    {
+      "no": 141,
+      "text": "PKP dibulatkan ke bawah hingga ribuan rupiah penuh",
+      "formula": "max(0, floor((156884614 - 63000000) / 1000) * 1000)",
+      "value": 93884000,
+      "sumber": "PMK 168/2023 Pasal 8 ayat (3)-(4), PDF hlm. 10; Lampiran B Bagian Pertama I.2 angka 3, PDF hlm. 29"
+    },
+    {
+      "no": 142,
+      "text": "Lapisan 5% (PKP di atas Rp0 s.d. Rp60.000.000): 5% x Rp60.000.000",
+      "formula": "0.05 * 60000000",
+      "value": 3000000,
+      "sumber": "UU 7/2021 (HPP) Pasal 3 angka 7 (Pasal 17 ayat (1) huruf a UU PPh), PDF hlm. 56; PMK 168/2023 Pasal 15 ayat (2), PDF hlm. 16"
+    },
+    {
+      "no": 143,
+      "text": "Lapisan 15% (PKP di atas Rp60.000.000 s.d. Rp250.000.000): 15% x Rp33.884.000",
+      "formula": "0.15 * 33884000",
+      "value": 5082600,
+      "sumber": "UU 7/2021 (HPP) Pasal 3 angka 7 (Pasal 17 ayat (1) huruf a UU PPh), PDF hlm. 56; PMK 168/2023 Pasal 15 ayat (2), PDF hlm. 16"
+    },
+    {
+      "no": 144,
+      "text": "PPh 21 terutang setahun (tarif Pasal 17)",
+      "formula": "0.05 * 60000000 + 0.15 * 33884000",
+      "value": 8082600,
+      "sumber": "UU 7/2021 (HPP) Pasal 3 angka 7 (Pasal 17 ayat (1) huruf a UU PPh), PDF hlm. 56; PMK 168/2023 Pasal 15 ayat (2), PDF hlm. 16"
+    },
+    {
+      "no": 145,
+      "text": "PPh 21 yang telah dipotong pada masa sebelumnya (termasuk yang DTP)",
+      "formula": "7954189",
+      "value": 7954189,
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf b, PDF hlm. 15; Lampiran B Bagian Pertama I.2 angka 1, PDF hlm. 28-29"
+    },
+    {
+      "no": 146,
+      "text": "Desember: PPh 21 Masa Pajak Terakhir = PPh setahun - PPh telah dipotong",
+      "formula": "8082600 - 7954189",
+      "value": 128411,
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf b, PDF hlm. 15; Lampiran B Bagian Pertama I.2 angka 1, PDF hlm. 28-29"
+    }
+  ],
+  "cek_aritmetika": "cocok",
+  "cek_aritmetika_rinci": {
+    "alat": "tools/check_gt3.py (pecahan eksak, terpisah dari tools/calculator.py)",
+    "langkah_numerik_dievaluasi_ulang": 131,
+    "langkah_tidak_cocok": 0,
+    "hitung_ulang_independen_item": 154,
+    "hitung_ulang_independen_tidak_cocok": 0
+  }
+}

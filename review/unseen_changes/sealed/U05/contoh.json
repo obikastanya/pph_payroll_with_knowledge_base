@@ -1,0 +1,1096 @@
+{
+ "id": "U05",
+ "catatan": "DOKUMEN FIKTIF UNTUK PENELITIAN. Contoh perhitungan untuk perubahan tak terlihat U05.",
+ "konvensi": [
+  "Setiap perubahan diterapkan sendiri-sendiri di atas aturan yang berlaku pada 2026 (PP 58/2023, PMK 168/2023, PMK 101/2016, UU HPP); perubahan lain dalam set ini tidak ikut berlaku.",
+  "Hasil TER x bruto dibulatkan ke bawah ke rupiah penuh (asumsi implementasi; PP 58/2023 dan PMK 168/2023 tidak mengatur), kecuali perubahan menyatakan lain.",
+  "Komponen rupiah pada input adalah nilai final yang dibayar/dipotong. Premi BPJS dihitung dari tabel bpjs.csv: JKK risiko sangat rendah 0,24%, JKM 0,30%, JKN pemberi kerja 4% (batas upah Rp12.000.000), JHT pegawai 2%, JP pegawai 1% (batas upah Rp11.086.300 sejak Maret 2026; untuk 2027-2028 diasumsikan tetap karena angka baru belum terbit; Januari-Februari 2026 Rp10.547.400).",
+  "Masa Pajak Terakhir = Desember, atau bulan yang disebut pada field masa_terakhir (bulan terakhir bekerja). Jika tidak ada Desember dan tidak ada masa_terakhir, contoh hanya memuat masa selain Masa Pajak Terakhir.",
+  "Biaya jabatan untuk bagian tahun pajak: paling banyak batas bulanan x jumlah bulan bekerja.",
+  "Nilai negatif pada pph21 Masa Pajak Terakhir berarti lebih potong yang dikembalikan kepada pegawai (kecuali dinyatakan tidak dikembalikan).",
+  "Kecuali disebut lain, pemberi kerja bukan penerima insentif PPh 21 DTP PMK 105/2025 dan pegawai memiliki NIK/NPWP valid dan terintegrasi.",
+  "Ekspresi memakai notasi Python: // adalah pembagian bulat ke bawah; 'x * 225 // 10000' berarti 2,25% x x dibulatkan ke bawah."
+ ],
+ "tabel_perubahan": {},
+ "contoh": [
+  {
+   "id": "U05-C1",
+   "judul": "TK/0 gaji Rp9 juta, penggantian internet berbukti Rp350.000, 10 hari kerja jarak jauh, Januari-Februari 2027",
+   "perubahan_berpengaruh": true,
+   "alasan": "Seluruh penggantian dikecualikan",
+   "input": {
+    "status_ptkp": "TK/0",
+    "metode": "gross",
+    "tahun_pajak": 2027,
+    "masa": [
+     {
+      "bulan": 1,
+      "komponen": {
+       "gaji_pokok": 9000000,
+       "penggantian_internet": 350000
+      },
+      "hari_kerja_jarak_jauh": 10
+     },
+     {
+      "bulan": 2,
+      "komponen": {
+       "gaji_pokok": 9000000,
+       "penggantian_internet": 350000
+      },
+      "hari_kerja_jarak_jauh": 10
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 9000000,
+      "pph21": 157500,
+      "pph21_dipotong": 157500
+     },
+     {
+      "bulan": 2,
+      "bruto": 9000000,
+      "pph21": 157500,
+      "pph21_dipotong": 157500
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 9350000,
+      "pph21": 163625,
+      "pph21_dipotong": 163625
+     },
+     {
+      "bulan": 2,
+      "bruto": 9350000,
+      "pph21": 163625,
+      "pph21_dipotong": 163625
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Masa Januari: 10 hari kerja jarak jauh (>= 8), bagian penggantian internet yang dikecualikan = paling banyak Rp400.000",
+     "ekspresi": "min(350000, 400000)",
+     "hasil": 350000
+    },
+    {
+     "no": 2,
+     "uraian": "Penghasilan bruto masa Januari = gaji pokok + penggantian biaya internet berbukti - bagian yang dikecualikan",
+     "ekspresi": "9000000 + 350000 - 350000",
+     "hasil": 9000000,
+     "keluaran": [
+      "per_masa[0].bruto",
+      "per_masa[1].bruto"
+     ]
+    },
+    {
+     "no": 3,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/0) untuk dasar Rp9.000.000 (tabel PP58/A) -> lapisan di atas Rp8.550.000 s.d. Rp9.650.000",
+     "tabel": "PP58/A",
+     "nilai": 9000000,
+     "hasil": "1,75%",
+     "tarif_basis_poin": 175
+    },
+    {
+     "no": 4,
+     "uraian": "PPh 21 masa Januari = 1,75% x Rp9.000.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "9000000 * 175 // 10000",
+     "hasil": 157500,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong",
+      "per_masa[1].pph21",
+      "per_masa[1].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 5,
+     "uraian": "Masa Februari: komponen sama dengan masa Januari, sehingga bruto Rp9.000.000 dan PPh 21 Rp157.500 sama"
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U05-C2",
+   "judul": "Penggantian Rp600.000, 12 hari kerja jarak jauh, Januari 2027",
+   "perubahan_berpengaruh": true,
+   "alasan": "Hanya Rp400.000 dikecualikan",
+   "input": {
+    "status_ptkp": "TK/0",
+    "metode": "gross",
+    "tahun_pajak": 2027,
+    "masa": [
+     {
+      "bulan": 1,
+      "komponen": {
+       "gaji_pokok": 9000000,
+       "penggantian_internet": 600000
+      },
+      "hari_kerja_jarak_jauh": 12
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 9200000,
+      "pph21": 161000,
+      "pph21_dipotong": 161000
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 9600000,
+      "pph21": 168000,
+      "pph21_dipotong": 168000
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Masa Januari: 12 hari kerja jarak jauh (>= 8), bagian penggantian internet yang dikecualikan = paling banyak Rp400.000",
+     "ekspresi": "min(600000, 400000)",
+     "hasil": 400000
+    },
+    {
+     "no": 2,
+     "uraian": "Penghasilan bruto masa Januari = gaji pokok + penggantian biaya internet berbukti - bagian yang dikecualikan",
+     "ekspresi": "9000000 + 600000 - 400000",
+     "hasil": 9200000,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 3,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/0) untuk dasar Rp9.200.000 (tabel PP58/A) -> lapisan di atas Rp8.550.000 s.d. Rp9.650.000",
+     "tabel": "PP58/A",
+     "nilai": 9200000,
+     "hasil": "1,75%",
+     "tarif_basis_poin": 175
+    },
+    {
+     "no": 4,
+     "uraian": "PPh 21 masa Januari = 1,75% x Rp9.200.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "9200000 * 175 // 10000",
+     "hasil": 161000,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U05-C3",
+   "judul": "Penggantian Rp600.000, hanya 5 hari kerja jarak jauh, Januari 2027",
+   "perubahan_berpengaruh": false,
+   "alasan": "Syarat paling sedikit 8 hari tidak terpenuhi",
+   "input": {
+    "status_ptkp": "TK/0",
+    "metode": "gross",
+    "tahun_pajak": 2027,
+    "masa": [
+     {
+      "bulan": 1,
+      "komponen": {
+       "gaji_pokok": 9000000,
+       "penggantian_internet": 600000
+      },
+      "hari_kerja_jarak_jauh": 5
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 9600000,
+      "pph21": 168000,
+      "pph21_dipotong": 168000
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 9600000,
+      "pph21": 168000,
+      "pph21_dipotong": 168000
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Masa Januari: hanya 5 hari kerja jarak jauh (< 8), penggantian internet seluruhnya penghasilan"
+    },
+    {
+     "no": 2,
+     "uraian": "Penghasilan bruto masa Januari = gaji pokok + penggantian biaya internet berbukti",
+     "ekspresi": "9000000 + 600000",
+     "hasil": 9600000,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 3,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/0) untuk dasar Rp9.600.000 (tabel PP58/A) -> lapisan di atas Rp8.550.000 s.d. Rp9.650.000",
+     "tabel": "PP58/A",
+     "nilai": 9600000,
+     "hasil": "1,75%",
+     "tarif_basis_poin": 175
+    },
+    {
+     "no": 4,
+     "uraian": "PPh 21 masa Januari = 1,75% x Rp9.600.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "9600000 * 175 // 10000",
+     "hasil": 168000,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U05-C4",
+   "judul": "Tunjangan internet tunai tetap Rp400.000, 15 hari kerja jarak jauh, Januari 2027",
+   "perubahan_berpengaruh": false,
+   "alasan": "Tunjangan tunai tanpa bukti tagihan tidak termasuk pengecualian",
+   "input": {
+    "status_ptkp": "TK/0",
+    "metode": "gross",
+    "tahun_pajak": 2027,
+    "masa": [
+     {
+      "bulan": 1,
+      "komponen": {
+       "gaji_pokok": 9000000,
+       "tunjangan_internet": 400000
+      },
+      "hari_kerja_jarak_jauh": 15
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 9400000,
+      "pph21": 164500,
+      "pph21_dipotong": 164500
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 9400000,
+      "pph21": 164500,
+      "pph21_dipotong": 164500
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Penghasilan bruto masa Januari = gaji pokok + tunjangan internet tunai",
+     "ekspresi": "9000000 + 400000",
+     "hasil": 9400000,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 2,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/0) untuk dasar Rp9.400.000 (tabel PP58/A) -> lapisan di atas Rp8.550.000 s.d. Rp9.650.000",
+     "tabel": "PP58/A",
+     "nilai": 9400000,
+     "hasil": "1,75%",
+     "tarif_basis_poin": 175
+    },
+    {
+     "no": 3,
+     "uraian": "PPh 21 masa Januari = 1,75% x Rp9.400.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "9400000 * 175 // 10000",
+     "hasil": 164500,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U05-C5",
+   "judul": "Penggantian Rp350.000, 10 hari kerja jarak jauh, Januari 2026",
+   "perubahan_berpengaruh": false,
+   "alasan": "Sebelum berlaku",
+   "input": {
+    "status_ptkp": "TK/0",
+    "metode": "gross",
+    "tahun_pajak": 2026,
+    "masa": [
+     {
+      "bulan": 1,
+      "komponen": {
+       "gaji_pokok": 9000000,
+       "penggantian_internet": 350000
+      },
+      "hari_kerja_jarak_jauh": 10
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 9350000,
+      "pph21": 163625,
+      "pph21_dipotong": 163625
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 9350000,
+      "pph21": 163625,
+      "pph21_dipotong": 163625
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Penghasilan bruto masa Januari = gaji pokok + penggantian biaya internet berbukti",
+     "ekspresi": "9000000 + 350000",
+     "hasil": 9350000,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 2,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/0) untuk dasar Rp9.350.000 (tabel PP58/A) -> lapisan di atas Rp8.550.000 s.d. Rp9.650.000",
+     "tabel": "PP58/A",
+     "nilai": 9350000,
+     "hasil": "1,75%",
+     "tarif_basis_poin": 175
+    },
+    {
+     "no": 3,
+     "uraian": "PPh 21 masa Januari = 1,75% x Rp9.350.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "9350000 * 175 // 10000",
+     "hasil": 163625,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U05-C6",
+   "judul": "K/0 upah Rp15 juta dengan BPJS, penggantian internet Rp450.000 setiap bulan, hari kerja jarak jauh berubah-ubah, setahun 2027",
+   "perubahan_berpengaruh": true,
+   "alasan": "Pengecualian hanya pada bulan dengan >= 8 hari; Desember ikut berubah",
+   "input": {
+    "status_ptkp": "K/0",
+    "metode": "gross",
+    "tahun_pajak": 2027,
+    "masa": [
+     {
+      "bulan": 1,
+      "komponen": {
+       "gaji_pokok": 15000000,
+       "premi_jkk": 36000,
+       "premi_jkm": 45000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 300000,
+       "iuran_jp_pegawai": 110863,
+       "penggantian_internet": 450000
+      },
+      "hari_kerja_jarak_jauh": 10
+     },
+     {
+      "bulan": 2,
+      "komponen": {
+       "gaji_pokok": 15000000,
+       "premi_jkk": 36000,
+       "premi_jkm": 45000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 300000,
+       "iuran_jp_pegawai": 110863,
+       "penggantian_internet": 450000
+      },
+      "hari_kerja_jarak_jauh": 10
+     },
+     {
+      "bulan": 3,
+      "komponen": {
+       "gaji_pokok": 15000000,
+       "premi_jkk": 36000,
+       "premi_jkm": 45000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 300000,
+       "iuran_jp_pegawai": 110863,
+       "penggantian_internet": 450000
+      },
+      "hari_kerja_jarak_jauh": 6
+     },
+     {
+      "bulan": 4,
+      "komponen": {
+       "gaji_pokok": 15000000,
+       "premi_jkk": 36000,
+       "premi_jkm": 45000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 300000,
+       "iuran_jp_pegawai": 110863,
+       "penggantian_internet": 450000
+      },
+      "hari_kerja_jarak_jauh": 12
+     },
+     {
+      "bulan": 5,
+      "komponen": {
+       "gaji_pokok": 15000000,
+       "premi_jkk": 36000,
+       "premi_jkm": 45000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 300000,
+       "iuran_jp_pegawai": 110863,
+       "penggantian_internet": 450000
+      },
+      "hari_kerja_jarak_jauh": 8
+     },
+     {
+      "bulan": 6,
+      "komponen": {
+       "gaji_pokok": 15000000,
+       "premi_jkk": 36000,
+       "premi_jkm": 45000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 300000,
+       "iuran_jp_pegawai": 110863,
+       "penggantian_internet": 450000
+      },
+      "hari_kerja_jarak_jauh": 7
+     },
+     {
+      "bulan": 7,
+      "komponen": {
+       "gaji_pokok": 15000000,
+       "premi_jkk": 36000,
+       "premi_jkm": 45000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 300000,
+       "iuran_jp_pegawai": 110863,
+       "penggantian_internet": 450000
+      },
+      "hari_kerja_jarak_jauh": 10
+     },
+     {
+      "bulan": 8,
+      "komponen": {
+       "gaji_pokok": 15000000,
+       "premi_jkk": 36000,
+       "premi_jkm": 45000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 300000,
+       "iuran_jp_pegawai": 110863,
+       "penggantian_internet": 450000
+      },
+      "hari_kerja_jarak_jauh": 10
+     },
+     {
+      "bulan": 9,
+      "komponen": {
+       "gaji_pokok": 15000000,
+       "premi_jkk": 36000,
+       "premi_jkm": 45000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 300000,
+       "iuran_jp_pegawai": 110863,
+       "penggantian_internet": 450000
+      },
+      "hari_kerja_jarak_jauh": 10
+     },
+     {
+      "bulan": 10,
+      "komponen": {
+       "gaji_pokok": 15000000,
+       "premi_jkk": 36000,
+       "premi_jkm": 45000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 300000,
+       "iuran_jp_pegawai": 110863,
+       "penggantian_internet": 450000
+      },
+      "hari_kerja_jarak_jauh": 4
+     },
+     {
+      "bulan": 11,
+      "komponen": {
+       "gaji_pokok": 15000000,
+       "premi_jkk": 36000,
+       "premi_jkm": 45000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 300000,
+       "iuran_jp_pegawai": 110863,
+       "penggantian_internet": 450000
+      },
+      "hari_kerja_jarak_jauh": 9
+     },
+     {
+      "bulan": 12,
+      "komponen": {
+       "gaji_pokok": 15000000,
+       "premi_jkk": 36000,
+       "premi_jkm": 45000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 300000,
+       "iuran_jp_pegawai": 110863,
+       "penggantian_internet": 450000
+      },
+      "hari_kerja_jarak_jauh": 10
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 15611000,
+      "pph21": 1092770,
+      "pph21_dipotong": 1092770
+     },
+     {
+      "bulan": 2,
+      "bruto": 15611000,
+      "pph21": 1092770,
+      "pph21_dipotong": 1092770
+     },
+     {
+      "bulan": 3,
+      "bruto": 16011000,
+      "pph21": 1120770,
+      "pph21_dipotong": 1120770
+     },
+     {
+      "bulan": 4,
+      "bruto": 15611000,
+      "pph21": 1092770,
+      "pph21_dipotong": 1092770
+     },
+     {
+      "bulan": 5,
+      "bruto": 15611000,
+      "pph21": 1092770,
+      "pph21_dipotong": 1092770
+     },
+     {
+      "bulan": 6,
+      "bruto": 16011000,
+      "pph21": 1120770,
+      "pph21_dipotong": 1120770
+     },
+     {
+      "bulan": 7,
+      "bruto": 15611000,
+      "pph21": 1092770,
+      "pph21_dipotong": 1092770
+     },
+     {
+      "bulan": 8,
+      "bruto": 15611000,
+      "pph21": 1092770,
+      "pph21_dipotong": 1092770
+     },
+     {
+      "bulan": 9,
+      "bruto": 15611000,
+      "pph21": 1092770,
+      "pph21_dipotong": 1092770
+     },
+     {
+      "bulan": 10,
+      "bruto": 16011000,
+      "pph21": 1120770,
+      "pph21_dipotong": 1120770
+     },
+     {
+      "bulan": 11,
+      "bruto": 15611000,
+      "pph21": 1092770,
+      "pph21_dipotong": 1092770
+     },
+     {
+      "bulan": 12,
+      "bruto": 15611000,
+      "pph21": -239320,
+      "pph21_dipotong": -239320
+     }
+    ],
+    "setahun": {
+     "bruto_setahun": 188532000,
+     "biaya_jabatan": 6000000,
+     "neto": 177601644,
+     "ptkp": 58500000,
+     "pkp": 119101000,
+     "pph21_setahun": 11865150
+    }
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 16011000,
+      "pph21": 1120770,
+      "pph21_dipotong": 1120770
+     },
+     {
+      "bulan": 2,
+      "bruto": 16011000,
+      "pph21": 1120770,
+      "pph21_dipotong": 1120770
+     },
+     {
+      "bulan": 3,
+      "bruto": 16011000,
+      "pph21": 1120770,
+      "pph21_dipotong": 1120770
+     },
+     {
+      "bulan": 4,
+      "bruto": 16011000,
+      "pph21": 1120770,
+      "pph21_dipotong": 1120770
+     },
+     {
+      "bulan": 5,
+      "bruto": 16011000,
+      "pph21": 1120770,
+      "pph21_dipotong": 1120770
+     },
+     {
+      "bulan": 6,
+      "bruto": 16011000,
+      "pph21": 1120770,
+      "pph21_dipotong": 1120770
+     },
+     {
+      "bulan": 7,
+      "bruto": 16011000,
+      "pph21": 1120770,
+      "pph21_dipotong": 1120770
+     },
+     {
+      "bulan": 8,
+      "bruto": 16011000,
+      "pph21": 1120770,
+      "pph21_dipotong": 1120770
+     },
+     {
+      "bulan": 9,
+      "bruto": 16011000,
+      "pph21": 1120770,
+      "pph21_dipotong": 1120770
+     },
+     {
+      "bulan": 10,
+      "bruto": 16011000,
+      "pph21": 1120770,
+      "pph21_dipotong": 1120770
+     },
+     {
+      "bulan": 11,
+      "bruto": 16011000,
+      "pph21": 1120770,
+      "pph21_dipotong": 1120770
+     },
+     {
+      "bulan": 12,
+      "bruto": 16011000,
+      "pph21": 76680,
+      "pph21_dipotong": 76680
+     }
+    ],
+    "pph21_setahun": 12405150
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Masa Januari: 10 hari kerja jarak jauh (>= 8), bagian penggantian internet yang dikecualikan = paling banyak Rp400.000",
+     "ekspresi": "min(450000, 400000)",
+     "hasil": 400000
+    },
+    {
+     "no": 2,
+     "uraian": "Penghasilan bruto masa Januari = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja) + penggantian biaya internet berbukti - bagian yang dikecualikan",
+     "ekspresi": "15000000 + 36000 + 45000 + 480000 + 450000 - 400000",
+     "hasil": 15611000,
+     "keluaran": [
+      "per_masa[0].bruto",
+      "per_masa[1].bruto",
+      "per_masa[6].bruto",
+      "per_masa[7].bruto",
+      "per_masa[8].bruto"
+     ]
+    },
+    {
+     "no": 3,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp15.611.000 (tabel PP58/A) -> lapisan di atas Rp15.100.000 s.d. Rp16.950.000",
+     "tabel": "PP58/A",
+     "nilai": 15611000,
+     "hasil": "7%",
+     "tarif_basis_poin": 700
+    },
+    {
+     "no": 4,
+     "uraian": "PPh 21 masa Januari = 7% x Rp15.611.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "15611000 * 700 // 10000",
+     "hasil": 1092770,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong",
+      "per_masa[1].pph21",
+      "per_masa[1].pph21_dipotong",
+      "per_masa[6].pph21",
+      "per_masa[6].pph21_dipotong",
+      "per_masa[7].pph21",
+      "per_masa[7].pph21_dipotong",
+      "per_masa[8].pph21",
+      "per_masa[8].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 5,
+     "uraian": "Masa Februari: komponen sama dengan masa Januari, sehingga bruto Rp15.611.000 dan PPh 21 Rp1.092.770 sama"
+    },
+    {
+     "no": 6,
+     "uraian": "Masa Maret: hanya 6 hari kerja jarak jauh (< 8), penggantian internet seluruhnya penghasilan"
+    },
+    {
+     "no": 7,
+     "uraian": "Penghasilan bruto masa Maret = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja) + penggantian biaya internet berbukti",
+     "ekspresi": "15000000 + 36000 + 45000 + 480000 + 450000",
+     "hasil": 16011000,
+     "keluaran": [
+      "per_masa[2].bruto"
+     ]
+    },
+    {
+     "no": 8,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp16.011.000 (tabel PP58/A) -> lapisan di atas Rp15.100.000 s.d. Rp16.950.000",
+     "tabel": "PP58/A",
+     "nilai": 16011000,
+     "hasil": "7%",
+     "tarif_basis_poin": 700
+    },
+    {
+     "no": 9,
+     "uraian": "PPh 21 masa Maret = 7% x Rp16.011.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "16011000 * 700 // 10000",
+     "hasil": 1120770,
+     "keluaran": [
+      "per_masa[2].pph21",
+      "per_masa[2].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 10,
+     "uraian": "Masa April: 12 hari kerja jarak jauh (>= 8), bagian penggantian internet yang dikecualikan = paling banyak Rp400.000",
+     "ekspresi": "min(450000, 400000)",
+     "hasil": 400000
+    },
+    {
+     "no": 11,
+     "uraian": "Penghasilan bruto masa April = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja) + penggantian biaya internet berbukti - bagian yang dikecualikan",
+     "ekspresi": "15000000 + 36000 + 45000 + 480000 + 450000 - 400000",
+     "hasil": 15611000,
+     "keluaran": [
+      "per_masa[3].bruto"
+     ]
+    },
+    {
+     "no": 12,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp15.611.000 (tabel PP58/A) -> lapisan di atas Rp15.100.000 s.d. Rp16.950.000",
+     "tabel": "PP58/A",
+     "nilai": 15611000,
+     "hasil": "7%",
+     "tarif_basis_poin": 700
+    },
+    {
+     "no": 13,
+     "uraian": "PPh 21 masa April = 7% x Rp15.611.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "15611000 * 700 // 10000",
+     "hasil": 1092770,
+     "keluaran": [
+      "per_masa[3].pph21",
+      "per_masa[3].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 14,
+     "uraian": "Masa Mei: 8 hari kerja jarak jauh (>= 8), bagian penggantian internet yang dikecualikan = paling banyak Rp400.000",
+     "ekspresi": "min(450000, 400000)",
+     "hasil": 400000
+    },
+    {
+     "no": 15,
+     "uraian": "Penghasilan bruto masa Mei = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja) + penggantian biaya internet berbukti - bagian yang dikecualikan",
+     "ekspresi": "15000000 + 36000 + 45000 + 480000 + 450000 - 400000",
+     "hasil": 15611000,
+     "keluaran": [
+      "per_masa[4].bruto"
+     ]
+    },
+    {
+     "no": 16,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp15.611.000 (tabel PP58/A) -> lapisan di atas Rp15.100.000 s.d. Rp16.950.000",
+     "tabel": "PP58/A",
+     "nilai": 15611000,
+     "hasil": "7%",
+     "tarif_basis_poin": 700
+    },
+    {
+     "no": 17,
+     "uraian": "PPh 21 masa Mei = 7% x Rp15.611.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "15611000 * 700 // 10000",
+     "hasil": 1092770,
+     "keluaran": [
+      "per_masa[4].pph21",
+      "per_masa[4].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 18,
+     "uraian": "Masa Juni: hanya 7 hari kerja jarak jauh (< 8), penggantian internet seluruhnya penghasilan"
+    },
+    {
+     "no": 19,
+     "uraian": "Penghasilan bruto masa Juni = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja) + penggantian biaya internet berbukti",
+     "ekspresi": "15000000 + 36000 + 45000 + 480000 + 450000",
+     "hasil": 16011000,
+     "keluaran": [
+      "per_masa[5].bruto"
+     ]
+    },
+    {
+     "no": 20,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp16.011.000 (tabel PP58/A) -> lapisan di atas Rp15.100.000 s.d. Rp16.950.000",
+     "tabel": "PP58/A",
+     "nilai": 16011000,
+     "hasil": "7%",
+     "tarif_basis_poin": 700
+    },
+    {
+     "no": 21,
+     "uraian": "PPh 21 masa Juni = 7% x Rp16.011.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "16011000 * 700 // 10000",
+     "hasil": 1120770,
+     "keluaran": [
+      "per_masa[5].pph21",
+      "per_masa[5].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 22,
+     "uraian": "Masa Juli: komponen sama dengan masa Januari, sehingga bruto Rp15.611.000 dan PPh 21 Rp1.092.770 sama"
+    },
+    {
+     "no": 23,
+     "uraian": "Masa Agustus: komponen sama dengan masa Januari, sehingga bruto Rp15.611.000 dan PPh 21 Rp1.092.770 sama"
+    },
+    {
+     "no": 24,
+     "uraian": "Masa September: komponen sama dengan masa Januari, sehingga bruto Rp15.611.000 dan PPh 21 Rp1.092.770 sama"
+    },
+    {
+     "no": 25,
+     "uraian": "Masa Oktober: hanya 4 hari kerja jarak jauh (< 8), penggantian internet seluruhnya penghasilan"
+    },
+    {
+     "no": 26,
+     "uraian": "Penghasilan bruto masa Oktober = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja) + penggantian biaya internet berbukti",
+     "ekspresi": "15000000 + 36000 + 45000 + 480000 + 450000",
+     "hasil": 16011000,
+     "keluaran": [
+      "per_masa[9].bruto"
+     ]
+    },
+    {
+     "no": 27,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp16.011.000 (tabel PP58/A) -> lapisan di atas Rp15.100.000 s.d. Rp16.950.000",
+     "tabel": "PP58/A",
+     "nilai": 16011000,
+     "hasil": "7%",
+     "tarif_basis_poin": 700
+    },
+    {
+     "no": 28,
+     "uraian": "PPh 21 masa Oktober = 7% x Rp16.011.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "16011000 * 700 // 10000",
+     "hasil": 1120770,
+     "keluaran": [
+      "per_masa[9].pph21",
+      "per_masa[9].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 29,
+     "uraian": "Masa November: 9 hari kerja jarak jauh (>= 8), bagian penggantian internet yang dikecualikan = paling banyak Rp400.000",
+     "ekspresi": "min(450000, 400000)",
+     "hasil": 400000
+    },
+    {
+     "no": 30,
+     "uraian": "Penghasilan bruto masa November = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja) + penggantian biaya internet berbukti - bagian yang dikecualikan",
+     "ekspresi": "15000000 + 36000 + 45000 + 480000 + 450000 - 400000",
+     "hasil": 15611000,
+     "keluaran": [
+      "per_masa[10].bruto"
+     ]
+    },
+    {
+     "no": 31,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp15.611.000 (tabel PP58/A) -> lapisan di atas Rp15.100.000 s.d. Rp16.950.000",
+     "tabel": "PP58/A",
+     "nilai": 15611000,
+     "hasil": "7%",
+     "tarif_basis_poin": 700
+    },
+    {
+     "no": 32,
+     "uraian": "PPh 21 masa November = 7% x Rp15.611.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "15611000 * 700 // 10000",
+     "hasil": 1092770,
+     "keluaran": [
+      "per_masa[10].pph21",
+      "per_masa[10].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 33,
+     "uraian": "Masa Desember: 10 hari kerja jarak jauh (>= 8), bagian penggantian internet yang dikecualikan = paling banyak Rp400.000",
+     "ekspresi": "min(450000, 400000)",
+     "hasil": 400000
+    },
+    {
+     "no": 34,
+     "uraian": "Penghasilan bruto masa Desember = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja) + penggantian biaya internet berbukti - bagian yang dikecualikan",
+     "ekspresi": "15000000 + 36000 + 45000 + 480000 + 450000 - 400000",
+     "hasil": 15611000,
+     "keluaran": [
+      "per_masa[11].bruto"
+     ]
+    },
+    {
+     "no": 35,
+     "uraian": "Perhitungan Masa Pajak Terakhir (Desember): PMK 168/2023 Pasal 15 ayat (1) huruf b dan ayat (2)"
+    },
+    {
+     "no": 36,
+     "uraian": "Jumlah penghasilan bruto 12 bulan",
+     "ekspresi": "15611000 * 2 + 16011000 + 15611000 * 2 + 16011000 + 15611000 * 3 + 16011000 + 15611000 * 2",
+     "hasil": 188532000,
+     "keluaran": [
+      "setahun.bruto_setahun"
+     ]
+    },
+    {
+     "no": 37,
+     "uraian": "Biaya jabatan = 5% x bruto, paling banyak Rp500.000 x 12 bulan",
+     "ekspresi": "min(188532000 * 5 // 100, 500000 * 12)",
+     "hasil": 6000000,
+     "keluaran": [
+      "setahun.biaya_jabatan"
+     ]
+    },
+    {
+     "no": 38,
+     "uraian": "Iuran JHT + JP dibayar pegawai setahun (PMK 168/2023 Pasal 10 ayat (1) huruf b)",
+     "ekspresi": "300000 * 12 + 110863 * 12",
+     "hasil": 4930356
+    },
+    {
+     "no": 39,
+     "uraian": "Penghasilan neto = bruto - biaya jabatan - iuran pensiun/JHT",
+     "ekspresi": "188532000 - 6000000 - 4930356",
+     "hasil": 177601644,
+     "keluaran": [
+      "setahun.neto"
+     ]
+    },
+    {
+     "no": 40,
+     "uraian": "PTKP setahun status K/0 (PMK 101/2016)",
+     "ekspresi": "58500000",
+     "hasil": 58500000,
+     "keluaran": [
+      "setahun.ptkp"
+     ]
+    },
+    {
+     "no": 41,
+     "uraian": "PKP = neto - PTKP, dibulatkan ke bawah hingga ribuan rupiah (minimal 0)",
+     "ekspresi": "max(0, (177601644 - 58500000) // 1000 * 1000)",
+     "hasil": 119101000,
+     "keluaran": [
+      "setahun.pkp"
+     ]
+    },
+    {
+     "no": 42,
+     "uraian": "PPh 21 setahun = tarif Pasal 17 UU HPP x PKP Rp119.101.000",
+     "ekspresi": "60000000 * 5 // 100 + (119101000 - 60000000) * 15 // 100",
+     "hasil": 11865150,
+     "keluaran": [
+      "setahun.pph21_setahun"
+     ]
+    },
+    {
+     "no": 43,
+     "uraian": "PPh 21 terutang masa-masa sebelumnya",
+     "ekspresi": "1092770 * 2 + 1120770 + 1092770 * 2 + 1120770 + 1092770 * 3 + 1120770 + 1092770",
+     "hasil": 12104470
+    },
+    {
+     "no": 44,
+     "uraian": "PPh 21 Masa Pajak Terakhir = PPh 21 setahun - PPh 21 masa sebelumnya",
+     "ekspresi": "11865150 - 12104470",
+     "hasil": -239320,
+     "keluaran": [
+      "per_masa[11].pph21",
+      "per_masa[11].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  }
+ ]
+}

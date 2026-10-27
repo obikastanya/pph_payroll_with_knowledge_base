@@ -1,0 +1,3443 @@
+{
+ "id": "U14",
+ "catatan": "DOKUMEN FIKTIF UNTUK PENELITIAN. Contoh perhitungan untuk perubahan tak terlihat U14.",
+ "konvensi": [
+  "Setiap perubahan diterapkan sendiri-sendiri di atas aturan yang berlaku pada 2026 (PP 58/2023, PMK 168/2023, PMK 101/2016, UU HPP); perubahan lain dalam set ini tidak ikut berlaku.",
+  "Hasil TER x bruto dibulatkan ke bawah ke rupiah penuh (asumsi implementasi; PP 58/2023 dan PMK 168/2023 tidak mengatur), kecuali perubahan menyatakan lain.",
+  "Komponen rupiah pada input adalah nilai final yang dibayar/dipotong. Premi BPJS dihitung dari tabel bpjs.csv: JKK risiko sangat rendah 0,24%, JKM 0,30%, JKN pemberi kerja 4% (batas upah Rp12.000.000), JHT pegawai 2%, JP pegawai 1% (batas upah Rp11.086.300 sejak Maret 2026; untuk 2027-2028 diasumsikan tetap karena angka baru belum terbit; Januari-Februari 2026 Rp10.547.400).",
+  "Masa Pajak Terakhir = Desember, atau bulan yang disebut pada field masa_terakhir (bulan terakhir bekerja). Jika tidak ada Desember dan tidak ada masa_terakhir, contoh hanya memuat masa selain Masa Pajak Terakhir.",
+  "Biaya jabatan untuk bagian tahun pajak: paling banyak batas bulanan x jumlah bulan bekerja.",
+  "Nilai negatif pada pph21 Masa Pajak Terakhir berarti lebih potong yang dikembalikan kepada pegawai (kecuali dinyatakan tidak dikembalikan).",
+  "Kecuali disebut lain, pemberi kerja bukan penerima insentif PPh 21 DTP PMK 105/2025 dan pegawai memiliki NIK/NPWP valid dan terintegrasi.",
+  "Ekspresi memakai notasi Python: // adalah pembagian bulat ke bawah; 'x * 225 // 10000' berarti 2,25% x x dibulatkan ke bawah."
+ ],
+ "tabel_perubahan": {},
+ "contoh": [
+  {
+   "id": "U14-C1",
+   "judul": "Golongan II, K/0, upah Rp10 juta, Januari-Februari 2027",
+   "perubahan_berpengaruh": true,
+   "alasan": "Tunjangan PPh 21 (gross-up) untuk golongan I-III",
+   "input": {
+    "status_ptkp": "K/0",
+    "metode": "sesuai_kebijakan_perusahaan",
+    "tahun_pajak": 2027,
+    "golongan": "II",
+    "masa": [
+     {
+      "bulan": 1,
+      "komponen": {
+       "gaji_pokok": 10000000,
+       "premi_jkk": 24000,
+       "premi_jkm": 30000,
+       "premi_jkn": 400000,
+       "iuran_jht_pegawai": 200000,
+       "iuran_jp_pegawai": 100000
+      }
+     },
+     {
+      "bulan": 2,
+      "komponen": {
+       "gaji_pokok": 10000000,
+       "premi_jkk": 24000,
+       "premi_jkm": 30000,
+       "premi_jkn": 400000,
+       "iuran_jht_pegawai": 200000,
+       "iuran_jp_pegawai": 100000
+      }
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 10777319,
+      "pph21": 323319,
+      "pph21_dipotong": 323319,
+      "tunjangan_pph21": 323319
+     },
+     {
+      "bulan": 2,
+      "bruto": 10777319,
+      "pph21": 323319,
+      "pph21_dipotong": 323319,
+      "tunjangan_pph21": 323319
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 10454000,
+      "pph21": 261350,
+      "pph21_dipotong": 261350
+     },
+     {
+      "bulan": 2,
+      "bruto": 10454000,
+      "pph21": 261350,
+      "pph21_dipotong": 261350
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Penghasilan bruto masa Januari = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "10000000 + 24000 + 30000 + 400000",
+     "hasil": 10454000
+    },
+    {
+     "no": 2,
+     "uraian": "Iterasi 1 masa Januari: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "10454000 + 0",
+     "hasil": 10454000
+    },
+    {
+     "no": 3,
+     "uraian": "TER kategori A untuk Rp10.454.000 -> lapisan di atas Rp10.350.000 s.d. Rp10.700.000",
+     "tabel": "PP58/A",
+     "nilai": 10454000,
+     "hasil": "2,5%",
+     "tarif_basis_poin": 250
+    },
+    {
+     "no": 4,
+     "uraian": "Iterasi 1: PPh 21 atas Rp10.454.000",
+     "ekspresi": "10454000 * 250 // 10000",
+     "hasil": 261350
+    },
+    {
+     "no": 5,
+     "uraian": "Iterasi 2 masa Januari: bruto + tunjangan PPh 21 Rp261.350",
+     "ekspresi": "10454000 + 261350",
+     "hasil": 10715350
+    },
+    {
+     "no": 6,
+     "uraian": "TER kategori A untuk Rp10.715.350 -> lapisan di atas Rp10.700.000 s.d. Rp11.050.000",
+     "tabel": "PP58/A",
+     "nilai": 10715350,
+     "hasil": "3%",
+     "tarif_basis_poin": 300
+    },
+    {
+     "no": 7,
+     "uraian": "Iterasi 2: PPh 21 atas Rp10.715.350",
+     "ekspresi": "10715350 * 300 // 10000",
+     "hasil": 321460
+    },
+    {
+     "no": 8,
+     "uraian": "Iterasi 3 masa Januari: bruto + tunjangan PPh 21 Rp321.460",
+     "ekspresi": "10454000 + 321460",
+     "hasil": 10775460
+    },
+    {
+     "no": 9,
+     "uraian": "TER kategori A untuk Rp10.775.460 -> lapisan di atas Rp10.700.000 s.d. Rp11.050.000",
+     "tabel": "PP58/A",
+     "nilai": 10775460,
+     "hasil": "3%",
+     "tarif_basis_poin": 300
+    },
+    {
+     "no": 10,
+     "uraian": "Iterasi 3: PPh 21 atas Rp10.775.460",
+     "ekspresi": "10775460 * 300 // 10000",
+     "hasil": 323263
+    },
+    {
+     "no": 11,
+     "uraian": "Iterasi 4 masa Januari: bruto + tunjangan PPh 21 Rp323.263",
+     "ekspresi": "10454000 + 323263",
+     "hasil": 10777263
+    },
+    {
+     "no": 12,
+     "uraian": "TER kategori A untuk Rp10.777.263 -> lapisan di atas Rp10.700.000 s.d. Rp11.050.000",
+     "tabel": "PP58/A",
+     "nilai": 10777263,
+     "hasil": "3%",
+     "tarif_basis_poin": 300
+    },
+    {
+     "no": 13,
+     "uraian": "Iterasi 4: PPh 21 atas Rp10.777.263",
+     "ekspresi": "10777263 * 300 // 10000",
+     "hasil": 323317
+    },
+    {
+     "no": 14,
+     "uraian": "Iterasi 5 masa Januari: bruto + tunjangan PPh 21 Rp323.317",
+     "ekspresi": "10454000 + 323317",
+     "hasil": 10777317
+    },
+    {
+     "no": 15,
+     "uraian": "TER kategori A untuk Rp10.777.317 -> lapisan di atas Rp10.700.000 s.d. Rp11.050.000",
+     "tabel": "PP58/A",
+     "nilai": 10777317,
+     "hasil": "3%",
+     "tarif_basis_poin": 300
+    },
+    {
+     "no": 16,
+     "uraian": "Iterasi 5: PPh 21 atas Rp10.777.317",
+     "ekspresi": "10777317 * 300 // 10000",
+     "hasil": 323319
+    },
+    {
+     "no": 17,
+     "uraian": "Iterasi 6 masa Januari: bruto + tunjangan PPh 21 Rp323.319",
+     "ekspresi": "10454000 + 323319",
+     "hasil": 10777319
+    },
+    {
+     "no": 18,
+     "uraian": "TER kategori A untuk Rp10.777.319 -> lapisan di atas Rp10.700.000 s.d. Rp11.050.000",
+     "tabel": "PP58/A",
+     "nilai": 10777319,
+     "hasil": "3%",
+     "tarif_basis_poin": 300
+    },
+    {
+     "no": 19,
+     "uraian": "Iterasi 6: PPh 21 atas Rp10.777.319",
+     "ekspresi": "10777319 * 300 // 10000",
+     "hasil": 323319,
+     "keluaran": [
+      "per_masa[0].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 20,
+     "uraian": "Iterasi 6: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa Januari = Rp323.319"
+    },
+    {
+     "no": 21,
+     "uraian": "Penghasilan bruto masa Januari termasuk tunjangan PPh 21",
+     "ekspresi": "10454000 + 323319",
+     "hasil": 10777319,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 22,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp10.777.319 (tabel PP58/A) -> lapisan di atas Rp10.700.000 s.d. Rp11.050.000",
+     "tabel": "PP58/A",
+     "nilai": 10777319,
+     "hasil": "3%",
+     "tarif_basis_poin": 300
+    },
+    {
+     "no": 23,
+     "uraian": "PPh 21 masa Januari = 3% x Rp10.777.319, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "10777319 * 300 // 10000",
+     "hasil": 323319,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 24,
+     "uraian": "Penghasilan bruto masa Februari = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "10000000 + 24000 + 30000 + 400000",
+     "hasil": 10454000
+    },
+    {
+     "no": 25,
+     "uraian": "Iterasi 1 masa Februari: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "10454000 + 0",
+     "hasil": 10454000
+    },
+    {
+     "no": 26,
+     "uraian": "TER kategori A untuk Rp10.454.000 -> lapisan di atas Rp10.350.000 s.d. Rp10.700.000",
+     "tabel": "PP58/A",
+     "nilai": 10454000,
+     "hasil": "2,5%",
+     "tarif_basis_poin": 250
+    },
+    {
+     "no": 27,
+     "uraian": "Iterasi 1: PPh 21 atas Rp10.454.000",
+     "ekspresi": "10454000 * 250 // 10000",
+     "hasil": 261350
+    },
+    {
+     "no": 28,
+     "uraian": "Iterasi 2 masa Februari: bruto + tunjangan PPh 21 Rp261.350",
+     "ekspresi": "10454000 + 261350",
+     "hasil": 10715350
+    },
+    {
+     "no": 29,
+     "uraian": "TER kategori A untuk Rp10.715.350 -> lapisan di atas Rp10.700.000 s.d. Rp11.050.000",
+     "tabel": "PP58/A",
+     "nilai": 10715350,
+     "hasil": "3%",
+     "tarif_basis_poin": 300
+    },
+    {
+     "no": 30,
+     "uraian": "Iterasi 2: PPh 21 atas Rp10.715.350",
+     "ekspresi": "10715350 * 300 // 10000",
+     "hasil": 321460
+    },
+    {
+     "no": 31,
+     "uraian": "Iterasi 3 masa Februari: bruto + tunjangan PPh 21 Rp321.460",
+     "ekspresi": "10454000 + 321460",
+     "hasil": 10775460
+    },
+    {
+     "no": 32,
+     "uraian": "TER kategori A untuk Rp10.775.460 -> lapisan di atas Rp10.700.000 s.d. Rp11.050.000",
+     "tabel": "PP58/A",
+     "nilai": 10775460,
+     "hasil": "3%",
+     "tarif_basis_poin": 300
+    },
+    {
+     "no": 33,
+     "uraian": "Iterasi 3: PPh 21 atas Rp10.775.460",
+     "ekspresi": "10775460 * 300 // 10000",
+     "hasil": 323263
+    },
+    {
+     "no": 34,
+     "uraian": "Iterasi 4 masa Februari: bruto + tunjangan PPh 21 Rp323.263",
+     "ekspresi": "10454000 + 323263",
+     "hasil": 10777263
+    },
+    {
+     "no": 35,
+     "uraian": "TER kategori A untuk Rp10.777.263 -> lapisan di atas Rp10.700.000 s.d. Rp11.050.000",
+     "tabel": "PP58/A",
+     "nilai": 10777263,
+     "hasil": "3%",
+     "tarif_basis_poin": 300
+    },
+    {
+     "no": 36,
+     "uraian": "Iterasi 4: PPh 21 atas Rp10.777.263",
+     "ekspresi": "10777263 * 300 // 10000",
+     "hasil": 323317
+    },
+    {
+     "no": 37,
+     "uraian": "Iterasi 5 masa Februari: bruto + tunjangan PPh 21 Rp323.317",
+     "ekspresi": "10454000 + 323317",
+     "hasil": 10777317
+    },
+    {
+     "no": 38,
+     "uraian": "TER kategori A untuk Rp10.777.317 -> lapisan di atas Rp10.700.000 s.d. Rp11.050.000",
+     "tabel": "PP58/A",
+     "nilai": 10777317,
+     "hasil": "3%",
+     "tarif_basis_poin": 300
+    },
+    {
+     "no": 39,
+     "uraian": "Iterasi 5: PPh 21 atas Rp10.777.317",
+     "ekspresi": "10777317 * 300 // 10000",
+     "hasil": 323319
+    },
+    {
+     "no": 40,
+     "uraian": "Iterasi 6 masa Februari: bruto + tunjangan PPh 21 Rp323.319",
+     "ekspresi": "10454000 + 323319",
+     "hasil": 10777319
+    },
+    {
+     "no": 41,
+     "uraian": "TER kategori A untuk Rp10.777.319 -> lapisan di atas Rp10.700.000 s.d. Rp11.050.000",
+     "tabel": "PP58/A",
+     "nilai": 10777319,
+     "hasil": "3%",
+     "tarif_basis_poin": 300
+    },
+    {
+     "no": 42,
+     "uraian": "Iterasi 6: PPh 21 atas Rp10.777.319",
+     "ekspresi": "10777319 * 300 // 10000",
+     "hasil": 323319,
+     "keluaran": [
+      "per_masa[1].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 43,
+     "uraian": "Iterasi 6: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa Februari = Rp323.319"
+    },
+    {
+     "no": 44,
+     "uraian": "Penghasilan bruto masa Februari termasuk tunjangan PPh 21",
+     "ekspresi": "10454000 + 323319",
+     "hasil": 10777319,
+     "keluaran": [
+      "per_masa[1].bruto"
+     ]
+    },
+    {
+     "no": 45,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp10.777.319 (tabel PP58/A) -> lapisan di atas Rp10.700.000 s.d. Rp11.050.000",
+     "tabel": "PP58/A",
+     "nilai": 10777319,
+     "hasil": "3%",
+     "tarif_basis_poin": 300
+    },
+    {
+     "no": 46,
+     "uraian": "PPh 21 masa Februari = 3% x Rp10.777.319, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "10777319 * 300 // 10000",
+     "hasil": 323319,
+     "keluaran": [
+      "per_masa[1].pph21",
+      "per_masa[1].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U14-C2",
+   "judul": "Golongan IV, K/0, upah Rp10 juta, Januari-Februari 2027",
+   "perubahan_berpengaruh": false,
+   "alasan": "Golongan IV tetap metode gross",
+   "input": {
+    "status_ptkp": "K/0",
+    "metode": "sesuai_kebijakan_perusahaan",
+    "tahun_pajak": 2027,
+    "golongan": "IV",
+    "masa": [
+     {
+      "bulan": 1,
+      "komponen": {
+       "gaji_pokok": 10000000,
+       "premi_jkk": 24000,
+       "premi_jkm": 30000,
+       "premi_jkn": 400000,
+       "iuran_jht_pegawai": 200000,
+       "iuran_jp_pegawai": 100000
+      }
+     },
+     {
+      "bulan": 2,
+      "komponen": {
+       "gaji_pokok": 10000000,
+       "premi_jkk": 24000,
+       "premi_jkm": 30000,
+       "premi_jkn": 400000,
+       "iuran_jht_pegawai": 200000,
+       "iuran_jp_pegawai": 100000
+      }
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 10454000,
+      "pph21": 261350,
+      "pph21_dipotong": 261350
+     },
+     {
+      "bulan": 2,
+      "bruto": 10454000,
+      "pph21": 261350,
+      "pph21_dipotong": 261350
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 10454000,
+      "pph21": 261350,
+      "pph21_dipotong": 261350
+     },
+     {
+      "bulan": 2,
+      "bruto": 10454000,
+      "pph21": 261350,
+      "pph21_dipotong": 261350
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Golongan IV: tidak termasuk golongan I-III, metode gross (tanpa tunjangan PPh 21)"
+    },
+    {
+     "no": 2,
+     "uraian": "Penghasilan bruto masa Januari = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "10000000 + 24000 + 30000 + 400000",
+     "hasil": 10454000,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 3,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp10.454.000 (tabel PP58/A) -> lapisan di atas Rp10.350.000 s.d. Rp10.700.000",
+     "tabel": "PP58/A",
+     "nilai": 10454000,
+     "hasil": "2,5%",
+     "tarif_basis_poin": 250
+    },
+    {
+     "no": 4,
+     "uraian": "PPh 21 masa Januari = 2,5% x Rp10.454.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "10454000 * 250 // 10000",
+     "hasil": 261350,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 5,
+     "uraian": "Penghasilan bruto masa Februari = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "10000000 + 24000 + 30000 + 400000",
+     "hasil": 10454000,
+     "keluaran": [
+      "per_masa[1].bruto"
+     ]
+    },
+    {
+     "no": 6,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp10.454.000 (tabel PP58/A) -> lapisan di atas Rp10.350.000 s.d. Rp10.700.000",
+     "tabel": "PP58/A",
+     "nilai": 10454000,
+     "hasil": "2,5%",
+     "tarif_basis_poin": 250
+    },
+    {
+     "no": 7,
+     "uraian": "PPh 21 masa Februari = 2,5% x Rp10.454.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "10454000 * 250 // 10000",
+     "hasil": 261350,
+     "keluaran": [
+      "per_masa[1].pph21",
+      "per_masa[1].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U14-C3",
+   "judul": "Golongan II, K/0, upah Rp10 juta, Januari-Februari 2026",
+   "perubahan_berpengaruh": false,
+   "alasan": "Kebijakan berlaku sejak masa Januari 2027",
+   "input": {
+    "status_ptkp": "K/0",
+    "metode": "sesuai_kebijakan_perusahaan",
+    "tahun_pajak": 2026,
+    "golongan": "II",
+    "masa": [
+     {
+      "bulan": 1,
+      "komponen": {
+       "gaji_pokok": 10000000,
+       "premi_jkk": 24000,
+       "premi_jkm": 30000,
+       "premi_jkn": 400000,
+       "iuran_jht_pegawai": 200000,
+       "iuran_jp_pegawai": 100000
+      }
+     },
+     {
+      "bulan": 2,
+      "komponen": {
+       "gaji_pokok": 10000000,
+       "premi_jkk": 24000,
+       "premi_jkm": 30000,
+       "premi_jkn": 400000,
+       "iuran_jht_pegawai": 200000,
+       "iuran_jp_pegawai": 100000
+      }
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 10454000,
+      "pph21": 261350,
+      "pph21_dipotong": 261350
+     },
+     {
+      "bulan": 2,
+      "bruto": 10454000,
+      "pph21": 261350,
+      "pph21_dipotong": 261350
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 10454000,
+      "pph21": 261350,
+      "pph21_dipotong": 261350
+     },
+     {
+      "bulan": 2,
+      "bruto": 10454000,
+      "pph21": 261350,
+      "pph21_dipotong": 261350
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Penghasilan bruto masa Januari = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "10000000 + 24000 + 30000 + 400000",
+     "hasil": 10454000,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 2,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp10.454.000 (tabel PP58/A) -> lapisan di atas Rp10.350.000 s.d. Rp10.700.000",
+     "tabel": "PP58/A",
+     "nilai": 10454000,
+     "hasil": "2,5%",
+     "tarif_basis_poin": 250
+    },
+    {
+     "no": 3,
+     "uraian": "PPh 21 masa Januari = 2,5% x Rp10.454.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "10454000 * 250 // 10000",
+     "hasil": 261350,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 4,
+     "uraian": "Penghasilan bruto masa Februari = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "10000000 + 24000 + 30000 + 400000",
+     "hasil": 10454000,
+     "keluaran": [
+      "per_masa[1].bruto"
+     ]
+    },
+    {
+     "no": 5,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp10.454.000 (tabel PP58/A) -> lapisan di atas Rp10.350.000 s.d. Rp10.700.000",
+     "tabel": "PP58/A",
+     "nilai": 10454000,
+     "hasil": "2,5%",
+     "tarif_basis_poin": 250
+    },
+    {
+     "no": 6,
+     "uraian": "PPh 21 masa Februari = 2,5% x Rp10.454.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "10454000 * 250 // 10000",
+     "hasil": 261350,
+     "keluaran": [
+      "per_masa[1].pph21",
+      "per_masa[1].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U14-C4",
+   "judul": "Golongan III, TK/1, upah Rp12 juta, THR Maret Rp12 juta, setahun 2027",
+   "perubahan_berpengaruh": true,
+   "alasan": "Gross-up bulanan dan gross-up Masa Pajak Terakhir",
+   "input": {
+    "status_ptkp": "TK/1",
+    "metode": "sesuai_kebijakan_perusahaan",
+    "tahun_pajak": 2027,
+    "golongan": "III",
+    "masa": [
+     {
+      "bulan": 1,
+      "komponen": {
+       "gaji_pokok": 11000000,
+       "tunjangan_tetap": 1000000,
+       "premi_jkk": 28800,
+       "premi_jkm": 36000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 240000,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 2,
+      "komponen": {
+       "gaji_pokok": 11000000,
+       "tunjangan_tetap": 1000000,
+       "premi_jkk": 28800,
+       "premi_jkm": 36000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 240000,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 3,
+      "komponen": {
+       "gaji_pokok": 11000000,
+       "tunjangan_tetap": 1000000,
+       "premi_jkk": 28800,
+       "premi_jkm": 36000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 240000,
+       "iuran_jp_pegawai": 110863,
+       "thr": 12000000
+      }
+     },
+     {
+      "bulan": 4,
+      "komponen": {
+       "gaji_pokok": 11000000,
+       "tunjangan_tetap": 1000000,
+       "premi_jkk": 28800,
+       "premi_jkm": 36000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 240000,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 5,
+      "komponen": {
+       "gaji_pokok": 11000000,
+       "tunjangan_tetap": 1000000,
+       "premi_jkk": 28800,
+       "premi_jkm": 36000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 240000,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 6,
+      "komponen": {
+       "gaji_pokok": 11000000,
+       "tunjangan_tetap": 1000000,
+       "premi_jkk": 28800,
+       "premi_jkm": 36000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 240000,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 7,
+      "komponen": {
+       "gaji_pokok": 11000000,
+       "tunjangan_tetap": 1000000,
+       "premi_jkk": 28800,
+       "premi_jkm": 36000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 240000,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 8,
+      "komponen": {
+       "gaji_pokok": 11000000,
+       "tunjangan_tetap": 1000000,
+       "premi_jkk": 28800,
+       "premi_jkm": 36000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 240000,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 9,
+      "komponen": {
+       "gaji_pokok": 11000000,
+       "tunjangan_tetap": 1000000,
+       "premi_jkk": 28800,
+       "premi_jkm": 36000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 240000,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 10,
+      "komponen": {
+       "gaji_pokok": 11000000,
+       "tunjangan_tetap": 1000000,
+       "premi_jkk": 28800,
+       "premi_jkm": 36000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 240000,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 11,
+      "komponen": {
+       "gaji_pokok": 11000000,
+       "tunjangan_tetap": 1000000,
+       "premi_jkk": 28800,
+       "premi_jkm": 36000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 240000,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 12,
+      "komponen": {
+       "gaji_pokok": 11000000,
+       "tunjangan_tetap": 1000000,
+       "premi_jkk": 28800,
+       "premi_jkm": 36000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 240000,
+       "iuran_jp_pegawai": 110863
+      }
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 13205052,
+      "pph21": 660252,
+      "pph21_dipotong": 660252,
+      "tunjangan_pph21": 660252
+     },
+     {
+      "bulan": 2,
+      "bruto": 13205052,
+      "pph21": 660252,
+      "pph21_dipotong": 660252,
+      "tunjangan_pph21": 660252
+     },
+     {
+      "bulan": 3,
+      "bruto": 27578426,
+      "pph21": 3033626,
+      "pph21_dipotong": 3033626,
+      "tunjangan_pph21": 3033626
+     },
+     {
+      "bulan": 4,
+      "bruto": 13205052,
+      "pph21": 660252,
+      "pph21_dipotong": 660252,
+      "tunjangan_pph21": 660252
+     },
+     {
+      "bulan": 5,
+      "bruto": 13205052,
+      "pph21": 660252,
+      "pph21_dipotong": 660252,
+      "tunjangan_pph21": 660252
+     },
+     {
+      "bulan": 6,
+      "bruto": 13205052,
+      "pph21": 660252,
+      "pph21_dipotong": 660252,
+      "tunjangan_pph21": 660252
+     },
+     {
+      "bulan": 7,
+      "bruto": 13205052,
+      "pph21": 660252,
+      "pph21_dipotong": 660252,
+      "tunjangan_pph21": 660252
+     },
+     {
+      "bulan": 8,
+      "bruto": 13205052,
+      "pph21": 660252,
+      "pph21_dipotong": 660252,
+      "tunjangan_pph21": 660252
+     },
+     {
+      "bulan": 9,
+      "bruto": 13205052,
+      "pph21": 660252,
+      "pph21_dipotong": 660252,
+      "tunjangan_pph21": 660252
+     },
+     {
+      "bulan": 10,
+      "bruto": 13205052,
+      "pph21": 660252,
+      "pph21_dipotong": 660252,
+      "tunjangan_pph21": 660252
+     },
+     {
+      "bulan": 11,
+      "bruto": 13205052,
+      "pph21": 660252,
+      "pph21_dipotong": 660252,
+      "tunjangan_pph21": 660252
+     },
+     {
+      "bulan": 12,
+      "bruto": 12544800,
+      "pph21": -116696,
+      "pph21_dipotong": -116696,
+      "tunjangan_pph21": 0
+     }
+    ],
+    "setahun": {
+     "bruto_setahun": 172173746,
+     "biaya_jabatan": 6000000,
+     "neto": 161963390,
+     "ptkp": 58500000,
+     "pkp": 103463000,
+     "pph21_setahun": 9519450,
+     "lebih_potong_menjadi_hak_perusahaan": 116696
+    }
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 12544800,
+      "pph21": 627240,
+      "pph21_dipotong": 627240
+     },
+     {
+      "bulan": 2,
+      "bruto": 12544800,
+      "pph21": 627240,
+      "pph21_dipotong": 627240
+     },
+     {
+      "bulan": 3,
+      "bruto": 24544800,
+      "pph21": 2454480,
+      "pph21_dipotong": 2454480
+     },
+     {
+      "bulan": 4,
+      "bruto": 12544800,
+      "pph21": 627240,
+      "pph21_dipotong": 627240
+     },
+     {
+      "bulan": 5,
+      "bruto": 12544800,
+      "pph21": 627240,
+      "pph21_dipotong": 627240
+     },
+     {
+      "bulan": 6,
+      "bruto": 12544800,
+      "pph21": 627240,
+      "pph21_dipotong": 627240
+     },
+     {
+      "bulan": 7,
+      "bruto": 12544800,
+      "pph21": 627240,
+      "pph21_dipotong": 627240
+     },
+     {
+      "bulan": 8,
+      "bruto": 12544800,
+      "pph21": 627240,
+      "pph21_dipotong": 627240
+     },
+     {
+      "bulan": 9,
+      "bruto": 12544800,
+      "pph21": 627240,
+      "pph21_dipotong": 627240
+     },
+     {
+      "bulan": 10,
+      "bruto": 12544800,
+      "pph21": 627240,
+      "pph21_dipotong": 627240
+     },
+     {
+      "bulan": 11,
+      "bruto": 12544800,
+      "pph21": 627240,
+      "pph21_dipotong": 627240
+     },
+     {
+      "bulan": 12,
+      "bruto": 12544800,
+      "pph21": -652830,
+      "pph21_dipotong": -652830
+     }
+    ],
+    "pph21_setahun": 8074050
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Penghasilan bruto masa Januari = gaji pokok + tunjangan tetap + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "11000000 + 1000000 + 28800 + 36000 + 480000",
+     "hasil": 12544800
+    },
+    {
+     "no": 2,
+     "uraian": "Iterasi 1 masa Januari: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "12544800 + 0",
+     "hasil": 12544800
+    },
+    {
+     "no": 3,
+     "uraian": "TER kategori A untuk Rp12.544.800 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 12544800,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 4,
+     "uraian": "Iterasi 1: PPh 21 atas Rp12.544.800",
+     "ekspresi": "12544800 * 500 // 10000",
+     "hasil": 627240
+    },
+    {
+     "no": 5,
+     "uraian": "Iterasi 2 masa Januari: bruto + tunjangan PPh 21 Rp627.240",
+     "ekspresi": "12544800 + 627240",
+     "hasil": 13172040
+    },
+    {
+     "no": 6,
+     "uraian": "TER kategori A untuk Rp13.172.040 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13172040,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 7,
+     "uraian": "Iterasi 2: PPh 21 atas Rp13.172.040",
+     "ekspresi": "13172040 * 500 // 10000",
+     "hasil": 658602
+    },
+    {
+     "no": 8,
+     "uraian": "Iterasi 3 masa Januari: bruto + tunjangan PPh 21 Rp658.602",
+     "ekspresi": "12544800 + 658602",
+     "hasil": 13203402
+    },
+    {
+     "no": 9,
+     "uraian": "TER kategori A untuk Rp13.203.402 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13203402,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 10,
+     "uraian": "Iterasi 3: PPh 21 atas Rp13.203.402",
+     "ekspresi": "13203402 * 500 // 10000",
+     "hasil": 660170
+    },
+    {
+     "no": 11,
+     "uraian": "Iterasi 4 masa Januari: bruto + tunjangan PPh 21 Rp660.170",
+     "ekspresi": "12544800 + 660170",
+     "hasil": 13204970
+    },
+    {
+     "no": 12,
+     "uraian": "TER kategori A untuk Rp13.204.970 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13204970,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 13,
+     "uraian": "Iterasi 4: PPh 21 atas Rp13.204.970",
+     "ekspresi": "13204970 * 500 // 10000",
+     "hasil": 660248
+    },
+    {
+     "no": 14,
+     "uraian": "Iterasi 5 masa Januari: bruto + tunjangan PPh 21 Rp660.248",
+     "ekspresi": "12544800 + 660248",
+     "hasil": 13205048
+    },
+    {
+     "no": 15,
+     "uraian": "TER kategori A untuk Rp13.205.048 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205048,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 16,
+     "uraian": "Iterasi 5: PPh 21 atas Rp13.205.048",
+     "ekspresi": "13205048 * 500 // 10000",
+     "hasil": 660252
+    },
+    {
+     "no": 17,
+     "uraian": "Iterasi 6 masa Januari: bruto + tunjangan PPh 21 Rp660.252",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052
+    },
+    {
+     "no": 18,
+     "uraian": "TER kategori A untuk Rp13.205.052 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 19,
+     "uraian": "Iterasi 6: PPh 21 atas Rp13.205.052",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[0].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 20,
+     "uraian": "Iterasi 6: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa Januari = Rp660.252"
+    },
+    {
+     "no": 21,
+     "uraian": "Penghasilan bruto masa Januari termasuk tunjangan PPh 21",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 22,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/1) untuk dasar Rp13.205.052 (tabel PP58/A) -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 23,
+     "uraian": "PPh 21 masa Januari = 5% x Rp13.205.052, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 24,
+     "uraian": "Penghasilan bruto masa Februari = gaji pokok + tunjangan tetap + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "11000000 + 1000000 + 28800 + 36000 + 480000",
+     "hasil": 12544800
+    },
+    {
+     "no": 25,
+     "uraian": "Iterasi 1 masa Februari: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "12544800 + 0",
+     "hasil": 12544800
+    },
+    {
+     "no": 26,
+     "uraian": "TER kategori A untuk Rp12.544.800 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 12544800,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 27,
+     "uraian": "Iterasi 1: PPh 21 atas Rp12.544.800",
+     "ekspresi": "12544800 * 500 // 10000",
+     "hasil": 627240
+    },
+    {
+     "no": 28,
+     "uraian": "Iterasi 2 masa Februari: bruto + tunjangan PPh 21 Rp627.240",
+     "ekspresi": "12544800 + 627240",
+     "hasil": 13172040
+    },
+    {
+     "no": 29,
+     "uraian": "TER kategori A untuk Rp13.172.040 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13172040,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 30,
+     "uraian": "Iterasi 2: PPh 21 atas Rp13.172.040",
+     "ekspresi": "13172040 * 500 // 10000",
+     "hasil": 658602
+    },
+    {
+     "no": 31,
+     "uraian": "Iterasi 3 masa Februari: bruto + tunjangan PPh 21 Rp658.602",
+     "ekspresi": "12544800 + 658602",
+     "hasil": 13203402
+    },
+    {
+     "no": 32,
+     "uraian": "TER kategori A untuk Rp13.203.402 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13203402,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 33,
+     "uraian": "Iterasi 3: PPh 21 atas Rp13.203.402",
+     "ekspresi": "13203402 * 500 // 10000",
+     "hasil": 660170
+    },
+    {
+     "no": 34,
+     "uraian": "Iterasi 4 masa Februari: bruto + tunjangan PPh 21 Rp660.170",
+     "ekspresi": "12544800 + 660170",
+     "hasil": 13204970
+    },
+    {
+     "no": 35,
+     "uraian": "TER kategori A untuk Rp13.204.970 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13204970,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 36,
+     "uraian": "Iterasi 4: PPh 21 atas Rp13.204.970",
+     "ekspresi": "13204970 * 500 // 10000",
+     "hasil": 660248
+    },
+    {
+     "no": 37,
+     "uraian": "Iterasi 5 masa Februari: bruto + tunjangan PPh 21 Rp660.248",
+     "ekspresi": "12544800 + 660248",
+     "hasil": 13205048
+    },
+    {
+     "no": 38,
+     "uraian": "TER kategori A untuk Rp13.205.048 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205048,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 39,
+     "uraian": "Iterasi 5: PPh 21 atas Rp13.205.048",
+     "ekspresi": "13205048 * 500 // 10000",
+     "hasil": 660252
+    },
+    {
+     "no": 40,
+     "uraian": "Iterasi 6 masa Februari: bruto + tunjangan PPh 21 Rp660.252",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052
+    },
+    {
+     "no": 41,
+     "uraian": "TER kategori A untuk Rp13.205.052 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 42,
+     "uraian": "Iterasi 6: PPh 21 atas Rp13.205.052",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[1].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 43,
+     "uraian": "Iterasi 6: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa Februari = Rp660.252"
+    },
+    {
+     "no": 44,
+     "uraian": "Penghasilan bruto masa Februari termasuk tunjangan PPh 21",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052,
+     "keluaran": [
+      "per_masa[1].bruto"
+     ]
+    },
+    {
+     "no": 45,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/1) untuk dasar Rp13.205.052 (tabel PP58/A) -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 46,
+     "uraian": "PPh 21 masa Februari = 5% x Rp13.205.052, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[1].pph21",
+      "per_masa[1].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 47,
+     "uraian": "Penghasilan bruto masa Maret = gaji pokok + tunjangan tetap + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja) + THR",
+     "ekspresi": "11000000 + 1000000 + 28800 + 36000 + 480000 + 12000000",
+     "hasil": 24544800
+    },
+    {
+     "no": 48,
+     "uraian": "Iterasi 1 masa Maret: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "24544800 + 0",
+     "hasil": 24544800
+    },
+    {
+     "no": 49,
+     "uraian": "TER kategori A untuk Rp24.544.800 -> lapisan di atas Rp24.150.000 s.d. Rp26.450.000",
+     "tabel": "PP58/A",
+     "nilai": 24544800,
+     "hasil": "10%",
+     "tarif_basis_poin": 1000
+    },
+    {
+     "no": 50,
+     "uraian": "Iterasi 1: PPh 21 atas Rp24.544.800",
+     "ekspresi": "24544800 * 1000 // 10000",
+     "hasil": 2454480
+    },
+    {
+     "no": 51,
+     "uraian": "Iterasi 2 masa Maret: bruto + tunjangan PPh 21 Rp2.454.480",
+     "ekspresi": "24544800 + 2454480",
+     "hasil": 26999280
+    },
+    {
+     "no": 52,
+     "uraian": "TER kategori A untuk Rp26.999.280 -> lapisan di atas Rp26.450.000 s.d. Rp28.000.000",
+     "tabel": "PP58/A",
+     "nilai": 26999280,
+     "hasil": "11%",
+     "tarif_basis_poin": 1100
+    },
+    {
+     "no": 53,
+     "uraian": "Iterasi 2: PPh 21 atas Rp26.999.280",
+     "ekspresi": "26999280 * 1100 // 10000",
+     "hasil": 2969920
+    },
+    {
+     "no": 54,
+     "uraian": "Iterasi 3 masa Maret: bruto + tunjangan PPh 21 Rp2.969.920",
+     "ekspresi": "24544800 + 2969920",
+     "hasil": 27514720
+    },
+    {
+     "no": 55,
+     "uraian": "TER kategori A untuk Rp27.514.720 -> lapisan di atas Rp26.450.000 s.d. Rp28.000.000",
+     "tabel": "PP58/A",
+     "nilai": 27514720,
+     "hasil": "11%",
+     "tarif_basis_poin": 1100
+    },
+    {
+     "no": 56,
+     "uraian": "Iterasi 3: PPh 21 atas Rp27.514.720",
+     "ekspresi": "27514720 * 1100 // 10000",
+     "hasil": 3026619
+    },
+    {
+     "no": 57,
+     "uraian": "Iterasi 4 masa Maret: bruto + tunjangan PPh 21 Rp3.026.619",
+     "ekspresi": "24544800 + 3026619",
+     "hasil": 27571419
+    },
+    {
+     "no": 58,
+     "uraian": "TER kategori A untuk Rp27.571.419 -> lapisan di atas Rp26.450.000 s.d. Rp28.000.000",
+     "tabel": "PP58/A",
+     "nilai": 27571419,
+     "hasil": "11%",
+     "tarif_basis_poin": 1100
+    },
+    {
+     "no": 59,
+     "uraian": "Iterasi 4: PPh 21 atas Rp27.571.419",
+     "ekspresi": "27571419 * 1100 // 10000",
+     "hasil": 3032856
+    },
+    {
+     "no": 60,
+     "uraian": "Iterasi 5 masa Maret: bruto + tunjangan PPh 21 Rp3.032.856",
+     "ekspresi": "24544800 + 3032856",
+     "hasil": 27577656
+    },
+    {
+     "no": 61,
+     "uraian": "TER kategori A untuk Rp27.577.656 -> lapisan di atas Rp26.450.000 s.d. Rp28.000.000",
+     "tabel": "PP58/A",
+     "nilai": 27577656,
+     "hasil": "11%",
+     "tarif_basis_poin": 1100
+    },
+    {
+     "no": 62,
+     "uraian": "Iterasi 5: PPh 21 atas Rp27.577.656",
+     "ekspresi": "27577656 * 1100 // 10000",
+     "hasil": 3033542
+    },
+    {
+     "no": 63,
+     "uraian": "Iterasi 6 masa Maret: bruto + tunjangan PPh 21 Rp3.033.542",
+     "ekspresi": "24544800 + 3033542",
+     "hasil": 27578342
+    },
+    {
+     "no": 64,
+     "uraian": "TER kategori A untuk Rp27.578.342 -> lapisan di atas Rp26.450.000 s.d. Rp28.000.000",
+     "tabel": "PP58/A",
+     "nilai": 27578342,
+     "hasil": "11%",
+     "tarif_basis_poin": 1100
+    },
+    {
+     "no": 65,
+     "uraian": "Iterasi 6: PPh 21 atas Rp27.578.342",
+     "ekspresi": "27578342 * 1100 // 10000",
+     "hasil": 3033617
+    },
+    {
+     "no": 66,
+     "uraian": "Iterasi 7 masa Maret: bruto + tunjangan PPh 21 Rp3.033.617",
+     "ekspresi": "24544800 + 3033617",
+     "hasil": 27578417
+    },
+    {
+     "no": 67,
+     "uraian": "TER kategori A untuk Rp27.578.417 -> lapisan di atas Rp26.450.000 s.d. Rp28.000.000",
+     "tabel": "PP58/A",
+     "nilai": 27578417,
+     "hasil": "11%",
+     "tarif_basis_poin": 1100
+    },
+    {
+     "no": 68,
+     "uraian": "Iterasi 7: PPh 21 atas Rp27.578.417",
+     "ekspresi": "27578417 * 1100 // 10000",
+     "hasil": 3033625
+    },
+    {
+     "no": 69,
+     "uraian": "Iterasi 8 masa Maret: bruto + tunjangan PPh 21 Rp3.033.625",
+     "ekspresi": "24544800 + 3033625",
+     "hasil": 27578425
+    },
+    {
+     "no": 70,
+     "uraian": "TER kategori A untuk Rp27.578.425 -> lapisan di atas Rp26.450.000 s.d. Rp28.000.000",
+     "tabel": "PP58/A",
+     "nilai": 27578425,
+     "hasil": "11%",
+     "tarif_basis_poin": 1100
+    },
+    {
+     "no": 71,
+     "uraian": "Iterasi 8: PPh 21 atas Rp27.578.425",
+     "ekspresi": "27578425 * 1100 // 10000",
+     "hasil": 3033626
+    },
+    {
+     "no": 72,
+     "uraian": "Iterasi 9 masa Maret: bruto + tunjangan PPh 21 Rp3.033.626",
+     "ekspresi": "24544800 + 3033626",
+     "hasil": 27578426
+    },
+    {
+     "no": 73,
+     "uraian": "TER kategori A untuk Rp27.578.426 -> lapisan di atas Rp26.450.000 s.d. Rp28.000.000",
+     "tabel": "PP58/A",
+     "nilai": 27578426,
+     "hasil": "11%",
+     "tarif_basis_poin": 1100
+    },
+    {
+     "no": 74,
+     "uraian": "Iterasi 9: PPh 21 atas Rp27.578.426",
+     "ekspresi": "27578426 * 1100 // 10000",
+     "hasil": 3033626,
+     "keluaran": [
+      "per_masa[2].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 75,
+     "uraian": "Iterasi 9: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa Maret = Rp3.033.626"
+    },
+    {
+     "no": 76,
+     "uraian": "Penghasilan bruto masa Maret termasuk tunjangan PPh 21",
+     "ekspresi": "24544800 + 3033626",
+     "hasil": 27578426,
+     "keluaran": [
+      "per_masa[2].bruto"
+     ]
+    },
+    {
+     "no": 77,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/1) untuk dasar Rp27.578.426 (tabel PP58/A) -> lapisan di atas Rp26.450.000 s.d. Rp28.000.000",
+     "tabel": "PP58/A",
+     "nilai": 27578426,
+     "hasil": "11%",
+     "tarif_basis_poin": 1100
+    },
+    {
+     "no": 78,
+     "uraian": "PPh 21 masa Maret = 11% x Rp27.578.426, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "27578426 * 1100 // 10000",
+     "hasil": 3033626,
+     "keluaran": [
+      "per_masa[2].pph21",
+      "per_masa[2].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 79,
+     "uraian": "Penghasilan bruto masa April = gaji pokok + tunjangan tetap + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "11000000 + 1000000 + 28800 + 36000 + 480000",
+     "hasil": 12544800
+    },
+    {
+     "no": 80,
+     "uraian": "Iterasi 1 masa April: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "12544800 + 0",
+     "hasil": 12544800
+    },
+    {
+     "no": 81,
+     "uraian": "TER kategori A untuk Rp12.544.800 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 12544800,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 82,
+     "uraian": "Iterasi 1: PPh 21 atas Rp12.544.800",
+     "ekspresi": "12544800 * 500 // 10000",
+     "hasil": 627240
+    },
+    {
+     "no": 83,
+     "uraian": "Iterasi 2 masa April: bruto + tunjangan PPh 21 Rp627.240",
+     "ekspresi": "12544800 + 627240",
+     "hasil": 13172040
+    },
+    {
+     "no": 84,
+     "uraian": "TER kategori A untuk Rp13.172.040 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13172040,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 85,
+     "uraian": "Iterasi 2: PPh 21 atas Rp13.172.040",
+     "ekspresi": "13172040 * 500 // 10000",
+     "hasil": 658602
+    },
+    {
+     "no": 86,
+     "uraian": "Iterasi 3 masa April: bruto + tunjangan PPh 21 Rp658.602",
+     "ekspresi": "12544800 + 658602",
+     "hasil": 13203402
+    },
+    {
+     "no": 87,
+     "uraian": "TER kategori A untuk Rp13.203.402 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13203402,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 88,
+     "uraian": "Iterasi 3: PPh 21 atas Rp13.203.402",
+     "ekspresi": "13203402 * 500 // 10000",
+     "hasil": 660170
+    },
+    {
+     "no": 89,
+     "uraian": "Iterasi 4 masa April: bruto + tunjangan PPh 21 Rp660.170",
+     "ekspresi": "12544800 + 660170",
+     "hasil": 13204970
+    },
+    {
+     "no": 90,
+     "uraian": "TER kategori A untuk Rp13.204.970 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13204970,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 91,
+     "uraian": "Iterasi 4: PPh 21 atas Rp13.204.970",
+     "ekspresi": "13204970 * 500 // 10000",
+     "hasil": 660248
+    },
+    {
+     "no": 92,
+     "uraian": "Iterasi 5 masa April: bruto + tunjangan PPh 21 Rp660.248",
+     "ekspresi": "12544800 + 660248",
+     "hasil": 13205048
+    },
+    {
+     "no": 93,
+     "uraian": "TER kategori A untuk Rp13.205.048 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205048,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 94,
+     "uraian": "Iterasi 5: PPh 21 atas Rp13.205.048",
+     "ekspresi": "13205048 * 500 // 10000",
+     "hasil": 660252
+    },
+    {
+     "no": 95,
+     "uraian": "Iterasi 6 masa April: bruto + tunjangan PPh 21 Rp660.252",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052
+    },
+    {
+     "no": 96,
+     "uraian": "TER kategori A untuk Rp13.205.052 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 97,
+     "uraian": "Iterasi 6: PPh 21 atas Rp13.205.052",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[3].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 98,
+     "uraian": "Iterasi 6: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa April = Rp660.252"
+    },
+    {
+     "no": 99,
+     "uraian": "Penghasilan bruto masa April termasuk tunjangan PPh 21",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052,
+     "keluaran": [
+      "per_masa[3].bruto"
+     ]
+    },
+    {
+     "no": 100,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/1) untuk dasar Rp13.205.052 (tabel PP58/A) -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 101,
+     "uraian": "PPh 21 masa April = 5% x Rp13.205.052, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[3].pph21",
+      "per_masa[3].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 102,
+     "uraian": "Penghasilan bruto masa Mei = gaji pokok + tunjangan tetap + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "11000000 + 1000000 + 28800 + 36000 + 480000",
+     "hasil": 12544800
+    },
+    {
+     "no": 103,
+     "uraian": "Iterasi 1 masa Mei: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "12544800 + 0",
+     "hasil": 12544800
+    },
+    {
+     "no": 104,
+     "uraian": "TER kategori A untuk Rp12.544.800 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 12544800,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 105,
+     "uraian": "Iterasi 1: PPh 21 atas Rp12.544.800",
+     "ekspresi": "12544800 * 500 // 10000",
+     "hasil": 627240
+    },
+    {
+     "no": 106,
+     "uraian": "Iterasi 2 masa Mei: bruto + tunjangan PPh 21 Rp627.240",
+     "ekspresi": "12544800 + 627240",
+     "hasil": 13172040
+    },
+    {
+     "no": 107,
+     "uraian": "TER kategori A untuk Rp13.172.040 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13172040,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 108,
+     "uraian": "Iterasi 2: PPh 21 atas Rp13.172.040",
+     "ekspresi": "13172040 * 500 // 10000",
+     "hasil": 658602
+    },
+    {
+     "no": 109,
+     "uraian": "Iterasi 3 masa Mei: bruto + tunjangan PPh 21 Rp658.602",
+     "ekspresi": "12544800 + 658602",
+     "hasil": 13203402
+    },
+    {
+     "no": 110,
+     "uraian": "TER kategori A untuk Rp13.203.402 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13203402,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 111,
+     "uraian": "Iterasi 3: PPh 21 atas Rp13.203.402",
+     "ekspresi": "13203402 * 500 // 10000",
+     "hasil": 660170
+    },
+    {
+     "no": 112,
+     "uraian": "Iterasi 4 masa Mei: bruto + tunjangan PPh 21 Rp660.170",
+     "ekspresi": "12544800 + 660170",
+     "hasil": 13204970
+    },
+    {
+     "no": 113,
+     "uraian": "TER kategori A untuk Rp13.204.970 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13204970,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 114,
+     "uraian": "Iterasi 4: PPh 21 atas Rp13.204.970",
+     "ekspresi": "13204970 * 500 // 10000",
+     "hasil": 660248
+    },
+    {
+     "no": 115,
+     "uraian": "Iterasi 5 masa Mei: bruto + tunjangan PPh 21 Rp660.248",
+     "ekspresi": "12544800 + 660248",
+     "hasil": 13205048
+    },
+    {
+     "no": 116,
+     "uraian": "TER kategori A untuk Rp13.205.048 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205048,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 117,
+     "uraian": "Iterasi 5: PPh 21 atas Rp13.205.048",
+     "ekspresi": "13205048 * 500 // 10000",
+     "hasil": 660252
+    },
+    {
+     "no": 118,
+     "uraian": "Iterasi 6 masa Mei: bruto + tunjangan PPh 21 Rp660.252",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052
+    },
+    {
+     "no": 119,
+     "uraian": "TER kategori A untuk Rp13.205.052 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 120,
+     "uraian": "Iterasi 6: PPh 21 atas Rp13.205.052",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[4].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 121,
+     "uraian": "Iterasi 6: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa Mei = Rp660.252"
+    },
+    {
+     "no": 122,
+     "uraian": "Penghasilan bruto masa Mei termasuk tunjangan PPh 21",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052,
+     "keluaran": [
+      "per_masa[4].bruto"
+     ]
+    },
+    {
+     "no": 123,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/1) untuk dasar Rp13.205.052 (tabel PP58/A) -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 124,
+     "uraian": "PPh 21 masa Mei = 5% x Rp13.205.052, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[4].pph21",
+      "per_masa[4].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 125,
+     "uraian": "Penghasilan bruto masa Juni = gaji pokok + tunjangan tetap + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "11000000 + 1000000 + 28800 + 36000 + 480000",
+     "hasil": 12544800
+    },
+    {
+     "no": 126,
+     "uraian": "Iterasi 1 masa Juni: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "12544800 + 0",
+     "hasil": 12544800
+    },
+    {
+     "no": 127,
+     "uraian": "TER kategori A untuk Rp12.544.800 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 12544800,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 128,
+     "uraian": "Iterasi 1: PPh 21 atas Rp12.544.800",
+     "ekspresi": "12544800 * 500 // 10000",
+     "hasil": 627240
+    },
+    {
+     "no": 129,
+     "uraian": "Iterasi 2 masa Juni: bruto + tunjangan PPh 21 Rp627.240",
+     "ekspresi": "12544800 + 627240",
+     "hasil": 13172040
+    },
+    {
+     "no": 130,
+     "uraian": "TER kategori A untuk Rp13.172.040 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13172040,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 131,
+     "uraian": "Iterasi 2: PPh 21 atas Rp13.172.040",
+     "ekspresi": "13172040 * 500 // 10000",
+     "hasil": 658602
+    },
+    {
+     "no": 132,
+     "uraian": "Iterasi 3 masa Juni: bruto + tunjangan PPh 21 Rp658.602",
+     "ekspresi": "12544800 + 658602",
+     "hasil": 13203402
+    },
+    {
+     "no": 133,
+     "uraian": "TER kategori A untuk Rp13.203.402 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13203402,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 134,
+     "uraian": "Iterasi 3: PPh 21 atas Rp13.203.402",
+     "ekspresi": "13203402 * 500 // 10000",
+     "hasil": 660170
+    },
+    {
+     "no": 135,
+     "uraian": "Iterasi 4 masa Juni: bruto + tunjangan PPh 21 Rp660.170",
+     "ekspresi": "12544800 + 660170",
+     "hasil": 13204970
+    },
+    {
+     "no": 136,
+     "uraian": "TER kategori A untuk Rp13.204.970 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13204970,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 137,
+     "uraian": "Iterasi 4: PPh 21 atas Rp13.204.970",
+     "ekspresi": "13204970 * 500 // 10000",
+     "hasil": 660248
+    },
+    {
+     "no": 138,
+     "uraian": "Iterasi 5 masa Juni: bruto + tunjangan PPh 21 Rp660.248",
+     "ekspresi": "12544800 + 660248",
+     "hasil": 13205048
+    },
+    {
+     "no": 139,
+     "uraian": "TER kategori A untuk Rp13.205.048 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205048,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 140,
+     "uraian": "Iterasi 5: PPh 21 atas Rp13.205.048",
+     "ekspresi": "13205048 * 500 // 10000",
+     "hasil": 660252
+    },
+    {
+     "no": 141,
+     "uraian": "Iterasi 6 masa Juni: bruto + tunjangan PPh 21 Rp660.252",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052
+    },
+    {
+     "no": 142,
+     "uraian": "TER kategori A untuk Rp13.205.052 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 143,
+     "uraian": "Iterasi 6: PPh 21 atas Rp13.205.052",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[5].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 144,
+     "uraian": "Iterasi 6: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa Juni = Rp660.252"
+    },
+    {
+     "no": 145,
+     "uraian": "Penghasilan bruto masa Juni termasuk tunjangan PPh 21",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052,
+     "keluaran": [
+      "per_masa[5].bruto"
+     ]
+    },
+    {
+     "no": 146,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/1) untuk dasar Rp13.205.052 (tabel PP58/A) -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 147,
+     "uraian": "PPh 21 masa Juni = 5% x Rp13.205.052, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[5].pph21",
+      "per_masa[5].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 148,
+     "uraian": "Penghasilan bruto masa Juli = gaji pokok + tunjangan tetap + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "11000000 + 1000000 + 28800 + 36000 + 480000",
+     "hasil": 12544800
+    },
+    {
+     "no": 149,
+     "uraian": "Iterasi 1 masa Juli: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "12544800 + 0",
+     "hasil": 12544800
+    },
+    {
+     "no": 150,
+     "uraian": "TER kategori A untuk Rp12.544.800 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 12544800,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 151,
+     "uraian": "Iterasi 1: PPh 21 atas Rp12.544.800",
+     "ekspresi": "12544800 * 500 // 10000",
+     "hasil": 627240
+    },
+    {
+     "no": 152,
+     "uraian": "Iterasi 2 masa Juli: bruto + tunjangan PPh 21 Rp627.240",
+     "ekspresi": "12544800 + 627240",
+     "hasil": 13172040
+    },
+    {
+     "no": 153,
+     "uraian": "TER kategori A untuk Rp13.172.040 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13172040,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 154,
+     "uraian": "Iterasi 2: PPh 21 atas Rp13.172.040",
+     "ekspresi": "13172040 * 500 // 10000",
+     "hasil": 658602
+    },
+    {
+     "no": 155,
+     "uraian": "Iterasi 3 masa Juli: bruto + tunjangan PPh 21 Rp658.602",
+     "ekspresi": "12544800 + 658602",
+     "hasil": 13203402
+    },
+    {
+     "no": 156,
+     "uraian": "TER kategori A untuk Rp13.203.402 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13203402,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 157,
+     "uraian": "Iterasi 3: PPh 21 atas Rp13.203.402",
+     "ekspresi": "13203402 * 500 // 10000",
+     "hasil": 660170
+    },
+    {
+     "no": 158,
+     "uraian": "Iterasi 4 masa Juli: bruto + tunjangan PPh 21 Rp660.170",
+     "ekspresi": "12544800 + 660170",
+     "hasil": 13204970
+    },
+    {
+     "no": 159,
+     "uraian": "TER kategori A untuk Rp13.204.970 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13204970,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 160,
+     "uraian": "Iterasi 4: PPh 21 atas Rp13.204.970",
+     "ekspresi": "13204970 * 500 // 10000",
+     "hasil": 660248
+    },
+    {
+     "no": 161,
+     "uraian": "Iterasi 5 masa Juli: bruto + tunjangan PPh 21 Rp660.248",
+     "ekspresi": "12544800 + 660248",
+     "hasil": 13205048
+    },
+    {
+     "no": 162,
+     "uraian": "TER kategori A untuk Rp13.205.048 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205048,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 163,
+     "uraian": "Iterasi 5: PPh 21 atas Rp13.205.048",
+     "ekspresi": "13205048 * 500 // 10000",
+     "hasil": 660252
+    },
+    {
+     "no": 164,
+     "uraian": "Iterasi 6 masa Juli: bruto + tunjangan PPh 21 Rp660.252",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052
+    },
+    {
+     "no": 165,
+     "uraian": "TER kategori A untuk Rp13.205.052 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 166,
+     "uraian": "Iterasi 6: PPh 21 atas Rp13.205.052",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[6].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 167,
+     "uraian": "Iterasi 6: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa Juli = Rp660.252"
+    },
+    {
+     "no": 168,
+     "uraian": "Penghasilan bruto masa Juli termasuk tunjangan PPh 21",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052,
+     "keluaran": [
+      "per_masa[6].bruto"
+     ]
+    },
+    {
+     "no": 169,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/1) untuk dasar Rp13.205.052 (tabel PP58/A) -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 170,
+     "uraian": "PPh 21 masa Juli = 5% x Rp13.205.052, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[6].pph21",
+      "per_masa[6].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 171,
+     "uraian": "Penghasilan bruto masa Agustus = gaji pokok + tunjangan tetap + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "11000000 + 1000000 + 28800 + 36000 + 480000",
+     "hasil": 12544800
+    },
+    {
+     "no": 172,
+     "uraian": "Iterasi 1 masa Agustus: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "12544800 + 0",
+     "hasil": 12544800
+    },
+    {
+     "no": 173,
+     "uraian": "TER kategori A untuk Rp12.544.800 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 12544800,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 174,
+     "uraian": "Iterasi 1: PPh 21 atas Rp12.544.800",
+     "ekspresi": "12544800 * 500 // 10000",
+     "hasil": 627240
+    },
+    {
+     "no": 175,
+     "uraian": "Iterasi 2 masa Agustus: bruto + tunjangan PPh 21 Rp627.240",
+     "ekspresi": "12544800 + 627240",
+     "hasil": 13172040
+    },
+    {
+     "no": 176,
+     "uraian": "TER kategori A untuk Rp13.172.040 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13172040,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 177,
+     "uraian": "Iterasi 2: PPh 21 atas Rp13.172.040",
+     "ekspresi": "13172040 * 500 // 10000",
+     "hasil": 658602
+    },
+    {
+     "no": 178,
+     "uraian": "Iterasi 3 masa Agustus: bruto + tunjangan PPh 21 Rp658.602",
+     "ekspresi": "12544800 + 658602",
+     "hasil": 13203402
+    },
+    {
+     "no": 179,
+     "uraian": "TER kategori A untuk Rp13.203.402 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13203402,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 180,
+     "uraian": "Iterasi 3: PPh 21 atas Rp13.203.402",
+     "ekspresi": "13203402 * 500 // 10000",
+     "hasil": 660170
+    },
+    {
+     "no": 181,
+     "uraian": "Iterasi 4 masa Agustus: bruto + tunjangan PPh 21 Rp660.170",
+     "ekspresi": "12544800 + 660170",
+     "hasil": 13204970
+    },
+    {
+     "no": 182,
+     "uraian": "TER kategori A untuk Rp13.204.970 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13204970,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 183,
+     "uraian": "Iterasi 4: PPh 21 atas Rp13.204.970",
+     "ekspresi": "13204970 * 500 // 10000",
+     "hasil": 660248
+    },
+    {
+     "no": 184,
+     "uraian": "Iterasi 5 masa Agustus: bruto + tunjangan PPh 21 Rp660.248",
+     "ekspresi": "12544800 + 660248",
+     "hasil": 13205048
+    },
+    {
+     "no": 185,
+     "uraian": "TER kategori A untuk Rp13.205.048 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205048,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 186,
+     "uraian": "Iterasi 5: PPh 21 atas Rp13.205.048",
+     "ekspresi": "13205048 * 500 // 10000",
+     "hasil": 660252
+    },
+    {
+     "no": 187,
+     "uraian": "Iterasi 6 masa Agustus: bruto + tunjangan PPh 21 Rp660.252",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052
+    },
+    {
+     "no": 188,
+     "uraian": "TER kategori A untuk Rp13.205.052 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 189,
+     "uraian": "Iterasi 6: PPh 21 atas Rp13.205.052",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[7].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 190,
+     "uraian": "Iterasi 6: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa Agustus = Rp660.252"
+    },
+    {
+     "no": 191,
+     "uraian": "Penghasilan bruto masa Agustus termasuk tunjangan PPh 21",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052,
+     "keluaran": [
+      "per_masa[7].bruto"
+     ]
+    },
+    {
+     "no": 192,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/1) untuk dasar Rp13.205.052 (tabel PP58/A) -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 193,
+     "uraian": "PPh 21 masa Agustus = 5% x Rp13.205.052, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[7].pph21",
+      "per_masa[7].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 194,
+     "uraian": "Penghasilan bruto masa September = gaji pokok + tunjangan tetap + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "11000000 + 1000000 + 28800 + 36000 + 480000",
+     "hasil": 12544800
+    },
+    {
+     "no": 195,
+     "uraian": "Iterasi 1 masa September: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "12544800 + 0",
+     "hasil": 12544800
+    },
+    {
+     "no": 196,
+     "uraian": "TER kategori A untuk Rp12.544.800 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 12544800,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 197,
+     "uraian": "Iterasi 1: PPh 21 atas Rp12.544.800",
+     "ekspresi": "12544800 * 500 // 10000",
+     "hasil": 627240
+    },
+    {
+     "no": 198,
+     "uraian": "Iterasi 2 masa September: bruto + tunjangan PPh 21 Rp627.240",
+     "ekspresi": "12544800 + 627240",
+     "hasil": 13172040
+    },
+    {
+     "no": 199,
+     "uraian": "TER kategori A untuk Rp13.172.040 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13172040,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 200,
+     "uraian": "Iterasi 2: PPh 21 atas Rp13.172.040",
+     "ekspresi": "13172040 * 500 // 10000",
+     "hasil": 658602
+    },
+    {
+     "no": 201,
+     "uraian": "Iterasi 3 masa September: bruto + tunjangan PPh 21 Rp658.602",
+     "ekspresi": "12544800 + 658602",
+     "hasil": 13203402
+    },
+    {
+     "no": 202,
+     "uraian": "TER kategori A untuk Rp13.203.402 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13203402,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 203,
+     "uraian": "Iterasi 3: PPh 21 atas Rp13.203.402",
+     "ekspresi": "13203402 * 500 // 10000",
+     "hasil": 660170
+    },
+    {
+     "no": 204,
+     "uraian": "Iterasi 4 masa September: bruto + tunjangan PPh 21 Rp660.170",
+     "ekspresi": "12544800 + 660170",
+     "hasil": 13204970
+    },
+    {
+     "no": 205,
+     "uraian": "TER kategori A untuk Rp13.204.970 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13204970,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 206,
+     "uraian": "Iterasi 4: PPh 21 atas Rp13.204.970",
+     "ekspresi": "13204970 * 500 // 10000",
+     "hasil": 660248
+    },
+    {
+     "no": 207,
+     "uraian": "Iterasi 5 masa September: bruto + tunjangan PPh 21 Rp660.248",
+     "ekspresi": "12544800 + 660248",
+     "hasil": 13205048
+    },
+    {
+     "no": 208,
+     "uraian": "TER kategori A untuk Rp13.205.048 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205048,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 209,
+     "uraian": "Iterasi 5: PPh 21 atas Rp13.205.048",
+     "ekspresi": "13205048 * 500 // 10000",
+     "hasil": 660252
+    },
+    {
+     "no": 210,
+     "uraian": "Iterasi 6 masa September: bruto + tunjangan PPh 21 Rp660.252",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052
+    },
+    {
+     "no": 211,
+     "uraian": "TER kategori A untuk Rp13.205.052 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 212,
+     "uraian": "Iterasi 6: PPh 21 atas Rp13.205.052",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[8].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 213,
+     "uraian": "Iterasi 6: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa September = Rp660.252"
+    },
+    {
+     "no": 214,
+     "uraian": "Penghasilan bruto masa September termasuk tunjangan PPh 21",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052,
+     "keluaran": [
+      "per_masa[8].bruto"
+     ]
+    },
+    {
+     "no": 215,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/1) untuk dasar Rp13.205.052 (tabel PP58/A) -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 216,
+     "uraian": "PPh 21 masa September = 5% x Rp13.205.052, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[8].pph21",
+      "per_masa[8].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 217,
+     "uraian": "Penghasilan bruto masa Oktober = gaji pokok + tunjangan tetap + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "11000000 + 1000000 + 28800 + 36000 + 480000",
+     "hasil": 12544800
+    },
+    {
+     "no": 218,
+     "uraian": "Iterasi 1 masa Oktober: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "12544800 + 0",
+     "hasil": 12544800
+    },
+    {
+     "no": 219,
+     "uraian": "TER kategori A untuk Rp12.544.800 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 12544800,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 220,
+     "uraian": "Iterasi 1: PPh 21 atas Rp12.544.800",
+     "ekspresi": "12544800 * 500 // 10000",
+     "hasil": 627240
+    },
+    {
+     "no": 221,
+     "uraian": "Iterasi 2 masa Oktober: bruto + tunjangan PPh 21 Rp627.240",
+     "ekspresi": "12544800 + 627240",
+     "hasil": 13172040
+    },
+    {
+     "no": 222,
+     "uraian": "TER kategori A untuk Rp13.172.040 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13172040,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 223,
+     "uraian": "Iterasi 2: PPh 21 atas Rp13.172.040",
+     "ekspresi": "13172040 * 500 // 10000",
+     "hasil": 658602
+    },
+    {
+     "no": 224,
+     "uraian": "Iterasi 3 masa Oktober: bruto + tunjangan PPh 21 Rp658.602",
+     "ekspresi": "12544800 + 658602",
+     "hasil": 13203402
+    },
+    {
+     "no": 225,
+     "uraian": "TER kategori A untuk Rp13.203.402 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13203402,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 226,
+     "uraian": "Iterasi 3: PPh 21 atas Rp13.203.402",
+     "ekspresi": "13203402 * 500 // 10000",
+     "hasil": 660170
+    },
+    {
+     "no": 227,
+     "uraian": "Iterasi 4 masa Oktober: bruto + tunjangan PPh 21 Rp660.170",
+     "ekspresi": "12544800 + 660170",
+     "hasil": 13204970
+    },
+    {
+     "no": 228,
+     "uraian": "TER kategori A untuk Rp13.204.970 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13204970,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 229,
+     "uraian": "Iterasi 4: PPh 21 atas Rp13.204.970",
+     "ekspresi": "13204970 * 500 // 10000",
+     "hasil": 660248
+    },
+    {
+     "no": 230,
+     "uraian": "Iterasi 5 masa Oktober: bruto + tunjangan PPh 21 Rp660.248",
+     "ekspresi": "12544800 + 660248",
+     "hasil": 13205048
+    },
+    {
+     "no": 231,
+     "uraian": "TER kategori A untuk Rp13.205.048 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205048,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 232,
+     "uraian": "Iterasi 5: PPh 21 atas Rp13.205.048",
+     "ekspresi": "13205048 * 500 // 10000",
+     "hasil": 660252
+    },
+    {
+     "no": 233,
+     "uraian": "Iterasi 6 masa Oktober: bruto + tunjangan PPh 21 Rp660.252",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052
+    },
+    {
+     "no": 234,
+     "uraian": "TER kategori A untuk Rp13.205.052 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 235,
+     "uraian": "Iterasi 6: PPh 21 atas Rp13.205.052",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[9].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 236,
+     "uraian": "Iterasi 6: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa Oktober = Rp660.252"
+    },
+    {
+     "no": 237,
+     "uraian": "Penghasilan bruto masa Oktober termasuk tunjangan PPh 21",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052,
+     "keluaran": [
+      "per_masa[9].bruto"
+     ]
+    },
+    {
+     "no": 238,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/1) untuk dasar Rp13.205.052 (tabel PP58/A) -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 239,
+     "uraian": "PPh 21 masa Oktober = 5% x Rp13.205.052, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[9].pph21",
+      "per_masa[9].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 240,
+     "uraian": "Penghasilan bruto masa November = gaji pokok + tunjangan tetap + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "11000000 + 1000000 + 28800 + 36000 + 480000",
+     "hasil": 12544800
+    },
+    {
+     "no": 241,
+     "uraian": "Iterasi 1 masa November: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "12544800 + 0",
+     "hasil": 12544800
+    },
+    {
+     "no": 242,
+     "uraian": "TER kategori A untuk Rp12.544.800 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 12544800,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 243,
+     "uraian": "Iterasi 1: PPh 21 atas Rp12.544.800",
+     "ekspresi": "12544800 * 500 // 10000",
+     "hasil": 627240
+    },
+    {
+     "no": 244,
+     "uraian": "Iterasi 2 masa November: bruto + tunjangan PPh 21 Rp627.240",
+     "ekspresi": "12544800 + 627240",
+     "hasil": 13172040
+    },
+    {
+     "no": 245,
+     "uraian": "TER kategori A untuk Rp13.172.040 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13172040,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 246,
+     "uraian": "Iterasi 2: PPh 21 atas Rp13.172.040",
+     "ekspresi": "13172040 * 500 // 10000",
+     "hasil": 658602
+    },
+    {
+     "no": 247,
+     "uraian": "Iterasi 3 masa November: bruto + tunjangan PPh 21 Rp658.602",
+     "ekspresi": "12544800 + 658602",
+     "hasil": 13203402
+    },
+    {
+     "no": 248,
+     "uraian": "TER kategori A untuk Rp13.203.402 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13203402,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 249,
+     "uraian": "Iterasi 3: PPh 21 atas Rp13.203.402",
+     "ekspresi": "13203402 * 500 // 10000",
+     "hasil": 660170
+    },
+    {
+     "no": 250,
+     "uraian": "Iterasi 4 masa November: bruto + tunjangan PPh 21 Rp660.170",
+     "ekspresi": "12544800 + 660170",
+     "hasil": 13204970
+    },
+    {
+     "no": 251,
+     "uraian": "TER kategori A untuk Rp13.204.970 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13204970,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 252,
+     "uraian": "Iterasi 4: PPh 21 atas Rp13.204.970",
+     "ekspresi": "13204970 * 500 // 10000",
+     "hasil": 660248
+    },
+    {
+     "no": 253,
+     "uraian": "Iterasi 5 masa November: bruto + tunjangan PPh 21 Rp660.248",
+     "ekspresi": "12544800 + 660248",
+     "hasil": 13205048
+    },
+    {
+     "no": 254,
+     "uraian": "TER kategori A untuk Rp13.205.048 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205048,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 255,
+     "uraian": "Iterasi 5: PPh 21 atas Rp13.205.048",
+     "ekspresi": "13205048 * 500 // 10000",
+     "hasil": 660252
+    },
+    {
+     "no": 256,
+     "uraian": "Iterasi 6 masa November: bruto + tunjangan PPh 21 Rp660.252",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052
+    },
+    {
+     "no": 257,
+     "uraian": "TER kategori A untuk Rp13.205.052 -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 258,
+     "uraian": "Iterasi 6: PPh 21 atas Rp13.205.052",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[10].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 259,
+     "uraian": "Iterasi 6: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa November = Rp660.252"
+    },
+    {
+     "no": 260,
+     "uraian": "Penghasilan bruto masa November termasuk tunjangan PPh 21",
+     "ekspresi": "12544800 + 660252",
+     "hasil": 13205052,
+     "keluaran": [
+      "per_masa[10].bruto"
+     ]
+    },
+    {
+     "no": 261,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/1) untuk dasar Rp13.205.052 (tabel PP58/A) -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 13205052,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 262,
+     "uraian": "PPh 21 masa November = 5% x Rp13.205.052, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "13205052 * 500 // 10000",
+     "hasil": 660252,
+     "keluaran": [
+      "per_masa[10].pph21",
+      "per_masa[10].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 263,
+     "uraian": "Penghasilan bruto masa Desember = gaji pokok + tunjangan tetap + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "11000000 + 1000000 + 28800 + 36000 + 480000",
+     "hasil": 12544800
+    },
+    {
+     "no": 264,
+     "uraian": "PPh 21 (tunjangan PPh 21) masa-masa sebelumnya",
+     "ekspresi": "660252 * 2 + 3033626 + 660252 * 8",
+     "hasil": 9636146
+    },
+    {
+     "no": 265,
+     "uraian": "Jumlah bruto masa-masa sebelumnya",
+     "ekspresi": "13205052 * 2 + 27578426 + 13205052 * 8",
+     "hasil": 159628946
+    },
+    {
+     "no": 266,
+     "uraian": "Iuran JHT + JP pegawai dalam tahun berjalan",
+     "ekspresi": "240000 * 12 + 110863 * 12",
+     "hasil": 4210356
+    },
+    {
+     "no": 267,
+     "uraian": "Iterasi 1 Masa Pajak Terakhir: bruto 12 bulan dengan tunjangan PPh 21 Desember Rp0",
+     "ekspresi": "159628946 + 12544800 + 0",
+     "hasil": 172173746
+    },
+    {
+     "no": 268,
+     "uraian": "Iterasi 1: biaya jabatan",
+     "ekspresi": "min(172173746 * 5 // 100, 500000 * 12)",
+     "hasil": 6000000
+    },
+    {
+     "no": 269,
+     "uraian": "Iterasi 1: PKP = bruto - biaya jabatan - iuran JHT/JP Rp4.210.356 - PTKP Rp58.500.000",
+     "ekspresi": "max(0, (172173746 - 6000000 - 4210356 - 58500000) // 1000 * 1000)",
+     "hasil": 103463000
+    },
+    {
+     "no": 270,
+     "uraian": "Iterasi 1: PPh 21 setahun = tarif Pasal 17 UU HPP x PKP Rp103.463.000",
+     "ekspresi": "60000000 * 5 // 100 + (103463000 - 60000000) * 15 // 100",
+     "hasil": 9519450
+    },
+    {
+     "no": 271,
+     "uraian": "Iterasi 1: tunjangan PPh 21 Desember = PPh setahun - PPh masa sebelumnya Rp9.636.146, paling sedikit nol (SK Direksi Pasal 4 ayat (3))",
+     "ekspresi": "max(0, 9519450 - 9636146)",
+     "hasil": 0,
+     "keluaran": [
+      "per_masa[11].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 272,
+     "uraian": "Iterasi 1: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa Desember = Rp0"
+    },
+    {
+     "no": 273,
+     "uraian": "Penghasilan bruto masa Desember termasuk tunjangan PPh 21",
+     "ekspresi": "12544800 + 0",
+     "hasil": 12544800,
+     "keluaran": [
+      "per_masa[11].bruto"
+     ]
+    },
+    {
+     "no": 274,
+     "uraian": "Perhitungan Masa Pajak Terakhir (Desember): PMK 168/2023 Pasal 15 ayat (1) huruf b dan ayat (2)"
+    },
+    {
+     "no": 275,
+     "uraian": "Jumlah penghasilan bruto 12 bulan",
+     "ekspresi": "13205052 * 2 + 27578426 + 13205052 * 8 + 12544800",
+     "hasil": 172173746,
+     "keluaran": [
+      "setahun.bruto_setahun"
+     ]
+    },
+    {
+     "no": 276,
+     "uraian": "Biaya jabatan = 5% x bruto, paling banyak Rp500.000 x 12 bulan",
+     "ekspresi": "min(172173746 * 5 // 100, 500000 * 12)",
+     "hasil": 6000000,
+     "keluaran": [
+      "setahun.biaya_jabatan"
+     ]
+    },
+    {
+     "no": 277,
+     "uraian": "Iuran JHT + JP dibayar pegawai setahun (PMK 168/2023 Pasal 10 ayat (1) huruf b)",
+     "ekspresi": "240000 * 12 + 110863 * 12",
+     "hasil": 4210356
+    },
+    {
+     "no": 278,
+     "uraian": "Penghasilan neto = bruto - biaya jabatan - iuran pensiun/JHT",
+     "ekspresi": "172173746 - 6000000 - 4210356",
+     "hasil": 161963390,
+     "keluaran": [
+      "setahun.neto"
+     ]
+    },
+    {
+     "no": 279,
+     "uraian": "PTKP setahun status TK/1 (PMK 101/2016)",
+     "ekspresi": "58500000",
+     "hasil": 58500000,
+     "keluaran": [
+      "setahun.ptkp"
+     ]
+    },
+    {
+     "no": 280,
+     "uraian": "PKP = neto - PTKP, dibulatkan ke bawah hingga ribuan rupiah (minimal 0)",
+     "ekspresi": "max(0, (161963390 - 58500000) // 1000 * 1000)",
+     "hasil": 103463000,
+     "keluaran": [
+      "setahun.pkp"
+     ]
+    },
+    {
+     "no": 281,
+     "uraian": "PPh 21 setahun = tarif Pasal 17 UU HPP x PKP Rp103.463.000",
+     "ekspresi": "60000000 * 5 // 100 + (103463000 - 60000000) * 15 // 100",
+     "hasil": 9519450,
+     "keluaran": [
+      "setahun.pph21_setahun"
+     ]
+    },
+    {
+     "no": 282,
+     "uraian": "PPh 21 terutang masa-masa sebelumnya",
+     "ekspresi": "660252 * 2 + 3033626 + 660252 * 8",
+     "hasil": 9636146
+    },
+    {
+     "no": 283,
+     "uraian": "PPh 21 Masa Pajak Terakhir = PPh 21 setahun - PPh 21 masa sebelumnya",
+     "ekspresi": "9519450 - 9636146",
+     "hasil": -116696,
+     "keluaran": [
+      "per_masa[11].pph21",
+      "per_masa[11].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 284,
+     "uraian": "Lebih potong Masa Pajak Terakhir menjadi hak perusahaan karena PPh 21 ditanggung melalui tunjangan (SK Direksi Pasal 4 ayat (4))",
+     "ekspresi": "0 - (-116696)",
+     "hasil": 116696,
+     "keluaran": [
+      "setahun.lebih_potong_menjadi_hak_perusahaan"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U14-C5",
+   "judul": "Golongan I, TK/0, upah Rp5 juta, Januari 2027",
+   "perubahan_berpengaruh": false,
+   "alasan": "PPh 21 nol sehingga tunjangan PPh 21 nol",
+   "input": {
+    "status_ptkp": "TK/0",
+    "metode": "sesuai_kebijakan_perusahaan",
+    "tahun_pajak": 2027,
+    "golongan": "I",
+    "masa": [
+     {
+      "bulan": 1,
+      "komponen": {
+       "gaji_pokok": 5000000,
+       "premi_jkk": 12000,
+       "premi_jkm": 15000,
+       "premi_jkn": 200000,
+       "iuran_jht_pegawai": 100000,
+       "iuran_jp_pegawai": 50000
+      }
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 5227000,
+      "pph21": 0,
+      "pph21_dipotong": 0,
+      "tunjangan_pph21": 0
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 5227000,
+      "pph21": 0,
+      "pph21_dipotong": 0
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Penghasilan bruto masa Januari = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "5000000 + 12000 + 15000 + 200000",
+     "hasil": 5227000
+    },
+    {
+     "no": 2,
+     "uraian": "Iterasi 1 masa Januari: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "5227000 + 0",
+     "hasil": 5227000
+    },
+    {
+     "no": 3,
+     "uraian": "TER kategori A untuk Rp5.227.000 -> lapisan di atas Rp0 s.d. Rp5.400.000",
+     "tabel": "PP58/A",
+     "nilai": 5227000,
+     "hasil": "0%",
+     "tarif_basis_poin": 0
+    },
+    {
+     "no": 4,
+     "uraian": "Iterasi 1: PPh 21 atas Rp5.227.000",
+     "ekspresi": "5227000 * 0 // 10000",
+     "hasil": 0,
+     "keluaran": [
+      "per_masa[0].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 5,
+     "uraian": "Iterasi 1: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa Januari = Rp0"
+    },
+    {
+     "no": 6,
+     "uraian": "Penghasilan bruto masa Januari termasuk tunjangan PPh 21",
+     "ekspresi": "5227000 + 0",
+     "hasil": 5227000,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 7,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/0) untuk dasar Rp5.227.000 (tabel PP58/A) -> lapisan di atas Rp0 s.d. Rp5.400.000",
+     "tabel": "PP58/A",
+     "nilai": 5227000,
+     "hasil": "0%",
+     "tarif_basis_poin": 0
+    },
+    {
+     "no": 8,
+     "uraian": "PPh 21 masa Januari = 0% x Rp5.227.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "5227000 * 0 // 10000",
+     "hasil": 0,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U14-C6",
+   "judul": "Golongan II, K/2, upah Rp6,97 juta, Januari-Februari 2027 (tarif berpindah lapisan karena tunjangan)",
+   "perubahan_berpengaruh": true,
+   "alasan": "Iterasi gross-up melewati batas lapisan TER",
+   "input": {
+    "status_ptkp": "K/2",
+    "metode": "sesuai_kebijakan_perusahaan",
+    "tahun_pajak": 2027,
+    "golongan": "II",
+    "masa": [
+     {
+      "bulan": 1,
+      "komponen": {
+       "gaji_pokok": 6570000,
+       "tunjangan_tetap": 400000,
+       "premi_jkk": 16728,
+       "premi_jkm": 20910,
+       "premi_jkn": 278800,
+       "iuran_jht_pegawai": 139400,
+       "iuran_jp_pegawai": 69700
+      }
+     },
+     {
+      "bulan": 2,
+      "komponen": {
+       "gaji_pokok": 6570000,
+       "tunjangan_tetap": 400000,
+       "premi_jkk": 16728,
+       "premi_jkm": 20910,
+       "premi_jkn": 278800,
+       "iuran_jht_pegawai": 139400,
+       "iuran_jp_pegawai": 69700
+      }
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 7360038,
+      "pph21": 73600,
+      "pph21_dipotong": 73600,
+      "tunjangan_pph21": 73600
+     },
+     {
+      "bulan": 2,
+      "bruto": 7360038,
+      "pph21": 73600,
+      "pph21_dipotong": 73600,
+      "tunjangan_pph21": 73600
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 1,
+      "bruto": 7286438,
+      "pph21": 54648,
+      "pph21_dipotong": 54648
+     },
+     {
+      "bulan": 2,
+      "bruto": 7286438,
+      "pph21": 54648,
+      "pph21_dipotong": 54648
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Penghasilan bruto masa Januari = gaji pokok + tunjangan tetap + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "6570000 + 400000 + 16728 + 20910 + 278800",
+     "hasil": 7286438
+    },
+    {
+     "no": 2,
+     "uraian": "Iterasi 1 masa Januari: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "7286438 + 0",
+     "hasil": 7286438
+    },
+    {
+     "no": 3,
+     "uraian": "TER kategori B untuk Rp7.286.438 -> lapisan di atas Rp6.850.000 s.d. Rp7.300.000",
+     "tabel": "PP58/B",
+     "nilai": 7286438,
+     "hasil": "0,75%",
+     "tarif_basis_poin": 75
+    },
+    {
+     "no": 4,
+     "uraian": "Iterasi 1: PPh 21 atas Rp7.286.438",
+     "ekspresi": "7286438 * 75 // 10000",
+     "hasil": 54648
+    },
+    {
+     "no": 5,
+     "uraian": "Iterasi 2 masa Januari: bruto + tunjangan PPh 21 Rp54.648",
+     "ekspresi": "7286438 + 54648",
+     "hasil": 7341086
+    },
+    {
+     "no": 6,
+     "uraian": "TER kategori B untuk Rp7.341.086 -> lapisan di atas Rp7.300.000 s.d. Rp9.200.000",
+     "tabel": "PP58/B",
+     "nilai": 7341086,
+     "hasil": "1%",
+     "tarif_basis_poin": 100
+    },
+    {
+     "no": 7,
+     "uraian": "Iterasi 2: PPh 21 atas Rp7.341.086",
+     "ekspresi": "7341086 * 100 // 10000",
+     "hasil": 73410
+    },
+    {
+     "no": 8,
+     "uraian": "Iterasi 3 masa Januari: bruto + tunjangan PPh 21 Rp73.410",
+     "ekspresi": "7286438 + 73410",
+     "hasil": 7359848
+    },
+    {
+     "no": 9,
+     "uraian": "TER kategori B untuk Rp7.359.848 -> lapisan di atas Rp7.300.000 s.d. Rp9.200.000",
+     "tabel": "PP58/B",
+     "nilai": 7359848,
+     "hasil": "1%",
+     "tarif_basis_poin": 100
+    },
+    {
+     "no": 10,
+     "uraian": "Iterasi 3: PPh 21 atas Rp7.359.848",
+     "ekspresi": "7359848 * 100 // 10000",
+     "hasil": 73598
+    },
+    {
+     "no": 11,
+     "uraian": "Iterasi 4 masa Januari: bruto + tunjangan PPh 21 Rp73.598",
+     "ekspresi": "7286438 + 73598",
+     "hasil": 7360036
+    },
+    {
+     "no": 12,
+     "uraian": "TER kategori B untuk Rp7.360.036 -> lapisan di atas Rp7.300.000 s.d. Rp9.200.000",
+     "tabel": "PP58/B",
+     "nilai": 7360036,
+     "hasil": "1%",
+     "tarif_basis_poin": 100
+    },
+    {
+     "no": 13,
+     "uraian": "Iterasi 4: PPh 21 atas Rp7.360.036",
+     "ekspresi": "7360036 * 100 // 10000",
+     "hasil": 73600
+    },
+    {
+     "no": 14,
+     "uraian": "Iterasi 5 masa Januari: bruto + tunjangan PPh 21 Rp73.600",
+     "ekspresi": "7286438 + 73600",
+     "hasil": 7360038
+    },
+    {
+     "no": 15,
+     "uraian": "TER kategori B untuk Rp7.360.038 -> lapisan di atas Rp7.300.000 s.d. Rp9.200.000",
+     "tabel": "PP58/B",
+     "nilai": 7360038,
+     "hasil": "1%",
+     "tarif_basis_poin": 100
+    },
+    {
+     "no": 16,
+     "uraian": "Iterasi 5: PPh 21 atas Rp7.360.038",
+     "ekspresi": "7360038 * 100 // 10000",
+     "hasil": 73600,
+     "keluaran": [
+      "per_masa[0].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 17,
+     "uraian": "Iterasi 5: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa Januari = Rp73.600"
+    },
+    {
+     "no": 18,
+     "uraian": "Penghasilan bruto masa Januari termasuk tunjangan PPh 21",
+     "ekspresi": "7286438 + 73600",
+     "hasil": 7360038,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 19,
+     "uraian": "Tarif efektif bulanan kategori B (status K/2) untuk dasar Rp7.360.038 (tabel PP58/B) -> lapisan di atas Rp7.300.000 s.d. Rp9.200.000",
+     "tabel": "PP58/B",
+     "nilai": 7360038,
+     "hasil": "1%",
+     "tarif_basis_poin": 100
+    },
+    {
+     "no": 20,
+     "uraian": "PPh 21 masa Januari = 1% x Rp7.360.038, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "7360038 * 100 // 10000",
+     "hasil": 73600,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 21,
+     "uraian": "Penghasilan bruto masa Februari = gaji pokok + tunjangan tetap + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "6570000 + 400000 + 16728 + 20910 + 278800",
+     "hasil": 7286438
+    },
+    {
+     "no": 22,
+     "uraian": "Iterasi 1 masa Februari: bruto + tunjangan PPh 21 Rp0",
+     "ekspresi": "7286438 + 0",
+     "hasil": 7286438
+    },
+    {
+     "no": 23,
+     "uraian": "TER kategori B untuk Rp7.286.438 -> lapisan di atas Rp6.850.000 s.d. Rp7.300.000",
+     "tabel": "PP58/B",
+     "nilai": 7286438,
+     "hasil": "0,75%",
+     "tarif_basis_poin": 75
+    },
+    {
+     "no": 24,
+     "uraian": "Iterasi 1: PPh 21 atas Rp7.286.438",
+     "ekspresi": "7286438 * 75 // 10000",
+     "hasil": 54648
+    },
+    {
+     "no": 25,
+     "uraian": "Iterasi 2 masa Februari: bruto + tunjangan PPh 21 Rp54.648",
+     "ekspresi": "7286438 + 54648",
+     "hasil": 7341086
+    },
+    {
+     "no": 26,
+     "uraian": "TER kategori B untuk Rp7.341.086 -> lapisan di atas Rp7.300.000 s.d. Rp9.200.000",
+     "tabel": "PP58/B",
+     "nilai": 7341086,
+     "hasil": "1%",
+     "tarif_basis_poin": 100
+    },
+    {
+     "no": 27,
+     "uraian": "Iterasi 2: PPh 21 atas Rp7.341.086",
+     "ekspresi": "7341086 * 100 // 10000",
+     "hasil": 73410
+    },
+    {
+     "no": 28,
+     "uraian": "Iterasi 3 masa Februari: bruto + tunjangan PPh 21 Rp73.410",
+     "ekspresi": "7286438 + 73410",
+     "hasil": 7359848
+    },
+    {
+     "no": 29,
+     "uraian": "TER kategori B untuk Rp7.359.848 -> lapisan di atas Rp7.300.000 s.d. Rp9.200.000",
+     "tabel": "PP58/B",
+     "nilai": 7359848,
+     "hasil": "1%",
+     "tarif_basis_poin": 100
+    },
+    {
+     "no": 30,
+     "uraian": "Iterasi 3: PPh 21 atas Rp7.359.848",
+     "ekspresi": "7359848 * 100 // 10000",
+     "hasil": 73598
+    },
+    {
+     "no": 31,
+     "uraian": "Iterasi 4 masa Februari: bruto + tunjangan PPh 21 Rp73.598",
+     "ekspresi": "7286438 + 73598",
+     "hasil": 7360036
+    },
+    {
+     "no": 32,
+     "uraian": "TER kategori B untuk Rp7.360.036 -> lapisan di atas Rp7.300.000 s.d. Rp9.200.000",
+     "tabel": "PP58/B",
+     "nilai": 7360036,
+     "hasil": "1%",
+     "tarif_basis_poin": 100
+    },
+    {
+     "no": 33,
+     "uraian": "Iterasi 4: PPh 21 atas Rp7.360.036",
+     "ekspresi": "7360036 * 100 // 10000",
+     "hasil": 73600
+    },
+    {
+     "no": 34,
+     "uraian": "Iterasi 5 masa Februari: bruto + tunjangan PPh 21 Rp73.600",
+     "ekspresi": "7286438 + 73600",
+     "hasil": 7360038
+    },
+    {
+     "no": 35,
+     "uraian": "TER kategori B untuk Rp7.360.038 -> lapisan di atas Rp7.300.000 s.d. Rp9.200.000",
+     "tabel": "PP58/B",
+     "nilai": 7360038,
+     "hasil": "1%",
+     "tarif_basis_poin": 100
+    },
+    {
+     "no": 36,
+     "uraian": "Iterasi 5: PPh 21 atas Rp7.360.038",
+     "ekspresi": "7360038 * 100 // 10000",
+     "hasil": 73600,
+     "keluaran": [
+      "per_masa[1].tunjangan_pph21"
+     ]
+    },
+    {
+     "no": 37,
+     "uraian": "Iterasi 5: hasil sama dengan tunjangan sebelumnya -> tunjangan PPh 21 masa Februari = Rp73.600"
+    },
+    {
+     "no": 38,
+     "uraian": "Penghasilan bruto masa Februari termasuk tunjangan PPh 21",
+     "ekspresi": "7286438 + 73600",
+     "hasil": 7360038,
+     "keluaran": [
+      "per_masa[1].bruto"
+     ]
+    },
+    {
+     "no": 39,
+     "uraian": "Tarif efektif bulanan kategori B (status K/2) untuk dasar Rp7.360.038 (tabel PP58/B) -> lapisan di atas Rp7.300.000 s.d. Rp9.200.000",
+     "tabel": "PP58/B",
+     "nilai": 7360038,
+     "hasil": "1%",
+     "tarif_basis_poin": 100
+    },
+    {
+     "no": 40,
+     "uraian": "PPh 21 masa Februari = 1% x Rp7.360.038, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "7360038 * 100 // 10000",
+     "hasil": 73600,
+     "keluaran": [
+      "per_masa[1].pph21",
+      "per_masa[1].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  }
+ ]
+}

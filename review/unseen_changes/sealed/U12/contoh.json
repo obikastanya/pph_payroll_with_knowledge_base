@@ -1,0 +1,823 @@
+{
+ "id": "U12",
+ "catatan": "DOKUMEN FIKTIF UNTUK PENELITIAN. Contoh perhitungan untuk perubahan tak terlihat U12.",
+ "konvensi": [
+  "Setiap perubahan diterapkan sendiri-sendiri di atas aturan yang berlaku pada 2026 (PP 58/2023, PMK 168/2023, PMK 101/2016, UU HPP); perubahan lain dalam set ini tidak ikut berlaku.",
+  "Hasil TER x bruto dibulatkan ke bawah ke rupiah penuh (asumsi implementasi; PP 58/2023 dan PMK 168/2023 tidak mengatur), kecuali perubahan menyatakan lain.",
+  "Komponen rupiah pada input adalah nilai final yang dibayar/dipotong. Premi BPJS dihitung dari tabel bpjs.csv: JKK risiko sangat rendah 0,24%, JKM 0,30%, JKN pemberi kerja 4% (batas upah Rp12.000.000), JHT pegawai 2%, JP pegawai 1% (batas upah Rp11.086.300 sejak Maret 2026; untuk 2027-2028 diasumsikan tetap karena angka baru belum terbit; Januari-Februari 2026 Rp10.547.400).",
+  "Masa Pajak Terakhir = Desember, atau bulan yang disebut pada field masa_terakhir (bulan terakhir bekerja). Jika tidak ada Desember dan tidak ada masa_terakhir, contoh hanya memuat masa selain Masa Pajak Terakhir.",
+  "Biaya jabatan untuk bagian tahun pajak: paling banyak batas bulanan x jumlah bulan bekerja.",
+  "Nilai negatif pada pph21 Masa Pajak Terakhir berarti lebih potong yang dikembalikan kepada pegawai (kecuali dinyatakan tidak dikembalikan).",
+  "Kecuali disebut lain, pemberi kerja bukan penerima insentif PPh 21 DTP PMK 105/2025 dan pegawai memiliki NIK/NPWP valid dan terintegrasi.",
+  "Ekspresi memakai notasi Python: // adalah pembagian bulat ke bawah; 'x * 225 // 10000' berarti 2,25% x x dibulatkan ke bawah."
+ ],
+ "tabel_perubahan": {},
+ "contoh": [
+  {
+   "id": "U12-C1",
+   "judul": "TK/0 mulai 16 September 2027, gaji sebulan Rp12 juta dibayar prorata Rp6 juta; September-Oktober",
+   "perubahan_berpengaruh": true,
+   "alasan": "Tarif bulan pertama memakai bruto setara sebulan penuh",
+   "input": {
+    "status_ptkp": "TK/0",
+    "metode": "gross",
+    "tahun_pajak": 2027,
+    "tanggal_mulai_bekerja": "2027-09-16",
+    "masa": [
+     {
+      "bulan": 9,
+      "komponen": {
+       "gaji_pokok": 6000000,
+       "premi_jkk": 14400,
+       "premi_jkm": 18000,
+       "premi_jkn": 240000,
+       "iuran_jht_pegawai": 120000,
+       "iuran_jp_pegawai": 60000
+      }
+     },
+     {
+      "bulan": 10,
+      "komponen": {
+       "gaji_pokok": 12000000,
+       "premi_jkk": 28800,
+       "premi_jkm": 36000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 240000,
+       "iuran_jp_pegawai": 110863
+      }
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 9,
+      "bruto": 6272400,
+      "pph21": 313620,
+      "pph21_dipotong": 313620
+     },
+     {
+      "bulan": 10,
+      "bruto": 12544800,
+      "pph21": 627240,
+      "pph21_dipotong": 627240
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 9,
+      "bruto": 6272400,
+      "pph21": 47043,
+      "pph21_dipotong": 47043
+     },
+     {
+      "bulan": 10,
+      "bruto": 12544800,
+      "pph21": 627240,
+      "pph21_dipotong": 627240
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Penghasilan bruto masa September = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "6000000 + 14400 + 18000 + 240000",
+     "hasil": 6272400,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 2,
+     "uraian": "Jumlah hari kalender sejak mulai bekerja 2027-09-16 s.d. akhir bulan (bulan 30 hari)",
+     "ekspresi": "30 - 16 + 1",
+     "hasil": 15
+    },
+    {
+     "no": 3,
+     "uraian": "Bruto setara sebulan penuh = bruto teratur x hari kalender bulan / hari bekerja (dibulatkan ke bawah) + penghasilan tidak teratur (PMK fiktif 120/2026 Pasal 15B)",
+     "ekspresi": "6272400 * 30 // 15",
+     "hasil": 12544800
+    },
+    {
+     "no": 4,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/0) untuk dasar Rp12.544.800 (tabel PP58/A) -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 12544800,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 5,
+     "uraian": "PPh 21 masa September = 5% x Rp6.272.400, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "6272400 * 500 // 10000",
+     "hasil": 313620,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 6,
+     "uraian": "Penghasilan bruto masa Oktober = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "12000000 + 28800 + 36000 + 480000",
+     "hasil": 12544800,
+     "keluaran": [
+      "per_masa[1].bruto"
+     ]
+    },
+    {
+     "no": 7,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/0) untuk dasar Rp12.544.800 (tabel PP58/A) -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 12544800,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 8,
+     "uraian": "PPh 21 masa Oktober = 5% x Rp12.544.800, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "12544800 * 500 // 10000",
+     "hasil": 627240,
+     "keluaran": [
+      "per_masa[1].pph21",
+      "per_masa[1].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U12-C2",
+   "judul": "TK/0 mulai 1 September 2027, gaji Rp12 juta",
+   "perubahan_berpengaruh": false,
+   "alasan": "Bulan pertama penuh",
+   "input": {
+    "status_ptkp": "TK/0",
+    "metode": "gross",
+    "tahun_pajak": 2027,
+    "tanggal_mulai_bekerja": "2027-09-01",
+    "masa": [
+     {
+      "bulan": 9,
+      "komponen": {
+       "gaji_pokok": 12000000,
+       "premi_jkk": 28800,
+       "premi_jkm": 36000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 240000,
+       "iuran_jp_pegawai": 110863
+      }
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 9,
+      "bruto": 12544800,
+      "pph21": 627240,
+      "pph21_dipotong": 627240
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 9,
+      "bruto": 12544800,
+      "pph21": 627240,
+      "pph21_dipotong": 627240
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Penghasilan bruto masa September = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "12000000 + 28800 + 36000 + 480000",
+     "hasil": 12544800,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 2,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/0) untuk dasar Rp12.544.800 (tabel PP58/A) -> lapisan di atas Rp12.500.000 s.d. Rp13.750.000",
+     "tabel": "PP58/A",
+     "nilai": 12544800,
+     "hasil": "5%",
+     "tarif_basis_poin": 500
+    },
+    {
+     "no": 3,
+     "uraian": "PPh 21 masa September = 5% x Rp12.544.800, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "12544800 * 500 // 10000",
+     "hasil": 627240,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U12-C3",
+   "judul": "TK/0 mulai 16 September 2026, gaji prorata Rp6 juta",
+   "perubahan_berpengaruh": false,
+   "alasan": "Sebelum berlaku",
+   "input": {
+    "status_ptkp": "TK/0",
+    "metode": "gross",
+    "tahun_pajak": 2026,
+    "tanggal_mulai_bekerja": "2026-09-16",
+    "masa": [
+     {
+      "bulan": 9,
+      "komponen": {
+       "gaji_pokok": 6000000,
+       "premi_jkk": 14400,
+       "premi_jkm": 18000,
+       "premi_jkn": 240000,
+       "iuran_jht_pegawai": 120000,
+       "iuran_jp_pegawai": 60000
+      }
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 9,
+      "bruto": 6272400,
+      "pph21": 47043,
+      "pph21_dipotong": 47043
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 9,
+      "bruto": 6272400,
+      "pph21": 47043,
+      "pph21_dipotong": 47043
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Penghasilan bruto masa September = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "6000000 + 14400 + 18000 + 240000",
+     "hasil": 6272400,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 2,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/0) untuk dasar Rp6.272.400 (tabel PP58/A) -> lapisan di atas Rp5.950.000 s.d. Rp6.300.000",
+     "tabel": "PP58/A",
+     "nilai": 6272400,
+     "hasil": "0,75%",
+     "tarif_basis_poin": 75
+    },
+    {
+     "no": 3,
+     "uraian": "PPh 21 masa September = 0,75% x Rp6.272.400, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "6272400 * 75 // 10000",
+     "hasil": 47043,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U12-C4",
+   "judul": "K/1 mulai 20 Februari 2027 (9 dari 28 hari), gaji sebulan Rp9 juta dibayar prorata Rp2.892.857",
+   "perubahan_berpengaruh": true,
+   "alasan": "Bruto setara dihitung dengan 28 hari kalender",
+   "input": {
+    "status_ptkp": "K/1",
+    "metode": "gross",
+    "tahun_pajak": 2027,
+    "tanggal_mulai_bekerja": "2027-02-20",
+    "masa": [
+     {
+      "bulan": 2,
+      "komponen": {
+       "gaji_pokok": 2892857
+      }
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 2,
+      "bruto": 2892857,
+      "pph21": 28928,
+      "pph21_dipotong": 28928
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 2,
+      "bruto": 2892857,
+      "pph21": 0,
+      "pph21_dipotong": 0
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Penghasilan bruto masa Februari = gaji pokok",
+     "ekspresi": "2892857",
+     "hasil": 2892857,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 2,
+     "uraian": "Jumlah hari kalender sejak mulai bekerja 2027-02-20 s.d. akhir bulan (bulan 28 hari)",
+     "ekspresi": "28 - 20 + 1",
+     "hasil": 9
+    },
+    {
+     "no": 3,
+     "uraian": "Bruto setara sebulan penuh = bruto teratur x hari kalender bulan / hari bekerja (dibulatkan ke bawah) + penghasilan tidak teratur (PMK fiktif 120/2026 Pasal 15B)",
+     "ekspresi": "2892857 * 28 // 9",
+     "hasil": 8999999
+    },
+    {
+     "no": 4,
+     "uraian": "Tarif efektif bulanan kategori B (status K/1) untuk dasar Rp8.999.999 (tabel PP58/B) -> lapisan di atas Rp7.300.000 s.d. Rp9.200.000",
+     "tabel": "PP58/B",
+     "nilai": 8999999,
+     "hasil": "1%",
+     "tarif_basis_poin": 100
+    },
+    {
+     "no": 5,
+     "uraian": "PPh 21 masa Februari = 1% x Rp2.892.857, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "2892857 * 100 // 10000",
+     "hasil": 28928,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U12-C5",
+   "judul": "K/0 mulai 10 Juli 2027, gaji sebulan Rp20 juta (Juli prorata 22/31), Juli-Desember",
+   "perubahan_berpengaruh": true,
+   "alasan": "Hanya Juli yang berubah; Desember menyesuaikan; PPh setahun sama",
+   "input": {
+    "status_ptkp": "K/0",
+    "metode": "gross",
+    "tahun_pajak": 2027,
+    "tanggal_mulai_bekerja": "2027-07-10",
+    "masa": [
+     {
+      "bulan": 7,
+      "komponen": {
+       "gaji_pokok": 14193548,
+       "premi_jkk": 34064,
+       "premi_jkm": 42580,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 283870,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 8,
+      "komponen": {
+       "gaji_pokok": 20000000,
+       "premi_jkk": 48000,
+       "premi_jkm": 60000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 400000,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 9,
+      "komponen": {
+       "gaji_pokok": 20000000,
+       "premi_jkk": 48000,
+       "premi_jkm": 60000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 400000,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 10,
+      "komponen": {
+       "gaji_pokok": 20000000,
+       "premi_jkk": 48000,
+       "premi_jkm": 60000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 400000,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 11,
+      "komponen": {
+       "gaji_pokok": 20000000,
+       "premi_jkk": 48000,
+       "premi_jkm": 60000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 400000,
+       "iuran_jp_pegawai": 110863
+      }
+     },
+     {
+      "bulan": 12,
+      "komponen": {
+       "gaji_pokok": 20000000,
+       "premi_jkk": 48000,
+       "premi_jkm": 60000,
+       "premi_jkn": 480000,
+       "iuran_jht_pegawai": 400000,
+       "iuran_jp_pegawai": 110863
+      }
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 7,
+      "bruto": 14750192,
+      "pph21": 1327517,
+      "pph21_dipotong": 1327517
+     },
+     {
+      "bulan": 8,
+      "bruto": 20588000,
+      "pph21": 1852920,
+      "pph21_dipotong": 1852920
+     },
+     {
+      "bulan": 9,
+      "bruto": 20588000,
+      "pph21": 1852920,
+      "pph21_dipotong": 1852920
+     },
+     {
+      "bulan": 10,
+      "bruto": 20588000,
+      "pph21": 1852920,
+      "pph21_dipotong": 1852920
+     },
+     {
+      "bulan": 11,
+      "bruto": 20588000,
+      "pph21": 1852920,
+      "pph21_dipotong": 1852920
+     },
+     {
+      "bulan": 12,
+      "bruto": 20588000,
+      "pph21": -6077147,
+      "pph21_dipotong": -6077147
+     }
+    ],
+    "setahun": {
+     "bruto_setahun": 117690192,
+     "biaya_jabatan": 3000000,
+     "neto": 111741144,
+     "ptkp": 58500000,
+     "pkp": 53241000,
+     "pph21_setahun": 2662050
+    }
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 7,
+      "bruto": 14750192,
+      "pph21": 885011,
+      "pph21_dipotong": 885011
+     },
+     {
+      "bulan": 8,
+      "bruto": 20588000,
+      "pph21": 1852920,
+      "pph21_dipotong": 1852920
+     },
+     {
+      "bulan": 9,
+      "bruto": 20588000,
+      "pph21": 1852920,
+      "pph21_dipotong": 1852920
+     },
+     {
+      "bulan": 10,
+      "bruto": 20588000,
+      "pph21": 1852920,
+      "pph21_dipotong": 1852920
+     },
+     {
+      "bulan": 11,
+      "bruto": 20588000,
+      "pph21": 1852920,
+      "pph21_dipotong": 1852920
+     },
+     {
+      "bulan": 12,
+      "bruto": 20588000,
+      "pph21": -5634641,
+      "pph21_dipotong": -5634641
+     }
+    ],
+    "pph21_setahun": 2662050
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Penghasilan bruto masa Juli = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "14193548 + 34064 + 42580 + 480000",
+     "hasil": 14750192,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 2,
+     "uraian": "Jumlah hari kalender sejak mulai bekerja 2027-07-10 s.d. akhir bulan (bulan 31 hari)",
+     "ekspresi": "31 - 10 + 1",
+     "hasil": 22
+    },
+    {
+     "no": 3,
+     "uraian": "Bruto setara sebulan penuh = bruto teratur x hari kalender bulan / hari bekerja (dibulatkan ke bawah) + penghasilan tidak teratur (PMK fiktif 120/2026 Pasal 15B)",
+     "ekspresi": "14750192 * 31 // 22",
+     "hasil": 20784361
+    },
+    {
+     "no": 4,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp20.784.361 (tabel PP58/A) -> lapisan di atas Rp19.750.000 s.d. Rp24.150.000",
+     "tabel": "PP58/A",
+     "nilai": 20784361,
+     "hasil": "9%",
+     "tarif_basis_poin": 900
+    },
+    {
+     "no": 5,
+     "uraian": "PPh 21 masa Juli = 9% x Rp14.750.192, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "14750192 * 900 // 10000",
+     "hasil": 1327517,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 6,
+     "uraian": "Penghasilan bruto masa Agustus = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "20000000 + 48000 + 60000 + 480000",
+     "hasil": 20588000,
+     "keluaran": [
+      "per_masa[1].bruto",
+      "per_masa[2].bruto",
+      "per_masa[3].bruto",
+      "per_masa[4].bruto"
+     ]
+    },
+    {
+     "no": 7,
+     "uraian": "Tarif efektif bulanan kategori A (status K/0) untuk dasar Rp20.588.000 (tabel PP58/A) -> lapisan di atas Rp19.750.000 s.d. Rp24.150.000",
+     "tabel": "PP58/A",
+     "nilai": 20588000,
+     "hasil": "9%",
+     "tarif_basis_poin": 900
+    },
+    {
+     "no": 8,
+     "uraian": "PPh 21 masa Agustus = 9% x Rp20.588.000, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "20588000 * 900 // 10000",
+     "hasil": 1852920,
+     "keluaran": [
+      "per_masa[1].pph21",
+      "per_masa[1].pph21_dipotong",
+      "per_masa[2].pph21",
+      "per_masa[2].pph21_dipotong",
+      "per_masa[3].pph21",
+      "per_masa[3].pph21_dipotong",
+      "per_masa[4].pph21",
+      "per_masa[4].pph21_dipotong"
+     ]
+    },
+    {
+     "no": 9,
+     "uraian": "Masa September: komponen sama dengan masa Agustus, sehingga bruto Rp20.588.000 dan PPh 21 Rp1.852.920 sama"
+    },
+    {
+     "no": 10,
+     "uraian": "Masa Oktober: komponen sama dengan masa Agustus, sehingga bruto Rp20.588.000 dan PPh 21 Rp1.852.920 sama"
+    },
+    {
+     "no": 11,
+     "uraian": "Masa November: komponen sama dengan masa Agustus, sehingga bruto Rp20.588.000 dan PPh 21 Rp1.852.920 sama"
+    },
+    {
+     "no": 12,
+     "uraian": "Penghasilan bruto masa Desember = gaji pokok + premi JKK (pemberi kerja) + premi JKM (pemberi kerja) + iuran JKN (pemberi kerja)",
+     "ekspresi": "20000000 + 48000 + 60000 + 480000",
+     "hasil": 20588000,
+     "keluaran": [
+      "per_masa[5].bruto"
+     ]
+    },
+    {
+     "no": 13,
+     "uraian": "Perhitungan Masa Pajak Terakhir (Desember): PMK 168/2023 Pasal 15 ayat (1) huruf b dan ayat (2)"
+    },
+    {
+     "no": 14,
+     "uraian": "Jumlah penghasilan bruto 6 bulan",
+     "ekspresi": "14750192 + 20588000 * 5",
+     "hasil": 117690192,
+     "keluaran": [
+      "setahun.bruto_setahun"
+     ]
+    },
+    {
+     "no": 15,
+     "uraian": "Biaya jabatan = 5% x bruto, paling banyak Rp500.000 x 6 bulan",
+     "ekspresi": "min(117690192 * 5 // 100, 500000 * 6)",
+     "hasil": 3000000,
+     "keluaran": [
+      "setahun.biaya_jabatan"
+     ]
+    },
+    {
+     "no": 16,
+     "uraian": "Iuran JHT + JP dibayar pegawai setahun (PMK 168/2023 Pasal 10 ayat (1) huruf b)",
+     "ekspresi": "283870 + 400000 * 5 + 110863 * 6",
+     "hasil": 2949048
+    },
+    {
+     "no": 17,
+     "uraian": "Penghasilan neto = bruto - biaya jabatan - iuran pensiun/JHT",
+     "ekspresi": "117690192 - 3000000 - 2949048",
+     "hasil": 111741144,
+     "keluaran": [
+      "setahun.neto"
+     ]
+    },
+    {
+     "no": 18,
+     "uraian": "PTKP setahun status K/0 (PMK 101/2016)",
+     "ekspresi": "58500000",
+     "hasil": 58500000,
+     "keluaran": [
+      "setahun.ptkp"
+     ]
+    },
+    {
+     "no": 19,
+     "uraian": "PKP = neto - PTKP, dibulatkan ke bawah hingga ribuan rupiah (minimal 0)",
+     "ekspresi": "max(0, (111741144 - 58500000) // 1000 * 1000)",
+     "hasil": 53241000,
+     "keluaran": [
+      "setahun.pkp"
+     ]
+    },
+    {
+     "no": 20,
+     "uraian": "PPh 21 setahun = tarif Pasal 17 UU HPP x PKP Rp53.241.000",
+     "ekspresi": "53241000 * 5 // 100",
+     "hasil": 2662050,
+     "keluaran": [
+      "setahun.pph21_setahun"
+     ]
+    },
+    {
+     "no": 21,
+     "uraian": "PPh 21 terutang masa-masa sebelumnya",
+     "ekspresi": "1327517 + 1852920 * 4",
+     "hasil": 8739197
+    },
+    {
+     "no": 22,
+     "uraian": "PPh 21 Masa Pajak Terakhir = PPh 21 setahun - PPh 21 masa sebelumnya",
+     "ekspresi": "2662050 - 8739197",
+     "hasil": -6077147,
+     "keluaran": [
+      "per_masa[5].pph21",
+      "per_masa[5].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  },
+  {
+   "id": "U12-C6",
+   "judul": "TK/1 mulai 15 Maret 2027 (17 dari 31 hari), gaji prorata Rp5.483.870 dan bonus penandatanganan Rp5 juta",
+   "perubahan_berpengaruh": true,
+   "alasan": "Hanya penghasilan teratur yang disetarakan; bonus ditambahkan tanpa penyetaraan",
+   "input": {
+    "status_ptkp": "TK/1",
+    "metode": "gross",
+    "tahun_pajak": 2027,
+    "tanggal_mulai_bekerja": "2027-03-15",
+    "masa": [
+     {
+      "bulan": 3,
+      "komponen": {
+       "gaji_pokok": 5483870,
+       "bonus": 5000000
+      }
+     }
+    ]
+   },
+   "keluaran_diharapkan": {
+    "per_masa": [
+     {
+      "bulan": 3,
+      "bruto": 10483870,
+      "pph21": 629032,
+      "pph21_dipotong": 629032
+     }
+    ]
+   },
+   "keluaran_menurut_aturan_2026": {
+    "per_masa": [
+     {
+      "bulan": 3,
+      "bruto": 10483870,
+      "pph21": 262096,
+      "pph21_dipotong": 262096
+     }
+    ]
+   },
+   "langkah": [
+    {
+     "no": 1,
+     "uraian": "Penghasilan bruto masa Maret = gaji pokok + bonus",
+     "ekspresi": "5483870 + 5000000",
+     "hasil": 10483870,
+     "keluaran": [
+      "per_masa[0].bruto"
+     ]
+    },
+    {
+     "no": 2,
+     "uraian": "Jumlah hari kalender sejak mulai bekerja 2027-03-15 s.d. akhir bulan (bulan 31 hari)",
+     "ekspresi": "31 - 15 + 1",
+     "hasil": 17
+    },
+    {
+     "no": 3,
+     "uraian": "Penghasilan bruto teratur masa pertama",
+     "ekspresi": "10483870 - 5000000",
+     "hasil": 5483870
+    },
+    {
+     "no": 4,
+     "uraian": "Bruto setara sebulan penuh = bruto teratur x hari kalender bulan / hari bekerja (dibulatkan ke bawah) + penghasilan tidak teratur (PMK fiktif 120/2026 Pasal 15B)",
+     "ekspresi": "5483870 * 31 // 17 + 5000000",
+     "hasil": 14999998
+    },
+    {
+     "no": 5,
+     "uraian": "Tarif efektif bulanan kategori A (status TK/1) untuk dasar Rp14.999.998 (tabel PP58/A) -> lapisan di atas Rp13.750.000 s.d. Rp15.100.000",
+     "tabel": "PP58/A",
+     "nilai": 14999998,
+     "hasil": "6%",
+     "tarif_basis_poin": 600
+    },
+    {
+     "no": 6,
+     "uraian": "PPh 21 masa Maret = 6% x Rp10.483.870, dibulatkan ke bawah ke rupiah penuh",
+     "ekspresi": "10483870 * 600 // 10000",
+     "hasil": 629032,
+     "keluaran": [
+      "per_masa[0].pph21",
+      "per_masa[0].pph21_dipotong"
+     ]
+    }
+   ],
+   "cek_aritmetika": "cocok"
+  }
+ ]
+}

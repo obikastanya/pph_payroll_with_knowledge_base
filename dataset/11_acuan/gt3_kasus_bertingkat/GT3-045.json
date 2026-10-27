@@ -1,0 +1,185 @@
+{
+  "id": "GT3-045",
+  "stratum": "bulanan",
+  "tahun_pajak": 2026,
+  "rezim": "TER_DTP_2026",
+  "uraian": "Pegawai TK/3 (tidak kawin, 3 tanggungan; TER B) Juni 2026; PPh 21 ditanggung pemberi kerja, dihitung full gross-up.",
+  "asumsi": [
+    "Pegawai tetap, Wajib Pajak orang pribadi dalam negeri sejak awal tahun (kewajiban subjektif sepanjang tahun), hanya satu pemberi kerja, tidak menerima penghasilan lain dari pemberi kerja ini selain yang tercantum.",
+    "Memiliki NPWP/NIK yang valid dan terintegrasi; tarif lebih tinggi 20% tanpa NPWP tidak berlaku (di luar lingkup, taksonomi.md bagian 0).",
+    "Status PTKP TK/3 pada 1 Januari 2026 dan tidak berubah sepanjang tahun.",
+    "Pemberi kerja: industri barang dari plastik (bukan sektor DTP, bukan padat karya PP 7/2025), KLU utama 22220 (per 1 Januari 2026). Kelompok risiko JKK: sedang (0,89% dari upah sebulan).",
+    "Upah sebulan dasar iuran BPJS = gaji pokok + tunjangan tetap (PP 44/2015 Pasal 19 ayat (2)), tidak di bawah upah minimum; lembur, THR, bonus, dan natura bukan dasar iuran.",
+    "Ikut seluruh program: JKK & JKM (dibayar pemberi kerja, objek PPh 21), JHT 3,7% pemberi kerja / 2% pegawai, JP 2% / 1% dengan batas upah JP sesuai bulan iuran, BPJS Kesehatan 4% pemberi kerja / 1% pegawai dengan batas Rp12.000.000. Iuran pegawai dipotong dari gaji; iuran JHT/JP pemberi kerja dicantumkan di input untuk menguji bahwa keduanya bukan objek.",
+    "Nilai premi/iuran sudah bulat rupiah (tidak perlu pembulatan).",
+    "Lembur diperlakukan sebagai penghasilan teratur; THR, bonus, dan bingkisan sebagai penghasilan tidak teratur.",
+    "PPh 21 masa selain Masa Pajak Terakhir = tarif efektif bulanan x bruto masa, dibulatkan ke bawah ke rupiah penuh (asumsi A1; pembulatan tidak diatur).",
+    "Biaya jabatan pada Masa Pajak Terakhir = min(5% x bruto, jumlah bulan bekerja x Rp500.000), sesuai pola contoh PMK 168/2023 Lampiran B.",
+    "Metode ditanggung pemberi kerja (2024+): PPh 21 yang ditanggung adalah kenikmatan dan objek PPh 21, dihitung full gross-up (PMK 168/2023 Lampiran B Bagian Kedua I.4, PDF hlm. 44); numerik sama dengan gross-up, tetapi PPh tidak dipotong dari gaji pegawai.",
+    "Penghasilan bruto tetap dan teratur untuk kriteria DTP Rp10.000.000 = gaji + tunjangan tetap saja; lembur, premi JKK/JKM/BPJS Kesehatan yang dibayar pemberi kerja, THR, dan bonus tidak dihitung (pembacaan GT3 atas PMK 10/2025 Pasal 4 ayat (3) / PMK 105/2025 Pasal 4 ayat (4); lihat ketidakpastian K5).",
+    "Pegawai tidak menerima insentif PPh 21 DTP lain; pemberi kerja melaporkan pemanfaatan DTP tepat waktu."
+  ],
+  "input": {
+    "status_ptkp": "TK/3",
+    "jenis_kelamin": "L",
+    "karyawati_kawin_suami_berpenghasilan": false,
+    "npwp_nik_valid": true,
+    "metode": "ditanggung",
+    "sektor": {
+      "klu": "22220",
+      "uraian": "industri barang dari plastik (bukan sektor DTP, bukan padat karya PP 7/2025)",
+      "kelompok_risiko_jkk": "sedang",
+      "padat_karya_pp7_2025": false
+    },
+    "bulan_masuk": null,
+    "bulan_keluar": null,
+    "masa": [
+      {
+        "bulan": 6,
+        "komponen": {
+          "gaji": 15000000,
+          "tunjangan_tetap": 1000000,
+          "premi_jkk": 142400,
+          "premi_jkm": 48000,
+          "iuran_jht_pemberi_kerja": 592000,
+          "iuran_jp_pemberi_kerja": 221726,
+          "iuran_jht_pegawai": 320000,
+          "iuran_jp_pegawai": 110863,
+          "premi_bpjs_kesehatan_pemberi_kerja": 480000,
+          "iuran_bpjs_kesehatan_pegawai": 120000
+        }
+      }
+    ]
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 6,
+        "bruto": 17925161,
+        "kategori_ter": "B",
+        "tarif_ter": 0.07,
+        "pph21": 1254761,
+        "pph21_dtp": 0,
+        "pph21_dipotong": 1254761,
+        "pph21_ditanggung_pemberi_kerja": 1254761
+      }
+    ],
+    "tahunan": null,
+    "berhak_dtp": false
+  },
+  "langkah": [
+    {
+      "no": 1,
+      "text": "PTKP setahun status TK/3 (keadaan awal tahun 2026)",
+      "formula": "54000000 + 3 * 4500000",
+      "value": 67500000,
+      "sumber": "UU 7/2021 (HPP) Pasal 3 angka 3 (Pasal 7 ayat (1) UU PPh), PDF hlm. 48; PMK 101/PMK.010/2016 Pasal 1, PDF hlm. 2-3; PMK 168/2023 Pasal 9 ayat (4), PDF hlm. 11; PP 58/2023 Pasal 2 ayat (3), PDF hlm. 4"
+    },
+    {
+      "no": 2,
+      "text": "Kategori TER untuk status PTKP TK/3",
+      "formula": null,
+      "value": "B",
+      "sumber": "PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4"
+    },
+    {
+      "no": 3,
+      "text": "Kriteria pegawai DTP: penghasilan bruto tetap dan teratur (gaji + tunjangan tetap) Masa Januari 2026 (diasumsikan sama dengan gaji + tunjangan tetap masa kasus ini) = Rp16.000.000 > Rp10.000.000; NPWP/NIK terintegrasi; tidak menerima DTP lain",
+      "formula": null,
+      "value": "tidak memenuhi",
+      "sumber": "PMK 105/2025 Pasal 4 ayat (2) dan (4), PDF hlm. 5"
+    },
+    {
+      "no": 4,
+      "text": "Juni: premi JKK dibayar pemberi kerja = 0,89% x upah sebulan Rp16.000.000",
+      "formula": "0.0089 * 16000000",
+      "value": 142400,
+      "sumber": "PP 44/2015 Pasal 16 ayat (1), PDF hlm. 12; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 5,
+      "text": "Juni: premi JKM dibayar pemberi kerja = 0,3% x Rp16.000.000",
+      "formula": "0.003 * 16000000",
+      "value": 48000,
+      "sumber": "PP 44/2015 Pasal 18 ayat (1), PDF hlm. 13; dasar upah sebulan Pasal 19 ayat (1)-(2), PDF hlm. 13"
+    },
+    {
+      "no": 6,
+      "text": "Juni: iuran JHT pegawai 2% x Rp16.000.000 (pengurang neto; JHT 3,7% pemberi kerja bukan objek)",
+      "formula": "0.02 * 16000000",
+      "value": 320000,
+      "sumber": "PP 46/2015 Pasal 16 ayat (1)-(2), PDF hlm. 11"
+    },
+    {
+      "no": 7,
+      "text": "Juni: iuran JP pegawai 1% x min(upah Rp16.000.000, batas upah JP Rp11.086.300) (pengurang neto; JP 2% pemberi kerja bukan objek)",
+      "formula": "0.01 * min(16000000, 11086300)",
+      "value": 110863,
+      "sumber": "PP 45/2015 Pasal 28 ayat (2)-(3), PDF hlm. 20; batas upah Pasal 29, PDF hlm. 21 (nilai: tables/bpjs.csv, surat BPJS TK)"
+    },
+    {
+      "no": 8,
+      "text": "Juni: premi BPJS Kesehatan pemberi kerja 4% x min(Rp16.000.000, Rp12.000.000) (objek); iuran 1% pegawai Rp120.000 bukan pengurang",
+      "formula": "0.04 * min(16000000, 12000000)",
+      "value": 480000,
+      "sumber": "Perpres 82/2018 Pasal 31 (4% pemberi kerja, 1% peserta), PDF hlm. 22; batas Rp12.000.000: Perpres 75/2019 Pasal I angka 3 (Pasal 32 ayat (1)), PDF hlm. 3; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 10 ayat (1), PDF hlm. 11-12; PER-16/PJ/2016 Pasal 10 ayat (3), PDF hlm. 10 (iuran JKN pegawai bukan pengurang)"
+    },
+    {
+      "no": 9,
+      "text": "Kelayakan DTP Juni 2026: KLU 22220 tidak tercantum di Lampiran A yang berlaku untuk masa ini",
+      "formula": null,
+      "value": "sektor tidak layak",
+      "sumber": "PMK 105/2025 Pasal 3 ayat (1)-(2), PDF hlm. 4"
+    },
+    {
+      "no": 10,
+      "text": "Juni: bruto sebelum tunjangan/PPh ditanggung (gaji, tunjangan, lembur, THR/bonus, premi JKK/JKM/BPJS Kesehatan pemberi kerja, natura objek)",
+      "formula": "15000000 + 1000000 + 142400 + 48000 + 480000",
+      "value": 16670400,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 11,
+      "text": "Juni: PPh 21 ditanggung pemberi kerja (kenikmatan, objek) T dicari sehingga T = floor(tarif TER(bruto) x (bruto sebelum T + T)); hasil T = Rp1.254.761 (tarif 7%; titik tetap terkecil)",
+      "formula": "floor(0.07 * (16670400 + 1254761))",
+      "value": 1254761,
+      "sumber": "PMK 168/2023 Lampiran B Bagian Kedua I.4 (PPh 21 ditanggung pemberi kerja = kenikmatan, objek, full gross up), PDF hlm. 44; Asumsi GT3 A3: tunjangan pajak = PPh 21 terutang masa yang sama (titik tetap terkecil, rupiah penuh); cara iterasi tidak diatur regulasi"
+    },
+    {
+      "no": 12,
+      "text": "Juni: penghasilan bruto masa = Rp16.670.400 + Rp1.254.761",
+      "formula": "16670400 + 1254761",
+      "value": 17925161,
+      "sumber": "PMK 168/2023 Pasal 5 ayat (3) huruf a-b dan Pasal 8 ayat (2) huruf a, PDF hlm. 9-10; PMK 168/2023 Pasal 5 ayat (3) huruf d, PDF hlm. 9; PMK 168/2023 Pasal 5 ayat (3) huruf e, PDF hlm. 9; PMK 168/2023 Pasal 7 huruf c, PDF hlm. 10"
+    },
+    {
+      "no": 13,
+      "text": "Juni: tarif efektif bulanan kategori B untuk bruto Rp17.925.161 (lapisan di atas Rp16.400.000 s.d. Rp18.450.000)",
+      "formula": null,
+      "value": 0.07,
+      "sumber": "PP 58/2023 Lampiran huruf B, PDF hlm. 17; PP 58/2023 Pasal 2 ayat (3)-(4), PDF hlm. 4"
+    },
+    {
+      "no": 14,
+      "text": "Juni: PPh 21 = 7% x Rp17.925.161 = Rp1.254.761,27; dibulatkan ke bawah ke rupiah penuh",
+      "formula": "floor(0.07 * 17925161)",
+      "value": 1254761,
+      "sumber": "PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15; Lampiran B Bagian Pertama I.1 angka 1-2, PDF hlm. 28; Asumsi GT3 A1: pembulatan PPh TER bulanan tidak diatur (PP 58/2023; PMK 168/2023 Pasal 15 ayat (1) huruf a, PDF hlm. 15) -> dibulatkan ke bawah ke rupiah penuh"
+    },
+    {
+      "no": 15,
+      "text": "Juni: tidak ada PPh 21 DTP masa ini; seluruh PPh 21 dipotong/disetor",
+      "formula": "0",
+      "value": 0,
+      "sumber": "PMK 105/2025 Pasal 4 ayat (2) dan (4), PDF hlm. 5; PMK 105/2025 Pasal 3 ayat (1)-(2), PDF hlm. 4"
+    }
+  ],
+  "cek_aritmetika": "cocok",
+  "cek_aritmetika_rinci": {
+    "alat": "tools/check_gt3.py (pecahan eksak, terpisah dari tools/calculator.py)",
+    "langkah_numerik_dievaluasi_ulang": 11,
+    "langkah_tidak_cocok": 0,
+    "hitung_ulang_independen_item": 13,
+    "hitung_ulang_independen_tidak_cocok": 0
+  }
+}

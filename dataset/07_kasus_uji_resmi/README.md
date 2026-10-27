@@ -239,3 +239,12 @@ Batasan: entri ringkas di `di_luar_lingkup.json` tidak melalui pass 2. Angka PER
 ## Reproduksi
 
 Berkas dibangkitkan oleh skrip di luar repositori (scratchpad sesi) dari nilai yang diketik tangan per contoh; cek dihitung dengan `Decimal`. Untuk memeriksa ulang, buka PDF pada `sumber.halaman_pdf` dan bandingkan dengan `expected` dan `langkah_resmi`.
+
+## Pembagian *holdout* (2026-10-27)
+
+`pembagian_holdout.csv` membagi 46 kasus dalam lingkup menjadi 32 kasus **pengembangan** dan 14 kasus **holdout**. Pembagian berstrata per sumber: PER-16 7, PMK 168 4, PMK 10 1, PMK 105 1, PMK 72 1, PP 58 0 (hanya satu contoh). Pengacakan memakai `random.Random(20261027)`.
+
+- Kasus *holdout* tidak boleh dipakai selama sistem baru (`system/`) dikembangkan, termasuk untuk memperbaiki aturan atau *prompt*. Kasus ini baru dipakai di E0 untuk memvalidasi K\*.
+- `HOLDOUT.sha256` menyegel isi berkas *holdout*. Periksa dengan `sha256sum -c HOLDOUT.sha256` dari folder ini.
+- Keterbatasan: ke-46 kasus sudah dipakai untuk menguji prototipe lama (`engine/`) sebelum pembagian ini, sehingga *holdout* hanya bersih terhadap sistem baru. Hal ini dilaporkan apa adanya.
+- Versi kanonik di `kanonik/` mengikuti pembagian yang sama.

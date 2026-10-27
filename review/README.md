@@ -13,6 +13,7 @@ Semua materi penelitian disusun lebih dulu oleh Claude. Folder ini menampung mat
 
 | Subfolder | Isi | Diperiksa oleh | Yang diperiksa |
 |---|---|---|---|
+| `corpus/` | Tabel peristiwa perubahan: relevansi, tanggal terbit dan berlaku, pengecoh | pakar *payroll* | Kelengkapan, relevansi, dan tanggal sesuai praktik |
 | `gold_delta/` | Δ emas: kunci jawaban perubahan KB untuk setiap regulasi dan kebijakan | pakar *payroll* | Isi aturan, tanggal berlaku, dan kutipan pasal sesuai teks dokumen |
 | `gold_cases/` | Sekitar 50 kasus pegawai bertingkat beserta hasil hitungan KB emas | pakar *payroll* | Hasil hitungan sama dengan hitungan manual |
 | `adjudication/` | Selisih antara KB emas dan acuan (contoh resmi, kalkulator pihak ketiga) beserta keputusan siapa yang salah | pakar *payroll* | Keputusan adjudikasi, diperiksa tanpa melihat keputusan Claude lebih dulu |
@@ -24,7 +25,9 @@ Semua materi penelitian disusun lebih dulu oleh Claude. Folder ini menampung mat
 
 | Berkas | Peran | Status | Tanggal |
 |---|---|---|---|
-| _(belum ada)_ | | | |
+| [corpus/peristiwa.review.md](corpus/peristiwa.review.md) | pakar *payroll* | menunggu | 2026-10-27 |
+| [gold_cases/gt3.review.md](gold_cases/gt3.review.md) | pakar *payroll* | menunggu | 2026-10-27 |
+| [unseen_changes/SEGEL.md](unseen_changes/SEGEL.md) | teman peneliti dan pakar *payroll* | tersegel, dibuka saat RQ1 | 2026-10-27 |
 
 ## Catatan independensi
 

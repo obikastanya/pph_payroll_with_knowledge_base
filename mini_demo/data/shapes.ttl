@@ -1,0 +1,25 @@
+# SHACL shapes for gate G1 (skeleton Section V, verification gates).
+@prefix tax: <https://w3id.org/pph21/ontology#> .
+@prefix sh:  <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+tax:RuleShape a sh:NodeShape ;
+    sh:targetClass tax:Rule ;
+    sh:property [ sh:path tax:id ;         sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path tax:layer ;      sh:minCount 1 ; sh:maxCount 1 ; sh:in ( tax:RegulationLayer tax:CompanyLayer ) ] ;
+    sh:property [ sh:path tax:modality ;   sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "mandatory" "default" "optional" ) ] ;
+    sh:property [ sh:path tax:validFrom ;  sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:date ] ;
+    sh:property [ sh:path tax:recordedOn ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:date ] ;
+    sh:property [ sh:path tax:produces ;   sh:minCount 1 ; sh:maxCount 1 ; sh:class tax:Fact ] ;
+    sh:property [ sh:path tax:expression ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path tax:hasSource ;  sh:minCount 1 ; sh:class tax:Article ] .
+
+tax:ArticleShape a sh:NodeShape ;
+    sh:targetClass tax:Article ;
+    sh:property [ sh:path tax:partOf ; sh:minCount 1 ; sh:class tax:Document ] .
+
+tax:TableShape a sh:NodeShape ;
+    sh:targetClass tax:Table ;
+    sh:property [ sh:path tax:name ;      sh:minCount 1 ] ;
+    sh:property [ sh:path tax:validFrom ; sh:minCount 1 ; sh:datatype xsd:date ] ;
+    sh:property [ sh:path tax:row ;       sh:minCount 1 ] .

@@ -1,0 +1,37 @@
+# Mini ontology of the PPh 21 knowledge base (skeleton Section IV, ontology figure).
+# The full version reuses ELI (regulations and articles), OWL-Time (validity), and PROV-O (recording).
+@prefix tax:  <https://w3id.org/pph21/ontology#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+tax:Document        a owl:Class ; rdfs:comment "Source document of knowledge." .
+tax:Regulation      a owl:Class ; rdfs:subClassOf tax:Document .
+tax:CompanyPolicy   a owl:Class ; rdfs:subClassOf tax:Document .
+tax:Article         a owl:Class ; rdfs:comment "Citable unit inside a document." .
+tax:Rule            a owl:Class ; rdfs:comment "Executable rule: if condition then fact := expression." .
+tax:Fact            a owl:Class ; rdfs:comment "Computed concept, e.g. gross_income or pph21." .
+tax:Table           a owl:Class ; rdfs:comment "Versioned table, e.g. TER rates or PTKP." .
+tax:Layer           a owl:Class .
+tax:RegulationLayer a tax:Layer .
+tax:CompanyLayer    a tax:Layer .
+
+tax:partOf     a owl:ObjectProperty ; rdfs:domain tax:Article ; rdfs:range tax:Document .
+tax:hasSource  a owl:ObjectProperty ; rdfs:range tax:Article .
+tax:layer      a owl:ObjectProperty ; rdfs:range tax:Layer .
+tax:produces   a owl:ObjectProperty ; rdfs:domain tax:Rule ; rdfs:range tax:Fact .
+tax:reads      a owl:ObjectProperty ; rdfs:domain tax:Rule ; rdfs:range tax:Fact ;
+               rdfs:comment "Derived from the expression; used by impact analysis." .
+tax:supersedes a owl:ObjectProperty ; rdfs:domain tax:Rule ; rdfs:range tax:Rule .
+tax:row        a owl:ObjectProperty ; rdfs:domain tax:Table .
+
+tax:id         a owl:DatatypeProperty .
+tax:modality   a owl:DatatypeProperty ; rdfs:comment "mandatory, default, or optional." .
+tax:validFrom  a owl:DatatypeProperty ; rdfs:range xsd:date .
+tax:validUntil a owl:DatatypeProperty ; rdfs:range xsd:date .
+tax:recordedOn a owl:DatatypeProperty ; rdfs:range xsd:date ; rdfs:comment "Knowledge time." .
+tax:condition  a owl:DatatypeProperty .
+tax:expression a owl:DatatypeProperty .
+tax:quote      a owl:DatatypeProperty .
+tax:name       a owl:DatatypeProperty .
+tax:label      a owl:DatatypeProperty .

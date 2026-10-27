@@ -1,0 +1,43 @@
+{
+  "document": "K0",
+  "note": "Legal state at the start of the study period (mini): the annualised method of PER-16/PJ/2016 and one Company X policy. Written in the same update format as a Delta and applied to an empty graph.",
+  "recorded_on": "2016-01-01",
+  "add": [
+    {"id": "R-GROSS", "layer": "regulation", "modality": "mandatory", "valid_from": "2016-01-01",
+     "produces": "gross_income", "expression": "employee.salary + employee.allowance + employee.overtime",
+     "source": {"document": "PER-16/PJ/2016", "article": "Ps. 1 angka 15-16"}},
+    {"id": "R-OVERTIME", "layer": "regulation", "modality": "mandatory", "valid_from": "2016-01-01",
+     "produces": "overtime_is_regular", "expression": "True",
+     "source": {"document": "PER-16/PJ/2016", "article": "Ps. 1 angka 15"}},
+    {"id": "R-REGULAR", "layer": "regulation", "modality": "mandatory", "valid_from": "2016-01-01",
+     "produces": "regular_income", "expression": "employee.salary + employee.allowance + (employee.overtime if overtime_is_regular else 0)",
+     "source": {"document": "PER-16/PJ/2016", "article": "Ps. 1 angka 15"}},
+    {"id": "R-JOBEXP", "layer": "regulation", "modality": "mandatory", "valid_from": "2016-01-01",
+     "produces": "job_expense", "expression": "min(round_down(percent('5') * regular_income), 500000)",
+     "source": {"document": "PER-16/PJ/2016", "article": "Ps. 10(3)a"}},
+    {"id": "R-PTKP", "layer": "regulation", "modality": "mandatory", "valid_from": "2016-01-01",
+     "produces": "ptkp_annual", "expression": "table_value('PTKP', employee.ptkp_status)",
+     "source": {"document": "PMK 101/PMK.010/2016", "article": "Ps. 1"}},
+    {"id": "R16-TAXABLE", "layer": "regulation", "modality": "mandatory", "valid_from": "2016-01-01",
+     "produces": "taxable_income_annual", "expression": "max(0, floor_thousand(12 * (regular_income - job_expense) - ptkp_annual))",
+     "source": {"document": "PER-16/PJ/2016", "article": "Ps. 14(3)"}},
+    {"id": "R16-PPH", "layer": "regulation", "modality": "mandatory", "valid_from": "2016-01-01",
+     "produces": "pph21", "expression": "round_down(progressive_tax('ARTICLE17', taxable_income_annual) / 12)",
+     "source": {"document": "PER-16/PJ/2016", "article": "Ps. 14(3)"}},
+    {"id": "R-WITHHELD", "layer": "regulation", "modality": "default", "valid_from": "2016-01-01",
+     "produces": "pph21_withheld", "expression": "pph21",
+     "source": {"document": "PER-16/PJ/2016", "article": "Ps. 14"}},
+    {"id": "PX-THP", "layer": "company", "modality": "optional", "valid_from": "2016-01-01",
+     "produces": "take_home_pay", "expression": "gross_income - pph21_withheld",
+     "source": {"document": "Peraturan Perusahaan X", "article": "Ps. 8"}}
+  ],
+  "tables": [
+    {"name": "PTKP", "valid_from": "2016-01-01",
+     "extract": {"file": "dataset/01_regulasi/tables/ptkp.csv", "key": "status", "value": "ptkp_setahun"},
+     "source": {"document": "PMK 101/PMK.010/2016", "article": "Ps. 1"}},
+    {"name": "ARTICLE17", "valid_from": "2022-01-01",
+     "extract": {"file": "dataset/01_regulasi/tables/tarif_pasal17.csv", "filter": {"rezim": "UU HPP"},
+                 "lower": "pkp_batas_bawah", "upper": "pkp_batas_atas", "value": "tarif_persen"},
+     "source": {"document": "UU 7/2021 (HPP)", "article": "Ps. 3 angka 7 (Pasal 17 ayat (1) huruf a UU PPh)"}}
+  ]
+}

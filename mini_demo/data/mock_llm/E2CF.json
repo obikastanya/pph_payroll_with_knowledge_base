@@ -1,0 +1,23 @@
+{
+  "note": "Mock LLM output for the counterfactual E2CF (threshold Rp12.000.000). Candidates 1 and 2 use the original Rp10.000.000 remembered from training data; G2 rejects them because their quote is not in the document. Candidate 3 reads the document correctly but records the knowledge on the effective date (1 January) instead of the issue date, so January results computed before the regulation was issued change; only G4 rejects it.",
+  "relevance": {"relevant": true, "quote": "ditanggung pemerintah"},
+  "shared": {
+    "dtp_rule": {"id": "R25-DTP", "layer": "regulation", "modality": "mandatory", "valid_from": "2025-01-01", "valid_until": "2025-12-31", "produces": "pph21_dtp",
+      "expression": "pph21 if (employee.dtp_sector and gross_income <= 10000000) else 0",
+      "source": {"document": "PMK 10/2025", "article": "Ps. 4(2)", "quote": "penghasilan bruto paling banyak Rp10.000.000 per bulan"}},
+    "withheld_rule": {"id": "R25-WITHHELD", "layer": "regulation", "modality": "mandatory", "valid_from": "2025-01-01", "valid_until": "2025-12-31",
+      "produces": "pph21_withheld", "expression": "pph21 - pph21_dtp",
+      "source": {"document": "PMK 10/2025", "article": "Ps. 5(1)", "quote": "ditanggung pemerintah"}}
+  },
+  "candidates": [
+    {"add": ["$dtp_rule", "$withheld_rule"], "tables": []},
+    {"add": ["$dtp_rule", "$withheld_rule"], "tables": []},
+    {"add": [
+      {"id": "R25-DTP", "layer": "regulation", "modality": "mandatory", "valid_from": "2025-01-01", "valid_until": "2025-12-31", "recorded_on": "2025-01-01",
+       "produces": "pph21_dtp", "expression": "pph21 if (employee.dtp_sector and gross_income <= 12000000) else 0",
+       "source": {"document": "PMK 10/2025", "article": "Ps. 4(2)", "quote": "penghasilan bruto paling banyak Rp12.000.000 per bulan"}},
+      {"id": "R25-WITHHELD", "layer": "regulation", "modality": "mandatory", "valid_from": "2025-01-01", "valid_until": "2025-12-31", "recorded_on": "2025-01-01",
+       "produces": "pph21_withheld", "expression": "pph21 - pph21_dtp",
+       "source": {"document": "PMK 10/2025", "article": "Ps. 5(1)", "quote": "ditanggung pemerintah"}}], "tables": []}
+  ]
+}

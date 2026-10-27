@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3id.org/pph21/schema/delta.json",
+  "title": "Delta: one update of the knowledge base",
+  "description": "Shared contract (PANDUAN stage 4) used by the acquisition pipeline, gold Deltas, baselines, the manual upload screen, and scoring. The mini demo supports 'add' and 'tables'; repeal is a new rule with 'supersedes'. 'change' and 'remove' are reserved for versioned rule records in the full system.",
+  "type": "object",
+  "properties": {
+    "document": {"type": "string"},
+    "relevant": {"type": "boolean"},
+    "note": {"type": "string"},
+    "recorded_on": {"$ref": "#/$defs/date", "description": "Default knowledge time for every element of this Delta."},
+    "add": {"type": "array", "items": {"$ref": "#/$defs/rule"}},
+    "tables": {"type": "array", "items": {"$ref": "#/$defs/table"}},
+    "change": {"type": "array", "maxItems": 0},
+    "remove": {"type": "array", "maxItems": 0}
+  },
+  "required": ["add", "tables"],
+  "additionalProperties": false,
+  "$defs": {
+    "date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "source": {
+      "type": "object",
+      "properties": {
+        "document": {"type": "string", "minLength": 1},
+        "article": {"type": "string", "minLength": 1},
+        "quote": {"type": "string", "description": "Verbatim text from the document; checked by gate G2."}
+      },
+      "required": ["document", "article"],
+      "additionalProperties": false
+    },
+    "rule": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string", "pattern": "^[A-Z][A-Z0-9-]*$"},
+        "layer": {"enum": ["regulation", "company"]},
+        "modality": {"enum": ["mandatory", "default", "optional"]},
+        "valid_from": {"$ref": "#/$defs/date"},
+        "valid_until": {"oneOf": [{"$ref": "#/$defs/date"}, {"type": "null"}]},
+        "recorded_on": {"$ref": "#/$defs/date", "description": "Knowledge time. Defaults to the issue date of the document."},
+        "produces": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "condition": {"type": "string"},
+        "expression": {"type": "string", "minLength": 1},
+        "supersedes": {"type": "array", "items": {"type": "string"}},
+        "source": {"$ref": "#/$defs/source"}
+      },
+      "required": ["id", "layer", "modality", "valid_from", "produces", "expression", "source"],
+      "additionalProperties": false
+    },
+    "table": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string", "pattern": "^[A-Z][A-Z0-9-]*$"},
+        "valid_from": {"$ref": "#/$defs/date"},
+        "recorded_on": {"$ref": "#/$defs/date"},
+        "source": {"$ref": "#/$defs/source"},
+        "rows": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/row"}},
+        "extract": {"type": "object", "description": "Call to the deterministic table-extraction tool instead of copied rows.",
+                    "required": ["file", "value"]}
+      },
+      "required": ["name", "valid_from"],
+      "oneOf": [{"required": ["rows"]}, {"required": ["extract"]}],
+      "additionalProperties": false
+    },
+    "row": {
+      "type": "object",
+      "properties": {
+        "key": {"type": "string"},
+        "lower": {"type": "integer"},
+        "upper": {"type": ["integer", "null"]},
+        "value": {"type": "string"}
+      },
+      "required": ["value"],
+      "additionalProperties": false
+    }
+  }
+}

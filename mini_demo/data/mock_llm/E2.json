@@ -1,0 +1,28 @@
+{
+  "note": "Mock LLM output for E2. Candidate 1 has the wrong effective date (February instead of January) and passes every gate; candidates 2 and 3 are correct with differently written expressions, so behavioural consensus outvotes candidate 1 while first-passing selection does not.",
+  "relevance": {"relevant": true, "quote": "ditanggung pemerintah"},
+  "shared": {
+    "withheld_rule": {"id": "R25-WITHHELD", "layer": "regulation", "modality": "mandatory", "valid_from": "2025-01-01", "valid_until": "2025-12-31",
+      "produces": "pph21_withheld", "expression": "pph21 - pph21_dtp",
+      "source": {"document": "PMK 10/2025", "article": "Ps. 5(1)", "quote": "ditanggung pemerintah"}}
+  },
+  "candidates": [
+    {"add": [
+      {"id": "R25-DTP", "layer": "regulation", "modality": "mandatory", "valid_from": "2025-02-01", "valid_until": "2025-12-31", "produces": "pph21_dtp",
+       "expression": "pph21 if (employee.dtp_sector and gross_income <= 10000000) else 0",
+       "source": {"document": "PMK 10/2025", "article": "Ps. 4(2)", "quote": "penghasilan bruto paling banyak Rp10.000.000 per bulan"}},
+      {"id": "R25-WITHHELD", "layer": "regulation", "modality": "mandatory", "valid_from": "2025-02-01", "valid_until": "2025-12-31",
+       "produces": "pph21_withheld", "expression": "pph21 - pph21_dtp",
+       "source": {"document": "PMK 10/2025", "article": "Ps. 5(1)", "quote": "ditanggung pemerintah"}}], "tables": []},
+    {"add": [
+      {"id": "R25-DTP", "layer": "regulation", "modality": "mandatory", "valid_from": "2025-01-01", "valid_until": "2025-12-31", "produces": "pph21_dtp",
+       "expression": "pph21 if (employee.dtp_sector and gross_income <= 10000000) else 0",
+       "source": {"document": "PMK 10/2025", "article": "Ps. 4(2)", "quote": "penghasilan bruto paling banyak Rp10.000.000 per bulan"}},
+      "$withheld_rule"], "tables": []},
+    {"add": [
+      {"id": "R25-DTP", "layer": "regulation", "modality": "mandatory", "valid_from": "2025-01-01", "valid_until": "2025-12-31", "produces": "pph21_dtp",
+       "expression": "0 if (not employee.dtp_sector or gross_income > 10000000) else pph21",
+       "source": {"document": "PMK 10/2025", "article": "Ps. 4(2)", "quote": "penghasilan bruto paling banyak Rp10.000.000 per bulan"}},
+      "$withheld_rule"], "tables": []}
+  ]
+}

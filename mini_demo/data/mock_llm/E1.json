@@ -1,0 +1,40 @@
+{
+  "note": "Mock LLM output for E1. Candidate 1 is vacuous (the TER rule never fires and the old rule is not superseded): it passes G1-G4 and only G5 rejects it. Candidates 2 and 3 are correct with differently written expressions.",
+  "relevance": {"relevant": true, "quote": "dihitung dengan mengalikan tarif efektif bulanan"},
+  "shared": {
+    "ter_tables": [
+      {"name": "TER-CATEGORY", "valid_from": "2024-01-01",
+       "extract": {"file": "dataset/01_regulasi/tables/ptkp.csv", "key": "status", "value": "kategori_ter", "prefix": "TER-"},
+       "source": {"document": "PP 58/2023", "article": "Ps. 2(4)", "quote": "Tarif efektif bulanan dikategorikan berdasarkan besarnya penghasilan tidak kena pajak"}},
+      {"name": "TER-A", "valid_from": "2024-01-01",
+       "extract": {"file": "dataset/01_regulasi/tables/ter_bulanan.csv", "filter": {"kategori": "A"}, "lower": "batas_bawah", "upper": "batas_atas", "value": "tarif_persen"},
+       "source": {"document": "PP 58/2023", "article": "Lampiran A", "quote": "Tarif efektif bulanan kategori A, kategori B, dan kategori C"}},
+      {"name": "TER-B", "valid_from": "2024-01-01",
+       "extract": {"file": "dataset/01_regulasi/tables/ter_bulanan.csv", "filter": {"kategori": "B"}, "lower": "batas_bawah", "upper": "batas_atas", "value": "tarif_persen"},
+       "source": {"document": "PP 58/2023", "article": "Lampiran B", "quote": "Tarif efektif bulanan kategori A, kategori B, dan kategori C"}},
+      {"name": "TER-C", "valid_from": "2024-01-01",
+       "extract": {"file": "dataset/01_regulasi/tables/ter_bulanan.csv", "filter": {"kategori": "C"}, "lower": "batas_bawah", "upper": "batas_atas", "value": "tarif_persen"},
+       "source": {"document": "PP 58/2023", "article": "Lampiran C", "quote": "Tarif efektif bulanan kategori A, kategori B, dan kategori C"}}
+    ],
+    "category_rule": {"id": "R24-CAT", "layer": "regulation", "modality": "mandatory", "valid_from": "2024-01-01", "produces": "ter_category",
+      "expression": "table_value('TER-CATEGORY', employee.ptkp_status)",
+      "source": {"document": "PP 58/2023", "article": "Ps. 2(4)", "quote": "Tarif efektif bulanan dikategorikan berdasarkan besarnya penghasilan tidak kena pajak"}}
+  },
+  "candidates": [
+    {"add": [
+      {"id": "R24-PPH", "layer": "regulation", "modality": "mandatory", "valid_from": "2024-01-01", "produces": "pph21",
+       "condition": "gross_income < 0", "expression": "gross_income",
+       "source": {"document": "PMK 168/2023", "article": "Ps. 15(1)a", "quote": "dihitung dengan mengalikan tarif efektif bulanan dengan jumlah penghasilan bruto"}}],
+     "tables": []},
+    {"add": ["$category_rule",
+      {"id": "R24-PPH", "layer": "regulation", "modality": "mandatory", "valid_from": "2024-01-01", "produces": "pph21",
+       "expression": "round_down(table_rate(ter_category, gross_income) * gross_income)", "supersedes": ["R16-PPH"],
+       "source": {"document": "PMK 168/2023", "article": "Ps. 15(1)a", "quote": "dihitung dengan mengalikan tarif efektif bulanan dengan jumlah penghasilan bruto"}}],
+     "tables": "$ter_tables"},
+    {"add": ["$category_rule",
+      {"id": "R24-PPH", "layer": "regulation", "modality": "mandatory", "valid_from": "2024-01-01", "produces": "pph21",
+       "expression": "round_down(gross_income * table_rate(ter_category, gross_income))", "supersedes": ["R16-PPH"],
+       "source": {"document": "PMK 168/2023", "article": "Ps. 15(1)a", "quote": "dihitung dengan mengalikan tarif efektif bulanan dengan jumlah penghasilan bruto"}}],
+     "tables": "$ter_tables"}
+  ]
+}

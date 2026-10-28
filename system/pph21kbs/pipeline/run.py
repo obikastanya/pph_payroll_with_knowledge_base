@@ -38,6 +38,7 @@ class Config:
     gates: tuple = ("G1", "G2", "G3", "G4", "G5")
     budget_tokens: int = select.TOKEN_BUDGET
     policy_omega: date = date(2026, 10, 27)   # knowledge date of the regulation chain policies are acquired against
+    max_tokens: int = 32000                   # per draft or repair call (AB1 formalises a whole knowledge base)
 
 
 @dataclass
@@ -151,7 +152,8 @@ def run_document(event, base, client, ledger, cfg=None, run_id="dev", out_dir=No
                                           user=prompts.draft_user(event, docs, rel), schema=_schema(),
                                           schema_name="delta", effort=cfg.draft_effort, step="draft",
                                           document=event.document, event=event.id, candidate=c.n,
-                                          order_seed=cfg.seed, call_id=f"{run_id}-{event.id}-cand{c.n}")
+                                          order_seed=cfg.seed, call_id=f"{run_id}-{event.id}-cand{c.n}",
+                                          max_tokens=cfg.max_tokens)
                                      for c in cands])
         for c, (_, out, _) in zip(cands, outs):
             c.llm = out
@@ -170,7 +172,8 @@ def run_document(event, base, client, ledger, cfg=None, run_id="dev", out_dir=No
                                               schema=_schema(), schema_name="delta", effort=cfg.draft_effort,
                                               step="repair", document=event.document, event=event.id,
                                               candidate=c.n, order_seed=cfg.seed,
-                                              call_id=f"{run_id}-{event.id}-cand{c.n}-rep{r + 1}")
+                                              call_id=f"{run_id}-{event.id}-cand{c.n}-rep{r + 1}",
+                                              max_tokens=cfg.max_tokens)
                                          for c in todo])
             for c, (_, out2, _) in zip(todo, outs):
                 if out2 is not None:

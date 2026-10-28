@@ -26,6 +26,7 @@ sys.path.insert(0, str(ROOT / "system"))
 sys.path.insert(0, str(ROOT / "system" / "tools"))
 
 import build_gold  # noqa: E402
+from kb_context import base_for  # noqa: E402
 from pph21kbs import corpus, testspace  # noqa: E402
 from pph21kbs.analysis import stats  # noqa: E402
 from pph21kbs.analysis.evaluate import _obs, se_cases  # noqa: E402
@@ -57,6 +58,28 @@ def wrong_set(kb, gold_label, gold_kb, cases, omega, oracle):
     return out
 
 
+def _load_iso(runs, event_id):
+    for r in runs.split(","):
+        path = ROOT / "experiments" / r / "results" / f"{event_id}.json"
+        if path.exists():
+            return json.loads(path.read_text(encoding="utf-8"))
+    return None
+
+
+def _iso_wrong(base, delta, delta_id, gold_kb, cases, ev, oracle):
+    """Wrong tuples of base (+) delta (strict, else lenient; abstain = base) against K*_n."""
+    kb = base
+    if delta is not None:
+        try:
+            kb = apply_delta(base, dict(delta, delta_id=delta_id))
+        except (UpdateError, ValueError, KeyError):
+            try:
+                kb = apply_delta(base, dict(delta, delta_id=delta_id + "-l"), lenient=True)
+            except (UpdateError, ValueError, KeyError):
+                kb = base
+    return wrong_set(kb, f"now-{ev.id}", gold_kb, cases, ev.issued, oracle)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("run")
@@ -66,6 +89,9 @@ def main():
     ap.add_argument("--events", default="")
     ap.add_argument("--limit", type=float, default=2.0)
     ap.add_argument("--sample", type=int, default=400, help="cases of S^E per year used in the chain (seeded)")
+    ap.add_argument("--iso2", default="", help="second isolated run(s): noise bound of H3b")
+    ap.add_argument("--m-reg", type=int, default=3, help="candidates of a regenerated regulation (as in E2)")
+    ap.add_argument("--m-dis", type=int, default=1, help="candidates of a regenerated distractor (as in E2)")
     args = ap.parse_args()
     out_dir = ROOT / "experiments" / args.run
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -97,9 +123,7 @@ def main():
         k_star_prev = build_gold.prefix_at(chain, (ev.issued - timedelta(days=1)).isoformat())
         k_star = chain.until(gold.delta_id) if gold else build_gold.prefix_at(chain, ev.issued.isoformat())
         h_n = wrong_set(k_sis, f"prev-{ev.id}", k_star_prev, cases, ev.issued - timedelta(days=1), oracle)
-        iso_paths = [ROOT / "experiments" / r / "results" / f"{ev.id}.json" for r in args.iso.split(",")]
-        iso_path = next((x for x in iso_paths if x.exists()), None)
-        iso = json.loads(iso_path.read_text(encoding="utf-8")) if iso_path else None
+        iso = _load_iso(args.iso, ev.id)
         iso_delta = iso.get("delta") if iso and iso.get("status") in ("applied", "empty") else None
         source = "isolated"
         delta = iso_delta
@@ -115,7 +139,8 @@ def main():
             if ledger is None:
                 ledger = llm.Ledger(args.run, run_limit_usd=args.limit)
                 client = llm.AnthropicClient(ledger)
-            res = run_document(ev, k_sis, client, ledger, Config(), run_id=args.run,
+            m = args.m_reg if ev.part == "uji" else args.m_dis
+            res = run_document(ev, k_sis, client, ledger, Config(m=m), run_id=args.run,
                                out_dir=out_dir / "results_chain")
             delta = res.get("delta") if res.get("status") in ("applied", "empty") else None
             source = "regenerated"
@@ -149,9 +174,23 @@ def main():
                 mech = wrong_set(k_mech, f"now-{ev.id}", k_star, cases, ev.issued, oracle) - h_n
             except (UpdateError, ValueError, KeyError):
                 mech = set()
+        # H3b: errors of the isolated update on the gold base (same cases and knowledge date), triggered errors
+        # I_n = wrong \ (E_iso u H_n), and the noise bound |E_iso1 xor E_iso2| of two independent isolated runs
+        gold_base, _ = base_for(ev, chain)
+        iso_wrong = _iso_wrong(gold_base, iso_delta, f"{args.run}-{ev.id}-i", k_star, cases, ev, oracle)
+        triggered = wrong - (iso_wrong | h_n)
+        noise = None
+        if args.iso2:
+            iso2 = _load_iso(args.iso2, ev.id)
+            if iso2 is not None:
+                d2 = iso2.get("delta") if iso2.get("status") in ("applied", "empty") else None
+                iso2_wrong = _iso_wrong(gold_base, d2, f"{args.run}-{ev.id}-i2", k_star, cases, ev, oracle)
+                noise = len(iso_wrong ^ iso2_wrong)
         rows.append({"event": ev.id, "part": ev.part, "source": source, "abstain": abstained, "not_run": not_run,
                      "cases": len(cases),
-                     "H_n": len(h_n), "wrong": len(wrong), "new_errors": len(new), "mechanical": len(mech)})
+                     "H_n": len(h_n), "wrong": len(wrong), "new_errors": len(new), "mechanical": len(mech),
+                     "iso_wrong": len(iso_wrong), "triggered": len(triggered),
+                     "noise_bound": "" if noise is None else noise})
         print(f"{ev.id:4s} {source:22s} H={len(h_n):4d} wrong={len(wrong):4d} new={len(new):4d} "
               f"mech={len(mech):4d}", flush=True)
         k_sis = k_next
@@ -166,7 +205,16 @@ def main():
                "regulation_events": sum(r["part"] == "uji" for r in run),
                "OAR_regulation": sum(r["new_errors"] == 0 for r in run if r["part"] == "uji")
                / max(1, sum(r["part"] == "uji" for r in run)),
-               "final_wrong_tuples": rows[-1]["wrong"], "variant": args.variant, "iso_run": args.iso}
+               "final_wrong_tuples": rows[-1]["wrong"], "variant": args.variant, "iso_run": args.iso,
+               "regenerated": args.regenerate,
+               "triggered_total": sum(r["triggered"] for r in run), "mechanical_total": sum(r["mechanical"] for r in run)}
+    paired = [r for r in run if r["noise_bound"] != ""]
+    if paired:
+        summary["H3b"] = {"events_with_noise_bound": len(paired),
+                          "triggered_total": sum(r["triggered"] for r in paired),
+                          "noise_bound_total": sum(r["noise_bound"] for r in paired),
+                          "events_triggered_above_noise": [r["event"] for r in paired
+                                                           if r["triggered"] > r["noise_bound"]]}
     (out_dir / "chain_summary.json").write_text(json.dumps(summary, indent=1, default=str) + "\n", encoding="utf-8")
     print(json.dumps(summary, indent=1, default=str))
 

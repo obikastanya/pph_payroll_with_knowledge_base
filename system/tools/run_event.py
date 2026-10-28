@@ -65,10 +65,11 @@ def main():
     ap.add_argument("--effort", default="high", help="effort of the drafts")
     ap.add_argument("--limit", type=float, default=1.0, help="USD limit of this run")
     ap.add_argument("--skip-done", action="store_true", help="skip events that already have a result")
+    ap.add_argument("--no-context", action="store_true", help="ablation AB2: vocabulary only, no knowledge base records")
     args = ap.parse_args()
     chain = build_gold.build(check_only=True, side=False)
     ledger = llm.Ledger(args.run, run_limit_usd=args.limit)
-    cfg = Config(m=args.m, draft_effort=args.effort)
+    cfg = Config(m=args.m, draft_effort=args.effort, with_context=not args.no_context)
     if args.model == "second":
         client = llm.OpenAIClient(ledger)
     elif args.batch:

@@ -100,6 +100,20 @@ Kolom "Dikutip di": Abs = abstrak, I = Pendahuluan, II = Tinjauan Pustaka, III =
 | `enqvist2023oversight` | ‘Human oversight’ in the EU artificial intelligence act: what, when and by whom? | Law, Innovation and Technology | 2023 | jurnal | [10.1080/17579961.2023.2245683](https://doi.org/10.1080/17579961.2023.2245683) | CC-BY-4.0 | tidak diunduh | II |
 | `green2022oversight` | The flaws of policies requiring human oversight of government algorithms | Computer Law & Security Review | 2022 | jurnal | [10.1016/j.clsr.2022.105681](https://doi.org/10.1016/j.clsr.2022.105681) | CC-BY-4.0 | ada (versi penulis) | II |
 
+### Ditambahkan 2026-10-29
+
+Empat entri ditambahkan saat naskah lengkap (`paper/draft/paper.tex`) ditulis. Metadata diperiksa lewat
+`https://api.crossref.org/works/<doi>` dan entri BibTeX disusun dari metadata itu. PDF tidak diunduh.
+`compton2021rdr` adalah buku (monografi penerbit akademik), bukan artikel jurnal atau prosiding; dimasukkan karena
+menjadi rujukan baku *Ripple-Down Rules*.
+
+| Kunci | Judul | Wadah | Tahun | Jenis | DOI | Dikutip di |
+|---|---|---|---|---|---|---|
+| `compton2021rdr` | Ripple-Down Rules: The Alternative to Machine Learning | Chapman and Hall/CRC | 2021 | buku | [10.1201/9781003126157](https://doi.org/10.1201/9781003126157) | I, III |
+| `gupta2024editing` | Model Editing at Scale leads to Gradual and Catastrophic Forgetting | Findings of the ACL 2024 | 2024 | prosiding | [10.18653/v1/2024.findings-acl.902](https://doi.org/10.18653/v1/2024.findings-acl.902) | I, III |
+| `li2022alphacode` | Competition-level code generation with AlphaCode | Science | 2022 | jurnal | [10.1126/science.abq1158](https://doi.org/10.1126/science.abq1158) | III, V |
+| `xin2021abstention` | The Art of Abstention: Selective Prediction and Error Regularization for Natural Language Processing | Proceedings of ACL-IJCNLP 2021 | 2021 | prosiding | [10.18653/v1/2021.acl-long.84](https://doi.org/10.18653/v1/2021.acl-long.84) | III, V |
+
 ## PDF yang tidak tersimpan
 
 - `alhawari2026payroll`: akses tertutup (tidak ada versi akses terbuka yang ditemukan)

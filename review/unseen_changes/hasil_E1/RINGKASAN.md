@@ -110,6 +110,15 @@ Hal-hal berikut tidak membuat perubahan gagal, tetapi menunjukkan apa yang harus
 7. **Komponen yang tidak dikenal hanya diperingatkan** (U04, U05). Basis tanpa Δ mengabaikan komponen baru dengan peringatan `UnreadInput`. Karena itu Δ perubahan juga harus menyatakan perlakuan 2026 atas komponen itu.
 8. **Syarat tanpa atribut kasus** (U06 Pasal 1 angka 1, "sebelumnya tidak pernah menjadi pegawai tetap pada pemberi kerja yang sama"). Syarat ini dianggap terpenuhi karena kasus tidak memuat atributnya (representasi.md 10.6).
 
+9. **Pembulatan tunjangan pajak U14** (temuan peninjau, `_review/TINJAUAN.md`). Pasal 3 ayat (1) U14 menyebut
+   tunjangan pajak dibulatkan ke bawah, tetapi Δ U14 tidak menyatakannya sendiri; contohnya lolos karena Δ konvensi
+   global. Pada varian tanpa konvensi, sebagian kegagalan U14 adalah celah Δ ini, bukan pembulatan basis.
+
+**Putusan pelaporan** (keputusan peneliti sesudah tinjauan independen): hasil utama 16/16 (batas bawah 0,829, H1
+diterima) dengan Δ konvensi sebagai penyelarasan basis uji terhadap konvensi pembulatan contoh; varian konservatif
+15/16 (0,736) karena bagian premi konvensi ditambahkan sesudah percobaan pertama U15 gagal; 8/16 sebagai kepekaan
+terhadap pembulatan basis.
+
 ## 8. Kepatuhan aturan pelaksanaan
 
 - Tidak ada berkas di `system/`, `dataset/`, `docs/`, atau `review/unseen_changes/sealed/` yang berubah. `git status --porcelain` dan `git diff --stat` untuk keempat path itu kosong.

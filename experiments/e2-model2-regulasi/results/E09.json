@@ -1,0 +1,623 @@
+{
+ "run": "e2-model2-regulasi-3",
+ "event": "E09",
+ "condition": "proposed",
+ "documents": [
+  "PP-36-2025"
+ ],
+ "selection": {
+  "PP-36-2025": {
+   "tokens": 2642,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "fail: TAB.JKK_RATES_RELIEF.2025.EXTENSION: number 0.0012 is not in a quote of this element; TAB.JKK_RATES_RELIEF.2025.EXTENSION: number 0.0027 is not in a quote of this element; TAB.JKK_RATES_RELIEF.2025.EXTENSION: number 89/20000 is not in a quote of this element; TAB.JKK_RATES_RELIEF.2025.EXTENSION: number 127/20000 is not in a quote of this element; TAB.JKK_RATES_RELIEF.2025.EXTENSION: number 0.0087 is not in a quote of this element"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.RELIEF.EXTENSION",
+      "label": "Extended JKK contribution relief",
+      "label_id": "Perpanjangan keringanan iuran JKK",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "recorded_on": "2025-09-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "lookup('jkk_rates', employer('jkk_risk_group')) / 2"
+       },
+       {
+        "name": "condition",
+        "value": "employer('jkk_relief_eligible') == True"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2, Pasal 10A",
+        "page": 4,
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk\nprogram JKP sebagaimana dimaksud dalam Pasal 10\ndilakukan perpanjangan sampai dengan Iuran JKK\nbulan Januari 2026."
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "page": 4,
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran\nbulan berikutnya dan terdapat kelebihan maka kelebihan\npembayaran Iuran JKK tersebut diperhitungkan untuk\nIuran JKK bulan berikutnya."
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Penutup",
+        "page": 5,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 4 September 2025"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The supplied KB's relief rates equal half the ordinary JKK rates, so the extension uses the still-valid ordinary-rate table without reproducing numerical rates absent from this document. Relief applies to August 2025–January 2026 contribution months, not through the later payment deadline; penalties and overpayment credits are not treated as employee taxable premiums."
+   },
+   "delta": {
+    "delta_id": "e2-model2-regulasi-3-E09-cand1",
+    "event_id": "E09",
+    "document": {
+     "id": "PP-36-2025",
+     "title": "PP 36/2025: Perpanjangan keringanan iuran JKK s.d. iuran Januari 2026",
+     "issued": "2025-09-04"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.RELIEF.EXTENSION",
+      "recorded_on": "2025-09-04",
+      "label": "Extended JKK contribution relief",
+      "label_id": "Perpanjangan keringanan iuran JKK",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('jkk_relief_eligible') == True",
+      "expression": "lookup('jkk_rates', employer('jkk_risk_group')) / 2",
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2, Pasal 10A",
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk\nprogram JKP sebagaimana dimaksud dalam Pasal 10\ndilakukan perpanjangan sampai dengan Iuran JKK\nbulan Januari 2026.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran\nbulan berikutnya dan terdapat kelebihan maka kelebihan\npembayaran Iuran JKK tersebut diperhitungkan untuk\nIuran JKK bulan berikutnya.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 4 September 2025",
+        "page": 5
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The supplied KB's relief rates equal half the ordinary JKK rates, so the extension uses the still-valid ordinary-rate table without reproducing numerical rates absent from this document. Relief applies to August 2025–January 2026 contribution months, not through the later payment deadline; penalties and overpayment credits are not treated as employee taxable premiums."
+   },
+   "initial_delta": {
+    "delta_id": "e2-model2-regulasi-3-E09-cand1",
+    "event_id": "E09",
+    "document": {
+     "id": "PP-36-2025",
+     "title": "PP 36/2025: Perpanjangan keringanan iuran JKK s.d. iuran Januari 2026",
+     "issued": "2025-09-04"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.RELIEF.EXTENSION",
+      "recorded_on": "2025-09-04",
+      "label": "Extended JKK contribution relief",
+      "label_id": "Perpanjangan keringanan iuran JKK",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('jkk_relief_eligible') == True",
+      "expression": "lookup('jkk_rates_relief', employer('jkk_risk_group'))",
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2, Pasal 10A",
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk\nprogram JKP sebagaimana dimaksud dalam Pasal 10\ndilakukan perpanjangan sampai dengan Iuran JKK\nbulan Januari 2026.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran\nbulan berikutnya dan terdapat kelebihan maka kelebihan\npembayaran Iuran JKK tersebut diperhitungkan untuk\nIuran JKK bulan berikutnya.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 4 September 2025",
+        "page": 5
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.JKK_RATES_RELIEF.2025.EXTENSION",
+      "recorded_on": "2025-09-04",
+      "label": "Unchanged JKK relief rates for the extension period",
+      "label_id": "Tarif keringanan iuran JKK untuk masa perpanjangan",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "name": "jkk_rates_relief",
+      "table_kind": "lookup",
+      "rows": [
+       {
+        "key": "very_low",
+        "value": "0.0012"
+       },
+       {
+        "key": "low",
+        "value": "0.0027"
+       },
+       {
+        "key": "medium",
+        "value": "0.00445"
+       },
+       {
+        "key": "high",
+        "value": "0.00635"
+       },
+       {
+        "key": "very_high",
+        "value": "0.0087"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2, Pasal 10A",
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk\nprogram JKP sebagaimana dimaksud dalam Pasal 10\ndilakukan perpanjangan sampai dengan Iuran JKK\nbulan Januari 2026.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran\nbulan berikutnya dan terdapat kelebihan maka kelebihan\npembayaran Iuran JKK tersebut diperhitungkan untuk\nIuran JKK bulan berikutnya.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 4 September 2025",
+        "page": 5
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Separate extension records preserve the existing February–July 2025 records and apply relief to August 2025–January 2026 contributions, rather than extending income recognition to the June payment deadline. The table rates are carried forward unchanged from the supplied KB; PP-36-2025 extends their application but does not reproduce their numerical values."
+   }
+  },
+  {
+   "n": 2,
+   "order": 2,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.RELIEF.EXTENSION",
+      "label": "Extended JKK contribution relief through January 2026",
+      "label_id": "Perpanjangan keringanan iuran JKK sampai Januari 2026",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "recorded_on": "2025-09-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "condition",
+        "value": "employer('jkk_relief_eligible') == True"
+       },
+       {
+        "name": "expression",
+        "value": "lookup('jkk_rates', employer('jkk_risk_group')) / 2"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2 (Pasal 10A)",
+        "page": 4,
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk\nprogram JKP sebagaimana dimaksud dalam Pasal 10\ndilakukan perpanjangan sampai dengan Iuran JKK\nbulan Januari 2026."
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "page": 4,
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran\nbulan berikutnya dan terdapat kelebihan maka kelebihan\npembayaran Iuran JKK tersebut diperhitungkan untuk\nIuran JKK bulan berikutnya."
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Penutup",
+        "page": 5,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 4 September 2025"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The existing KB relief rates are exactly half the ordinary JKK rates, so the extension carries that relationship forward without relying on the expired relief table. Payment deadlines, penalties, JKP recomposition, and overpayment credits are not treated as changes to the contribution-month premium included in employee taxable income."
+   },
+   "delta": {
+    "delta_id": "e2-model2-regulasi-3-E09-cand2",
+    "event_id": "E09",
+    "document": {
+     "id": "PP-36-2025",
+     "title": "PP 36/2025: Perpanjangan keringanan iuran JKK s.d. iuran Januari 2026",
+     "issued": "2025-09-04"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.RELIEF.EXTENSION",
+      "recorded_on": "2025-09-04",
+      "label": "Extended JKK contribution relief through January 2026",
+      "label_id": "Perpanjangan keringanan iuran JKK sampai Januari 2026",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('jkk_relief_eligible') == True",
+      "expression": "lookup('jkk_rates', employer('jkk_risk_group')) / 2",
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2 (Pasal 10A)",
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk\nprogram JKP sebagaimana dimaksud dalam Pasal 10\ndilakukan perpanjangan sampai dengan Iuran JKK\nbulan Januari 2026.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran\nbulan berikutnya dan terdapat kelebihan maka kelebihan\npembayaran Iuran JKK tersebut diperhitungkan untuk\nIuran JKK bulan berikutnya.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 4 September 2025",
+        "page": 5
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The existing KB relief rates are exactly half the ordinary JKK rates, so the extension carries that relationship forward without relying on the expired relief table. Payment deadlines, penalties, JKP recomposition, and overpayment credits are not treated as changes to the contribution-month premium included in employee taxable income."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 3,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.RELIEF.EXTENSION",
+      "label": "Extended JKK contribution relief",
+      "label_id": "Perpanjangan keringanan tarif iuran JKK",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "recorded_on": "2025-09-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "lookup('jkk_rates', employer('jkk_risk_group')) / 2"
+       },
+       {
+        "name": "condition",
+        "value": "employer('jkk_relief_eligible') == True"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2, Pasal 10A",
+        "page": 4,
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk\nprogram JKP sebagaimana dimaksud dalam Pasal 10\ndilakukan perpanjangan sampai dengan Iuran JKK\nbulan Januari 2026."
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "page": 4,
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran\nbulan berikutnya dan terdapat kelebihan maka kelebihan\npembayaran Iuran JKK tersebut diperhitungkan untuk\nIuran JKK bulan berikutnya."
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Penutup",
+        "page": 5,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 4 September 2025"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The extension preserves the existing KB relief amounts, equivalent to half the ordinary JKK rates, for contribution months August 2025–January 2026; the expression avoids depending on the expired relief table. Settlement deadlines, penalties and overpayment credits do not change the contribution-month premium used for PPh 21."
+   },
+   "delta": {
+    "delta_id": "e2-model2-regulasi-3-E09-cand3",
+    "event_id": "E09",
+    "document": {
+     "id": "PP-36-2025",
+     "title": "PP 36/2025: Perpanjangan keringanan iuran JKK s.d. iuran Januari 2026",
+     "issued": "2025-09-04"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.RELIEF.EXTENSION",
+      "recorded_on": "2025-09-04",
+      "label": "Extended JKK contribution relief",
+      "label_id": "Perpanjangan keringanan tarif iuran JKK",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('jkk_relief_eligible') == True",
+      "expression": "lookup('jkk_rates', employer('jkk_risk_group')) / 2",
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2, Pasal 10A",
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk\nprogram JKP sebagaimana dimaksud dalam Pasal 10\ndilakukan perpanjangan sampai dengan Iuran JKK\nbulan Januari 2026.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran\nbulan berikutnya dan terdapat kelebihan maka kelebihan\npembayaran Iuran JKK tersebut diperhitungkan untuk\nIuran JKK bulan berikutnya.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 4 September 2025",
+        "page": 5
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The extension preserves the existing KB relief amounts, equivalent to half the ordinary JKK rates, for contribution months August 2025–January 2026; the expression avoids depending on the expired relief table. Settlement deadlines, penalties and overpayment credits do not change the contribution-month premium used for PPh 21."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   1,
+   3,
+   2
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-model2-regulasi-3-E09-cand1",
+  "event_id": "E09",
+  "document": {
+   "id": "PP-36-2025",
+   "title": "PP 36/2025: Perpanjangan keringanan iuran JKK s.d. iuran Januari 2026",
+   "issued": "2025-09-04"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.JKK_RATE.RELIEF.EXTENSION",
+    "recorded_on": "2025-09-04",
+    "label": "Extended JKK contribution relief",
+    "label_id": "Perpanjangan keringanan iuran JKK",
+    "valid_from": "2025-08-01",
+    "valid_until": "2026-01-31",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "jkk_rate",
+    "condition": "employer('jkk_relief_eligible') == True",
+    "expression": "lookup('jkk_rates', employer('jkk_risk_group')) / 2",
+    "source": [
+     {
+      "document": "PP-36-2025",
+      "provision": "Pasal I angka 2, Pasal 10A",
+      "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk\nprogram JKP sebagaimana dimaksud dalam Pasal 10\ndilakukan perpanjangan sampai dengan Iuran JKK\nbulan Januari 2026.",
+      "page": 4
+     },
+     {
+      "document": "PP-36-2025",
+      "provision": "Pasal II angka 1",
+      "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran\nbulan berikutnya dan terdapat kelebihan maka kelebihan\npembayaran Iuran JKK tersebut diperhitungkan untuk\nIuran JKK bulan berikutnya.",
+      "page": 4
+     },
+     {
+      "document": "PP-36-2025",
+      "provision": "Penutup",
+      "quote": "Ditetapkan di Jakarta\npada tanggal 4 September 2025",
+      "page": 5
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "The supplied KB's relief rates equal half the ordinary JKK rates, so the extension uses the still-valid ordinary-rate table without reproducing numerical rates absent from this document. Relief applies to August 2025–January 2026 contribution months, not through the later payment deadline; penalties and overpayment credits are not treated as employee taxable premiums."
+ },
+ "cost_usd": 0.177974,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "Memperpanjang masa keringanan iuran JKK bagi perusahaan industri padat karya tertentu sampai dengan iuran Januari 2026, termasuk memperhitungkan kelebihan pembayaran sejak iuran Agustus 2025. Perubahan masa fasilitas iuran JKK ini relevan terhadap komponen iuran pemberi kerja yang masuk penghasilan bruto pegawai tetap untuk PPh 21, bukan semata-mata administrasi pembayaran.",
+   "quotes": [
+    {
+     "provision": "Pasal I angka 2, Pasal 1OA",
+     "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk\nprogram JKP sebagaimana dimaksud dalam Pasal 10\ndilakukan perpanjangan sampai dengan Iuran JKK\nbulan Januari 2026."
+    },
+    {
+     "provision": "Pasal II angka 1",
+     "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran\nbulan berikutnya dan terdapat kelebihan maka kelebihan\npembayaran Iuran JKK tersebut diperhitungkan untuk\nIuran JKK bulan berikutnya."
+    }
+   ],
+   "effective_from": "2025-08-01",
+   "effective_from_quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran\nbulan berikutnya dan terdapat kelebihan maka kelebihan\npembayaran Iuran JKK tersebut diperhitungkan untuk\nIuran JKK bulan berikutnya.",
+   "effective_until": "2026-01-31",
+   "effective_until_quote": "dilakukan perpanjangan sampai dengan Iuran JKK\nbulan Januari 2026.",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "Perusahaan industri padat karya tertentu",
+     "quote": "Perusahaan industri padat karya tertentu yang telah"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

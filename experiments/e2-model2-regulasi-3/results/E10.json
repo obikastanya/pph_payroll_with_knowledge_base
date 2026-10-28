@@ -1,0 +1,1212 @@
+{
+ "run": "e2-model2-regulasi-3",
+ "event": "E10",
+ "condition": "proposed",
+ "documents": [
+  "PMK-72-2025"
+ ],
+ "selection": {
+  "PMK-72-2025": {
+   "tokens": 3320,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.DTP.FACILITY, REG.DTP.FACILITY.SECTOR_WINDOW dtp_facility: always beaten by REG.DTP.FACILITY.SECTOR_WINDOW"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.DTP.FACILITY, REG.DTP.FACILITY.SECTOR_WINDOW dtp_facility: always beaten by REG.DTP.FACILITY.SECTOR_WINDOW"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY.SECTOR_WINDOW",
+      "label": "Sector-specific periods for the 2025 DTP facility",
+      "label_id": "Jangka waktu fasilitas DTP tahun 2025 menurut sektor",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_facility"
+       },
+       {
+        "name": "expression",
+        "value": "year_value('dtp_eligible') and (table_attr('dtp_klu', employer('klu'), 'sector') != 'pariwisata' or month >= 10)"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.DTP.FACILITY"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf a",
+        "page": 3,
+        "quote": "a. melakukan kegiatan usaha pada bidang industri:\n1. alas kaki;\n2. tekstil dan pakaian jadi;\n3. furnitur;\n4. kulit dan barang dari kulit; atau\n5. pariwisata; dan"
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf a dan huruf b",
+        "page": 4,
+        "quote": "a. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5."
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY",
+      "label": "DTP facility under the repealed calendar-year provision",
+      "label_id": "Fasilitas DTP berdasarkan ketentuan tahun kalender yang dihapus",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-09-30",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_facility"
+       },
+       {
+        "name": "expression",
+        "value": "dtp_eligible"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 1",
+        "page": 3,
+        "quote": "1. Ketentuan Pasal 2 ayat (3) dihapus sehingga Pasal 2\nberbunyi sebagai berikut:"
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf a dan huruf b",
+        "page": 4,
+        "quote": "a. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5."
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2025",
+      "label": "Business classifications and sectors for the 2025 DTP facility",
+      "label_id": "Kode klasifikasi lapangan usaha dan sektor fasilitas DTP tahun 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\":\"PMK-72-2025/LAMPIRAN-A\",\"columns\":{\"key\":\"klu\",\"sector\":\"sektor\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "page": 3,
+        "quote": "b. memiliki kode klasifikasi lapangan usaha\nsebagaimana tercantum dalam Lampiran huruf A\nyang merupakan bagian tidak terpisahkan dari\nPeraturan Menteri ini."
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 6",
+        "page": 5,
+        "quote": "6. Ketentuan huruf A dan huruf B sebagaimana tercantum\ndalam Lampiran Peraturan Menteri Keuangan Nomor 10\nTahun 2025 tentang Pajak Penghasilan Pasal 21 Atas\nPenghasilan Tertentu Yang Ditanggung Pemerintah Dalam\nRangka Stimulus Ekonomi Tahun Anggaran 2025 diubah,\nsehingga menjadi sebagaimana tercantum dalam Lampiran\nyang merupakan bagian tidak terpisahkan dari Peraturan\nMenteri ini."
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf a dan huruf b",
+        "page": 4,
+        "quote": "a. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5."
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "adopts": [],
+    "note": "The amended annex is represented as the 2025 sector universe, with Article 4A enforcing January–December for existing sectors and October–December for tourism; the repealed facility rule is closed before October. No refund rule is duplicated because REG.DTP.REFUND already limits refunds to the non-DTP portion, as required by Article 5(5a)."
+   },
+   "delta": {
+    "delta_id": "e2-model2-regulasi-3-E10-cand1",
+    "event_id": "E10",
+    "document": {
+     "id": "PMK-72-2025",
+     "title": "PMK 72/2025: Perubahan PMK 10/2025: DTP sektor pariwisata",
+     "issued": "2025-10-28"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY.SECTOR_WINDOW",
+      "recorded_on": "2025-10-28",
+      "label": "Sector-specific periods for the 2025 DTP facility",
+      "label_id": "Jangka waktu fasilitas DTP tahun 2025 menurut sektor",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "dtp_facility",
+      "expression": "year_value('dtp_eligible') and (table_attr('dtp_klu', employer('klu'), 'sector') != 'pariwisata' or month >= 10)",
+      "overrides": [
+       "REG.DTP.FACILITY"
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf a",
+        "quote": "a. melakukan kegiatan usaha pada bidang industri:\n1. alas kaki;\n2. tekstil dan pakaian jadi;\n3. furnitur;\n4. kulit dan barang dari kulit; atau\n5. pariwisata; dan",
+        "page": 3
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf a dan huruf b",
+        "quote": "a. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY",
+      "recorded_on": "2025-10-28",
+      "label": "DTP facility under the repealed calendar-year provision",
+      "label_id": "Fasilitas DTP berdasarkan ketentuan tahun kalender yang dihapus",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-09-30",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "dtp_facility",
+      "expression": "dtp_eligible",
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 1",
+        "quote": "1. Ketentuan Pasal 2 ayat (3) dihapus sehingga Pasal 2\nberbunyi sebagai berikut:",
+        "page": 3
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf a dan huruf b",
+        "quote": "a. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2025",
+      "recorded_on": "2025-10-28",
+      "label": "Business classifications and sectors for the 2025 DTP facility",
+      "label_id": "Kode klasifikasi lapangan usaha dan sektor fasilitas DTP tahun 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "name": "dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-72-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu",
+        "sector": "sektor"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "quote": "b. memiliki kode klasifikasi lapangan usaha\nsebagaimana tercantum dalam Lampiran huruf A\nyang merupakan bagian tidak terpisahkan dari\nPeraturan Menteri ini.",
+        "page": 3
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 6",
+        "quote": "6. Ketentuan huruf A dan huruf B sebagaimana tercantum\ndalam Lampiran Peraturan Menteri Keuangan Nomor 10\nTahun 2025 tentang Pajak Penghasilan Pasal 21 Atas\nPenghasilan Tertentu Yang Ditanggung Pemerintah Dalam\nRangka Stimulus Ekonomi Tahun Anggaran 2025 diubah,\nsehingga menjadi sebagaimana tercantum dalam Lampiran\nyang merupakan bagian tidak terpisahkan dari Peraturan\nMenteri ini.",
+        "page": 5
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf a dan huruf b",
+        "quote": "a. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "note": "The amended annex is represented as the 2025 sector universe, with Article 4A enforcing January–December for existing sectors and October–December for tourism; the repealed facility rule is closed before October. No refund rule is duplicated because REG.DTP.REFUND already limits refunds to the non-DTP portion, as required by Article 5(5a)."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.DTP.FACILITY, REG.DTP.FACILITY.SECTOR_WINDOW dtp_facility: always beaten by REG.DTP.FACILITY.SECTOR_WINDOW"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.DTP.FACILITY, REG.DTP.FACILITY.SECTOR_WINDOW dtp_facility: always beaten by REG.DTP.FACILITY.SECTOR_WINDOW"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2025.PMK72",
+      "label": "Eligible DTP business classifications including tourism",
+      "label_id": "Kode klasifikasi lapangan usaha penerima DTP termasuk pariwisata",
+      "valid_from": "2025-10-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\":\"PMK-72-2025/LAMPIRAN-A\",\"columns\":{\"key\":\"klu\",\"sector\":\"sektor\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 6",
+        "page": 5,
+        "quote": "6. Ketentuan huruf A dan huruf B sebagaimana tercantum\ndalam Lampiran Peraturan Menteri Keuangan Nomor 10\nTahun 2025 tentang Pajak Penghasilan Pasal 21 Atas\nPenghasilan Tertentu Yang Ditanggung Pemerintah Dalam\nRangka Stimulus Ekonomi Tahun Anggaran 2025 diubah,\nsehingga menjadi sebagaimana tercantum dalam Lampiran\nyang merupakan bagian tidak terpisahkan dari Peraturan\nMenteri ini."
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "page": 3,
+        "quote": "b. memiliki kode klasifikasi lapangan usaha\nsebagaimana tercantum dalam Lampiran huruf A\nyang merupakan bagian tidak terpisahkan dari\nPeraturan Menteri ini."
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "page": 4,
+        "quote": "b. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY.SECTOR_WINDOW",
+      "label": "DTP facility subject to sector-specific tax-period windows",
+      "label_id": "Fasilitas DTP sesuai jangka waktu masa pajak setiap sektor",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_facility"
+       },
+       {
+        "name": "expression",
+        "value": "year_value('dtp_eligible') and in_table('dtp_klu', employer('klu')) and (table_attr('dtp_klu', employer('klu'), 'sector') != 'pariwisata' or month >= 10)"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.DTP.FACILITY"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A",
+        "page": 4,
+        "quote": "Pasal 4A\nJangka waktu pemberian insentif Pajak Penghasilan Pasal\n21 ditanggung pemerintah sebagaimana dimaksud dalam\nPasal 2 ayat (2) diberikan untuk:\na. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5."
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf b dan ayat (2)",
+        "page": 3,
+        "quote": "b. memiliki kode klasifikasi lapangan usaha\nsebagaimana tercantum dalam Lampiran huruf A\nyang merupakan bagian tidak terpisahkan dari\nPeraturan Menteri ini.\n(2) Kode klasifikasi lapangan usaha sebagaimana\ndimaksud pada ayat (1) huruf b merupakan kode\nklasifikasi lapangan usaha utama yang tercantum\npada basis data yang terdapat dalam administrasi\nperpajakan Direktorat Jenderal Pajak."
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY",
+      "label": "Superseded blanket DTP tax-period facility",
+      "label_id": "Fasilitas masa pajak DTP sebelum penggantian ketentuan jangka waktu",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-09-30",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_facility"
+       },
+       {
+        "name": "expression",
+        "value": "dtp_eligible"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 1",
+        "page": 3,
+        "quote": "1. Ketentuan Pasal 2 ayat (3) dihapus sehingga Pasal 2\nberbunyi sebagai berikut:"
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A",
+        "page": 4,
+        "quote": "Pasal 4A\nJangka waktu pemberian insentif Pajak Penghasilan Pasal\n21 ditanggung pemerintah sebagaimana dimaksud dalam\nPasal 2 ayat (2) diberikan untuk:\na. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5."
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2025",
+      "label": "Superseded DTP business classifications",
+      "label_id": "Kode klasifikasi lapangan usaha sebelum perluasan DTP",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-09-30",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\":\"PMK-10-2025/LAMPIRAN-A\",\"columns\":{\"key\":\"klu\",\"sector\":\"sektor\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 6",
+        "page": 5,
+        "quote": "6. Ketentuan huruf A dan huruf B sebagaimana tercantum\ndalam Lampiran Peraturan Menteri Keuangan Nomor 10\nTahun 2025 tentang Pajak Penghasilan Pasal 21 Atas\nPenghasilan Tertentu Yang Ditanggung Pemerintah Dalam\nRangka Stimulus Ekonomi Tahun Anggaran 2025 diubah,\nsehingga menjadi sebagaimana tercantum dalam Lampiran\nyang merupakan bagian tidak terpisahkan dari Peraturan\nMenteri ini."
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A",
+        "page": 4,
+        "quote": "Pasal 4A\nJangka waktu pemberian insentif Pajak Penghasilan Pasal\n21 ditanggung pemerintah sebagaimana dimaksud dalam\nPasal 2 ayat (2) diberikan untuk:\na. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5."
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "adopts": [],
+    "note": "The replacement window covers January–December under Pasal 4A while restricting tourism to October–December; checking the KLU table valid in each tax month prevents annual eligibility from extending tourism DTP into earlier months. REG.DTP.REFUND already limits refunds to non-DTP excess withholding, so Pasal 5 ayat (5a) requires no duplicate calculation rule, and the compensation-reporting requirements do not alter the employee-tax calculation."
+   },
+   "delta": {
+    "delta_id": "e2-model2-regulasi-3-E10-cand2",
+    "event_id": "E10",
+    "document": {
+     "id": "PMK-72-2025",
+     "title": "PMK 72/2025: Perubahan PMK 10/2025: DTP sektor pariwisata",
+     "issued": "2025-10-28"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2025.PMK72",
+      "recorded_on": "2025-10-28",
+      "label": "Eligible DTP business classifications including tourism",
+      "label_id": "Kode klasifikasi lapangan usaha penerima DTP termasuk pariwisata",
+      "valid_from": "2025-10-01",
+      "valid_until": "2025-12-31",
+      "name": "dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-72-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu",
+        "sector": "sektor"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 6",
+        "quote": "6. Ketentuan huruf A dan huruf B sebagaimana tercantum\ndalam Lampiran Peraturan Menteri Keuangan Nomor 10\nTahun 2025 tentang Pajak Penghasilan Pasal 21 Atas\nPenghasilan Tertentu Yang Ditanggung Pemerintah Dalam\nRangka Stimulus Ekonomi Tahun Anggaran 2025 diubah,\nsehingga menjadi sebagaimana tercantum dalam Lampiran\nyang merupakan bagian tidak terpisahkan dari Peraturan\nMenteri ini.",
+        "page": 5
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "quote": "b. memiliki kode klasifikasi lapangan usaha\nsebagaimana tercantum dalam Lampiran huruf A\nyang merupakan bagian tidak terpisahkan dari\nPeraturan Menteri ini.",
+        "page": 3
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "quote": "b. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY.SECTOR_WINDOW",
+      "recorded_on": "2025-10-28",
+      "label": "DTP facility subject to sector-specific tax-period windows",
+      "label_id": "Fasilitas DTP sesuai jangka waktu masa pajak setiap sektor",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "dtp_facility",
+      "expression": "year_value('dtp_eligible') and in_table('dtp_klu', employer('klu')) and (table_attr('dtp_klu', employer('klu'), 'sector') != 'pariwisata' or month >= 10)",
+      "overrides": [
+       "REG.DTP.FACILITY"
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A",
+        "quote": "Pasal 4A\nJangka waktu pemberian insentif Pajak Penghasilan Pasal\n21 ditanggung pemerintah sebagaimana dimaksud dalam\nPasal 2 ayat (2) diberikan untuk:\na. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+        "page": 4
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf b dan ayat (2)",
+        "quote": "b. memiliki kode klasifikasi lapangan usaha\nsebagaimana tercantum dalam Lampiran huruf A\nyang merupakan bagian tidak terpisahkan dari\nPeraturan Menteri ini.\n(2) Kode klasifikasi lapangan usaha sebagaimana\ndimaksud pada ayat (1) huruf b merupakan kode\nklasifikasi lapangan usaha utama yang tercantum\npada basis data yang terdapat dalam administrasi\nperpajakan Direktorat Jenderal Pajak.",
+        "page": 3
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY",
+      "recorded_on": "2025-10-28",
+      "label": "Superseded blanket DTP tax-period facility",
+      "label_id": "Fasilitas masa pajak DTP sebelum penggantian ketentuan jangka waktu",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-09-30",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "dtp_facility",
+      "expression": "dtp_eligible",
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 1",
+        "quote": "1. Ketentuan Pasal 2 ayat (3) dihapus sehingga Pasal 2\nberbunyi sebagai berikut:",
+        "page": 3
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A",
+        "quote": "Pasal 4A\nJangka waktu pemberian insentif Pajak Penghasilan Pasal\n21 ditanggung pemerintah sebagaimana dimaksud dalam\nPasal 2 ayat (2) diberikan untuk:\na. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2025",
+      "recorded_on": "2025-10-28",
+      "label": "Superseded DTP business classifications",
+      "label_id": "Kode klasifikasi lapangan usaha sebelum perluasan DTP",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-09-30",
+      "name": "dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-10-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu",
+        "sector": "sektor"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 6",
+        "quote": "6. Ketentuan huruf A dan huruf B sebagaimana tercantum\ndalam Lampiran Peraturan Menteri Keuangan Nomor 10\nTahun 2025 tentang Pajak Penghasilan Pasal 21 Atas\nPenghasilan Tertentu Yang Ditanggung Pemerintah Dalam\nRangka Stimulus Ekonomi Tahun Anggaran 2025 diubah,\nsehingga menjadi sebagaimana tercantum dalam Lampiran\nyang merupakan bagian tidak terpisahkan dari Peraturan\nMenteri ini.",
+        "page": 5
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A",
+        "quote": "Pasal 4A\nJangka waktu pemberian insentif Pajak Penghasilan Pasal\n21 ditanggung pemerintah sebagaimana dimaksud dalam\nPasal 2 ayat (2) diberikan untuk:\na. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "note": "The replacement window covers January–December under Pasal 4A while restricting tourism to October–December; checking the KLU table valid in each tax month prevents annual eligibility from extending tourism DTP into earlier months. REG.DTP.REFUND already limits refunds to non-DTP excess withholding, so Pasal 5 ayat (5a) requires no duplicate calculation rule, and the compensation-reporting requirements do not alter the employee-tax calculation."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 3,
+   "order": 2,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.DTP.FACILITY, REG.DTP.FACILITY.WINDOWS dtp_facility: always beaten by REG.DTP.FACILITY.WINDOWS"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.DTP.FACILITY, REG.DTP.FACILITY.WINDOWS dtp_facility: always beaten by REG.DTP.FACILITY.WINDOWS"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2025.PMK72",
+      "label": "DTP business classifications including tourism",
+      "label_id": "Kode klasifikasi lapangan usaha penerima DTP termasuk pariwisata",
+      "valid_from": "2025-10-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\":\"PMK-72-2025/LAMPIRAN-A\",\"columns\":{\"key\":\"klu\",\"sector\":\"sektor\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "page": 3,
+        "quote": "b. memiliki kode klasifikasi lapangan usaha\nsebagaimana tercantum dalam Lampiran huruf A\nyang merupakan bagian tidak terpisahkan dari\nPeraturan Menteri ini."
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 6",
+        "page": 5,
+        "quote": "6. Ketentuan huruf A dan huruf B sebagaimana tercantum\ndalam Lampiran Peraturan Menteri Keuangan Nomor 10\nTahun 2025 tentang Pajak Penghasilan Pasal 21 Atas\nPenghasilan Tertentu Yang Ditanggung Pemerintah Dalam\nRangka Stimulus Ekonomi Tahun Anggaran 2025 diubah,\nsehingga menjadi sebagaimana tercantum dalam Lampiran\nyang merupakan bagian tidak terpisahkan dari Peraturan\nMenteri ini."
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "page": 4,
+        "quote": "b. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY.WINDOWS",
+      "label": "DTP facility within the applicable sector period",
+      "label_id": "Fasilitas DTP sesuai jangka waktu sektor usaha",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_facility"
+       },
+       {
+        "name": "expression",
+        "value": "year_value('dtp_eligible') and in_table('dtp_klu', employer('klu')) and (table_attr('dtp_klu', employer('klu'), 'sector') != 'pariwisata' or month >= 10)"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.DTP.FACILITY"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A",
+        "page": 4,
+        "quote": "Pasal 4A\nJangka waktu pemberian insentif Pajak Penghasilan Pasal\n21 ditanggung pemerintah sebagaimana dimaksud dalam\nPasal 2 ayat (2) diberikan untuk:\na. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5."
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2025",
+      "label": "Original DTP business classifications",
+      "label_id": "kode klasifikasi lapangan usaha",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-09-30",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\":\"PMK-10-2025/LAMPIRAN-A\",\"columns\":{\"key\":\"klu\",\"sector\":\"sektor\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 6",
+        "page": 5,
+        "quote": "6. Ketentuan huruf A dan huruf B sebagaimana tercantum\ndalam Lampiran Peraturan Menteri Keuangan Nomor 10\nTahun 2025 tentang Pajak Penghasilan Pasal 21 Atas\nPenghasilan Tertentu Yang Ditanggung Pemerintah Dalam\nRangka Stimulus Ekonomi Tahun Anggaran 2025 diubah,\nsehingga menjadi sebagaimana tercantum dalam Lampiran\nyang merupakan bagian tidak terpisahkan dari Peraturan\nMenteri ini."
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf a dan huruf b",
+        "page": 4,
+        "quote": "a. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY",
+      "label": "DTP facility under the deleted period provision",
+      "label_id": "Fasilitas DTP berdasarkan ketentuan jangka waktu yang dihapus",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-09-30",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_facility"
+       },
+       {
+        "name": "expression",
+        "value": "dtp_eligible"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 1",
+        "page": 3,
+        "quote": "1. Ketentuan Pasal 2 ayat (3) dihapus sehingga Pasal 2\nberbunyi sebagai berikut:"
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf a dan huruf b",
+        "page": 4,
+        "quote": "a. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5."
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "adopts": [],
+    "note": "Pasal 4A preserves the original sectors' January–December window and admits tourism only from October; the superseded provision and annex are closed at end-September, and recorded_on follows the supplied metadata. No duplicate refund rule is added because REG.DTP.REFUND already limits refunds to excess withholding not borne by the government."
+   },
+   "delta": {
+    "delta_id": "e2-model2-regulasi-3-E10-cand3",
+    "event_id": "E10",
+    "document": {
+     "id": "PMK-72-2025",
+     "title": "PMK 72/2025: Perubahan PMK 10/2025: DTP sektor pariwisata",
+     "issued": "2025-10-28"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2025.PMK72",
+      "recorded_on": "2025-10-28",
+      "label": "DTP business classifications including tourism",
+      "label_id": "Kode klasifikasi lapangan usaha penerima DTP termasuk pariwisata",
+      "valid_from": "2025-10-01",
+      "valid_until": "2025-12-31",
+      "name": "dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-72-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu",
+        "sector": "sektor"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "quote": "b. memiliki kode klasifikasi lapangan usaha\nsebagaimana tercantum dalam Lampiran huruf A\nyang merupakan bagian tidak terpisahkan dari\nPeraturan Menteri ini.",
+        "page": 3
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 6",
+        "quote": "6. Ketentuan huruf A dan huruf B sebagaimana tercantum\ndalam Lampiran Peraturan Menteri Keuangan Nomor 10\nTahun 2025 tentang Pajak Penghasilan Pasal 21 Atas\nPenghasilan Tertentu Yang Ditanggung Pemerintah Dalam\nRangka Stimulus Ekonomi Tahun Anggaran 2025 diubah,\nsehingga menjadi sebagaimana tercantum dalam Lampiran\nyang merupakan bagian tidak terpisahkan dari Peraturan\nMenteri ini.",
+        "page": 5
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "quote": "b. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY.WINDOWS",
+      "recorded_on": "2025-10-28",
+      "label": "DTP facility within the applicable sector period",
+      "label_id": "Fasilitas DTP sesuai jangka waktu sektor usaha",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "dtp_facility",
+      "expression": "year_value('dtp_eligible') and in_table('dtp_klu', employer('klu')) and (table_attr('dtp_klu', employer('klu'), 'sector') != 'pariwisata' or month >= 10)",
+      "overrides": [
+       "REG.DTP.FACILITY"
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A",
+        "quote": "Pasal 4A\nJangka waktu pemberian insentif Pajak Penghasilan Pasal\n21 ditanggung pemerintah sebagaimana dimaksud dalam\nPasal 2 ayat (2) diberikan untuk:\na. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2025",
+      "recorded_on": "2025-10-28",
+      "label": "Original DTP business classifications",
+      "label_id": "kode klasifikasi lapangan usaha",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-09-30",
+      "name": "dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-10-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu",
+        "sector": "sektor"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 6",
+        "quote": "6. Ketentuan huruf A dan huruf B sebagaimana tercantum\ndalam Lampiran Peraturan Menteri Keuangan Nomor 10\nTahun 2025 tentang Pajak Penghasilan Pasal 21 Atas\nPenghasilan Tertentu Yang Ditanggung Pemerintah Dalam\nRangka Stimulus Ekonomi Tahun Anggaran 2025 diubah,\nsehingga menjadi sebagaimana tercantum dalam Lampiran\nyang merupakan bagian tidak terpisahkan dari Peraturan\nMenteri ini.",
+        "page": 5
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf a dan huruf b",
+        "quote": "a. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY",
+      "recorded_on": "2025-10-28",
+      "label": "DTP facility under the deleted period provision",
+      "label_id": "Fasilitas DTP berdasarkan ketentuan jangka waktu yang dihapus",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-09-30",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "dtp_facility",
+      "expression": "dtp_eligible",
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 1",
+        "quote": "1. Ketentuan Pasal 2 ayat (3) dihapus sehingga Pasal 2\nberbunyi sebagai berikut:",
+        "page": 3
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf a dan huruf b",
+        "quote": "a. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "note": "Pasal 4A preserves the original sectors' January–December window and admits tourism only from October; the superseded provision and annex are closed at end-September, and recorded_on follows the supplied metadata. No duplicate refund rule is added because REG.DTP.REFUND already limits refunds to excess withholding not borne by the government."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   2,
+   3
+  ],
+  [
+   1
+  ]
+ ],
+ "selected": 2,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-model2-regulasi-3-E10-cand2",
+  "event_id": "E10",
+  "document": {
+   "id": "PMK-72-2025",
+   "title": "PMK 72/2025: Perubahan PMK 10/2025: DTP sektor pariwisata",
+   "issued": "2025-10-28"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "table",
+    "id": "TAB.DTP_KLU.2025.PMK72",
+    "recorded_on": "2025-10-28",
+    "label": "Eligible DTP business classifications including tourism",
+    "label_id": "Kode klasifikasi lapangan usaha penerima DTP termasuk pariwisata",
+    "valid_from": "2025-10-01",
+    "valid_until": "2025-12-31",
+    "name": "dtp_klu",
+    "table_kind": "set",
+    "rows_ref": {
+     "extracted_table": "PMK-72-2025/LAMPIRAN-A",
+     "columns": {
+      "key": "klu",
+      "sector": "sektor"
+     }
+    },
+    "source": [
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal I angka 6",
+      "quote": "6. Ketentuan huruf A dan huruf B sebagaimana tercantum\ndalam Lampiran Peraturan Menteri Keuangan Nomor 10\nTahun 2025 tentang Pajak Penghasilan Pasal 21 Atas\nPenghasilan Tertentu Yang Ditanggung Pemerintah Dalam\nRangka Stimulus Ekonomi Tahun Anggaran 2025 diubah,\nsehingga menjadi sebagaimana tercantum dalam Lampiran\nyang merupakan bagian tidak terpisahkan dari Peraturan\nMenteri ini.",
+      "page": 5
+     },
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal 3 ayat (1) huruf b",
+      "quote": "b. memiliki kode klasifikasi lapangan usaha\nsebagaimana tercantum dalam Lampiran huruf A\nyang merupakan bagian tidak terpisahkan dari\nPeraturan Menteri ini.",
+      "page": 3
+     },
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal 4A huruf b",
+      "quote": "b. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+      "page": 4
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "REG.DTP.FACILITY.SECTOR_WINDOW",
+    "recorded_on": "2025-10-28",
+    "label": "DTP facility subject to sector-specific tax-period windows",
+    "label_id": "Fasilitas DTP sesuai jangka waktu masa pajak setiap sektor",
+    "valid_from": "2025-01-01",
+    "valid_until": "2025-12-31",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "dtp_facility",
+    "expression": "year_value('dtp_eligible') and in_table('dtp_klu', employer('klu')) and (table_attr('dtp_klu', employer('klu'), 'sector') != 'pariwisata' or month >= 10)",
+    "overrides": [
+     "REG.DTP.FACILITY"
+    ],
+    "source": [
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal 4A",
+      "quote": "Pasal 4A\nJangka waktu pemberian insentif Pajak Penghasilan Pasal\n21 ditanggung pemerintah sebagaimana dimaksud dalam\nPasal 2 ayat (2) diberikan untuk:\na. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+      "page": 4
+     },
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal 3 ayat (1) huruf b dan ayat (2)",
+      "quote": "b. memiliki kode klasifikasi lapangan usaha\nsebagaimana tercantum dalam Lampiran huruf A\nyang merupakan bagian tidak terpisahkan dari\nPeraturan Menteri ini.\n(2) Kode klasifikasi lapangan usaha sebagaimana\ndimaksud pada ayat (1) huruf b merupakan kode\nklasifikasi lapangan usaha utama yang tercantum\npada basis data yang terdapat dalam administrasi\nperpajakan Direktorat Jenderal Pajak.",
+      "page": 3
+     }
+    ]
+   }
+  ],
+  "change": [
+   {
+    "kind": "rule",
+    "id": "REG.DTP.FACILITY",
+    "recorded_on": "2025-10-28",
+    "label": "Superseded blanket DTP tax-period facility",
+    "label_id": "Fasilitas masa pajak DTP sebelum penggantian ketentuan jangka waktu",
+    "valid_from": "2025-01-01",
+    "valid_until": "2025-09-30",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "dtp_facility",
+    "expression": "dtp_eligible",
+    "source": [
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal I angka 1",
+      "quote": "1. Ketentuan Pasal 2 ayat (3) dihapus sehingga Pasal 2\nberbunyi sebagai berikut:",
+      "page": 3
+     },
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal 4A",
+      "quote": "Pasal 4A\nJangka waktu pemberian insentif Pajak Penghasilan Pasal\n21 ditanggung pemerintah sebagaimana dimaksud dalam\nPasal 2 ayat (2) diberikan untuk:\na. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+      "page": 4
+     }
+    ]
+   },
+   {
+    "kind": "table",
+    "id": "TAB.DTP_KLU.2025",
+    "recorded_on": "2025-10-28",
+    "label": "Superseded DTP business classifications",
+    "label_id": "Kode klasifikasi lapangan usaha sebelum perluasan DTP",
+    "valid_from": "2025-01-01",
+    "valid_until": "2025-09-30",
+    "name": "dtp_klu",
+    "table_kind": "set",
+    "rows_ref": {
+     "extracted_table": "PMK-10-2025/LAMPIRAN-A",
+     "columns": {
+      "key": "klu",
+      "sector": "sektor"
+     }
+    },
+    "source": [
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal I angka 6",
+      "quote": "6. Ketentuan huruf A dan huruf B sebagaimana tercantum\ndalam Lampiran Peraturan Menteri Keuangan Nomor 10\nTahun 2025 tentang Pajak Penghasilan Pasal 21 Atas\nPenghasilan Tertentu Yang Ditanggung Pemerintah Dalam\nRangka Stimulus Ekonomi Tahun Anggaran 2025 diubah,\nsehingga menjadi sebagaimana tercantum dalam Lampiran\nyang merupakan bagian tidak terpisahkan dari Peraturan\nMenteri ini.",
+      "page": 5
+     },
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal 4A",
+      "quote": "Pasal 4A\nJangka waktu pemberian insentif Pajak Penghasilan Pasal\n21 ditanggung pemerintah sebagaimana dimaksud dalam\nPasal 2 ayat (2) diberikan untuk:\na. Masa Pajak Januari 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 1 sampai dengan angka 4;\nb. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+      "page": 4
+     }
+    ]
+   }
+  ],
+  "remove": [],
+  "note": "The replacement window covers January–December under Pasal 4A while restricting tourism to October–December; checking the KLU table valid in each tax month prevents annual eligibility from extending tourism DTP into earlier months. REG.DTP.REFUND already limits refunds to non-DTP excess withholding, so Pasal 5 ayat (5a) requires no duplicate calculation rule, and the compensation-reporting requirements do not alter the employee-tax calculation."
+ },
+ "cost_usd": 0.258127,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "Mengubah fasilitas PPh Pasal 21 ditanggung pemerintah dengan memperluas cakupannya ke sektor pariwisata untuk Masa Pajak Oktober–Desember 2025. Untuk pegawai tetap sektor tersebut, aturan baru juga memperbolehkan pengembalian kelebihan pemotongan tahunan hanya sebesar bagian yang tidak ditanggung pemerintah. Dengan demikian, perubahan ini memengaruhi fasilitas dan penghitungan penyelesaian PPh 21 pegawai tetap, bukan hanya administrasi.",
+   "quotes": [
+    {
+     "provision": "Pasal 3 ayat (1) huruf a",
+     "quote": "a. melakukan kegiatan usaha pada bidang industri:\n1. alas kaki;\n2. tekstil dan pakaian jadi;\n3. furnitur;\n4. kulit dan barang dari kulit; atau\n5. pariwisata; dan"
+    },
+    {
+     "provision": "Pasal 4A huruf b",
+     "quote": "b. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5."
+    },
+    {
+     "provision": "Pasal 5 ayat (5a)",
+     "quote": "angka 5 yang Pajak Penghasilan Pasal 21 nya telah\ndipotong dan telah diberikan insentif dalam tahun\nkalender yang bersangkutan lebih besar dari Pajak\nPenghasilan Pasal 21 yang terutang untuk 1 (satu)\nTahun Pajak, kelebihan Pajak Penghasilan Pasal 21\ndapat dikembalikan oleh Pemberi Kerja kepada\nPegawai Tetap bersangkutan hanya sebesar bagian\nkelebihan pemotongan pajak yang tidak\nditanggung pemerintah."
+    }
+   ],
+   "effective_from": "2025-10-01",
+   "effective_from_quote": "b. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+   "effective_until": "2025-12-31",
+   "effective_until_quote": "b. Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5.",
+   "subjects": [
+    {
+     "kind": "sector",
+     "value": "Alas kaki; tekstil dan pakaian jadi; furnitur; kulit dan barang dari kulit; pariwisata. Perluasan fasilitas dalam perubahan ini mencakup pariwisata.",
+     "quote": "a. melakukan kegiatan usaha pada bidang industri:\n1. alas kaki;\n2. tekstil dan pakaian jadi;\n3. furnitur;\n4. kulit dan barang dari kulit; atau\n5. pariwisata; dan"
+    },
+    {
+     "kind": "employer_group",
+     "value": "Pemberi kerja dengan KLU utama yang tercantum dalam Lampiran A; rows_ref: PMK-72-2025/LAMPIRAN-A.",
+     "quote": "b. memiliki kode klasifikasi lapangan usaha\nsebagaimana tercantum dalam Lampiran huruf A\nyang merupakan bagian tidak terpisahkan dari\nPeraturan Menteri ini."
+    },
+    {
+     "kind": "employee_group",
+     "value": "Pegawai tetap tertentu pada pemberi kerja yang memenuhi kriteria, termasuk sektor pariwisata.",
+     "quote": "(5a) Dikecualikan dari ketentuan ayat (5), untuk Pegawai\nTetap tertentu dari Pemberi Kerja tertentu\nsebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

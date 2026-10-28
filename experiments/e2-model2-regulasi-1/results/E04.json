@@ -1,0 +1,3748 @@
+{
+ "run": "e2-model2-regulasi-1",
+ "event": "E04",
+ "condition": "proposed",
+ "documents": [
+  "PMK-168-2023"
+ ],
+ "selection": {
+  "PMK-168-2023": {
+   "tokens": 13999,
+   "dropped": [
+    "Pasal 2",
+    "Pasal 3",
+    "Pasal 4",
+    "Pasal 6",
+    "Pasal 7",
+    "Pasal 11",
+    "Pasal 14",
+    "Pasal 22",
+    "Pasal 23",
+    "Pasal 21 (2)"
+   ]
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 2,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "redundant REG.YEAR.NET, REG.PMK168.ANNUAL_NET annual_net: same condition and expression",
+     "redundant REG.YEAR.PENSION, REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS annual_pension_contributions: same condition and expression"
+    ],
+    "G4": "pass",
+    "G5": "fail: REG.PMK168.PREMIUMS_TAXABLE: no effect on any S^G case (vacuous element); REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS: no effect on any S^G case (vacuous element); REG.PMK168.ANNUAL_NET: no effect on any S^G case (vacuous element)"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "redundant REG.YEAR.NET, REG.PMK168.ANNUAL_NET annual_net: same condition and expression",
+     "redundant REG.YEAR.PENSION, REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS annual_pension_contributions: same condition and expression"
+    ],
+    "G4": "fail: SG-000 y2024: engine error on K': EvaluationError(ter_category@year) [REG.TER.CATEGORY]: key 'OTHER' not in lookup table ter_category; SG-002 y2025: engine error on K': EvaluationError(ter_category@year) [REG.TER.CATEGORY]: key 'OTHER' not in lookup table ter_category; SG-003 y2024: engine error on K': EvaluationError(ter_category@year) [REG.TER.CATEGORY]: key 'K/' not in lookup table ter_category; SG-004 y2025: engine error on K': EvaluationError(ter_category@year) [REG.TER.CATEGORY]: key 'K/' "
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PREMIUMS_TAXABLE",
+      "label": "Taxable social security and insurance premiums paid by the employer",
+      "label_id": "Iuran jaminan sosial dan premi asuransi pemberi kerja yang menjadi penghasilan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employer_premiums_taxable"
+       },
+       {
+        "name": "expression",
+        "value": "jkk_premium + jkm_premium + health_premium_employer + income('employer_insurance_premiums')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 5 ayat (3) huruf d sampai dengan huruf f",
+        "page": 9,
+        "quote": "d. pembayaran iuran jaminan kecelakaan kerja dan\niuran jaminan kematian kepada badan penyelenggara\njaminan sosial ketenagakerjaan, yang dibayarkan oleh\npemberi kerja;\ne. pembayaran iuran jaminan pemeliharaan kesehatan\nkepada badan penyelenggara jaminan sosial\nkesehatan yang dibayarkan oleh pemberi kerja; dan\nf. pembayaran premi asuransi kesehatan, asuransi\nkecelakaan kerja, asuransi jiwa, asuransi dwiguna,\ndan asuransi beasiswa yang dibayarkan oleh pemberi\nkerja."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ZAKAT_DEDUCTIBLE",
+      "label": "Deduct eligible zakat and mandatory religious donations paid through the employer",
+      "label_id": "Pengurangan zakat dan sumbangan keagamaan wajib melalui pemberi kerja",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "zakat_deductible"
+       },
+       {
+        "name": "expression",
+        "value": "zakat_withheld + income('mandatory_religious_donation_via_employer_to_approved_body')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "page": 12,
+        "quote": "c. zakat atau sumbangan keagamaan yang sifatnya\nwajib bagi pemeluk agama yang diakui di Indonesia,\nyang dibayarkan melalui pemberi kerja kepada badan\namil zakat, lembaga amil zakat, dan lembaga\nkeagamaan yang dibentuk atau disahkan oleh\npemerintah."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS",
+      "label": "Annual eligible employee pension and old-age contributions",
+      "label_id": "Iuran pensiun dan hari tua pegawai yang dapat dikurangkan setahun",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_pension_contributions"
+       },
+       {
+        "name": "expression",
+        "value": "sum_periods('employee_pension_contributions')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "page": 11,
+        "quote": "b. iuran terkait program pensiun dan hari tua, yang\nterkait dengan gaji, yang dibayar oleh Pegawai melalui\npemberi kerja kepada:"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Lampiran huruf B Bagian Pertama I.2 angka 5 huruf a",
+        "page": 29,
+        "quote": "a. untuk Pegawai Tetap, yaitu jumlah bruto seluruh penghasilan\nsebagaimana dimaksud dalam Pasal 5 ayat (1) huruf a yang\nditerima atau diperoleh dari pemberi kerja dikurangi dengan biaya\njabatan, iuran terkait program pensiun dan hari tua, dan zakat\natau sumbangan keagamaan yang bersifat wajib yang dibayarkan\nmelalui pemberi kerja kepada badan amil zakat, lembaga amil\nzakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh\npemerintah, dalam Tahun Pajak bersangkutan;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_NET",
+      "label": "Annual net income after permitted deductions",
+      "label_id": "Penghasilan neto setahun setelah pengurangan yang diperbolehkan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_net"
+       },
+       {
+        "name": "expression",
+        "value": "annual_gross - annual_deductions"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (5)",
+        "page": 11,
+        "quote": "(5) Penghasilan neto sebagaimana dimaksud pada ayat (3)\nmerupakan seluruh jumlah penghasilan bruto\nsebagaimana dimaksud pada ayat (2) dalam 1 (satu) Tahun\nPajak atau bagian Tahun Pajak dikurangi dengan\npengurangan yang diperbolehkan."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_STATUS",
+      "label": "Effective PTKP status, including married women and new residents",
+      "label_id": "Status PTKP efektif termasuk karyawati kawin dan pegawai baru menetap",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "ptkp_status_effective"
+       },
+       {
+        "name": "expression",
+        "value": "'TK/1' if (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input) == 'TK/1' else 'TK/2' if (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input) == 'TK/2' else 'TK/3' if (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input) == 'TK/3' else 'TK/0' if employee('gender') == 'female' and employee('husband_no_income_certificate') != True else 'K/0' if (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input) == 'K/0' else 'K/1' if (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input) == 'K/1' else 'K/2' if (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input) == 'K/2' else 'K/3' if (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input) == 'K/3' else 'TK/0'"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (2)",
+        "page": 11,
+        "quote": "(2) Penghasilan Tidak Kena Pajak bagi karyawati berlaku\nketentuan sebagai berikut:\na. bagi karyawati kawin, sebesar Penghasilan Tidak\nKena Pajak untuk dirinya sendiri; atau\nb. bagi karyawati tidak kawin, sebesar Penghasilan\nTidak Kena Pajak untuk dirinya sendiri ditambah\nPenghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam\ngaris keturunan lurus serta anak angkat yang\nmenjadi tanggungan sepenuhnya."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (3)",
+        "page": 11,
+        "quote": "(3) Dalam hal karyawati kawin dapat menunjukkan\nketerangan tertulis dari pemerintah daerah setempat\nserendah-rendahnya kecamatan yang menyatakan bahwa\nsuaminya tidak menerima atau memperoleh penghasilan,\nbesarnya Penghasilan Tidak Kena Pajak merupakan\nPenghasilan Tidak Kena Pajak untuk dirinya sendiri\nditambah Penghasilan Tidak Kena Pajak untuk status\nkawin dan Penghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam garis\nketurunan lurus serta anak angkat yang menjadi\ntanggungan sepenuhnya."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (4) dan ayat (5)",
+        "page": 11,
+        "quote": "(4) Penghasilan Tidak Kena Pajak sebagaimana dimaksud\npada ayat ( 1) ditentukan berdasarkan keadaan pada awal\ntahun kalender.\n(5) Dikecualikan dari ketentuan sebagaimana dimaksud pada\nayat (4), besarnya Penghasilan Tidak Kena Pajak untuk\nPegawai yang baru datang dan menetap di Indonesia\ndalam bagian tahun kalender ditentukan berdasarkan\nkeadaan pada awal bulan dari bagian tahun kalender yang\nbersangkutan."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PUBLIC_COMBINED_NET",
+      "label": "Combine certified net income at the secondary government employer",
+      "label_id": "Penggabungan penghasilan neto pada pemberi kerja pemerintah selain pembayar gaji pokok",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_net"
+       },
+       {
+        "name": "condition",
+        "value": "employer('is_government') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_employment_pph21_government_borne') == True and employee('primary_employer_certificate_issued') == True and employee('primary_employer_certificate_submitted') == True and employee('employer_list_and_aggregation_statement') == True"
+       },
+       {
+        "name": "expression",
+        "value": "annual_gross - annual_deductions + employee('primary_employer_net_income')"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.PMK168.ANNUAL_NET"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "page": 19,
+        "quote": "(4) Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "page": 19,
+        "quote": "(5) Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PUBLIC_COMBINED_WITHHELD",
+      "label": "Include certified primary-employer withholding in government reconciliation",
+      "label_id": "Perhitungan pemotongan pemberi kerja pembayar gaji pokok dalam rekonsiliasi pemerintah",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withheld_before_final"
+       },
+       {
+        "name": "condition",
+        "value": "employer('is_government') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_employment_pph21_government_borne') == True and employee('primary_employer_certificate_issued') == True and employee('primary_employer_certificate_submitted') == True and employee('employer_list_and_aggregation_statement') == True"
+       },
+       {
+        "name": "expression",
+        "value": "sum_periods_before_final('pph21_due') + employee('primary_employer_pph21')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "page": 19,
+        "quote": "(4) Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "page": 19,
+        "quote": "(5) Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.REFUND_TO_EMPLOYEE",
+      "label": "Refund excess withholding excluding government-borne tax",
+      "label_id": "Pengembalian kelebihan pemotongan selain pajak yang ditanggung pemerintah",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "refund_to_employee"
+       },
+       {
+        "name": "expression",
+        "value": "0 if employee('all_employment_pph21_government_borne') == True else max(0, withheld_before_final - annual_pph21 - sum_periods_before_final('pph21_dtp'))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "page": 21,
+        "quote": "(1) Dalam hal jumlah Pajak Penghasilan Pasal 21 yang telah\ndipotong pada Masa Pajak selain Masa Pajak Terakhir\ndalam Tahun Pajak yang bersangkutan lebih besar\ndaripada Pajak Penghasilan Pasal 21 yang terutang selama\n1 (satu) Tahun Pajak atau bagian Tahun Pajak, kelebihan\nPajak Penghasilan Pasal 21 yang telah dipotong tersebut\nwajib dikenibalikan oleh Pemotong Pajak kepada Pegawai\nTetap dan Pensiunan yang bersangkutan beserta dengan\npemberian bukti pemotongan Pajak Penghasilan Pasal 21,\npaling lambat akhir bulan berikutnya setelah Masa Pajak\nTerakhir."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (2)",
+        "page": 21,
+        "quote": "(2) Tidak termasuk kelebihan Pajak Penghasilan Pasal 21\nyang dikembalikan sebagaimana dimaksud pada ayat (1)\nyaitu Pajak Penghasilan Pasal 21 yang ditanggung\npemerintah."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Status PTKP yang tidak dikenal, termasuk OTHER dan K/, dinormalisasi ke TK/0 sebagai konvensi input agar lookup PTKP dan kategori TER hanya menerima kode yang tersedia; status bulan kedatangan hanya diisi bagi pegawai baru menetap. Aturan identik tidak diulang dan tidak ada ID yang bersumber langsung pada ketentuan yang dicabut dalam daftar KB; input pengurang dan premi diasumsikan memenuhi kualifikasi hukum, serta data pemberi kerja utama berasal dari bukti pemotongan yang memenuhi Pasal 18."
+   },
+   "delta": {
+    "delta_id": "e2-model2-regulasi-1-E04-cand1",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PREMIUMS_TAXABLE",
+      "recorded_on": "2023-12-29",
+      "label": "Taxable social security and insurance premiums paid by the employer",
+      "label_id": "Iuran jaminan sosial dan premi asuransi pemberi kerja yang menjadi penghasilan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "jkk_premium + jkm_premium + health_premium_employer + income('employer_insurance_premiums')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 5 ayat (3) huruf d sampai dengan huruf f",
+        "quote": "d. pembayaran iuran jaminan kecelakaan kerja dan\niuran jaminan kematian kepada badan penyelenggara\njaminan sosial ketenagakerjaan, yang dibayarkan oleh\npemberi kerja;\ne. pembayaran iuran jaminan pemeliharaan kesehatan\nkepada badan penyelenggara jaminan sosial\nkesehatan yang dibayarkan oleh pemberi kerja; dan\nf. pembayaran premi asuransi kesehatan, asuransi\nkecelakaan kerja, asuransi jiwa, asuransi dwiguna,\ndan asuransi beasiswa yang dibayarkan oleh pemberi\nkerja.",
+        "page": 9
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ZAKAT_DEDUCTIBLE",
+      "recorded_on": "2023-12-29",
+      "label": "Deduct eligible zakat and mandatory religious donations paid through the employer",
+      "label_id": "Pengurangan zakat dan sumbangan keagamaan wajib melalui pemberi kerja",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "zakat_deductible",
+      "expression": "zakat_withheld + income('mandatory_religious_donation_via_employer_to_approved_body')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "c. zakat atau sumbangan keagamaan yang sifatnya\nwajib bagi pemeluk agama yang diakui di Indonesia,\nyang dibayarkan melalui pemberi kerja kepada badan\namil zakat, lembaga amil zakat, dan lembaga\nkeagamaan yang dibentuk atau disahkan oleh\npemerintah.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS",
+      "recorded_on": "2023-12-29",
+      "label": "Annual eligible employee pension and old-age contributions",
+      "label_id": "Iuran pensiun dan hari tua pegawai yang dapat dikurangkan setahun",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_pension_contributions",
+      "expression": "sum_periods('employee_pension_contributions')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "quote": "b. iuran terkait program pensiun dan hari tua, yang\nterkait dengan gaji, yang dibayar oleh Pegawai melalui\npemberi kerja kepada:",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Lampiran huruf B Bagian Pertama I.2 angka 5 huruf a",
+        "quote": "a. untuk Pegawai Tetap, yaitu jumlah bruto seluruh penghasilan\nsebagaimana dimaksud dalam Pasal 5 ayat (1) huruf a yang\nditerima atau diperoleh dari pemberi kerja dikurangi dengan biaya\njabatan, iuran terkait program pensiun dan hari tua, dan zakat\natau sumbangan keagamaan yang bersifat wajib yang dibayarkan\nmelalui pemberi kerja kepada badan amil zakat, lembaga amil\nzakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh\npemerintah, dalam Tahun Pajak bersangkutan;",
+        "page": 29
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_NET",
+      "recorded_on": "2023-12-29",
+      "label": "Annual net income after permitted deductions",
+      "label_id": "Penghasilan neto setahun setelah pengurangan yang diperbolehkan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_net",
+      "expression": "annual_gross - annual_deductions",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (5)",
+        "quote": "(5) Penghasilan neto sebagaimana dimaksud pada ayat (3)\nmerupakan seluruh jumlah penghasilan bruto\nsebagaimana dimaksud pada ayat (2) dalam 1 (satu) Tahun\nPajak atau bagian Tahun Pajak dikurangi dengan\npengurangan yang diperbolehkan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_STATUS",
+      "recorded_on": "2023-12-29",
+      "label": "Effective PTKP status, including married women and new residents",
+      "label_id": "Status PTKP efektif termasuk karyawati kawin dan pegawai baru menetap",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "ptkp_status_effective",
+      "expression": "'TK/1' if (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input) == 'TK/1' else 'TK/2' if (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input) == 'TK/2' else 'TK/3' if (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input) == 'TK/3' else 'TK/0' if employee('gender') == 'female' and employee('husband_no_income_certificate') != True else 'K/0' if (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input) == 'K/0' else 'K/1' if (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input) == 'K/1' else 'K/2' if (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input) == 'K/2' else 'K/3' if (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input) == 'K/3' else 'TK/0'",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (2)",
+        "quote": "(2) Penghasilan Tidak Kena Pajak bagi karyawati berlaku\nketentuan sebagai berikut:\na. bagi karyawati kawin, sebesar Penghasilan Tidak\nKena Pajak untuk dirinya sendiri; atau\nb. bagi karyawati tidak kawin, sebesar Penghasilan\nTidak Kena Pajak untuk dirinya sendiri ditambah\nPenghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam\ngaris keturunan lurus serta anak angkat yang\nmenjadi tanggungan sepenuhnya.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (3)",
+        "quote": "(3) Dalam hal karyawati kawin dapat menunjukkan\nketerangan tertulis dari pemerintah daerah setempat\nserendah-rendahnya kecamatan yang menyatakan bahwa\nsuaminya tidak menerima atau memperoleh penghasilan,\nbesarnya Penghasilan Tidak Kena Pajak merupakan\nPenghasilan Tidak Kena Pajak untuk dirinya sendiri\nditambah Penghasilan Tidak Kena Pajak untuk status\nkawin dan Penghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam garis\nketurunan lurus serta anak angkat yang menjadi\ntanggungan sepenuhnya.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (4) dan ayat (5)",
+        "quote": "(4) Penghasilan Tidak Kena Pajak sebagaimana dimaksud\npada ayat ( 1) ditentukan berdasarkan keadaan pada awal\ntahun kalender.\n(5) Dikecualikan dari ketentuan sebagaimana dimaksud pada\nayat (4), besarnya Penghasilan Tidak Kena Pajak untuk\nPegawai yang baru datang dan menetap di Indonesia\ndalam bagian tahun kalender ditentukan berdasarkan\nkeadaan pada awal bulan dari bagian tahun kalender yang\nbersangkutan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PUBLIC_COMBINED_NET",
+      "recorded_on": "2023-12-29",
+      "label": "Combine certified net income at the secondary government employer",
+      "label_id": "Penggabungan penghasilan neto pada pemberi kerja pemerintah selain pembayar gaji pokok",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_net",
+      "condition": "employer('is_government') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_employment_pph21_government_borne') == True and employee('primary_employer_certificate_issued') == True and employee('primary_employer_certificate_submitted') == True and employee('employer_list_and_aggregation_statement') == True",
+      "expression": "annual_gross - annual_deductions + employee('primary_employer_net_income')",
+      "overrides": [
+       "REG.PMK168.ANNUAL_NET"
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "quote": "(4) Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "quote": "(5) Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PUBLIC_COMBINED_WITHHELD",
+      "recorded_on": "2023-12-29",
+      "label": "Include certified primary-employer withholding in government reconciliation",
+      "label_id": "Perhitungan pemotongan pemberi kerja pembayar gaji pokok dalam rekonsiliasi pemerintah",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "withheld_before_final",
+      "condition": "employer('is_government') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_employment_pph21_government_borne') == True and employee('primary_employer_certificate_issued') == True and employee('primary_employer_certificate_submitted') == True and employee('employer_list_and_aggregation_statement') == True",
+      "expression": "sum_periods_before_final('pph21_due') + employee('primary_employer_pph21')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "quote": "(4) Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "quote": "(5) Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.REFUND_TO_EMPLOYEE",
+      "recorded_on": "2023-12-29",
+      "label": "Refund excess withholding excluding government-borne tax",
+      "label_id": "Pengembalian kelebihan pemotongan selain pajak yang ditanggung pemerintah",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "expression": "0 if employee('all_employment_pph21_government_borne') == True else max(0, withheld_before_final - annual_pph21 - sum_periods_before_final('pph21_dtp'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "quote": "(1) Dalam hal jumlah Pajak Penghasilan Pasal 21 yang telah\ndipotong pada Masa Pajak selain Masa Pajak Terakhir\ndalam Tahun Pajak yang bersangkutan lebih besar\ndaripada Pajak Penghasilan Pasal 21 yang terutang selama\n1 (satu) Tahun Pajak atau bagian Tahun Pajak, kelebihan\nPajak Penghasilan Pasal 21 yang telah dipotong tersebut\nwajib dikenibalikan oleh Pemotong Pajak kepada Pegawai\nTetap dan Pensiunan yang bersangkutan beserta dengan\npemberian bukti pemotongan Pajak Penghasilan Pasal 21,\npaling lambat akhir bulan berikutnya setelah Masa Pajak\nTerakhir.",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (2)",
+        "quote": "(2) Tidak termasuk kelebihan Pajak Penghasilan Pasal 21\nyang dikembalikan sebagaimana dimaksud pada ayat (1)\nyaitu Pajak Penghasilan Pasal 21 yang ditanggung\npemerintah.",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Status PTKP yang tidak dikenal, termasuk OTHER dan K/, dinormalisasi ke TK/0 sebagai konvensi input agar lookup PTKP dan kategori TER hanya menerima kode yang tersedia; status bulan kedatangan hanya diisi bagi pegawai baru menetap. Aturan identik tidak diulang dan tidak ada ID yang bersumber langsung pada ketentuan yang dicabut dalam daftar KB; input pengurang dan premi diasumsikan memenuhi kualifikasi hukum, serta data pemberi kerja utama berasal dari bukti pemotongan yang memenuhi Pasal 18."
+   },
+   "initial_delta": {
+    "delta_id": "e2-model2-regulasi-1-E04-cand1",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PREMIUMS_TAXABLE",
+      "recorded_on": "2023-12-29",
+      "label": "Taxable social security and insurance premiums paid by the employer",
+      "label_id": "Iuran jaminan sosial dan premi asuransi pemberi kerja yang menjadi penghasilan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "jkk_premium + jkm_premium + health_premium_employer + income('employer_insurance_premiums')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 5 ayat (3) huruf d sampai dengan huruf f",
+        "quote": "d. pembayaran iuran jaminan kecelakaan kerja dan\niuran jaminan kematian kepada badan penyelenggara\njaminan sosial ketenagakerjaan, yang dibayarkan oleh\npemberi kerja;\ne. pembayaran iuran jaminan pemeliharaan kesehatan\nkepada badan penyelenggara jaminan sosial\nkesehatan yang dibayarkan oleh pemberi kerja; dan\nf. pembayaran premi asuransi kesehatan, asuransi\nkecelakaan kerja, asuransi jiwa, asuransi dwiguna,\ndan asuransi beasiswa yang dibayarkan oleh pemberi\nkerja.",
+        "page": 9
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ZAKAT_DEDUCTIBLE",
+      "recorded_on": "2023-12-29",
+      "label": "Deduct eligible zakat and mandatory religious donations paid through the employer",
+      "label_id": "Pengurangan zakat dan sumbangan keagamaan wajib melalui pemberi kerja",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "zakat_deductible",
+      "expression": "zakat_withheld + income('mandatory_religious_donation_via_employer_to_approved_body')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "c. zakat atau sumbangan keagamaan yang sifatnya\nwajib bagi pemeluk agama yang diakui di Indonesia,\nyang dibayarkan melalui pemberi kerja kepada badan\namil zakat, lembaga amil zakat, dan lembaga\nkeagamaan yang dibentuk atau disahkan oleh\npemerintah.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS",
+      "recorded_on": "2023-12-29",
+      "label": "Annual eligible employee pension and old-age contributions",
+      "label_id": "Iuran pensiun dan hari tua pegawai yang dapat dikurangkan setahun",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_pension_contributions",
+      "expression": "sum_periods('employee_pension_contributions')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "quote": "b. iuran terkait program pensiun dan hari tua, yang\nterkait dengan gaji, yang dibayar oleh Pegawai melalui\npemberi kerja kepada:",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Lampiran huruf B Bagian Pertama I.2 angka 5 huruf a",
+        "quote": "a. untuk Pegawai Tetap, yaitu jumlah bruto seluruh penghasilan\nsebagaimana dimaksud dalam Pasal 5 ayat (1) huruf a yang\nditerima atau diperoleh dari pemberi kerja dikurangi dengan biaya\njabatan, iuran terkait program pensiun dan hari tua, dan zakat\natau sumbangan keagamaan yang bersifat wajib yang dibayarkan\nmelalui pemberi kerja kepada badan amil zakat, lembaga amil\nzakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh\npemerintah, dalam Tahun Pajak bersangkutan;",
+        "page": 29
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_NET",
+      "recorded_on": "2023-12-29",
+      "label": "Annual net income after permitted deductions",
+      "label_id": "Penghasilan neto setahun setelah pengurangan yang diperbolehkan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_net",
+      "expression": "annual_gross - annual_deductions",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (5)",
+        "quote": "(5) Penghasilan neto sebagaimana dimaksud pada ayat (3)\nmerupakan seluruh jumlah penghasilan bruto\nsebagaimana dimaksud pada ayat (2) dalam 1 (satu) Tahun\nPajak atau bagian Tahun Pajak dikurangi dengan\npengurangan yang diperbolehkan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_STATUS",
+      "recorded_on": "2023-12-29",
+      "label": "Effective PTKP status, including married women and new residents",
+      "label_id": "Status PTKP efektif termasuk karyawati kawin dan pegawai baru menetap",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "ptkp_status_effective",
+      "expression": "'TK/0' if employee('gender') == 'female' and startswith(employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input, 'K/') and employee('husband_no_income_certificate') != True else (employee('ptkp_status_at_start_of_resident_month') if employee('ptkp_status_at_start_of_resident_month') != None else ptkp_status_input)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (2)",
+        "quote": "(2) Penghasilan Tidak Kena Pajak bagi karyawati berlaku\nketentuan sebagai berikut:\na. bagi karyawati kawin, sebesar Penghasilan Tidak\nKena Pajak untuk dirinya sendiri; atau\nb. bagi karyawati tidak kawin, sebesar Penghasilan\nTidak Kena Pajak untuk dirinya sendiri ditambah\nPenghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam\ngaris keturunan lurus serta anak angkat yang\nmenjadi tanggungan sepenuhnya.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (3)",
+        "quote": "(3) Dalam hal karyawati kawin dapat menunjukkan\nketerangan tertulis dari pemerintah daerah setempat\nserendah-rendahnya kecamatan yang menyatakan bahwa\nsuaminya tidak menerima atau memperoleh penghasilan,\nbesarnya Penghasilan Tidak Kena Pajak merupakan\nPenghasilan Tidak Kena Pajak untuk dirinya sendiri\nditambah Penghasilan Tidak Kena Pajak untuk status\nkawin dan Penghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam garis\nketurunan lurus serta anak angkat yang menjadi\ntanggungan sepenuhnya.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (4) dan ayat (5)",
+        "quote": "(4) Penghasilan Tidak Kena Pajak sebagaimana dimaksud\npada ayat ( 1) ditentukan berdasarkan keadaan pada awal\ntahun kalender.\n(5) Dikecualikan dari ketentuan sebagaimana dimaksud pada\nayat (4), besarnya Penghasilan Tidak Kena Pajak untuk\nPegawai yang baru datang dan menetap di Indonesia\ndalam bagian tahun kalender ditentukan berdasarkan\nkeadaan pada awal bulan dari bagian tahun kalender yang\nbersangkutan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PUBLIC_COMBINED_NET",
+      "recorded_on": "2023-12-29",
+      "label": "Combine certified net income at the secondary government employer",
+      "label_id": "Penggabungan penghasilan neto pada pemberi kerja pemerintah selain pembayar gaji pokok",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_net",
+      "condition": "employer('is_government') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_employment_pph21_government_borne') == True and employee('primary_employer_certificate_issued') == True and employee('primary_employer_certificate_submitted') == True and employee('employer_list_and_aggregation_statement') == True",
+      "expression": "annual_gross - annual_deductions + employee('primary_employer_net_income')",
+      "overrides": [
+       "REG.PMK168.ANNUAL_NET"
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "quote": "(4) Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "quote": "(5) Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PUBLIC_COMBINED_WITHHELD",
+      "recorded_on": "2023-12-29",
+      "label": "Include certified primary-employer withholding in government reconciliation",
+      "label_id": "Perhitungan pemotongan pemberi kerja pembayar gaji pokok dalam rekonsiliasi pemerintah",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "withheld_before_final",
+      "condition": "employer('is_government') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_employment_pph21_government_borne') == True and employee('primary_employer_certificate_issued') == True and employee('primary_employer_certificate_submitted') == True and employee('employer_list_and_aggregation_statement') == True",
+      "expression": "sum_periods_before_final('pph21_due') + employee('primary_employer_pph21')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "quote": "(4) Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "quote": "(5) Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.REFUND_TO_EMPLOYEE",
+      "recorded_on": "2023-12-29",
+      "label": "Refund excess withholding excluding government-borne tax",
+      "label_id": "Pengembalian kelebihan pemotongan selain pajak yang ditanggung pemerintah",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "expression": "0 if employee('all_employment_pph21_government_borne') == True else max(0, withheld_before_final - annual_pph21 - sum_periods_before_final('pph21_dtp'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "quote": "(1) Dalam hal jumlah Pajak Penghasilan Pasal 21 yang telah\ndipotong pada Masa Pajak selain Masa Pajak Terakhir\ndalam Tahun Pajak yang bersangkutan lebih besar\ndaripada Pajak Penghasilan Pasal 21 yang terutang selama\n1 (satu) Tahun Pajak atau bagian Tahun Pajak, kelebihan\nPajak Penghasilan Pasal 21 yang telah dipotong tersebut\nwajib dikenibalikan oleh Pemotong Pajak kepada Pegawai\nTetap dan Pensiunan yang bersangkutan beserta dengan\npemberian bukti pemotongan Pajak Penghasilan Pasal 21,\npaling lambat akhir bulan berikutnya setelah Masa Pajak\nTerakhir.",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (2)",
+        "quote": "(2) Tidak termasuk kelebihan Pajak Penghasilan Pasal 21\nyang dikembalikan sebagaimana dimaksud pada ayat (1)\nyaitu Pajak Penghasilan Pasal 21 yang ditanggung\npemerintah.",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Aturan TER, biaya jabatan, dan rekonsiliasi yang sudah identik tidak diulang; daftar rekaman yang diberikan tidak memuat ID yang bersumber langsung pada ketentuan yang dicabut Pasal 24. Input iuran, zakat, sumbangan, dan premi diasumsikan memenuhi kualifikasi hukumnya; status PTKP bulan kedatangan hanya diisi untuk pegawai baru menetap, sedangkan data pemberi kerja utama diambil dari bukti pemotongan yang memenuhi Pasal 18."
+   }
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "redundant REG.YEAR.NET, REG.PMK168.ANNUAL_NET annual_net: same condition and expression",
+     "redundant REG.YEAR.PENSION, REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS annual_pension_contributions: same condition and expression"
+    ],
+    "G4": "pass",
+    "G5": "fail: REG.PMK168.PREMIUMS_TAXABLE: no effect on any S^G case (vacuous element); REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS: no effect on any S^G case (vacuous element); REG.PMK168.ANNUAL_NET: no effect on any S^G case (vacuous element); REG.PMK168.REFUND_TO_EMPLOYEE: no effect on any S^G case (vacuous element)"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "redundant REG.YEAR.NET, REG.PMK168.ANNUAL_NET annual_net: same condition and expression",
+     "redundant REG.YEAR.PENSION, REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS annual_pension_contributions: same condition and expression"
+    ],
+    "G4": "fail: SG-000 y2024: engine error on K': EvaluationError(ter_category@year) [REG.TER.CATEGORY]: key 'OTHER' not in lookup table ter_category; SG-003 y2024: engine error on K': EvaluationError(ter_category@year) [REG.TER.CATEGORY]: key 'K/' not in lookup table ter_category; SG-006 y2024: engine error on K': EvaluationError(ter_category@year) [REG.TER.CATEGORY]: key 'OTHER' not in lookup table ter_category; SG-010 y2024: engine error on K': EvaluationError(ter_category@year) [REG.TER.CATEGORY]: key 'OTHE"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PREMIUMS_TAXABLE",
+      "label": "Employer social-security and specified insurance premiums included in income",
+      "label_id": "Iuran jaminan sosial dan premi asuransi tertentu pemberi kerja sebagai penghasilan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employer_premiums_taxable"
+       },
+       {
+        "name": "expression",
+        "value": "jkk_premium + jkm_premium + health_premium_employer + income('employer_specified_insurance_premiums')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 5 ayat (3) huruf d sampai dengan huruf f",
+        "page": 9,
+        "quote": "d. pembayaran iuran jaminan kecelakaan kerja dan\niuran jaminan kematian kepada badan penyelenggara\njaminan sosial ketenagakerjaan, yang dibayarkan oleh\npemberi kerja;\ne. pembayaran iuran jaminan pemeliharaan kesehatan\nkepada badan penyelenggara jaminan sosial\nkesehatan yang dibayarkan oleh pemberi kerja; dan\nf. pembayaran premi asuransi kesehatan, asuransi\nkecelakaan kerja, asuransi jiwa, asuransi dwiguna,\ndan asuransi beasiswa yang dibayarkan oleh pemberi\nkerja."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ZAKAT_DEDUCTIBLE",
+      "label": "Deduct qualifying zakat and compulsory religious contributions paid through the employer",
+      "label_id": "Pengurangan zakat dan sumbangan keagamaan wajib yang memenuhi syarat melalui pemberi kerja",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "zakat_deductible"
+       },
+       {
+        "name": "expression",
+        "value": "(zakat_withheld if employer('zakat_recipient_approved') == True else 0) + (income('mandatory_religious_contributions') if employer('mandatory_religious_contributions_qualified') == True else 0)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "page": 12,
+        "quote": "c. zakat atau sumbangan keagamaan yang sifatnya\nwajib bagi pemeluk agama yang diakui di Indonesia,\nyang dibayarkan melalui pemberi kerja kepada badan\namil zakat, lembaga amil zakat, dan lembaga\nkeagamaan yang dibentuk atau disahkan oleh\npemerintah."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS",
+      "label": "Aggregate deductible employee pension and old-age contributions",
+      "label_id": "Jumlah iuran pensiun dan hari tua pegawai yang dapat dikurangkan setahun",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_pension_contributions"
+       },
+       {
+        "name": "expression",
+        "value": "sum_periods('employee_pension_contributions')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "page": 11,
+        "quote": "b. iuran terkait program pensiun dan hari tua, yang\nterkait dengan gaji, yang dibayar oleh Pegawai melalui\npemberi kerja kepada:\n1. dana pensiun yang pendiriannya telah disahkan\noleh Menteri atau telah mendapatkan izin dari\nOtoritas Jasa Keuangan;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b angka 2 dan angka 3",
+        "page": 12,
+        "quote": "2. badan penyelenggara jamman sosial\nketenagakerjaan; dan\n3. badan penyelenggara tunjangan hari tua yang\npendiriannya sesuai dengan ketentuan\nperaturan perundang-undangan; dan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Lampiran B Bagian Pertama I.2 angka 5 huruf a",
+        "page": 29,
+        "quote": "a. untuk Pegawai Tetap, yaitu jumlah bruto seluruh penghasilan\nsebagaimana dimaksud dalam Pasal 5 ayat (1) huruf a yang\nditerima atau diperoleh dari pemberi kerja dikurangi dengan biaya\njabatan, iuran terkait program pensiun dan hari tua, dan zakat\natau sumbangan keagamaan yang bersifat wajib yang dibayarkan\nmelalui pemberi kerja kepada badan amil zakat, lembaga amil\nzakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh\npemerintah, dalam Tahun Pajak bersangkutan; dan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_NET",
+      "label": "Annual net income after permitted deductions",
+      "label_id": "Penghasilan neto setahun setelah pengurangan yang diperbolehkan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_net"
+       },
+       {
+        "name": "expression",
+        "value": "annual_gross - annual_deductions"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (5)",
+        "page": 11,
+        "quote": "(5) Penghasilan neto sebagaimana dimaksud pada ayat (3)\nmerupakan seluruh jumlah penghasilan bruto\nsebagaimana dimaksud pada ayat (2) dalam 1 (satu) Tahun\nPajak atau bagian Tahun Pajak dikurangi dengan\npengurangan yang diperbolehkan."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_EFFECTIVE",
+      "label": "Validated effective PTKP status, including married women and newly resident employees",
+      "label_id": "Status PTKP sah yang berlaku termasuk bagi karyawati kawin dan pegawai yang baru menetap",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "ptkp_status_effective"
+       },
+       {
+        "name": "expression",
+        "value": "('TK/0' if employee('gender') == 'female' and startswith((employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input), 'K/') and employee('husband_no_income_local_certificate') != True else (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input)) if ((employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'TK/0' or (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'TK/1' or (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'TK/2' or (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'TK/3' or (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'K/0' or (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'K/1' or (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'K/2' or (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'K/3') else 'TK/0'"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (1)",
+        "page": 11,
+        "quote": "(1) Besarnya Penghasilan Tidak Kena Pajak sebagaimana\ndimaksud dalam Pasal 8 ayat (3) diatur dalam Pasal 7 ayat\n(1) dan ayat (3) Undang-Undang Pajak Penghasilan."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (2)",
+        "page": 11,
+        "quote": "(2) Penghasilan Tidak Kena Pajak bagi karyawati berlaku\nketentuan sebagai berikut:\na. bagi karyawati kawin, sebesar Penghasilan Tidak\nKena Pajak untuk dirinya sendiri; atau\nb. bagi karyawati tidak kawin, sebesar Penghasilan\nTidak Kena Pajak untuk dirinya sendiri ditambah\nPenghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam\ngaris keturunan lurus serta anak angkat yang\nmenjadi tanggungan sepenuhnya."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (3)",
+        "page": 11,
+        "quote": "(3) Dalam hal karyawati kawin dapat menunjukkan\nketerangan tertulis dari pemerintah daerah setempat\nserendah-rendahnya kecamatan yang menyatakan bahwa\nsuaminya tidak menerima atau memperoleh penghasilan,\nbesarnya Penghasilan Tidak Kena Pajak merupakan\nPenghasilan Tidak Kena Pajak untuk dirinya sendiri\nditambah Penghasilan Tidak Kena Pajak untuk status\nkawin dan Penghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam garis\nketurunan lurus serta anak angkat yang menjadi\ntanggungan sepenuhnya."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (4) dan ayat (5)",
+        "page": 11,
+        "quote": "(4) Penghasilan Tidak Kena Pajak sebagaimana dimaksud\npada ayat ( 1) ditentukan berdasarkan keadaan pada awal\ntahun kalender.\n(5) Dikecualikan dari ketentuan sebagaimana dimaksud pada\nayat (4), besarnya Penghasilan Tidak Kena Pajak untuk\nPegawai yang baru datang dan menetap di Indonesia\ndalam bagian tahun kalender ditentukan berdasarkan\nkeadaan pada awal bulan dari bagian tahun kalender yang\nbersangkutan."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.REFUND_TO_EMPLOYEE",
+      "label": "Refund over-withholding excluding government-funded excess",
+      "label_id": "Pengembalian kelebihan pemotongan selain bagian yang ditanggung pemerintah",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "refund_to_employee"
+       },
+       {
+        "name": "expression",
+        "value": "(0 if sum_periods_before_final('pph21_dtp') >= withheld_before_final else (withheld_before_final - annual_pph21 if sum_periods_before_final('pph21_dtp') == 0 else max(0, withheld_before_final - annual_pph21 - employee('government_borne_overwithholding')))) if withheld_before_final > annual_pph21 else 0"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "page": 21,
+        "quote": "(1) Dalam hal jumlah Pajak Penghasilan Pasal 21 yang telah\ndipotong pada Masa Pajak selain Masa Pajak Terakhir\ndalam Tahun Pajak yang bersangkutan lebih besar\ndaripada Pajak Penghasilan Pasal 21 yang terutang selama\n1 (satu) Tahun Pajak atau bagian Tahun Pajak, kelebihan\nPajak Penghasilan Pasal 21 yang telah dipotong tersebut\nwajib dikenibalikan oleh Pemotong Pajak kepada Pegawai\nTetap dan Pensiunan yang bersangkutan beserta dengan\npemberian bukti pemotongan Pajak Penghasilan Pasal 21,\npaling lambat akhir bulan berikutnya setelah Masa Pajak\nTerakhir."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (2)",
+        "page": 21,
+        "quote": "(2) Tidak termasuk kelebihan Pajak Penghasilan Pasal 21\nyang dikembalikan sebagaimana dimaksud pada ayat (1)\nyaitu Pajak Penghasilan Pasal 21 yang ditanggung\npemerintah."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "PTKP status is validated before downstream PTKP and TER lookups; malformed or unsupported codes are interpreted as establishing no additional marital or dependent entitlement and fall back to TK/0. Existing TER and annual reconciliation rules are retained; mixed government/private overwithholding requires employee('government_borne_overwithholding') to identify the government-funded portion of the excess."
+   },
+   "delta": {
+    "delta_id": "e2-model2-regulasi-1-E04-cand2",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PREMIUMS_TAXABLE",
+      "recorded_on": "2023-12-29",
+      "label": "Employer social-security and specified insurance premiums included in income",
+      "label_id": "Iuran jaminan sosial dan premi asuransi tertentu pemberi kerja sebagai penghasilan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "jkk_premium + jkm_premium + health_premium_employer + income('employer_specified_insurance_premiums')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 5 ayat (3) huruf d sampai dengan huruf f",
+        "quote": "d. pembayaran iuran jaminan kecelakaan kerja dan\niuran jaminan kematian kepada badan penyelenggara\njaminan sosial ketenagakerjaan, yang dibayarkan oleh\npemberi kerja;\ne. pembayaran iuran jaminan pemeliharaan kesehatan\nkepada badan penyelenggara jaminan sosial\nkesehatan yang dibayarkan oleh pemberi kerja; dan\nf. pembayaran premi asuransi kesehatan, asuransi\nkecelakaan kerja, asuransi jiwa, asuransi dwiguna,\ndan asuransi beasiswa yang dibayarkan oleh pemberi\nkerja.",
+        "page": 9
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ZAKAT_DEDUCTIBLE",
+      "recorded_on": "2023-12-29",
+      "label": "Deduct qualifying zakat and compulsory religious contributions paid through the employer",
+      "label_id": "Pengurangan zakat dan sumbangan keagamaan wajib yang memenuhi syarat melalui pemberi kerja",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "zakat_deductible",
+      "expression": "(zakat_withheld if employer('zakat_recipient_approved') == True else 0) + (income('mandatory_religious_contributions') if employer('mandatory_religious_contributions_qualified') == True else 0)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "c. zakat atau sumbangan keagamaan yang sifatnya\nwajib bagi pemeluk agama yang diakui di Indonesia,\nyang dibayarkan melalui pemberi kerja kepada badan\namil zakat, lembaga amil zakat, dan lembaga\nkeagamaan yang dibentuk atau disahkan oleh\npemerintah.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS",
+      "recorded_on": "2023-12-29",
+      "label": "Aggregate deductible employee pension and old-age contributions",
+      "label_id": "Jumlah iuran pensiun dan hari tua pegawai yang dapat dikurangkan setahun",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_pension_contributions",
+      "expression": "sum_periods('employee_pension_contributions')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "quote": "b. iuran terkait program pensiun dan hari tua, yang\nterkait dengan gaji, yang dibayar oleh Pegawai melalui\npemberi kerja kepada:\n1. dana pensiun yang pendiriannya telah disahkan\noleh Menteri atau telah mendapatkan izin dari\nOtoritas Jasa Keuangan;",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b angka 2 dan angka 3",
+        "quote": "2. badan penyelenggara jamman sosial\nketenagakerjaan; dan\n3. badan penyelenggara tunjangan hari tua yang\npendiriannya sesuai dengan ketentuan\nperaturan perundang-undangan; dan",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Lampiran B Bagian Pertama I.2 angka 5 huruf a",
+        "quote": "a. untuk Pegawai Tetap, yaitu jumlah bruto seluruh penghasilan\nsebagaimana dimaksud dalam Pasal 5 ayat (1) huruf a yang\nditerima atau diperoleh dari pemberi kerja dikurangi dengan biaya\njabatan, iuran terkait program pensiun dan hari tua, dan zakat\natau sumbangan keagamaan yang bersifat wajib yang dibayarkan\nmelalui pemberi kerja kepada badan amil zakat, lembaga amil\nzakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh\npemerintah, dalam Tahun Pajak bersangkutan; dan",
+        "page": 29
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_NET",
+      "recorded_on": "2023-12-29",
+      "label": "Annual net income after permitted deductions",
+      "label_id": "Penghasilan neto setahun setelah pengurangan yang diperbolehkan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_net",
+      "expression": "annual_gross - annual_deductions",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (5)",
+        "quote": "(5) Penghasilan neto sebagaimana dimaksud pada ayat (3)\nmerupakan seluruh jumlah penghasilan bruto\nsebagaimana dimaksud pada ayat (2) dalam 1 (satu) Tahun\nPajak atau bagian Tahun Pajak dikurangi dengan\npengurangan yang diperbolehkan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_EFFECTIVE",
+      "recorded_on": "2023-12-29",
+      "label": "Validated effective PTKP status, including married women and newly resident employees",
+      "label_id": "Status PTKP sah yang berlaku termasuk bagi karyawati kawin dan pegawai yang baru menetap",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "ptkp_status_effective",
+      "expression": "('TK/0' if employee('gender') == 'female' and startswith((employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input), 'K/') and employee('husband_no_income_local_certificate') != True else (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input)) if ((employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'TK/0' or (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'TK/1' or (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'TK/2' or (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'TK/3' or (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'K/0' or (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'K/1' or (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'K/2' or (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input) == 'K/3') else 'TK/0'",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (1)",
+        "quote": "(1) Besarnya Penghasilan Tidak Kena Pajak sebagaimana\ndimaksud dalam Pasal 8 ayat (3) diatur dalam Pasal 7 ayat\n(1) dan ayat (3) Undang-Undang Pajak Penghasilan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (2)",
+        "quote": "(2) Penghasilan Tidak Kena Pajak bagi karyawati berlaku\nketentuan sebagai berikut:\na. bagi karyawati kawin, sebesar Penghasilan Tidak\nKena Pajak untuk dirinya sendiri; atau\nb. bagi karyawati tidak kawin, sebesar Penghasilan\nTidak Kena Pajak untuk dirinya sendiri ditambah\nPenghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam\ngaris keturunan lurus serta anak angkat yang\nmenjadi tanggungan sepenuhnya.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (3)",
+        "quote": "(3) Dalam hal karyawati kawin dapat menunjukkan\nketerangan tertulis dari pemerintah daerah setempat\nserendah-rendahnya kecamatan yang menyatakan bahwa\nsuaminya tidak menerima atau memperoleh penghasilan,\nbesarnya Penghasilan Tidak Kena Pajak merupakan\nPenghasilan Tidak Kena Pajak untuk dirinya sendiri\nditambah Penghasilan Tidak Kena Pajak untuk status\nkawin dan Penghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam garis\nketurunan lurus serta anak angkat yang menjadi\ntanggungan sepenuhnya.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (4) dan ayat (5)",
+        "quote": "(4) Penghasilan Tidak Kena Pajak sebagaimana dimaksud\npada ayat ( 1) ditentukan berdasarkan keadaan pada awal\ntahun kalender.\n(5) Dikecualikan dari ketentuan sebagaimana dimaksud pada\nayat (4), besarnya Penghasilan Tidak Kena Pajak untuk\nPegawai yang baru datang dan menetap di Indonesia\ndalam bagian tahun kalender ditentukan berdasarkan\nkeadaan pada awal bulan dari bagian tahun kalender yang\nbersangkutan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.REFUND_TO_EMPLOYEE",
+      "recorded_on": "2023-12-29",
+      "label": "Refund over-withholding excluding government-funded excess",
+      "label_id": "Pengembalian kelebihan pemotongan selain bagian yang ditanggung pemerintah",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "expression": "(0 if sum_periods_before_final('pph21_dtp') >= withheld_before_final else (withheld_before_final - annual_pph21 if sum_periods_before_final('pph21_dtp') == 0 else max(0, withheld_before_final - annual_pph21 - employee('government_borne_overwithholding')))) if withheld_before_final > annual_pph21 else 0",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "quote": "(1) Dalam hal jumlah Pajak Penghasilan Pasal 21 yang telah\ndipotong pada Masa Pajak selain Masa Pajak Terakhir\ndalam Tahun Pajak yang bersangkutan lebih besar\ndaripada Pajak Penghasilan Pasal 21 yang terutang selama\n1 (satu) Tahun Pajak atau bagian Tahun Pajak, kelebihan\nPajak Penghasilan Pasal 21 yang telah dipotong tersebut\nwajib dikenibalikan oleh Pemotong Pajak kepada Pegawai\nTetap dan Pensiunan yang bersangkutan beserta dengan\npemberian bukti pemotongan Pajak Penghasilan Pasal 21,\npaling lambat akhir bulan berikutnya setelah Masa Pajak\nTerakhir.",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (2)",
+        "quote": "(2) Tidak termasuk kelebihan Pajak Penghasilan Pasal 21\nyang dikembalikan sebagaimana dimaksud pada ayat (1)\nyaitu Pajak Penghasilan Pasal 21 yang ditanggung\npemerintah.",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "PTKP status is validated before downstream PTKP and TER lookups; malformed or unsupported codes are interpreted as establishing no additional marital or dependent entitlement and fall back to TK/0. Existing TER and annual reconciliation rules are retained; mixed government/private overwithholding requires employee('government_borne_overwithholding') to identify the government-funded portion of the excess."
+   },
+   "initial_delta": {
+    "delta_id": "e2-model2-regulasi-1-E04-cand2",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PREMIUMS_TAXABLE",
+      "recorded_on": "2023-12-29",
+      "label": "Employer social-security and specified insurance premiums included in income",
+      "label_id": "Iuran jaminan sosial dan premi asuransi tertentu pemberi kerja sebagai penghasilan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "jkk_premium + jkm_premium + health_premium_employer + income('employer_specified_insurance_premiums')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 5 ayat (3) huruf d sampai dengan huruf f",
+        "quote": "d. pembayaran iuran jaminan kecelakaan kerja dan\niuran jaminan kematian kepada badan penyelenggara\njaminan sosial ketenagakerjaan, yang dibayarkan oleh\npemberi kerja;\ne. pembayaran iuran jaminan pemeliharaan kesehatan\nkepada badan penyelenggara jaminan sosial\nkesehatan yang dibayarkan oleh pemberi kerja; dan\nf. pembayaran premi asuransi kesehatan, asuransi\nkecelakaan kerja, asuransi jiwa, asuransi dwiguna,\ndan asuransi beasiswa yang dibayarkan oleh pemberi\nkerja.",
+        "page": 9
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ZAKAT_DEDUCTIBLE",
+      "recorded_on": "2023-12-29",
+      "label": "Deduct qualifying zakat and compulsory religious contributions paid through the employer",
+      "label_id": "Pengurangan zakat dan sumbangan keagamaan wajib yang memenuhi syarat melalui pemberi kerja",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "zakat_deductible",
+      "expression": "(zakat_withheld if employer('zakat_recipient_approved') == True else 0) + (income('mandatory_religious_contributions') if employer('mandatory_religious_contributions_qualified') == True else 0)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "c. zakat atau sumbangan keagamaan yang sifatnya\nwajib bagi pemeluk agama yang diakui di Indonesia,\nyang dibayarkan melalui pemberi kerja kepada badan\namil zakat, lembaga amil zakat, dan lembaga\nkeagamaan yang dibentuk atau disahkan oleh\npemerintah.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS",
+      "recorded_on": "2023-12-29",
+      "label": "Aggregate deductible employee pension and old-age contributions",
+      "label_id": "Jumlah iuran pensiun dan hari tua pegawai yang dapat dikurangkan setahun",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_pension_contributions",
+      "expression": "sum_periods('employee_pension_contributions')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "quote": "b. iuran terkait program pensiun dan hari tua, yang\nterkait dengan gaji, yang dibayar oleh Pegawai melalui\npemberi kerja kepada:\n1. dana pensiun yang pendiriannya telah disahkan\noleh Menteri atau telah mendapatkan izin dari\nOtoritas Jasa Keuangan;",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b angka 2 dan angka 3",
+        "quote": "2. badan penyelenggara jamman sosial\nketenagakerjaan; dan\n3. badan penyelenggara tunjangan hari tua yang\npendiriannya sesuai dengan ketentuan\nperaturan perundang-undangan; dan",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Lampiran B Bagian Pertama I.2 angka 5 huruf a",
+        "quote": "a. untuk Pegawai Tetap, yaitu jumlah bruto seluruh penghasilan\nsebagaimana dimaksud dalam Pasal 5 ayat (1) huruf a yang\nditerima atau diperoleh dari pemberi kerja dikurangi dengan biaya\njabatan, iuran terkait program pensiun dan hari tua, dan zakat\natau sumbangan keagamaan yang bersifat wajib yang dibayarkan\nmelalui pemberi kerja kepada badan amil zakat, lembaga amil\nzakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh\npemerintah, dalam Tahun Pajak bersangkutan; dan",
+        "page": 29
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_NET",
+      "recorded_on": "2023-12-29",
+      "label": "Annual net income after permitted deductions",
+      "label_id": "Penghasilan neto setahun setelah pengurangan yang diperbolehkan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_net",
+      "expression": "annual_gross - annual_deductions",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (5)",
+        "quote": "(5) Penghasilan neto sebagaimana dimaksud pada ayat (3)\nmerupakan seluruh jumlah penghasilan bruto\nsebagaimana dimaksud pada ayat (2) dalam 1 (satu) Tahun\nPajak atau bagian Tahun Pajak dikurangi dengan\npengurangan yang diperbolehkan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_EFFECTIVE",
+      "recorded_on": "2023-12-29",
+      "label": "Effective PTKP status, including married women and newly resident employees",
+      "label_id": "Status PTKP yang berlaku termasuk bagi karyawati kawin dan pegawai yang baru menetap",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "ptkp_status_effective",
+      "expression": "'TK/0' if employee('gender') == 'female' and startswith((employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input), 'K/') and employee('husband_no_income_local_certificate') != True else (employee('ptkp_status_at_subjective_start') if employee('newly_resident_in_indonesia') == True else ptkp_status_input)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (2)",
+        "quote": "(2) Penghasilan Tidak Kena Pajak bagi karyawati berlaku\nketentuan sebagai berikut:\na. bagi karyawati kawin, sebesar Penghasilan Tidak\nKena Pajak untuk dirinya sendiri; atau\nb. bagi karyawati tidak kawin, sebesar Penghasilan\nTidak Kena Pajak untuk dirinya sendiri ditambah\nPenghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam\ngaris keturunan lurus serta anak angkat yang\nmenjadi tanggungan sepenuhnya.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (3)",
+        "quote": "(3) Dalam hal karyawati kawin dapat menunjukkan\nketerangan tertulis dari pemerintah daerah setempat\nserendah-rendahnya kecamatan yang menyatakan bahwa\nsuaminya tidak menerima atau memperoleh penghasilan,\nbesarnya Penghasilan Tidak Kena Pajak merupakan\nPenghasilan Tidak Kena Pajak untuk dirinya sendiri\nditambah Penghasilan Tidak Kena Pajak untuk status\nkawin dan Penghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam garis\nketurunan lurus serta anak angkat yang menjadi\ntanggungan sepenuhnya.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (4) dan ayat (5)",
+        "quote": "(4) Penghasilan Tidak Kena Pajak sebagaimana dimaksud\npada ayat ( 1) ditentukan berdasarkan keadaan pada awal\ntahun kalender.\n(5) Dikecualikan dari ketentuan sebagaimana dimaksud pada\nayat (4), besarnya Penghasilan Tidak Kena Pajak untuk\nPegawai yang baru datang dan menetap di Indonesia\ndalam bagian tahun kalender ditentukan berdasarkan\nkeadaan pada awal bulan dari bagian tahun kalender yang\nbersangkutan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.REFUND_TO_EMPLOYEE",
+      "recorded_on": "2023-12-29",
+      "label": "Refund over-withholding excluding government-funded excess",
+      "label_id": "Pengembalian kelebihan pemotongan selain bagian yang ditanggung pemerintah",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "expression": "(0 if sum_periods_before_final('pph21_dtp') >= withheld_before_final else (withheld_before_final - annual_pph21 if sum_periods_before_final('pph21_dtp') == 0 else max(0, withheld_before_final - annual_pph21 - employee('government_borne_overwithholding')))) if withheld_before_final > annual_pph21 else 0",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "quote": "(1) Dalam hal jumlah Pajak Penghasilan Pasal 21 yang telah\ndipotong pada Masa Pajak selain Masa Pajak Terakhir\ndalam Tahun Pajak yang bersangkutan lebih besar\ndaripada Pajak Penghasilan Pasal 21 yang terutang selama\n1 (satu) Tahun Pajak atau bagian Tahun Pajak, kelebihan\nPajak Penghasilan Pasal 21 yang telah dipotong tersebut\nwajib dikenibalikan oleh Pemotong Pajak kepada Pegawai\nTetap dan Pensiunan yang bersangkutan beserta dengan\npemberian bukti pemotongan Pajak Penghasilan Pasal 21,\npaling lambat akhir bulan berikutnya setelah Masa Pajak\nTerakhir.",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (2)",
+        "quote": "(2) Tidak termasuk kelebihan Pajak Penghasilan Pasal 21\nyang dikembalikan sebagaimana dimaksud pada ayat (1)\nyaitu Pajak Penghasilan Pasal 21 yang ditanggung\npemerintah.",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Existing TER, expense parameters, and annual reconciliation/annualisation rules are retained; no supplied record is directly sourced to a provision expressly revoked by Pasal 24. Input aggregates and qualification flags must reflect the specified insurance, pension, religious-recipient and local-certificate requirements; mixed government/private overwithholding requires employee('government_borne_overwithholding') to identify the government-funded part of the excess rather than infer it from total DTP."
+   }
+  },
+  {
+   "n": 3,
+   "order": 1,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "redundant REG.YEAR.NET, REG.PMK168.ANNUAL_NET annual_net: same condition and expression",
+     "redundant REG.YEAR.PENSION, REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS annual_pension_contributions: same condition and expression"
+    ],
+    "G4": "pass",
+    "G5": "fail: REG.PMK168.EMPLOYER_PREMIUMS: no effect on any S^G case (vacuous element); REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS: no effect on any S^G case (vacuous element); REG.PMK168.ANNUAL_NET: no effect on any S^G case (vacuous element); REG.PMK168.REFUND: no effect on any S^G case (vacuous element)"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "redundant REG.PTKP.STATUS, REG.PMK168.PTKP_STATUS ptkp_status_effective: same condition and expression",
+     "redundant REG.YEAR.NET, REG.PMK168.ANNUAL_NET annual_net: same condition and expression",
+     "redundant REG.YEAR.PENSION, REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS annual_pension_contributions: same condition and expression"
+    ],
+    "G4": "fail: SG-002 y2025: engine error on K': EvaluationError(ter_category@year) [REG.TER.CATEGORY]: key 'OTHER' not in lookup table ter_category; SG-004 y2024: engine error on K': EvaluationError(ter_category@year) [REG.TER.CATEGORY]: key 'K/' not in lookup table ter_category; SG-005 y2024: engine error on K': EvaluationError(ter_category@year) [REG.TER.CATEGORY]: key 'K/' not in lookup table ter_category; SG-006 y2024: engine error on K': EvaluationError(ter_category@year) [REG.TER.CATEGORY]: key 'OTHER' "
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.EMPLOYER_PREMIUMS",
+      "label": "Employer-paid social security and insurance premiums included in income",
+      "label_id": "Iuran jaminan sosial dan premi asuransi pemberi kerja yang termasuk penghasilan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employer_premiums_taxable"
+       },
+       {
+        "name": "expression",
+        "value": "jkk_premium + jkm_premium + health_premium_employer + income('employer_insurance_premiums')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 5 ayat (3) huruf d sampai dengan huruf f",
+        "page": 9,
+        "quote": "d. pembayaran iuran jaminan kecelakaan kerja dan\niuran jaminan kematian kepada badan penyelenggara\njaminan sosial ketenagakerjaan, yang dibayarkan oleh\npemberi kerja;\ne. pembayaran iuran jaminan pemeliharaan kesehatan\nkepada badan penyelenggara jaminan sosial\nkesehatan yang dibayarkan oleh pemberi kerja; dan\nf. pembayaran premi asuransi kesehatan, asuransi\nkecelakaan kerja, asuransi jiwa, asuransi dwiguna,\ndan asuransi beasiswa yang dibayarkan oleh pemberi\nkerja."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ZAKAT_DEDUCTIBLE",
+      "label": "Deduct qualifying compulsory religious payments made through the employer",
+      "label_id": "Pengurangan zakat atau sumbangan keagamaan wajib melalui pemberi kerja",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "zakat_deductible"
+       },
+       {
+        "name": "expression",
+        "value": "zakat_withheld"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "page": 12,
+        "quote": "c. zakat atau sumbangan keagamaan yang sifatnya\nwajib bagi pemeluk agama yang diakui di Indonesia,\nyang dibayarkan melalui pemberi kerja kepada badan\namil zakat, lembaga amil zakat, dan lembaga\nkeagamaan yang dibentuk atau disahkan oleh\npemerintah."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS",
+      "label": "Aggregate qualifying employee pension and old-age contributions",
+      "label_id": "Jumlah iuran pensiun dan hari tua pegawai yang dapat dikurangkan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_pension_contributions"
+       },
+       {
+        "name": "expression",
+        "value": "sum_periods('employee_pension_contributions')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "page": 11,
+        "quote": "b. iuran terkait program pensiun dan hari tua, yang\nterkait dengan gaji, yang dibayar oleh Pegawai melalui\npemberi kerja kepada:\n1. dana pensiun yang pendiriannya telah disahkan\noleh Menteri atau telah mendapatkan izin dari\nOtoritas Jasa Keuangan;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b angka 2 dan angka 3",
+        "page": 12,
+        "quote": "2. badan penyelenggara jamman sosial\nketenagakerjaan; dan\n3. badan penyelenggara tunjangan hari tua yang\npendiriannya sesuai dengan ketentuan\nperaturan perundang-undangan; dan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Lampiran huruf B Bagian Pertama I.2 angka 5 huruf a",
+        "page": 29,
+        "quote": "untuk Pegawai Tetap, yaitu jumlah bruto seluruh penghasilan\nsebagaimana dimaksud dalam Pasal 5 ayat (1) huruf a yang\nditerima atau diperoleh dari pemberi kerja dikurangi dengan biaya\njabatan, iuran terkait program pensiun dan hari tua, dan zakat\natau sumbangan keagamaan yang bersifat wajib yang dibayarkan\nmelalui pemberi kerja kepada badan amil zakat, lembaga amil\nzakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh\npemerintah, dalam Tahun Pajak bersangkutan;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_NET",
+      "label": "Annual net income after allowable deductions",
+      "label_id": "Penghasilan neto setahun setelah pengurangan yang diperbolehkan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_net"
+       },
+       {
+        "name": "expression",
+        "value": "annual_gross - annual_deductions"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (5)",
+        "page": 11,
+        "quote": "Penghasilan neto sebagaimana dimaksud pada ayat (3)\nmerupakan seluruh jumlah penghasilan bruto\nsebagaimana dimaksud pada ayat (2) dalam 1 (satu) Tahun\nPajak atau bagian Tahun Pajak dikurangi dengan\npengurangan yang diperbolehkan."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_STATUS",
+      "label": "Beginning-of-year PTKP status using canonical lookup keys",
+      "label_id": "Status PTKP awal tahun dengan kode baku tabel",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "ptkp_status_effective"
+       },
+       {
+        "name": "expression",
+        "value": "ptkp_status_input if (ptkp_status_input == 'TK/0' or ptkp_status_input == 'TK/1' or ptkp_status_input == 'TK/2' or ptkp_status_input == 'TK/3' or ptkp_status_input == 'K/0' or ptkp_status_input == 'K/1' or ptkp_status_input == 'K/2' or ptkp_status_input == 'K/3') else ('K/0' if ptkp_status_input != None and startswith(ptkp_status_input, 'K/') else 'TK/0')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (1)",
+        "page": 11,
+        "quote": "Besarnya Penghasilan Tidak Kena Pajak sebagaimana\ndimaksud dalam Pasal 8 ayat (3) diatur dalam Pasal 7 ayat\n(1) dan ayat (3) Undang-Undang Pajak Penghasilan."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (4)",
+        "page": 11,
+        "quote": "Penghasilan Tidak Kena Pajak sebagaimana dimaksud\npada ayat ( 1) ditentukan berdasarkan keadaan pada awal\ntahun kalender."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_MARRIED_WOMAN",
+      "label": "Married female employee receives personal PTKP unless the husband's lack of income is certified",
+      "label_id": "PTKP karyawati kawin tanpa surat keterangan suami tidak berpenghasilan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "ptkp_status_effective"
+       },
+       {
+        "name": "condition",
+        "value": "employee('gender') == 'female' and ptkp_status_input != None and startswith(ptkp_status_input, 'K/') and employee('husband_no_income_certificate') != True"
+       },
+       {
+        "name": "expression",
+        "value": "'TK/0'"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.PMK168.PTKP_STATUS"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (2) huruf a",
+        "page": 11,
+        "quote": "bagi karyawati kawin, sebesar Penghasilan Tidak\nKena Pajak untuk dirinya sendiri; atau"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (3)",
+        "page": 11,
+        "quote": "Dalam hal karyawati kawin dapat menunjukkan\nketerangan tertulis dari pemerintah daerah setempat\nserendah-rendahnya kecamatan yang menyatakan bahwa\nsuaminya tidak menerima atau memperoleh penghasilan,\nbesarnya Penghasilan Tidak Kena Pajak merupakan\nPenghasilan Tidak Kena Pajak untuk dirinya sendiri\nditambah Penghasilan Tidak Kena Pajak untuk status\nkawin dan Penghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam garis\nketurunan lurus serta anak angkat yang menjadi\ntanggungan sepenuhnya."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_NEW_RESIDENT",
+      "label": "Arrival-month PTKP for an employee newly settling in Indonesia",
+      "label_id": "PTKP awal bulan kedatangan pegawai yang baru menetap di Indonesia",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "ptkp_status_effective"
+       },
+       {
+        "name": "condition",
+        "value": "employee('new_resident_in_tax_year') == True and employee('ptkp_status_at_start_of_arrival_month') != None"
+       },
+       {
+        "name": "expression",
+        "value": "'TK/0' if employee('gender') == 'female' and startswith(employee('ptkp_status_at_start_of_arrival_month'), 'K/') and employee('husband_no_income_certificate') != True else (employee('ptkp_status_at_start_of_arrival_month') if (employee('ptkp_status_at_start_of_arrival_month') == 'TK/0' or employee('ptkp_status_at_start_of_arrival_month') == 'TK/1' or employee('ptkp_status_at_start_of_arrival_month') == 'TK/2' or employee('ptkp_status_at_start_of_arrival_month') == 'TK/3' or employee('ptkp_status_at_start_of_arrival_month') == 'K/0' or employee('ptkp_status_at_start_of_arrival_month') == 'K/1' or employee('ptkp_status_at_start_of_arrival_month') == 'K/2' or employee('ptkp_status_at_start_of_arrival_month') == 'K/3') else ('K/0' if startswith(employee('ptkp_status_at_start_of_arrival_month'), 'K/') else 'TK/0'))"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.PMK168.PTKP_STATUS,REG.PMK168.PTKP_MARRIED_WOMAN"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (5)",
+        "page": 11,
+        "quote": "Dikecualikan dari ketentuan sebagaimana dimaksud pada\nayat (4), besarnya Penghasilan Tidak Kena Pajak untuk\nPegawai yang baru datang dan menetap di Indonesia\ndalam bagian tahun kalender ditentukan berdasarkan\nkeadaan pada awal bulan dari bagian tahun kalender yang\nbersangkutan."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (2) huruf a",
+        "page": 11,
+        "quote": "bagi karyawati kawin, sebesar Penghasilan Tidak\nKena Pajak untuk dirinya sendiri; atau"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (3)",
+        "page": 11,
+        "quote": "Dalam hal karyawati kawin dapat menunjukkan\nketerangan tertulis dari pemerintah daerah setempat\nserendah-rendahnya kecamatan yang menyatakan bahwa\nsuaminya tidak menerima atau memperoleh penghasilan,\nbesarnya Penghasilan Tidak Kena Pajak merupakan\nPenghasilan Tidak Kena Pajak untuk dirinya sendiri\nditambah Penghasilan Tidak Kena Pajak untuk status\nkawin dan Penghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam garis\nketurunan lurus serta anak angkat yang menjadi\ntanggungan sepenuhnya."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.REFUND",
+      "label": "Refund excess withholding other than government-borne tax",
+      "label_id": "Pengembalian kelebihan pemotongan selain pajak ditanggung pemerintah",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "refund_to_employee"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, withheld_before_final - annual_pph21 - sum_periods_before_final('pph21_dtp'))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "page": 21,
+        "quote": "Dalam hal jumlah Pajak Penghasilan Pasal 21 yang telah\ndipotong pada Masa Pajak selain Masa Pajak Terakhir\ndalam Tahun Pajak yang bersangkutan lebih besar\ndaripada Pajak Penghasilan Pasal 21 yang terutang selama\n1 (satu) Tahun Pajak atau bagian Tahun Pajak, kelebihan\nPajak Penghasilan Pasal 21 yang telah dipotong tersebut\nwajib dikenibalikan oleh Pemotong Pajak kepada Pegawai\nTetap dan Pensiunan yang bersangkutan beserta dengan\npemberian bukti pemotongan Pajak Penghasilan Pasal 21,\npaling lambat akhir bulan berikutnya setelah Masa Pajak\nTerakhir."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (2)",
+        "page": 21,
+        "quote": "Tidak termasuk kelebihan Pajak Penghasilan Pasal 21\nyang dikembalikan sebagaimana dimaksud pada ayat (1)\nyaitu Pajak Penghasilan Pasal 21 yang ditanggung\npemerintah."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.GOVERNMENT_COMBINED_NET",
+      "label": "Combine net regular government income at the employer not paying basic salary",
+      "label_id": "Penggabungan penghasilan neto tetap dan teratur pada pemberi kerja selain pembayar gaji pokok",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_net"
+       },
+       {
+        "name": "condition",
+        "value": "employer('government_regular_income_withholding') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_government_employment_pph21_borne_by_government') == True and employee('primary_government_withholding_slip_issued') == True and employee('primary_government_withholding_slip_submitted') == True and employee('government_employers_and_willingness_statement_submitted') == True"
+       },
+       {
+        "name": "expression",
+        "value": "annual_gross - annual_deductions + employee('primary_government_annual_net')"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.PMK168.ANNUAL_NET"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "page": 19,
+        "quote": "Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "page": 19,
+        "quote": "Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (3)",
+        "page": 12,
+        "quote": "Dalam hal Pegawai Tetap menerima atau memperoleh\npenghasilan lebih dari satu pemberi kerja, biaya jabatan\nsebagaimana dimaksud pada ayat (1) huruf a dihitung\npada masing-masing pemberi kerja."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.GOVERNMENT_FINAL_TAX",
+      "label": "Credit primary-employer withholding in the combined government reconciliation",
+      "label_id": "Perhitungan pajak pemberi kerja pembayar gaji pokok dalam rekonsiliasi gabungan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "final_period_tax"
+       },
+       {
+        "name": "condition",
+        "value": "employer('government_regular_income_withholding') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_government_employment_pph21_borne_by_government') == True and employee('primary_government_withholding_slip_issued') == True and employee('primary_government_withholding_slip_submitted') == True and employee('government_employers_and_willingness_statement_submitted') == True"
+       },
+       {
+        "name": "expression",
+        "value": "annual_pph21 - withheld_before_final - employee('primary_government_annual_pph21')"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.YEAR.FINAL_TAX"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (1) huruf b",
+        "page": 19,
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara\nPajak Penghasilan Pasal 21 yang terutang selama 1\n(satu) Tahun Pajak atau bagian Tahun Pajak dengan\nPajak Penghasilan Pasal 21 yang telah dipotong pada\nMasa Pajak selain Masa Pajak Terakhir sebagaimana\ndimaksud pada huruf a."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "page": 19,
+        "quote": "Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "page": 19,
+        "quote": "Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.GOVERNMENT_REFUND",
+      "label": "No employee refund from an entirely government-borne combined reconciliation",
+      "label_id": "Tidak ada pengembalian kepada pegawai atas rekonsiliasi gabungan yang seluruh pajaknya ditanggung pemerintah",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "refund_to_employee"
+       },
+       {
+        "name": "condition",
+        "value": "employer('government_regular_income_withholding') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_government_employment_pph21_borne_by_government') == True and employee('primary_government_withholding_slip_issued') == True and employee('primary_government_withholding_slip_submitted') == True and employee('government_employers_and_willingness_statement_submitted') == True"
+       },
+       {
+        "name": "expression",
+        "value": "0"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.PMK168.REFUND"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (2)",
+        "page": 21,
+        "quote": "Tidak termasuk kelebihan Pajak Penghasilan Pasal 21\nyang dikembalikan sebagaimana dimaksud pada ayat (1)\nyaitu Pajak Penghasilan Pasal 21 yang ditanggung\npemerintah."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "page": 19,
+        "quote": "Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "page": 19,
+        "quote": "Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "page": 24,
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "PTKP input normalization preserves recognized table keys, interprets incomplete K/ claims as K/0 and other unrecognized codes as TK/0 without unsupported dependency allowances, and applies the same normalization to supplied arrival-month status. Existing TER and annual calculations are retained; payment inputs represent qualifying amounts, additional insurance premiums exclude separately counted social-security premiums, and government aggregation uses the submitted primary-employer certificate."
+   },
+   "delta": {
+    "delta_id": "e2-model2-regulasi-1-E04-cand3",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.EMPLOYER_PREMIUMS",
+      "recorded_on": "2023-12-29",
+      "label": "Employer-paid social security and insurance premiums included in income",
+      "label_id": "Iuran jaminan sosial dan premi asuransi pemberi kerja yang termasuk penghasilan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "jkk_premium + jkm_premium + health_premium_employer + income('employer_insurance_premiums')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 5 ayat (3) huruf d sampai dengan huruf f",
+        "quote": "d. pembayaran iuran jaminan kecelakaan kerja dan\niuran jaminan kematian kepada badan penyelenggara\njaminan sosial ketenagakerjaan, yang dibayarkan oleh\npemberi kerja;\ne. pembayaran iuran jaminan pemeliharaan kesehatan\nkepada badan penyelenggara jaminan sosial\nkesehatan yang dibayarkan oleh pemberi kerja; dan\nf. pembayaran premi asuransi kesehatan, asuransi\nkecelakaan kerja, asuransi jiwa, asuransi dwiguna,\ndan asuransi beasiswa yang dibayarkan oleh pemberi\nkerja.",
+        "page": 9
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ZAKAT_DEDUCTIBLE",
+      "recorded_on": "2023-12-29",
+      "label": "Deduct qualifying compulsory religious payments made through the employer",
+      "label_id": "Pengurangan zakat atau sumbangan keagamaan wajib melalui pemberi kerja",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "zakat_deductible",
+      "expression": "zakat_withheld",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "c. zakat atau sumbangan keagamaan yang sifatnya\nwajib bagi pemeluk agama yang diakui di Indonesia,\nyang dibayarkan melalui pemberi kerja kepada badan\namil zakat, lembaga amil zakat, dan lembaga\nkeagamaan yang dibentuk atau disahkan oleh\npemerintah.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS",
+      "recorded_on": "2023-12-29",
+      "label": "Aggregate qualifying employee pension and old-age contributions",
+      "label_id": "Jumlah iuran pensiun dan hari tua pegawai yang dapat dikurangkan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_pension_contributions",
+      "expression": "sum_periods('employee_pension_contributions')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "quote": "b. iuran terkait program pensiun dan hari tua, yang\nterkait dengan gaji, yang dibayar oleh Pegawai melalui\npemberi kerja kepada:\n1. dana pensiun yang pendiriannya telah disahkan\noleh Menteri atau telah mendapatkan izin dari\nOtoritas Jasa Keuangan;",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b angka 2 dan angka 3",
+        "quote": "2. badan penyelenggara jamman sosial\nketenagakerjaan; dan\n3. badan penyelenggara tunjangan hari tua yang\npendiriannya sesuai dengan ketentuan\nperaturan perundang-undangan; dan",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Lampiran huruf B Bagian Pertama I.2 angka 5 huruf a",
+        "quote": "untuk Pegawai Tetap, yaitu jumlah bruto seluruh penghasilan\nsebagaimana dimaksud dalam Pasal 5 ayat (1) huruf a yang\nditerima atau diperoleh dari pemberi kerja dikurangi dengan biaya\njabatan, iuran terkait program pensiun dan hari tua, dan zakat\natau sumbangan keagamaan yang bersifat wajib yang dibayarkan\nmelalui pemberi kerja kepada badan amil zakat, lembaga amil\nzakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh\npemerintah, dalam Tahun Pajak bersangkutan;",
+        "page": 29
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_NET",
+      "recorded_on": "2023-12-29",
+      "label": "Annual net income after allowable deductions",
+      "label_id": "Penghasilan neto setahun setelah pengurangan yang diperbolehkan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_net",
+      "expression": "annual_gross - annual_deductions",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (5)",
+        "quote": "Penghasilan neto sebagaimana dimaksud pada ayat (3)\nmerupakan seluruh jumlah penghasilan bruto\nsebagaimana dimaksud pada ayat (2) dalam 1 (satu) Tahun\nPajak atau bagian Tahun Pajak dikurangi dengan\npengurangan yang diperbolehkan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_STATUS",
+      "recorded_on": "2023-12-29",
+      "label": "Beginning-of-year PTKP status using canonical lookup keys",
+      "label_id": "Status PTKP awal tahun dengan kode baku tabel",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "ptkp_status_effective",
+      "expression": "ptkp_status_input if (ptkp_status_input == 'TK/0' or ptkp_status_input == 'TK/1' or ptkp_status_input == 'TK/2' or ptkp_status_input == 'TK/3' or ptkp_status_input == 'K/0' or ptkp_status_input == 'K/1' or ptkp_status_input == 'K/2' or ptkp_status_input == 'K/3') else ('K/0' if ptkp_status_input != None and startswith(ptkp_status_input, 'K/') else 'TK/0')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (1)",
+        "quote": "Besarnya Penghasilan Tidak Kena Pajak sebagaimana\ndimaksud dalam Pasal 8 ayat (3) diatur dalam Pasal 7 ayat\n(1) dan ayat (3) Undang-Undang Pajak Penghasilan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (4)",
+        "quote": "Penghasilan Tidak Kena Pajak sebagaimana dimaksud\npada ayat ( 1) ditentukan berdasarkan keadaan pada awal\ntahun kalender.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_MARRIED_WOMAN",
+      "recorded_on": "2023-12-29",
+      "label": "Married female employee receives personal PTKP unless the husband's lack of income is certified",
+      "label_id": "PTKP karyawati kawin tanpa surat keterangan suami tidak berpenghasilan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "ptkp_status_effective",
+      "condition": "employee('gender') == 'female' and ptkp_status_input != None and startswith(ptkp_status_input, 'K/') and employee('husband_no_income_certificate') != True",
+      "expression": "'TK/0'",
+      "overrides": [
+       "REG.PMK168.PTKP_STATUS"
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (2) huruf a",
+        "quote": "bagi karyawati kawin, sebesar Penghasilan Tidak\nKena Pajak untuk dirinya sendiri; atau",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (3)",
+        "quote": "Dalam hal karyawati kawin dapat menunjukkan\nketerangan tertulis dari pemerintah daerah setempat\nserendah-rendahnya kecamatan yang menyatakan bahwa\nsuaminya tidak menerima atau memperoleh penghasilan,\nbesarnya Penghasilan Tidak Kena Pajak merupakan\nPenghasilan Tidak Kena Pajak untuk dirinya sendiri\nditambah Penghasilan Tidak Kena Pajak untuk status\nkawin dan Penghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam garis\nketurunan lurus serta anak angkat yang menjadi\ntanggungan sepenuhnya.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_NEW_RESIDENT",
+      "recorded_on": "2023-12-29",
+      "label": "Arrival-month PTKP for an employee newly settling in Indonesia",
+      "label_id": "PTKP awal bulan kedatangan pegawai yang baru menetap di Indonesia",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "ptkp_status_effective",
+      "condition": "employee('new_resident_in_tax_year') == True and employee('ptkp_status_at_start_of_arrival_month') != None",
+      "expression": "'TK/0' if employee('gender') == 'female' and startswith(employee('ptkp_status_at_start_of_arrival_month'), 'K/') and employee('husband_no_income_certificate') != True else (employee('ptkp_status_at_start_of_arrival_month') if (employee('ptkp_status_at_start_of_arrival_month') == 'TK/0' or employee('ptkp_status_at_start_of_arrival_month') == 'TK/1' or employee('ptkp_status_at_start_of_arrival_month') == 'TK/2' or employee('ptkp_status_at_start_of_arrival_month') == 'TK/3' or employee('ptkp_status_at_start_of_arrival_month') == 'K/0' or employee('ptkp_status_at_start_of_arrival_month') == 'K/1' or employee('ptkp_status_at_start_of_arrival_month') == 'K/2' or employee('ptkp_status_at_start_of_arrival_month') == 'K/3') else ('K/0' if startswith(employee('ptkp_status_at_start_of_arrival_month'), 'K/') else 'TK/0'))",
+      "overrides": [
+       "REG.PMK168.PTKP_STATUS",
+       "REG.PMK168.PTKP_MARRIED_WOMAN"
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (5)",
+        "quote": "Dikecualikan dari ketentuan sebagaimana dimaksud pada\nayat (4), besarnya Penghasilan Tidak Kena Pajak untuk\nPegawai yang baru datang dan menetap di Indonesia\ndalam bagian tahun kalender ditentukan berdasarkan\nkeadaan pada awal bulan dari bagian tahun kalender yang\nbersangkutan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (2) huruf a",
+        "quote": "bagi karyawati kawin, sebesar Penghasilan Tidak\nKena Pajak untuk dirinya sendiri; atau",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (3)",
+        "quote": "Dalam hal karyawati kawin dapat menunjukkan\nketerangan tertulis dari pemerintah daerah setempat\nserendah-rendahnya kecamatan yang menyatakan bahwa\nsuaminya tidak menerima atau memperoleh penghasilan,\nbesarnya Penghasilan Tidak Kena Pajak merupakan\nPenghasilan Tidak Kena Pajak untuk dirinya sendiri\nditambah Penghasilan Tidak Kena Pajak untuk status\nkawin dan Penghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam garis\nketurunan lurus serta anak angkat yang menjadi\ntanggungan sepenuhnya.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.REFUND",
+      "recorded_on": "2023-12-29",
+      "label": "Refund excess withholding other than government-borne tax",
+      "label_id": "Pengembalian kelebihan pemotongan selain pajak ditanggung pemerintah",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "expression": "max(0, withheld_before_final - annual_pph21 - sum_periods_before_final('pph21_dtp'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "quote": "Dalam hal jumlah Pajak Penghasilan Pasal 21 yang telah\ndipotong pada Masa Pajak selain Masa Pajak Terakhir\ndalam Tahun Pajak yang bersangkutan lebih besar\ndaripada Pajak Penghasilan Pasal 21 yang terutang selama\n1 (satu) Tahun Pajak atau bagian Tahun Pajak, kelebihan\nPajak Penghasilan Pasal 21 yang telah dipotong tersebut\nwajib dikenibalikan oleh Pemotong Pajak kepada Pegawai\nTetap dan Pensiunan yang bersangkutan beserta dengan\npemberian bukti pemotongan Pajak Penghasilan Pasal 21,\npaling lambat akhir bulan berikutnya setelah Masa Pajak\nTerakhir.",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (2)",
+        "quote": "Tidak termasuk kelebihan Pajak Penghasilan Pasal 21\nyang dikembalikan sebagaimana dimaksud pada ayat (1)\nyaitu Pajak Penghasilan Pasal 21 yang ditanggung\npemerintah.",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.GOVERNMENT_COMBINED_NET",
+      "recorded_on": "2023-12-29",
+      "label": "Combine net regular government income at the employer not paying basic salary",
+      "label_id": "Penggabungan penghasilan neto tetap dan teratur pada pemberi kerja selain pembayar gaji pokok",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_net",
+      "condition": "employer('government_regular_income_withholding') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_government_employment_pph21_borne_by_government') == True and employee('primary_government_withholding_slip_issued') == True and employee('primary_government_withholding_slip_submitted') == True and employee('government_employers_and_willingness_statement_submitted') == True",
+      "expression": "annual_gross - annual_deductions + employee('primary_government_annual_net')",
+      "overrides": [
+       "REG.PMK168.ANNUAL_NET"
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "quote": "Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "quote": "Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (3)",
+        "quote": "Dalam hal Pegawai Tetap menerima atau memperoleh\npenghasilan lebih dari satu pemberi kerja, biaya jabatan\nsebagaimana dimaksud pada ayat (1) huruf a dihitung\npada masing-masing pemberi kerja.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.GOVERNMENT_FINAL_TAX",
+      "recorded_on": "2023-12-29",
+      "label": "Credit primary-employer withholding in the combined government reconciliation",
+      "label_id": "Perhitungan pajak pemberi kerja pembayar gaji pokok dalam rekonsiliasi gabungan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "final_period_tax",
+      "condition": "employer('government_regular_income_withholding') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_government_employment_pph21_borne_by_government') == True and employee('primary_government_withholding_slip_issued') == True and employee('primary_government_withholding_slip_submitted') == True and employee('government_employers_and_willingness_statement_submitted') == True",
+      "expression": "annual_pph21 - withheld_before_final - employee('primary_government_annual_pph21')",
+      "overrides": [
+       "REG.YEAR.FINAL_TAX"
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara\nPajak Penghasilan Pasal 21 yang terutang selama 1\n(satu) Tahun Pajak atau bagian Tahun Pajak dengan\nPajak Penghasilan Pasal 21 yang telah dipotong pada\nMasa Pajak selain Masa Pajak Terakhir sebagaimana\ndimaksud pada huruf a.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "quote": "Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "quote": "Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.GOVERNMENT_REFUND",
+      "recorded_on": "2023-12-29",
+      "label": "No employee refund from an entirely government-borne combined reconciliation",
+      "label_id": "Tidak ada pengembalian kepada pegawai atas rekonsiliasi gabungan yang seluruh pajaknya ditanggung pemerintah",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "condition": "employer('government_regular_income_withholding') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_government_employment_pph21_borne_by_government') == True and employee('primary_government_withholding_slip_issued') == True and employee('primary_government_withholding_slip_submitted') == True and employee('government_employers_and_willingness_statement_submitted') == True",
+      "expression": "0",
+      "overrides": [
+       "REG.PMK168.REFUND"
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (2)",
+        "quote": "Tidak termasuk kelebihan Pajak Penghasilan Pasal 21\nyang dikembalikan sebagaimana dimaksud pada ayat (1)\nyaitu Pajak Penghasilan Pasal 21 yang ditanggung\npemerintah.",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "quote": "Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "quote": "Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "PTKP input normalization preserves recognized table keys, interprets incomplete K/ claims as K/0 and other unrecognized codes as TK/0 without unsupported dependency allowances, and applies the same normalization to supplied arrival-month status. Existing TER and annual calculations are retained; payment inputs represent qualifying amounts, additional insurance premiums exclude separately counted social-security premiums, and government aggregation uses the submitted primary-employer certificate."
+   },
+   "initial_delta": {
+    "delta_id": "e2-model2-regulasi-1-E04-cand3",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.EMPLOYER_PREMIUMS",
+      "recorded_on": "2023-12-29",
+      "label": "Employer-paid social security and insurance premiums included in income",
+      "label_id": "Iuran jaminan sosial dan premi asuransi pemberi kerja yang termasuk penghasilan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "jkk_premium + jkm_premium + health_premium_employer + income('employer_insurance_premiums')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 5 ayat (3) huruf d sampai dengan huruf f",
+        "quote": "d. pembayaran iuran jaminan kecelakaan kerja dan\niuran jaminan kematian kepada badan penyelenggara\njaminan sosial ketenagakerjaan, yang dibayarkan oleh\npemberi kerja;\ne. pembayaran iuran jaminan pemeliharaan kesehatan\nkepada badan penyelenggara jaminan sosial\nkesehatan yang dibayarkan oleh pemberi kerja; dan\nf. pembayaran premi asuransi kesehatan, asuransi\nkecelakaan kerja, asuransi jiwa, asuransi dwiguna,\ndan asuransi beasiswa yang dibayarkan oleh pemberi\nkerja.",
+        "page": 9
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ZAKAT_DEDUCTIBLE",
+      "recorded_on": "2023-12-29",
+      "label": "Deduct qualifying compulsory religious payments made through the employer",
+      "label_id": "Pengurangan zakat atau sumbangan keagamaan wajib melalui pemberi kerja",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "zakat_deductible",
+      "expression": "zakat_withheld",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "c. zakat atau sumbangan keagamaan yang sifatnya\nwajib bagi pemeluk agama yang diakui di Indonesia,\nyang dibayarkan melalui pemberi kerja kepada badan\namil zakat, lembaga amil zakat, dan lembaga\nkeagamaan yang dibentuk atau disahkan oleh\npemerintah.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_PENSION_CONTRIBUTIONS",
+      "recorded_on": "2023-12-29",
+      "label": "Aggregate qualifying employee pension and old-age contributions",
+      "label_id": "Jumlah iuran pensiun dan hari tua pegawai yang dapat dikurangkan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_pension_contributions",
+      "expression": "sum_periods('employee_pension_contributions')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "quote": "b. iuran terkait program pensiun dan hari tua, yang\nterkait dengan gaji, yang dibayar oleh Pegawai melalui\npemberi kerja kepada:\n1. dana pensiun yang pendiriannya telah disahkan\noleh Menteri atau telah mendapatkan izin dari\nOtoritas Jasa Keuangan;",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b angka 2 dan angka 3",
+        "quote": "2. badan penyelenggara jamman sosial\nketenagakerjaan; dan\n3. badan penyelenggara tunjangan hari tua yang\npendiriannya sesuai dengan ketentuan\nperaturan perundang-undangan; dan",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Lampiran huruf B Bagian Pertama I.2 angka 5 huruf a",
+        "quote": "untuk Pegawai Tetap, yaitu jumlah bruto seluruh penghasilan\nsebagaimana dimaksud dalam Pasal 5 ayat (1) huruf a yang\nditerima atau diperoleh dari pemberi kerja dikurangi dengan biaya\njabatan, iuran terkait program pensiun dan hari tua, dan zakat\natau sumbangan keagamaan yang bersifat wajib yang dibayarkan\nmelalui pemberi kerja kepada badan amil zakat, lembaga amil\nzakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh\npemerintah, dalam Tahun Pajak bersangkutan;",
+        "page": 29
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ANNUAL_NET",
+      "recorded_on": "2023-12-29",
+      "label": "Annual net income after allowable deductions",
+      "label_id": "Penghasilan neto setahun setelah pengurangan yang diperbolehkan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_net",
+      "expression": "annual_gross - annual_deductions",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (5)",
+        "quote": "Penghasilan neto sebagaimana dimaksud pada ayat (3)\nmerupakan seluruh jumlah penghasilan bruto\nsebagaimana dimaksud pada ayat (2) dalam 1 (satu) Tahun\nPajak atau bagian Tahun Pajak dikurangi dengan\npengurangan yang diperbolehkan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_STATUS",
+      "recorded_on": "2023-12-29",
+      "label": "Use PTKP circumstances at the beginning of the calendar year",
+      "label_id": "Status PTKP berdasarkan keadaan pada awal tahun kalender",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "ptkp_status_effective",
+      "expression": "ptkp_status_input",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (4)",
+        "quote": "Penghasilan Tidak Kena Pajak sebagaimana dimaksud\npada ayat ( 1) ditentukan berdasarkan keadaan pada awal\ntahun kalender.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_MARRIED_WOMAN",
+      "recorded_on": "2023-12-29",
+      "label": "Married female employee receives personal PTKP unless the husband's lack of income is certified",
+      "label_id": "PTKP karyawati kawin tanpa surat keterangan suami tidak berpenghasilan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "ptkp_status_effective",
+      "condition": "employee('gender') == 'female' and startswith(ptkp_status_input, 'K/') and employee('husband_no_income_certificate') != True",
+      "expression": "'TK/0'",
+      "overrides": [
+       "REG.PMK168.PTKP_STATUS"
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (2) huruf a",
+        "quote": "bagi karyawati kawin, sebesar Penghasilan Tidak\nKena Pajak untuk dirinya sendiri; atau",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (3)",
+        "quote": "Dalam hal karyawati kawin dapat menunjukkan\nketerangan tertulis dari pemerintah daerah setempat\nserendah-rendahnya kecamatan yang menyatakan bahwa\nsuaminya tidak menerima atau memperoleh penghasilan,\nbesarnya Penghasilan Tidak Kena Pajak merupakan\nPenghasilan Tidak Kena Pajak untuk dirinya sendiri\nditambah Penghasilan Tidak Kena Pajak untuk status\nkawin dan Penghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam garis\nketurunan lurus serta anak angkat yang menjadi\ntanggungan sepenuhnya.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_NEW_RESIDENT",
+      "recorded_on": "2023-12-29",
+      "label": "PTKP for an employee newly arriving and settling in Indonesia",
+      "label_id": "PTKP pegawai yang baru datang dan menetap di Indonesia",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "ptkp_status_effective",
+      "condition": "employee('new_resident_in_tax_year') == True",
+      "expression": "'TK/0' if employee('gender') == 'female' and startswith(employee('ptkp_status_at_start_of_arrival_month'), 'K/') and employee('husband_no_income_certificate') != True else employee('ptkp_status_at_start_of_arrival_month')",
+      "overrides": [
+       "REG.PMK168.PTKP_STATUS",
+       "REG.PMK168.PTKP_MARRIED_WOMAN"
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (5)",
+        "quote": "Dikecualikan dari ketentuan sebagaimana dimaksud pada\nayat (4), besarnya Penghasilan Tidak Kena Pajak untuk\nPegawai yang baru datang dan menetap di Indonesia\ndalam bagian tahun kalender ditentukan berdasarkan\nkeadaan pada awal bulan dari bagian tahun kalender yang\nbersangkutan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (2) huruf a",
+        "quote": "bagi karyawati kawin, sebesar Penghasilan Tidak\nKena Pajak untuk dirinya sendiri; atau",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (3)",
+        "quote": "Dalam hal karyawati kawin dapat menunjukkan\nketerangan tertulis dari pemerintah daerah setempat\nserendah-rendahnya kecamatan yang menyatakan bahwa\nsuaminya tidak menerima atau memperoleh penghasilan,\nbesarnya Penghasilan Tidak Kena Pajak merupakan\nPenghasilan Tidak Kena Pajak untuk dirinya sendiri\nditambah Penghasilan Tidak Kena Pajak untuk status\nkawin dan Penghasilan Tidak Kena Pajak untuk anggota\nkeluarga sedarah dan/ atau keluarga semenda dalam garis\nketurunan lurus serta anak angkat yang menjadi\ntanggungan sepenuhnya.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.REFUND",
+      "recorded_on": "2023-12-29",
+      "label": "Refund excess withholding other than government-borne tax",
+      "label_id": "Pengembalian kelebihan pemotongan selain pajak ditanggung pemerintah",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "expression": "max(0, withheld_before_final - annual_pph21 - sum_periods_before_final('pph21_dtp'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "quote": "Dalam hal jumlah Pajak Penghasilan Pasal 21 yang telah\ndipotong pada Masa Pajak selain Masa Pajak Terakhir\ndalam Tahun Pajak yang bersangkutan lebih besar\ndaripada Pajak Penghasilan Pasal 21 yang terutang selama\n1 (satu) Tahun Pajak atau bagian Tahun Pajak, kelebihan\nPajak Penghasilan Pasal 21 yang telah dipotong tersebut\nwajib dikenibalikan oleh Pemotong Pajak kepada Pegawai\nTetap dan Pensiunan yang bersangkutan beserta dengan\npemberian bukti pemotongan Pajak Penghasilan Pasal 21,\npaling lambat akhir bulan berikutnya setelah Masa Pajak\nTerakhir.",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (2)",
+        "quote": "Tidak termasuk kelebihan Pajak Penghasilan Pasal 21\nyang dikembalikan sebagaimana dimaksud pada ayat (1)\nyaitu Pajak Penghasilan Pasal 21 yang ditanggung\npemerintah.",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.GOVERNMENT_COMBINED_NET",
+      "recorded_on": "2023-12-29",
+      "label": "Combine net regular government income at the employer not paying basic salary",
+      "label_id": "Penggabungan penghasilan neto tetap dan teratur pada pemberi kerja selain pembayar gaji pokok",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_net",
+      "condition": "employer('government_regular_income_withholding') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_government_employment_pph21_borne_by_government') == True and employee('primary_government_withholding_slip_issued') == True and employee('primary_government_withholding_slip_submitted') == True and employee('government_employers_and_willingness_statement_submitted') == True",
+      "expression": "annual_gross - annual_deductions + employee('primary_government_annual_net')",
+      "overrides": [
+       "REG.PMK168.ANNUAL_NET"
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "quote": "Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "quote": "Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (3)",
+        "quote": "Dalam hal Pegawai Tetap menerima atau memperoleh\npenghasilan lebih dari satu pemberi kerja, biaya jabatan\nsebagaimana dimaksud pada ayat (1) huruf a dihitung\npada masing-masing pemberi kerja.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.GOVERNMENT_FINAL_TAX",
+      "recorded_on": "2023-12-29",
+      "label": "Credit primary-employer withholding in the combined government reconciliation",
+      "label_id": "Perhitungan pajak pemberi kerja pembayar gaji pokok dalam rekonsiliasi gabungan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "final_period_tax",
+      "condition": "employer('government_regular_income_withholding') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_government_employment_pph21_borne_by_government') == True and employee('primary_government_withholding_slip_issued') == True and employee('primary_government_withholding_slip_submitted') == True and employee('government_employers_and_willingness_statement_submitted') == True",
+      "expression": "annual_pph21 - withheld_before_final - employee('primary_government_annual_pph21')",
+      "overrides": [
+       "REG.YEAR.FINAL_TAX"
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara\nPajak Penghasilan Pasal 21 yang terutang selama 1\n(satu) Tahun Pajak atau bagian Tahun Pajak dengan\nPajak Penghasilan Pasal 21 yang telah dipotong pada\nMasa Pajak selain Masa Pajak Terakhir sebagaimana\ndimaksud pada huruf a.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "quote": "Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "quote": "Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.GOVERNMENT_REFUND",
+      "recorded_on": "2023-12-29",
+      "label": "No employee refund from an entirely government-borne combined reconciliation",
+      "label_id": "Tidak ada pengembalian kepada pegawai atas rekonsiliasi gabungan yang seluruh pajaknya ditanggung pemerintah",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "condition": "employer('government_regular_income_withholding') == True and employer('pays_basic_salary') == False and employee('government_employer_count') == 2 and employee('all_government_employment_pph21_borne_by_government') == True and employee('primary_government_withholding_slip_issued') == True and employee('primary_government_withholding_slip_submitted') == True and employee('government_employers_and_willingness_statement_submitted') == True",
+      "expression": "0",
+      "overrides": [
+       "REG.PMK168.REFUND"
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (2)",
+        "quote": "Tidak termasuk kelebihan Pajak Penghasilan Pasal 21\nyang dikembalikan sebagaimana dimaksud pada ayat (1)\nyaitu Pajak Penghasilan Pasal 21 yang ditanggung\npemerintah.",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (4)",
+        "quote": "Dalam hal Pejabat Negara, PNS, Anggota TNI, Anggota\nPOLRI, atau Pensiunan menerima penghasilan dari 2 (dua)\npemberi kerja dan Pajak Penghasilan Pasal 21 atas seluruh\npenghasilan dimaksud ditanggung oleh pemerintah,\npenghitungan Pajak Penghasilan Pasal 21 pada Masa\nPajak Terakhir yang dilakukan oleh selain pemberi kerja\nyang membayar gaji pokok harus memperhitungkan\njumlah seluruh penghasilan tetap dan teratur yang\nditerima atau diperoleh Pejabat Negara, PNS, Anggota TNI,\nAnggota POLRI, atau Pensiunan, termasuk penghasilan\ndalam penghitungan Pajak Penghasilan Pasal 21 pada\npemberi kerja yang membayar gaji pokok.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 18 ayat (5)",
+        "quote": "Penghitungan sebagaimana dimaksud pada ayat (4)\ndilakukan dalam hal:\na. pemberi kerja yang membayar gaji pokok telah\nmenerbitkan bukti pemotongan Pajak Penghasilan\nPasal 21 untuk diperhitungkan dengan bukti\npemotongan Pajak Penghasilan Pasal 21 pemberi\nkerja lainnya;\nb. penerima penghasilan menyampaikan bukti\npemotongan sebagaimana dimaksud dalam huruf a\nkepada pemberi kerja lainnya; dan\nc. penerima penghasilan membuat surat pernyataan\nyang menyatakan daftar pemberi kerja dan kesediaan\npemberi kerja lainnya untuk memperhitungkan\npenghasilan dari pemberi kerja sebagaimana\ndimaksud dalam huruf a.",
+        "page": 19
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Penutup — tanggal penetapan",
+        "quote": "Ditetapkan di Jakarta\npada tanggal 29 Desember 2023",
+        "page": 24
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Existing TER, annual reconciliation, annualisation and job-expense calculations are retained; none of the supplied records directly cites an instrument or provision expressly revoked by Pasal 24. Payment inputs are interpreted as qualifying amounts under the quoted provisions, additional employer insurance premiums exclude the separately counted social-security premiums, and government aggregation uses net income and tax from the submitted primary-employer withholding certificate."
+   }
+  }
+ ],
+ "groups": [],
+ "selected": null,
+ "status": "abstain",
+ "delta": null,
+ "cost_usd": 0.95652,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "Mengubah langkah penghitungan PPh 21 Pegawai Tetap: masa selain Masa Pajak Terakhir menggunakan tarif efektif bulanan atas penghasilan bruto, sedangkan Masa Pajak Terakhir merekonsiliasi pajak setahun atau bagian tahun dengan pemotongan sebelumnya menggunakan tarif Pasal 17 atas penghasilan kena pajak. Dokumen juga mengatur komponen bruto berupa iuran jaminan sosial yang dibayar pemberi kerja serta pengurangan penghasilan neto berupa biaya jabatan, iuran pensiun dan hari tua, dan zakat atau sumbangan keagamaan wajib melalui pemberi kerja.",
+   "quotes": [
+    {
+     "provision": "Pasal 15 ayat (1)",
+     "quote": "(1) Pajak Penghasilan Pasal 21 yang wajib dipotong bagi\nPegawai Tetap sebagaimana dimaksud dalam Pasal 3 ayat\n( 1) huruf a dan Pensiunan se bagaimana dimaksud dalam\nPasal 3 ayat (1) huruf b pada:\na. setiap Masa Pajak selain Masa Pajak Terakhir\ndihitung menggunakan tarif efektif bulanan\nsebagaimana dimaksud dalam Pasal 13 ayat (2) huruf\na dikalikan dengan dasar pengenaan dan pemotongan\nsebagaimana dimaksud dalam Pasal 8 ayat (1) huruf\na;dan\nb. Masa Pajak Terakhir yaitu sebesar selisih antara Pajak\nPenghasilan Pasal 21 yang terutang selama 1 (satu) Tahun\nPajak atau bagian Tahun Pajak dengan Pajak Penghasilan\nPasal 21 yang telah dipotong pada Masa Pajak selain Masa\nPajak Terakhir sebagaimana dimaksud dalam huruf a."
+    },
+    {
+     "provision": "Pasal 8 ayat (1)",
+     "quote": "(1) Dasar pengenaan dan pemotongan Pajak Penghasilan\nPasal 21 untuk Pegawai Tetap dan Pensiunan, yaitu:\na. penghasilan bruto dalam 1 (satu) Masa Pajak; atau\nb. penghasilan kena pajak."
+    },
+    {
+     "provision": "Pasal 15 ayat (2)",
+     "quote": "(2) Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu)\nTahun Pajak atau bagian Tahun Pajak sebagaimana\ndimaksud pada ayat (1) huruf b dihitung menggunakan\ntarif Pasal 17 ayat (1) huruf a Undang-Undang Pajak\nPenghasilan dikalikan dengan dasar pengenaan dan\npemotongan sebagaimana dimaksud dalam Pasal 8 ayat\n(1) huruf b dalam 1 (satu) Tahun Pajak atau bagian Tahun\nPajak."
+    },
+    {
+     "provision": "Pasal 5 ayat (3) huruf d–e",
+     "quote": "d. pembayaran iuran jaminan kecelakaan kerja dan\niuran jaminan kematian kepada badan penyelenggara\njaminan sosial ketenagakerjaan, yang dibayarkan oleh\npemberi kerja;\ne. pembayaran iuran jaminan pemeliharaan kesehatan\nkepada badan penyelenggara jaminan sosial\nkesehatan yang dibayarkan oleh pemberi kerja; dan"
+    },
+    {
+     "provision": "Lampiran B, Bagian Pertama, I.2 angka 5 huruf a",
+     "quote": "a. untuk Pegawai Tetap, yaitu jumlah bruto seluruh penghasilan\nsebagaimana dimaksud dalam Pasal 5 ayat (1) huruf a yang\nditerima atau diperoleh dari pemberi kerja dikurangi dengan biaya\njabatan, iuran terkait program pensiun dan hari tua, dan zakat\natau sumbangan keagamaan yang bersifat wajib yang dibayarkan\nmelalui pemberi kerja kepada badan amil zakat, lembaga amil\nzakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh\npemerintah, dalam Tahun Pajak bersangkutan; dan"
+    }
+   ],
+   "effective_from": "2024-01-01",
+   "effective_from_quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+   "effective_until": null,
+   "effective_until_quote": null,
+   "subjects": [
+    {
+     "kind": "employee_group",
+     "value": "Pegawai Tetap, termasuk komisaris dan pengawas berpenghasilan teratur serta pegawai kontrak yang bekerja penuh",
+     "quote": "10. Pegawai Tetap adalah Pegawai yang menerima atau\nmemperoleh penghasilan secara teratur, termasuk\nanggota dewan komisaris dan anggota dewan pengawas,\nserta Pegawai yang bekerja berdasarkan kontrak untuk\nsuatu jangka waktu tertentu sepanjang Pegawai yang\nbersangkutan bekerja penuh dalam pekerjaan tersebut."
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

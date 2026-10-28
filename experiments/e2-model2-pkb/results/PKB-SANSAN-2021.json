@@ -1,0 +1,2472 @@
+{
+ "run": "e2-model2-pkb",
+ "event": "PKB-SANSAN-2021",
+ "condition": "proposed",
+ "documents": [
+  "PKB-SANSAN-2021"
+ ],
+ "selection": {
+  "PKB-SANSAN-2021": {
+   "tokens": 13968,
+   "dropped": [
+    "Pasal 2",
+    "Pasal 3",
+    "Pasal 4",
+    "Pasal 5",
+    "Pasal 7",
+    "Pasal 8",
+    "Pasal 9",
+    "Pasal 10",
+    "Pasal 12",
+    "Pasal 13",
+    "Pasal 14",
+    "Pasal 15",
+    "Pasal 16",
+    "Pasal 17",
+    "Pasal 18",
+    "Pasal 19",
+    "Pasal 20",
+    "Pasal 21",
+    "Pasal 22",
+    "Pasal 24",
+    "Pasal 26",
+    "Pasal 27",
+    "Pasal 28",
+    "Pasal 29",
+    "Pasal 30",
+    "Pasal 38",
+    "Pasal 42",
+    "Pasal 43",
+    "Pasal 44",
+    "Pasal 45",
+    "Pasal 46",
+    "Pasal 47",
+    "Pasal 48",
+    "Pasal 49",
+    "Pasal 50",
+    "Pasal 51",
+    "Pasal 54",
+    "Pasal 56",
+    "Pasal 59",
+    "Pasal 60",
+    "Pasal 61",
+    "Pasal 62",
+    "Pasal 63",
+    "Pasal 64",
+    "Pasal 65",
+    "Pasal 66",
+    "Pasal 67",
+    "Pasal 68",
+    "Pasal 69",
+    "Pasal 70",
+    "Pasal 71",
+    "Pasal 72",
+    "Pasal 73",
+    "Pasal 75",
+    "Pasal 76",
+    "Pasal 78",
+    "Pasal 79",
+    "Pasal 80",
+    "Pasal 81",
+    "Pasal 83",
+    "Pasal 84",
+    "Pasal 85",
+    "Pasal 86",
+    "Pasal 87",
+    "Pasal 88",
+    "Pasal 89",
+    "Pasal 90",
+    "Pasal 94",
+    "Pasal 95",
+    "Pasal 96",
+    "Pasal 97",
+    "Pasal 98",
+    "Pasal 99",
+    "Pasal 101",
+    "Pasal 103"
+   ]
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.PKB_SANSAN_2021.BPJS_WAGE, REG.BPJS.WAGE bpjs_wage: company rule always loses to mandatory REG.BPJS.WAGE (conflict C8)",
+     "overridden PRS.PKB_SANSAN_2021.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C8)",
+     "redundant REG.DEFAULT.TAX_ALLOWANCE, PRS.PKB_SANSAN_2021.TAX_ALLOWANCE tax_allowance: same condition and expression"
+    ],
+    "G4": "pass",
+    "G5": "fail: PRS.PKB_SANSAN_2021.TAX_ALLOWANCE: no effect on any S^G case (vacuous element)"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "fail: PRS.PKB_SANSAN_2021.JP_EMPLOYEE: number 0.01 is not in a quote of this element"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.WITHHOLDING_METHOD",
+      "label": "Employee-borne income tax",
+      "label_id": "PPh Pasal 21 ditanggung pekerja",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross'"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C1"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (8)",
+        "page": 1,
+        "quote": "8. Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai\nperaturan pemerintah."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.TAX_ALLOWANCE",
+      "label": "No employer-funded tax allowance",
+      "label_id": "Tanpa tunjangan pajak dari perusahaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "tax_allowance"
+       },
+       {
+        "name": "expression",
+        "value": "0"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C1"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (8)",
+        "page": 1,
+        "quote": "8. Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai\nperaturan pemerintah."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.REGULAR_CASH_ALLOWANCES",
+      "label": "Cash meal allowances and attendance premium",
+      "label_id": "Tunjangan makan tunai dan premi hadir",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "other_regular_income"
+       },
+       {
+        "name": "expression",
+        "value": "income('other_regular_income') + round(hr('meal_allowance_per_day') * (hr('days_present') + hr('overtime_days_over_four_hours')) + hr('external_lunch_allowance_per_day') * hr('authorized_external_lunch_days_without_provided_meal'), 1, 'down') + (round(min(income('attendance_premium_full'), base_salary * (20 / 100) / (1 - 20 / 100)) * (1 if hr('absence_days') == 0 else (50 / 100 if hr('absence_days') == 1 else 0)), 1, 'down') if hr('overtime_eligible') == 1 else 0)"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C8"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 36 ayat (1)-(2)",
+        "page": 1,
+        "quote": "1. Perusahaan akan memberikan tunjangan makan kepada Pekerja/Buruh yang\nhadir dalam bentuk uang yang nominalnya akan ditentukan pada ketentuan\nterpisah.\n2. Perusahaan akan memberikan kompensasi tunjangan makan kepada\nPekerja/Buruh yang bekerja lembur lebih dari 4 jam dengan nilai tunjangan makan\nsama seperti tunjangan makan siang."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 36 ayat (3)-(4)",
+        "page": 1,
+        "quote": "3. Perusahaan akan memberikan kompensasi tunjangan makan slang kepada\nPekerja/Buruh yang menjalankan tugas perusahaan dengan atas seizin atasannya\ndan pada saat jam makan siang masih berada diluar perusahaan. Nilai kompensasi\nmakan siang besarnya ditetapkan dalam aturan tersendiri dan dibayarkan pada\nhari Pekerja/Buruh ditugaskan\n4. Dalam hal tugas diluar perusahaan Pekerja/Buruh mendapat makan di\nperusahaan tempat Pekerja/Buruh bertugas sesuai diluar perusahaan.\npemberitahuan perusahaan, maka ketetapan seperti dimaksud Pasal 36 ayat 3 tidak\nberlaku."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 37 ayat (1)-(2)",
+        "page": 1,
+        "quote": "1. Premi diberikan atas kehadiran Pekerja/Buruh untuk bekerja.\n2. Premi hadir diberikan kepada Pekerja/Buruh yang berhak atas perhitungan\nupah lembur.\na. Besarnya premi hadir ditentukan maksimum 20%\n(dua puluh persen) dari upah pokok dan premi hadir.\nb. Apabila Pekerja/Buruh tidak hadir selama 1\n(satu) hari pada hari kerja perusahaan, maka premi hadir hilang sebesar 50% dan\napabila tidak hadir selama 2 (dua) hari maka premi hadir hilang seluruhnya."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.PROLONGED_SICKNESS_BASE_SALARY",
+      "label": "Basic salary during certified prolonged sickness",
+      "label_id": "Gaji pokok selama sakit berkepanjangan yang dibuktikan secara medis",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "base_salary"
+       },
+       {
+        "name": "condition",
+        "value": "hr('prolonged_sickness_medically_certified') == 1 and hr('prolonged_sickness_month') >= 1"
+       },
+       {
+        "name": "expression",
+        "value": "round(hr('contractual_base_salary') * (1 if hr('prolonged_sickness_month') <= 4 else (75 / 100 if hr('prolonged_sickness_month') <= 8 else (50 / 100 if hr('prolonged_sickness_month') <= 12 else 25 / 100))), 1, 'down')"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C8"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 34 ayat (2)",
+        "page": 1,
+        "quote": "2. Pekerja/Buruh yang tidak masuk kerja karena sakit kronis atau penyakit\nmenular dalam jangka waktu yang lama dan menurut Surat Keterangan Dokter perlu\nistirahat dan perawatan maka pembayaran upah, akan diatur sesuai dengan pasal\n93 ayat 3 Undang - Undang Ketenagakerjaan No. 13 tahun 2003 yaitu :\nLama Pekerja/Buruh sakitPembayaran upah/gaji\na. Empat bulan pertama 100 % x upah pokok\nsebulan\nb. Empat bulan kedua 75 % x upah pokok sebulan\nc. Empat bulan ketiga 50 % x upah pokok sebulan\nd. Bulan selanjutnya 25 % x upah pokok sebulan"
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.THR",
+      "label": "Contractual religious holiday allowance",
+      "label_id": "THR menurut perjanjian kerja bersama",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "thr"
+       },
+       {
+        "name": "expression",
+        "value": "round((base_salary + income('position_allowance')) * (1 if hr('months_of_service') >= 12 else (hr('months_of_service') / 12 if hr('months_of_service') > 1 else 0)), 1, 'down') if hr('thr_holiday') == 1 and hr('days_terminated_before_thr_payment') <= 30 else 0"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C10"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "page": 1,
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat (1)-(4)",
+        "page": 1,
+        "quote": "1. Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada\nPekerja/Buruh sebesar 1 bulan upah/proporsional bagi Pekerja/Buruh yang\nmemiliki masa kerja 12 bulan (1 tahun) atau lebih.\n2. Bagi Pekerja/Buruh yang mempunyai masa kerja kurang dari 12 bulan (1\ntahun) tetapi lebih dari 1 bulan, maka THR diberikan secara proporsional yaitu\n:\n(Masa Kerja/12) x 1 bulan upah\n3. Pembayaran THR dilakukan selambat-lambatnya 7 (tujuh) hari kerja sebelum\nhari raya.\n4. Bagi Pekerja/Buruh yang mengundurkan diri atau terkena Pemutusan Hubungan\nKerja (PHK) 30 (tiga puluh) hari sebelum tanggal pembayaran, maka perusahaan\ntetap memberikan Tunjangan Hari Raya tersebut."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.BPJS_WAGE",
+      "label": "Contractual monthly wage for social security contributions",
+      "label_id": "Upah sebulan untuk iuran BPJS menurut PKB",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "bpjs_wage"
+       },
+       {
+        "name": "expression",
+        "value": "base_salary + income('position_allowance')"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C8"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "page": 1,
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf c",
+        "page": 1,
+        "quote": "c. Jaminan Hari Tua\n- Ketentuan iuran= 3.70 % x upah sebulan, ditanggung\noleh Perusahaan\n= 2.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.JKK_RATE",
+      "label": "Work accident contribution rate by company division",
+      "label_id": "Tarif iuran JKK menurut divisi perusahaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "condition",
+        "value": "employer('division') == 'garmen' or employer('division') == 'tekstil'"
+       },
+       {
+        "name": "expression",
+        "value": "dec('0.0024') if employer('division') == 'garmen' else dec('0.0089')"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C8"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf a",
+        "page": 1,
+        "quote": "a. Jaminan Kecelakaan Kerja, termasuk penyakit\nakibat hubungan kerja sesuai dengan Kepres No.22 tahun 1993.\n- Ketentuan iuran divisi garmen= 0,24 % x upah\nsebulan ditanggung oleh Perusahaan.\n- Ketentuan iuran divisi tekstil= 0,89 % x upah\nsebulan ditanggung oleh Perusahaan."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.JP_EMPLOYEE",
+      "label": "Employee pension contribution on contractual monthly wage",
+      "label_id": "Iuran JP pekerja atas upah sebulan menurut PKB",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jp_employee"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "expression",
+        "value": "round(param('jp_employee_rate') * (base_salary + income('position_allowance')), 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C8"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "page": 1,
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf d",
+        "page": 1,
+        "quote": "d. Jaminan Pensiun\n- Ketentuan iuran= 2.00 % x upah sebulan, ditanggung\noleh Perusahaan\n= 1.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Masa berlaku dipetakan ke bulan pajak, sedangkan recorded_on mengikuti metadata; nominal makan, premi hadir penuh, gaji pokok kontraktual, dan hitungan kejadian yang memenuhi syarat dibaca dari payroll/HR, dengan other_regular_income sebagai komponen residual yang tidak menduplikasi tunjangan tersebut. Batas premi hadir diselesaikan secara aljabar sebagai batas maksimum, sementara rumusan THR dan dasar upah JP perusahaan dipertahankan agar perbedaannya tetap terdeteksi oleh aturan wajib dan kendala minimum THR yang sudah ada; tarif JP pekerja menggunakan parameter jp_employee_rate yang sudah tersedia."
+   },
+   "delta": {
+    "delta_id": "e2-model2-pkb-PKB-SANSAN-2021-cand1",
+    "event_id": "PKB-SANSAN-2021",
+    "document": {
+     "id": "PKB-SANSAN-2021",
+     "title": "PKB PT Sansan Saudaratex Jaya 2021-2024",
+     "issued": "2021-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.WITHHOLDING_METHOD",
+      "recorded_on": "2021-01-01",
+      "label": "Employee-borne income tax",
+      "label_id": "PPh Pasal 21 ditanggung pekerja",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (8)",
+        "quote": "8. Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai\nperaturan pemerintah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.TAX_ALLOWANCE",
+      "recorded_on": "2021-01-01",
+      "label": "No employer-funded tax allowance",
+      "label_id": "Tanpa tunjangan pajak dari perusahaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "tax_allowance",
+      "expression": "0",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (8)",
+        "quote": "8. Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai\nperaturan pemerintah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.REGULAR_CASH_ALLOWANCES",
+      "recorded_on": "2021-01-01",
+      "label": "Cash meal allowances and attendance premium",
+      "label_id": "Tunjangan makan tunai dan premi hadir",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "other_regular_income",
+      "expression": "income('other_regular_income') + round(hr('meal_allowance_per_day') * (hr('days_present') + hr('overtime_days_over_four_hours')) + hr('external_lunch_allowance_per_day') * hr('authorized_external_lunch_days_without_provided_meal'), 1, 'down') + (round(min(income('attendance_premium_full'), base_salary * (20 / 100) / (1 - 20 / 100)) * (1 if hr('absence_days') == 0 else (50 / 100 if hr('absence_days') == 1 else 0)), 1, 'down') if hr('overtime_eligible') == 1 else 0)",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C8",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 36 ayat (1)-(2)",
+        "quote": "1. Perusahaan akan memberikan tunjangan makan kepada Pekerja/Buruh yang\nhadir dalam bentuk uang yang nominalnya akan ditentukan pada ketentuan\nterpisah.\n2. Perusahaan akan memberikan kompensasi tunjangan makan kepada\nPekerja/Buruh yang bekerja lembur lebih dari 4 jam dengan nilai tunjangan makan\nsama seperti tunjangan makan siang.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 36 ayat (3)-(4)",
+        "quote": "3. Perusahaan akan memberikan kompensasi tunjangan makan slang kepada\nPekerja/Buruh yang menjalankan tugas perusahaan dengan atas seizin atasannya\ndan pada saat jam makan siang masih berada diluar perusahaan. Nilai kompensasi\nmakan siang besarnya ditetapkan dalam aturan tersendiri dan dibayarkan pada\nhari Pekerja/Buruh ditugaskan\n4. Dalam hal tugas diluar perusahaan Pekerja/Buruh mendapat makan di\nperusahaan tempat Pekerja/Buruh bertugas sesuai diluar perusahaan.\npemberitahuan perusahaan, maka ketetapan seperti dimaksud Pasal 36 ayat 3 tidak\nberlaku.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 37 ayat (1)-(2)",
+        "quote": "1. Premi diberikan atas kehadiran Pekerja/Buruh untuk bekerja.\n2. Premi hadir diberikan kepada Pekerja/Buruh yang berhak atas perhitungan\nupah lembur.\na. Besarnya premi hadir ditentukan maksimum 20%\n(dua puluh persen) dari upah pokok dan premi hadir.\nb. Apabila Pekerja/Buruh tidak hadir selama 1\n(satu) hari pada hari kerja perusahaan, maka premi hadir hilang sebesar 50% dan\napabila tidak hadir selama 2 (dua) hari maka premi hadir hilang seluruhnya.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.PROLONGED_SICKNESS_BASE_SALARY",
+      "recorded_on": "2021-01-01",
+      "label": "Basic salary during certified prolonged sickness",
+      "label_id": "Gaji pokok selama sakit berkepanjangan yang dibuktikan secara medis",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "base_salary",
+      "condition": "hr('prolonged_sickness_medically_certified') == 1 and hr('prolonged_sickness_month') >= 1",
+      "expression": "round(hr('contractual_base_salary') * (1 if hr('prolonged_sickness_month') <= 4 else (75 / 100 if hr('prolonged_sickness_month') <= 8 else (50 / 100 if hr('prolonged_sickness_month') <= 12 else 25 / 100))), 1, 'down')",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C8",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 34 ayat (2)",
+        "quote": "2. Pekerja/Buruh yang tidak masuk kerja karena sakit kronis atau penyakit\nmenular dalam jangka waktu yang lama dan menurut Surat Keterangan Dokter perlu\nistirahat dan perawatan maka pembayaran upah, akan diatur sesuai dengan pasal\n93 ayat 3 Undang - Undang Ketenagakerjaan No. 13 tahun 2003 yaitu :\nLama Pekerja/Buruh sakitPembayaran upah/gaji\na. Empat bulan pertama 100 % x upah pokok\nsebulan\nb. Empat bulan kedua 75 % x upah pokok sebulan\nc. Empat bulan ketiga 50 % x upah pokok sebulan\nd. Bulan selanjutnya 25 % x upah pokok sebulan",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.THR",
+      "recorded_on": "2021-01-01",
+      "label": "Contractual religious holiday allowance",
+      "label_id": "THR menurut perjanjian kerja bersama",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "expression": "round((base_salary + income('position_allowance')) * (1 if hr('months_of_service') >= 12 else (hr('months_of_service') / 12 if hr('months_of_service') > 1 else 0)), 1, 'down') if hr('thr_holiday') == 1 and hr('days_terminated_before_thr_payment') <= 30 else 0",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C10",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat (1)-(4)",
+        "quote": "1. Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada\nPekerja/Buruh sebesar 1 bulan upah/proporsional bagi Pekerja/Buruh yang\nmemiliki masa kerja 12 bulan (1 tahun) atau lebih.\n2. Bagi Pekerja/Buruh yang mempunyai masa kerja kurang dari 12 bulan (1\ntahun) tetapi lebih dari 1 bulan, maka THR diberikan secara proporsional yaitu\n:\n(Masa Kerja/12) x 1 bulan upah\n3. Pembayaran THR dilakukan selambat-lambatnya 7 (tujuh) hari kerja sebelum\nhari raya.\n4. Bagi Pekerja/Buruh yang mengundurkan diri atau terkena Pemutusan Hubungan\nKerja (PHK) 30 (tiga puluh) hari sebelum tanggal pembayaran, maka perusahaan\ntetap memberikan Tunjangan Hari Raya tersebut.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.BPJS_WAGE",
+      "recorded_on": "2021-01-01",
+      "label": "Contractual monthly wage for social security contributions",
+      "label_id": "Upah sebulan untuk iuran BPJS menurut PKB",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "bpjs_wage",
+      "expression": "base_salary + income('position_allowance')",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C8",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf c",
+        "quote": "c. Jaminan Hari Tua\n- Ketentuan iuran= 3.70 % x upah sebulan, ditanggung\noleh Perusahaan\n= 2.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.JKK_RATE",
+      "recorded_on": "2021-01-01",
+      "label": "Work accident contribution rate by company division",
+      "label_id": "Tarif iuran JKK menurut divisi perusahaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('division') == 'garmen' or employer('division') == 'tekstil'",
+      "expression": "dec('0.0024') if employer('division') == 'garmen' else dec('0.0089')",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C8",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf a",
+        "quote": "a. Jaminan Kecelakaan Kerja, termasuk penyakit\nakibat hubungan kerja sesuai dengan Kepres No.22 tahun 1993.\n- Ketentuan iuran divisi garmen= 0,24 % x upah\nsebulan ditanggung oleh Perusahaan.\n- Ketentuan iuran divisi tekstil= 0,89 % x upah\nsebulan ditanggung oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.JP_EMPLOYEE",
+      "recorded_on": "2021-01-01",
+      "label": "Employee pension contribution on contractual monthly wage",
+      "label_id": "Iuran JP pekerja atas upah sebulan menurut PKB",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(param('jp_employee_rate') * (base_salary + income('position_allowance')), 1, param('bpjs_round_mode'))",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C8",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf d",
+        "quote": "d. Jaminan Pensiun\n- Ketentuan iuran= 2.00 % x upah sebulan, ditanggung\noleh Perusahaan\n= 1.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Masa berlaku dipetakan ke bulan pajak, sedangkan recorded_on mengikuti metadata; nominal makan, premi hadir penuh, gaji pokok kontraktual, dan hitungan kejadian yang memenuhi syarat dibaca dari payroll/HR, dengan other_regular_income sebagai komponen residual yang tidak menduplikasi tunjangan tersebut. Batas premi hadir diselesaikan secara aljabar sebagai batas maksimum, sementara rumusan THR dan dasar upah JP perusahaan dipertahankan agar perbedaannya tetap terdeteksi oleh aturan wajib dan kendala minimum THR yang sudah ada; tarif JP pekerja menggunakan parameter jp_employee_rate yang sudah tersedia."
+   },
+   "initial_delta": {
+    "delta_id": "e2-model2-pkb-PKB-SANSAN-2021-cand1",
+    "event_id": "PKB-SANSAN-2021",
+    "document": {
+     "id": "PKB-SANSAN-2021",
+     "title": "PKB PT Sansan Saudaratex Jaya 2021-2024",
+     "issued": "2021-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.WITHHOLDING_METHOD",
+      "recorded_on": "2021-01-01",
+      "label": "Employee-borne income tax",
+      "label_id": "PPh Pasal 21 ditanggung pekerja",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (8)",
+        "quote": "8. Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai\nperaturan pemerintah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.TAX_ALLOWANCE",
+      "recorded_on": "2021-01-01",
+      "label": "No employer-funded tax allowance",
+      "label_id": "Tanpa tunjangan pajak dari perusahaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "tax_allowance",
+      "expression": "0",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (8)",
+        "quote": "8. Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai\nperaturan pemerintah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.REGULAR_CASH_ALLOWANCES",
+      "recorded_on": "2021-01-01",
+      "label": "Cash meal allowances and attendance premium",
+      "label_id": "Tunjangan makan tunai dan premi hadir",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "other_regular_income",
+      "expression": "income('other_regular_income') + round(hr('meal_allowance_per_day') * (hr('days_present') + hr('overtime_days_over_four_hours')) + hr('external_lunch_allowance_per_day') * hr('authorized_external_lunch_days_without_provided_meal'), 1, 'down') + (round(min(income('attendance_premium_full'), base_salary * (20 / 100) / (1 - 20 / 100)) * (1 if hr('absence_days') == 0 else (50 / 100 if hr('absence_days') == 1 else 0)), 1, 'down') if hr('overtime_eligible') == 1 else 0)",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C8",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 36 ayat (1)-(2)",
+        "quote": "1. Perusahaan akan memberikan tunjangan makan kepada Pekerja/Buruh yang\nhadir dalam bentuk uang yang nominalnya akan ditentukan pada ketentuan\nterpisah.\n2. Perusahaan akan memberikan kompensasi tunjangan makan kepada\nPekerja/Buruh yang bekerja lembur lebih dari 4 jam dengan nilai tunjangan makan\nsama seperti tunjangan makan siang.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 36 ayat (3)-(4)",
+        "quote": "3. Perusahaan akan memberikan kompensasi tunjangan makan slang kepada\nPekerja/Buruh yang menjalankan tugas perusahaan dengan atas seizin atasannya\ndan pada saat jam makan siang masih berada diluar perusahaan. Nilai kompensasi\nmakan siang besarnya ditetapkan dalam aturan tersendiri dan dibayarkan pada\nhari Pekerja/Buruh ditugaskan\n4. Dalam hal tugas diluar perusahaan Pekerja/Buruh mendapat makan di\nperusahaan tempat Pekerja/Buruh bertugas sesuai diluar perusahaan.\npemberitahuan perusahaan, maka ketetapan seperti dimaksud Pasal 36 ayat 3 tidak\nberlaku.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 37 ayat (1)-(2)",
+        "quote": "1. Premi diberikan atas kehadiran Pekerja/Buruh untuk bekerja.\n2. Premi hadir diberikan kepada Pekerja/Buruh yang berhak atas perhitungan\nupah lembur.\na. Besarnya premi hadir ditentukan maksimum 20%\n(dua puluh persen) dari upah pokok dan premi hadir.\nb. Apabila Pekerja/Buruh tidak hadir selama 1\n(satu) hari pada hari kerja perusahaan, maka premi hadir hilang sebesar 50% dan\napabila tidak hadir selama 2 (dua) hari maka premi hadir hilang seluruhnya.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.PROLONGED_SICKNESS_BASE_SALARY",
+      "recorded_on": "2021-01-01",
+      "label": "Basic salary during certified prolonged sickness",
+      "label_id": "Gaji pokok selama sakit berkepanjangan yang dibuktikan secara medis",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "base_salary",
+      "condition": "hr('prolonged_sickness_medically_certified') == 1 and hr('prolonged_sickness_month') >= 1",
+      "expression": "round(hr('contractual_base_salary') * (1 if hr('prolonged_sickness_month') <= 4 else (75 / 100 if hr('prolonged_sickness_month') <= 8 else (50 / 100 if hr('prolonged_sickness_month') <= 12 else 25 / 100))), 1, 'down')",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C8",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 34 ayat (2)",
+        "quote": "2. Pekerja/Buruh yang tidak masuk kerja karena sakit kronis atau penyakit\nmenular dalam jangka waktu yang lama dan menurut Surat Keterangan Dokter perlu\nistirahat dan perawatan maka pembayaran upah, akan diatur sesuai dengan pasal\n93 ayat 3 Undang - Undang Ketenagakerjaan No. 13 tahun 2003 yaitu :\nLama Pekerja/Buruh sakitPembayaran upah/gaji\na. Empat bulan pertama 100 % x upah pokok\nsebulan\nb. Empat bulan kedua 75 % x upah pokok sebulan\nc. Empat bulan ketiga 50 % x upah pokok sebulan\nd. Bulan selanjutnya 25 % x upah pokok sebulan",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.THR",
+      "recorded_on": "2021-01-01",
+      "label": "Contractual religious holiday allowance",
+      "label_id": "THR menurut perjanjian kerja bersama",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "expression": "round((base_salary + income('position_allowance')) * (1 if hr('months_of_service') >= 12 else (hr('months_of_service') / 12 if hr('months_of_service') > 1 else 0)), 1, 'down') if hr('thr_holiday') == 1 and hr('days_terminated_before_thr_payment') <= 30 else 0",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C10",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat (1)-(4)",
+        "quote": "1. Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada\nPekerja/Buruh sebesar 1 bulan upah/proporsional bagi Pekerja/Buruh yang\nmemiliki masa kerja 12 bulan (1 tahun) atau lebih.\n2. Bagi Pekerja/Buruh yang mempunyai masa kerja kurang dari 12 bulan (1\ntahun) tetapi lebih dari 1 bulan, maka THR diberikan secara proporsional yaitu\n:\n(Masa Kerja/12) x 1 bulan upah\n3. Pembayaran THR dilakukan selambat-lambatnya 7 (tujuh) hari kerja sebelum\nhari raya.\n4. Bagi Pekerja/Buruh yang mengundurkan diri atau terkena Pemutusan Hubungan\nKerja (PHK) 30 (tiga puluh) hari sebelum tanggal pembayaran, maka perusahaan\ntetap memberikan Tunjangan Hari Raya tersebut.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.BPJS_WAGE",
+      "recorded_on": "2021-01-01",
+      "label": "Contractual monthly wage for social security contributions",
+      "label_id": "Upah sebulan untuk iuran BPJS menurut PKB",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "bpjs_wage",
+      "expression": "base_salary + income('position_allowance')",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C8",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf c",
+        "quote": "c. Jaminan Hari Tua\n- Ketentuan iuran= 3.70 % x upah sebulan, ditanggung\noleh Perusahaan\n= 2.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.JKK_RATE",
+      "recorded_on": "2021-01-01",
+      "label": "Work accident contribution rate by company division",
+      "label_id": "Tarif iuran JKK menurut divisi perusahaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('division') == 'garmen' or employer('division') == 'tekstil'",
+      "expression": "dec('0.0024') if employer('division') == 'garmen' else dec('0.0089')",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C8",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf a",
+        "quote": "a. Jaminan Kecelakaan Kerja, termasuk penyakit\nakibat hubungan kerja sesuai dengan Kepres No.22 tahun 1993.\n- Ketentuan iuran divisi garmen= 0,24 % x upah\nsebulan ditanggung oleh Perusahaan.\n- Ketentuan iuran divisi tekstil= 0,89 % x upah\nsebulan ditanggung oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB_SANSAN_2021.JP_EMPLOYEE",
+      "recorded_on": "2021-01-01",
+      "label": "Employee pension contribution on contractual monthly wage",
+      "label_id": "Iuran JP pekerja atas upah sebulan menurut PKB",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round((1 / 100) * (base_salary + income('position_allowance')), 1, param('bpjs_round_mode'))",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C8",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf d",
+        "quote": "d. Jaminan Pensiun\n- Ketentuan iuran= 2.00 % x upah sebulan, ditanggung\noleh Perusahaan\n= 1.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Masa berlaku dipetakan ke bulan pajak, sedangkan recorded_on mengikuti metadata; nominal makan, premi hadir penuh, gaji pokok kontraktual, dan hitungan kejadian yang memenuhi syarat dibaca dari payroll/HR, dengan other_regular_income sebagai komponen residual yang tidak menduplikasi tunjangan tersebut. Batas premi hadir diselesaikan secara aljabar sebagai batas maksimum, sementara rumusan THR dan JP perusahaan dipertahankan sebagaimana tertulis agar perbedaannya tetap terdeteksi oleh aturan wajib dan kendala minimum THR yang sudah ada."
+   }
+  },
+  {
+   "n": 2,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.PKB-SANSAN-2021.BPJS_WAGE, REG.BPJS.WAGE bpjs_wage: company rule always loses to mandatory REG.BPJS.WAGE (conflict C2)",
+     "overridden PRS.PKB-SANSAN-2021.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C3)"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "fail: PRS.PKB-SANSAN-2021.JP_EMPLOYEE: number 0.01 is not in a quote of this element"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.WITHHOLDING_METHOD",
+      "label": "PPh 21 is borne by the employee",
+      "label_id": "PPh Pasal 21 ditanggung pekerja",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross'"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C1"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (8)",
+        "page": 1,
+        "quote": "8. Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai\nperaturan pemerintah."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.BPJS_WAGE",
+      "label": "Company monthly wage definition for employment social security",
+      "label_id": "Definisi upah sebulan perusahaan untuk BPJS Ketenagakerjaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "bpjs_wage"
+       },
+       {
+        "name": "expression",
+        "value": "base_salary + income('position_allowance')"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C2"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "page": 1,
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf c",
+        "page": 1,
+        "quote": "c. Jaminan Hari Tua\n- Ketentuan iuran= 3.70 % x upah sebulan, ditanggung\noleh Perusahaan\n= 2.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.JKK_RATE",
+      "label": "Company work accident premium rate by division",
+      "label_id": "Tarif iuran JKK perusahaan menurut divisi",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "condition",
+        "value": "employee('division') == 'garmen' or employee('division') == 'tekstil'"
+       },
+       {
+        "name": "expression",
+        "value": "dec('0.0024') if employee('division') == 'garmen' else dec('0.0089')"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C3"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf a",
+        "page": 1,
+        "quote": "- Ketentuan iuran divisi garmen= 0,24 % x upah\nsebulan ditanggung oleh Perusahaan.\n- Ketentuan iuran divisi tekstil= 0,89 % x upah\nsebulan ditanggung oleh Perusahaan."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.JP_EMPLOYEE",
+      "label": "Company employee pension contribution on monthly wages",
+      "label_id": "Iuran JP pekerja menurut rumus upah sebulan perusahaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jp_employee"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "expression",
+        "value": "round(param('jp_employee_rate') * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C4"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf d",
+        "page": 1,
+        "quote": "d. Jaminan Pensiun\n- Ketentuan iuran= 2.00 % x upah sebulan, ditanggung\noleh Perusahaan\n= 1.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.MEALS_AND_ATTENDANCE",
+      "label": "Cash meal allowances and attendance premium in regular income",
+      "label_id": "Tunjangan makan tunai dan premi hadir dalam penghasilan teratur",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "other_regular_income"
+       },
+       {
+        "name": "expression",
+        "value": "income('other_regular_income') + round(hr('meal_allowance_rate') * (hr('meal_allowance_days_present') + hr('overtime_days_over_4_hours')) + hr('outside_duty_lunch_allowance_rate') * hr('outside_duty_lunches_without_meal'), 1, 'down') + (round(min(hr('attendance_premium_full'), base_salary * dec('0.20') / (1 - dec('0.20'))) * (0 if hr('absence_days') >= 2 else (dec('0.50') if hr('absence_days') == 1 else 1)), 1, 'down') if hr('overtime_eligible') == 1 else 0)"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C8"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 36 ayat (1) dan ayat (2)",
+        "page": 1,
+        "quote": "1. Perusahaan akan memberikan tunjangan makan kepada Pekerja/Buruh yang\nhadir dalam bentuk uang yang nominalnya akan ditentukan pada ketentuan\nterpisah.\n2. Perusahaan akan memberikan kompensasi tunjangan makan kepada\nPekerja/Buruh yang bekerja lembur lebih dari 4 jam dengan nilai tunjangan makan\nsama seperti tunjangan makan siang."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 36 ayat (3) dan ayat (4)",
+        "page": 1,
+        "quote": "3. Perusahaan akan memberikan kompensasi tunjangan makan slang kepada\nPekerja/Buruh yang menjalankan tugas perusahaan dengan atas seizin atasannya\ndan pada saat jam makan siang masih berada diluar perusahaan. Nilai kompensasi\nmakan siang besarnya ditetapkan dalam aturan tersendiri dan dibayarkan pada\nhari Pekerja/Buruh ditugaskan\n4. Dalam hal tugas diluar perusahaan Pekerja/Buruh mendapat makan di\nperusahaan tempat Pekerja/Buruh bertugas sesuai diluar perusahaan.\npemberitahuan perusahaan, maka ketetapan seperti dimaksud Pasal 36 ayat 3 tidak\nberlaku."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 37 ayat (1) dan ayat (2)",
+        "page": 1,
+        "quote": "1. Premi diberikan atas kehadiran Pekerja/Buruh untuk bekerja.\n2. Premi hadir diberikan kepada Pekerja/Buruh yang berhak atas perhitungan\nupah lembur.\na. Besarnya premi hadir ditentukan maksimum 20%\n(dua puluh persen) dari upah pokok dan premi hadir.\nb. Apabila Pekerja/Buruh tidak hadir selama 1\n(satu) hari pada hari kerja perusahaan, maka premi hadir hilang sebesar 50% dan\napabila tidak hadir selama 2 (dua) hari maka premi hadir hilang seluruhnya."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.THR",
+      "label": "Company religious holiday allowance",
+      "label_id": "THR keagamaan menurut perusahaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "thr"
+       },
+       {
+        "name": "expression",
+        "value": "(round((base_salary + income('position_allowance')) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') > 1 and hr('days_terminated_before_thr_payment') <= 30 else 0) if hr('thr_holiday') == 1 else 0"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C10"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "page": 1,
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat (1) dan ayat (2)",
+        "page": 1,
+        "quote": "1. Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada\nPekerja/Buruh sebesar 1 bulan upah/proporsional bagi Pekerja/Buruh yang\nmemiliki masa kerja 12 bulan (1 tahun) atau lebih.\n2. Bagi Pekerja/Buruh yang mempunyai masa kerja kurang dari 12 bulan (1\ntahun) tetapi lebih dari 1 bulan, maka THR diberikan secara proporsional yaitu\n:\n(Masa Kerja/12) x 1 bulan upah"
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat (4)",
+        "page": 1,
+        "quote": "4. Bagi Pekerja/Buruh yang mengundurkan diri atau terkena Pemutusan Hubungan\nKerja (PHK) 30 (tiga puluh) hari sebelum tanggal pembayaran, maka perusahaan\ntetap memberikan Tunjangan Hari Raya tersebut."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.LONG_TERM_SICK_PAY",
+      "label": "Paid base salary during certified long-term sickness",
+      "label_id": "Pembayaran upah pokok selama sakit berkepanjangan dengan surat dokter",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "base_salary"
+       },
+       {
+        "name": "condition",
+        "value": "hr('long_term_sickness_certified') == 1 and hr('long_term_sick_month') > 0"
+       },
+       {
+        "name": "expression",
+        "value": "round(income('base_salary') * (1 if hr('long_term_sick_month') <= 4 else (dec('0.75') if hr('long_term_sick_month') <= 8 else (dec('0.50') if hr('long_term_sick_month') <= 12 else dec('0.25')))), 1, 'down')"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C8"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 34 ayat (2)",
+        "page": 1,
+        "quote": "2. Pekerja/Buruh yang tidak masuk kerja karena sakit kronis atau penyakit\nmenular dalam jangka waktu yang lama dan menurut Surat Keterangan Dokter perlu\nistirahat dan perawatan maka pembayaran upah, akan diatur sesuai dengan pasal\n93 ayat 3 Undang - Undang Ketenagakerjaan No. 13 tahun 2003 yaitu :\nLama Pekerja/Buruh sakitPembayaran upah/gaji\na. Empat bulan pertama 100 % x upah pokok\nsebulan\nb. Empat bulan kedua 75 % x upah pokok sebulan\nc. Empat bulan ketiga 50 % x upah pokok sebulan\nd. Bulan selanjutnya 25 % x upah pokok sebulan"
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "page": 1,
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Masa berlaku dinormalisasi ke bulan pajak September 2021–September 2024 dan recorded_on mengikuti metadata; input komponen terpisah diasumsikan tidak tumpang tindih, dengan base_salary sebelum pengurangan sakit dan premi hadir penuh sebelum pengurangan absensi. Premi hadir menggunakan plafon aljabar, bukan otomatis nilai maksimum, sedangkan rumus JP memakai parameter tarif yang sudah ada atas upah sebulan secara literal sebagai kebijakan perusahaan yang tetap kalah terhadap aturan wajib; tarif BPJS lain yang sama dengan KB tidak diulang dan ketentuan minimum THR tetap diperiksa oleh constraint yang sudah ada."
+   },
+   "delta": {
+    "delta_id": "e2-model2-pkb-PKB-SANSAN-2021-cand2",
+    "event_id": "PKB-SANSAN-2021",
+    "document": {
+     "id": "PKB-SANSAN-2021",
+     "title": "PKB PT Sansan Saudaratex Jaya 2021-2024",
+     "issued": "2021-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.WITHHOLDING_METHOD",
+      "recorded_on": "2021-01-01",
+      "label": "PPh 21 is borne by the employee",
+      "label_id": "PPh Pasal 21 ditanggung pekerja",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (8)",
+        "quote": "8. Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai\nperaturan pemerintah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.BPJS_WAGE",
+      "recorded_on": "2021-01-01",
+      "label": "Company monthly wage definition for employment social security",
+      "label_id": "Definisi upah sebulan perusahaan untuk BPJS Ketenagakerjaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "bpjs_wage",
+      "expression": "base_salary + income('position_allowance')",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf c",
+        "quote": "c. Jaminan Hari Tua\n- Ketentuan iuran= 3.70 % x upah sebulan, ditanggung\noleh Perusahaan\n= 2.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.JKK_RATE",
+      "recorded_on": "2021-01-01",
+      "label": "Company work accident premium rate by division",
+      "label_id": "Tarif iuran JKK perusahaan menurut divisi",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employee('division') == 'garmen' or employee('division') == 'tekstil'",
+      "expression": "dec('0.0024') if employee('division') == 'garmen' else dec('0.0089')",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C3",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf a",
+        "quote": "- Ketentuan iuran divisi garmen= 0,24 % x upah\nsebulan ditanggung oleh Perusahaan.\n- Ketentuan iuran divisi tekstil= 0,89 % x upah\nsebulan ditanggung oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.JP_EMPLOYEE",
+      "recorded_on": "2021-01-01",
+      "label": "Company employee pension contribution on monthly wages",
+      "label_id": "Iuran JP pekerja menurut rumus upah sebulan perusahaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(param('jp_employee_rate') * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf d",
+        "quote": "d. Jaminan Pensiun\n- Ketentuan iuran= 2.00 % x upah sebulan, ditanggung\noleh Perusahaan\n= 1.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.MEALS_AND_ATTENDANCE",
+      "recorded_on": "2021-01-01",
+      "label": "Cash meal allowances and attendance premium in regular income",
+      "label_id": "Tunjangan makan tunai dan premi hadir dalam penghasilan teratur",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "other_regular_income",
+      "expression": "income('other_regular_income') + round(hr('meal_allowance_rate') * (hr('meal_allowance_days_present') + hr('overtime_days_over_4_hours')) + hr('outside_duty_lunch_allowance_rate') * hr('outside_duty_lunches_without_meal'), 1, 'down') + (round(min(hr('attendance_premium_full'), base_salary * dec('0.20') / (1 - dec('0.20'))) * (0 if hr('absence_days') >= 2 else (dec('0.50') if hr('absence_days') == 1 else 1)), 1, 'down') if hr('overtime_eligible') == 1 else 0)",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C8",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 36 ayat (1) dan ayat (2)",
+        "quote": "1. Perusahaan akan memberikan tunjangan makan kepada Pekerja/Buruh yang\nhadir dalam bentuk uang yang nominalnya akan ditentukan pada ketentuan\nterpisah.\n2. Perusahaan akan memberikan kompensasi tunjangan makan kepada\nPekerja/Buruh yang bekerja lembur lebih dari 4 jam dengan nilai tunjangan makan\nsama seperti tunjangan makan siang.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 36 ayat (3) dan ayat (4)",
+        "quote": "3. Perusahaan akan memberikan kompensasi tunjangan makan slang kepada\nPekerja/Buruh yang menjalankan tugas perusahaan dengan atas seizin atasannya\ndan pada saat jam makan siang masih berada diluar perusahaan. Nilai kompensasi\nmakan siang besarnya ditetapkan dalam aturan tersendiri dan dibayarkan pada\nhari Pekerja/Buruh ditugaskan\n4. Dalam hal tugas diluar perusahaan Pekerja/Buruh mendapat makan di\nperusahaan tempat Pekerja/Buruh bertugas sesuai diluar perusahaan.\npemberitahuan perusahaan, maka ketetapan seperti dimaksud Pasal 36 ayat 3 tidak\nberlaku.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 37 ayat (1) dan ayat (2)",
+        "quote": "1. Premi diberikan atas kehadiran Pekerja/Buruh untuk bekerja.\n2. Premi hadir diberikan kepada Pekerja/Buruh yang berhak atas perhitungan\nupah lembur.\na. Besarnya premi hadir ditentukan maksimum 20%\n(dua puluh persen) dari upah pokok dan premi hadir.\nb. Apabila Pekerja/Buruh tidak hadir selama 1\n(satu) hari pada hari kerja perusahaan, maka premi hadir hilang sebesar 50% dan\napabila tidak hadir selama 2 (dua) hari maka premi hadir hilang seluruhnya.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.THR",
+      "recorded_on": "2021-01-01",
+      "label": "Company religious holiday allowance",
+      "label_id": "THR keagamaan menurut perusahaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "expression": "(round((base_salary + income('position_allowance')) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') > 1 and hr('days_terminated_before_thr_payment') <= 30 else 0) if hr('thr_holiday') == 1 else 0",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C10",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat (1) dan ayat (2)",
+        "quote": "1. Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada\nPekerja/Buruh sebesar 1 bulan upah/proporsional bagi Pekerja/Buruh yang\nmemiliki masa kerja 12 bulan (1 tahun) atau lebih.\n2. Bagi Pekerja/Buruh yang mempunyai masa kerja kurang dari 12 bulan (1\ntahun) tetapi lebih dari 1 bulan, maka THR diberikan secara proporsional yaitu\n:\n(Masa Kerja/12) x 1 bulan upah",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat (4)",
+        "quote": "4. Bagi Pekerja/Buruh yang mengundurkan diri atau terkena Pemutusan Hubungan\nKerja (PHK) 30 (tiga puluh) hari sebelum tanggal pembayaran, maka perusahaan\ntetap memberikan Tunjangan Hari Raya tersebut.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.LONG_TERM_SICK_PAY",
+      "recorded_on": "2021-01-01",
+      "label": "Paid base salary during certified long-term sickness",
+      "label_id": "Pembayaran upah pokok selama sakit berkepanjangan dengan surat dokter",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "base_salary",
+      "condition": "hr('long_term_sickness_certified') == 1 and hr('long_term_sick_month') > 0",
+      "expression": "round(income('base_salary') * (1 if hr('long_term_sick_month') <= 4 else (dec('0.75') if hr('long_term_sick_month') <= 8 else (dec('0.50') if hr('long_term_sick_month') <= 12 else dec('0.25')))), 1, 'down')",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C8",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 34 ayat (2)",
+        "quote": "2. Pekerja/Buruh yang tidak masuk kerja karena sakit kronis atau penyakit\nmenular dalam jangka waktu yang lama dan menurut Surat Keterangan Dokter perlu\nistirahat dan perawatan maka pembayaran upah, akan diatur sesuai dengan pasal\n93 ayat 3 Undang - Undang Ketenagakerjaan No. 13 tahun 2003 yaitu :\nLama Pekerja/Buruh sakitPembayaran upah/gaji\na. Empat bulan pertama 100 % x upah pokok\nsebulan\nb. Empat bulan kedua 75 % x upah pokok sebulan\nc. Empat bulan ketiga 50 % x upah pokok sebulan\nd. Bulan selanjutnya 25 % x upah pokok sebulan",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Masa berlaku dinormalisasi ke bulan pajak September 2021–September 2024 dan recorded_on mengikuti metadata; input komponen terpisah diasumsikan tidak tumpang tindih, dengan base_salary sebelum pengurangan sakit dan premi hadir penuh sebelum pengurangan absensi. Premi hadir menggunakan plafon aljabar, bukan otomatis nilai maksimum, sedangkan rumus JP memakai parameter tarif yang sudah ada atas upah sebulan secara literal sebagai kebijakan perusahaan yang tetap kalah terhadap aturan wajib; tarif BPJS lain yang sama dengan KB tidak diulang dan ketentuan minimum THR tetap diperiksa oleh constraint yang sudah ada."
+   },
+   "initial_delta": {
+    "delta_id": "e2-model2-pkb-PKB-SANSAN-2021-cand2",
+    "event_id": "PKB-SANSAN-2021",
+    "document": {
+     "id": "PKB-SANSAN-2021",
+     "title": "PKB PT Sansan Saudaratex Jaya 2021-2024",
+     "issued": "2021-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.WITHHOLDING_METHOD",
+      "recorded_on": "2021-01-01",
+      "label": "PPh 21 is borne by the employee",
+      "label_id": "PPh Pasal 21 ditanggung pekerja",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (8)",
+        "quote": "8. Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai\nperaturan pemerintah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.BPJS_WAGE",
+      "recorded_on": "2021-01-01",
+      "label": "Company monthly wage definition for employment social security",
+      "label_id": "Definisi upah sebulan perusahaan untuk BPJS Ketenagakerjaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "bpjs_wage",
+      "expression": "base_salary + income('position_allowance')",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf c",
+        "quote": "c. Jaminan Hari Tua\n- Ketentuan iuran= 3.70 % x upah sebulan, ditanggung\noleh Perusahaan\n= 2.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.JKK_RATE",
+      "recorded_on": "2021-01-01",
+      "label": "Company work accident premium rate by division",
+      "label_id": "Tarif iuran JKK perusahaan menurut divisi",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employee('division') == 'garmen' or employee('division') == 'tekstil'",
+      "expression": "dec('0.0024') if employee('division') == 'garmen' else dec('0.0089')",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C3",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf a",
+        "quote": "- Ketentuan iuran divisi garmen= 0,24 % x upah\nsebulan ditanggung oleh Perusahaan.\n- Ketentuan iuran divisi tekstil= 0,89 % x upah\nsebulan ditanggung oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.JP_EMPLOYEE",
+      "recorded_on": "2021-01-01",
+      "label": "Company employee pension contribution on monthly wages",
+      "label_id": "Iuran JP pekerja menurut rumus upah sebulan perusahaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(dec('0.01') * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat (2) huruf d",
+        "quote": "d. Jaminan Pensiun\n- Ketentuan iuran= 2.00 % x upah sebulan, ditanggung\noleh Perusahaan\n= 1.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.MEALS_AND_ATTENDANCE",
+      "recorded_on": "2021-01-01",
+      "label": "Cash meal allowances and attendance premium in regular income",
+      "label_id": "Tunjangan makan tunai dan premi hadir dalam penghasilan teratur",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "other_regular_income",
+      "expression": "income('other_regular_income') + round(hr('meal_allowance_rate') * (hr('meal_allowance_days_present') + hr('overtime_days_over_4_hours')) + hr('outside_duty_lunch_allowance_rate') * hr('outside_duty_lunches_without_meal'), 1, 'down') + (round(min(hr('attendance_premium_full'), base_salary * dec('0.20') / (1 - dec('0.20'))) * (0 if hr('absence_days') >= 2 else (dec('0.50') if hr('absence_days') == 1 else 1)), 1, 'down') if hr('overtime_eligible') == 1 else 0)",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C8",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 36 ayat (1) dan ayat (2)",
+        "quote": "1. Perusahaan akan memberikan tunjangan makan kepada Pekerja/Buruh yang\nhadir dalam bentuk uang yang nominalnya akan ditentukan pada ketentuan\nterpisah.\n2. Perusahaan akan memberikan kompensasi tunjangan makan kepada\nPekerja/Buruh yang bekerja lembur lebih dari 4 jam dengan nilai tunjangan makan\nsama seperti tunjangan makan siang.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 36 ayat (3) dan ayat (4)",
+        "quote": "3. Perusahaan akan memberikan kompensasi tunjangan makan slang kepada\nPekerja/Buruh yang menjalankan tugas perusahaan dengan atas seizin atasannya\ndan pada saat jam makan siang masih berada diluar perusahaan. Nilai kompensasi\nmakan siang besarnya ditetapkan dalam aturan tersendiri dan dibayarkan pada\nhari Pekerja/Buruh ditugaskan\n4. Dalam hal tugas diluar perusahaan Pekerja/Buruh mendapat makan di\nperusahaan tempat Pekerja/Buruh bertugas sesuai diluar perusahaan.\npemberitahuan perusahaan, maka ketetapan seperti dimaksud Pasal 36 ayat 3 tidak\nberlaku.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 37 ayat (1) dan ayat (2)",
+        "quote": "1. Premi diberikan atas kehadiran Pekerja/Buruh untuk bekerja.\n2. Premi hadir diberikan kepada Pekerja/Buruh yang berhak atas perhitungan\nupah lembur.\na. Besarnya premi hadir ditentukan maksimum 20%\n(dua puluh persen) dari upah pokok dan premi hadir.\nb. Apabila Pekerja/Buruh tidak hadir selama 1\n(satu) hari pada hari kerja perusahaan, maka premi hadir hilang sebesar 50% dan\napabila tidak hadir selama 2 (dua) hari maka premi hadir hilang seluruhnya.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.THR",
+      "recorded_on": "2021-01-01",
+      "label": "Company religious holiday allowance",
+      "label_id": "THR keagamaan menurut perusahaan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "expression": "(round((base_salary + income('position_allowance')) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') > 1 and hr('days_terminated_before_thr_payment') <= 30 else 0) if hr('thr_holiday') == 1 else 0",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C10",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat (3)",
+        "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat (1) dan ayat (2)",
+        "quote": "1. Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada\nPekerja/Buruh sebesar 1 bulan upah/proporsional bagi Pekerja/Buruh yang\nmemiliki masa kerja 12 bulan (1 tahun) atau lebih.\n2. Bagi Pekerja/Buruh yang mempunyai masa kerja kurang dari 12 bulan (1\ntahun) tetapi lebih dari 1 bulan, maka THR diberikan secara proporsional yaitu\n:\n(Masa Kerja/12) x 1 bulan upah",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat (4)",
+        "quote": "4. Bagi Pekerja/Buruh yang mengundurkan diri atau terkena Pemutusan Hubungan\nKerja (PHK) 30 (tiga puluh) hari sebelum tanggal pembayaran, maka perusahaan\ntetap memberikan Tunjangan Hari Raya tersebut.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.PKB-SANSAN-2021.LONG_TERM_SICK_PAY",
+      "recorded_on": "2021-01-01",
+      "label": "Paid base salary during certified long-term sickness",
+      "label_id": "Pembayaran upah pokok selama sakit berkepanjangan dengan surat dokter",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "base_salary",
+      "condition": "hr('long_term_sickness_certified') == 1 and hr('long_term_sick_month') > 0",
+      "expression": "round(income('base_salary') * (1 if hr('long_term_sick_month') <= 4 else (dec('0.75') if hr('long_term_sick_month') <= 8 else (dec('0.50') if hr('long_term_sick_month') <= 12 else dec('0.25')))), 1, 'down')",
+      "policy": "PKB-SANSAN-2021",
+      "conflict_code": "C8",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 34 ayat (2)",
+        "quote": "2. Pekerja/Buruh yang tidak masuk kerja karena sakit kronis atau penyakit\nmenular dalam jangka waktu yang lama dan menurut Surat Keterangan Dokter perlu\nistirahat dan perawatan maka pembayaran upah, akan diatur sesuai dengan pasal\n93 ayat 3 Undang - Undang Ketenagakerjaan No. 13 tahun 2003 yaitu :\nLama Pekerja/Buruh sakitPembayaran upah/gaji\na. Empat bulan pertama 100 % x upah pokok\nsebulan\nb. Empat bulan kedua 75 % x upah pokok sebulan\nc. Empat bulan ketiga 50 % x upah pokok sebulan\nd. Bulan selanjutnya 25 % x upah pokok sebulan",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat (1)",
+        "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Masa berlaku dinormalisasi ke bulan pajak September 2021–September 2024 dan recorded_on mengikuti metadata; input komponen terpisah diasumsikan tidak tumpang tindih, dengan base_salary sebelum pengurangan sakit dan premi hadir penuh sebelum pengurangan absensi. Premi hadir menggunakan plafon aljabar, bukan otomatis nilai maksimum, sedangkan rumus JP atas upah sebulan dicatat secara literal sebagai kebijakan perusahaan yang tetap kalah terhadap aturan wajib; tarif BPJS lain yang sama dengan KB tidak diulang dan ketentuan minimum THR tetap diperiksa oleh constraint yang sudah ada."
+   }
+  }
+ ],
+ "groups": [
+  [
+   2
+  ]
+ ],
+ "selected": 2,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-model2-pkb-PKB-SANSAN-2021-cand2",
+  "event_id": "PKB-SANSAN-2021",
+  "document": {
+   "id": "PKB-SANSAN-2021",
+   "title": "PKB PT Sansan Saudaratex Jaya 2021-2024",
+   "issued": "2021-01-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.PKB-SANSAN-2021.WITHHOLDING_METHOD",
+    "recorded_on": "2021-01-01",
+    "label": "PPh 21 is borne by the employee",
+    "label_id": "PPh Pasal 21 ditanggung pekerja",
+    "valid_from": "2021-09-01",
+    "valid_until": "2024-09-30",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "expression": "'gross'",
+    "policy": "PKB-SANSAN-2021",
+    "conflict_code": "C1",
+    "source": [
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 31 ayat (8)",
+      "quote": "8. Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai\nperaturan pemerintah.",
+      "page": 1
+     },
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 102 ayat (1)",
+      "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.PKB-SANSAN-2021.BPJS_WAGE",
+    "recorded_on": "2021-01-01",
+    "label": "Company monthly wage definition for employment social security",
+    "label_id": "Definisi upah sebulan perusahaan untuk BPJS Ketenagakerjaan",
+    "valid_from": "2021-09-01",
+    "valid_until": "2024-09-30",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bpjs_wage",
+    "expression": "base_salary + income('position_allowance')",
+    "policy": "PKB-SANSAN-2021",
+    "conflict_code": "C2",
+    "source": [
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 31 ayat (3)",
+      "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan.",
+      "page": 1
+     },
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 52 ayat (2) huruf c",
+      "quote": "c. Jaminan Hari Tua\n- Ketentuan iuran= 3.70 % x upah sebulan, ditanggung\noleh Perusahaan\n= 2.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh.",
+      "page": 1
+     },
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 102 ayat (1)",
+      "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.PKB-SANSAN-2021.JKK_RATE",
+    "recorded_on": "2021-01-01",
+    "label": "Company work accident premium rate by division",
+    "label_id": "Tarif iuran JKK perusahaan menurut divisi",
+    "valid_from": "2021-09-01",
+    "valid_until": "2024-09-30",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "jkk_rate",
+    "condition": "employee('division') == 'garmen' or employee('division') == 'tekstil'",
+    "expression": "dec('0.0024') if employee('division') == 'garmen' else dec('0.0089')",
+    "policy": "PKB-SANSAN-2021",
+    "conflict_code": "C3",
+    "source": [
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 52 ayat (2) huruf a",
+      "quote": "- Ketentuan iuran divisi garmen= 0,24 % x upah\nsebulan ditanggung oleh Perusahaan.\n- Ketentuan iuran divisi tekstil= 0,89 % x upah\nsebulan ditanggung oleh Perusahaan.",
+      "page": 1
+     },
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 102 ayat (1)",
+      "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.PKB-SANSAN-2021.JP_EMPLOYEE",
+    "recorded_on": "2021-01-01",
+    "label": "Company employee pension contribution on monthly wages",
+    "label_id": "Iuran JP pekerja menurut rumus upah sebulan perusahaan",
+    "valid_from": "2021-09-01",
+    "valid_until": "2024-09-30",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "jp_employee",
+    "condition": "employer('premiums_as_billed') != True",
+    "expression": "round(param('jp_employee_rate') * bpjs_wage, 1, param('bpjs_round_mode'))",
+    "policy": "PKB-SANSAN-2021",
+    "conflict_code": "C4",
+    "source": [
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 52 ayat (2) huruf d",
+      "quote": "d. Jaminan Pensiun\n- Ketentuan iuran= 2.00 % x upah sebulan, ditanggung\noleh Perusahaan\n= 1.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh.",
+      "page": 1
+     },
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 102 ayat (1)",
+      "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.PKB-SANSAN-2021.MEALS_AND_ATTENDANCE",
+    "recorded_on": "2021-01-01",
+    "label": "Cash meal allowances and attendance premium in regular income",
+    "label_id": "Tunjangan makan tunai dan premi hadir dalam penghasilan teratur",
+    "valid_from": "2021-09-01",
+    "valid_until": "2024-09-30",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular_income') + round(hr('meal_allowance_rate') * (hr('meal_allowance_days_present') + hr('overtime_days_over_4_hours')) + hr('outside_duty_lunch_allowance_rate') * hr('outside_duty_lunches_without_meal'), 1, 'down') + (round(min(hr('attendance_premium_full'), base_salary * dec('0.20') / (1 - dec('0.20'))) * (0 if hr('absence_days') >= 2 else (dec('0.50') if hr('absence_days') == 1 else 1)), 1, 'down') if hr('overtime_eligible') == 1 else 0)",
+    "policy": "PKB-SANSAN-2021",
+    "conflict_code": "C8",
+    "source": [
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 36 ayat (1) dan ayat (2)",
+      "quote": "1. Perusahaan akan memberikan tunjangan makan kepada Pekerja/Buruh yang\nhadir dalam bentuk uang yang nominalnya akan ditentukan pada ketentuan\nterpisah.\n2. Perusahaan akan memberikan kompensasi tunjangan makan kepada\nPekerja/Buruh yang bekerja lembur lebih dari 4 jam dengan nilai tunjangan makan\nsama seperti tunjangan makan siang.",
+      "page": 1
+     },
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 36 ayat (3) dan ayat (4)",
+      "quote": "3. Perusahaan akan memberikan kompensasi tunjangan makan slang kepada\nPekerja/Buruh yang menjalankan tugas perusahaan dengan atas seizin atasannya\ndan pada saat jam makan siang masih berada diluar perusahaan. Nilai kompensasi\nmakan siang besarnya ditetapkan dalam aturan tersendiri dan dibayarkan pada\nhari Pekerja/Buruh ditugaskan\n4. Dalam hal tugas diluar perusahaan Pekerja/Buruh mendapat makan di\nperusahaan tempat Pekerja/Buruh bertugas sesuai diluar perusahaan.\npemberitahuan perusahaan, maka ketetapan seperti dimaksud Pasal 36 ayat 3 tidak\nberlaku.",
+      "page": 1
+     },
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 37 ayat (1) dan ayat (2)",
+      "quote": "1. Premi diberikan atas kehadiran Pekerja/Buruh untuk bekerja.\n2. Premi hadir diberikan kepada Pekerja/Buruh yang berhak atas perhitungan\nupah lembur.\na. Besarnya premi hadir ditentukan maksimum 20%\n(dua puluh persen) dari upah pokok dan premi hadir.\nb. Apabila Pekerja/Buruh tidak hadir selama 1\n(satu) hari pada hari kerja perusahaan, maka premi hadir hilang sebesar 50% dan\napabila tidak hadir selama 2 (dua) hari maka premi hadir hilang seluruhnya.",
+      "page": 1
+     },
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 102 ayat (1)",
+      "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.PKB-SANSAN-2021.THR",
+    "recorded_on": "2021-01-01",
+    "label": "Company religious holiday allowance",
+    "label_id": "THR keagamaan menurut perusahaan",
+    "valid_from": "2021-09-01",
+    "valid_until": "2024-09-30",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "expression": "(round((base_salary + income('position_allowance')) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') > 1 and hr('days_terminated_before_thr_payment') <= 30 else 0) if hr('thr_holiday') == 1 else 0",
+    "policy": "PKB-SANSAN-2021",
+    "conflict_code": "C10",
+    "source": [
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 31 ayat (3)",
+      "quote": "3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan.",
+      "page": 1
+     },
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 41 ayat (1) dan ayat (2)",
+      "quote": "1. Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada\nPekerja/Buruh sebesar 1 bulan upah/proporsional bagi Pekerja/Buruh yang\nmemiliki masa kerja 12 bulan (1 tahun) atau lebih.\n2. Bagi Pekerja/Buruh yang mempunyai masa kerja kurang dari 12 bulan (1\ntahun) tetapi lebih dari 1 bulan, maka THR diberikan secara proporsional yaitu\n:\n(Masa Kerja/12) x 1 bulan upah",
+      "page": 1
+     },
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 41 ayat (4)",
+      "quote": "4. Bagi Pekerja/Buruh yang mengundurkan diri atau terkena Pemutusan Hubungan\nKerja (PHK) 30 (tiga puluh) hari sebelum tanggal pembayaran, maka perusahaan\ntetap memberikan Tunjangan Hari Raya tersebut.",
+      "page": 1
+     },
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 102 ayat (1)",
+      "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.PKB-SANSAN-2021.LONG_TERM_SICK_PAY",
+    "recorded_on": "2021-01-01",
+    "label": "Paid base salary during certified long-term sickness",
+    "label_id": "Pembayaran upah pokok selama sakit berkepanjangan dengan surat dokter",
+    "valid_from": "2021-09-01",
+    "valid_until": "2024-09-30",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "base_salary",
+    "condition": "hr('long_term_sickness_certified') == 1 and hr('long_term_sick_month') > 0",
+    "expression": "round(income('base_salary') * (1 if hr('long_term_sick_month') <= 4 else (dec('0.75') if hr('long_term_sick_month') <= 8 else (dec('0.50') if hr('long_term_sick_month') <= 12 else dec('0.25')))), 1, 'down')",
+    "policy": "PKB-SANSAN-2021",
+    "conflict_code": "C8",
+    "source": [
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 34 ayat (2)",
+      "quote": "2. Pekerja/Buruh yang tidak masuk kerja karena sakit kronis atau penyakit\nmenular dalam jangka waktu yang lama dan menurut Surat Keterangan Dokter perlu\nistirahat dan perawatan maka pembayaran upah, akan diatur sesuai dengan pasal\n93 ayat 3 Undang - Undang Ketenagakerjaan No. 13 tahun 2003 yaitu :\nLama Pekerja/Buruh sakitPembayaran upah/gaji\na. Empat bulan pertama 100 % x upah pokok\nsebulan\nb. Empat bulan kedua 75 % x upah pokok sebulan\nc. Empat bulan ketiga 50 % x upah pokok sebulan\nd. Bulan selanjutnya 25 % x upah pokok sebulan",
+      "page": 1
+     },
+     {
+      "document": "PKB-SANSAN-2021",
+      "provision": "Pasal 102 ayat (1)",
+      "quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+      "page": 1
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "Masa berlaku dinormalisasi ke bulan pajak September 2021–September 2024 dan recorded_on mengikuti metadata; input komponen terpisah diasumsikan tidak tumpang tindih, dengan base_salary sebelum pengurangan sakit dan premi hadir penuh sebelum pengurangan absensi. Premi hadir menggunakan plafon aljabar, bukan otomatis nilai maksimum, sedangkan rumus JP memakai parameter tarif yang sudah ada atas upah sebulan secara literal sebagai kebijakan perusahaan yang tetap kalah terhadap aturan wajib; tarif BPJS lain yang sama dengan KB tidak diulang dan ketentuan minimum THR tetap diperiksa oleh constraint yang sudah ada."
+ },
+ "cost_usd": 0.572188,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "Relevan pada lapisan perusahaan karena menetapkan komponen dan dasar upah, PPh 21 yang ditanggung pekerja, tunjangan makan tunai, premi hadir, THR, serta tarif dan pembagian iuran BPJS. Ketentuan payroll ini mencakup pekerja tetap dan menentukan nilai penghasilan serta iuran yang digunakan dalam perhitungan payroll/PPh 21, bukan mengubah tarif pajak nasional. Masa berlaku dipetakan ke bulan pajak September 2021 sampai September 2024.",
+   "quotes": [
+    {
+     "provision": "Pasal 31 ayat 2–3",
+     "quote": "2. Struktur pendapatan Pekerja/Buruh terdiri dari :\na. Gaji pokok\nb. Tunjangan tetap\nc. Tunjangan tidak tetap\n3. Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang\nmemiliki jabatan."
+    },
+    {
+     "provision": "Pasal 31 ayat 8",
+     "quote": "8. Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai\nperaturan pemerintah."
+    },
+    {
+     "provision": "Pasal 35 ayat 1–3",
+     "quote": "1. Bagi Pekerja/Buruh yang memegang jabatan diberikan Tunjangan Jabatan\nberdasarkan peringkat jabatan yang nilainya ditentukan dalam peraturan\ntersendiri\n2. Tunjangan jabatan akan berubah disesuaikan dengan posisi jabatan baru\nPekerja/Buruh.\n3. Tunjangan jabatan terkait demosi dapat diberikan lebih rendah yang\ndisesuaikan dengan jabatan baru."
+    },
+    {
+     "provision": "Pasal 36 ayat 1–2",
+     "quote": "1. Perusahaan akan memberikan tunjangan makan kepada Pekerja/Buruh yang\nhadir dalam bentuk uang yang nominalnya akan ditentukan pada ketentuan\nterpisah.\n2. Perusahaan akan memberikan kompensasi tunjangan makan kepada\nPekerja/Buruh yang bekerja lembur lebih dari 4 jam dengan nilai tunjangan makan\nsama seperti tunjangan makan siang."
+    },
+    {
+     "provision": "Pasal 37 ayat 1–2",
+     "quote": "1. Premi diberikan atas kehadiran Pekerja/Buruh untuk bekerja.\n2. Premi hadir diberikan kepada Pekerja/Buruh yang berhak atas perhitungan\nupah lembur.\na. Besarnya premi hadir ditentukan maksimum 20%\n(dua puluh persen) dari upah pokok dan premi hadir.\nb. Apabila Pekerja/Buruh tidak hadir selama 1\n(satu) hari pada hari kerja perusahaan, maka premi hadir hilang sebesar 50% dan\napabila tidak hadir selama 2 (dua) hari maka premi hadir hilang seluruhnya."
+    },
+    {
+     "provision": "Pasal 41 ayat 1–2",
+     "quote": "1. Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada\nPekerja/Buruh sebesar 1 bulan upah/proporsional bagi Pekerja/Buruh yang\nmemiliki masa kerja 12 bulan (1 tahun) atau lebih.\n2. Bagi Pekerja/Buruh yang mempunyai masa kerja kurang dari 12 bulan (1\ntahun) tetapi lebih dari 1 bulan, maka THR diberikan secara proporsional yaitu\n:\n(Masa Kerja/12) x 1 bulan upah"
+    },
+    {
+     "provision": "Pasal 52 ayat 2 huruf a–b",
+     "quote": "a. Jaminan Kecelakaan Kerja, termasuk penyakit\nakibat hubungan kerja sesuai dengan Kepres No.22 tahun 1993.\n- Ketentuan iuran divisi garmen= 0,24 % x upah\nsebulan ditanggung oleh Perusahaan.\n- Ketentuan iuran divisi tekstil= 0,89 % x upah\nsebulan ditanggung oleh Perusahaan.\nb. Jaminan Kematian\n- Ketentuan iuran= 0.30 % x upah sebulan, ditanggung\noleh Perusahaan."
+    },
+    {
+     "provision": "Pasal 52 ayat 2 huruf c–d",
+     "quote": "c. Jaminan Hari Tua\n- Ketentuan iuran= 3.70 % x upah sebulan, ditanggung\noleh Perusahaan\n= 2.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh.\nd. Jaminan Pensiun\n- Ketentuan iuran= 2.00 % x upah sebulan, ditanggung\noleh Perusahaan\n= 1.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh."
+    },
+    {
+     "provision": "Lampiran 1 angka 1",
+     "quote": "1. Total perhitungan harga piece rate per Pekerja/Buruh yang didapatkan per\nbulan harus mencapai/setara dengan UMK yang berlaku dengan formula yang\nditetapkan berdasarkan UMK, waktu proses dan skill. Formula tersebut dijelaskan\nsebagai berikut :\nKlasifikasi\nCost/Min \nPresentase/UMK \nGrade/Skill\nA\n110%\nB\n105%\nC\nUMK\nHelper/Skill \nHL-A\nUMK\nHL-B\n95%\nHL-C\n90%"
+    },
+    {
+     "provision": "Pasal 1 angka 16",
+     "quote": "Masa kerja tetap \nAdalah jangka waktu seseorang bekerja di Perusahaan diperhitungkan sejak\n    tanggal awal diangkat sebagai Pekerja/Buruh tetap."
+    }
+   ],
+   "effective_from": "2021-09-01",
+   "effective_from_quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+   "effective_until": "2024-09-30",
+   "effective_until_quote": "1. Perjanjian Kerja Bersama ini berlaku dan mengikat kedua belah pihak\nselama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir\ntanggal 23 September 2024",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT. Sansan Saudaratex Jaya",
+     "quote": "Adalah suatu badan hukum berbentuk Perseroan Terbatas bernama PT. Sansan\nSaudaratex Jaya yang didirikan di Cimahi berdasarkan Akta Notaris No. 105,"
+    },
+    {
+     "kind": "employee_group",
+     "value": "Pekerja/Buruh perusahaan, termasuk pekerja tetap",
+     "quote": "3. Pekerja/Buruh\nAdalah setiap orang dewasa yang secara resmi terikat dalam suatu hubungan\nkerja dengan perusahaan dan oleh karena itu menerima upah/gaji."
+    },
+    {
+     "kind": "sector",
+     "value": "Divisi garmen",
+     "quote": "- Ketentuan iuran divisi garmen= 0,24 % x upah\nsebulan ditanggung oleh Perusahaan."
+    },
+    {
+     "kind": "sector",
+     "value": "Divisi tekstil",
+     "quote": "- Ketentuan iuran divisi tekstil= 0,89 % x upah\nsebulan ditanggung oleh Perusahaan."
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

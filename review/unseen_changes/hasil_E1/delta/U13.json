@@ -1,0 +1,47 @@
+{
+ "delta_id": "E1-U13",
+ "event_id": "U13",
+ "document": {
+  "id": "UNSEEN-U13",
+  "title": "PMK 106/2026 (fiktif): PTKP proporsional di Masa Pajak Terakhir",
+  "issued": "2026-11-30"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "rule",
+   "id": "REG.PTKP.AMOUNT.PART_YEAR_EMPLOYMENT",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "ptkp_amount",
+   "expression": "round(lookup('ptkp', ptkp_status_effective) * months_employed / 12, 1, 'down')",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U13",
+     "provision": "Pasal I (Pasal 15 ayat (2a))",
+     "quote": "sebesar Penghasilan Tidak Kena Pajak setahun dikalikan jumlah bulan bekerja pada pemberi kerja tersebut dibagi 12 (dua belas), dibulatkan ke bawah hingga rupiah penuh"
+    },
+    {
+     "document": "UNSEEN-U13",
+     "provision": "Pasal II ayat (1)",
+     "quote": "tidak berlaku bagi Pegawai Tetap yang kewajiban pajak subjektifnya dimulai setelah bulan Januari atau berakhir sebelum bulan Desember"
+    },
+    {
+     "document": "UNSEEN-U13",
+     "provision": "Pasal II ayat (2)",
+     "quote": "Bagian bulan bekerja dihitung sebagai 1 (satu) bulan penuh."
+    }
+   ],
+   "condition": "months_employed < 12 and subjective_months >= 12 and employee('subjective_change_mid_year') != True",
+   "overrides": [
+    "REG.PTKP.AMOUNT"
+   ],
+   "recorded_on": "2026-11-30"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "months_employed counts the employment months of the case (a part month counts as a month)."
+}

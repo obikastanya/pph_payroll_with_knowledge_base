@@ -1,0 +1,156 @@
+{
+ "delta_id": "E1-U09",
+ "event_id": "U09",
+ "document": {
+  "id": "UNSEEN-U09",
+  "title": "PP 52/2026 dan PMK 118/2026 (fiktif): metode penghasilan tidak teratur",
+  "issued": "2026-12-29"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "rule",
+   "id": "REG.TER.RATE.REGULAR_ONLY",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "ter_rate",
+   "expression": "bracket('ter_monthly', ter_category, regular_gross)",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U09",
+     "provision": "Dokumen 1, Pasal I (PP 58/2023 Pasal 2 ayat (2a))",
+     "quote": "tarif efektif bulanan sebagaimana dimaksud pada ayat (2) huruf a diterapkan atas penghasilan bruto yang bersifat teratur dalam 1 (satu) Masa Pajak"
+    },
+    {
+     "document": "UNSEEN-U09",
+     "provision": "Dokumen 2, Pasal 2",
+     "quote": "tarif efektif bulanan sesuai kategori Pegawai Tetap dikalikan penghasilan bruto teratur Masa Pajak tersebut"
+    }
+   ],
+   "condition": "not is_final_period and irregular_gross > 0",
+   "overrides": [
+    "REG.TER.RATE"
+   ],
+   "recorded_on": "2026-12-29"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.TER.RUNNING.IRREGULAR",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph21_running",
+   "expression": "round(ter_rate * regular_gross, 1, param('pph_round_mode')) + pph_irregular_month",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U09",
+     "provision": "Dokumen 1, Pasal I (PP 58/2023 Pasal 2 ayat (2a))",
+     "quote": "tarif efektif bulanan sebagaimana dimaksud pada ayat (2) huruf a diterapkan atas penghasilan bruto yang bersifat teratur dalam 1 (satu) Masa Pajak"
+    },
+    {
+     "document": "UNSEEN-U09",
+     "provision": "Dokumen 2, Pasal 2",
+     "quote": "tarif efektif bulanan sesuai kategori Pegawai Tetap dikalikan penghasilan bruto teratur Masa Pajak tersebut"
+    }
+   ],
+   "condition": "not is_final_period and irregular_gross > 0",
+   "overrides": [
+    "REG.TER.RUNNING"
+   ],
+   "recorded_on": "2026-12-29"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.IRREGULAR.TAXABLE_WITH",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "taxable_with_irregular",
+   "expression": "max(0, round(12 * regular_gross + irregular_gross - min(round(param('job_expense_rate') * (12 * regular_gross + irregular_gross), 1, 'down'), param('job_expense_max_year')) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U09",
+     "provision": "Dokumen 2, Pasal 3 ayat (1)",
+     "quote": "dihitung dari penghasilan bruto teratur Masa Pajak tersebut dikalikan 12 (dua belas) ditambah seluruh penghasilan tidak teratur"
+    },
+    {
+     "document": "UNSEEN-U09",
+     "provision": "Dokumen 2, Pasal 3 ayat (2)",
+     "quote": "mengurangkan biaya jabatan sebesar 5% (lima persen) dari penghasilan bruto yang bersangkutan, paling banyak Rp6.000.000,00"
+    },
+    {
+     "document": "UNSEEN-U09",
+     "provision": "Dokumen 2, Pasal 3 ayat (2) huruf d",
+     "quote": "membulatkan hasilnya ke bawah hingga ribuan rupiah penuh"
+    }
+   ],
+   "condition": "not is_final_period and irregular_gross > 0",
+   "recorded_on": "2026-12-29"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.IRREGULAR.TAXABLE_WITHOUT",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "taxable_without_irregular",
+   "expression": "max(0, round(12 * regular_gross - min(round(param('job_expense_rate') * (12 * regular_gross), 1, 'down'), param('job_expense_max_year')) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U09",
+     "provision": "Dokumen 2, Pasal 3 ayat (1)",
+     "quote": "dihitung dari penghasilan bruto teratur Masa Pajak tersebut dikalikan 12 (dua belas) ditambah seluruh penghasilan tidak teratur"
+    },
+    {
+     "document": "UNSEEN-U09",
+     "provision": "Dokumen 2, Pasal 3 ayat (2)",
+     "quote": "mengurangkan biaya jabatan sebesar 5% (lima persen) dari penghasilan bruto yang bersangkutan, paling banyak Rp6.000.000,00"
+    },
+    {
+     "document": "UNSEEN-U09",
+     "provision": "Dokumen 2, Pasal 3 ayat (2) huruf d",
+     "quote": "membulatkan hasilnya ke bawah hingga ribuan rupiah penuh"
+    }
+   ],
+   "condition": "not is_final_period and irregular_gross > 0",
+   "recorded_on": "2026-12-29"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.IRREGULAR.PPH",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph_irregular_month",
+   "expression": "round(progressive('pasal17', taxable_with_irregular), 1, 'down') - round(progressive('pasal17', taxable_without_irregular), 1, 'down')",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U09",
+     "provision": "Dokumen 2, Pasal 3 ayat (1)",
+     "quote": "dihitung dari penghasilan bruto teratur Masa Pajak tersebut dikalikan 12 (dua belas) ditambah seluruh penghasilan tidak teratur"
+    },
+    {
+     "document": "UNSEEN-U09",
+     "provision": "Dokumen 2, Pasal 3 ayat (2)",
+     "quote": "mengurangkan biaya jabatan sebesar 5% (lima persen) dari penghasilan bruto yang bersangkutan, paling banyak Rp6.000.000,00"
+    },
+    {
+     "document": "UNSEEN-U09",
+     "provision": "Dokumen 2, Pasal 3 ayat (2) huruf d",
+     "quote": "membulatkan hasilnya ke bawah hingga ribuan rupiah penuh"
+    }
+   ],
+   "condition": "not is_final_period and irregular_gross > 0",
+   "recorded_on": "2026-12-29"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "Two documents (PP sets the principle, PMK the formula); one Delta cites both and is recorded on the PMK date, because the computation needs both. Reuses the facts taxable_with_irregular, taxable_without_irregular, pph_irregular_month of the PER-16 method."
+}

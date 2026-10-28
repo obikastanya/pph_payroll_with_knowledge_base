@@ -1,0 +1,171 @@
+{
+ "delta_id": "E1-U05",
+ "event_id": "U05",
+ "document": {
+  "id": "UNSEEN-U05",
+  "title": "PMK 108/2026 (fiktif): penggantian internet kerja jarak jauh",
+  "issued": "2026-12-07"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "internet_taxable",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "taxable part of internet reimbursement and allowance",
+   "source": [
+    {
+     "document": "UNSEEN-U05",
+     "provision": "Pasal I angka 1 (Pasal 7 huruf i)",
+     "quote": "penggantian biaya komunikasi dan internet bagi Pegawai Tetap yang bekerja jarak jauh"
+    },
+    {
+     "document": "UNSEEN-U05",
+     "provision": "Pasal I angka 2 (Pasal 7A ayat (1) huruf b)",
+     "quote": "bekerja jarak jauh paling sedikit 8 (delapan) hari kerja"
+    },
+    {
+     "document": "UNSEEN-U05",
+     "provision": "Pasal I angka 2 (Pasal 7A ayat (2))",
+     "quote": "paling banyak Rp400.000,00 (empat ratus ribu rupiah) untuk setiap Masa Pajak"
+    },
+    {
+     "document": "UNSEEN-U05",
+     "provision": "Pasal I angka 2 (Pasal 7A ayat (3))",
+     "quote": "merupakan penghasilan yang bersifat teratur dan termasuk dalam penghasilan bruto Pegawai Tetap"
+    },
+    {
+     "document": "UNSEEN-U05",
+     "provision": "Pasal I angka 2 (Pasal 7A ayat (4))",
+     "quote": "Tunjangan komunikasi atau tunjangan internet yang diberikan dalam jumlah tetap"
+    }
+   ],
+   "recorded_on": "2026-12-07"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.INTERNET_REIMBURSEMENT_CAP.2027",
+   "name": "internet_reimbursement_cap",
+   "value": 400000,
+   "value_type": "money",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U05",
+     "provision": "Pasal I angka 2 (Pasal 7A ayat (2))",
+     "quote": "paling banyak Rp400.000,00 (empat ratus ribu rupiah) untuk setiap Masa Pajak"
+    }
+   ],
+   "recorded_on": "2026-12-07"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.REMOTE_WORK_MIN_DAYS.2027",
+   "name": "remote_work_min_days",
+   "value": 8,
+   "value_type": "int",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U05",
+     "provision": "Pasal I angka 2 (Pasal 7A ayat (1) huruf b)",
+     "quote": "bekerja jarak jauh paling sedikit 8 (delapan) hari kerja"
+    }
+   ],
+   "recorded_on": "2026-12-07"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.INTERNET.TAXABLE.DEFAULT",
+   "layer": "regulation",
+   "modality": "default",
+   "scope": "period",
+   "produces": "internet_taxable",
+   "expression": "income('internet_reimbursement') + income('internet_allowance')",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U05",
+     "provision": "Ringkasan perubahan",
+     "quote": "Tunjangan internet tunai dengan jumlah tetap (tanpa bukti tagihan) tetap penghasilan penuh."
+    }
+   ],
+   "label": "before 2027 reimbursement and allowance are regular income",
+   "recorded_on": "2026-12-07"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.INTERNET.TAXABLE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "internet_taxable",
+   "expression": "income('internet_allowance') + (max(0, income('internet_reimbursement') - param('internet_reimbursement_cap')) if hr('remote_work_days') >= param('remote_work_min_days') else income('internet_reimbursement'))",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U05",
+     "provision": "Pasal I angka 1 (Pasal 7 huruf i)",
+     "quote": "penggantian biaya komunikasi dan internet bagi Pegawai Tetap yang bekerja jarak jauh"
+    },
+    {
+     "document": "UNSEEN-U05",
+     "provision": "Pasal I angka 2 (Pasal 7A ayat (1) huruf b)",
+     "quote": "bekerja jarak jauh paling sedikit 8 (delapan) hari kerja"
+    },
+    {
+     "document": "UNSEEN-U05",
+     "provision": "Pasal I angka 2 (Pasal 7A ayat (2))",
+     "quote": "paling banyak Rp400.000,00 (empat ratus ribu rupiah) untuk setiap Masa Pajak"
+    },
+    {
+     "document": "UNSEEN-U05",
+     "provision": "Pasal I angka 2 (Pasal 7A ayat (3))",
+     "quote": "merupakan penghasilan yang bersifat teratur dan termasuk dalam penghasilan bruto Pegawai Tetap"
+    },
+    {
+     "document": "UNSEEN-U05",
+     "provision": "Pasal I angka 2 (Pasal 7A ayat (4))",
+     "quote": "Tunjangan komunikasi atau tunjangan internet yang diberikan dalam jumlah tetap"
+    }
+   ],
+   "recorded_on": "2026-12-07"
+  }
+ ],
+ "change": [
+  {
+   "kind": "rule",
+   "id": "REG.GROSS.REGULAR",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "regular_gross",
+   "expression": "base_salary + fixed_allowance + other_regular_income + overtime_pay + employer_premiums_taxable + benefits_taxable_regular + tax_allowance + internet_taxable",
+   "valid_from": "2009-01-01",
+   "source": [
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Lampiran I angka 15",
+     "page": 4,
+     "quote": "berupa gaji atau upah, segala macam tunjangan, dan imbalan dengan nama"
+    },
+    {
+     "document": "PER-16-PJ-2016",
+     "provision": "Lampiran I angka 15",
+     "page": 4,
+     "quote": "termasuk uang lembur"
+    },
+    {
+     "document": "UNSEEN-U05",
+     "provision": "Pasal I angka 2 (Pasal 7A ayat (3))",
+     "quote": "merupakan penghasilan yang bersifat teratur dan termasuk dalam penghasilan bruto Pegawai Tetap"
+    }
+   ],
+   "recorded_on": "2026-12-07"
+  }
+ ],
+ "remove": [],
+ "note": "Case data: income.internet_reimbursement (bill-based), income.internet_allowance (fixed cash), hr.remote_work_days."
+}

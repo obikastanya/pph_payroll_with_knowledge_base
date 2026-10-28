@@ -1,0 +1,367 @@
+{
+ "delta_id": "E1-U06",
+ "event_id": "U06",
+ "document": {
+  "id": "UNSEEN-U06",
+  "title": "PMK 19/2027 (fiktif): PPh 21 DTP pegawai baru usia muda",
+  "issued": "2027-03-01"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "young_dtp_age",
+   "fact_type": "int",
+   "fact_scope": "year",
+   "output": false,
+   "label": "age in full years on the start date",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 3 huruf b",
+     "quote": "berusia paling tinggi 30 (tiga puluh) tahun pada tanggal mulai bekerja"
+    }
+   ],
+   "recorded_on": "2027-03-01"
+  },
+  {
+   "kind": "fact",
+   "id": "young_dtp_fixed_income",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "fixed regular salary and allowances",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 5 ayat (1)",
+     "quote": "berupa gaji dan tunjangan yang bersifat tetap dan teratur setiap bulan"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 5 ayat (2)",
+     "quote": "hanya diuji pada Masa Pajak bulan pertama bekerja"
+    }
+   ],
+   "recorded_on": "2027-03-01"
+  },
+  {
+   "kind": "fact",
+   "id": "young_dtp_eligible",
+   "fact_type": "bool",
+   "fact_scope": "year",
+   "output": false,
+   "label": "employee meets the young new employee DTP criteria",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 3 huruf a",
+     "quote": "mulai bekerja pada pemberi kerja paling cepat tanggal 1 Januari 2027"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 3 huruf b",
+     "quote": "berusia paling tinggi 30 (tiga puluh) tahun pada tanggal mulai bekerja"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 3 huruf c",
+     "quote": "Nomor Induk Kependudukan yang telah terintegrasi dengan sistem administrasi Direktorat Jenderal Pajak"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 3 huruf d",
+     "quote": "tidak lebih dari Rp9.000.000,00 (sembilan juta rupiah) pada Masa Pajak bulan pertama bekerja"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 3 huruf e",
+     "quote": "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya"
+    }
+   ],
+   "recorded_on": "2027-03-01"
+  },
+  {
+   "kind": "fact",
+   "id": "young_dtp_facility",
+   "fact_type": "bool",
+   "fact_scope": "period",
+   "output": false,
+   "label": "young new employee DTP applies this month",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 4 ayat (1)",
+     "quote": "jumlah Pegawai Tetap pada akhir bulan Masa Pajak tersebut lebih banyak daripada jumlah Pegawai Tetap pada tanggal 31 Desember 2026"
+    }
+   ],
+   "recorded_on": "2027-03-01"
+  },
+  {
+   "kind": "fact",
+   "id": "dtp_excess_not_refunded",
+   "fact_type": "money",
+   "fact_scope": "year",
+   "output": false,
+   "label": "overpayment from DTP that is not refunded",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 6 ayat (4)",
+     "quote": "dikembalikan kepada Pegawai Baru paling banyak sebesar Pajak Penghasilan Pasal 21 yang benar-benar dipotong dari Pegawai Baru dalam Tahun Pajak 2027"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 6 ayat (4)",
+     "quote": "Sisa kelebihan yang berasal dari PPh 21 DTP tidak dikembalikan."
+    }
+   ],
+   "recorded_on": "2027-03-01"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.YOUNG_DTP_AGE_MAX.2027",
+   "name": "young_dtp_age_max",
+   "value": 30,
+   "value_type": "int",
+   "valid_from": "2027-03-01",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 3 huruf b",
+     "quote": "berusia paling tinggi 30 (tiga puluh) tahun pada tanggal mulai bekerja"
+    }
+   ],
+   "valid_until": "2027-12-31",
+   "recorded_on": "2027-03-01"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.YOUNG_DTP_FIXED_INCOME_CAP.2027",
+   "name": "young_dtp_fixed_income_cap",
+   "value": 9000000,
+   "value_type": "money",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 3 huruf d",
+     "quote": "tidak lebih dari Rp9.000.000,00 (sembilan juta rupiah) pada Masa Pajak bulan pertama bekerja"
+    }
+   ],
+   "valid_until": "2027-12-31",
+   "recorded_on": "2027-03-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YOUNG_DTP.AGE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "young_dtp_age",
+   "expression": "employee('start_year') - employee('birth_year') - (1 if employee('start_month') * 100 + employee('start_day') < employee('birth_month') * 100 + employee('birth_day') else 0)",
+   "valid_from": "2027-03-01",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 3 huruf b",
+     "quote": "berusia paling tinggi 30 (tiga puluh) tahun pada tanggal mulai bekerja"
+    }
+   ],
+   "valid_until": "2027-12-31",
+   "recorded_on": "2027-03-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YOUNG_DTP.FIXED_INCOME",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "young_dtp_fixed_income",
+   "expression": "base_salary + fixed_allowance",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 5 ayat (1)",
+     "quote": "berupa gaji dan tunjangan yang bersifat tetap dan teratur setiap bulan"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 5 ayat (2)",
+     "quote": "hanya diuji pada Masa Pajak bulan pertama bekerja"
+    }
+   ],
+   "valid_until": "2027-12-31",
+   "recorded_on": "2027-03-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YOUNG_DTP.ELIGIBLE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "young_dtp_eligible",
+   "expression": "employee('start_date') != None and employee('start_date') >= '2027-01-01' and employee('birth_year') != None and young_dtp_age <= param('young_dtp_age_max') and employee('tax_id_integrated') == True and value_in('young_dtp_fixed_income', first_month) <= param('young_dtp_fixed_income_cap') and employee('other_dtp_incentive') != True",
+   "valid_from": "2027-03-01",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 3 huruf a",
+     "quote": "mulai bekerja pada pemberi kerja paling cepat tanggal 1 Januari 2027"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 3 huruf b",
+     "quote": "berusia paling tinggi 30 (tiga puluh) tahun pada tanggal mulai bekerja"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 3 huruf c",
+     "quote": "Nomor Induk Kependudukan yang telah terintegrasi dengan sistem administrasi Direktorat Jenderal Pajak"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 3 huruf d",
+     "quote": "tidak lebih dari Rp9.000.000,00 (sembilan juta rupiah) pada Masa Pajak bulan pertama bekerja"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 3 huruf e",
+     "quote": "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 5 ayat (2)",
+     "quote": "hanya diuji pada Masa Pajak bulan pertama bekerja"
+    }
+   ],
+   "valid_until": "2027-12-31",
+   "recorded_on": "2027-03-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YOUNG_DTP.FACILITY",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "young_dtp_facility",
+   "expression": "young_dtp_eligible and employer('permanent_headcount_end_2026') != None and hr('permanent_headcount') > employer('permanent_headcount_end_2026')",
+   "valid_from": "2027-03-01",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 4 ayat (1)",
+     "quote": "jumlah Pegawai Tetap pada akhir bulan Masa Pajak tersebut lebih banyak daripada jumlah Pegawai Tetap pada tanggal 31 Desember 2026"
+    }
+   ],
+   "valid_until": "2027-12-31",
+   "recorded_on": "2027-03-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YOUNG_DTP.RUNNING",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph21_dtp",
+   "expression": "pph21_due if young_dtp_facility else 0",
+   "valid_from": "2027-03-01",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 2 ayat (2)",
+     "quote": "diberikan untuk Masa Pajak Maret 2027 sampai dengan Masa Pajak Desember 2027"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 6 ayat (1)",
+     "quote": "PPh 21 DTP untuk setiap Masa Pajak sebesar Pajak Penghasilan Pasal 21 yang terutang pada Masa Pajak tersebut"
+    }
+   ],
+   "condition": "not is_final_period",
+   "valid_until": "2027-12-31",
+   "recorded_on": "2027-03-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YOUNG_DTP.FINAL",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph21_dtp",
+   "expression": "max(0, pph21_due) if young_dtp_facility else 0",
+   "valid_from": "2027-03-01",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 2 ayat (2)",
+     "quote": "diberikan untuk Masa Pajak Maret 2027 sampai dengan Masa Pajak Desember 2027"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 6 ayat (1)",
+     "quote": "PPh 21 DTP untuk setiap Masa Pajak sebesar Pajak Penghasilan Pasal 21 yang terutang pada Masa Pajak tersebut"
+    }
+   ],
+   "condition": "is_final_period",
+   "valid_until": "2027-12-31",
+   "recorded_on": "2027-03-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YOUNG_DTP.REFUND",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "refund_to_employee",
+   "expression": "min(max(0, 0 - final_period_tax), max(0, sum_periods_before_final('pph21_due') - sum_periods_before_final('pph21_dtp')))",
+   "valid_from": "2027-03-01",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 6 ayat (4)",
+     "quote": "dikembalikan kepada Pegawai Baru paling banyak sebesar Pajak Penghasilan Pasal 21 yang benar-benar dipotong dari Pegawai Baru dalam Tahun Pajak 2027"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 6 ayat (4)",
+     "quote": "Sisa kelebihan yang berasal dari PPh 21 DTP tidak dikembalikan."
+    }
+   ],
+   "condition": "young_dtp_eligible",
+   "valid_until": "2027-12-31",
+   "overrides": [
+    "REG.YEAR.REFUND"
+   ],
+   "recorded_on": "2027-03-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YOUNG_DTP.EXCESS",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "dtp_excess_not_refunded",
+   "expression": "max(0, 0 - final_period_tax) - refund_to_employee",
+   "valid_from": "2027-03-01",
+   "source": [
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 6 ayat (4)",
+     "quote": "dikembalikan kepada Pegawai Baru paling banyak sebesar Pajak Penghasilan Pasal 21 yang benar-benar dipotong dari Pegawai Baru dalam Tahun Pajak 2027"
+    },
+    {
+     "document": "UNSEEN-U06",
+     "provision": "Pasal 6 ayat (4)",
+     "quote": "Sisa kelebihan yang berasal dari PPh 21 DTP tidak dikembalikan."
+    }
+   ],
+   "valid_until": "2027-12-31",
+   "recorded_on": "2027-03-01"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "Case data: employee.start_date/start_year/start_month/start_day, birth_*, tax_id_integrated, other_dtp_incentive; employer.permanent_headcount_end_2026; hr.permanent_headcount per month. 'Never before a permanent employee of the same employer' (Pasal 1 angka 1) has no case attribute and is assumed true."
+}

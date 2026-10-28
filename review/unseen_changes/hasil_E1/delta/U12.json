@@ -1,0 +1,256 @@
+{
+ "delta_id": "E1-U12",
+ "event_id": "U12",
+ "document": {
+  "id": "UNSEEN-U12",
+  "title": "PMK 120/2026 (fiktif): tarif bulan pertama dari bruto setara",
+  "issued": "2026-12-30"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "days_in_month",
+   "fact_type": "int",
+   "fact_scope": "period",
+   "output": false,
+   "label": "calendar days of the month",
+   "source": [
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (2))",
+     "quote": "jumlah hari kalender sejak tanggal mulai bekerja sampai dengan akhir bulan, termasuk tanggal mulai bekerja"
+    },
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (2))",
+     "quote": "dengan hasil bagi dibulatkan ke bawah hingga rupiah penuh"
+    }
+   ],
+   "recorded_on": "2026-12-30"
+  },
+  {
+   "kind": "fact",
+   "id": "partial_first_month",
+   "fact_type": "bool",
+   "fact_scope": "period",
+   "output": false,
+   "label": "first month of an employee who started after day 1",
+   "source": [
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (1))",
+     "quote": "tarif efektif bulanan untuk Masa Pajak bulan pertama bekerja ditentukan berdasarkan penghasilan bruto setara sebulan penuh"
+    },
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal II",
+     "quote": "berlaku bagi Pegawai Tetap yang mulai bekerja sejak tanggal 1 Januari 2027"
+    }
+   ],
+   "recorded_on": "2026-12-30"
+  },
+  {
+   "kind": "fact",
+   "id": "ter_equivalent_gross",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "gross equivalent to a full month",
+   "source": [
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (2))",
+     "quote": "jumlah hari kalender sejak tanggal mulai bekerja sampai dengan akhir bulan, termasuk tanggal mulai bekerja"
+    },
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (2))",
+     "quote": "dengan hasil bagi dibulatkan ke bawah hingga rupiah penuh"
+    }
+   ],
+   "recorded_on": "2026-12-30"
+  },
+  {
+   "kind": "table",
+   "id": "TAB.DAYS_IN_MONTH",
+   "name": "days_in_month",
+   "table_kind": "lookup",
+   "rows": [
+    {
+     "key": "1",
+     "value": 31
+    },
+    {
+     "key": "2",
+     "value": 28
+    },
+    {
+     "key": "3",
+     "value": 31
+    },
+    {
+     "key": "4",
+     "value": 30
+    },
+    {
+     "key": "5",
+     "value": 31
+    },
+    {
+     "key": "6",
+     "value": 30
+    },
+    {
+     "key": "7",
+     "value": 31
+    },
+    {
+     "key": "8",
+     "value": 31
+    },
+    {
+     "key": "9",
+     "value": 30
+    },
+    {
+     "key": "10",
+     "value": 31
+    },
+    {
+     "key": "11",
+     "value": 30
+    },
+    {
+     "key": "12",
+     "value": 31
+    }
+   ],
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (2))",
+     "quote": "jumlah hari kalender sejak tanggal mulai bekerja sampai dengan akhir bulan, termasuk tanggal mulai bekerja"
+    },
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (2))",
+     "quote": "dengan hasil bagi dibulatkan ke bawah hingga rupiah penuh"
+    }
+   ],
+   "label": "days per month (non-leap)",
+   "recorded_on": "2026-12-30"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.CAL.DAYS_IN_MONTH",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "days_in_month",
+   "expression": "29 if (month == 2 and tax_year / 4 == round(tax_year / 4, 1, 'down') and (tax_year / 100 != round(tax_year / 100, 1, 'down') or tax_year / 400 == round(tax_year / 400, 1, 'down'))) else lookup('days_in_month', month)",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (2))",
+     "quote": "jumlah hari kalender sejak tanggal mulai bekerja sampai dengan akhir bulan, termasuk tanggal mulai bekerja"
+    },
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (2))",
+     "quote": "dengan hasil bagi dibulatkan ke bawah hingga rupiah penuh"
+    }
+   ],
+   "recorded_on": "2026-12-30"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.TER.PARTIAL_FIRST_MONTH",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "partial_first_month",
+   "expression": "employee('start_date') != None and employee('start_date') >= '2027-01-01' and employee('start_year') == tax_year and employee('start_month') == month and employee('start_day') > 1",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (1))",
+     "quote": "tarif efektif bulanan untuk Masa Pajak bulan pertama bekerja ditentukan berdasarkan penghasilan bruto setara sebulan penuh"
+    },
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal II",
+     "quote": "berlaku bagi Pegawai Tetap yang mulai bekerja sejak tanggal 1 Januari 2027"
+    }
+   ],
+   "recorded_on": "2026-12-30"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.TER.EQUIVALENT_GROSS",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "ter_equivalent_gross",
+   "expression": "round(regular_gross * days_in_month / (days_in_month - employee('start_day') + 1), 1, 'down') + irregular_gross",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (2))",
+     "quote": "jumlah hari kalender sejak tanggal mulai bekerja sampai dengan akhir bulan, termasuk tanggal mulai bekerja"
+    },
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (2))",
+     "quote": "dengan hasil bagi dibulatkan ke bawah hingga rupiah penuh"
+    }
+   ],
+   "condition": "partial_first_month",
+   "recorded_on": "2026-12-30"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.TER.RATE.PARTIAL_FIRST_MONTH",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "ter_rate",
+   "expression": "bracket('ter_monthly', ter_category, ter_equivalent_gross)",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (1))",
+     "quote": "tarif efektif bulanan untuk Masa Pajak bulan pertama bekerja ditentukan berdasarkan penghasilan bruto setara sebulan penuh"
+    },
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal II",
+     "quote": "berlaku bagi Pegawai Tetap yang mulai bekerja sejak tanggal 1 Januari 2027"
+    },
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (3))",
+     "quote": "dikalikan dengan penghasilan bruto sebenarnya"
+    },
+    {
+     "document": "UNSEEN-U12",
+     "provision": "Pasal I (Pasal 15B ayat (4))",
+     "quote": "tidak berlaku dalam hal Masa Pajak bulan pertama bekerja juga merupakan Masa Pajak Terakhir"
+    }
+   ],
+   "condition": "not is_final_period and partial_first_month",
+   "overrides": [
+    "REG.TER.RATE"
+   ],
+   "recorded_on": "2026-12-30"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "Case data: employee.start_date and its parts (the expression language has no date arithmetic)."
+}

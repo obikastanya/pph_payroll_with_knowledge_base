@@ -1,0 +1,99 @@
+{
+ "delta_id": "E1-U11",
+ "event_id": "U11",
+ "document": {
+  "id": "UNSEEN-U11",
+  "title": "PMK 116/2026 (fiktif): pembulatan dasar TER ke ribuan",
+  "issued": "2026-12-24"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "ter_base",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "monthly TER base rounded down to thousands",
+   "source": [
+    {
+     "document": "UNSEEN-U11",
+     "provision": "Pasal I (Pasal 15A ayat (1))",
+     "quote": "dibulatkan ke bawah hingga ribuan rupiah penuh. Penentuan lapisan tarif efektif bulanan didasarkan pada penghasilan bruto yang telah dibulatkan"
+    }
+   ],
+   "recorded_on": "2026-12-24"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.TER.BASE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "ter_base",
+   "expression": "round(gross_income, 1000, 'down')",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U11",
+     "provision": "Pasal I (Pasal 15A ayat (1))",
+     "quote": "dibulatkan ke bawah hingga ribuan rupiah penuh. Penentuan lapisan tarif efektif bulanan didasarkan pada penghasilan bruto yang telah dibulatkan"
+    }
+   ],
+   "condition": "not is_final_period",
+   "recorded_on": "2026-12-24"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.TER.RATE.ROUNDED_BASE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "ter_rate",
+   "expression": "bracket('ter_monthly', ter_category, ter_base)",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U11",
+     "provision": "Pasal I (Pasal 15A ayat (1))",
+     "quote": "dibulatkan ke bawah hingga ribuan rupiah penuh. Penentuan lapisan tarif efektif bulanan didasarkan pada penghasilan bruto yang telah dibulatkan"
+    }
+   ],
+   "condition": "not is_final_period",
+   "overrides": [
+    "REG.TER.RATE"
+   ],
+   "recorded_on": "2026-12-24"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.TER.RUNNING.ROUNDED_BASE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph21_running",
+   "expression": "round(ter_rate * ter_base, 1, 'down')",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U11",
+     "provision": "Pasal I (Pasal 15A ayat (1))",
+     "quote": "dibulatkan ke bawah hingga ribuan rupiah penuh. Penentuan lapisan tarif efektif bulanan didasarkan pada penghasilan bruto yang telah dibulatkan"
+    },
+    {
+     "document": "UNSEEN-U11",
+     "provision": "Pasal I (Pasal 15A ayat (2))",
+     "quote": "dengan dasar pengenaan sebagaimana dimaksud pada ayat (1) dibulatkan ke bawah hingga rupiah penuh"
+    }
+   ],
+   "condition": "not is_final_period",
+   "overrides": [
+    "REG.TER.RUNNING"
+   ],
+   "recorded_on": "2026-12-24"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "Annual gross at the final period keeps the actual amounts (Pasal 15A ayat (3)): only TER rules change."
+}

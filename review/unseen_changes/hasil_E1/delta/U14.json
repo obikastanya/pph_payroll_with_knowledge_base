@@ -1,0 +1,99 @@
+{
+ "delta_id": "E1-U14",
+ "event_id": "U14",
+ "document": {
+  "id": "UNSEEN-U14",
+  "title": "SK Direksi PT Fiktif Maju Bersama 014/SK-DIR/XII/2026: tunjangan PPh 21 golongan I-III",
+  "issued": "2026-12-14"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "excess_retained_by_company",
+   "fact_type": "money",
+   "fact_scope": "year",
+   "output": false,
+   "label": "final-period overpayment kept by the company",
+   "source": [
+    {
+     "document": "UNSEEN-U14",
+     "provision": "Pasal 4 ayat (4)",
+     "quote": "kelebihan tersebut menjadi hak perusahaan dan tidak dibayarkan kepada pegawai"
+    }
+   ],
+   "recorded_on": "2026-12-14"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.U14.METHOD",
+   "layer": "company",
+   "modality": "default",
+   "scope": "year",
+   "produces": "withholding_method",
+   "expression": "'gross_up' if employee('grade') in ('I', 'II', 'III') else case('method')",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U14",
+     "provision": "Pasal 1 ayat (1)",
+     "quote": "Pegawai tetap golongan I, golongan II, dan golongan III diberikan tunjangan Pajak Penghasilan Pasal 21 setiap bulan"
+    },
+    {
+     "document": "UNSEEN-U14",
+     "provision": "Pasal 1 ayat (2)",
+     "quote": "Pegawai tetap golongan IV dan golongan di atasnya tidak diberikan tunjangan Pajak Penghasilan Pasal 21"
+    },
+    {
+     "document": "UNSEEN-U14",
+     "provision": "Pasal 5",
+     "quote": "berlaku sejak pembayaran gaji Masa Pajak Januari 2027"
+    }
+   ],
+   "policy": "UNSEEN-U14",
+   "recorded_on": "2026-12-14"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.U14.TAX_BURDEN.FINAL",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "employee_tax_burden",
+   "expression": "0",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U14",
+     "provision": "Pasal 4 ayat (4)",
+     "quote": "kelebihan tersebut menjadi hak perusahaan dan tidak dibayarkan kepada pegawai"
+    }
+   ],
+   "condition": "withholding_method == 'gross_up' and is_final_period and pph21_due < 0",
+   "policy": "UNSEEN-U14",
+   "recorded_on": "2026-12-14"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.U14.EXCESS",
+   "layer": "company",
+   "modality": "default",
+   "scope": "year",
+   "produces": "excess_retained_by_company",
+   "expression": "max(0, 0 - final_period_tax) if withholding_method == 'gross_up' else 0",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U14",
+     "provision": "Pasal 4 ayat (4)",
+     "quote": "kelebihan tersebut menjadi hak perusahaan dan tidak dibayarkan kepada pegawai"
+    }
+   ],
+   "policy": "UNSEEN-U14",
+   "recorded_on": "2026-12-14"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "The gross-up itself (T = TER(B+T) x (B+T), least fixed point from 0; final period max(0, ...)) is the existing REG.GROSSUP.* of the knowledge base. Grade is taken from the case for the whole year."
+}

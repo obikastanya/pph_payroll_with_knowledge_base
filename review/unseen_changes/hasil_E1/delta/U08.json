@@ -1,0 +1,92 @@
+{
+ "delta_id": "E1-U08",
+ "event_id": "U08",
+ "document": {
+  "id": "UNSEEN-U08",
+  "title": "PMK 112/2026 (fiktif): PTKP tanggungan karyawati kawin",
+  "issued": "2026-12-16"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "table",
+   "id": "TAB.PTKP_STATUS_MARRIED_WOMAN_DEPENDANTS.2027",
+   "name": "ptkp_status_married_woman_dependants",
+   "table_kind": "lookup",
+   "rows": [
+    {
+     "key": "K/0",
+     "value": "TK/0"
+    },
+    {
+     "key": "K/1",
+     "value": "TK/1"
+    },
+    {
+     "key": "K/2",
+     "value": "TK/2"
+    },
+    {
+     "key": "K/3",
+     "value": "TK/3"
+    }
+   ],
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U08",
+     "provision": "Pasal I (Pasal 9 ayat (2) huruf a)",
+     "quote": "sebesar Penghasilan Tidak Kena Pajak untuk dirinya sendiri, ditambah Penghasilan Tidak Kena Pajak untuk anggota keluarga sedarah"
+    },
+    {
+     "document": "UNSEEN-U08",
+     "provision": "Pasal I (Pasal 9 ayat (2a))",
+     "quote": "Surat pernyataan disampaikan kepada pemberi kerja paling lambat pada awal tahun kalender"
+    },
+    {
+     "document": "UNSEEN-U08",
+     "provision": "Pasal I (Pasal 9 ayat (2b))",
+     "quote": "ditentukan sesuai dengan status tidak kawin dengan jumlah tanggungan yang sama"
+    }
+   ],
+   "label": "status K/n treated as TK/n",
+   "recorded_on": "2026-12-16"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.PTKP.STATUS.MARRIED_WOMAN.DEPENDANTS",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "ptkp_status_effective",
+   "expression": "lookup('ptkp_status_married_woman_dependants', ptkp_status_input)",
+   "valid_from": "2027-01-01",
+   "source": [
+    {
+     "document": "UNSEEN-U08",
+     "provision": "Pasal I (Pasal 9 ayat (2) huruf a)",
+     "quote": "sebesar Penghasilan Tidak Kena Pajak untuk dirinya sendiri, ditambah Penghasilan Tidak Kena Pajak untuk anggota keluarga sedarah"
+    },
+    {
+     "document": "UNSEEN-U08",
+     "provision": "Pasal I (Pasal 9 ayat (2a))",
+     "quote": "Surat pernyataan disampaikan kepada pemberi kerja paling lambat pada awal tahun kalender"
+    },
+    {
+     "document": "UNSEEN-U08",
+     "provision": "Pasal I (Pasal 9 ayat (2b))",
+     "quote": "ditentukan sesuai dengan status tidak kawin dengan jumlah tanggungan yang sama"
+    }
+   ],
+   "condition": "employee('sex') == 'F' and startswith(ptkp_status_input, 'K/') and not employee('husband_no_income_certified') and employee('dependants_statement') == True",
+   "overrides": [
+    "REG.PTKP.STATUS.MARRIED_WOMAN",
+    "REG.PTKP.STATUS"
+   ],
+   "recorded_on": "2026-12-16"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "Case data: employee.dependants_statement. PTKP and TER category both follow the effective status TK/n."
+}

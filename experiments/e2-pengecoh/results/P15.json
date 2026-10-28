@@ -26,11 +26,177 @@
    ]
   }
  },
- "candidates": [],
- "groups": [],
- "selected": null,
- "status": "budget",
- "delta": null,
- "cost_usd": 0.0,
- "error": "run e2-pengecoh spend reached its limit 2.2 USD"
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "fail: REG.ZAKAT.YEAR.NO_LOSS: no effect on any S^G case (vacuous element); stated effective date 2025-12-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": false,
+    "add": [],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "PMK-114-2025 confirms in Pasal 12 ayat (3) that zakat paid by permanent employees through the employer is deductible in PPh 21. The existing REG.ZAKAT.DEDUCTIBLE rule already models this. The no-fiscal-loss cap and the religious-obligation cap cannot bind for employee withholding, and the other provisions concern donors, recipients and reporting, so the computation does not change."
+   },
+   "delta": {
+    "delta_id": "e2-pengecoh-P15-cand1",
+    "event_id": "P15",
+    "document": {
+     "id": "PMK-114-2025",
+     "title": "PMK 114/2025: Sumbangan, zakat, dan sumbangan keagamaan wajib sebagai pengurang",
+     "issued": "2025-12-31"
+    },
+    "relevant": false,
+    "add": [],
+    "change": [],
+    "remove": [],
+    "note": "PMK-114-2025 confirms in Pasal 12 ayat (3) that zakat paid by permanent employees through the employer is deductible in PPh 21. The existing REG.ZAKAT.DEDUCTIBLE rule already models this. The no-fiscal-loss cap and the religious-obligation cap cannot bind for employee withholding, and the other provisions concern donors, recipients and reporting, so the computation does not change."
+   },
+   "initial_delta": {
+    "delta_id": "e2-pengecoh-P15-cand1",
+    "event_id": "P15",
+    "document": {
+     "id": "PMK-114-2025",
+     "title": "PMK 114/2025: Sumbangan, zakat, dan sumbangan keagamaan wajib sebagai pengurang",
+     "issued": "2025-12-31"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.ZAKAT.YEAR.NO_LOSS",
+      "recorded_on": "2025-12-31",
+      "label": "zakat deduction limited to the amount that causes no fiscal loss",
+      "label_id": "zakat pengurang dibatasi sebesar jumlah yang tidak menyebabkan rugi fiskal",
+      "valid_from": "2025-12-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_zakat_deduction",
+      "expression": "min(sum_periods('zakat_deductible'), max(0, annual_gross - job_expense - annual_pension_contributions))",
+      "overrides": [
+       "REG.YEAR.ZAKAT"
+      ],
+      "source": [
+       {
+        "document": "PMK-114-2025",
+        "provision": "Pasal 9 ayat (3)",
+        "quote": "besaran zakat atau sumbangan keagamaan yang sifatnya wajib yang dapat dikurangkan hanya sebesar jumlah yang tidak menyebabkan rugi fiskal",
+        "page": 8
+       },
+       {
+        "document": "PMK-114-2025",
+        "provision": "Pasal 12 ayat (3)",
+        "quote": "zakat atau sumbangan keagamaan tersebut dapat dikurangkan dari penghasilan bruto dalam menghitung Pajak Penghasilan sebagaimana dimaksud dalam Pasal 21 Undang-Undang Pajak Penghasilan.",
+        "page": 9
+       },
+       {
+        "document": "PMK-114-2025",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal diundangkan.",
+        "page": 16
+       },
+       {
+        "document": "PMK-114-2025",
+        "provision": "penutup",
+        "quote": "Ditetapkan di Jakarta pada tanggal 30 Desember 2025",
+        "page": 17
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The no-fiscal-loss limit (Pasal 9 ayat (3)) is modelled as capping the annual zakat deduction at net income before zakat; the cap at the religious obligation, the NPWP requirement and the recipient list are treated as conditions on the input zakat_paid(). The promulgation date is not shown, so validity starts with the December 2025 tax period inferred from the 30 Desember 2025 issue date."
+   }
+  }
+ ],
+ "groups": [
+  [
+   1
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-pengecoh-P15-cand1",
+  "event_id": "P15",
+  "document": {
+   "id": "PMK-114-2025",
+   "title": "PMK 114/2025: Sumbangan, zakat, dan sumbangan keagamaan wajib sebagai pengurang",
+   "issued": "2025-12-31"
+  },
+  "relevant": false,
+  "add": [],
+  "change": [],
+  "remove": [],
+  "note": "PMK-114-2025 confirms in Pasal 12 ayat (3) that zakat paid by permanent employees through the employer is deductible in PPh 21. The existing REG.ZAKAT.DEDUCTIBLE rule already models this. The no-fiscal-loss cap and the religious-obligation cap cannot bind for employee withholding, and the other provisions concern donors, recipients and reporting, so the computation does not change."
+ },
+ "cost_usd": 0.399835,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "PMK 114/2025 replaces PMK 254/2010 as the rule for deducting zakat and mandatory religious contributions from gross income. Pasal 12(3) states that zakat paid by permanent employees through the employer is deducted from gross income when computing PPh 21. The new rule sets conditions for that deduction: it must not cause a fiscal loss, it needs valid proof, and the recipient body must hold an NPWP. It also caps the deduction at the religious obligation amount, and payments to a body removed from the official list are no longer deductible. These conditions govern a deduction that enters the PPh 21 calculation for pegawai tetap. The document does not show the promulgation date, so the start date is inferred from the issue date in the metadata.",
+   "quotes": [
+    {
+     "provision": "Pasal 12 ayat (3)",
+     "quote": "oleh Wajib Pajak orang pribadi yang merupakan:\na. pegawai tetap melalui pemberi kerja;"
+    },
+    {
+     "provision": "Pasal 12 ayat (3)",
+     "quote": "zakat atau sumbangan keagamaan tersebut dapat\ndikurangkan dari penghasilan bruto dalam menghitung\nPajak Penghasilan sebagaimana dimaksud dalam Pasal 21\nUndang-Undang Pajak Penghasilan."
+    },
+    {
+     "provision": "Pasal 9 ayat (1)",
+     "quote": "c. diterima oleh badan amil zakat, lembaga amil zakat,\natau lembaga keagamaan yang memiliki Nomor Pokok\nWajib Pajak."
+    },
+    {
+     "provision": "Pasal 9 ayat (2)",
+     "quote": "dimaksud pada ayat (1) dibatasi tidak\nmelebihi besaran kewajiban sesuai dengan ketentuan\nagama masing-masing."
+    },
+    {
+     "provision": "Pasal 22 ayat (3)",
+     "quote": "dilakukan pencabutan sebagaimana dimaksud pada\nayat (2), tidak dapat dikurangkan dari penghasilan bruto."
+    },
+    {
+     "provision": "Lampiran B angka 1 huruf b",
+     "quote": "Zakat yang dibayarkan oleh karyawan dapat menjadi pengurang penghasilan\nbruto karyawan dalam menghitung Pajak Penghasilan karyawan\nmelalui mekanisme pemotongan Pajak Penghasilan Pasal 21."
+    }
+   ],
+   "effective_from": "2025-12-01",
+   "effective_from_quote": "Peraturan Menteri ini mulai berlaku pada tanggal diundangkan.",
+   "effective_until": null,
+   "effective_until_quote": null,
+   "subjects": [
+    {
+     "kind": "employee_group",
+     "value": "Permanent employees paying zakat or mandatory religious contributions through the employer",
+     "quote": "a. pegawai tetap melalui pemberi kerja;"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
 }

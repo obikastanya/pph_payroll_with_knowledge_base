@@ -11,11 +11,168 @@
    "dropped": []
   }
  },
- "candidates": [],
- "groups": [],
- "selected": null,
- "status": "budget",
- "delta": null,
- "cost_usd": 0.0,
- "error": "run e2-pengecoh spend reached its limit 2.2 USD"
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2026-03-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": false,
+    "add": [],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "PER-4/PJ/2026 only replaces the list of government-approved zakat and religious contribution recipients (Lampiran) and restates that payments to delisted bodies are not deductible. The KB does not model recipient identity, and the existing REG.ZAKAT.DEDUCTIBLE rule already covers zakat paid through the employer, so the PPh 21 computation does not change."
+   },
+   "delta": {
+    "delta_id": "e2-pengecoh-P20-cand1",
+    "event_id": "P20",
+    "document": {
+     "id": "PER-4-PJ-2026",
+     "title": "PER-4/PJ/2026: Badan atau lembaga penerima zakat dan sumbangan keagamaan",
+     "issued": "2026-03-30"
+    },
+    "relevant": false,
+    "add": [],
+    "change": [],
+    "remove": [],
+    "note": "PER-4/PJ/2026 only replaces the list of government-approved zakat and religious contribution recipients (Lampiran) and restates that payments to delisted bodies are not deductible. The KB does not model recipient identity, and the existing REG.ZAKAT.DEDUCTIBLE rule already covers zakat paid through the employer, so the PPh 21 computation does not change."
+   },
+   "initial_delta": {
+    "delta_id": "e2-pengecoh-P20-cand1",
+    "event_id": "P20",
+    "document": {
+     "id": "PER-4-PJ-2026",
+     "title": "PER-4/PJ/2026: Badan atau lembaga penerima zakat dan sumbangan keagamaan",
+     "issued": "2026-03-30"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.ZAKAT.DEDUCTIBLE.UNLISTED_RECIPIENT",
+      "recorded_on": "2026-03-30",
+      "label": "zakat paid to a body not on (or removed from) the DGT recipient list is not deductible",
+      "label_id": "zakat yang dibayarkan kepada badan/lembaga yang tidak tercantum atau telah dicabut dari daftar tidak dapat dikurangkan",
+      "valid_from": "2026-03-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "zakat_deductible",
+      "condition": "employer('zakat_recipient_listed') == False",
+      "expression": "0",
+      "overrides": [
+       "REG.ZAKAT.DEDUCTIBLE"
+      ],
+      "source": [
+       {
+        "document": "PER-4-PJ-2026",
+        "provision": "Pasal 1 ayat (5)",
+        "quote": "Zakat atau sumbangan keagamaan yang sifatnya wajib yang dibayarkan kepada badan atau lembaga setelah dilakukan pencabutan sebagaimana dimaksud pada ayat (4), tidak dapat dikurangkan dari penghasilan bruto.",
+        "page": 3
+       },
+       {
+        "document": "PER-4-PJ-2026",
+        "provision": "Pasal 1 ayat (3)",
+        "quote": "Badan atau lembaga sebagaimana dimaksud pada ayat (2) tercantum dalam Lampiran yang merupakan bagian tidak terpisahkan dari Peraturan Direktur Jenderal ini.",
+        "page": 3
+       },
+       {
+        "document": "PER-4-PJ-2026",
+        "provision": "Pasal 3",
+        "quote": "Peraturan Direktur Jenderal ini mulai berlaku pada tanggal ditetapkan.",
+        "page": 3
+       },
+       {
+        "document": "PER-4-PJ-2026",
+        "provision": "penutup",
+        "quote": "Ditetapkan di Jakarta pada tanggal 30 Maret 2026",
+        "page": 3
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The KB does not model the identity of the zakat recipient, so the new Lampiran list and the revocation rule (Pasal 1 ayat (3)-(5)) are modelled as an exception that sets zakat_deductible to 0 when the case marks the recipient body as not listed (employer attribute zakat_recipient_listed == False). The existing REG.ZAKAT.DEDUCTIBLE stays unchanged; valid_from is the first day of the March 2026 tax period, as the regulation takes effect on 30 March 2026."
+   }
+  }
+ ],
+ "groups": [
+  [
+   1
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-pengecoh-P20-cand1",
+  "event_id": "P20",
+  "document": {
+   "id": "PER-4-PJ-2026",
+   "title": "PER-4/PJ/2026: Badan atau lembaga penerima zakat dan sumbangan keagamaan",
+   "issued": "2026-03-30"
+  },
+  "relevant": false,
+  "add": [],
+  "change": [],
+  "remove": [],
+  "note": "PER-4/PJ/2026 only replaces the list of government-approved zakat and religious contribution recipients (Lampiran) and restates that payments to delisted bodies are not deductible. The KB does not model recipient identity, and the existing REG.ZAKAT.DEDUCTIBLE rule already covers zakat paid through the employer, so the PPh 21 computation does not change."
+ },
+ "cost_usd": 0.326101,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "The regulation replaces PER-04/PJ/2022 and its amendments with a new consolidated list of government-established or approved zakat and compulsory religious donation recipients. Payments to these bodies may be deducted from gross income. For permanent employees, zakat paid through the employer to a listed body reduces net income in the PPh 21 calculation, so changing the list changes which deductions qualify. The new list includes bodies approved up to February 2026. It also adds a rule that payments made after a body's licence is revoked and it is removed from the list are not deductible.",
+   "quotes": [
+    {
+     "provision": "Pasal 1 ayat (1)",
+     "quote": "Zakat atau sumbangan keagamaan yang sifatnya wajib yang dapat dikurangkan dari penghasilan bruto meliputi"
+    },
+    {
+     "provision": "Pasal 1 ayat (3)",
+     "quote": "Badan atau lembaga sebagaimana dimaksud pada ayat (2) tercantum dalam Lampiran yang merupakan bagian tidak terpisahkan dari Peraturan Direktur Jenderal ini."
+    },
+    {
+     "provision": "Pasal 1 ayat (5)",
+     "quote": "yang dibayarkan kepada badan atau lembaga setelah dilakukan pencabutan sebagaimana dimaksud pada ayat (4), tidak dapat dikurangkan dari penghasilan bruto."
+    },
+    {
+     "provision": "Pasal 2",
+     "quote": "dicabut dan dinyatakan tidak berlaku."
+    },
+    {
+     "provision": "Lampiran D.43",
+     "quote": "43. Yayasan Energi Kebaikan Nomor 165 Tahun 2026"
+    }
+   ],
+   "effective_from": "2026-03-01",
+   "effective_from_quote": "Peraturan Direktur Jenderal ini mulai berlaku pada tanggal ditetapkan.",
+   "effective_until": null,
+   "effective_until_quote": null,
+   "subjects": []
+  },
+  "quotes_ok": true
+ }
 }

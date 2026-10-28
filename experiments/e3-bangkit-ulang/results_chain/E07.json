@@ -1,0 +1,1295 @@
+{
+ "run": "e3-bangkit-ulang",
+ "event": "E07",
+ "condition": "proposed",
+ "documents": [
+  "PP-7-2025"
+ ],
+ "selection": {
+  "PP-7-2025": {
+   "tokens": 3572,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.PADAT_KARYA_2025",
+      "label": "JKK rate reduced by 50% for certain labour-intensive industries (Feb-Jul 2025)",
+      "label_id": "tarif iuran JKK dengan keringanan 50% bagi perusahaan industri padat karya tertentu (Februari-Juli 2025)",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "lookup('jkk_rates', employer('jkk_risk_group')) / 2"
+       },
+       {
+        "name": "condition",
+        "value": "employer('jkk_relief_padat_karya') == True"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.BPJS.JKK_RATE"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "page": 4,
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko lingkungan kerja menjadi:"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (3)",
+        "page": 3,
+        "quote": "merupakan industri yang memiliki jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang terdaftar sslagai peserta aktif di BPJS Ketenagakerjaan."
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.JKP.PADAT_KARYA_2025",
+      "label": "reduced JKK rate after recomposition into JKP for certain labour-intensive industries (Feb-Jul 2025)",
+      "label_id": "tarif iuran JKK keringanan setelah rekomposisi untuk iuran JKP bagi perusahaan industri padat karya tertentu (Februari-Juli 2025)",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, lookup('jkk_rates', employer('jkk_risk_group')) / 2 - param('jkk_jkp_recomposition_rate'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('jkk_relief_padat_karya') == True and employee('jkp_registered') == True and employee('bpjs_arrears') != True"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.BPJS.JKK_RATE,REG.BPJS.JKK_RATE.JKP,REG.BPJS.JKK_RATE.PADAT_KARYA_2025"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "page": 4,
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko lingkungan kerja menjadi:"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 9 ayat (1) huruf a",
+        "page": 6,
+        "quote": "tingkat risiko lingkungan kerja sangat rendah direkomposisi untuk Iuran JKP sebesar O,L2Oo/o (noL koma satu dua nol persen) dari Upah sebulan"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 9 ayat (1) huruf b",
+        "page": 6,
+        "quote": "dan sangat tinggi direkomposisi untuk Iuran JKP masing-masing sebesar O,L4Oo/o (nol koma satu empat nol persen) dari Upah sebulan."
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Eligibility (Pasal 3 ayat (3)-(4) and Pasal 6 ayat (2), verified by BPJS) is read from a single employer attribute jkk_relief_padat_karya; the 50% relief halves the table rate. For JKP participants the recomposed share (0.120% for very low risk, i.e. the whole reduced rate, and 0.140% otherwise, equal to the existing jkk_jkp_recomposition_rate) is subtracted, written as max(0, halved rate - 0.14%)."
+   },
+   "delta": {
+    "delta_id": "e3-bangkit-ulang-E07-cand1",
+    "event_id": "E07",
+    "document": {
+     "id": "PP-7-2025",
+     "title": "PP 7/2025: Keringanan 50% iuran JKK industri padat karya tertentu",
+     "issued": "2025-02-07"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.PADAT_KARYA_2025",
+      "recorded_on": "2025-02-07",
+      "label": "JKK rate reduced by 50% for certain labour-intensive industries (Feb-Jul 2025)",
+      "label_id": "tarif iuran JKK dengan keringanan 50% bagi perusahaan industri padat karya tertentu (Februari-Juli 2025)",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('jkk_relief_padat_karya') == True",
+      "expression": "lookup('jkk_rates', employer('jkk_risk_group')) / 2",
+      "overrides": [
+       "REG.BPJS.JKK_RATE"
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko lingkungan kerja menjadi:",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (3)",
+        "quote": "merupakan industri yang memiliki jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang terdaftar sslagai peserta aktif di BPJS Ketenagakerjaan.",
+        "page": 3
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25.",
+        "page": 6
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.JKP.PADAT_KARYA_2025",
+      "recorded_on": "2025-02-07",
+      "label": "reduced JKK rate after recomposition into JKP for certain labour-intensive industries (Feb-Jul 2025)",
+      "label_id": "tarif iuran JKK keringanan setelah rekomposisi untuk iuran JKP bagi perusahaan industri padat karya tertentu (Februari-Juli 2025)",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('jkk_relief_padat_karya') == True and employee('jkp_registered') == True and employee('bpjs_arrears') != True",
+      "expression": "max(0, lookup('jkk_rates', employer('jkk_risk_group')) / 2 - param('jkk_jkp_recomposition_rate'))",
+      "overrides": [
+       "REG.BPJS.JKK_RATE",
+       "REG.BPJS.JKK_RATE.JKP",
+       "REG.BPJS.JKK_RATE.PADAT_KARYA_2025"
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko lingkungan kerja menjadi:",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 9 ayat (1) huruf a",
+        "quote": "tingkat risiko lingkungan kerja sangat rendah direkomposisi untuk Iuran JKP sebesar O,L2Oo/o (noL koma satu dua nol persen) dari Upah sebulan",
+        "page": 6
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 9 ayat (1) huruf b",
+        "quote": "dan sangat tinggi direkomposisi untuk Iuran JKP masing-masing sebesar O,L4Oo/o (nol koma satu empat nol persen) dari Upah sebulan.",
+        "page": 6
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25.",
+        "page": 6
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Eligibility (Pasal 3 ayat (3)-(4) and Pasal 6 ayat (2), verified by BPJS) is read from a single employer attribute jkk_relief_padat_karya; the 50% relief halves the table rate. For JKP participants the recomposed share (0.120% for very low risk, i.e. the whole reduced rate, and 0.140% otherwise, equal to the existing jkk_jkp_recomposition_rate) is subtracted, written as max(0, halved rate - 0.14%)."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 2,
+   "order": 2,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.PADAT_KARYA_JKK_INDUSTRY.2025",
+      "label": "labour-intensive industries eligible for the 2025 JKK premium relief",
+      "label_id": "industri padat karya tertentu penerima keringanan iuran JKK 2025",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "name",
+        "value": "padat_karya_jkk_industries"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows",
+        "value": "[{\"key\": \"food_beverage_tobacco\"}, {\"key\": \"textile_apparel\"}, {\"key\": \"leather_goods\"}, {\"key\": \"footwear\"}, {\"key\": \"children_toys\"}, {\"key\": \"furniture\"}]"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4)",
+        "page": 4,
+        "quote": "industri makanan, minuman, dan tembakau;"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4)",
+        "page": 4,
+        "quote": "industri tekstil dan pakaian jadi;"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25"
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.JKK_JKP_RECOMPOSITION_PADAT_KARYA.2025",
+      "label": "part of the reduced JKK rate recomposed into JKP (labour-intensive industries 2025)",
+      "label_id": "rekomposisi iuran JKK yang diringankan untuk iuran JKP (industri padat karya tertentu 2025)",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "name",
+        "value": "jkk_jkp_recomposition_padat_karya"
+       },
+       {
+        "name": "table_kind",
+        "value": "lookup"
+       },
+       {
+        "name": "rows",
+        "value": "[{\"key\": \"very_low\", \"value\": \"0.0012\"}, {\"key\": \"low\", \"value\": \"0.0014\"}, {\"key\": \"medium\", \"value\": \"0.0014\"}, {\"key\": \"high\", \"value\": \"0.0014\"}, {\"key\": \"very_high\", \"value\": \"0.0014\"}]"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 9 ayat (1) huruf a",
+        "page": 6,
+        "quote": "tingkat risiko lingkungan kerja sangat rendah direkomposisi untuk Iuran JKP sebesar O,L2Oo/o (noL koma satu dua nol persen) dari Upah sebulan"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 9 ayat (1) huruf b",
+        "page": 6,
+        "quote": "dan sangat tinggi direkomposisi untuk Iuran JKP masing-masing sebesar O,L4Oo/o (nol koma satu empat nol persen) dari Upah sebulan"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.PADAT_KARYA",
+      "label": "JKK rate reduced by 50% for certain labour-intensive industries (February-July 2025)",
+      "label_id": "tarif iuran JKK dengan keringanan 50% bagi perusahaan industri padat karya tertentu (Februari-Juli 2025)",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "lookup('jkk_rates', employer('jkk_risk_group')) * 50 / 100"
+       },
+       {
+        "name": "condition",
+        "value": "in_table('padat_karya_jkk_industries', employer('industry')) and employer('bpjs_active_participants') >= 50"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.BPJS.JKK_RATE"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "page": 4,
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko lingkungan kerja menjadi:"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (3)",
+        "page": 3,
+        "quote": "merupakan industri yang memiliki jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang terdaftar sslagai peserta aktif di BPJS Ketenagakerjaan."
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.PADAT_KARYA.JKP",
+      "label": "reduced JKK rate after JKP recomposition for certain labour-intensive industries (February-July 2025)",
+      "label_id": "tarif iuran JKK yang diringankan setelah rekomposisi JKP bagi industri padat karya tertentu (Februari-Juli 2025)",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, lookup('jkk_rates', employer('jkk_risk_group')) * 50 / 100 - lookup('jkk_jkp_recomposition_padat_karya', employer('jkk_risk_group')))"
+       },
+       {
+        "name": "condition",
+        "value": "in_table('padat_karya_jkk_industries', employer('industry')) and employer('bpjs_active_participants') >= 50 and employee('jkp_registered') == True and employee('bpjs_arrears') != True"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.BPJS.JKK_RATE, REG.BPJS.JKK_RATE.JKP, REG.BPJS.JKK_RATE.PADAT_KARYA"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 9 ayat (1)",
+        "page": 5,
+        "quote": "Iuran JKK sebagaimana dimaksud dalam Pasal 4 ayat (1) direkomposisi sebagai berikut:"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "page": 4,
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko lingkungan kerja menjadi:"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk progrErm JKP sebagaimana dimaksud dalam Peraturan Pemerintah ini berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Eligibility (one of the six listed industries and at least 50 active BPJS participants, verified by BPJS) is read from employer attributes 'industry' and 'bpjs_active_participants'; the halved JKK rate (50% of the existing jkk_rates table, matching Pasal 4 values) applies to February-July 2025 contributions, and for JKP-registered employees the Pasal 9 recomposition share (0.120% very low, 0.140% others) is moved out of jkk_premium, consistent with the existing PP 49/2023 modelling. Payment deadlines, fines and the Pasal 11 settlement do not affect the PPh 21 computation and are not modelled."
+   },
+   "delta": {
+    "delta_id": "e3-bangkit-ulang-E07-cand2",
+    "event_id": "E07",
+    "document": {
+     "id": "PP-7-2025",
+     "title": "PP 7/2025: Keringanan 50% iuran JKK industri padat karya tertentu",
+     "issued": "2025-02-07"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.PADAT_KARYA_JKK_INDUSTRY.2025",
+      "recorded_on": "2025-02-07",
+      "label": "labour-intensive industries eligible for the 2025 JKK premium relief",
+      "label_id": "industri padat karya tertentu penerima keringanan iuran JKK 2025",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "name": "padat_karya_jkk_industries",
+      "table_kind": "set",
+      "rows": [
+       {
+        "key": "food_beverage_tobacco"
+       },
+       {
+        "key": "textile_apparel"
+       },
+       {
+        "key": "leather_goods"
+       },
+       {
+        "key": "footwear"
+       },
+       {
+        "key": "children_toys"
+       },
+       {
+        "key": "furniture"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4)",
+        "quote": "industri makanan, minuman, dan tembakau;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4)",
+        "quote": "industri tekstil dan pakaian jadi;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25",
+        "page": 6
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.JKK_JKP_RECOMPOSITION_PADAT_KARYA.2025",
+      "recorded_on": "2025-02-07",
+      "label": "part of the reduced JKK rate recomposed into JKP (labour-intensive industries 2025)",
+      "label_id": "rekomposisi iuran JKK yang diringankan untuk iuran JKP (industri padat karya tertentu 2025)",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "name": "jkk_jkp_recomposition_padat_karya",
+      "table_kind": "lookup",
+      "rows": [
+       {
+        "key": "very_low",
+        "value": "0.0012"
+       },
+       {
+        "key": "low",
+        "value": "0.0014"
+       },
+       {
+        "key": "medium",
+        "value": "0.0014"
+       },
+       {
+        "key": "high",
+        "value": "0.0014"
+       },
+       {
+        "key": "very_high",
+        "value": "0.0014"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 9 ayat (1) huruf a",
+        "quote": "tingkat risiko lingkungan kerja sangat rendah direkomposisi untuk Iuran JKP sebesar O,L2Oo/o (noL koma satu dua nol persen) dari Upah sebulan",
+        "page": 6
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 9 ayat (1) huruf b",
+        "quote": "dan sangat tinggi direkomposisi untuk Iuran JKP masing-masing sebesar O,L4Oo/o (nol koma satu empat nol persen) dari Upah sebulan",
+        "page": 6
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25",
+        "page": 6
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.PADAT_KARYA",
+      "recorded_on": "2025-02-07",
+      "label": "JKK rate reduced by 50% for certain labour-intensive industries (February-July 2025)",
+      "label_id": "tarif iuran JKK dengan keringanan 50% bagi perusahaan industri padat karya tertentu (Februari-Juli 2025)",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "in_table('padat_karya_jkk_industries', employer('industry')) and employer('bpjs_active_participants') >= 50",
+      "expression": "lookup('jkk_rates', employer('jkk_risk_group')) * 50 / 100",
+      "overrides": [
+       "REG.BPJS.JKK_RATE"
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko lingkungan kerja menjadi:",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (3)",
+        "quote": "merupakan industri yang memiliki jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang terdaftar sslagai peserta aktif di BPJS Ketenagakerjaan.",
+        "page": 3
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25",
+        "page": 6
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.PADAT_KARYA.JKP",
+      "recorded_on": "2025-02-07",
+      "label": "reduced JKK rate after JKP recomposition for certain labour-intensive industries (February-July 2025)",
+      "label_id": "tarif iuran JKK yang diringankan setelah rekomposisi JKP bagi industri padat karya tertentu (Februari-Juli 2025)",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "in_table('padat_karya_jkk_industries', employer('industry')) and employer('bpjs_active_participants') >= 50 and employee('jkp_registered') == True and employee('bpjs_arrears') != True",
+      "expression": "max(0, lookup('jkk_rates', employer('jkk_risk_group')) * 50 / 100 - lookup('jkk_jkp_recomposition_padat_karya', employer('jkk_risk_group')))",
+      "overrides": [
+       "REG.BPJS.JKK_RATE",
+       "REG.BPJS.JKK_RATE.JKP",
+       "REG.BPJS.JKK_RATE.PADAT_KARYA"
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 9 ayat (1)",
+        "quote": "Iuran JKK sebagaimana dimaksud dalam Pasal 4 ayat (1) direkomposisi sebagai berikut:",
+        "page": 5
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko lingkungan kerja menjadi:",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk progrErm JKP sebagaimana dimaksud dalam Peraturan Pemerintah ini berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25",
+        "page": 6
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Eligibility (one of the six listed industries and at least 50 active BPJS participants, verified by BPJS) is read from employer attributes 'industry' and 'bpjs_active_participants'; the halved JKK rate (50% of the existing jkk_rates table, matching Pasal 4 values) applies to February-July 2025 contributions, and for JKP-registered employees the Pasal 9 recomposition share (0.120% very low, 0.140% others) is moved out of jkk_premium, consistent with the existing PP 49/2023 modelling. Payment deadlines, fines and the Pasal 11 settlement do not affect the PPh 21 computation and are not modelled."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 3,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.JKK_RATES_PADAT_KARYA.2025",
+      "label": "reduced JKK premium rates by risk group for certain labour-intensive industries (50% relief)",
+      "label_id": "tarif iuran JKK setelah keringanan 50% bagi perusahaan industri padat karya tertentu",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "name",
+        "value": "jkk_rates_padat_karya"
+       },
+       {
+        "name": "table_kind",
+        "value": "lookup"
+       },
+       {
+        "name": "rows",
+        "value": "[{\"key\": \"very_low\", \"value\": \"0.0012\"}, {\"key\": \"low\", \"value\": \"0.0027\"}, {\"key\": \"medium\", \"value\": \"0.00445\"}, {\"key\": \"high\", \"value\": \"0.00635\"}, {\"key\": \"very_high\", \"value\": \"0.0087\"}]"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1) huruf a",
+        "page": 4,
+        "quote": "tingkat risiko sangat rendah, yaitu sebesar O,24o/o lnol koma dua empat persen) dari Upah sebulan diberikan keringanan sehingga menjadi O,l2Oo/o (nol koma satu dua nol persen) dari Upah sebulan"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1) huruf b",
+        "page": 4,
+        "quote": "tingkat risiko rendah, yaitu sebesar O,54o/o (nol koma lima empat persen) dari Upah sebulan diberikan keringanan sehingga menjadi O,27Oo/o (nol koma dua tujuh nol persen) dari Upah sebulan"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1) huruf c",
+        "page": 4,
+        "quote": "tingkat risiko sedang, yaitu sebesar O,89o/o (nol koma delapan sembilan persen) dari Upah sebulan diberikan sehingga menjadi O,445o/o (nol koma empat empat lima persen) dari Upah sebulan"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1) huruf d",
+        "page": 4,
+        "quote": "tingkat risiko tinggi, yaitu sebesar 1,277o (satu koma dua tujuh persen) dari Upah sebulan diberikan keringanan sehingga menjadi 0,6350/o (nol koma enam tiga lima persen) dari Upah sebulan"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1) huruf e",
+        "page": 4,
+        "quote": "tingkat risiko sangat tinggi, yaitu sebesar 1,74o/o lsaat koma tujuh empat persen) dari Upah sebulan diberikan keringanan sehingga menjadi 0,870% (nol koma delapan tqiuh nol persen) dari Upah sebulan"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.PADAT_KARYA",
+      "label": "reduced JKK rate (50% relief) for certain labour-intensive industries",
+      "label_id": "tarif iuran JKK dengan keringanan 50% bagi perusahaan industri padat karya tertentu",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "lookup('jkk_rates_padat_karya', employer('jkk_risk_group'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('jkk_relief_padat_karya') == True"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.BPJS.JKK_RATE,REG.BPJS.JKK_RATE.JKP"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "page": 4,
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko lingkungan kerja menjadi:"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (3)",
+        "page": 3,
+        "quote": "merupakan industri yang memiliki jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang terdaftar sslagai peserta aktif di BPJS Ketenagakerjaan"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 5 ayat (2)",
+        "page": 5,
+        "quote": "dilakukan melalui verifikasi terhadap persyaratan sebagaimana dimaksud dalam Pasal 3 ayat (3) dan ayat (4)"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.PADAT_KARYA.JKP",
+      "label": "reduced JKK rate after recomposition into JKP for certain labour-intensive industries",
+      "label_id": "tarif iuran JKK keringanan setelah rekomposisi untuk iuran JKP bagi perusahaan industri padat karya tertentu",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "lookup('jkk_rates_padat_karya', employer('jkk_risk_group')) - (dec('0.0012') if employer('jkk_risk_group') == 'very_low' else dec('0.0014'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('jkk_relief_padat_karya') == True and employee('jkp_registered') == True and employee('bpjs_arrears') != True"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.BPJS.JKK_RATE,REG.BPJS.JKK_RATE.JKP,REG.BPJS.JKK_RATE.PADAT_KARYA"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 9 ayat (1) huruf a",
+        "page": 6,
+        "quote": "tingkat risiko lingkungan kerja sangat rendah direkomposisi untuk Iuran JKP sebesar O,L2Oo/o (noL koma satu dua nol persen) dari Upah sebulan"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 9 ayat (1) huruf b",
+        "page": 6,
+        "quote": "tingkat risiko lingkungan kerja rendah, sedang, tinggi, dan sangat tinggi direkomposisi untuk Iuran JKP masing-masing sebesar O,L4Oo/o (nol koma satu empat nol persen) dari Upah sebulan"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Eligibility (one of the six listed industries, at least 50 active BPJS participants, verified by BPJS and JKK paid up to January 2025) is read from an employer flag jkk_relief_padat_karya rather than recomputed. For JKP-registered employees the reduced JKK rate is net of the PP 7/2025 recomposition (0.120% for very low risk, 0.140% otherwise); JKP itself does not enter gross income, and the existing jkk_premium rule picks up the new jkk_rate."
+   },
+   "delta": {
+    "delta_id": "e3-bangkit-ulang-E07-cand3",
+    "event_id": "E07",
+    "document": {
+     "id": "PP-7-2025",
+     "title": "PP 7/2025: Keringanan 50% iuran JKK industri padat karya tertentu",
+     "issued": "2025-02-07"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.JKK_RATES_PADAT_KARYA.2025",
+      "recorded_on": "2025-02-07",
+      "label": "reduced JKK premium rates by risk group for certain labour-intensive industries (50% relief)",
+      "label_id": "tarif iuran JKK setelah keringanan 50% bagi perusahaan industri padat karya tertentu",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "name": "jkk_rates_padat_karya",
+      "table_kind": "lookup",
+      "rows": [
+       {
+        "key": "very_low",
+        "value": "0.0012"
+       },
+       {
+        "key": "low",
+        "value": "0.0027"
+       },
+       {
+        "key": "medium",
+        "value": "0.00445"
+       },
+       {
+        "key": "high",
+        "value": "0.00635"
+       },
+       {
+        "key": "very_high",
+        "value": "0.0087"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1) huruf a",
+        "quote": "tingkat risiko sangat rendah, yaitu sebesar O,24o/o lnol koma dua empat persen) dari Upah sebulan diberikan keringanan sehingga menjadi O,l2Oo/o (nol koma satu dua nol persen) dari Upah sebulan",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1) huruf b",
+        "quote": "tingkat risiko rendah, yaitu sebesar O,54o/o (nol koma lima empat persen) dari Upah sebulan diberikan keringanan sehingga menjadi O,27Oo/o (nol koma dua tujuh nol persen) dari Upah sebulan",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1) huruf c",
+        "quote": "tingkat risiko sedang, yaitu sebesar O,89o/o (nol koma delapan sembilan persen) dari Upah sebulan diberikan sehingga menjadi O,445o/o (nol koma empat empat lima persen) dari Upah sebulan",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1) huruf d",
+        "quote": "tingkat risiko tinggi, yaitu sebesar 1,277o (satu koma dua tujuh persen) dari Upah sebulan diberikan keringanan sehingga menjadi 0,6350/o (nol koma enam tiga lima persen) dari Upah sebulan",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1) huruf e",
+        "quote": "tingkat risiko sangat tinggi, yaitu sebesar 1,74o/o lsaat koma tujuh empat persen) dari Upah sebulan diberikan keringanan sehingga menjadi 0,870% (nol koma delapan tqiuh nol persen) dari Upah sebulan",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25",
+        "page": 6
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.PADAT_KARYA",
+      "recorded_on": "2025-02-07",
+      "label": "reduced JKK rate (50% relief) for certain labour-intensive industries",
+      "label_id": "tarif iuran JKK dengan keringanan 50% bagi perusahaan industri padat karya tertentu",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('jkk_relief_padat_karya') == True",
+      "expression": "lookup('jkk_rates_padat_karya', employer('jkk_risk_group'))",
+      "overrides": [
+       "REG.BPJS.JKK_RATE",
+       "REG.BPJS.JKK_RATE.JKP"
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko lingkungan kerja menjadi:",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (3)",
+        "quote": "merupakan industri yang memiliki jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang terdaftar sslagai peserta aktif di BPJS Ketenagakerjaan",
+        "page": 3
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 5 ayat (2)",
+        "quote": "dilakukan melalui verifikasi terhadap persyaratan sebagaimana dimaksud dalam Pasal 3 ayat (3) dan ayat (4)",
+        "page": 5
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25",
+        "page": 6
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE.PADAT_KARYA.JKP",
+      "recorded_on": "2025-02-07",
+      "label": "reduced JKK rate after recomposition into JKP for certain labour-intensive industries",
+      "label_id": "tarif iuran JKK keringanan setelah rekomposisi untuk iuran JKP bagi perusahaan industri padat karya tertentu",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('jkk_relief_padat_karya') == True and employee('jkp_registered') == True and employee('bpjs_arrears') != True",
+      "expression": "lookup('jkk_rates_padat_karya', employer('jkk_risk_group')) - (dec('0.0012') if employer('jkk_risk_group') == 'very_low' else dec('0.0014'))",
+      "overrides": [
+       "REG.BPJS.JKK_RATE",
+       "REG.BPJS.JKK_RATE.JKP",
+       "REG.BPJS.JKK_RATE.PADAT_KARYA"
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 9 ayat (1) huruf a",
+        "quote": "tingkat risiko lingkungan kerja sangat rendah direkomposisi untuk Iuran JKP sebesar O,L2Oo/o (noL koma satu dua nol persen) dari Upah sebulan",
+        "page": 6
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 9 ayat (1) huruf b",
+        "quote": "tingkat risiko lingkungan kerja rendah, sedang, tinggi, dan sangat tinggi direkomposisi untuk Iuran JKP masing-masing sebesar O,L4Oo/o (nol koma satu empat nol persen) dari Upah sebulan",
+        "page": 6
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25",
+        "page": 6
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Eligibility (one of the six listed industries, at least 50 active BPJS participants, verified by BPJS and JKK paid up to January 2025) is read from an employer flag jkk_relief_padat_karya rather than recomputed. For JKP-registered employees the reduced JKK rate is net of the PP 7/2025 recomposition (0.120% for very low risk, 0.140% otherwise); JKP itself does not enter gross income, and the existing jkk_premium rule picks up the new jkk_rate."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   1,
+   3
+  ],
+  [
+   2
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e3-bangkit-ulang-E07-cand1",
+  "event_id": "E07",
+  "document": {
+   "id": "PP-7-2025",
+   "title": "PP 7/2025: Keringanan 50% iuran JKK industri padat karya tertentu",
+   "issued": "2025-02-07"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.JKK_RATE.PADAT_KARYA_2025",
+    "recorded_on": "2025-02-07",
+    "label": "JKK rate reduced by 50% for certain labour-intensive industries (Feb-Jul 2025)",
+    "label_id": "tarif iuran JKK dengan keringanan 50% bagi perusahaan industri padat karya tertentu (Februari-Juli 2025)",
+    "valid_from": "2025-02-01",
+    "valid_until": "2025-07-31",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "jkk_rate",
+    "condition": "employer('jkk_relief_padat_karya') == True",
+    "expression": "lookup('jkk_rates', employer('jkk_risk_group')) / 2",
+    "overrides": [
+     "REG.BPJS.JKK_RATE"
+    ],
+    "source": [
+     {
+      "document": "PP-7-2025",
+      "provision": "Pasal 4 ayat (1)",
+      "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko lingkungan kerja menjadi:",
+      "page": 4
+     },
+     {
+      "document": "PP-7-2025",
+      "provision": "Pasal 3 ayat (3)",
+      "quote": "merupakan industri yang memiliki jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang terdaftar sslagai peserta aktif di BPJS Ketenagakerjaan.",
+      "page": 3
+     },
+     {
+      "document": "PP-7-2025",
+      "provision": "Pasal 10",
+      "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25.",
+      "page": 6
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.JKK_RATE.JKP.PADAT_KARYA_2025",
+    "recorded_on": "2025-02-07",
+    "label": "reduced JKK rate after recomposition into JKP for certain labour-intensive industries (Feb-Jul 2025)",
+    "label_id": "tarif iuran JKK keringanan setelah rekomposisi untuk iuran JKP bagi perusahaan industri padat karya tertentu (Februari-Juli 2025)",
+    "valid_from": "2025-02-01",
+    "valid_until": "2025-07-31",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "jkk_rate",
+    "condition": "employer('jkk_relief_padat_karya') == True and employee('jkp_registered') == True and employee('bpjs_arrears') != True",
+    "expression": "max(0, lookup('jkk_rates', employer('jkk_risk_group')) / 2 - param('jkk_jkp_recomposition_rate'))",
+    "overrides": [
+     "REG.BPJS.JKK_RATE",
+     "REG.BPJS.JKK_RATE.JKP",
+     "REG.BPJS.JKK_RATE.PADAT_KARYA_2025"
+    ],
+    "source": [
+     {
+      "document": "PP-7-2025",
+      "provision": "Pasal 4 ayat (1)",
+      "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok tingkat risiko lingkungan kerja menjadi:",
+      "page": 4
+     },
+     {
+      "document": "PP-7-2025",
+      "provision": "Pasal 9 ayat (1) huruf a",
+      "quote": "tingkat risiko lingkungan kerja sangat rendah direkomposisi untuk Iuran JKP sebesar O,L2Oo/o (noL koma satu dua nol persen) dari Upah sebulan",
+      "page": 6
+     },
+     {
+      "document": "PP-7-2025",
+      "provision": "Pasal 9 ayat (1) huruf b",
+      "quote": "dan sangat tinggi direkomposisi untuk Iuran JKP masing-masing sebesar O,L4Oo/o (nol koma satu empat nol persen) dari Upah sebulan.",
+      "page": 6
+     },
+     {
+      "document": "PP-7-2025",
+      "provision": "Pasal 10",
+      "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25.",
+      "page": 6
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "Eligibility (Pasal 3 ayat (3)-(4) and Pasal 6 ayat (2), verified by BPJS) is read from a single employer attribute jkk_relief_padat_karya; the 50% relief halves the table rate. For JKP participants the recomposed share (0.120% for very low risk, i.e. the whole reduced rate, and 0.140% otherwise, equal to the existing jkk_jkp_recomposition_rate) is subtracted, written as max(0, halved rate - 0.14%)."
+ },
+ "cost_usd": 0.509365,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "Employer-paid JKK premiums count as part of a permanent employee's gross income for PPh 21. This regulation cuts the JKK contribution by 50% for every risk tier (e.g. 0.24% to 0.12%, 1.74% to 0.87% of monthly wages). That lowers the JKK benefit added to gross income, but only for certain labour-intensive industries with at least 50 active BPJS participants. It applies to JKK contributions for February 2025 through July 2025. Part of the reduced JKK is also recomposed into JKP, which does not enter gross income.",
+   "quotes": [
+    {
+     "provision": "Pasal 4 ayat (1)",
+     "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh"
+    },
+    {
+     "provision": "Pasal 4 ayat (1) huruf a",
+     "quote": "tingkat risiko sangat rendah, yaitu sebesar O,24o/o lnol"
+    },
+    {
+     "provision": "Pasal 4 ayat (1) huruf e",
+     "quote": "diberikan keringanan sehingga menjadi 0,870% (nol"
+    },
+    {
+     "provision": "Pasal 9 ayat (1)",
+     "quote": "Iuran JKK sebagaimana dimaksud dalam Pasal 4"
+    },
+    {
+     "provision": "Pasal 10",
+     "quote": "sampai dengan Iuran JKK bulan Juli 2O25."
+    }
+   ],
+   "effective_from": "2025-02-01",
+   "effective_from_quote": "berlaku untuk Iuran JKK bulan Februari 2O25",
+   "effective_until": "2025-07-31",
+   "effective_until_quote": "sampai dengan Iuran JKK bulan Juli 2O25.",
+   "subjects": [
+    {
+     "kind": "sector",
+     "value": "Industri makanan, minuman, dan tembakau",
+     "quote": "industri makanan, minuman, dan tembakau;"
+    },
+    {
+     "kind": "sector",
+     "value": "Industri tekstil dan pakaian jadi",
+     "quote": "industri tekstil dan pakaian jadi;"
+    },
+    {
+     "kind": "sector",
+     "value": "Industri kulit dan barang kulit",
+     "quote": "industri kulit dan barang kulit;"
+    },
+    {
+     "kind": "sector",
+     "value": "Industri alas kaki",
+     "quote": "industri alas kaki;"
+    },
+    {
+     "kind": "sector",
+     "value": "Industri mainan anak",
+     "quote": "industri mainan anak; dan"
+    },
+    {
+     "kind": "sector",
+     "value": "Industri furnitur",
+     "quote": "industri furnitur."
+    },
+    {
+     "kind": "employer_group",
+     "value": "Labour-intensive companies with at least 50 workers registered as active BPJS Ketenagakerjaan participants",
+     "quote": "jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

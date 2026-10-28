@@ -1,0 +1,281 @@
+{
+ "run": "e3-bangkit-ulang",
+ "event": "P06",
+ "condition": "proposed",
+ "documents": [
+  "PP-6-2025"
+ ],
+ "selection": {
+  "PP-6-2025": {
+   "tokens": 6307,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKM.JKP",
+      "label": "recomposed JKM premium for wage earners registered in JKP",
+      "label_id": "iuran JKM rekomposisi bagi peserta penerima upah yang terdaftar JKP",
+      "valid_from": "2023-10-01",
+      "valid_until": "2025-01-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkm_premium"
+       },
+       {
+        "name": "expression",
+        "value": "round(param('jkm_rate') * 2 / 3 * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True and employee('jkp_registered') == True and employee('bpjs_arrears') != True"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.BPJS.JKM"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-6-2025",
+        "provision": "Pasal I angka 2, Pasal 11 ayat (3)",
+        "page": 3,
+        "quote": "Iuran sebesar 0,360/o (nol koma tiga enam persen)\nsebagaimana dimaksud pada ayat (2) bersumber dari\niuran yang dibayarkan oleh Pemerintah Pusat dan\nsumber pendanaan JKP."
+       },
+       {
+        "document": "PP-6-2025",
+        "provision": "Pasal I angka 2, Pasal 11 ayat (5)",
+        "page": 3,
+        "quote": "Sumber pendanaan JKP sebagaimana dimaksud\npada ayat (3) merupakan rekomposisi dari iuran\nprogram JKK"
+       },
+       {
+        "document": "PP-6-2025",
+        "provision": "Pasal II angka 4",
+        "page": 9,
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada tanggal\ndiundangkan."
+       },
+       {
+        "document": "PP-6-2025",
+        "provision": "penutup",
+        "page": 10,
+        "quote": "Diundangkan di Jakarta\npada tanggal 7 Februari 2O25"
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "adopts": [],
+    "note": "PP 6/2025 funds the 0,36% JKP contribution only from the Central Government and the 0,14% JKK recomposition, so the JKM recomposition ends and the normal JKM rule applies again from the February 2025 contribution month (the PP took effect on promulgation, 7 February 2025). The recomposed JKK rates listed equal the existing table minus 0,14%, so no JKK change is needed."
+   },
+   "delta": {
+    "delta_id": "e3-bangkit-ulang-P06-cand1",
+    "event_id": "P06",
+    "document": {
+     "id": "PP-6-2025",
+     "title": "PP 6/2025: Perubahan PP 37/2021 (iuran JKP 0,36%)",
+     "issued": "2025-02-07"
+    },
+    "relevant": true,
+    "add": [],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKM.JKP",
+      "recorded_on": "2025-02-07",
+      "label": "recomposed JKM premium for wage earners registered in JKP",
+      "label_id": "iuran JKM rekomposisi bagi peserta penerima upah yang terdaftar JKP",
+      "valid_from": "2023-10-01",
+      "valid_until": "2025-01-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkm_premium",
+      "condition": "employer('premiums_as_billed') != True and employee('jkp_registered') == True and employee('bpjs_arrears') != True",
+      "expression": "round(param('jkm_rate') * 2 / 3 * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "overrides": [
+       "REG.BPJS.JKM"
+      ],
+      "source": [
+       {
+        "document": "PP-6-2025",
+        "provision": "Pasal I angka 2, Pasal 11 ayat (3)",
+        "quote": "Iuran sebesar 0,360/o (nol koma tiga enam persen)\nsebagaimana dimaksud pada ayat (2) bersumber dari\niuran yang dibayarkan oleh Pemerintah Pusat dan\nsumber pendanaan JKP.",
+        "page": 3
+       },
+       {
+        "document": "PP-6-2025",
+        "provision": "Pasal I angka 2, Pasal 11 ayat (5)",
+        "quote": "Sumber pendanaan JKP sebagaimana dimaksud\npada ayat (3) merupakan rekomposisi dari iuran\nprogram JKK",
+        "page": 3
+       },
+       {
+        "document": "PP-6-2025",
+        "provision": "Pasal II angka 4",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada tanggal\ndiundangkan.",
+        "page": 9
+       },
+       {
+        "document": "PP-6-2025",
+        "provision": "penutup",
+        "quote": "Diundangkan di Jakarta\npada tanggal 7 Februari 2O25",
+        "page": 10
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "note": "PP 6/2025 funds the 0,36% JKP contribution only from the Central Government and the 0,14% JKK recomposition, so the JKM recomposition ends and the normal JKM rule applies again from the February 2025 contribution month (the PP took effect on promulgation, 7 February 2025). The recomposed JKK rates listed equal the existing table minus 0,14%, so no JKK change is needed."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   1
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e3-bangkit-ulang-P06-cand1",
+  "event_id": "P06",
+  "document": {
+   "id": "PP-6-2025",
+   "title": "PP 6/2025: Perubahan PP 37/2021 (iuran JKP 0,36%)",
+   "issued": "2025-02-07"
+  },
+  "relevant": true,
+  "add": [],
+  "change": [
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.JKM.JKP",
+    "recorded_on": "2025-02-07",
+    "label": "recomposed JKM premium for wage earners registered in JKP",
+    "label_id": "iuran JKM rekomposisi bagi peserta penerima upah yang terdaftar JKP",
+    "valid_from": "2023-10-01",
+    "valid_until": "2025-01-31",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "jkm_premium",
+    "condition": "employer('premiums_as_billed') != True and employee('jkp_registered') == True and employee('bpjs_arrears') != True",
+    "expression": "round(param('jkm_rate') * 2 / 3 * bpjs_wage, 1, param('bpjs_round_mode'))",
+    "overrides": [
+     "REG.BPJS.JKM"
+    ],
+    "source": [
+     {
+      "document": "PP-6-2025",
+      "provision": "Pasal I angka 2, Pasal 11 ayat (3)",
+      "quote": "Iuran sebesar 0,360/o (nol koma tiga enam persen)\nsebagaimana dimaksud pada ayat (2) bersumber dari\niuran yang dibayarkan oleh Pemerintah Pusat dan\nsumber pendanaan JKP.",
+      "page": 3
+     },
+     {
+      "document": "PP-6-2025",
+      "provision": "Pasal I angka 2, Pasal 11 ayat (5)",
+      "quote": "Sumber pendanaan JKP sebagaimana dimaksud\npada ayat (3) merupakan rekomposisi dari iuran\nprogram JKK",
+      "page": 3
+     },
+     {
+      "document": "PP-6-2025",
+      "provision": "Pasal II angka 4",
+      "quote": "Peraturan Pemerintah ini mulai berlaku pada tanggal\ndiundangkan.",
+      "page": 9
+     },
+     {
+      "document": "PP-6-2025",
+      "provision": "penutup",
+      "quote": "Diundangkan di Jakarta\npada tanggal 7 Februari 2O25",
+      "page": 10
+     }
+    ]
+   }
+  ],
+  "remove": [],
+  "note": "PP 6/2025 funds the 0,36% JKP contribution only from the Central Government and the 0,14% JKK recomposition, so the JKM recomposition ends and the normal JKM rule applies again from the February 2025 contribution month (the PP took effect on promulgation, 7 February 2025). The recomposed JKK rates listed equal the existing table minus 0,14%, so no JKK change is needed."
+ },
+ "cost_usd": 0.267461,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "The amendment cuts the JKP contribution from 0.46% to 0.36% of wages. It is now funded only by the Central Government (0.22%) and a 0.14% recomposition of JKK. The JKM recomposition in the original PP 37/2021 is dropped, so the employer-paid JKM premium returns to its normal level, while JKK risk-class rates stay at the recomposed values. Employer-paid JKK and JKM premiums are part of a permanent employee's gross income for PPh 21. A change in the effective JKM premium therefore changes the PPh 21 base. The JKM effect is inferred, not stated: the document never mentions JKM rates directly. The new JKP benefit rules (60% of wages for 6 months) concern unemployment benefits, not monthly payroll withholding.",
+   "quotes": [
+    {
+     "provision": "Pasal 11 ayat (3)",
+     "quote": "bersumber dari\niuran yang dibayarkan oleh Pemerintah Pusat dan\nsumber pendanaan JKP."
+    },
+    {
+     "provision": "Pasal 11 ayat (5)",
+     "quote": "merupakan rekomposisi dari iuran\nprogram JKK, dengan ketentuan iuran JKK\ndirekomposisi sebesar 0,14% (nol koma satu empat\npersen) dari Upah sebulan"
+    },
+    {
+     "provision": "Pasal 11 ayat (5) huruf a",
+     "quote": "tingkat risiko sangat rendah sebesar 0,10% (nol\nkoma satu nol persen) dari Upah sebulan;"
+    },
+    {
+     "provision": "Pasal 11 ayat (5) huruf d",
+     "quote": "tingkat risiko tinggi sebesar 1,13% (satu koma\nsatu tiga persen) dari Upah sebulan; dan"
+    },
+    {
+     "provision": "Pasal 11 ayat (4)",
+     "quote": "Iuran yang dibayarkan oleh Pemerintah Pusat\nsebagaimana dimaksud pada ayat (3) sebesar 0,227o"
+    }
+   ],
+   "effective_from": "2025-02-01",
+   "effective_from_quote": "Peraturan Pemerintah ini mulai berlaku pada tanggal",
+   "effective_until": null,
+   "effective_until_quote": null,
+   "subjects": []
+  },
+  "quotes_ok": true
+ }
+}

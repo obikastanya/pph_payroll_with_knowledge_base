@@ -1,0 +1,1805 @@
+{
+ "run": "e3-bangkit-ulang",
+ "event": "E06",
+ "condition": "proposed",
+ "documents": [
+  "PMK-10-2025"
+ ],
+ "selection": {
+  "PMK-10-2025": {
+   "tokens": 4680,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_PADAT_KARYA_INCOME_CAP.2025",
+      "label": "maximum fixed regular gross income for the 2025 labour-intensive industry PPh 21 DTP",
+      "label_id": "batas penghasilan bruto tetap dan teratur untuk PPh 21 DTP industri padat karya 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_padat_karya_income_cap"
+       },
+       {
+        "name": "value",
+        "value": "10000000"
+       },
+       {
+        "name": "value_type",
+        "value": "money"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "page": 5,
+        "quote": "menerima atau memperoleh penghasilan bruto yang bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025."
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.DTP_PADAT_KARYA_KLU.2025",
+      "label": "business classification codes eligible for the 2025 PPh 21 DTP",
+      "label_id": "kode klasifikasi lapangan usaha penerima PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_padat_karya_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PMK-10-2025/LAMPIRAN-A\", \"columns\": {\"key\": \"klu\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "page": 4,
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025."
+       }
+      ]
+     },
+     {
+      "kind": "fact",
+      "id": "dtp_fixed_income",
+      "label": "fixed regular gross income for the 2025 DTP criterion",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": null,
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "fact_type",
+        "value": "money"
+       },
+       {
+        "name": "fact_scope",
+        "value": "period"
+       },
+       {
+        "name": "output",
+        "value": "false"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (3)",
+        "page": 5,
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.FIXED_INCOME",
+      "label": "fixed regular gross income for the 2025 DTP criterion",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_fixed_income"
+       },
+       {
+        "name": "expression",
+        "value": "base_salary + fixed_allowance + other_regular_income + benefits_taxable_regular"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (3)",
+        "page": 5,
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (4)",
+        "page": 5,
+        "quote": "termasuk penerimaan dalam bentuk natura dan/atau kenikmatan."
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.PPH21_DTP",
+      "label": "PPh 21 borne by the government for certain permanent employees of labour-intensive industries in 2025",
+      "label_id": "PPh Pasal 21 ditanggung pemerintah bagi Pegawai Tetap tertentu industri padat karya tahun 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_dtp"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, pph21_due)"
+       },
+       {
+        "name": "condition",
+        "value": "in_table('dtp_padat_karya_klu', employer('klu')) and value_in('dtp_fixed_income', first_month) <= param('dtp_padat_karya_income_cap') and employee('npwp_nik_integrated') != False and employee('other_dtp_incentive') != True"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (2)",
+        "page": 4,
+        "quote": "atas seluruh penghasilan bruto dalam tahun 2025 yang diterima atau diperoleh Pegawai tertentu dari Pemberi Kerja dengan kriteria tertentu diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah."
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025."
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "page": 5,
+        "quote": "Masa Pajak bulan pertama bekerja, untuk Pegawai tertentu yang baru bekerja pada tahun 2025"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 5 ayat (5)",
+        "page": 6,
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The DTP equals the PPh 21 due of each 2025 period (floored at zero, so a negative December result yields no DTP) for employees of employers whose KLU is in Lampiran A and whose fixed regular gross income (salary, fixed allowances, other regular income and regular benefits in kind) in the first employment month of 2025 (January for existing employees) is at most Rp10,000,000. The NPWP/NIK and no-other-DTP criteria are read from employee attributes, treated as satisfied when absent."
+   },
+   "delta": {
+    "delta_id": "e3-bangkit-ulang-E06-cand1",
+    "event_id": "E06",
+    "document": {
+     "id": "PMK-10-2025",
+     "title": "PMK 10/2025: PPh 21 DTP industri padat karya TA 2025",
+     "issued": "2025-02-04"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_PADAT_KARYA_INCOME_CAP.2025",
+      "recorded_on": "2025-02-04",
+      "label": "maximum fixed regular gross income for the 2025 labour-intensive industry PPh 21 DTP",
+      "label_id": "batas penghasilan bruto tetap dan teratur untuk PPh 21 DTP industri padat karya 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "name": "dtp_padat_karya_income_cap",
+      "value_type": "money",
+      "value": 10000000,
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "quote": "menerima atau memperoleh penghasilan bruto yang bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.DTP_PADAT_KARYA_KLU.2025",
+      "recorded_on": "2025-02-04",
+      "label": "business classification codes eligible for the 2025 PPh 21 DTP",
+      "label_id": "kode klasifikasi lapangan usaha penerima PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "name": "dtp_padat_karya_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-10-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A",
+        "page": 4
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "fact",
+      "id": "dtp_fixed_income",
+      "recorded_on": "2025-02-04",
+      "label": "fixed regular gross income for the 2025 DTP criterion",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "fact_type": "money",
+      "fact_scope": "period",
+      "output": false,
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (3)",
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.FIXED_INCOME",
+      "recorded_on": "2025-02-04",
+      "label": "fixed regular gross income for the 2025 DTP criterion",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "dtp_fixed_income",
+      "expression": "base_salary + fixed_allowance + other_regular_income + benefits_taxable_regular",
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (3)",
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (4)",
+        "quote": "termasuk penerimaan dalam bentuk natura dan/atau kenikmatan.",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.PPH21_DTP",
+      "recorded_on": "2025-02-04",
+      "label": "PPh 21 borne by the government for certain permanent employees of labour-intensive industries in 2025",
+      "label_id": "PPh Pasal 21 ditanggung pemerintah bagi Pegawai Tetap tertentu industri padat karya tahun 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_dtp",
+      "condition": "in_table('dtp_padat_karya_klu', employer('klu')) and value_in('dtp_fixed_income', first_month) <= param('dtp_padat_karya_income_cap') and employee('npwp_nik_integrated') != False and employee('other_dtp_incentive') != True",
+      "expression": "max(0, pph21_due)",
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (2)",
+        "quote": "atas seluruh penghasilan bruto dalam tahun 2025 yang diterima atau diperoleh Pegawai tertentu dari Pemberi Kerja dengan kriteria tertentu diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah.",
+        "page": 4
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025.",
+        "page": 4
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "quote": "Masa Pajak bulan pertama bekerja, untuk Pegawai tertentu yang baru bekerja pada tahun 2025",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 5 ayat (5)",
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan.",
+        "page": 6
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The DTP equals the PPh 21 due of each 2025 period (floored at zero, so a negative December result yields no DTP) for employees of employers whose KLU is in Lampiran A and whose fixed regular gross income (salary, fixed allowances, other regular income and regular benefits in kind) in the first employment month of 2025 (January for existing employees) is at most Rp10,000,000. The NPWP/NIK and no-other-DTP criteria are read from employee attributes, treated as satisfied when absent."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 2,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_PADAT_KARYA_KLU.2025",
+      "label": "business classification codes eligible for the 2025 labour-intensive PPh 21 DTP",
+      "label_id": "kode KLU penerima insentif PPh 21 DTP industri padat karya 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_padat_karya_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PMK-10-2025/LAMPIRAN-A\", \"columns\": {\"key\": \"klu\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "page": 4,
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025."
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_PADAT_KARYA_INCOME_CAP.2025",
+      "label": "fixed regular gross income cap for the 2025 labour-intensive PPh 21 DTP",
+      "label_id": "batas penghasilan bruto tetap dan teratur PPh 21 DTP padat karya 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_padat_karya_income_cap"
+       },
+       {
+        "name": "value",
+        "value": "10000000"
+       },
+       {
+        "name": "value_type",
+        "value": "money"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "page": 5,
+        "quote": "bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025."
+       }
+      ]
+     },
+     {
+      "kind": "fact",
+      "id": "dtp_fixed_income",
+      "label": "fixed regular gross income for the 2025 labour-intensive DTP criterion",
+      "label_id": "penghasilan bruto tetap dan teratur kriteria PPh 21 DTP padat karya",
+      "valid_from": null,
+      "valid_until": null,
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "fact_type",
+        "value": "money"
+       },
+       {
+        "name": "fact_scope",
+        "value": "period"
+       },
+       {
+        "name": "output",
+        "value": "false"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (3) huruf a",
+        "page": 5,
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau"
+       }
+      ]
+     },
+     {
+      "kind": "fact",
+      "id": "dtp_padat_karya_eligible",
+      "label": "employee eligible for the 2025 labour-intensive PPh 21 DTP",
+      "label_id": "pegawai tetap tertentu penerima PPh 21 DTP padat karya 2025",
+      "valid_from": null,
+      "valid_until": null,
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "fact_type",
+        "value": "bool"
+       },
+       {
+        "name": "fact_scope",
+        "value": "period"
+       },
+       {
+        "name": "output",
+        "value": "false"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2)",
+        "page": 5,
+        "quote": "Pegawai Tetap tertentu sebagaimana dimaksud pada ayat (1) huruf a merupakan Pegawai Tetap yang memenuhi kriteria:"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.FIXED_INCOME",
+      "label": "fixed regular gross income for the 2025 DTP criterion",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_fixed_income"
+       },
+       {
+        "name": "expression",
+        "value": "base_salary + fixed_allowance + benefits_taxable_regular"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (3)",
+        "page": 5,
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (4)",
+        "page": 5,
+        "quote": "termasuk penerimaan dalam bentuk natura dan/atau kenikmatan."
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.ELIGIBLE",
+      "label": "eligibility of a permanent employee for the 2025 labour-intensive PPh 21 DTP",
+      "label_id": "kriteria Pegawai Tetap tertentu penerima PPh 21 DTP padat karya 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_padat_karya_eligible"
+       },
+       {
+        "name": "expression",
+        "value": "in_table('dtp_padat_karya_klu', employer('klu')) and value_in('dtp_fixed_income', first_month) <= param('dtp_padat_karya_income_cap') and (employee('npwp') != None or employee('nik') != None) and employee('other_dtp_incentive') != True"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "page": 4,
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf a",
+        "page": 5,
+        "quote": "memiliki Nomor Pokok Wajib Pajak dan/atau Nomor Induk Kependudukan yang diadministrasikan oleh"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "page": 5,
+        "quote": "Masa Pajak Januari 2025, untuk Pegawai tertentu yang mulai bekerja sebelum Januari 2025; atau"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf c",
+        "page": 5,
+        "quote": "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.PPH21_DTP",
+      "label": "PPh 21 borne by the government for eligible employees in labour-intensive industries 2025",
+      "label_id": "PPh Pasal 21 ditanggung pemerintah bagi pegawai tertentu industri padat karya 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_dtp"
+       },
+       {
+        "name": "condition",
+        "value": "dtp_padat_karya_eligible"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, pph21_due)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (2)",
+        "page": 4,
+        "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah."
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 5 ayat (1)",
+        "page": 6,
+        "quote": "insentif yang harus dibayarkan secara tunai oleh Pemberi Kerja pada saat pembayaran penghasilan kepada Pegawai tertentu"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.NO_REFUND",
+      "label": "excess government-borne PPh 21 is not refunded to the permanent employee",
+      "label_id": "kelebihan PPh Pasal 21 DTP tidak dikembalikan kepada Pegawai Tetap",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "refund_to_employee"
+       },
+       {
+        "name": "condition",
+        "value": "final_period_tax < 0 and sum_periods_before_final('pph21_dtp') > 0"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, min(0 - final_period_tax, withheld_before_final - sum_periods_before_final('pph21_dtp')))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 5 ayat (5)",
+        "page": 6,
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan."
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The reference month for the Rp10,000,000 criterion is taken as first_month (January for employees who started before 2025, otherwise the first month of work), and fixed regular income as base salary, fixed allowances and regular benefits in kind; DTP covers the full positive PPh 21 due of each period, and any year-end over-withholding is refunded only up to the employee-borne part."
+   },
+   "delta": {
+    "delta_id": "e3-bangkit-ulang-E06-cand2",
+    "event_id": "E06",
+    "document": {
+     "id": "PMK-10-2025",
+     "title": "PMK 10/2025: PPh 21 DTP industri padat karya TA 2025",
+     "issued": "2025-02-04"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_PADAT_KARYA_KLU.2025",
+      "recorded_on": "2025-02-04",
+      "label": "business classification codes eligible for the 2025 labour-intensive PPh 21 DTP",
+      "label_id": "kode KLU penerima insentif PPh 21 DTP industri padat karya 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "name": "dtp_padat_karya_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-10-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A",
+        "page": 4
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_PADAT_KARYA_INCOME_CAP.2025",
+      "recorded_on": "2025-02-04",
+      "label": "fixed regular gross income cap for the 2025 labour-intensive PPh 21 DTP",
+      "label_id": "batas penghasilan bruto tetap dan teratur PPh 21 DTP padat karya 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "name": "dtp_padat_karya_income_cap",
+      "value_type": "money",
+      "value": 10000000,
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "quote": "bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "fact",
+      "id": "dtp_fixed_income",
+      "recorded_on": "2025-02-04",
+      "label": "fixed regular gross income for the 2025 labour-intensive DTP criterion",
+      "label_id": "penghasilan bruto tetap dan teratur kriteria PPh 21 DTP padat karya",
+      "fact_type": "money",
+      "fact_scope": "period",
+      "output": false,
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (3) huruf a",
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau",
+        "page": 5
+       }
+      ]
+     },
+     {
+      "kind": "fact",
+      "id": "dtp_padat_karya_eligible",
+      "recorded_on": "2025-02-04",
+      "label": "employee eligible for the 2025 labour-intensive PPh 21 DTP",
+      "label_id": "pegawai tetap tertentu penerima PPh 21 DTP padat karya 2025",
+      "fact_type": "bool",
+      "fact_scope": "period",
+      "output": false,
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2)",
+        "quote": "Pegawai Tetap tertentu sebagaimana dimaksud pada ayat (1) huruf a merupakan Pegawai Tetap yang memenuhi kriteria:",
+        "page": 5
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.FIXED_INCOME",
+      "recorded_on": "2025-02-04",
+      "label": "fixed regular gross income for the 2025 DTP criterion",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "dtp_fixed_income",
+      "expression": "base_salary + fixed_allowance + benefits_taxable_regular",
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (3)",
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (4)",
+        "quote": "termasuk penerimaan dalam bentuk natura dan/atau kenikmatan.",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.ELIGIBLE",
+      "recorded_on": "2025-02-04",
+      "label": "eligibility of a permanent employee for the 2025 labour-intensive PPh 21 DTP",
+      "label_id": "kriteria Pegawai Tetap tertentu penerima PPh 21 DTP padat karya 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "dtp_padat_karya_eligible",
+      "expression": "in_table('dtp_padat_karya_klu', employer('klu')) and value_in('dtp_fixed_income', first_month) <= param('dtp_padat_karya_income_cap') and (employee('npwp') != None or employee('nik') != None) and employee('other_dtp_incentive') != True",
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A",
+        "page": 4
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf a",
+        "quote": "memiliki Nomor Pokok Wajib Pajak dan/atau Nomor Induk Kependudukan yang diadministrasikan oleh",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "quote": "Masa Pajak Januari 2025, untuk Pegawai tertentu yang mulai bekerja sebelum Januari 2025; atau",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf c",
+        "quote": "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.PPH21_DTP",
+      "recorded_on": "2025-02-04",
+      "label": "PPh 21 borne by the government for eligible employees in labour-intensive industries 2025",
+      "label_id": "PPh Pasal 21 ditanggung pemerintah bagi pegawai tertentu industri padat karya 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_dtp",
+      "condition": "dtp_padat_karya_eligible",
+      "expression": "max(0, pph21_due)",
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (2)",
+        "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah.",
+        "page": 4
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 5 ayat (1)",
+        "quote": "insentif yang harus dibayarkan secara tunai oleh Pemberi Kerja pada saat pembayaran penghasilan kepada Pegawai tertentu",
+        "page": 6
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.NO_REFUND",
+      "recorded_on": "2025-02-04",
+      "label": "excess government-borne PPh 21 is not refunded to the permanent employee",
+      "label_id": "kelebihan PPh Pasal 21 DTP tidak dikembalikan kepada Pegawai Tetap",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "condition": "final_period_tax < 0 and sum_periods_before_final('pph21_dtp') > 0",
+      "expression": "max(0, min(0 - final_period_tax, withheld_before_final - sum_periods_before_final('pph21_dtp')))",
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 5 ayat (5)",
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan.",
+        "page": 6
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025.",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The reference month for the Rp10,000,000 criterion is taken as first_month (January for employees who started before 2025, otherwise the first month of work), and fixed regular income as base salary, fixed allowances and regular benefits in kind; DTP covers the full positive PPh 21 due of each period, and any year-end over-withholding is refunded only up to the employee-borne part."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 3,
+   "order": 2,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.PADAT_KARYA_DTP_KLU.2025",
+      "label": "business classification codes of employers eligible for the 2025 PPh 21 DTP incentive",
+      "label_id": "kode klasifikasi lapangan usaha Pemberi Kerja penerima insentif PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "name",
+        "value": "padat_karya_dtp_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PMK-10-2025/LAMPIRAN-A\", \"columns\": {\"key\": \"klu\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "page": 4,
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025"
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.PADAT_KARYA_DTP_INCOME_CAP.2025",
+      "label": "fixed regular gross income cap for the 2025 PPh 21 DTP incentive",
+      "label_id": "batas penghasilan bruto tetap dan teratur insentif PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "name",
+        "value": "padat_karya_dtp_income_cap"
+       },
+       {
+        "name": "value",
+        "value": "10000000"
+       },
+       {
+        "name": "value_type",
+        "value": "money"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "page": 5,
+        "quote": "bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025"
+       }
+      ]
+     },
+     {
+      "kind": "fact",
+      "id": "padat_karya_dtp_fixed_income",
+      "label": "fixed regular gross income for the 2025 DTP criterion",
+      "label_id": "penghasilan bruto tetap dan teratur kriteria PPh 21 DTP 2025",
+      "valid_from": null,
+      "valid_until": null,
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "fact_type",
+        "value": "money"
+       },
+       {
+        "name": "fact_scope",
+        "value": "period"
+       },
+       {
+        "name": "output",
+        "value": "false"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (3)",
+        "page": 5,
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan"
+       }
+      ]
+     },
+     {
+      "kind": "fact",
+      "id": "padat_karya_dtp_eligible",
+      "label": "employee eligible for the 2025 PPh 21 DTP incentive",
+      "label_id": "Pegawai Tetap tertentu penerima PPh 21 DTP 2025",
+      "valid_from": null,
+      "valid_until": null,
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "fact_type",
+        "value": "bool"
+       },
+       {
+        "name": "fact_scope",
+        "value": "period"
+       },
+       {
+        "name": "output",
+        "value": "false"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2)",
+        "page": 5,
+        "quote": "Pegawai Tetap tertentu sebagaimana dimaksud pada ayat (1) huruf a merupakan Pegawai Tetap yang memenuhi kriteria"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.FIXED_INCOME",
+      "label": "fixed regular gross income for the 2025 DTP criterion",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "padat_karya_dtp_fixed_income"
+       },
+       {
+        "name": "expression",
+        "value": "base_salary + fixed_allowance + benefits_taxable_regular"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (3) dan ayat (4)",
+        "page": 5,
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (4)",
+        "page": 5,
+        "quote": "termasuk penerimaan dalam bentuk natura dan/atau kenikmatan"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.ELIGIBLE",
+      "label": "eligibility of a permanent employee for the 2025 PPh 21 DTP incentive",
+      "label_id": "kriteria Pegawai Tetap tertentu penerima insentif PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "padat_karya_dtp_eligible"
+       },
+       {
+        "name": "expression",
+        "value": "in_table('padat_karya_dtp_klu', employer('klu')) and (employee('npwp') != None or employee('nik') != None) and employee('other_dtp') != True and value_in('padat_karya_dtp_fixed_income', first_month) <= param('padat_karya_dtp_income_cap')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "page": 5,
+        "quote": "bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf b angka 1 dan 2",
+        "page": 5,
+        "quote": "Masa Pajak Januari 2025, untuk Pegawai tertentu yang mulai bekerja sebelum Januari 2025; atau"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf c",
+        "page": 5,
+        "quote": "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.DTP",
+      "label": "PPh 21 borne by the government for eligible employees of labour-intensive industries 2025",
+      "label_id": "PPh Pasal 21 ditanggung pemerintah bagi Pegawai Tetap tertentu industri padat karya 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_dtp"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, pph21_due)"
+       },
+       {
+        "name": "condition",
+        "value": "padat_karya_dtp_eligible"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.DEFAULT.DTP"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (2)",
+        "page": 4,
+        "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 5 ayat (1)",
+        "page": 6,
+        "quote": "merupakan insentif yang harus dibayarkan secara tunai oleh Pemberi Kerja pada saat pembayaran penghasilan kepada Pegawai tertentu"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.REFUND",
+      "label": "excess government-borne PPh 21 is not refunded to the employee",
+      "label_id": "kelebihan PPh 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-02-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "refund_to_employee"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, withheld_before_final - annual_pph21 - max(0, sum_periods_before_final('pph21_dtp') - annual_pph21))"
+       },
+       {
+        "name": "condition",
+        "value": "sum_periods('pph21_dtp') > 0"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 5 ayat (5)",
+        "page": 6,
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan"
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Fixed regular income is measured in the first employment month of 2025 (January for employees hired earlier) as base salary + fixed allowances + regular benefits in kind; NPWP/NIK, other-DTP status and the employer's main KLU are read from case attributes (npwp, nik, other_dtp, klu). DTP equals the PPh 21 due of each period (never negative), and the year-end refund excludes DTP in excess of the annual tax."
+   },
+   "delta": {
+    "delta_id": "e3-bangkit-ulang-E06-cand3",
+    "event_id": "E06",
+    "document": {
+     "id": "PMK-10-2025",
+     "title": "PMK 10/2025: PPh 21 DTP industri padat karya TA 2025",
+     "issued": "2025-02-04"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.PADAT_KARYA_DTP_KLU.2025",
+      "recorded_on": "2025-02-04",
+      "label": "business classification codes of employers eligible for the 2025 PPh 21 DTP incentive",
+      "label_id": "kode klasifikasi lapangan usaha Pemberi Kerja penerima insentif PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "name": "padat_karya_dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-10-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A",
+        "page": 4
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.PADAT_KARYA_DTP_INCOME_CAP.2025",
+      "recorded_on": "2025-02-04",
+      "label": "fixed regular gross income cap for the 2025 PPh 21 DTP incentive",
+      "label_id": "batas penghasilan bruto tetap dan teratur insentif PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "name": "padat_karya_dtp_income_cap",
+      "value_type": "money",
+      "value": 10000000,
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "quote": "bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "fact",
+      "id": "padat_karya_dtp_fixed_income",
+      "recorded_on": "2025-02-04",
+      "label": "fixed regular gross income for the 2025 DTP criterion",
+      "label_id": "penghasilan bruto tetap dan teratur kriteria PPh 21 DTP 2025",
+      "fact_type": "money",
+      "fact_scope": "period",
+      "output": false,
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (3)",
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan",
+        "page": 5
+       }
+      ]
+     },
+     {
+      "kind": "fact",
+      "id": "padat_karya_dtp_eligible",
+      "recorded_on": "2025-02-04",
+      "label": "employee eligible for the 2025 PPh 21 DTP incentive",
+      "label_id": "Pegawai Tetap tertentu penerima PPh 21 DTP 2025",
+      "fact_type": "bool",
+      "fact_scope": "period",
+      "output": false,
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2)",
+        "quote": "Pegawai Tetap tertentu sebagaimana dimaksud pada ayat (1) huruf a merupakan Pegawai Tetap yang memenuhi kriteria",
+        "page": 5
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.FIXED_INCOME",
+      "recorded_on": "2025-02-04",
+      "label": "fixed regular gross income for the 2025 DTP criterion",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "padat_karya_dtp_fixed_income",
+      "expression": "base_salary + fixed_allowance + benefits_taxable_regular",
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (3) dan ayat (4)",
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (4)",
+        "quote": "termasuk penerimaan dalam bentuk natura dan/atau kenikmatan",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.ELIGIBLE",
+      "recorded_on": "2025-02-04",
+      "label": "eligibility of a permanent employee for the 2025 PPh 21 DTP incentive",
+      "label_id": "kriteria Pegawai Tetap tertentu penerima insentif PPh 21 DTP 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "padat_karya_dtp_eligible",
+      "expression": "in_table('padat_karya_dtp_klu', employer('klu')) and (employee('npwp') != None or employee('nik') != None) and employee('other_dtp') != True and value_in('padat_karya_dtp_fixed_income', first_month) <= param('padat_karya_dtp_income_cap')",
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "quote": "bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf b angka 1 dan 2",
+        "quote": "Masa Pajak Januari 2025, untuk Pegawai tertentu yang mulai bekerja sebelum Januari 2025; atau",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 4 ayat (2) huruf c",
+        "quote": "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya",
+        "page": 5
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.DTP",
+      "recorded_on": "2025-02-04",
+      "label": "PPh 21 borne by the government for eligible employees of labour-intensive industries 2025",
+      "label_id": "PPh Pasal 21 ditanggung pemerintah bagi Pegawai Tetap tertentu industri padat karya 2025",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_dtp",
+      "condition": "padat_karya_dtp_eligible",
+      "expression": "max(0, pph21_due)",
+      "overrides": [
+       "REG.DEFAULT.DTP"
+      ],
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (2)",
+        "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah",
+        "page": 4
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025",
+        "page": 4
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 5 ayat (1)",
+        "quote": "merupakan insentif yang harus dibayarkan secara tunai oleh Pemberi Kerja pada saat pembayaran penghasilan kepada Pegawai tertentu",
+        "page": 6
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2025.REFUND",
+      "recorded_on": "2025-02-04",
+      "label": "excess government-borne PPh 21 is not refunded to the employee",
+      "label_id": "kelebihan PPh 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "condition": "sum_periods('pph21_dtp') > 0",
+      "expression": "max(0, withheld_before_final - annual_pph21 - max(0, sum_periods_before_final('pph21_dtp') - annual_pph21))",
+      "source": [
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 5 ayat (5)",
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan",
+        "page": 6
+       },
+       {
+        "document": "PMK-10-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Fixed regular income is measured in the first employment month of 2025 (January for employees hired earlier) as base salary + fixed allowances + regular benefits in kind; NPWP/NIK, other-DTP status and the employer's main KLU are read from case attributes (npwp, nik, other_dtp, klu). DTP equals the PPh 21 due of each period (never negative), and the year-end refund excludes DTP in excess of the annual tax."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   1
+  ],
+  [
+   2
+  ],
+  [
+   3
+  ]
+ ],
+ "selected": null,
+ "status": "abstain",
+ "delta": null,
+ "cost_usd": 0.599129,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "Grants a government-borne (DTP) PPh 21 facility for Masa Pajak January–December 2025. It covers certain permanent employees whose fixed and regular gross income is at most Rp10,000,000 and who work for employers in labor-intensive industries (footwear, textiles and apparel, furniture, leather) with KLU codes listed in Lampiran A. The DTP amount is paid in cash and is not treated as taxable income, which changes the PPh 21 computation and net pay for qualifying permanent employees.",
+   "quotes": [
+    {
+     "provision": "Pasal 2 ayat (2)",
+     "quote": "atas seluruh penghasilan bruto dalam tahun 2025 yang diterima atau diperoleh Pegawai tertentu dari Pemberi Kerja dengan kriteria tertentu diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah."
+    },
+    {
+     "provision": "Pasal 2 ayat (3)",
+     "quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025."
+    },
+    {
+     "provision": "Pasal 4 ayat (2) huruf b",
+     "quote": "menerima atau memperoleh penghasilan bruto yang bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:"
+    },
+    {
+     "provision": "Pasal 5 ayat (1)",
+     "quote": "insentif yang harus dibayarkan secara tunai oleh Pemberi Kerja pada saat pembayaran penghasilan kepada Pegawai tertentu"
+    },
+    {
+     "provision": "Pasal 5 ayat (2)",
+     "quote": "tidak diperhitungkan sebagai penghasilan yang\ndikenakan pajak."
+    },
+    {
+     "provision": "Pasal 5 ayat (5)",
+     "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan."
+    }
+   ],
+   "effective_from": "2025-01-01",
+   "effective_from_quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025.",
+   "effective_until": "2025-12-31",
+   "effective_until_quote": "diberikan untuk Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025.",
+   "subjects": [
+    {
+     "kind": "sector",
+     "value": "padat karya: alas kaki, tekstil dan pakaian jadi, furnitur, kulit dan barang dari kulit",
+     "quote": "melakukan kegiatan usaha pada bidang industri:\n1. alas kaki;\n2. tekstil dan pakaian jadi;\n3. furnitur; atau\n4. kulit dan barang dari kulit; dan"
+    },
+    {
+     "kind": "klu",
+     "value": "KLU utama listed in Lampiran A (PMK-10-2025/LAMPIRAN-A, e.g. 13111)",
+     "quote": "memiliki kode klasifikasi lapangan usaha\nsebagaimana tercantum dalam Lampiran huruf A"
+    },
+    {
+     "kind": "employee_group",
+     "value": "Pegawai Tetap tertentu with fixed and regular gross income not exceeding Rp10,000,000",
+     "quote": "Pegawai Tetap tertentu sebagaimana dimaksud pada\nayat (1) huruf a merupakan Pegawai Tetap yang memenuhi\nkriteria:"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

@@ -1,0 +1,1865 @@
+{
+ "run": "e3-bangkit-ulang",
+ "event": "E11",
+ "condition": "proposed",
+ "documents": [
+  "PMK-105-2025"
+ ],
+ "selection": {
+  "PMK-105-2025": {
+   "tokens": 4773,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "fail: REG.DTP2026.FIXED_INCOME: quote not found in PMK-105-2025: 'gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau imbala'"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "parameter",
+      "id": "PAR.COVID_DTP_INCOME_CAP.2026",
+      "label": "fixed regular gross income cap for PPh 21 DTP 2026",
+      "label_id": "batas penghasilan bruto tetap dan teratur PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "name",
+        "value": "covid_dtp_income_cap"
+       },
+       {
+        "name": "value",
+        "value": "10000000"
+       },
+       {
+        "name": "value_type",
+        "value": "money"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "page": 5,
+        "quote": "menerima atau memperoleh penghasilan bruto yang bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.COVID_DTP_KLU.2026",
+      "label": "business classification codes eligible for PPh 21 DTP 2026",
+      "label_id": "kode klasifikasi lapangan usaha penerima PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "name",
+        "value": "covid_dtp_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PMK-105-2025/LAMPIRAN-A\", \"columns\": {\"key\": \"klu\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "page": 4,
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini."
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.FIXED_INCOME",
+      "label": "fixed and regular gross income for the PPh 21 DTP 2026 criterion",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "covid_dtp_fixed_income"
+       },
+       {
+        "name": "expression",
+        "value": "base_salary + fixed_allowance + benefits_taxable_regular"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (4) huruf a",
+        "page": 5,
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (4) huruf b",
+        "page": 5,
+        "quote": "imbalan sejenis yang bersifat tetap dan teratur"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (5)",
+        "page": 5,
+        "quote": "dapat diberikan dengan nama dan dalam bentuk apa pun, termasuk penerimaan dalam bentuk natura dan/atau kenikmatan."
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.ELIGIBLE",
+      "label": "permanent employee eligible for PPh 21 DTP 2026 (labour-intensive and tourism industries)",
+      "label_id": "Pegawai Tetap tertentu penerima PPh 21 DTP 2026 (industri padat karya dan pariwisata)",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "covid_dtp_eligible"
+       },
+       {
+        "name": "expression",
+        "value": "in_table('covid_dtp_klu', employer('klu')) and value_in('covid_dtp_fixed_income', first_month) <= param('covid_dtp_income_cap') and employee('npwp_or_nik_integrated') != False and employee('other_dtp_incentive') != True"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "page": 5,
+        "quote": "bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada: 1. Masa Pajak Januari 2026, untuk Pegawai tertentu yang mulai bekerja sebelum Januari 2026; atau 2. Masa Pajak bulan pertama bekerja, untuk Pegawai tertentu yang baru bekerja pada tahun 2026"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf c",
+        "page": 5,
+        "quote": "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya berdasarkan peraturan perundang-undangan di bidang perpajakan."
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.AMOUNT",
+      "label": "PPh 21 borne by the government for eligible permanent employees 2026",
+      "label_id": "PPh Pasal 21 ditanggung pemerintah bagi Pegawai Tetap tertentu 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_dtp"
+       },
+       {
+        "name": "condition",
+        "value": "covid_dtp_eligible"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, pph21_due)"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.DEFAULT.DTP"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (2)",
+        "page": 4,
+        "quote": "atas seluruh penghasilan bruto dalam tahun 2026 yang diterima atau diperoleh Pegawai tertentu dari Pemberi Kerja dengan kriteria tertentu diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah."
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026."
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 5 ayat (1)",
+        "page": 6,
+        "quote": "merupakan insentif yang harus dibayarkan secara tunai oleh Pemberi Kerja pada saat pembayaran penghasilan kepada Pegawai tertentu"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.NO_REFUND",
+      "label": "excess PPh 21 DTP 2026 is not refunded to the employee",
+      "label_id": "kelebihan PPh 21 DTP 2026 tidak dikembalikan kepada Pegawai Tetap",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "refund_to_employee"
+       },
+       {
+        "name": "condition",
+        "value": "final_period_tax < 0 and sum_periods_before_final('pph21_dtp') > 0"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, min(0 - final_period_tax, withheld_before_final - sum_periods_before_final('pph21_dtp') - annual_pph21))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 5 ayat (5)",
+        "page": 6,
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan."
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Eligibility is fixed by the fixed regular income (salary, fixed allowances and regular benefits in kind) of the first employment month of 2026 (January for existing employees) and the employer's main KLU in Lampiran A; the DTP covers the whole PPh 21 due of each 2026 period including the final one, and at year-end only the over-withholding not funded by DTP is refunded."
+   },
+   "delta": {
+    "delta_id": "e3-bangkit-ulang-E11-cand1",
+    "event_id": "E11",
+    "document": {
+     "id": "PMK-105-2025",
+     "title": "PMK 105/2025: PPh 21 DTP TA 2026 (padat karya dan pariwisata)",
+     "issued": "2025-12-31"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "parameter",
+      "id": "PAR.COVID_DTP_INCOME_CAP.2026",
+      "recorded_on": "2025-12-31",
+      "label": "fixed regular gross income cap for PPh 21 DTP 2026",
+      "label_id": "batas penghasilan bruto tetap dan teratur PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "name": "covid_dtp_income_cap",
+      "value_type": "money",
+      "value": 10000000,
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "quote": "menerima atau memperoleh penghasilan bruto yang bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.COVID_DTP_KLU.2026",
+      "recorded_on": "2025-12-31",
+      "label": "business classification codes eligible for PPh 21 DTP 2026",
+      "label_id": "kode klasifikasi lapangan usaha penerima PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "name": "covid_dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-105-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini.",
+        "page": 4
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.FIXED_INCOME",
+      "recorded_on": "2025-12-31",
+      "label": "fixed and regular gross income for the PPh 21 DTP 2026 criterion",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "covid_dtp_fixed_income",
+      "expression": "base_salary + fixed_allowance + benefits_taxable_regular",
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (4) huruf a",
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (4) huruf b",
+        "quote": "imbalan sejenis yang bersifat tetap dan teratur",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (5)",
+        "quote": "dapat diberikan dengan nama dan dalam bentuk apa pun, termasuk penerimaan dalam bentuk natura dan/atau kenikmatan.",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.ELIGIBLE",
+      "recorded_on": "2025-12-31",
+      "label": "permanent employee eligible for PPh 21 DTP 2026 (labour-intensive and tourism industries)",
+      "label_id": "Pegawai Tetap tertentu penerima PPh 21 DTP 2026 (industri padat karya dan pariwisata)",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "covid_dtp_eligible",
+      "expression": "in_table('covid_dtp_klu', employer('klu')) and value_in('covid_dtp_fixed_income', first_month) <= param('covid_dtp_income_cap') and employee('npwp_or_nik_integrated') != False and employee('other_dtp_incentive') != True",
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "quote": "bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada: 1. Masa Pajak Januari 2026, untuk Pegawai tertentu yang mulai bekerja sebelum Januari 2026; atau 2. Masa Pajak bulan pertama bekerja, untuk Pegawai tertentu yang baru bekerja pada tahun 2026",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf c",
+        "quote": "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya berdasarkan peraturan perundang-undangan di bidang perpajakan.",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.AMOUNT",
+      "recorded_on": "2025-12-31",
+      "label": "PPh 21 borne by the government for eligible permanent employees 2026",
+      "label_id": "PPh Pasal 21 ditanggung pemerintah bagi Pegawai Tetap tertentu 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_dtp",
+      "condition": "covid_dtp_eligible",
+      "expression": "max(0, pph21_due)",
+      "overrides": [
+       "REG.DEFAULT.DTP"
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (2)",
+        "quote": "atas seluruh penghasilan bruto dalam tahun 2026 yang diterima atau diperoleh Pegawai tertentu dari Pemberi Kerja dengan kriteria tertentu diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah.",
+        "page": 4
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 5 ayat (1)",
+        "quote": "merupakan insentif yang harus dibayarkan secara tunai oleh Pemberi Kerja pada saat pembayaran penghasilan kepada Pegawai tertentu",
+        "page": 6
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.NO_REFUND",
+      "recorded_on": "2025-12-31",
+      "label": "excess PPh 21 DTP 2026 is not refunded to the employee",
+      "label_id": "kelebihan PPh 21 DTP 2026 tidak dikembalikan kepada Pegawai Tetap",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "condition": "final_period_tax < 0 and sum_periods_before_final('pph21_dtp') > 0",
+      "expression": "max(0, min(0 - final_period_tax, withheld_before_final - sum_periods_before_final('pph21_dtp') - annual_pph21))",
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 5 ayat (5)",
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan.",
+        "page": 6
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Eligibility is fixed by the fixed regular income (salary, fixed allowances and regular benefits in kind) of the first employment month of 2026 (January for existing employees) and the employer's main KLU in Lampiran A; the DTP covers the whole PPh 21 due of each 2026 period including the final one, and at year-end only the over-withholding not funded by DTP is refunded."
+   },
+   "initial_delta": {
+    "delta_id": "e3-bangkit-ulang-E11-cand1",
+    "event_id": "E11",
+    "document": {
+     "id": "PMK-105-2025",
+     "title": "PMK 105/2025: PPh 21 DTP TA 2026 (padat karya dan pariwisata)",
+     "issued": "2025-12-31"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "parameter",
+      "id": "PAR.COVID_DTP_INCOME_CAP.2026",
+      "recorded_on": "2025-12-31",
+      "label": "fixed regular gross income cap for PPh 21 DTP 2026",
+      "label_id": "batas penghasilan bruto tetap dan teratur PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "name": "covid_dtp_income_cap",
+      "value_type": "money",
+      "value": 10000000,
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "quote": "menerima atau memperoleh penghasilan bruto yang bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.COVID_DTP_KLU.2026",
+      "recorded_on": "2025-12-31",
+      "label": "business classification codes eligible for PPh 21 DTP 2026",
+      "label_id": "kode klasifikasi lapangan usaha penerima PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "name": "covid_dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-105-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini.",
+        "page": 4
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.FIXED_INCOME",
+      "recorded_on": "2025-12-31",
+      "label": "fixed and regular gross income for the PPh 21 DTP 2026 criterion",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "covid_dtp_fixed_income",
+      "expression": "base_salary + fixed_allowance + benefits_taxable_regular",
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (4) dan ayat (5)",
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau imbalan sejenis yang bersifat tetap dan teratur",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (5)",
+        "quote": "dapat diberikan dengan nama dan dalam bentuk apa pun, termasuk penerimaan dalam bentuk natura dan/atau kenikmatan.",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.ELIGIBLE",
+      "recorded_on": "2025-12-31",
+      "label": "permanent employee eligible for PPh 21 DTP 2026 (labour-intensive and tourism industries)",
+      "label_id": "Pegawai Tetap tertentu penerima PPh 21 DTP 2026 (industri padat karya dan pariwisata)",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "covid_dtp_eligible",
+      "expression": "in_table('covid_dtp_klu', employer('klu')) and value_in('covid_dtp_fixed_income', first_month) <= param('covid_dtp_income_cap') and employee('npwp_or_nik_integrated') != False and employee('other_dtp_incentive') != True",
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "quote": "bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada: 1. Masa Pajak Januari 2026, untuk Pegawai tertentu yang mulai bekerja sebelum Januari 2026; atau 2. Masa Pajak bulan pertama bekerja, untuk Pegawai tertentu yang baru bekerja pada tahun 2026",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf c",
+        "quote": "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya berdasarkan peraturan perundang-undangan di bidang perpajakan.",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.AMOUNT",
+      "recorded_on": "2025-12-31",
+      "label": "PPh 21 borne by the government for eligible permanent employees 2026",
+      "label_id": "PPh Pasal 21 ditanggung pemerintah bagi Pegawai Tetap tertentu 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_dtp",
+      "condition": "covid_dtp_eligible",
+      "expression": "max(0, pph21_due)",
+      "overrides": [
+       "REG.DEFAULT.DTP"
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (2)",
+        "quote": "atas seluruh penghasilan bruto dalam tahun 2026 yang diterima atau diperoleh Pegawai tertentu dari Pemberi Kerja dengan kriteria tertentu diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah.",
+        "page": 4
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 5 ayat (1)",
+        "quote": "merupakan insentif yang harus dibayarkan secara tunai oleh Pemberi Kerja pada saat pembayaran penghasilan kepada Pegawai tertentu",
+        "page": 6
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.NO_REFUND",
+      "recorded_on": "2025-12-31",
+      "label": "excess PPh 21 DTP 2026 is not refunded to the employee",
+      "label_id": "kelebihan PPh 21 DTP 2026 tidak dikembalikan kepada Pegawai Tetap",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "condition": "final_period_tax < 0 and sum_periods_before_final('pph21_dtp') > 0",
+      "expression": "max(0, min(0 - final_period_tax, withheld_before_final - sum_periods_before_final('pph21_dtp') - annual_pph21))",
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 5 ayat (5)",
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan.",
+        "page": 6
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Eligibility is fixed by the fixed regular income (salary, fixed allowances and regular benefits in kind) of the first employment month of 2026 (January for existing employees) and the employer's main KLU in Lampiran A; the DTP covers the whole PPh 21 due of each 2026 period including the final one, and at year-end only the over-withholding not funded by DTP is refunded."
+   }
+  },
+  {
+   "n": 2,
+   "order": 2,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2026",
+      "label": "business classification codes of employers eligible for PPh 21 DTP 2026",
+      "label_id": "kode klasifikasi lapangan usaha Pemberi Kerja penerima insentif PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PMK-105-2025/LAMPIRAN-A\", \"columns\": {\"key\": \"klu\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "page": 4,
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026"
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_INCOME_CAP.2026",
+      "label": "monthly fixed regular gross income cap for PPh 21 DTP 2026",
+      "label_id": "batas penghasilan bruto tetap dan teratur sebulan untuk PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_income_cap"
+       },
+       {
+        "name": "value",
+        "value": "10000000"
+       },
+       {
+        "name": "value_type",
+        "value": "money"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "page": 5,
+        "quote": "menerima atau memperoleh penghasilan bruto yang bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada: 1. Masa Pajak Januari 2026"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FIXED_INCOME.2026",
+      "label": "fixed regular gross income for the PPh 21 DTP 2026 criterion",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "covid_dtp_fixed_income"
+       },
+       {
+        "name": "expression",
+        "value": "base_salary + fixed_allowance + benefits_taxable_regular"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (4) dan ayat (5)",
+        "page": 5,
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau b. imbalan sejenis yang bersifat tetap dan teratur"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.ELIGIBLE.2026",
+      "label": "permanent employee eligible for PPh 21 DTP 2026 (labour-intensive and tourism industries)",
+      "label_id": "Pegawai Tetap tertentu penerima PPh 21 DTP 2026 (industri padat karya dan pariwisata)",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "covid_dtp_eligible"
+       },
+       {
+        "name": "expression",
+        "value": "in_table('dtp_klu', employer('klu')) and value_in('covid_dtp_fixed_income', first_month) <= param('dtp_income_cap') and employee('has_npwp_or_nik') != False and employee('other_dtp_incentive') != True"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2)",
+        "page": 5,
+        "quote": "tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada: 1. Masa Pajak Januari 2026, untuk Pegawai tertentu yang mulai bekerja sebelum Januari 2026; atau 2. Masa Pajak bulan pertama bekerja, untuk Pegawai tertentu yang baru bekerja pada tahun 2026"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf c",
+        "page": 5,
+        "quote": "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "page": 4,
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.AMOUNT.2026",
+      "label": "PPh 21 borne by the government for eligible employees (2026)",
+      "label_id": "PPh Pasal 21 ditanggung pemerintah bagi Pegawai Tetap tertentu (2026)",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_dtp"
+       },
+       {
+        "name": "condition",
+        "value": "covid_dtp_eligible == True"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, pph21_due)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (2)",
+        "page": 4,
+        "quote": "atas seluruh penghasilan bruto dalam tahun 2026 yang diterima atau diperoleh Pegawai tertentu dari Pemberi Kerja dengan kriteria tertentu diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.REFUND.2026",
+      "label": "excess government-borne PPh 21 is not refunded to the employee (2026)",
+      "label_id": "kelebihan PPh Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap (2026)",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "refund_to_employee"
+       },
+       {
+        "name": "condition",
+        "value": "sum_periods_before_final('pph21_dtp') > 0"
+       },
+       {
+        "name": "expression",
+        "value": "0 if final_period_tax >= 0 else max(0, min(0 - final_period_tax, withheld_before_final - sum_periods_before_final('pph21_dtp')))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 5 ayat (5)",
+        "page": 6,
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Reused the existing DTP facts (covid_dtp_eligible, covid_dtp_fixed_income) but created new table/parameter names for the 2026 KLU list and the Rp10,000,000 monthly cap; eligibility is fixed by the fixed regular income of first_month (January or the first month of work in 2026). The DTP covers the full PPh 21 due of each period, and at year-end only over-withholding not borne by the government is refunded; the NPWP/NIK and no-other-DTP criteria are read from employee attributes, and the exclusion of final-taxed income is not modelled."
+   },
+   "delta": {
+    "delta_id": "e3-bangkit-ulang-E11-cand2",
+    "event_id": "E11",
+    "document": {
+     "id": "PMK-105-2025",
+     "title": "PMK 105/2025: PPh 21 DTP TA 2026 (padat karya dan pariwisata)",
+     "issued": "2025-12-31"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2026",
+      "recorded_on": "2025-12-31",
+      "label": "business classification codes of employers eligible for PPh 21 DTP 2026",
+      "label_id": "kode klasifikasi lapangan usaha Pemberi Kerja penerima insentif PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "name": "dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-105-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A",
+        "page": 4
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.DTP_INCOME_CAP.2026",
+      "recorded_on": "2025-12-31",
+      "label": "monthly fixed regular gross income cap for PPh 21 DTP 2026",
+      "label_id": "batas penghasilan bruto tetap dan teratur sebulan untuk PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "name": "dtp_income_cap",
+      "value_type": "money",
+      "value": 10000000,
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "quote": "menerima atau memperoleh penghasilan bruto yang bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada: 1. Masa Pajak Januari 2026",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FIXED_INCOME.2026",
+      "recorded_on": "2025-12-31",
+      "label": "fixed regular gross income for the PPh 21 DTP 2026 criterion",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "covid_dtp_fixed_income",
+      "expression": "base_salary + fixed_allowance + benefits_taxable_regular",
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (4) dan ayat (5)",
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau b. imbalan sejenis yang bersifat tetap dan teratur",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.ELIGIBLE.2026",
+      "recorded_on": "2025-12-31",
+      "label": "permanent employee eligible for PPh 21 DTP 2026 (labour-intensive and tourism industries)",
+      "label_id": "Pegawai Tetap tertentu penerima PPh 21 DTP 2026 (industri padat karya dan pariwisata)",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "covid_dtp_eligible",
+      "expression": "in_table('dtp_klu', employer('klu')) and value_in('covid_dtp_fixed_income', first_month) <= param('dtp_income_cap') and employee('has_npwp_or_nik') != False and employee('other_dtp_incentive') != True",
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2)",
+        "quote": "tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada: 1. Masa Pajak Januari 2026, untuk Pegawai tertentu yang mulai bekerja sebelum Januari 2026; atau 2. Masa Pajak bulan pertama bekerja, untuk Pegawai tertentu yang baru bekerja pada tahun 2026",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf c",
+        "quote": "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A",
+        "page": 4
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.AMOUNT.2026",
+      "recorded_on": "2025-12-31",
+      "label": "PPh 21 borne by the government for eligible employees (2026)",
+      "label_id": "PPh Pasal 21 ditanggung pemerintah bagi Pegawai Tetap tertentu (2026)",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_dtp",
+      "condition": "covid_dtp_eligible == True",
+      "expression": "max(0, pph21_due)",
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (2)",
+        "quote": "atas seluruh penghasilan bruto dalam tahun 2026 yang diterima atau diperoleh Pegawai tertentu dari Pemberi Kerja dengan kriteria tertentu diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah",
+        "page": 4
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.REFUND.2026",
+      "recorded_on": "2025-12-31",
+      "label": "excess government-borne PPh 21 is not refunded to the employee (2026)",
+      "label_id": "kelebihan PPh Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap (2026)",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "condition": "sum_periods_before_final('pph21_dtp') > 0",
+      "expression": "0 if final_period_tax >= 0 else max(0, min(0 - final_period_tax, withheld_before_final - sum_periods_before_final('pph21_dtp')))",
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 5 ayat (5)",
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan",
+        "page": 6
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Reused the existing DTP facts (covid_dtp_eligible, covid_dtp_fixed_income) but created new table/parameter names for the 2026 KLU list and the Rp10,000,000 monthly cap; eligibility is fixed by the fixed regular income of first_month (January or the first month of work in 2026). The DTP covers the full PPh 21 due of each period, and at year-end only over-withholding not borne by the government is refunded; the NPWP/NIK and no-other-DTP criteria are read from employee attributes, and the exclusion of final-taxed income is not modelled."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 3,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.COVID_DTP_KLU.2026",
+      "label": "business classification codes (KLU) of employers eligible for PPh 21 DTP in 2026",
+      "label_id": "kode klasifikasi lapangan usaha Pemberi Kerja penerima insentif PPh 21 DTP tahun 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "name",
+        "value": "covid_dtp_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PMK-105-2025/LAMPIRAN-A\", \"columns\": {\"key\": \"klu\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "page": 4,
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini."
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.COVID_DTP_INCOME_CAP.2026",
+      "label": "fixed regular gross income cap for the 2026 PPh 21 DTP",
+      "label_id": "batas penghasilan bruto tetap dan teratur PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "name",
+        "value": "covid_dtp_income_cap"
+       },
+       {
+        "name": "value",
+        "value": "10000000"
+       },
+       {
+        "name": "value_type",
+        "value": "money"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "page": 5,
+        "quote": "menerima atau memperoleh penghasilan bruto yang bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.FIXED_INCOME",
+      "label": "fixed regular gross income for the 2026 DTP criterion (salary, fixed allowances, regular benefits in kind)",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "covid_dtp_fixed_income"
+       },
+       {
+        "name": "expression",
+        "value": "base_salary + fixed_allowance + benefits_taxable_regular"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (4) huruf a",
+        "page": 5,
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (5)",
+        "page": 5,
+        "quote": "dapat diberikan dengan nama dan dalam bentuk apa pun, termasuk penerimaan dalam bentuk natura dan/atau kenikmatan."
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.ELIGIBLE",
+      "label": "permanent employee eligible for the 2026 PPh 21 DTP (labour-intensive and tourism industries)",
+      "label_id": "Pegawai Tetap tertentu penerima insentif PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "covid_dtp_eligible"
+       },
+       {
+        "name": "expression",
+        "value": "in_table('covid_dtp_klu', employer('klu')) and employee('npwp_or_nik') != False and employee('other_dtp_incentive') != True and value_in('covid_dtp_fixed_income', first_month) <= param('covid_dtp_income_cap')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "page": 5,
+        "quote": "Masa Pajak Januari 2026, untuk Pegawai tertentu yang mulai bekerja sebelum Januari 2026; atau"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf b angka 2",
+        "page": 5,
+        "quote": "Masa Pajak bulan pertama bekerja, untuk Pegawai tertentu yang baru bekerja pada tahun 2026; dan"
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf c",
+        "page": 5,
+        "quote": "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya berdasarkan peraturan perundang-undangan di bidang perpajakan."
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.DTP",
+      "label": "PPh 21 on 2026 gross income of eligible employees borne by the government",
+      "label_id": "PPh Pasal 21 atas seluruh penghasilan bruto tahun 2026 ditanggung pemerintah",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_dtp"
+       },
+       {
+        "name": "condition",
+        "value": "covid_dtp_eligible"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, pph21_due)"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.DEFAULT.DTP"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (2)",
+        "page": 4,
+        "quote": "atas seluruh penghasilan bruto dalam tahun 2026 yang diterima atau diperoleh Pegawai tertentu dari Pemberi Kerja dengan kriteria tertentu diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah."
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.NO_EXCESS_REFUND",
+      "label": "excess government-borne PPh 21 is not refunded to the employee at year end",
+      "label_id": "kelebihan PPh 21 DTP tidak dikembalikan kepada Pegawai Tetap",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-12-31",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "refund_to_employee"
+       },
+       {
+        "name": "condition",
+        "value": "final_period_tax < 0 and sum_periods_before_final('pph21_dtp') > 0"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, min(0 - final_period_tax, (withheld_before_final - sum_periods_before_final('pph21_dtp')) - max(0, annual_pph21 - sum_periods_before_final('pph21_dtp'))))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 5 ayat (5)",
+        "page": 6,
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan."
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Reused the existing DTP facts, parameter name covid_dtp_income_cap and table name covid_dtp_klu with 2026 versions; the income test reads the fixed regular income of first_month (January for existing employees, the first working month for 2026 hires), and employer('klu'), employee('npwp_or_nik') and employee('other_dtp_incentive') are assumed case attributes. At year end only the employee-paid part of any over-withholding is refunded, since excess DTP is not returned."
+   },
+   "delta": {
+    "delta_id": "e3-bangkit-ulang-E11-cand3",
+    "event_id": "E11",
+    "document": {
+     "id": "PMK-105-2025",
+     "title": "PMK 105/2025: PPh 21 DTP TA 2026 (padat karya dan pariwisata)",
+     "issued": "2025-12-31"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.COVID_DTP_KLU.2026",
+      "recorded_on": "2025-12-31",
+      "label": "business classification codes (KLU) of employers eligible for PPh 21 DTP in 2026",
+      "label_id": "kode klasifikasi lapangan usaha Pemberi Kerja penerima insentif PPh 21 DTP tahun 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "name": "covid_dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-105-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini.",
+        "page": 4
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "parameter",
+      "id": "PAR.COVID_DTP_INCOME_CAP.2026",
+      "recorded_on": "2025-12-31",
+      "label": "fixed regular gross income cap for the 2026 PPh 21 DTP",
+      "label_id": "batas penghasilan bruto tetap dan teratur PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "name": "covid_dtp_income_cap",
+      "value_type": "money",
+      "value": 10000000,
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "quote": "menerima atau memperoleh penghasilan bruto yang bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.FIXED_INCOME",
+      "recorded_on": "2025-12-31",
+      "label": "fixed regular gross income for the 2026 DTP criterion (salary, fixed allowances, regular benefits in kind)",
+      "label_id": "penghasilan bruto tetap dan teratur untuk kriteria PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "covid_dtp_fixed_income",
+      "expression": "base_salary + fixed_allowance + benefits_taxable_regular",
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (4) huruf a",
+        "quote": "gaji dan tunjangan yang sifatnya tetap dan teratur setiap bulan; dan/atau",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (5)",
+        "quote": "dapat diberikan dengan nama dan dalam bentuk apa pun, termasuk penerimaan dalam bentuk natura dan/atau kenikmatan.",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.ELIGIBLE",
+      "recorded_on": "2025-12-31",
+      "label": "permanent employee eligible for the 2026 PPh 21 DTP (labour-intensive and tourism industries)",
+      "label_id": "Pegawai Tetap tertentu penerima insentif PPh 21 DTP 2026",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "covid_dtp_eligible",
+      "expression": "in_table('covid_dtp_klu', employer('klu')) and employee('npwp_or_nik') != False and employee('other_dtp_incentive') != True and value_in('covid_dtp_fixed_income', first_month) <= param('covid_dtp_income_cap')",
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf b",
+        "quote": "Masa Pajak Januari 2026, untuk Pegawai tertentu yang mulai bekerja sebelum Januari 2026; atau",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf b angka 2",
+        "quote": "Masa Pajak bulan pertama bekerja, untuk Pegawai tertentu yang baru bekerja pada tahun 2026; dan",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 4 ayat (2) huruf c",
+        "quote": "tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya berdasarkan peraturan perundang-undangan di bidang perpajakan.",
+        "page": 5
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.DTP",
+      "recorded_on": "2025-12-31",
+      "label": "PPh 21 on 2026 gross income of eligible employees borne by the government",
+      "label_id": "PPh Pasal 21 atas seluruh penghasilan bruto tahun 2026 ditanggung pemerintah",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_dtp",
+      "condition": "covid_dtp_eligible",
+      "expression": "max(0, pph21_due)",
+      "overrides": [
+       "REG.DEFAULT.DTP"
+      ],
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (2)",
+        "quote": "atas seluruh penghasilan bruto dalam tahun 2026 yang diterima atau diperoleh Pegawai tertentu dari Pemberi Kerja dengan kriteria tertentu diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah.",
+        "page": 4
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP2026.NO_EXCESS_REFUND",
+      "recorded_on": "2025-12-31",
+      "label": "excess government-borne PPh 21 is not refunded to the employee at year end",
+      "label_id": "kelebihan PPh 21 DTP tidak dikembalikan kepada Pegawai Tetap",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "condition": "final_period_tax < 0 and sum_periods_before_final('pph21_dtp') > 0",
+      "expression": "max(0, min(0 - final_period_tax, (withheld_before_final - sum_periods_before_final('pph21_dtp')) - max(0, annual_pph21 - sum_periods_before_final('pph21_dtp'))))",
+      "source": [
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 5 ayat (5)",
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan.",
+        "page": 6
+       },
+       {
+        "document": "PMK-105-2025",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Reused the existing DTP facts, parameter name covid_dtp_income_cap and table name covid_dtp_klu with 2026 versions; the income test reads the fixed regular income of first_month (January for existing employees, the first working month for 2026 hires), and employer('klu'), employee('npwp_or_nik') and employee('other_dtp_incentive') are assumed case attributes. At year end only the employee-paid part of any over-withholding is refunded, since excess DTP is not returned."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   1
+  ],
+  [
+   3
+  ],
+  [
+   2
+  ]
+ ],
+ "selected": null,
+ "status": "abstain",
+ "delta": null,
+ "cost_usd": 0.745388,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "The regulation grants a government-borne (DTP) PPh 21 incentive for certain permanent employees (regular gross income up to Rp10,000,000 in January 2026 or in the first month of work) of employers in the footwear, textile and apparel, furniture, leather and tourism industries with the KLU codes listed in Lampiran A. It covers the January to December 2026 tax periods. The DTP amount is paid in cash to the employee and is not treated as taxable income, and any excess DTP is not refunded at year-end. These rules change the PPh 21 calculation for qualifying permanent employees.",
+   "quotes": [
+    {
+     "provision": "Pasal 2 ayat (2)",
+     "quote": "atas seluruh penghasilan bruto dalam tahun 2026 yang diterima atau diperoleh Pegawai tertentu dari Pemberi Kerja dengan kriteria tertentu diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah."
+    },
+    {
+     "provision": "Pasal 4 ayat (2) huruf b",
+     "quote": "menerima atau memperoleh penghasilan bruto yang bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) pada:"
+    },
+    {
+     "provision": "Pasal 5 ayat (1)",
+     "quote": "merupakan insentif yang harus dibayarkan secara tunai oleh Pemberi Kerja pada saat pembayaran penghasilan kepada Pegawai tertentu"
+    },
+    {
+     "provision": "Pasal 5 ayat (2)",
+     "quote": "tidak diperhitungkan sebagai penghasilan yang\ndikenakan pajak."
+    },
+    {
+     "provision": "Pasal 5 ayat (5)",
+     "quote": "kelebihan Pajak Penghasilan Pasal 21 ditanggung pemerintah tidak dikembalikan kepada Pegawai Tetap bersangkutan."
+    }
+   ],
+   "effective_from": "2026-01-01",
+   "effective_from_quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+   "effective_until": "2026-12-31",
+   "effective_until_quote": "diberikan untuk Masa Pajak Januari 2026 sampai dengan Masa Pajak Desember 2026.",
+   "subjects": [
+    {
+     "kind": "sector",
+     "value": "alas kaki, tekstil dan pakaian jadi, furnitur, kulit dan barang dari kulit, pariwisata",
+     "quote": "melakukan kegiatan usaha pada bidang industri:"
+    },
+    {
+     "kind": "klu",
+     "value": "KLU listed in Lampiran A (e.g. 13111, 13112, 13113)",
+     "quote": "memiliki kode klasifikasi lapangan usaha\nsebagaimana tercantum dalam Lampiran huruf A"
+    },
+    {
+     "kind": "employee_group",
+     "value": "Pegawai Tetap with regular gross income up to Rp10,000,000 per month",
+     "quote": "bersifat tetap dan teratur tidak lebih dari\nRp10.000.000,00 (sepuluh juta rupiah)"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

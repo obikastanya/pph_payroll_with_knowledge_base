@@ -515,3 +515,83 @@ query yang sama di GraphDB karena rdflib ~10 menit per pasangan; kesetaraan diuj
 ### Bahan paper
 
 Seluruh angka di atas dan tafsirnya ada di `docs/BAHAN_PAPER.md` bagian VI–VIII.
+
+---
+
+## Lanjutan 2026-10-28/29: anggaran tambahan, amandemen 1, E1, dan pelengkap E2–E5
+
+Peneliti menambah kredit API; amandemen pra-registrasi §10 (*tag* `prareg-amandemen-1`) ditulis sebelum jalan
+tambahan. Batas akhir: kredit Claude tersisa ±USD 23 (29 Oktober), dipakai hanya bila perlu, ±USD 20 disisakan untuk
+demo. Pengeluaran akhir: Claude ±USD 81,6 kumulatif, OpenAI USD 8,1.
+
+### E1 (RQ1, H1): perubahan tak terlihat
+
+Dikerjakan agen independen yang tidak ikut merancang representasi; perancang hanya menerima hasil
+(`review/unseen_changes/hasil_E1/`). Segel utuh (38 berkas, hash manifes cocok). 16 perubahan (T1–T10), 100 contoh,
+2.609 nilai: semua Δ diterapkan ketat, lolos SHACL dan G3, *engine* sama dengan `engine-v1`.
+
+| Varian | RA | Batas bawah satu sisi | H1 |
+|---|---|---|---|
+| Utama: Δ konvensi pembulatan (contoh memakai pembulatan ke bawah untuk PPh TER dan premi) | 16/16 | 0,829 | diterima |
+| Konservatif: tanpa bagian premi (ditambahkan sesudah U15 gagal sekali) | 15/16 | 0,736 | diterima |
+| Kepekaan: tanpa Δ konvensi | 8/16 | 0,279 | ditolak (semua selisih ≤ Rp11, pembulatan basis) |
+
+Tinjauan independen kedua (`_review/TINJAUAN.md`) mereproduksi ketiga angka, menilai konvensi dapat
+dipertanggungjawabkan sebagai penyelarasan basis uji, dan tidak menemukan Δ yang meniru angka contoh. Batas
+representasi yang terlihat walau contoh lolos (RINGKASAN §7): tidak ada aritmetika tanggal, tidak ada pembentukan teks,
+lapis perusahaan tidak dapat mengganti fakta wajib, golongan per tahun, satu Δ satu dokumen, tidak ada operasi
+"perpanjang", komponen baru hanya diperingatkan, syarat tanpa atribut kasus, pembulatan tunjangan pajak U14.
+
+### E2 pelengkap
+
+| Jalan | Hasil usulan |
+|---|---|
+| Pengecoh 20/20 (9 sisa dijalankan) | positif palsu 7/20 = 0,35 (CI 0,15–0,59); salah diterapkan 1/20 (P01) |
+| Jalan terisolasi kedua, 13 regulasi | benar 8, salah 2 (E07, E11), *abstain* 3; E07 dan E11 salah di kedua jalan |
+| Sensitivitas $m = 5$, regulasi | benar 8, salah 2, *abstain* 3 (E02 salah → *abstain*) |
+| Sensitivitas $m = 5$, PKB | *abstain* 4, salah 1 (Taekwang) |
+| AB2 tanpa konteks KB, regulasi / PKB | 6/3/4 dan 0/2/3 (benar/salah/*abstain*); gabungan 18: benar 6, salah 5 (usulan 8 dan 3) |
+| Kontrafaktual (4, $m = 2$) | benar 1, salah 1 (CF-E11, 2 tupel), *abstain* 2; hafalan 0 dari 6 kandidat bernilai |
+| Kebijakan buatan (14, $m = 2$) sesudah koreksi emas | benar 5 (2 tidak teruji: SP07, SP14), salah 6, *abstain* 3 |
+| AB1 formalisasi dari nol (2023, 2024; 2025 tidak dijalankan) | tidak ada kandidat lolos gerbang; dari 6 kandidat hanya 1 dapat diterapkan dan salah di 150/150 kasus |
+| E5/B2 LLM menghitung langsung (100 kasus 2025) | tepat 76/100 (CI 0,66–0,84), dalam Rp1 97/100; USD 0,068 per kasus |
+| AB5 SHACL | 7 dari 319 draf ditolak hanya oleh SHACL (6 Taekwang `validUntil`, 1 nama fakta) |
+| Ketepatan kutipan (28 unsur, agen independen) | mendukung 23, sebagian 5, tidak mendukung 0 (0,82; CI 0,63–0,94) |
+
+Model kedua `gpt-6.1-sol` (paralel per *shard*; satu draf GPT bisa 24 menit, USD 8,1): regulasi usulan benar 7, salah 2 (E06, E10), *abstain* 4; PKB salah 1 (Sansan), *abstain* 4; B3 regulasi 6/5/2, PKB 0/2/3. Gabungan 18: usulan SER 3/18, CAR 7/18; B3 SER 7/18, CAR 6/18.
+
+### Koreksi dan perbaikan alat ukur sesudah pembekuan
+
+1. Emas kebijakan buatan: aturan metode SP04, SP07, SP11, SP14 dihapus (adjudikasi independen,
+   `review/gold/sintetis_adjudikasi.md`); SP07 dan SP14 sesudahnya tidak teruji pada $S^E$.
+2. Penilai A4: kunci konflik aturan perusahaan diselaraskan lewat fakta yang dihasilkan (representasi.md §8).
+   Konsensus alur beku tidak menyelaraskan; kondisi `proposed_aligned` menunjukkan hasilnya sama (PKB tetap
+   *abstain* 5/5, kebijakan buatan sama).
+3. Emas latar 2016: `REG.P16.FACTOR.KNOWN_END` (PER-16 Lampiran II.1.1); *holdout* GT1 sesudah semua koreksi 8/10 kasus,
+   232/235 observasi; $S^E$ tidak berubah.
+
+### E3: pembangkitan ulang dan H3b
+
+| Rantai | OAR | Batas bawah | Kesalahan akhir |
+|---|---|---|---|
+| Transplantasi Δ terisolasi (analisis terdaftar) | 31/33 = 0,939 | 0,821 (H3a diterima) | 579 tupel |
+| Pembangkitan ulang dengan $\mathcal{K}^{\mathrm{sis}}$ sebagai konteks | 23/33 = 0,697 | 0,540 (di bawah θ₃) | 93 tupel |
+
+Rantai transplantasi menyembunyikan kesalahan baru di balik kesalahan P01 ($H_n$ besar); di rantai pembangkitan ulang
+P01 tidak salah, sehingga *abstain* E04, E06, E10, E11 tampak sebagai kesalahan baru. H3b: kesalahan terpicu 29 tupel
+(E03, E09, E10, E11) terhadap batas derau 0 (dua jalan terisolasi identik pada sampel rantai): **tidak didukung**.
+
+### E4 akhir
+
+Sesudah koreksi emas: angka detektor beku tetap (presisi 0,71, *recall* 0,91, $F_2$ 0,862). Detektor v2 (jenis d)
+menandai pasangan yang sama persis dengan B5(i) (presisi 0,57, *recall* 1,0, $F_2$ 0,868): menutup celah *recall*
+tetapi kehilangan keunggulan presisi.
+
+### Kalkulator engine baru
+
+`system/tools/calculate.py` (baris perintah, jejak sampai sumber) dan `system/app/calculator_app.py` (Streamlit), tanpa
+menyentuh prototipe lama di `ui/` dan `web/`.
+
+### Bahan paper
+
+Semua angka di atas masuk `docs/BAHAN_PAPER.md` (diperbarui sesudah penilaian model kedua).

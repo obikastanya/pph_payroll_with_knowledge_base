@@ -14,24 +14,12 @@ Dibuat 2026-10-28 00:36 WIB atas permintaan peneliti (besok berangkat perjalanan
 
 ## Status saat berhenti
 
-Checkpoint akhir 03:45 WIB 2026-10-28. Penelitian berhenti pada titik ini karena anggaran LLM habis (USD 15,016 dari 15),
-bukan karena batas waktu.
+Checkpoint 2026-10-29. Semua eksperimen E0–E5 selesai (kecuali AB1 keadaan 2025, dihentikan untuk menghemat kredit).
+Ringkasan putusan dan peta bahan: `docs/BAHAN_PAPER.md`; log: `docs/LOG_PENELITIAN.md` bagian "Lanjutan 2026-10-28/29".
+Biaya: Claude ±USD 81,6 kumulatif (±USD 20 kredit disisakan untuk demo; batas di `config.BUDGET_USD` USD 89,5), OpenAI
+USD 8,1.
 
-Selesai (lihat `docs/BAHAN_PAPER.md` untuk peta lengkap):
-- Tahap 3–13: spesifikasi, emas, gerbang, $S^E$ + *mutation score* (non-setara 1,00), alat analisis, kalibrasi,
-  pembekuan (`alur-beku`, `engine-v1`), pra-registrasi (`prareg`), `emas-v1`, E0 (*holdout* GT1 + satu koreksi emas).
-- E2: 13 regulasi ($m = 3$), 5 PKB ($m = 2$), 11 dari 20 pengecoh. H2a tidak diterima; H2b CAR tidak diterima;
-  non-inferioritas SER terhadap B3 terpenuhi, terhadap B4 tidak.
-- E3: OAR 22/24 (H3a diterima, $N = 24$); kesalahan P01 bertahan sampai akhir rantai.
-- E4: H4a diterima, H4b tidak.
-- Angka diperiksa ulang oleh agen peninjau independen; temuan sudah diperbaiki.
-
-Belum dan perlu keputusan peneliti:
-1. E1 (H1): buka `review/unseen_changes/sealed/` (Claude tidak membukanya), cocokkan hash, susun Δ, hitung RA.
-2. Daftarkan `docs/PRAREGISTRASI.md` ke OSF/AsPredicted (stempel waktu pihak ketiga).
-3. Anggaran tambahan bila ingin: 9 pengecoh tersisa, kebijakan buatan dan kontrafaktual di E2, model kedua (E5),
-   pembangkitan ulang E3 (komponen kontekstual, H3b), ablasi AB1/AB2/AB5.
-4. Kesalahan emas latar 2016 (PER16-II.1.1, pegawai pensiun yang bulan kerjanya diketahui): perbaikannya menyentuh
-   daftar aturan P16 yang diakhiri E03/E04 dan FR01; putuskan apakah dikoreksi.
-5. Celah detektor dampak (kebijakan *menghasilkan* fakta di $F_\Delta$ tanpa aturan Δ yang sama) untuk versi berikutnya.
-6. Menulis ulang paper dari `docs/BAHAN_PAPER.md` dan `docs/LOG_PENELITIAN.md`.
+Sisa pekerjaan:
+1. Menulis ulang paper dari `docs/BAHAN_PAPER.md` (sedang dikerjakan).
+2. Untuk peneliti: daftarkan `docs/PRAREGISTRASI.md` ke OSF/AsPredicted; pakar manusia memeriksa perubahan tak
+   terlihat (`review/unseen_changes/SEGEL.md` aturan 3) dan emas kebijakan buatan bila ingin klaim "divalidasi pakar".

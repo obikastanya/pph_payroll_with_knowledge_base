@@ -499,8 +499,8 @@ USD 15,016 dari 15 (selisih 1,6 sen dari permintaan *batch* yang selesai saat di
 
 Mode berantai dari $\mathcal{K}^\star_0$ (rekaman sampai 2022), 150 kasus $S^E$ per tahun, hasil terisolasi E2 sebagai
 $\hat{\Delta}_n$ (tanpa pembangkitan ulang: anggaran habis). OAR 22/24 = 0,917 (CI 0,730–0,990; batas bawah satu sisi
-0,760) → **H3a diterima** (θ₃ = 0,75). Kesalahan baru: E02 (15 tupel), P01 (264). Kesalahan bertahan sampai akhir:
-579 tupel salah pada peristiwa terakhir (hampir seluruh sampel), terutama dari P01. Varian peninjau sempurna sama
+0,760) → **H3a diterima** (θ₃ = 0,75). Kesalahan baru: E02 (15 kasus), P01 (264 kasus). Kesalahan bertahan sampai akhir:
+579 kasus salah pada peristiwa terakhir (hampir seluruh sampel), terutama dari P01. Varian peninjau sempurna sama
 persis karena E04 dan E06 hanya menyentuh tupel yang sudah salah. Komponen mekanis = kesalahan baru (tidak ada
 pembangkitan ulang sehingga komponen kontekstual dan H3b tidak diukur). E09 (dan E10 pada varian tetap) diterapkan secara
 longgar (Δ terisolasi tidak berlaku ketat pada $\mathcal{K}^{\mathrm{sis}}$).
@@ -574,11 +574,11 @@ Model kedua `gpt-6.1-sol` (paralel per *shard*; satu draf GPT bisa 24 menit, USD
 
 | Rantai | OAR | Batas bawah | Kesalahan akhir |
 |---|---|---|---|
-| Transplantasi Δ terisolasi (analisis terdaftar) | 31/33 = 0,939 | 0,821 (H3a diterima) | 579 tupel |
-| Pembangkitan ulang dengan $\mathcal{K}^{\mathrm{sis}}$ sebagai konteks | 23/33 = 0,697 | 0,540 (di bawah θ₃) | 93 tupel |
+| Transplantasi Δ terisolasi (analisis terdaftar) | 31/33 = 0,939 | 0,821 (H3a diterima) | 579 dari 600 kasus |
+| Pembangkitan ulang dengan $\mathcal{K}^{\mathrm{sis}}$ sebagai konteks | 23/33 = 0,697 | 0,540 (di bawah θ₃) | 93 dari 600 kasus |
 
 Rantai transplantasi menyembunyikan kesalahan baru di balik kesalahan P01 ($H_n$ besar); di rantai pembangkitan ulang
-P01 tidak salah, sehingga *abstain* E04, E06, E10, E11 tampak sebagai kesalahan baru. H3b: kesalahan terpicu 29 tupel
+P01 tidak salah, sehingga *abstain* E04, E06, E10, E11 tampak sebagai kesalahan baru. H3b: kesalahan terpicu 29 kasus
 (E03, E09, E10, E11) terhadap batas derau 0 (dua jalan terisolasi identik pada sampel rantai): **tidak didukung**.
 
 ### E4 akhir

@@ -29,7 +29,7 @@ OpenAI USD 8,1.
 | H2b CAR usulan > B3, B4 | 8/18 vs 8/18 dan 9/18; Holm p = 1 | tidak diterima |
 | H2b non-inferioritas SER (δ = 0,10) | vs B3: batas atas 0,004 (terpenuhi); vs B4: 0,153 (tidak) | sebagian |
 | H3a OAR ≥ 0,75 | transplantasi 31/33, batas bawah 0,821 (terdaftar); pembangkitan ulang 23/33, 0,540 | diterima pada analisis terdaftar, tidak kokoh |
-| H3b kesalahan terpicu ≤ batas derau | 29 tupel vs batas derau 0 | tidak didukung |
+| H3b kesalahan terpicu ≤ batas derau | 29 kasus vs batas derau 0 | tidak didukung |
 | H4a *recall* ≥ 0,70 | 0,91, batas bawah 0,75 | diterima |
 | H4b $F_2$ detektor > B5(i), B5(ii) | +0,193 vs B5(ii); −0,006 vs B5(i) | tidak diterima |
 
@@ -108,7 +108,8 @@ Gabungan 18 dokumen nyata, model utama (`docs/hasil/e2_ringkasan.json`):
 - *pass@1* 0,667, *pass@m* 0,692, *1@m* 0,615 (regulasi).
 - Pengecoh 20: positif palsu 7/20 = 0,35 (CI 0,15–0,59); salah diterapkan 1/20 (P01 PP 49/2023, pengecoh sulit).
 - Kontrafaktual 4: benar 1, salah 1, *abstain* 2; hafalan 0 dari 6 kandidat bernilai (semua memakai nilai dokumen).
-- Kebijakan buatan 14 (strata terpisah): benar 5 (2 tidak teruji), salah 6, *abstain* 3; B3 salah 7, B4 salah 2.
+- Kebijakan buatan 14 (strata terpisah): sebelum koreksi emas benar 3, salah 8, *abstain* 3; sesudah koreksi benar 5
+  (2 tidak teruji), salah 6, *abstain* 3; B3 salah 7, B4 salah 2. Koreksi menggeser hasil ke arah usulan.
 - AB1 formalisasi dari nol (2023, 2024): tidak ada kandidat lolos gerbang; dari 6 kandidat 1 dapat diterapkan dan salah
   di 150/150 kasus (`experiments/e2-ab1/`).
 - AB5: SHACL menolak 7/319 draf yang lolos skema (`docs/hasil/ab5_shacl.json`).
@@ -120,12 +121,15 @@ Gabungan 18 dokumen nyata, model utama (`docs/hasil/e2_ringkasan.json`):
 
 | Rantai | OAR | Batas bawah | Kesalahan akhir |
 |---|---|---|---|
-| Transplantasi Δ terisolasi (`e3-tetap`, `e3-sempurna`; terdaftar) | 31/33 | 0,821 | 579 tupel |
-| Pembangkitan ulang (`e3-bangkit-ulang`) | 23/33 | 0,540 | 93 tupel |
+| Transplantasi Δ terisolasi (`e3-tetap`, `e3-sempurna`; terdaftar) | 31/33 | 0,821 | 579 dari 600 kasus |
+| Pembangkitan ulang (`e3-bangkit-ulang`) | 23/33 | 0,540 | 93 dari 600 kasus |
 
-Transplantasi: kesalahan baru hanya E02 (15) dan P01 (264), P01 bertahan sampai akhir. Pembangkitan ulang: P01 tidak
-salah, tetapi *abstain* E04, E06, E10, E11 tampak sebagai kesalahan baru. H3b: kesalahan terpicu 29 tupel (E03, E09,
+Transplantasi: kesalahan baru hanya E02 (15 kasus) dan P01 (264 kasus), P01 bertahan sampai akhir. Pembangkitan ulang: P01 tidak
+salah, tetapi *abstain* E04, E06, E10, E11 tampak sebagai kesalahan baru. H3b: kesalahan terpicu 29 kasus (E03, E09,
 E10, E11) vs batas derau 0. Interim $N = 24$ disimpan di `experiments/e3-interim-n24/`.
+
+Satuan E3: kasus (pegawai-tahun) dari sampel 150 per tahun pada tanggal pengetahuan peristiwa, bukan tupel; 26 dari
+29 kasus terpicu berasal dari *abstain* E10 dan E11, bukan dari pembaruan salah yang merambat.
 
 ### RQ4 (E4)
 
@@ -178,6 +182,8 @@ LLM menghitung langsung dari 26 dokumen yang berlaku (100 kasus operasional 2025
 - Emas kebijakan buatan dan bahan ahli ditinjau agen independen, bukan pakar *payroll* manusia.
 - Pelabel kutipan sempat membuka spesifikasi tafsir proyek (2 label mungkin terpengaruh).
 - Kebocoran desain kecil: pemeriksaan awal pemilihan segmen pada beberapa dokumen uji (log Tahap 9).
+- Kebocoran desain: gerbang (terutama pendaratan angka dan tanggal G2) disetel agar emas semua peristiwa, termasuk
+  peristiwa uji, lolos (Tahap 7); 27 dari 33 pasangan positif RQ4 berasal dari kebijakan buatan.
 - Penyelarasan kunci konflik tidak ada di konsensus alur beku (sensitivitas menunjukkan hasil sama).
 - Batch API tidak dapat dipakai; GPT sangat lambat untuk draf panjang (24 menit per draf).
 - Kontaminasi tidak dapat diuji dengan pemisahan *cutoff* (semua peristiwa sebelum *cutoff*).

@@ -134,7 +134,8 @@ def _sp04():
         p.rule("BENEFITS_NOT_INCOME", "benefit_housing_taxable", "0", src, code="C1",
                label="the apartment of Pasal 27 is treated as no income; other benefits in kind keep their "
                      "treatment (second reader, kebijakan.review.md)"),
-        p.method("gross", p.q("Pasal 29 ayat (1)", "dipotong oleh Perusahaan sesuai ketentuan perpajakan yang berlaku")),
+        # koreksi emas 2026-10-29 (review/gold/sintetis_adjudikasi.md): "dipotong" alone does not say who bears the
+        # tax, so no method rule; the case data's method applies
     ])
 
 
@@ -179,7 +180,8 @@ def _sp07():
            p.q("Pasal 52 ayat (6)", "berakhir sebelum hari raya keagamaan, karena sebab apa pun, tidak berhak atas THR")]
     return p.update([
         _thr(p, None, src, leaver_keeps=False),
-        p.method("gross", p.q("Pasal 53", "dipotong Pajak Penghasilan Pasal 21 pada bulan dibayarkan")),
+        # koreksi emas 2026-10-29 (review/gold/sintetis_adjudikasi.md): "dipotong" alone does not say who bears the
+        # tax, so no method rule; the case data's method applies
     ])
 
 
@@ -262,7 +264,8 @@ def _sp11():
                label="leaver's last month at the monthly effective rate"),
         p.rule("LEAVER_REFUND", "refund_to_employee", "0", leave, scope="year", cond="final_month < 12", code="C5",
                label="over-withholding of a leaver settled by the employee"),
-        p.method("gross", p.q("Pasal 51 ayat (1)", "dipotong setiap bulan dengan tarif efektif bulanan")),
+        # koreksi emas 2026-10-29 (review/gold/sintetis_adjudikasi.md): "dipotong" alone does not say who bears the
+        # tax, so no method rule; the case data's method applies
     ])
 
 
@@ -292,7 +295,8 @@ def _sp14():
            p.q("Pasal 60 ayat (5)", "berakhir terhitung sejak 30 (tiga puluh) hari sebelum hari raya keagamaan tetap berhak atas THR")]
     return p.update([
         _thr(p, "dec('1.5')", src, leaver_keeps=True),
-        p.method("gross", p.q("Pasal 61 ayat (1)", "termasuk THR, dipotong sesuai ketentuan perpajakan yang berlaku")),
+        # koreksi emas 2026-10-29 (review/gold/sintetis_adjudikasi.md): "dipotong" alone does not say who bears the
+        # tax, so no method rule; the case data's method applies
     ], note="Pasal 61 ayat (3) (DTP paid in cash, not income) restates PMK 10/2025 Pasal 5 and is not encoded.")
 
 

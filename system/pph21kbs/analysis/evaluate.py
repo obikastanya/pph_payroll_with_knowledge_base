@@ -63,9 +63,11 @@ def _obs(kb, case, omega):
     return obs, sorted(map(str, r.conflict_keys())), r.errors
 
 
-def score_kb(kb, event, tuples, cases, keep_ids=50):
-    """Compare a knowledge base with the gold expected tuples of an event."""
+def score_kb(kb, event, tuples, cases, keep_ids=50, gold_produces=None):
+    """Compare a knowledge base with the gold expected tuples of an event. gold_produces (company rule id -> fact of
+    the gold policy) aligns conflict keys of differently named company rules (representasi.md 8; policy events)."""
     s = Score("benar")
+    produces_at = {}
     start = event.effective_from or event.issued
     for t in tuples:
         case = cases[t["case_id"]]
@@ -87,7 +89,14 @@ def score_kb(kb, event, tuples, cases, keep_ids=50):
                     s.a2 += 1
                 else:
                     s.a3t += 1
-        if conflicts != t["conflicts"]:
+        want_conflicts = t["conflicts"]
+        if gold_produces is not None:
+            from .conflicts import aligned, produces_map
+            if omega not in produces_at:
+                produces_at[omega] = produces_map(kb, omega)
+            conflicts = aligned(conflicts, produces_at[omega])
+            want_conflicts = aligned(want_conflicts, gold_produces)
+        if conflicts != want_conflicts:
             s.a4 += 1
             wrong = True
         if wrong:
@@ -99,7 +108,7 @@ def score_kb(kb, event, tuples, cases, keep_ids=50):
     return s
 
 
-def score_update(base, delta, event, tuples, cases):
+def score_update(base, delta, event, tuples, cases, gold_produces=None):
     """Score Delta-hat applied to base (strict application)."""
     if delta is None:
         return Score("abstain", note="no update selected")
@@ -107,7 +116,7 @@ def score_update(base, delta, event, tuples, cases):
         kb = apply_delta(base, delta)
     except (UpdateError, ValueError, KeyError) as e:
         return Score("salah", note=f"not applicable: {e}"[:200])
-    return score_kb(kb, event, tuples, cases)
+    return score_kb(kb, event, tuples, cases, gold_produces=gold_produces)
 
 
 def score_result(base, result, event, tuples, cases):

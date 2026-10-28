@@ -34,6 +34,11 @@ def main():
     run = ROOT / "experiments" / args.run
     chain = build_gold.load_graph()
     cases = se_cases(dev=args.dev)
+    # policy events: conflict keys of the candidate's company rules are aligned with the gold policy's
+    # (representasi.md 8) through the fact each rule produces
+    side = {u.doc.id: u.to_json() for u in build_gold.collect_side() if u.kind == "policy"}
+    produces_of = {doc: {e["id"]: e["produces"] for e in d["add"] + d["change"] if e.get("kind") == "rule"}
+                   for doc, d in side.items()}
     rows, by_cond = [], {}
     pass1, passm, onem = [], [], []
     for path in sorted((run / "results").glob("*.json")):
@@ -43,13 +48,14 @@ def main():
         tuples = se_expected(ev.id, dev=args.dev)
         if not tuples:
             continue
+        gp = produces_of.get(ev.document) if ev.layer == "company" else None
         conds = {"proposed": res.get("delta") if res.get("status") in ("applied", "empty") else None}
         if args.conditions and res.get("candidates"):
             from pph21kbs.analysis.conditions import conditions
-            conds = conditions(res, base, ev, oracle=lambda d: score_update(base, d, ev, tuples, cases).outcome
+            conds = conditions(res, base, ev, oracle=lambda d: score_update(base, d, ev, tuples, cases, gp).outcome
                                == "benar", policies=(ev.document,) if ev.layer == "company" else ())
         for name, delta in conds.items():
-            s = score_update(base, delta, ev, tuples, cases) if delta is not None else None
+            s = score_update(base, delta, ev, tuples, cases, gp) if delta is not None else None
             outcome = s.outcome if s else "abstain"
             rows.append({"event": ev.id, "part": ev.part, "layer": ev.layer, "relevant": ev.relevant,
                          "condition": name, "status": res.get("status"), "outcome": outcome,
@@ -64,7 +70,7 @@ def main():
             k = 0
             for c in cands:
                 initial = c.get("initial_delta") if c.get("repaired") else c.get("delta")
-                if initial is not None and score_update(base, initial, ev, tuples, cases).outcome == "benar":
+                if initial is not None and score_update(base, initial, ev, tuples, cases, gp).outcome == "benar":
                     k += 1
             pass1.append(stats.pass_at(m, k, 1))
             passm.append(stats.pass_at(m, k, m))

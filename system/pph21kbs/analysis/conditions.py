@@ -4,6 +4,8 @@
   B3         first candidate in the random order that passes G1-G2, before repair
   B4         behavioural majority over the m initial candidates, without gates (tie -> abstain)
   AB3_noG5, AB3_noG4, AB3_norepair   consensus with one gate or the repair round removed
+  proposed_aligned   sensitivity (policy events): the consensus of the proposed pipeline with conflict keys aligned
+             across differently named company rules (representasi.md 8), which the frozen consensus did not do
   AB4_first, AB4_consensus, AB4_perfect   first passing candidate; consensus; a passing candidate that is correct on
              S^E when there is one (selection by an oracle: an upper bound, never a usable condition)
 
@@ -43,6 +45,43 @@ def all_gates(base, delta, event, issued, relevance=None, policies=(), policy_om
     return out, (kb2, sgs.cases, sgs.omegas)
 
 
+def _aligned_choose(pool, order):
+    """consensus.choose with conflict keys aligned through the facts the company rules produce."""
+    from .conflicts import aligned, produces_map
+    if not pool:
+        return None, "abstain"
+    union, seen, omegas = [], set(), None
+    for n in order:
+        if n in pool:
+            omegas = omegas or pool[n][2]
+            for c in pool[n][1]:
+                key = repr(sorted(c.items(), key=lambda t: t[0]))
+                if key not in seen:
+                    seen.add(key)
+                    union.append(c)
+    sigs = {}
+    for n, (kb2, _, _) in pool.items():
+        sig = []
+        for i, case in enumerate(union):
+            for w in omegas:
+                obs, conflicts, errors, _ = gates.observe(kb2, case, w)
+                sig.append((i, w.isoformat(), tuple(sorted((k, str(v)) for k, v in obs.items())),
+                            tuple(aligned(conflicts, produces_map(kb2, w))), bool(errors)))
+        sigs[n] = tuple(sig)
+    groups = []
+    for n in [x for x in order if x in pool]:
+        for g in groups:
+            if sigs[g[0]] == sigs[n]:
+                g.append(n)
+                break
+        else:
+            groups.append([n])
+    groups.sort(key=lambda g: -len(g))
+    if len(groups) > 1 and len(groups[0]) == len(groups[1]):
+        return None, "abstain"
+    return groups[0][0], "applied"
+
+
 def _choose(pool, order):
     if not pool:
         return None, "abstain"
@@ -66,7 +105,8 @@ def conditions(result, base, event, oracle=None, policies=()):
             final[c["n"]] = (c["delta"],) + all_gates(base, c["delta"], event, issued, rel, policies)
     out = {"proposed": result.get("delta") if result.get("status") in ("applied", "empty") else None}
     if result.get("status") == "empty":
-        for k in ("B3", "B4", "AB3_noG5", "AB3_noG4", "AB3_norepair", "AB4_first", "AB4_consensus", "AB4_perfect"):
+        for k in ("B3", "B4", "AB3_noG5", "AB3_noG4", "AB3_norepair", "AB4_first", "AB4_consensus", "AB4_perfect",
+                  "proposed_aligned"):
             out[k] = result["delta"]
         return out
 
@@ -98,6 +138,13 @@ def conditions(result, base, event, oracle=None, policies=()):
     pool = {n: initial[n][2] for n in order if n in initial and initial[n][2] and ok(initial[n][1], ORDER)}
     sel, _ = _choose(pool, order)
     out["AB3_norepair"] = initial[sel][0] if sel is not None else None
+    # proposed with aligned conflict keys (policy events only; identical for regulation events)
+    if event.layer == "company":
+        pool = {n: final[n][2] for n in order if n in final and final[n][2] and ok(final[n][1], ORDER)}
+        sel, _ = _aligned_choose(pool, order)
+        out["proposed_aligned"] = final[sel][0] if sel is not None else None
+    else:
+        out["proposed_aligned"] = out["proposed"]
     # AB4
     passing = [n for n in order if n in final and ok(final[n][1], ORDER)]
     out["AB4_first"] = final[passing[0]][0] if passing else None

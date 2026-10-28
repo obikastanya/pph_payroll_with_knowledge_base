@@ -14,12 +14,17 @@ Dibuat 2026-10-28 00:36 WIB atas permintaan peneliti (besok berangkat perjalanan
 
 ## Status saat berhenti
 
-Checkpoint 2026-10-29. Semua eksperimen E0–E5 selesai (kecuali AB1 keadaan 2025, dihentikan untuk menghemat kredit).
-Ringkasan putusan dan peta bahan: `docs/BAHAN_PAPER.md`; log: `docs/LOG_PENELITIAN.md` bagian "Lanjutan 2026-10-28/29".
-Biaya: Claude ±USD 81,6 kumulatif (±USD 20 kredit disisakan untuk demo; batas di `config.BUDGET_USD` USD 89,5), OpenAI
-USD 8,1.
+Selesai 2026-10-29. Semua eksperimen E0–E5 selesai (AB1 keadaan 2025 sengaja tidak dijalankan untuk menghemat
+kredit). Paper ditulis ulang: `paper/draft/paper.tex` / `paper.pdf` (16 halaman), angka dan klaimnya diperiksa agen
+independen (`review/paper/PEMERIKSAAN_ANGKA.md`, 27 temuan, semua sudah diperbaiki). Peta bahan: `docs/BAHAN_PAPER.md`.
 
-Sisa pekerjaan:
-1. Menulis ulang paper dari `docs/BAHAN_PAPER.md` (sedang dikerjakan).
-2. Untuk peneliti: daftarkan `docs/PRAREGISTRASI.md` ke OSF/AsPredicted; pakar manusia memeriksa perubahan tak
-   terlihat (`review/unseen_changes/SEGEL.md` aturan 3) dan emas kebijakan buatan bila ingin klaim "divalidasi pakar".
+Biaya: Claude ±USD 81,6 kumulatif; ±USD 20 kredit tersisa untuk demo (`config.BUDGET_USD` membatasi di USD 89,5);
+OpenAI USD 8,1.
+
+Untuk peneliti:
+1. Daftarkan `docs/PRAREGISTRASI.md` (beserta amandemen §10) ke OSF/AsPredicted.
+2. Bila ingin klaim "divalidasi pakar": pakar *payroll* manusia memeriksa perubahan tak terlihat
+   (`review/unseen_changes/SEGEL.md` aturan 3), emas kebijakan buatan, dan PKB; jalankan protokol koreksi emas bila ada
+   temuan.
+3. Demo: kalkulator `env\Scripts\streamlit.exe run systempp\calculator_app.py` (tanpa API) dan alur akuisisi
+   `system/tools/run_event.py` (memakai kredit Claude, ±USD 0,1–0,9 per dokumen).

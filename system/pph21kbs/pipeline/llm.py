@@ -2,8 +2,8 @@
 
 Every call is logged as one JSONL line in experiments/<run>/calls.jsonl; the full prompt goes to
 experiments/<run>/prompts/<sha256>.json. The budget guard sums the cost of every call ever logged under experiments/
-(all runs) and refuses a call that would start once the total reached the limit (USD 15, config.BUDGET_USD) or the
-run's own limit. Keys come from .env through config; they are never logged.
+(all runs) of a provider and refuses a call that would start once that total reached the provider's limit
+(config.BUDGET_USD) or the run's own limit. Keys come from .env through config; they are never logged.
 
 Clients: AnthropicClient (main model, structured output through output_config.format, effort through
 output_config.effort, prompt caching on the shared prefix), AnthropicBatchClient (the same requests through the
@@ -57,12 +57,15 @@ def cost(model, usage, batch=False):
     return round(c * (0.5 if batch else 1.0), 6)
 
 
-def spent_total(root=EXPERIMENTS):
+def spent_total(root=EXPERIMENTS, provider=None):
+    """Cost of every logged call, or of one provider's calls."""
     total = 0.0
     for path in Path(root).glob("*/calls.jsonl"):
         for line in path.read_text(encoding="utf-8").splitlines():
             if line.strip():
-                total += json.loads(line).get("cost_usd") or 0.0
+                e = json.loads(line)
+                if provider is None or e.get("provider") == provider:
+                    total += e.get("cost_usd") or 0.0
     return round(total, 6)
 
 
@@ -85,10 +88,17 @@ class Ledger:
         return round(sum(json.loads(l).get("cost_usd") or 0.0
                          for l in self.calls.read_text(encoding="utf-8").splitlines() if l.strip()), 6)
 
-    def check(self):
-        total = spent_total(self.root)
-        if total >= self.total_limit:
-            raise BudgetExceeded(f"total LLM spend {total:.4f} USD reached the limit {self.total_limit} USD")
+    def limit(self, provider):
+        """The total limit for a provider: a number applies to all calls, a dict holds one limit per provider."""
+        if isinstance(self.total_limit, dict):
+            return self.total_limit.get(provider), provider
+        return self.total_limit, None
+
+    def check(self, provider=None):
+        limit, scope = self.limit(provider)
+        total = spent_total(self.root, scope)
+        if limit is not None and total >= limit:
+            raise BudgetExceeded(f"{scope or 'total'} LLM spend {total:.4f} USD reached the limit {limit} USD")
         if self.run_limit is not None and self.spent_run() >= self.run_limit:
             raise BudgetExceeded(f"run {self.run} spend reached its limit {self.run_limit} USD")
 
@@ -154,7 +164,7 @@ class Client:
         return [self.complete(**r) for r in requests]
 
     def _begin(self, req):
-        self.ledger.check()
+        self.ledger.check(self.provider)
         prompt = {"model": self.model, "effort": req["effort"], "system": req["system"], "prefix": req["prefix"],
                   "user": req["user"], "schema_name": req["schema_name"]}
         return self.ledger.save_prompt(prompt, private=str(req["document"]).startswith("PKB-"))
@@ -351,10 +361,11 @@ class BatchDispatcher:
         items = [it for slot in pool for it in slot["items"]]
         try:
             bound = self._bound(items)
-            total = spent_total(self.ledger.root)
-            if total + bound > self.ledger.total_limit:
+            limit, scope = self.ledger.limit("anthropic")
+            total = spent_total(self.ledger.root, scope)
+            if limit is not None and total + bound > limit:
                 raise BudgetExceeded(f"batch of {len(items)} requests may cost up to {bound:.2f} USD; spent "
-                                     f"{total:.4f} of {self.ledger.total_limit} USD")
+                                     f"{total:.4f} of {limit} USD")
             if self.ledger.run_limit is not None and self.ledger.spent_run() + bound > self.ledger.run_limit:
                 raise BudgetExceeded(f"batch of {len(items)} requests may cost up to {bound:.2f} USD; run "
                                      f"{self.ledger.run} spent {self.ledger.spent_run():.4f} of its limit "

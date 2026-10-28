@@ -14,7 +14,9 @@ MAIN_MODEL = "claude-opus-5-5"
 MAIN_EFFORT = "high"
 SECOND_MODEL = os.environ.get("PPH21_SECOND_MODEL", "gpt-6.1-sol")
 SECOND_EFFORT = "high"
-BUDGET_USD = 15.0
+# LLM budget per provider, cumulative over all runs under experiments/ (decision log 2026-10-27: USD 15 spent by
+# 2026-10-28; then at most USD 100 more per provider, kept USD 2 below that so a call in flight cannot cross it)
+BUDGET_USD = {"anthropic": 15.02 + 98.0, "openai": 98.0}
 
 GRAPHDB_URL = os.environ.get("PPH21_GRAPHDB_URL", "http://localhost:7200")
 GRAPHDB_REPOSITORY = os.environ.get("PPH21_GRAPHDB_REPOSITORY", "pph21")

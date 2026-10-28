@@ -124,7 +124,29 @@ seluruh anggaran Rp247.500.
 ## 9. Efek minimum yang dapat dideteksi
 
 *pass@1* kalibrasi: 3/6 kandidat benar pada $S^E$ pengembangan (FR01 3/3, D05 0/3; Koja tanpa $S^E$). Simulasi McNemar
-eksak satu sisi, $N = 18$, $lpha = 0{,}025$ (Holm, dua uji CAR), CAR pembanding 0,3–0,5: daya 0,15–0,16 untuk selisih
+eksak satu sisi, $N = 18$, $\alpha = 0{,}025$ (Holm, dua uji CAR), CAR pembanding 0,3–0,5: daya 0,15–0,16 untuk selisih
 0,2; 0,41–0,42 untuk 0,3; 0,69–0,72 untuk 0,4; 0,89–0,95 untuk 0,5. Efek minimum dengan daya 80% kira-kira 0,45. H2b
 (1) karena itu kurang daya untuk selisih yang realistis; hasilnya dilaporkan dengan selang Newcombe, dan kegagalan
 menolak tidak dibaca sebagai bukti kesetaraan.
+
+## 10. Amandemen 1 (2026-10-28, sesudah hasil awal E2–E4 terlihat)
+
+Ditulis sebelum jalan tambahan mana pun. Peneliti menambah anggaran: paling banyak USD 100 lagi untuk API Claude dan
+USD 100 untuk API OpenAI (`config.BUDGET_USD`, batas kumulatif per penyedia), API hanya untuk eksperimen yang ada di
+rancangan. Alur, *engine*, emas, $S^E$, ambang, dan $\delta_S$ tidak berubah. Karena hasil awal sudah terlihat, amandemen
+ini tidak buta; statusnya dinyatakan per jalan agar tidak ada analisis yang dipilih sesudah melihat hasil.
+
+| Jalan tambahan | Status |
+|---|---|
+| 9 pengecoh sisa (P13–P21), alur dan $m = 1$ sama dengan 11 pengecoh lain | melengkapi rancangan: H3a diuji pada $N = 33$ sesuai §3; hasil $N = 24$ dilaporkan sebagai interim |
+| Jalan terisolasi kedua, 13 regulasi, $m = 3$ | melengkapi rancangan: batas derau H3b |
+| Pembangkitan ulang di mode berantai, $R = 1$ | melengkapi rancangan: komponen kontekstual, H3b |
+| Tambahan kandidat sampai $m = 5$ (prompt dan awalan sama, konsensus dihitung ulang) | sensitivitas; analisis utama H2a/H2b tetap $m = 3$ (regulasi) dan $m = 2$ (PKB) |
+| Model kedua `gpt-6.1-sol`, usulan dan B3, $m$ sama dengan model utama | eksploratori (rancangan §4) |
+| Kontrafaktual (4) dan kebijakan buatan (14), $m = 2$ | eksploratori, strata terpisah (§2, §4) |
+| AB2 (tanpa konteks KB) pada 18 dokumen nyata; AB1 (formalisasi dari nol, 3 keadaan hukum); E5/B2 (±100 kasus) | eksploratori |
+| AB5 bagian RQ2, analisis kontaminasi, label ketepatan kutipan | eksploratori, tanpa API |
+| Koreksi emas latar 2016 (PER16-II.1.1) | protokol §6: semua kondisi dinilai ulang, jumlah koreksi dilaporkan |
+
+Kebijakan buatan dijalankan dengan emas yang sudah ditinjau agen independen; bila kelak divalidasi pakar dan emasnya
+berubah, protokol §6 berlaku. E1 tetap menunggu perubahan tersegel dibuka peneliti atau kolaborator.

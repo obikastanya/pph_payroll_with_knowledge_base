@@ -212,6 +212,12 @@ def _method():
                     q16("Pasal 14 ayat (4)", "jumlah bulan tersisa dalam tahun"), START, scope="year",
                     cond="first_month > 1 and employee('subjective_start_month') == None",
                     overrides=["REG.P16.FACTOR"]))
+    # koreksi emas 2026-10-29 (E0, GT1 holdout PER16-II.1.1): a retirement date known at the start of the year
+    # annualises over the months to be worked
+    out.append(rule("REG.P16.FACTOR.KNOWN_END", "annualization_factor", "employee('known_last_month') - first_month + 1",
+                    q16("Lampiran II.1.1", "waktu pensiun sudah dapat diketahui dengan pasti pada awal tahun"), START,
+                    scope="year", cond="employee('known_last_month') != None",
+                    overrides=["REG.P16.FACTOR", "REG.P16.FACTOR.NEW_EMPLOYEE"]))
     pkp = q16("Pasal 14 ayat (8)", "dibulatkan ke bawah hingga ribuan penuh")
     out.append(rule("REG.P16.TAXABLE_ANNUALIZED", "taxable_regular_annualized",
                     "max(0, round(net_regular_month * annualization_factor - ptkp_amount, 1000, 'down'))",

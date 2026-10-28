@@ -217,6 +217,7 @@ def gt1_case(c):
                              and peg.get("suami_tidak_berpenghasilan_terbukti", True) is not False),
                          "tax_id_valid": bool(peg.get("punya_npwp", True)),
                          "contract_fixed_income": (c.get("dtp") or {}).get("penghasilan_tetap_teratur_kontrak_januari"),
+                         "known_last_month": peg.get("bulan_kerja_diketahui"),
                          "subjective_start_month": peg.get("subjektif_mulai_bulan"),
                          "subjective_end_month": peg.get("subjektif_akhir_bulan")},
             "employer": {"klu": c["pemberi_kerja"].get("klu"), "jkk_risk_group": "very_low",

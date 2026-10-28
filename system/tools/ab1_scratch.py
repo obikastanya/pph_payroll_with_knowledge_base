@@ -41,9 +41,7 @@ from pph21kbs.text import TEXT_DIR  # noqa: E402
 def ab1_draft_user(event, documents, relevance=None):
     """Draft message of AB1: formalise the whole knowledge base, not an update of one document."""
     return (prompts.metadata_text(event, documents)
-            + f"
-
-FORMALISATION FROM SCRATCH (ablation AB1). The knowledge base holds only the fact vocabulary listed in"
+            + "\n\nFORMALISATION FROM SCRATCH (ablation AB1). The knowledge base holds only the fact vocabulary listed in"
             f" the context: there are no rules, parameters, tables or constraints yet. Write ONE Delta that adds every"
             f" rule, parameter and table needed to compute PPh 21 of permanent employees exactly as the documents above,"
             f" read together, require on {event.issued}: inputs from the case data, PTKP, job expense, pension and"

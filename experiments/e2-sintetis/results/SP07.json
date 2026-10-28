@@ -1,0 +1,478 @@
+{
+ "run": "e2-sintetis",
+ "event": "SP07",
+ "condition": "proposed",
+ "documents": [
+  "SP07"
+ ],
+ "selection": {
+  "SP07": {
+   "tokens": 672,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP07.THR",
+      "label": "THR under the collective labour agreement: one month's wage (base salary plus fixed allowances), pro-rated below 12 months of service, none if employment ends before the holiday",
+      "label_id": "THR menurut PKB: 1 bulan upah (gaji pokok dan tunjangan tetap), proporsional bila masa kerja kurang dari 12 bulan, tidak berhak bila hubungan kerja berakhir sebelum hari raya",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2024-02-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "thr"
+       },
+       {
+        "name": "policy",
+        "value": "SP07"
+       },
+       {
+        "name": "condition",
+        "value": "hr('thr_holiday') == 1"
+       },
+       {
+        "name": "expression",
+        "value": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 0 else 0"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C10"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (2)",
+        "page": 1,
+        "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan secara terus-menerus atau lebih diberikan THR sebesar 1 (satu) bulan upah."
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (3)",
+        "page": 1,
+        "quote": "diberikan THR secara proporsional dengan perhitungan masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan upah."
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (4)",
+        "page": 1,
+        "quote": "Upah 1 (satu) bulan sebagaimana dimaksud pada ayat (2) dan ayat (3) terdiri atas gaji pokok dan tunjangan tetap."
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (6)",
+        "page": 1,
+        "quote": "Pekerja yang hubungan kerjanya berakhir sebelum hari raya keagamaan, karena sebab apa pun, tidak berhak atas THR tahun yang bersangkutan."
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 73 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The PKB THR formula is modelled as a company rule replacing the THR input in holiday months; its denial of THR to anyone whose employment ends before the holiday (days_terminated_before_holiday > 0) falls below the statutory minimum for those terminated within 30 days and is reported via the existing C10 constraint. Pasal 53 only restates existing treatment of THR as irregular income, so no change is needed there."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP07-cand1",
+    "event_id": "SP07",
+    "document": {
+     "id": "SP07",
+     "title": "PT Sentosa Ritel Prima: Perjanjian Kerja Bersama",
+     "issued": "2024-02-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP07.THR",
+      "recorded_on": "2024-02-01",
+      "label": "THR under the collective labour agreement: one month's wage (base salary plus fixed allowances), pro-rated below 12 months of service, none if employment ends before the holiday",
+      "label_id": "THR menurut PKB: 1 bulan upah (gaji pokok dan tunjangan tetap), proporsional bila masa kerja kurang dari 12 bulan, tidak berhak bila hubungan kerja berakhir sebelum hari raya",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "condition": "hr('thr_holiday') == 1",
+      "expression": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 0 else 0",
+      "policy": "SP07",
+      "conflict_code": "C10",
+      "source": [
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (2)",
+        "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan secara terus-menerus atau lebih diberikan THR sebesar 1 (satu) bulan upah.",
+        "page": 1
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (3)",
+        "quote": "diberikan THR secara proporsional dengan perhitungan masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan upah.",
+        "page": 1
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (4)",
+        "quote": "Upah 1 (satu) bulan sebagaimana dimaksud pada ayat (2) dan ayat (3) terdiri atas gaji pokok dan tunjangan tetap.",
+        "page": 1
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (6)",
+        "quote": "Pekerja yang hubungan kerjanya berakhir sebelum hari raya keagamaan, karena sebab apa pun, tidak berhak atas THR tahun yang bersangkutan.",
+        "page": 1
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 73 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The PKB THR formula is modelled as a company rule replacing the THR input in holiday months; its denial of THR to anyone whose employment ends before the holiday (days_terminated_before_holiday > 0) falls below the statutory minimum for those terminated within 30 days and is reported via the existing C10 constraint. Pasal 53 only restates existing treatment of THR as irregular income, so no change is needed there."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP07.THR",
+      "label": "THR under the PT Sentosa Ritel Prima collective agreement: one month of wages, pro-rated below 12 months of service, none if employment ends before the holiday",
+      "label_id": "THR menurut PKB PT Sentosa Ritel Prima: 1 bulan upah, proporsional untuk masa kerja kurang dari 12 bulan, tidak berhak bila hubungan kerja berakhir sebelum hari raya",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2024-02-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "thr"
+       },
+       {
+        "name": "policy",
+        "value": "SP07"
+       },
+       {
+        "name": "condition",
+        "value": "hr('thr_holiday') == 1"
+       },
+       {
+        "name": "expression",
+        "value": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 0 else 0"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C10"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (2)",
+        "page": 1,
+        "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan secara terus-menerus atau lebih diberikan THR sebesar 1 (satu) bulan upah."
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (3)",
+        "page": 1,
+        "quote": "diberikan THR secara proporsional dengan perhitungan masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan upah."
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (4)",
+        "page": 1,
+        "quote": "Upah 1 (satu) bulan sebagaimana dimaksud pada ayat (2) dan ayat (3) terdiri atas gaji pokok dan tunjangan tetap."
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (6)",
+        "page": 1,
+        "quote": "Pekerja yang hubungan kerjanya berakhir sebelum hari raya keagamaan, karena sebab apa pun, tidak berhak atas THR tahun yang bersangkutan."
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 73 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The PKB fixes THR in the holiday month as base salary plus fixed allowances, pro-rated by months of service up to 12; withholding it from anyone whose employment ended before the holiday conflicts with the statutory 30-day protection, which CON.THR.MINIMUM reports as C10. Pasal 53 (THR is irregular income taxed in the month paid) restates existing regulation, so no rule was added for it."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP07-cand2",
+    "event_id": "SP07",
+    "document": {
+     "id": "SP07",
+     "title": "PT Sentosa Ritel Prima: Perjanjian Kerja Bersama",
+     "issued": "2024-02-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP07.THR",
+      "recorded_on": "2024-02-01",
+      "label": "THR under the PT Sentosa Ritel Prima collective agreement: one month of wages, pro-rated below 12 months of service, none if employment ends before the holiday",
+      "label_id": "THR menurut PKB PT Sentosa Ritel Prima: 1 bulan upah, proporsional untuk masa kerja kurang dari 12 bulan, tidak berhak bila hubungan kerja berakhir sebelum hari raya",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "condition": "hr('thr_holiday') == 1",
+      "expression": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 0 else 0",
+      "policy": "SP07",
+      "conflict_code": "C10",
+      "source": [
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (2)",
+        "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan secara terus-menerus atau lebih diberikan THR sebesar 1 (satu) bulan upah.",
+        "page": 1
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (3)",
+        "quote": "diberikan THR secara proporsional dengan perhitungan masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan upah.",
+        "page": 1
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (4)",
+        "quote": "Upah 1 (satu) bulan sebagaimana dimaksud pada ayat (2) dan ayat (3) terdiri atas gaji pokok dan tunjangan tetap.",
+        "page": 1
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 52 ayat (6)",
+        "quote": "Pekerja yang hubungan kerjanya berakhir sebelum hari raya keagamaan, karena sebab apa pun, tidak berhak atas THR tahun yang bersangkutan.",
+        "page": 1
+       },
+       {
+        "document": "SP07",
+        "provision": "Pasal 73 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The PKB fixes THR in the holiday month as base salary plus fixed allowances, pro-rated by months of service up to 12; withholding it from anyone whose employment ended before the holiday conflicts with the statutory 30-day protection, which CON.THR.MINIMUM reports as C10. Pasal 53 (THR is irregular income taxed in the month paid) restates existing regulation, so no rule was added for it."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   2,
+   1
+  ]
+ ],
+ "selected": 2,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-sintetis-SP07-cand2",
+  "event_id": "SP07",
+  "document": {
+   "id": "SP07",
+   "title": "PT Sentosa Ritel Prima: Perjanjian Kerja Bersama",
+   "issued": "2024-02-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP07.THR",
+    "recorded_on": "2024-02-01",
+    "label": "THR under the PT Sentosa Ritel Prima collective agreement: one month of wages, pro-rated below 12 months of service, none if employment ends before the holiday",
+    "label_id": "THR menurut PKB PT Sentosa Ritel Prima: 1 bulan upah, proporsional untuk masa kerja kurang dari 12 bulan, tidak berhak bila hubungan kerja berakhir sebelum hari raya",
+    "valid_from": "2024-02-01",
+    "valid_until": "2025-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "condition": "hr('thr_holiday') == 1",
+    "expression": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 0 else 0",
+    "policy": "SP07",
+    "conflict_code": "C10",
+    "source": [
+     {
+      "document": "SP07",
+      "provision": "Pasal 52 ayat (2)",
+      "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan secara terus-menerus atau lebih diberikan THR sebesar 1 (satu) bulan upah.",
+      "page": 1
+     },
+     {
+      "document": "SP07",
+      "provision": "Pasal 52 ayat (3)",
+      "quote": "diberikan THR secara proporsional dengan perhitungan masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan upah.",
+      "page": 1
+     },
+     {
+      "document": "SP07",
+      "provision": "Pasal 52 ayat (4)",
+      "quote": "Upah 1 (satu) bulan sebagaimana dimaksud pada ayat (2) dan ayat (3) terdiri atas gaji pokok dan tunjangan tetap.",
+      "page": 1
+     },
+     {
+      "document": "SP07",
+      "provision": "Pasal 52 ayat (6)",
+      "quote": "Pekerja yang hubungan kerjanya berakhir sebelum hari raya keagamaan, karena sebab apa pun, tidak berhak atas THR tahun yang bersangkutan.",
+      "page": 1
+     },
+     {
+      "document": "SP07",
+      "provision": "Pasal 73 ayat (1)",
+      "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025.",
+      "page": 1
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "The PKB fixes THR in the holiday month as base salary plus fixed allowances, pro-rated by months of service up to 12; withholding it from anyone whose employment ended before the holiday conflicts with the statutory 30-day protection, which CON.THR.MINIMUM reports as C10. Pasal 53 (THR is irregular income taxed in the month paid) restates existing regulation, so no rule was added for it."
+ },
+ "cost_usd": 0.174584,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "This company collective labour agreement (PKB) sets payroll rules that determine the THR amount entering employees' gross income for PPh 21. THR equals 1 month of wages (base salary plus fixed allowances) for 12+ months of service, and is pro-rated for shorter service. Employees whose employment ends before the religious holiday get no THR, which departs from the statutory default. It also confirms THR is treated as irregular income and taxed in the month it is paid. Validity runs 1 Feb 2024 to 31 Dec 2025.",
+   "quotes": [
+    {
+     "provision": "Pasal 52 ayat (2)",
+     "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan secara terus-menerus atau lebih diberikan THR sebesar 1 (satu) bulan upah."
+    },
+    {
+     "provision": "Pasal 52 ayat (3)",
+     "quote": "diberikan THR secara proporsional dengan perhitungan masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan upah"
+    },
+    {
+     "provision": "Pasal 52 ayat (4)",
+     "quote": "Upah 1 (satu) bulan sebagaimana dimaksud pada ayat (2) dan ayat (3) terdiri atas gaji pokok dan tunjangan tetap."
+    },
+    {
+     "provision": "Pasal 52 ayat (6)",
+     "quote": "Pekerja yang hubungan kerjanya berakhir sebelum hari raya keagamaan, karena sebab apa pun, tidak berhak atas THR tahun yang bersangkutan."
+    },
+    {
+     "provision": "Pasal 53",
+     "quote": "THR merupakan penghasilan tidak teratur dan dipotong Pajak Penghasilan Pasal 21 pada bulan dibayarkan sesuai ketentuan perpajakan yang berlaku."
+    }
+   ],
+   "effective_from": "2024-02-01",
+   "effective_from_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025.",
+   "effective_until": "2025-12-31",
+   "effective_until_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025.",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT Sentosa Ritel Prima",
+     "quote": "PERJANJIAN KERJA BERSAMA PT SENTOSA RITEL PRIMA PERIODE 2024-2025"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

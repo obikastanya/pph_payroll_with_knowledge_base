@@ -1,0 +1,2874 @@
+{
+ "run": "e2-ab2-regulasi",
+ "event": "E04",
+ "condition": "proposed",
+ "documents": [
+  "PMK-168-2023"
+ ],
+ "selection": {
+  "PMK-168-2023": {
+   "tokens": 13999,
+   "dropped": [
+    "Pasal 2",
+    "Pasal 3",
+    "Pasal 4",
+    "Pasal 6",
+    "Pasal 7",
+    "Pasal 11",
+    "Pasal 14",
+    "Pasal 22",
+    "Pasal 23",
+    "Pasal 21 (2)"
+   ]
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "fail: application: REG.TER.PPH21_DUE: expression: first argument of year_value() must be a name in quotes, in 'max(year_value(final_period_tax), 0) if is_final_period else pph21_running'"
+   },
+   "first_gate_log": {
+    "G1": "fail: application: REG.TER.WITHHELD_BEFORE_FINAL: expression: first argument of sum_periods_before_final() must be a name in quotes, in 'sum_periods_before_final(pph21_running)'"
+   },
+   "sg_size": 0,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_RUNNING",
+      "label": "PPh 21 of a non-final period: monthly effective rate times monthly gross income",
+      "label_id": "PPh Pasal 21 masa selain Masa Pajak Terakhir: tarif efektif bulanan dikali penghasilan bruto sebulan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_running"
+       },
+       {
+        "name": "expression",
+        "value": "round(ter_rate * gross_income, 1, 'down')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "page": 15,
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan sebagaimana dimaksud dalam Pasal 13 ayat (2) huruf a dikalikan dengan dasar pengenaan dan pemotongan sebagaimana dimaksud dalam Pasal 8 ayat (1) huruf a"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (1) huruf a",
+        "page": 10,
+        "quote": "penghasilan bruto dalam 1 (satu) Masa Pajak"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.WITHHELD_BEFORE_FINAL",
+      "label": "PPh 21 withheld in the periods before the final period",
+      "label_id": "PPh Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withheld_before_final"
+       },
+       {
+        "name": "expression",
+        "value": "sum_periods_before_final('pph21_running')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "page": 15,
+        "quote": "Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir sebagaimana dimaksud dalam huruf a"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.FINAL_PERIOD_TAX",
+      "label": "PPh 21 of the final period: annual tax minus tax withheld before",
+      "label_id": "PPh Pasal 21 Masa Pajak Terakhir: PPh setahun dikurangi PPh yang telah dipotong",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "final_period_tax"
+       },
+       {
+        "name": "expression",
+        "value": "annual_pph21 - withheld_before_final"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "page": 15,
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_DUE",
+      "label": "PPh 21 due: TER withholding in non-final periods, annual reconciliation in the final period",
+      "label_id": "PPh Pasal 21 terutang: tarif efektif pada masa selain terakhir, selisih setahun pada Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_due"
+       },
+       {
+        "name": "expression",
+        "value": "max(year_value(final_period_tax), 0) if is_final_period else pph21_running"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1)",
+        "page": 15,
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "page": 15,
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.REFUND_TO_EMPLOYEE",
+      "label": "Over-withholding refunded to the employee",
+      "label_id": "Kelebihan PPh Pasal 21 yang dipotong dikembalikan kepada pegawai",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "refund_to_employee"
+       },
+       {
+        "name": "expression",
+        "value": "max(withheld_before_final - annual_pph21, 0)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "page": 21,
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 yang telah dipotong tersebut wajib dikenibalikan oleh Pemotong Pajak kepada Pegawai Tetap dan Pensiunan yang bersangkutan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Added the TER withholding scheme for permanent employees from January 2024: TER times monthly gross in non-final periods and annual Article 17 tax minus prior withholding in the final period; the new rules supersede the PMK 252/2008 rules by lex posterior. Job expense, PTKP, thousand-rupiah rounding and proration are restated with unchanged values, so existing parameters and rules are kept, and the existing ter_rate rule from PP 58/2023 is assumed."
+   },
+   "delta": {
+    "delta_id": "e2-ab2-regulasi-E04-cand1",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_RUNNING",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 of a non-final period: monthly effective rate times monthly gross income",
+      "label_id": "PPh Pasal 21 masa selain Masa Pajak Terakhir: tarif efektif bulanan dikali penghasilan bruto sebulan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "expression": "round(ter_rate * gross_income, 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan sebagaimana dimaksud dalam Pasal 13 ayat (2) huruf a dikalikan dengan dasar pengenaan dan pemotongan sebagaimana dimaksud dalam Pasal 8 ayat (1) huruf a",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (1) huruf a",
+        "quote": "penghasilan bruto dalam 1 (satu) Masa Pajak",
+        "page": 10
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.WITHHELD_BEFORE_FINAL",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 withheld in the periods before the final period",
+      "label_id": "PPh Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "withheld_before_final",
+      "expression": "sum_periods_before_final('pph21_running')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir sebagaimana dimaksud dalam huruf a",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.FINAL_PERIOD_TAX",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 of the final period: annual tax minus tax withheld before",
+      "label_id": "PPh Pasal 21 Masa Pajak Terakhir: PPh setahun dikurangi PPh yang telah dipotong",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "final_period_tax",
+      "expression": "annual_pph21 - withheld_before_final",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_DUE",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 due: TER withholding in non-final periods, annual reconciliation in the final period",
+      "label_id": "PPh Pasal 21 terutang: tarif efektif pada masa selain terakhir, selisih setahun pada Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_due",
+      "expression": "max(year_value(final_period_tax), 0) if is_final_period else pph21_running",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1)",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.REFUND_TO_EMPLOYEE",
+      "recorded_on": "2023-12-29",
+      "label": "Over-withholding refunded to the employee",
+      "label_id": "Kelebihan PPh Pasal 21 yang dipotong dikembalikan kepada pegawai",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "expression": "max(withheld_before_final - annual_pph21, 0)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 yang telah dipotong tersebut wajib dikenibalikan oleh Pemotong Pajak kepada Pegawai Tetap dan Pensiunan yang bersangkutan",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Added the TER withholding scheme for permanent employees from January 2024: TER times monthly gross in non-final periods and annual Article 17 tax minus prior withholding in the final period; the new rules supersede the PMK 252/2008 rules by lex posterior. Job expense, PTKP, thousand-rupiah rounding and proration are restated with unchanged values, so existing parameters and rules are kept, and the existing ter_rate rule from PP 58/2023 is assumed."
+   },
+   "initial_delta": {
+    "delta_id": "e2-ab2-regulasi-E04-cand1",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_RUNNING",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 of a non-final period: monthly effective rate times monthly gross income",
+      "label_id": "PPh Pasal 21 masa selain Masa Pajak Terakhir: tarif efektif bulanan dikali penghasilan bruto sebulan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "expression": "round(ter_rate * gross_income, 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan sebagaimana dimaksud dalam Pasal 13 ayat (2) huruf a dikalikan dengan dasar pengenaan dan pemotongan sebagaimana dimaksud dalam Pasal 8 ayat (1) huruf a",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (1) huruf a",
+        "quote": "penghasilan bruto dalam 1 (satu) Masa Pajak",
+        "page": 10
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.WITHHELD_BEFORE_FINAL",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 withheld in the periods before the final period",
+      "label_id": "PPh Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "withheld_before_final",
+      "expression": "sum_periods_before_final(pph21_running)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir sebagaimana dimaksud dalam huruf a",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.FINAL_PERIOD_TAX",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 of the final period: annual tax minus tax withheld before",
+      "label_id": "PPh Pasal 21 Masa Pajak Terakhir: PPh setahun dikurangi PPh yang telah dipotong",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "final_period_tax",
+      "expression": "annual_pph21 - withheld_before_final",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_DUE",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 due: TER withholding in non-final periods, annual reconciliation in the final period",
+      "label_id": "PPh Pasal 21 terutang: tarif efektif pada masa selain terakhir, selisih setahun pada Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_due",
+      "expression": "max(year_value(final_period_tax), 0) if is_final_period else pph21_running",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1)",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.REFUND_TO_EMPLOYEE",
+      "recorded_on": "2023-12-29",
+      "label": "Over-withholding refunded to the employee",
+      "label_id": "Kelebihan PPh Pasal 21 yang dipotong dikembalikan kepada pegawai",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "expression": "max(withheld_before_final - annual_pph21, 0)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 yang telah dipotong tersebut wajib dikenibalikan oleh Pemotong Pajak kepada Pegawai Tetap dan Pensiunan yang bersangkutan",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Added the TER withholding scheme for permanent employees from January 2024: TER × monthly gross in non-final periods and annual Article 17 tax minus prior withholding in the final period. The new rules supersede the PMK 252/2008 rules by lex posterior. Job expense (5%, Rp500.000/Rp6.000.000), PTKP, thousand-rupiah rounding and proration are restated with unchanged values, so the existing parameters and rules are kept. The existing ter_rate rule from PP 58/2023 is assumed."
+   }
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "fail: application: REG.TER.PPH21_DUE_FINAL: expression: first argument of year_value() must be a name in quotes, in 'max(year_value(final_period_tax), 0)'"
+   },
+   "first_gate_log": {
+    "G1": "fail: application: REG.TER.WITHHELD_BEFORE_FINAL: expression: first argument of sum_periods_before_final() must be a name in quotes, in 'sum_periods_before_final(pph21_running)'"
+   },
+   "sg_size": 0,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_RUNNING",
+      "label": "PPh 21 of a non-final period: monthly effective rate times monthly gross income",
+      "label_id": "PPh Pasal 21 masa selain Masa Pajak Terakhir: tarif efektif bulanan dikalikan penghasilan bruto sebulan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_running"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "expression",
+        "value": "round(ter_rate * gross_income, 1, 'down')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "page": 15,
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan sebagaimana dimaksud dalam Pasal 13 ayat (2) huruf a dikalikan dengan dasar pengenaan dan pemotongan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_DUE_PERIOD",
+      "label": "PPh 21 due in a non-final period under the TER method",
+      "label_id": "PPh Pasal 21 terutang pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_due"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "expression",
+        "value": "pph21_running"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "page": 15,
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.WITHHELD_BEFORE_FINAL",
+      "label": "PPh 21 withheld in the periods before the final period",
+      "label_id": "PPh Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withheld_before_final"
+       },
+       {
+        "name": "expression",
+        "value": "sum_periods_before_final('pph21_running')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "page": 15,
+        "quote": "dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.FINAL_PERIOD_TAX",
+      "label": "PPh 21 of the final period: annual tax minus tax withheld before",
+      "label_id": "PPh Pasal 21 Masa Pajak Terakhir: selisih PPh setahun dengan PPh yang telah dipotong",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "final_period_tax"
+       },
+       {
+        "name": "expression",
+        "value": "annual_pph21 - withheld_before_final"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "page": 15,
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_DUE_FINAL",
+      "label": "PPh 21 due in the final period under the TER method",
+      "label_id": "PPh Pasal 21 terutang pada Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_due"
+       },
+       {
+        "name": "condition",
+        "value": "is_final_period"
+       },
+       {
+        "name": "expression",
+        "value": "max(year_value(final_period_tax), 0)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "page": 15,
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.REFUND_TO_EMPLOYEE",
+      "label": "over-withholding refunded to the employee after the final period",
+      "label_id": "kelebihan PPh Pasal 21 yang telah dipotong dikembalikan kepada Pegawai Tetap",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "refund_to_employee"
+       },
+       {
+        "name": "expression",
+        "value": "max(withheld_before_final - annual_pph21, 0)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "page": 21,
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 yang telah dipotong tersebut wajib dikenibalikan oleh Pemotong Pajak kepada Pegawai Tetap dan Pensiunan yang bersangkutan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Added the TER withholding scheme of Pasal 15 (TER x monthly gross in non-final periods, annual Pasal 17 tax minus prior withholding in the final period, refund of excess per Pasal 21), relying on existing ter_rate, gross_income, annual_pph21 and taxable-income rules. Job-expense parameters (5%, Rp500.000/Rp6.000.000) are unchanged and not restated; PMK 252/2008 rules lose by lex posterior from 1 January 2024 since their ids are not visible for explicit closing."
+   },
+   "delta": {
+    "delta_id": "e2-ab2-regulasi-E04-cand2",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_RUNNING",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 of a non-final period: monthly effective rate times monthly gross income",
+      "label_id": "PPh Pasal 21 masa selain Masa Pajak Terakhir: tarif efektif bulanan dikalikan penghasilan bruto sebulan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(ter_rate * gross_income, 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan sebagaimana dimaksud dalam Pasal 13 ayat (2) huruf a dikalikan dengan dasar pengenaan dan pemotongan",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_DUE_PERIOD",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 due in a non-final period under the TER method",
+      "label_id": "PPh Pasal 21 terutang pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "not is_final_period",
+      "expression": "pph21_running",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.WITHHELD_BEFORE_FINAL",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 withheld in the periods before the final period",
+      "label_id": "PPh Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "withheld_before_final",
+      "expression": "sum_periods_before_final('pph21_running')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.FINAL_PERIOD_TAX",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 of the final period: annual tax minus tax withheld before",
+      "label_id": "PPh Pasal 21 Masa Pajak Terakhir: selisih PPh setahun dengan PPh yang telah dipotong",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "final_period_tax",
+      "expression": "annual_pph21 - withheld_before_final",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_DUE_FINAL",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 due in the final period under the TER method",
+      "label_id": "PPh Pasal 21 terutang pada Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "is_final_period",
+      "expression": "max(year_value(final_period_tax), 0)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.REFUND_TO_EMPLOYEE",
+      "recorded_on": "2023-12-29",
+      "label": "over-withholding refunded to the employee after the final period",
+      "label_id": "kelebihan PPh Pasal 21 yang telah dipotong dikembalikan kepada Pegawai Tetap",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "expression": "max(withheld_before_final - annual_pph21, 0)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 yang telah dipotong tersebut wajib dikenibalikan oleh Pemotong Pajak kepada Pegawai Tetap dan Pensiunan yang bersangkutan",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Added the TER withholding scheme of Pasal 15 (TER x monthly gross in non-final periods, annual Pasal 17 tax minus prior withholding in the final period, refund of excess per Pasal 21), relying on existing ter_rate, gross_income, annual_pph21 and taxable-income rules. Job-expense parameters (5%, Rp500.000/Rp6.000.000) are unchanged and not restated; PMK 252/2008 rules lose by lex posterior from 1 January 2024 since their ids are not visible for explicit closing."
+   },
+   "initial_delta": {
+    "delta_id": "e2-ab2-regulasi-E04-cand2",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_RUNNING",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 of a non-final period: monthly effective rate times monthly gross income",
+      "label_id": "PPh Pasal 21 masa selain Masa Pajak Terakhir: tarif efektif bulanan dikalikan penghasilan bruto sebulan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(ter_rate * gross_income, 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan sebagaimana dimaksud dalam Pasal 13 ayat (2) huruf a dikalikan dengan dasar pengenaan dan pemotongan",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_DUE_PERIOD",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 due in a non-final period under the TER method",
+      "label_id": "PPh Pasal 21 terutang pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "not is_final_period",
+      "expression": "pph21_running",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.WITHHELD_BEFORE_FINAL",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 withheld in the periods before the final period",
+      "label_id": "PPh Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "withheld_before_final",
+      "expression": "sum_periods_before_final(pph21_running)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.FINAL_PERIOD_TAX",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 of the final period: annual tax minus tax withheld before",
+      "label_id": "PPh Pasal 21 Masa Pajak Terakhir: selisih PPh setahun dengan PPh yang telah dipotong",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "final_period_tax",
+      "expression": "annual_pph21 - withheld_before_final",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.PPH21_DUE_FINAL",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 due in the final period under the TER method",
+      "label_id": "PPh Pasal 21 terutang pada Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "is_final_period",
+      "expression": "max(year_value(final_period_tax), 0)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.REFUND_TO_EMPLOYEE",
+      "recorded_on": "2023-12-29",
+      "label": "over-withholding refunded to the employee after the final period",
+      "label_id": "kelebihan PPh Pasal 21 yang telah dipotong dikembalikan kepada Pegawai Tetap",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "expression": "max(withheld_before_final - annual_pph21, 0)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 yang telah dipotong tersebut wajib dikenibalikan oleh Pemotong Pajak kepada Pegawai Tetap dan Pensiunan yang bersangkutan",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Added the TER withholding scheme of Pasal 15 (TER x monthly gross in non-final periods, annual Pasal 17 tax minus prior withholding in the final period, refund of excess per Pasal 21), relying on existing ter_rate, gross_income, annual_pph21 and taxable-income rules. Annual net/PTKP/job-expense rules and parameters are unchanged in substance (5%, Rp500.000/Rp6.000.000) and are not restated. The PMK 252/2008 rules lose by lex posterior from 1 January 2024 because their ids are not visible here for explicit closing."
+   }
+  },
+  {
+   "n": 3,
+   "order": 2,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "fail: application: REG.PPH21.WITHHELD_BEFORE_FINAL: expression: first argument of sum_periods_before_final() must be a name in quotes, in 'sum_periods_before_final(pph21_running)'"
+   },
+   "first_gate_log": {
+    "G1": "fail: application: REG.PPH21.DUE_FINAL: expression: first argument of year_value() must be a name in quotes, in 'max(0, year_value(final_period_tax))'"
+   },
+   "sg_size": 0,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.RUNNING_TER",
+      "label": "PPh 21 of a non-final period: monthly effective rate times monthly gross income",
+      "label_id": "PPh 21 masa selain Masa Pajak Terakhir: tarif efektif bulanan dikali penghasilan bruto sebulan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_running"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "expression",
+        "value": "round(ter_rate * gross_income, 1, 'down')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "page": 15,
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan sebagaimana dimaksud dalam Pasal 13 ayat (2) huruf a dikalikan dengan dasar pengenaan dan pemotongan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.DUE_TER",
+      "label": "PPh 21 due in a non-final period",
+      "label_id": "PPh 21 terutang pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_due"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "expression",
+        "value": "pph21_running"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "page": 15,
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan sebagaimana dimaksud dalam Pasal 13 ayat (2) huruf a dikalikan dengan dasar pengenaan dan pemotongan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.DUE_FINAL",
+      "label": "PPh 21 due in the final period",
+      "label_id": "PPh 21 terutang pada Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_due"
+       },
+       {
+        "name": "condition",
+        "value": "is_final_period"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, year_value('final_period_tax'))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "page": 15,
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.WITHHELD_BEFORE_FINAL",
+      "label": "PPh 21 withheld in the periods before the final period",
+      "label_id": "PPh 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withheld_before_final"
+       },
+       {
+        "name": "expression",
+        "value": "sum_periods_before_final(pph21_running)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "page": 15,
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.FINAL_PERIOD_TAX",
+      "label": "PPh 21 of the final period: annual tax minus tax already withheld",
+      "label_id": "PPh 21 Masa Pajak Terakhir: PPh setahun dikurangi PPh yang telah dipotong",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "final_period_tax"
+       },
+       {
+        "name": "expression",
+        "value": "annual_pph21 - withheld_before_final"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "page": 15,
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.REFUND",
+      "label": "Over-withholding refunded to the employee",
+      "label_id": "Kelebihan PPh 21 yang dipotong dikembalikan kepada pegawai",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "refund_to_employee"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, withheld_before_final - annual_pph21)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "page": 21,
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 yang telah dipotong tersebut wajib dikenibalikan oleh Pemotong Pajak kepada Pegawai Tetap dan Pensiunan yang bersangkutan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_PPH21",
+      "label": "Annual PPh 21 under Article 17 rates, prorated for a partial subjective year",
+      "label_id": "PPh 21 setahun dengan tarif Pasal 17, proporsional untuk bagian Tahun Pajak",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_pph21"
+       },
+       {
+        "name": "expression",
+        "value": "round(progressive('pasal17', taxable_income) * value_or(subjective_months, 12) / 12, 1, 'down')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (2)",
+        "page": 16,
+        "quote": "dihitung menggunakan tarif Pasal 17 ayat (1) huruf a Undang-Undang Pajak Penghasilan dikalikan dengan dasar pengenaan dan pemotongan sebagaimana dimaksud dalam Pasal 8 ayat (1) huruf b dalam 1 (satu) Tahun Pajak atau bagian Tahun Pajak"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (3)",
+        "page": 16,
+        "quote": "penghitungan Pajak Penghasilan Pasal 21 yang terutang dilakukan berdasarkan penghasilan neto yang disetahunkan dan pajaknya dihitung secara proporsional terhadap jumlah bulan dalam bagian Tahun Pajak yang bersangkutan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.TAXABLE_INCOME",
+      "label": "Taxable income: (annualised) net income minus PTKP, rounded down to thousands",
+      "label_id": "Penghasilan kena pajak: penghasilan neto (disetahunkan) dikurangi PTKP, dibulatkan ke bawah ribuan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "taxable_income"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, round(annual_net * 12 / value_or(subjective_months, 12) - ptkp_amount, 1000, 'down'))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (3)",
+        "page": 10,
+        "quote": "Penghasilan kena pajak sebagaimana dimaksud pada ayat (1) huruf b sebesar penghasilan neto dikurangi Penghasilan Tidak Kena Pajak."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (4)",
+        "page": 10,
+        "quote": "Jumlah penghasilan kena pajak sebagaimana dimaksud pada ayat (3) dibulatkan ke bawah hingga ribuan rupiah"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (3)",
+        "page": 16,
+        "quote": "penghitungan Pajak Penghasilan Pasal 21 yang terutang dilakukan berdasarkan penghasilan neto yang disetahunkan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_NET",
+      "label": "Net income of the tax year",
+      "label_id": "Penghasilan neto setahun",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_net"
+       },
+       {
+        "name": "expression",
+        "value": "annual_gross - annual_deductions"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (5)",
+        "page": 11,
+        "quote": "merupakan seluruh jumlah penghasilan bruto sebagaimana dimaksud pada ayat (2) dalam 1 (satu) Tahun Pajak atau bagian Tahun Pajak dikurangi dengan pengurangan yang diperbolehkan."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_GROSS",
+      "label": "Gross income of the tax year",
+      "label_id": "Penghasilan bruto setahun",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_gross"
+       },
+       {
+        "name": "expression",
+        "value": "sum_periods(gross_income)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (2) huruf a",
+        "page": 10,
+        "quote": "bagi Pegawai Tetap meliputi seluruh penghasilan sebagaimana dimaksud dalam Pasal 5 ayat (1) huruf a yang diterima atau diperoleh dari pemberi kerja"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_DEDUCTIONS",
+      "label": "Allowable deductions: job expense, pension and old-age contributions, zakat",
+      "label_id": "Pengurangan yang diperbolehkan: biaya jabatan, iuran pensiun dan hari tua, zakat",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_deductions"
+       },
+       {
+        "name": "expression",
+        "value": "job_expense + annual_pension_contributions + annual_zakat_deduction"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf a",
+        "page": 11,
+        "quote": "biaya jabatan, sebagaimana diatur dalam Pasal 21 ayat (3) Undang-Undang Pajak Penghasilan;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "page": 11,
+        "quote": "iuran terkait program pensiun dan hari tua, yang terkait dengan gaji, yang dibayar oleh Pegawai melalui pemberi kerja kepada:"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "page": 12,
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_PENSION_CONTRIBUTIONS",
+      "label": "Employee pension and old-age contributions of the year",
+      "label_id": "Iuran pensiun dan hari tua pegawai setahun",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_pension_contributions"
+       },
+       {
+        "name": "expression",
+        "value": "sum_periods(employee_pension_contributions)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "page": 11,
+        "quote": "iuran terkait program pensiun dan hari tua, yang terkait dengan gaji, yang dibayar oleh Pegawai melalui pemberi kerja kepada:"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_ZAKAT",
+      "label": "Zakat paid through the employer deducted in the year",
+      "label_id": "Zakat melalui pemberi kerja setahun",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_zakat_deduction"
+       },
+       {
+        "name": "expression",
+        "value": "sum_periods(zakat_deductible)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "page": 12,
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.JOB_EXPENSE",
+      "label": "Job expense: 5% of gross income, capped per month and per year",
+      "label_id": "Biaya jabatan 5% dari penghasilan bruto, paling banyak per bulan dan per tahun",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "job_expense"
+       },
+       {
+        "name": "expression",
+        "value": "min(round(param('job_expense_rate') * annual_gross, 1, 'down'), param('job_expense_max_month') * months_employed, param('job_expense_max_year'))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (2)",
+        "page": 12,
+        "quote": "ditetapkan sebesar 5% (lima persen) dari penghasilan bruto, paling banyak Rp6.000.000,00 (enam juta rupiah) setahun atau paling banyak Rp500.000,00 (lima ratus ribu rupiah) sebulan."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "New TER-based withholding rules from 1 January 2024 are added; they supersede the PMK 252/2008 and 250/2008 rules by lex posterior, since the ids of those older rules are not visible and cannot be closed here. Job expense parameters keep their existing values (5%, Rp500.000/month, Rp6.000.000/year), and the monthly effective rate (ter_rate) is assumed to come from the existing PP 58/2023 rules."
+   },
+   "delta": {
+    "delta_id": "e2-ab2-regulasi-E04-cand3",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.RUNNING_TER",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 of a non-final period: monthly effective rate times monthly gross income",
+      "label_id": "PPh 21 masa selain Masa Pajak Terakhir: tarif efektif bulanan dikali penghasilan bruto sebulan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(ter_rate * gross_income, 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan sebagaimana dimaksud dalam Pasal 13 ayat (2) huruf a dikalikan dengan dasar pengenaan dan pemotongan",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.DUE_TER",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 due in a non-final period",
+      "label_id": "PPh 21 terutang pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "not is_final_period",
+      "expression": "pph21_running",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan sebagaimana dimaksud dalam Pasal 13 ayat (2) huruf a dikalikan dengan dasar pengenaan dan pemotongan",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.DUE_FINAL",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 due in the final period",
+      "label_id": "PPh 21 terutang pada Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "is_final_period",
+      "expression": "max(0, year_value('final_period_tax'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.WITHHELD_BEFORE_FINAL",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 withheld in the periods before the final period",
+      "label_id": "PPh 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "withheld_before_final",
+      "expression": "sum_periods_before_final(pph21_running)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.FINAL_PERIOD_TAX",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 of the final period: annual tax minus tax already withheld",
+      "label_id": "PPh 21 Masa Pajak Terakhir: PPh setahun dikurangi PPh yang telah dipotong",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "final_period_tax",
+      "expression": "annual_pph21 - withheld_before_final",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.REFUND",
+      "recorded_on": "2023-12-29",
+      "label": "Over-withholding refunded to the employee",
+      "label_id": "Kelebihan PPh 21 yang dipotong dikembalikan kepada pegawai",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "expression": "max(0, withheld_before_final - annual_pph21)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 yang telah dipotong tersebut wajib dikenibalikan oleh Pemotong Pajak kepada Pegawai Tetap dan Pensiunan yang bersangkutan",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_PPH21",
+      "recorded_on": "2023-12-29",
+      "label": "Annual PPh 21 under Article 17 rates, prorated for a partial subjective year",
+      "label_id": "PPh 21 setahun dengan tarif Pasal 17, proporsional untuk bagian Tahun Pajak",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_pph21",
+      "expression": "round(progressive('pasal17', taxable_income) * value_or(subjective_months, 12) / 12, 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (2)",
+        "quote": "dihitung menggunakan tarif Pasal 17 ayat (1) huruf a Undang-Undang Pajak Penghasilan dikalikan dengan dasar pengenaan dan pemotongan sebagaimana dimaksud dalam Pasal 8 ayat (1) huruf b dalam 1 (satu) Tahun Pajak atau bagian Tahun Pajak",
+        "page": 16
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (3)",
+        "quote": "penghitungan Pajak Penghasilan Pasal 21 yang terutang dilakukan berdasarkan penghasilan neto yang disetahunkan dan pajaknya dihitung secara proporsional terhadap jumlah bulan dalam bagian Tahun Pajak yang bersangkutan",
+        "page": 16
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.TAXABLE_INCOME",
+      "recorded_on": "2023-12-29",
+      "label": "Taxable income: (annualised) net income minus PTKP, rounded down to thousands",
+      "label_id": "Penghasilan kena pajak: penghasilan neto (disetahunkan) dikurangi PTKP, dibulatkan ke bawah ribuan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "taxable_income",
+      "expression": "max(0, round(annual_net * 12 / value_or(subjective_months, 12) - ptkp_amount, 1000, 'down'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (3)",
+        "quote": "Penghasilan kena pajak sebagaimana dimaksud pada ayat (1) huruf b sebesar penghasilan neto dikurangi Penghasilan Tidak Kena Pajak.",
+        "page": 10
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (4)",
+        "quote": "Jumlah penghasilan kena pajak sebagaimana dimaksud pada ayat (3) dibulatkan ke bawah hingga ribuan rupiah",
+        "page": 10
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (3)",
+        "quote": "penghitungan Pajak Penghasilan Pasal 21 yang terutang dilakukan berdasarkan penghasilan neto yang disetahunkan",
+        "page": 16
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_NET",
+      "recorded_on": "2023-12-29",
+      "label": "Net income of the tax year",
+      "label_id": "Penghasilan neto setahun",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_net",
+      "expression": "annual_gross - annual_deductions",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (5)",
+        "quote": "merupakan seluruh jumlah penghasilan bruto sebagaimana dimaksud pada ayat (2) dalam 1 (satu) Tahun Pajak atau bagian Tahun Pajak dikurangi dengan pengurangan yang diperbolehkan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_GROSS",
+      "recorded_on": "2023-12-29",
+      "label": "Gross income of the tax year",
+      "label_id": "Penghasilan bruto setahun",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_gross",
+      "expression": "sum_periods(gross_income)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (2) huruf a",
+        "quote": "bagi Pegawai Tetap meliputi seluruh penghasilan sebagaimana dimaksud dalam Pasal 5 ayat (1) huruf a yang diterima atau diperoleh dari pemberi kerja",
+        "page": 10
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_DEDUCTIONS",
+      "recorded_on": "2023-12-29",
+      "label": "Allowable deductions: job expense, pension and old-age contributions, zakat",
+      "label_id": "Pengurangan yang diperbolehkan: biaya jabatan, iuran pensiun dan hari tua, zakat",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_deductions",
+      "expression": "job_expense + annual_pension_contributions + annual_zakat_deduction",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf a",
+        "quote": "biaya jabatan, sebagaimana diatur dalam Pasal 21 ayat (3) Undang-Undang Pajak Penghasilan;",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "quote": "iuran terkait program pensiun dan hari tua, yang terkait dengan gaji, yang dibayar oleh Pegawai melalui pemberi kerja kepada:",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_PENSION_CONTRIBUTIONS",
+      "recorded_on": "2023-12-29",
+      "label": "Employee pension and old-age contributions of the year",
+      "label_id": "Iuran pensiun dan hari tua pegawai setahun",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_pension_contributions",
+      "expression": "sum_periods(employee_pension_contributions)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "quote": "iuran terkait program pensiun dan hari tua, yang terkait dengan gaji, yang dibayar oleh Pegawai melalui pemberi kerja kepada:",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_ZAKAT",
+      "recorded_on": "2023-12-29",
+      "label": "Zakat paid through the employer deducted in the year",
+      "label_id": "Zakat melalui pemberi kerja setahun",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_zakat_deduction",
+      "expression": "sum_periods(zakat_deductible)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.JOB_EXPENSE",
+      "recorded_on": "2023-12-29",
+      "label": "Job expense: 5% of gross income, capped per month and per year",
+      "label_id": "Biaya jabatan 5% dari penghasilan bruto, paling banyak per bulan dan per tahun",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "job_expense",
+      "expression": "min(round(param('job_expense_rate') * annual_gross, 1, 'down'), param('job_expense_max_month') * months_employed, param('job_expense_max_year'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (2)",
+        "quote": "ditetapkan sebesar 5% (lima persen) dari penghasilan bruto, paling banyak Rp6.000.000,00 (enam juta rupiah) setahun atau paling banyak Rp500.000,00 (lima ratus ribu rupiah) sebulan.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "New TER-based withholding rules from 1 January 2024 are added; they supersede the PMK 252/2008 and 250/2008 rules by lex posterior, since the ids of those older rules are not visible and cannot be closed here. Job expense parameters keep their existing values (5%, Rp500.000/month, Rp6.000.000/year), and the monthly effective rate (ter_rate) is assumed to come from the existing PP 58/2023 rules."
+   },
+   "initial_delta": {
+    "delta_id": "e2-ab2-regulasi-E04-cand3",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.RUNNING_TER",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 of a non-final period: monthly effective rate times monthly gross income",
+      "label_id": "PPh 21 masa selain Masa Pajak Terakhir: tarif efektif bulanan dikali penghasilan bruto sebulan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(ter_rate * gross_income, 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan sebagaimana dimaksud dalam Pasal 13 ayat (2) huruf a dikalikan dengan dasar pengenaan dan pemotongan",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.DUE_TER",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 due in a non-final period",
+      "label_id": "PPh 21 terutang pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "not is_final_period",
+      "expression": "pph21_running",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan sebagaimana dimaksud dalam Pasal 13 ayat (2) huruf a dikalikan dengan dasar pengenaan dan pemotongan",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.DUE_FINAL",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 due in the final period",
+      "label_id": "PPh 21 terutang pada Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "is_final_period",
+      "expression": "max(0, year_value(final_period_tax))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.WITHHELD_BEFORE_FINAL",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 withheld in the periods before the final period",
+      "label_id": "PPh 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "withheld_before_final",
+      "expression": "sum_periods_before_final(pph21_running)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.FINAL_PERIOD_TAX",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 of the final period: annual tax minus tax already withheld",
+      "label_id": "PPh 21 Masa Pajak Terakhir: PPh setahun dikurangi PPh yang telah dipotong",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "final_period_tax",
+      "expression": "annual_pph21 - withheld_before_final",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf b",
+        "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak Penghasilan Pasal 21 yang terutang selama 1 (satu) Tahun Pajak atau bagian Tahun Pajak dengan Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak selain Masa Pajak Terakhir",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.REFUND",
+      "recorded_on": "2023-12-29",
+      "label": "Over-withholding refunded to the employee",
+      "label_id": "Kelebihan PPh 21 yang dipotong dikembalikan kepada pegawai",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "refund_to_employee",
+      "expression": "max(0, withheld_before_final - annual_pph21)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 21 ayat (1)",
+        "quote": "kelebihan Pajak Penghasilan Pasal 21 yang telah dipotong tersebut wajib dikenibalikan oleh Pemotong Pajak kepada Pegawai Tetap dan Pensiunan yang bersangkutan",
+        "page": 21
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_PPH21",
+      "recorded_on": "2023-12-29",
+      "label": "Annual PPh 21 under Article 17 rates, prorated for a partial subjective year",
+      "label_id": "PPh 21 setahun dengan tarif Pasal 17, proporsional untuk bagian Tahun Pajak",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_pph21",
+      "expression": "round(progressive('pasal17', taxable_income) * value_or(subjective_months, 12) / 12, 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (2)",
+        "quote": "dihitung menggunakan tarif Pasal 17 ayat (1) huruf a Undang-Undang Pajak Penghasilan dikalikan dengan dasar pengenaan dan pemotongan sebagaimana dimaksud dalam Pasal 8 ayat (1) huruf b dalam 1 (satu) Tahun Pajak atau bagian Tahun Pajak",
+        "page": 16
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (3)",
+        "quote": "penghitungan Pajak Penghasilan Pasal 21 yang terutang dilakukan berdasarkan penghasilan neto yang disetahunkan dan pajaknya dihitung secara proporsional terhadap jumlah bulan dalam bagian Tahun Pajak yang bersangkutan",
+        "page": 16
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.TAXABLE_INCOME",
+      "recorded_on": "2023-12-29",
+      "label": "Taxable income: (annualised) net income minus PTKP, rounded down to thousands",
+      "label_id": "Penghasilan kena pajak: penghasilan neto (disetahunkan) dikurangi PTKP, dibulatkan ke bawah ribuan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "taxable_income",
+      "expression": "max(0, round(annual_net * 12 / value_or(subjective_months, 12) - ptkp_amount, 1000, 'down'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (3)",
+        "quote": "Penghasilan kena pajak sebagaimana dimaksud pada ayat (1) huruf b sebesar penghasilan neto dikurangi Penghasilan Tidak Kena Pajak.",
+        "page": 10
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (4)",
+        "quote": "Jumlah penghasilan kena pajak sebagaimana dimaksud pada ayat (3) dibulatkan ke bawah hingga ribuan rupiah",
+        "page": 10
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (3)",
+        "quote": "penghitungan Pajak Penghasilan Pasal 21 yang terutang dilakukan berdasarkan penghasilan neto yang disetahunkan",
+        "page": 16
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_NET",
+      "recorded_on": "2023-12-29",
+      "label": "Net income of the tax year",
+      "label_id": "Penghasilan neto setahun",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_net",
+      "expression": "annual_gross - annual_deductions",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (5)",
+        "quote": "merupakan seluruh jumlah penghasilan bruto sebagaimana dimaksud pada ayat (2) dalam 1 (satu) Tahun Pajak atau bagian Tahun Pajak dikurangi dengan pengurangan yang diperbolehkan.",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_GROSS",
+      "recorded_on": "2023-12-29",
+      "label": "Gross income of the tax year",
+      "label_id": "Penghasilan bruto setahun",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_gross",
+      "expression": "sum_periods(gross_income)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (2) huruf a",
+        "quote": "bagi Pegawai Tetap meliputi seluruh penghasilan sebagaimana dimaksud dalam Pasal 5 ayat (1) huruf a yang diterima atau diperoleh dari pemberi kerja",
+        "page": 10
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_DEDUCTIONS",
+      "recorded_on": "2023-12-29",
+      "label": "Allowable deductions: job expense, pension and old-age contributions, zakat",
+      "label_id": "Pengurangan yang diperbolehkan: biaya jabatan, iuran pensiun dan hari tua, zakat",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_deductions",
+      "expression": "job_expense + annual_pension_contributions + annual_zakat_deduction",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf a",
+        "quote": "biaya jabatan, sebagaimana diatur dalam Pasal 21 ayat (3) Undang-Undang Pajak Penghasilan;",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "quote": "iuran terkait program pensiun dan hari tua, yang terkait dengan gaji, yang dibayar oleh Pegawai melalui pemberi kerja kepada:",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_PENSION_CONTRIBUTIONS",
+      "recorded_on": "2023-12-29",
+      "label": "Employee pension and old-age contributions of the year",
+      "label_id": "Iuran pensiun dan hari tua pegawai setahun",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_pension_contributions",
+      "expression": "sum_periods(employee_pension_contributions)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf b",
+        "quote": "iuran terkait program pensiun dan hari tua, yang terkait dengan gaji, yang dibayar oleh Pegawai melalui pemberi kerja kepada:",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.ANNUAL_ZAKAT",
+      "recorded_on": "2023-12-29",
+      "label": "Zakat paid through the employer deducted in the year",
+      "label_id": "Zakat melalui pemberi kerja setahun",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "annual_zakat_deduction",
+      "expression": "sum_periods(zakat_deductible)",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PPH21.JOB_EXPENSE",
+      "recorded_on": "2023-12-29",
+      "label": "Job expense: 5% of gross income, capped per month and per year",
+      "label_id": "Biaya jabatan 5% dari penghasilan bruto, paling banyak per bulan dan per tahun",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "job_expense",
+      "expression": "min(round(param('job_expense_rate') * annual_gross, 1, 'down'), param('job_expense_max_month') * months_employed, param('job_expense_max_year'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (2)",
+        "quote": "ditetapkan sebesar 5% (lima persen) dari penghasilan bruto, paling banyak Rp6.000.000,00 (enam juta rupiah) setahun atau paling banyak Rp500.000,00 (lima ratus ribu rupiah) sebulan.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "New TER-based withholding rules from 1 January 2024 are added; they supersede the PMK 252/2008 and 250/2008 rules by lex posterior, since the ids of those older rules are not visible and cannot be closed here. Job expense parameters keep their existing values (5%, Rp500.000/month, Rp6.000.000/year), and the monthly effective rate (ter_rate) is assumed to come from the existing PP 58/2023 rules."
+   }
+  }
+ ],
+ "groups": [],
+ "selected": null,
+ "status": "abstain",
+ "delta": null,
+ "cost_usd": 1.201741,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "PMK 168/2023 replaces PMK 252/PMK.03/2008 and PMK 250/PMK.03/2008. It introduces a new PPh 21 calculation method for permanent employees (Pegawai Tetap). For every tax period other than the last one, withholding is the monthly effective rate (TER) multiplied by monthly gross income. In the last tax period, it is the annual tax under the Article 17 rates minus the tax already withheld. The regulation also defines the gross income components, including employer-paid JKK, JKM and health contributions and insurance premiums. It sets the allowable deductions: biaya jabatan at 5%, capped at Rp500.000 per month or Rp6.000.000 per year, plus pension/JHT contributions and zakat. It further covers PTKP rules, rounding of taxable income down to the full thousand rupiah, proration for partial-year tax subjects, and refund of over-withholding. It is effective from 1 January 2024.",
+   "quotes": [
+    {
+     "provision": "Pasal 15 ayat (1)",
+     "quote": "setiap Masa Pajak selain Masa Pajak Terakhir\ndihitung menggunakan tarif efektif bulanan\nsebagaimana dimaksud dalam Pasal 13 ayat (2) huruf\na dikalikan dengan dasar pengenaan dan pemotongan\nsebagaimana dimaksud dalam Pasal 8 ayat (1) huruf\na;dan"
+    },
+    {
+     "provision": "Pasal 15 ayat (1) huruf b",
+     "quote": "Masa Pajak Terakhir yaitu sebesar selisih antara Pajak\nPenghasilan Pasal 21 yang terutang selama 1 (satu) Tahun\nPajak atau bagian Tahun Pajak dengan Pajak Penghasilan\nPasal 21 yang telah dipotong pada Masa Pajak selain Masa\nPajak Terakhir"
+    },
+    {
+     "provision": "Pasal 10 ayat (2)",
+     "quote": "ditetapkan sebesar 5% (lima persen) dari\npenghasilan bruto, paling banyak Rp6.000.000,00 (enam\njuta rupiah) setahun atau paling banyak Rp500.000,00\n(lima ratus ribu rupiah) sebulan."
+    },
+    {
+     "provision": "Pasal 5 ayat (3) huruf d",
+     "quote": "pembayaran iuran jaminan kecelakaan kerja dan\niuran jaminan kematian kepada badan penyelenggara\njaminan sosial ketenagakerjaan, yang dibayarkan oleh\npemberi kerja;"
+    },
+    {
+     "provision": "Pasal 8 ayat (4)",
+     "quote": "Jumlah penghasilan kena pajak sebagaimana dimaksud\npada ayat (3) dibulatkan ke bawah hingga ribuan rupiah\npen uh."
+    },
+    {
+     "provision": "Pasal 10 ayat (1) huruf b",
+     "quote": "iuran terkait program pensiun dan hari tua, yang\nterkait dengan gaji, yang dibayar oleh Pegawai melalui\npemberi kerja kepada:"
+    },
+    {
+     "provision": "Pasal 15 ayat (3)",
+     "quote": "berdasarkan penghasilan neto yang disetahunkan dan\npajaknya dihitung secara proporsional terhadap jumlah\nbulan dalam bagian Tahun Pajak yang bersangkutan."
+    }
+   ],
+   "effective_from": "2024-01-01",
+   "effective_from_quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+   "effective_until": null,
+   "effective_until_quote": null,
+   "subjects": []
+  },
+  "quotes_ok": true
+ }
+}

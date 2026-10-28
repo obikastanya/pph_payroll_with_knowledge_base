@@ -1,0 +1,381 @@
+{
+ "run": "e2-sintetis",
+ "event": "SP05",
+ "condition": "proposed",
+ "documents": [
+  "SP05"
+ ],
+ "selection": {
+  "SP05": {
+   "tokens": 666,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP05.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2024-07-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": false,
+    "add": [],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The agreement does not change the PPh 21 computation, so no records are added. Every provision it contains already matches the knowledge base: JKK 0.54% for the low risk group (jkk_rates table), JKM 0.30%, JHT 2% and JP 1% employee shares, JKK/JKM/health premiums counted as gross income (REG.PREMIUMS.TAXABLE), and PPh 21 withheld from the wage (ordinary withholding)."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP05-cand1",
+    "event_id": "SP05",
+    "document": {
+     "id": "SP05",
+     "title": "PT Benang Sutra Lestari: Perjanjian Kerja Bersama",
+     "issued": "2024-07-01"
+    },
+    "relevant": false,
+    "add": [],
+    "change": [],
+    "remove": [],
+    "note": "The agreement does not change the PPh 21 computation, so no records are added. Every provision it contains already matches the knowledge base: JKK 0.54% for the low risk group (jkk_rates table), JKM 0.30%, JHT 2% and JP 1% employee shares, JKK/JKM/health premiums counted as gross income (REG.PREMIUMS.TAXABLE), and PPh 21 withheld from the wage (ordinary withholding)."
+   },
+   "initial_delta": {
+    "delta_id": "e2-sintetis-SP05-cand1",
+    "event_id": "SP05",
+    "document": {
+     "id": "SP05",
+     "title": "PT Benang Sutra Lestari: Perjanjian Kerja Bersama",
+     "issued": "2024-07-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP05.JKK_RATE",
+      "recorded_on": "2024-07-01",
+      "label": "JKK premium rate fixed by the collective labour agreement (low risk group, 0.54%)",
+      "label_id": "tarif iuran JKK menurut PKB (kelompok tingkat risiko rendah, 0,54%)",
+      "valid_from": "2024-07-01",
+      "valid_until": "2026-06-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "dec('0.0054')",
+      "policy": "SP05",
+      "source": [
+       {
+        "document": "SP05",
+        "provision": "Pasal 45 ayat (2)",
+        "quote": "Iuran JKK ditetapkan sebesar 0,54% (nol koma lima puluh empat persen) dari upah sebulan sesuai kelompok tingkat risiko rendah dan ditanggung sepenuhnya oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP05",
+        "provision": "Pasal 67 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juli 2024 sampai dengan tanggal 30 Juni 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only the JKK rate (0.54%, low risk group) is encoded as a company rule; it agrees with the regulatory jkk_rates table for the low group, so it only produces a conflict if the employer's recorded risk group differs. JKM 0.30%, JHT 2%/1%... JP 2%/1%, the gross-income treatment of JKK/JKM/health premiums, and withholding from the wage (no gross-up) restate existing regulation and existing defaults, so no further records are added."
+   }
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP05.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP05.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP05.JKK_RATE",
+      "label": "JKK rate of the low risk group under the collective labour agreement",
+      "label_id": "tarif iuran JKK kelompok tingkat risiko rendah menurut PKB",
+      "valid_from": "2024-07-01",
+      "valid_until": "2026-06-30",
+      "recorded_on": "2024-07-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "lookup('jkk_rates', 'low')"
+       },
+       {
+        "name": "policy",
+        "value": "SP05"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP05",
+        "provision": "Pasal 45 ayat (2)",
+        "page": 1,
+        "quote": "Iuran JKK ditetapkan sebesar 0,54% (nol koma lima puluh empat persen) dari upah sebulan sesuai kelompok tingkat risiko rendah dan ditanggung sepenuhnya oleh Perusahaan."
+       },
+       {
+        "document": "SP05",
+        "provision": "Pasal 67 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juli 2024 sampai dengan tanggal 30 Juni 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP05.WITHHOLDING_METHOD",
+      "label": "PPh 21 withheld from the employee's wage (gross method)",
+      "label_id": "PPh Pasal 21 dipotong dari upah pekerja (metode gross)",
+      "valid_from": "2024-07-01",
+      "valid_until": "2026-06-30",
+      "recorded_on": "2024-07-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross'"
+       },
+       {
+        "name": "policy",
+        "value": "SP05"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP05",
+        "provision": "Pasal 47",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan pekerja dipotong dari upah pekerja setiap bulan."
+       },
+       {
+        "document": "SP05",
+        "provision": "Pasal 67 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juli 2024 sampai dengan tanggal 30 Juni 2026."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The JKM, JHT, JP rates and the tax treatment of employer premiums restate existing regulation and are not repeated; only the company's choice of the low JKK risk group (0,54%) and withholding from wages (method 'gross', no gross-up) are added as company rules for the agreement's term."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP05-cand2",
+    "event_id": "SP05",
+    "document": {
+     "id": "SP05",
+     "title": "PT Benang Sutra Lestari: Perjanjian Kerja Bersama",
+     "issued": "2024-07-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP05.JKK_RATE",
+      "recorded_on": "2024-07-01",
+      "label": "JKK rate of the low risk group under the collective labour agreement",
+      "label_id": "tarif iuran JKK kelompok tingkat risiko rendah menurut PKB",
+      "valid_from": "2024-07-01",
+      "valid_until": "2026-06-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "lookup('jkk_rates', 'low')",
+      "policy": "SP05",
+      "source": [
+       {
+        "document": "SP05",
+        "provision": "Pasal 45 ayat (2)",
+        "quote": "Iuran JKK ditetapkan sebesar 0,54% (nol koma lima puluh empat persen) dari upah sebulan sesuai kelompok tingkat risiko rendah dan ditanggung sepenuhnya oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP05",
+        "provision": "Pasal 67 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juli 2024 sampai dengan tanggal 30 Juni 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP05.WITHHOLDING_METHOD",
+      "recorded_on": "2024-07-01",
+      "label": "PPh 21 withheld from the employee's wage (gross method)",
+      "label_id": "PPh Pasal 21 dipotong dari upah pekerja (metode gross)",
+      "valid_from": "2024-07-01",
+      "valid_until": "2026-06-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "SP05",
+      "source": [
+       {
+        "document": "SP05",
+        "provision": "Pasal 47",
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan pekerja dipotong dari upah pekerja setiap bulan.",
+        "page": 1
+       },
+       {
+        "document": "SP05",
+        "provision": "Pasal 67 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juli 2024 sampai dengan tanggal 30 Juni 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The JKM, JHT, JP rates and the tax treatment of employer premiums restate existing regulation and are not repeated; only the company's choice of the low JKK risk group (0,54%) and withholding from wages (method 'gross', no gross-up) are added as company rules for the agreement's term."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   2
+  ],
+  [
+   1
+  ]
+ ],
+ "selected": null,
+ "status": "abstain",
+ "delta": null,
+ "cost_usd": 0.210824,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "Company collective labour agreement that sets company-specific payroll parameters entering the PPh 21 computation for permanent employees. It fixes the JKK rate at 0.54% (low-risk group) and the JKM rate at 0.30%, both borne by the company and counted as gross income. It sets the employee-borne JHT (2%) and JP (1%) contributions, which are deductible. It also treats the company share of health insurance as gross income and provides that PPh 21 is withheld from the worker's wage rather than borne by the company (no gross-up).",
+   "quotes": [
+    {
+     "provision": "Pasal 45 ayat (2)",
+     "quote": "Iuran JKK ditetapkan sebesar 0,54% (nol koma lima puluh empat persen) dari upah sebulan sesuai kelompok tingkat risiko rendah dan ditanggung sepenuhnya oleh Perusahaan."
+    },
+    {
+     "provision": "Pasal 45 ayat (3)",
+     "quote": "Iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung Perusahaan."
+    },
+    {
+     "provision": "Pasal 45 ayat (4)",
+     "quote": "Iuran JHT sebesar 3,7% (tiga koma tujuh persen) ditanggung Perusahaan dan 2% (dua persen) ditanggung pekerja."
+    },
+    {
+     "provision": "Pasal 45 ayat (5)",
+     "quote": "Iuran JP sebesar 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja"
+    },
+    {
+     "provision": "Pasal 46",
+     "quote": "iuran JKK dan iuran JKM sebagaimana dimaksud dalam Pasal 45 ayat (2) dan ayat (3) serta iuran Jaminan Kesehatan bagian Perusahaan diperhitungkan sebagai penghasilan bruto pekerja."
+    },
+    {
+     "provision": "Pasal 47",
+     "quote": "Pajak Penghasilan Pasal 21 atas penghasilan pekerja dipotong dari upah pekerja setiap bulan."
+    }
+   ],
+   "effective_from": "2024-07-01",
+   "effective_from_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juli 2024 sampai dengan tanggal 30 Juni 2026.",
+   "effective_until": "2026-06-30",
+   "effective_until_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juli 2024 sampai dengan tanggal 30 Juni 2026.",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT Benang Sutra Lestari",
+     "quote": "PERJANJIAN KERJA BERSAMA PT BENANG SUTRA LESTARI"
+    },
+    {
+     "kind": "sector",
+     "value": "Textile, apparel and leather industry",
+     "quote": "SERIKAT PEKERJA TEKSTIL SANDANG DAN KULIT"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

@@ -1,0 +1,493 @@
+{
+ "run": "e2-sintetis",
+ "event": "SP14",
+ "condition": "proposed",
+ "documents": [
+  "SP14"
+ ],
+ "selection": {
+  "SP14": {
+   "tokens": 757,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP14.THR",
+      "label": "Company THR: 1.5 times monthly wage (base salary plus fixed allowances), prorated for service under 12 months",
+      "label_id": "THR perusahaan: 1,5 kali upah sebulan (gaji pokok dan tunjangan tetap), proporsional untuk masa kerja kurang dari 12 bulan",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "thr"
+       },
+       {
+        "name": "policy",
+        "value": "SP14"
+       },
+       {
+        "name": "condition",
+        "value": "hr('thr_holiday') == 1"
+       },
+       {
+        "name": "expression",
+        "value": "round((base_salary + fixed_allowance) * 15 / 10 * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (2)",
+        "page": 1,
+        "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1,5 (satu koma lima) kali upah sebulan."
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (3)",
+        "page": 1,
+        "quote": "Pekerja dengan masa kerja kurang dari 12 (dua belas) bulan menerima THR sebesar masa kerja dibagi 12 (dua belas) dikali 1,5 (satu koma lima) kali upah sebulan."
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (4)",
+        "page": 1,
+        "quote": "Upah sebulan terdiri atas gaji pokok dan tunjangan tetap."
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (1)",
+        "page": 1,
+        "quote": "THR diberikan kepada pekerja yang mempunyai masa kerja 1 (satu) bulan secara terus-menerus atau lebih."
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (5)",
+        "page": 1,
+        "quote": "hubungan kerjanya berakhir terhitung sejak 30 (tiga puluh) hari sebelum hari raya keagamaan tetap berhak atas THR"
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 81 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The THR rule mirrors the statutory minimum rule's eligibility conditions but with a factor of 1.5. It is rounded down to the rupiah. Pasal 61 (cash payment of DTP PPh 21 not counted as income; BPJS per regulation) matches the existing treatment: pph21_dtp is excluded from gross income and reduces the employee tax burden. So no further elements are added."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP14-cand1",
+    "event_id": "SP14",
+    "document": {
+     "id": "SP14",
+     "title": "PT Rajut Indah Garmenindo: Perjanjian Kerja Bersama",
+     "issued": "2025-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP14.THR",
+      "recorded_on": "2025-01-01",
+      "label": "Company THR: 1.5 times monthly wage (base salary plus fixed allowances), prorated for service under 12 months",
+      "label_id": "THR perusahaan: 1,5 kali upah sebulan (gaji pokok dan tunjangan tetap), proporsional untuk masa kerja kurang dari 12 bulan",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "condition": "hr('thr_holiday') == 1",
+      "expression": "round((base_salary + fixed_allowance) * 15 / 10 * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0",
+      "policy": "SP14",
+      "source": [
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (2)",
+        "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1,5 (satu koma lima) kali upah sebulan.",
+        "page": 1
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (3)",
+        "quote": "Pekerja dengan masa kerja kurang dari 12 (dua belas) bulan menerima THR sebesar masa kerja dibagi 12 (dua belas) dikali 1,5 (satu koma lima) kali upah sebulan.",
+        "page": 1
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (4)",
+        "quote": "Upah sebulan terdiri atas gaji pokok dan tunjangan tetap.",
+        "page": 1
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (1)",
+        "quote": "THR diberikan kepada pekerja yang mempunyai masa kerja 1 (satu) bulan secara terus-menerus atau lebih.",
+        "page": 1
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (5)",
+        "quote": "hubungan kerjanya berakhir terhitung sejak 30 (tiga puluh) hari sebelum hari raya keagamaan tetap berhak atas THR",
+        "page": 1
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 81 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The THR rule mirrors the statutory minimum rule's eligibility conditions but with a factor of 1.5. It is rounded down to the rupiah. Pasal 61 (cash payment of DTP PPh 21 not counted as income; BPJS per regulation) matches the existing treatment: pph21_dtp is excluded from gross income and reduces the employee tax burden. So no further elements are added."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 2,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP14.THR",
+      "label": "THR of 1.5 times the monthly wage under the 2025-2026 collective labour agreement, prorated for service under 12 months",
+      "label_id": "THR 1,5 kali upah sebulan menurut PKB 2025-2026, proporsional untuk masa kerja kurang dari 12 bulan",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "thr"
+       },
+       {
+        "name": "policy",
+        "value": "SP14"
+       },
+       {
+        "name": "condition",
+        "value": "hr('thr_holiday') == 1"
+       },
+       {
+        "name": "expression",
+        "value": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12 * 3 / 2, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (2)",
+        "page": 1,
+        "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1,5 (satu koma lima) kali upah sebulan."
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (3)",
+        "page": 1,
+        "quote": "Pekerja dengan masa kerja kurang dari 12 (dua belas) bulan menerima THR sebesar masa kerja dibagi 12 (dua belas) dikali 1,5 (satu koma lima) kali upah sebulan."
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (4)",
+        "page": 1,
+        "quote": "Upah sebulan terdiri atas gaji pokok dan tunjangan tetap."
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (1)",
+        "page": 1,
+        "quote": "THR diberikan kepada pekerja yang mempunyai masa kerja 1 (satu) bulan secara terus-menerus atau lebih."
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (5)",
+        "page": 1,
+        "quote": "Pekerja dengan perjanjian kerja waktu tidak tertentu yang hubungan kerjanya berakhir terhitung sejak 30 (tiga puluh) hari sebelum hari raya keagamaan tetap berhak atas THR."
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 81 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Only the THR amount (1.5 times base salary plus fixed allowances, prorated by months of service) changes the computation; it applies in the holiday month, while other months fall back to the input convention. The cash payment of the DTP incentive outside income already matches the existing treatment (pph21_dtp reduces the employee tax burden and is not part of gross income), and Pasal 61 ayat (1)-(2) only refer to statutory rules, so no other records are needed."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP14-cand2",
+    "event_id": "SP14",
+    "document": {
+     "id": "SP14",
+     "title": "PT Rajut Indah Garmenindo: Perjanjian Kerja Bersama",
+     "issued": "2025-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP14.THR",
+      "recorded_on": "2025-01-01",
+      "label": "THR of 1.5 times the monthly wage under the 2025-2026 collective labour agreement, prorated for service under 12 months",
+      "label_id": "THR 1,5 kali upah sebulan menurut PKB 2025-2026, proporsional untuk masa kerja kurang dari 12 bulan",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "condition": "hr('thr_holiday') == 1",
+      "expression": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12 * 3 / 2, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0",
+      "policy": "SP14",
+      "source": [
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (2)",
+        "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1,5 (satu koma lima) kali upah sebulan.",
+        "page": 1
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (3)",
+        "quote": "Pekerja dengan masa kerja kurang dari 12 (dua belas) bulan menerima THR sebesar masa kerja dibagi 12 (dua belas) dikali 1,5 (satu koma lima) kali upah sebulan.",
+        "page": 1
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (4)",
+        "quote": "Upah sebulan terdiri atas gaji pokok dan tunjangan tetap.",
+        "page": 1
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (1)",
+        "quote": "THR diberikan kepada pekerja yang mempunyai masa kerja 1 (satu) bulan secara terus-menerus atau lebih.",
+        "page": 1
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 60 ayat (5)",
+        "quote": "Pekerja dengan perjanjian kerja waktu tidak tertentu yang hubungan kerjanya berakhir terhitung sejak 30 (tiga puluh) hari sebelum hari raya keagamaan tetap berhak atas THR.",
+        "page": 1
+       },
+       {
+        "document": "SP14",
+        "provision": "Pasal 81 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only the THR amount (1.5 times base salary plus fixed allowances, prorated by months of service) changes the computation; it applies in the holiday month, while other months fall back to the input convention. The cash payment of the DTP incentive outside income already matches the existing treatment (pph21_dtp reduces the employee tax burden and is not part of gross income), and Pasal 61 ayat (1)-(2) only refer to statutory rules, so no other records are needed."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   1,
+   2
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-sintetis-SP14-cand1",
+  "event_id": "SP14",
+  "document": {
+   "id": "SP14",
+   "title": "PT Rajut Indah Garmenindo: Perjanjian Kerja Bersama",
+   "issued": "2025-01-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP14.THR",
+    "recorded_on": "2025-01-01",
+    "label": "Company THR: 1.5 times monthly wage (base salary plus fixed allowances), prorated for service under 12 months",
+    "label_id": "THR perusahaan: 1,5 kali upah sebulan (gaji pokok dan tunjangan tetap), proporsional untuk masa kerja kurang dari 12 bulan",
+    "valid_from": "2025-01-01",
+    "valid_until": "2026-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "condition": "hr('thr_holiday') == 1",
+    "expression": "round((base_salary + fixed_allowance) * 15 / 10 * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0",
+    "policy": "SP14",
+    "source": [
+     {
+      "document": "SP14",
+      "provision": "Pasal 60 ayat (2)",
+      "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1,5 (satu koma lima) kali upah sebulan.",
+      "page": 1
+     },
+     {
+      "document": "SP14",
+      "provision": "Pasal 60 ayat (3)",
+      "quote": "Pekerja dengan masa kerja kurang dari 12 (dua belas) bulan menerima THR sebesar masa kerja dibagi 12 (dua belas) dikali 1,5 (satu koma lima) kali upah sebulan.",
+      "page": 1
+     },
+     {
+      "document": "SP14",
+      "provision": "Pasal 60 ayat (4)",
+      "quote": "Upah sebulan terdiri atas gaji pokok dan tunjangan tetap.",
+      "page": 1
+     },
+     {
+      "document": "SP14",
+      "provision": "Pasal 60 ayat (1)",
+      "quote": "THR diberikan kepada pekerja yang mempunyai masa kerja 1 (satu) bulan secara terus-menerus atau lebih.",
+      "page": 1
+     },
+     {
+      "document": "SP14",
+      "provision": "Pasal 60 ayat (5)",
+      "quote": "hubungan kerjanya berakhir terhitung sejak 30 (tiga puluh) hari sebelum hari raya keagamaan tetap berhak atas THR",
+      "page": 1
+     },
+     {
+      "document": "SP14",
+      "provision": "Pasal 81 ayat (1)",
+      "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+      "page": 1
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "The THR rule mirrors the statutory minimum rule's eligibility conditions but with a factor of 1.5. It is rounded down to the rupiah. Pasal 61 (cash payment of DTP PPh 21 not counted as income; BPJS per regulation) matches the existing treatment: pph21_dtp is excluded from gross income and reduces the employee tax burden. So no further elements are added."
+ },
+ "cost_usd": 0.19315,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "This company collective labour agreement sets a THR of 1.5 times the monthly wage for workers with 12 or more months of service, prorated for shorter service. The monthly wage is defined as base salary plus fixed allowances. This exceeds the statutory one month and so raises the gross income on which PPh 21 is computed. It also says the cash payment of the government-borne (DTP) PPh 21 incentive is paid with wages and not counted as income. It covers the 2025-2026 period.",
+   "quotes": [
+    {
+     "provision": "Pasal 60 ayat (2)",
+     "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1,5 (satu koma lima) kali upah sebulan."
+    },
+    {
+     "provision": "Pasal 60 ayat (3)",
+     "quote": "Pekerja dengan masa kerja kurang dari 12 (dua belas) bulan menerima THR sebesar masa kerja dibagi 12 (dua belas) dikali 1,5 (satu koma lima) kali upah sebulan."
+    },
+    {
+     "provision": "Pasal 60 ayat (4)",
+     "quote": "Upah sebulan terdiri atas gaji pokok dan tunjangan tetap."
+    },
+    {
+     "provision": "Pasal 61 ayat (3)",
+     "quote": "Perusahaan membayarkan insentif tersebut secara tunai kepada pekerja bersamaan dengan pembayaran upah, dan pembayaran tunai tersebut tidak diperhitungkan sebagai penghasilan."
+    }
+   ],
+   "effective_from": "2025-01-01",
+   "effective_from_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+   "effective_until": "2026-12-31",
+   "effective_until_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+   "subjects": [
+    {
+     "kind": "sector",
+     "value": "garment industry",
+     "quote": "PERJANJIAN KERJA BERSAMA PT RAJUT INDAH GARMENINDO DENGAN PIMPINAN UNIT KERJA SERIKAT PEKERJA GARMEN"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

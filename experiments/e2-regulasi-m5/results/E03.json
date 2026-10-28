@@ -1,0 +1,2876 @@
+{
+ "run": "e2-regulasi-m5",
+ "event": "E03",
+ "condition": "proposed",
+ "documents": [
+  "PP-58-2023"
+ ],
+ "selection": {
+  "PP-58-2023": {
+   "tokens": 3887,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 300,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.TER_CATEGORY.2024",
+      "label": "monthly effective rate category by PTKP status",
+      "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "name",
+        "value": "ter_category"
+       },
+       {
+        "name": "table_kind",
+        "value": "lookup"
+       },
+       {
+        "name": "rows",
+        "value": "[{\"key\": \"TK/0\", \"value\": \"A\"}, {\"key\": \"TK/1\", \"value\": \"A\"}, {\"key\": \"K/0\", \"value\": \"A\"}, {\"key\": \"TK/2\", \"value\": \"B\"}, {\"key\": \"TK/3\", \"value\": \"B\"}, {\"key\": \"K/1\", \"value\": \"B\"}, {\"key\": \"K/2\", \"value\": \"B\"}, {\"key\": \"K/3\", \"value\": \"C\"}]"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf a",
+        "page": 4,
+        "quote": "a. kategori A diterapkan atas penghasilan bruto bulanan"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf b",
+        "page": 4,
+        "quote": "b. kategori B diterapkan atas penghasilan bruto bulanan"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf c",
+        "page": 4,
+        "quote": "c. kategori C diterapkan atas penghasilan bruto bulanan"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "page": 5,
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024"
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_MONTHLY.2024",
+      "label": "monthly effective withholding rates (TER) categories A, B, C",
+      "label_id": "tarif efektif bulanan kategori A, B, C",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "name",
+        "value": "ter_monthly"
+       },
+       {
+        "name": "table_kind",
+        "value": "bracket"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PP-58-2023/LAMPIRAN-ABC\", \"columns\": {\"key\": \"kategori\", \"lower\": \"batas_bawah\", \"upper\": \"batas_atas\", \"value\": \"tarif_persen\"}, \"value_scale\": \"percent\"}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (5)",
+        "page": 5,
+        "quote": "tarif dimaksud sebagaimana tercantum dalam Lampiran"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "page": 5,
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.RUNNING",
+      "label": "PPh 21 of non-final periods with the monthly effective rate (TER)",
+      "label_id": "PPh Pasal 21 masa selain masa terakhir dengan tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_running"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "expression",
+        "value": "round(bracket('ter_monthly', lookup('ter_category', ptkp_status_effective), gross_income) * gross_income, 1, param('pph_round_mode'))"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.P16.RUNNING"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (1) huruf b",
+        "page": 3,
+        "quote": "b. tarif efektif pemotongan Pajak Penghasilan Pasal 21."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "Tidak Kena Pajak sesuai status perkawinan dan jumlah"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (5)",
+        "page": 10,
+        "quote": "penghasilan yang diterima Wajib Pajak orang pribadi dalam satu"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "page": 5,
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "From January 2024 the non-final-period PPh 21 is TER x monthly gross income, with the category taken from the effective PTKP status at the start of the year; the final period keeps the existing annual Pasal 17 reconciliation (confirmed by the Penjelasan example). Daily TER (Lampiran D) concerns non-permanent employees and the revoked PP 80/2010 provision is not in the KB, so both are omitted."
+   },
+   "delta": {
+    "delta_id": "e2-regulasi-E03-cand1",
+    "event_id": "E03",
+    "document": {
+     "id": "PP-58-2023",
+     "title": "PP 58/2023: Tarif pemotongan PPh 21: TER bulanan A/B/C dan TER harian",
+     "issued": "2023-12-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.TER_CATEGORY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "monthly effective rate category by PTKP status",
+      "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+      "valid_from": "2024-01-01",
+      "name": "ter_category",
+      "table_kind": "lookup",
+      "rows": [
+       {
+        "key": "TK/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/1",
+        "value": "A"
+       },
+       {
+        "key": "K/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/2",
+        "value": "B"
+       },
+       {
+        "key": "TK/3",
+        "value": "B"
+       },
+       {
+        "key": "K/1",
+        "value": "B"
+       },
+       {
+        "key": "K/2",
+        "value": "B"
+       },
+       {
+        "key": "K/3",
+        "value": "C"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf a",
+        "quote": "a. kategori A diterapkan atas penghasilan bruto bulanan",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf b",
+        "quote": "b. kategori B diterapkan atas penghasilan bruto bulanan",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf c",
+        "quote": "c. kategori C diterapkan atas penghasilan bruto bulanan",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024",
+        "page": 8
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_MONTHLY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "monthly effective withholding rates (TER) categories A, B, C",
+      "label_id": "tarif efektif bulanan kategori A, B, C",
+      "valid_from": "2024-01-01",
+      "name": "ter_monthly",
+      "table_kind": "bracket",
+      "rows_ref": {
+       "extracted_table": "PP-58-2023/LAMPIRAN-ABC",
+       "columns": {
+        "key": "kategori",
+        "lower": "batas_bawah",
+        "upper": "batas_atas",
+        "value": "tarif_persen"
+       },
+       "value_scale": "percent"
+      },
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (5)",
+        "quote": "tarif dimaksud sebagaimana tercantum dalam Lampiran",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024",
+        "page": 8
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.RUNNING",
+      "recorded_on": "2023-12-27",
+      "label": "PPh 21 of non-final periods with the monthly effective rate (TER)",
+      "label_id": "PPh Pasal 21 masa selain masa terakhir dengan tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(bracket('ter_monthly', lookup('ter_category', ptkp_status_effective), gross_income) * gross_income, 1, param('pph_round_mode'))",
+      "overrides": [
+       "REG.P16.RUNNING"
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (1) huruf b",
+        "quote": "b. tarif efektif pemotongan Pajak Penghasilan Pasal 21.",
+        "page": 3
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "Tidak Kena Pajak sesuai status perkawinan dan jumlah",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (5)",
+        "quote": "penghasilan yang diterima Wajib Pajak orang pribadi dalam satu",
+        "page": 10
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024",
+        "page": 8
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "From January 2024 the non-final-period PPh 21 is TER x monthly gross income, with the category taken from the effective PTKP status at the start of the year; the final period keeps the existing annual Pasal 17 reconciliation (confirmed by the Penjelasan example). Daily TER (Lampiran D) concerns non-permanent employees and the revoked PP 80/2010 provision is not in the KB, so both are omitted."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 2,
+   "order": 2,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "fail: REG.TER.RUNNING: quote not found in PP-58-2023: 'Tarif pemotongan Pajak Penghasilan Pasal 21 terdiri atas: a. tarif berdasarkan P'; REG.TER.RUNNING: quote not found in PP-58-2023: 'Penghasilan bruto bulanan yang menjadi dasar penerapan tarif efektif bulanan pem'"
+   },
+   "sg_size": 300,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.TER_CATEGORY.2024",
+      "label": "monthly effective rate (TER) category by PTKP status",
+      "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "name",
+        "value": "ter_category"
+       },
+       {
+        "name": "table_kind",
+        "value": "lookup"
+       },
+       {
+        "name": "rows",
+        "value": "[{\"key\": \"TK/0\", \"value\": \"A\"}, {\"key\": \"TK/1\", \"value\": \"A\"}, {\"key\": \"K/0\", \"value\": \"A\"}, {\"key\": \"TK/2\", \"value\": \"B\"}, {\"key\": \"TK/3\", \"value\": \"B\"}, {\"key\": \"K/1\", \"value\": \"B\"}, {\"key\": \"K/2\", \"value\": \"B\"}, {\"key\": \"K/3\", \"value\": \"C\"}]"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "Tarif efektif bulanan sebagaimana dimaksud pada ayat (2) huruf a dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf a",
+        "page": 4,
+        "quote": "kategori A diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak:"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf c",
+        "page": 4,
+        "quote": "kategori C diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak kawin dengan jumlah tanggungan sebanyak 3 (tiga) orang."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "page": 5,
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A"
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_MONTHLY.2024",
+      "label": "monthly effective withholding rates (TER) categories A, B, C",
+      "label_id": "tarif efektif bulanan kategori A, B, C",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "name",
+        "value": "ter_monthly"
+       },
+       {
+        "name": "table_kind",
+        "value": "bracket"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PP-58-2023/LAMPIRAN-ABC\", \"columns\": {\"key\": \"kategori\", \"lower\": \"batas_bawah\", \"upper\": \"batas_atas\", \"value\": \"tarif_persen\"}, \"value_scale\": \"percent\"}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (5)",
+        "page": 5,
+        "quote": "Perincian atas tarif efektif bulanan dari masing-masing kategori sebagaimana dimaksud pada ayat (4) beserta besaran penghasilan bruto bulanan untuk masing-masing tarif dimaksud sebagaimana tercantum dalam Lampiran huruf A, huruf B, dan huruf C"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "page": 5,
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.RUNNING",
+      "label": "PPh 21 of a non-final period with the monthly effective rate (TER)",
+      "label_id": "PPh Pasal 21 masa dengan tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_running"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "expression",
+        "value": "round(bracket('ter_monthly', lookup('ter_category', ptkp_status_effective), gross_income) * gross_income, 1, param('pph_round_mode')) if gross_income > 0 else 0"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.P16.RUNNING"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (1) huruf b",
+        "page": 3,
+        "quote": "b. tarif efektif pemotongan Pajak Penghasilan Pasal 21."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (5)",
+        "page": 10,
+        "quote": "efektif bulanan pemotongan Pajak Penghasilan Pasal yaitu penghasilan yang diterima Wajib Pajak orang pribadi dalam satu masa pajak."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "page": 5,
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "From January 2024 the non-final-period withholding is the TER rate (category from the start-of-year PTKP status, bracket on the period's gross income) times gross income; the final period keeps the existing annual Article 17 reconciliation. Daily TER (non-permanent workers) and the revoked PP 80/2010 provision are outside the KB scope."
+   },
+   "delta": {
+    "delta_id": "e2-regulasi-E03-cand2",
+    "event_id": "E03",
+    "document": {
+     "id": "PP-58-2023",
+     "title": "PP 58/2023: Tarif pemotongan PPh 21: TER bulanan A/B/C dan TER harian",
+     "issued": "2023-12-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.TER_CATEGORY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "monthly effective rate (TER) category by PTKP status",
+      "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+      "valid_from": "2024-01-01",
+      "name": "ter_category",
+      "table_kind": "lookup",
+      "rows": [
+       {
+        "key": "TK/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/1",
+        "value": "A"
+       },
+       {
+        "key": "K/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/2",
+        "value": "B"
+       },
+       {
+        "key": "TK/3",
+        "value": "B"
+       },
+       {
+        "key": "K/1",
+        "value": "B"
+       },
+       {
+        "key": "K/2",
+        "value": "B"
+       },
+       {
+        "key": "K/3",
+        "value": "C"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "Tarif efektif bulanan sebagaimana dimaksud pada ayat (2) huruf a dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf a",
+        "quote": "kategori A diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak:",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf c",
+        "quote": "kategori C diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak kawin dengan jumlah tanggungan sebanyak 3 (tiga) orang.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_MONTHLY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "monthly effective withholding rates (TER) categories A, B, C",
+      "label_id": "tarif efektif bulanan kategori A, B, C",
+      "valid_from": "2024-01-01",
+      "name": "ter_monthly",
+      "table_kind": "bracket",
+      "rows_ref": {
+       "extracted_table": "PP-58-2023/LAMPIRAN-ABC",
+       "columns": {
+        "key": "kategori",
+        "lower": "batas_bawah",
+        "upper": "batas_atas",
+        "value": "tarif_persen"
+       },
+       "value_scale": "percent"
+      },
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (5)",
+        "quote": "Perincian atas tarif efektif bulanan dari masing-masing kategori sebagaimana dimaksud pada ayat (4) beserta besaran penghasilan bruto bulanan untuk masing-masing tarif dimaksud sebagaimana tercantum dalam Lampiran huruf A, huruf B, dan huruf C",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.RUNNING",
+      "recorded_on": "2023-12-27",
+      "label": "PPh 21 of a non-final period with the monthly effective rate (TER)",
+      "label_id": "PPh Pasal 21 masa dengan tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(bracket('ter_monthly', lookup('ter_category', ptkp_status_effective), gross_income) * gross_income, 1, param('pph_round_mode')) if gross_income > 0 else 0",
+      "overrides": [
+       "REG.P16.RUNNING"
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (1) huruf b",
+        "quote": "b. tarif efektif pemotongan Pajak Penghasilan Pasal 21.",
+        "page": 3
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (5)",
+        "quote": "efektif bulanan pemotongan Pajak Penghasilan Pasal yaitu penghasilan yang diterima Wajib Pajak orang pribadi dalam satu masa pajak.",
+        "page": 10
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "From January 2024 the non-final-period withholding is the TER rate (category from the start-of-year PTKP status, bracket on the period's gross income) times gross income; the final period keeps the existing annual Article 17 reconciliation. Daily TER (non-permanent workers) and the revoked PP 80/2010 provision are outside the KB scope."
+   },
+   "initial_delta": {
+    "delta_id": "e2-regulasi-E03-cand2",
+    "event_id": "E03",
+    "document": {
+     "id": "PP-58-2023",
+     "title": "PP 58/2023: Tarif pemotongan PPh 21: TER bulanan A/B/C dan TER harian",
+     "issued": "2023-12-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.TER_CATEGORY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "monthly effective rate (TER) category by PTKP status",
+      "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+      "valid_from": "2024-01-01",
+      "name": "ter_category",
+      "table_kind": "lookup",
+      "rows": [
+       {
+        "key": "TK/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/1",
+        "value": "A"
+       },
+       {
+        "key": "K/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/2",
+        "value": "B"
+       },
+       {
+        "key": "TK/3",
+        "value": "B"
+       },
+       {
+        "key": "K/1",
+        "value": "B"
+       },
+       {
+        "key": "K/2",
+        "value": "B"
+       },
+       {
+        "key": "K/3",
+        "value": "C"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "Tarif efektif bulanan sebagaimana dimaksud pada ayat (2) huruf a dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf a",
+        "quote": "kategori A diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak:",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf c",
+        "quote": "kategori C diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak kawin dengan jumlah tanggungan sebanyak 3 (tiga) orang.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_MONTHLY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "monthly effective withholding rates (TER) categories A, B, C",
+      "label_id": "tarif efektif bulanan kategori A, B, C",
+      "valid_from": "2024-01-01",
+      "name": "ter_monthly",
+      "table_kind": "bracket",
+      "rows_ref": {
+       "extracted_table": "PP-58-2023/LAMPIRAN-ABC",
+       "columns": {
+        "key": "kategori",
+        "lower": "batas_bawah",
+        "upper": "batas_atas",
+        "value": "tarif_persen"
+       },
+       "value_scale": "percent"
+      },
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (5)",
+        "quote": "Perincian atas tarif efektif bulanan dari masing-masing kategori sebagaimana dimaksud pada ayat (4) beserta besaran penghasilan bruto bulanan untuk masing-masing tarif dimaksud sebagaimana tercantum dalam Lampiran huruf A, huruf B, dan huruf C",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.RUNNING",
+      "recorded_on": "2023-12-27",
+      "label": "PPh 21 of a non-final period with the monthly effective rate (TER)",
+      "label_id": "PPh Pasal 21 masa dengan tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(bracket('ter_monthly', lookup('ter_category', ptkp_status_effective), gross_income) * gross_income, 1, param('pph_round_mode')) if gross_income > 0 else 0",
+      "overrides": [
+       "REG.P16.RUNNING"
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (1)",
+        "quote": "Tarif pemotongan Pajak Penghasilan Pasal 21 terdiri atas: a. tarif berdasarkan Pasal 17 ayat (1) huruf a Undang- Undang Pajak Penghasilan; dan b. tarif efektif pemotongan Pajak Penghasilan Pasal 21.",
+        "page": 3
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (5)",
+        "quote": "Penghasilan bruto bulanan yang menjadi dasar penerapan tarif efektif bulanan pemotongan Pajak Penghasilan Pasal yaitu penghasilan yang diterima Wajib Pajak orang pribadi dalam satu masa pajak.",
+        "page": 10
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "pemotongan Pajak Penghasilan Pasal 21 atas penghasilan yang diterima atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "From January 2024 the non-final-period withholding is the TER rate (category from the start-of-year PTKP status, bracket on the period's gross income) times gross income; the final period keeps the existing annual Article 17 reconciliation. Daily TER (non-permanent workers) and the revoked PP 80/2010 provision are outside the KB scope."
+   }
+  },
+  {
+   "n": 3,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "fail: REG.TER.RUNNING: quote not found in PP-58-2023: 'Tarif pemotongan Pajak Penghasilan Pasal 21 terdiri atas: a. tarif berdasarkan P'"
+   },
+   "sg_size": 300,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.TER_MONTHLY.2024",
+      "label": "monthly effective withholding rates (TER) categories A, B, C",
+      "label_id": "tarif efektif bulanan kategori A, B, C",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "name",
+        "value": "ter_monthly"
+       },
+       {
+        "name": "table_kind",
+        "value": "bracket"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PP-58-2023/LAMPIRAN-ABC\", \"columns\": {\"key\": \"kategori\", \"lower\": \"batas_bawah\", \"upper\": \"batas_atas\", \"value\": \"tarif_persen\"}, \"value_scale\": \"percent\"}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (5)",
+        "page": 5,
+        "quote": "Perincian atas tarif efektif bulanan dari masing-masing kategori sebagaimana dimaksud pada ayat (4) beserta besaran penghasilan bruto bulanan untuk masing-masing tarif dimaksud sebagaimana tercantum dalam Lampiran huruf A, huruf B, dan huruf C"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A"
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_CATEGORY.2024",
+      "label": "TER category by PTKP status",
+      "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "name",
+        "value": "ter_category"
+       },
+       {
+        "name": "table_kind",
+        "value": "lookup"
+       },
+       {
+        "name": "rows",
+        "value": "[{\"key\": \"TK/0\", \"value\": \"A\"}, {\"key\": \"TK/1\", \"value\": \"A\"}, {\"key\": \"K/0\", \"value\": \"A\"}, {\"key\": \"TK/2\", \"value\": \"B\"}, {\"key\": \"TK/3\", \"value\": \"B\"}, {\"key\": \"K/1\", \"value\": \"B\"}, {\"key\": \"K/2\", \"value\": \"B\"}, {\"key\": \"K/3\", \"value\": \"C\"}]"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf a",
+        "page": 4,
+        "quote": "kategori A diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak:"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf c",
+        "page": 4,
+        "quote": "kategori C diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak kawin dengan jumlah tanggungan sebanyak 3 (tiga) orang."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.RUNNING",
+      "label": "PPh 21 of non-final periods with the monthly effective rate (TER)",
+      "label_id": "PPh Pasal 21 masa dengan tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_running"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "expression",
+        "value": "round(bracket('ter_monthly', lookup('ter_category', ptkp_status_effective), gross_income) * gross_income, 1, param('pph_round_mode'))"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.P16.RUNNING"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (1)",
+        "page": 3,
+        "quote": "Tarif pemotongan Pajak Penghasilan Pasal 21 terdiri atas:"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (1) huruf b",
+        "page": 3,
+        "quote": "tarif efektif pemotongan Pajak Penghasilan Pasal 21."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (5)",
+        "page": 10,
+        "quote": "Penghasilan bruto bulanan yang menjadi dasar penerapan tarif"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "page": 5,
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "TER applies to non-final periods from Masa Pajak Januari 2024 (category from the PTKP status used for the year, rate x monthly gross income, truncated); the final period keeps the existing annual Pasal 17 computation, so the old annualised running rule is superseded via overrides and lex posterior without being closed, as PP 58/2023 does not revoke it. Pasal 4 (PP 80/2010, APBN/APBD officials) and daily TER (non-permanent employees) are outside this KB's scope."
+   },
+   "delta": {
+    "delta_id": "e2-regulasi-E03-cand3",
+    "event_id": "E03",
+    "document": {
+     "id": "PP-58-2023",
+     "title": "PP 58/2023: Tarif pemotongan PPh 21: TER bulanan A/B/C dan TER harian",
+     "issued": "2023-12-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.TER_MONTHLY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "monthly effective withholding rates (TER) categories A, B, C",
+      "label_id": "tarif efektif bulanan kategori A, B, C",
+      "valid_from": "2024-01-01",
+      "name": "ter_monthly",
+      "table_kind": "bracket",
+      "rows_ref": {
+       "extracted_table": "PP-58-2023/LAMPIRAN-ABC",
+       "columns": {
+        "key": "kategori",
+        "lower": "batas_bawah",
+        "upper": "batas_atas",
+        "value": "tarif_persen"
+       },
+       "value_scale": "percent"
+      },
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (5)",
+        "quote": "Perincian atas tarif efektif bulanan dari masing-masing kategori sebagaimana dimaksud pada ayat (4) beserta besaran penghasilan bruto bulanan untuk masing-masing tarif dimaksud sebagaimana tercantum dalam Lampiran huruf A, huruf B, dan huruf C",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_CATEGORY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "TER category by PTKP status",
+      "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+      "valid_from": "2024-01-01",
+      "name": "ter_category",
+      "table_kind": "lookup",
+      "rows": [
+       {
+        "key": "TK/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/1",
+        "value": "A"
+       },
+       {
+        "key": "K/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/2",
+        "value": "B"
+       },
+       {
+        "key": "TK/3",
+        "value": "B"
+       },
+       {
+        "key": "K/1",
+        "value": "B"
+       },
+       {
+        "key": "K/2",
+        "value": "B"
+       },
+       {
+        "key": "K/3",
+        "value": "C"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf a",
+        "quote": "kategori A diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak:",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf c",
+        "quote": "kategori C diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak kawin dengan jumlah tanggungan sebanyak 3 (tiga) orang.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.RUNNING",
+      "recorded_on": "2023-12-27",
+      "label": "PPh 21 of non-final periods with the monthly effective rate (TER)",
+      "label_id": "PPh Pasal 21 masa dengan tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(bracket('ter_monthly', lookup('ter_category', ptkp_status_effective), gross_income) * gross_income, 1, param('pph_round_mode'))",
+      "overrides": [
+       "REG.P16.RUNNING"
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (1)",
+        "quote": "Tarif pemotongan Pajak Penghasilan Pasal 21 terdiri atas:",
+        "page": 3
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (1) huruf b",
+        "quote": "tarif efektif pemotongan Pajak Penghasilan Pasal 21.",
+        "page": 3
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (5)",
+        "quote": "Penghasilan bruto bulanan yang menjadi dasar penerapan tarif",
+        "page": 10
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada",
+        "page": 5
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "TER applies to non-final periods from Masa Pajak Januari 2024 (category from the PTKP status used for the year, rate x monthly gross income, truncated); the final period keeps the existing annual Pasal 17 computation, so the old annualised running rule is superseded via overrides and lex posterior without being closed, as PP 58/2023 does not revoke it. Pasal 4 (PP 80/2010, APBN/APBD officials) and daily TER (non-permanent employees) are outside this KB's scope."
+   },
+   "initial_delta": {
+    "delta_id": "e2-regulasi-E03-cand3",
+    "event_id": "E03",
+    "document": {
+     "id": "PP-58-2023",
+     "title": "PP 58/2023: Tarif pemotongan PPh 21: TER bulanan A/B/C dan TER harian",
+     "issued": "2023-12-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.TER_MONTHLY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "monthly effective withholding rates (TER) categories A, B, C",
+      "label_id": "tarif efektif bulanan kategori A, B, C",
+      "valid_from": "2024-01-01",
+      "name": "ter_monthly",
+      "table_kind": "bracket",
+      "rows_ref": {
+       "extracted_table": "PP-58-2023/LAMPIRAN-ABC",
+       "columns": {
+        "key": "kategori",
+        "lower": "batas_bawah",
+        "upper": "batas_atas",
+        "value": "tarif_persen"
+       },
+       "value_scale": "percent"
+      },
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (5)",
+        "quote": "Perincian atas tarif efektif bulanan dari masing-masing kategori sebagaimana dimaksud pada ayat (4) beserta besaran penghasilan bruto bulanan untuk masing-masing tarif dimaksud sebagaimana tercantum dalam Lampiran huruf A, huruf B, dan huruf C",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_CATEGORY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "TER category by PTKP status",
+      "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+      "valid_from": "2024-01-01",
+      "name": "ter_category",
+      "table_kind": "lookup",
+      "rows": [
+       {
+        "key": "TK/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/1",
+        "value": "A"
+       },
+       {
+        "key": "K/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/2",
+        "value": "B"
+       },
+       {
+        "key": "TK/3",
+        "value": "B"
+       },
+       {
+        "key": "K/1",
+        "value": "B"
+       },
+       {
+        "key": "K/2",
+        "value": "B"
+       },
+       {
+        "key": "K/3",
+        "value": "C"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf a",
+        "quote": "kategori A diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak:",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf c",
+        "quote": "kategori C diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak kawin dengan jumlah tanggungan sebanyak 3 (tiga) orang.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.RUNNING",
+      "recorded_on": "2023-12-27",
+      "label": "PPh 21 of non-final periods with the monthly effective rate (TER)",
+      "label_id": "PPh Pasal 21 masa dengan tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(bracket('ter_monthly', lookup('ter_category', ptkp_status_effective), gross_income) * gross_income, 1, param('pph_round_mode'))",
+      "overrides": [
+       "REG.P16.RUNNING"
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (1)",
+        "quote": "Tarif pemotongan Pajak Penghasilan Pasal 21 terdiri atas: a. tarif berdasarkan Pasal 17 ayat (1) huruf a Undang- Undang Pajak Penghasilan; dan b. tarif efektif pemotongan Pajak Penghasilan Pasal 21.",
+        "page": 3
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (5)",
+        "quote": "Penghasilan bruto bulanan yang menjadi dasar penerapan tarif",
+        "page": 10
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada",
+        "page": 5
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "TER applies to non-final periods from Masa Pajak Januari 2024 (category from the PTKP status used for the year, rate x monthly gross income, truncated); the final period keeps the existing annual Pasal 17 computation, so the old annualised running rule is superseded via overrides and lex posterior without being closed, as PP 58/2023 does not revoke it. Pasal 4 (PP 80/2010, APBN/APBD officials) and daily TER (non-permanent employees) are outside this KB's scope."
+   }
+  },
+  {
+   "n": 4,
+   "order": 3,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "fail: TAB.TER_MONTHLY.2024: valid_from 2024-01-01 is not supported by a quote of this element; TAB.TER_CATEGORY.2024: valid_from 2024-01-01 is not supported by a quote of this element"
+   },
+   "sg_size": 300,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.TER_MONTHLY.2024",
+      "label": "monthly effective withholding rates (TER) categories A, B and C",
+      "label_id": "tarif efektif bulanan kategori A, B, dan C",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "name",
+        "value": "ter_monthly"
+       },
+       {
+        "name": "table_kind",
+        "value": "bracket"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PP-58-2023/LAMPIRAN-ABC\", \"columns\": {\"key\": \"kategori\", \"lower\": \"batas_bawah\", \"upper\": \"batas_atas\", \"value\": \"tarif_persen\"}, \"value_scale\": \"percent\"}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (5)",
+        "page": 5,
+        "quote": "Perincian atas tarif efektif bulanan dari masing-masing kategori sebagaimana dimaksud pada ayat (4) beserta besaran penghasilan bruto bulanan untuk masing-masing tarif dimaksud sebagaimana tercantum dalam Lampiran huruf A, huruf B, dan huruf C"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "page": 5,
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024."
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_CATEGORY.2024",
+      "label": "TER category by PTKP status",
+      "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "name",
+        "value": "ter_category"
+       },
+       {
+        "name": "table_kind",
+        "value": "lookup"
+       },
+       {
+        "name": "rows",
+        "value": "[{\"key\": \"TK/0\", \"value\": \"A\"}, {\"key\": \"TK/1\", \"value\": \"A\"}, {\"key\": \"K/0\", \"value\": \"A\"}, {\"key\": \"TK/2\", \"value\": \"B\"}, {\"key\": \"TK/3\", \"value\": \"B\"}, {\"key\": \"K/1\", \"value\": \"B\"}, {\"key\": \"K/2\", \"value\": \"B\"}, {\"key\": \"K/3\", \"value\": \"C\"}]"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf a",
+        "page": 4,
+        "quote": "kategori A diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf c",
+        "page": 4,
+        "quote": "kategori C diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak kawin dengan jumlah tanggungan sebanyak 3 (tiga) orang."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "page": 5,
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.RUNNING",
+      "label": "PPh 21 of non-final periods with the monthly effective rate (TER)",
+      "label_id": "PPh Pasal 21 masa selain masa pajak terakhir dengan tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_running"
+       },
+       {
+        "name": "expression",
+        "value": "round(bracket('ter_monthly', lookup('ter_category', ptkp_status_effective), gross_income) * gross_income, 1, param('pph_round_mode')) if gross_income > 0 else 0"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "Tarif efektif bulanan sebagaimana dimaksud pada ayat (2) huruf a dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (5)",
+        "page": 10,
+        "quote": "efektif bulanan pemotongan Pajak Penghasilan Pasal yaitu penghasilan yang diterima Wajib Pajak orang pribadi dalam satu masa pajak."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "page": 5,
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "From January 2024 the non-final-period PPh 21 is TER rate (category by effective PTKP status at the start of the year) times the period's gross income; the new rule beats REG.P16.RUNNING by lex posterior, while the final period keeps the existing annual Pasal 17 computation. Pasal 4 (revoking PP 80/2010 Pasal 2 ayat (3)) and the daily TER for non-permanent employees do not affect permanent employees and are not modelled."
+   },
+   "delta": {
+    "delta_id": "e2-regulasi-m5-E03-cand4",
+    "event_id": "E03",
+    "document": {
+     "id": "PP-58-2023",
+     "title": "PP 58/2023: Tarif pemotongan PPh 21: TER bulanan A/B/C dan TER harian",
+     "issued": "2023-12-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.TER_MONTHLY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "monthly effective withholding rates (TER) categories A, B and C",
+      "label_id": "tarif efektif bulanan kategori A, B, dan C",
+      "valid_from": "2024-01-01",
+      "name": "ter_monthly",
+      "table_kind": "bracket",
+      "rows_ref": {
+       "extracted_table": "PP-58-2023/LAMPIRAN-ABC",
+       "columns": {
+        "key": "kategori",
+        "lower": "batas_bawah",
+        "upper": "batas_atas",
+        "value": "tarif_persen"
+       },
+       "value_scale": "percent"
+      },
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (5)",
+        "quote": "Perincian atas tarif efektif bulanan dari masing-masing kategori sebagaimana dimaksud pada ayat (4) beserta besaran penghasilan bruto bulanan untuk masing-masing tarif dimaksud sebagaimana tercantum dalam Lampiran huruf A, huruf B, dan huruf C",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_CATEGORY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "TER category by PTKP status",
+      "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+      "valid_from": "2024-01-01",
+      "name": "ter_category",
+      "table_kind": "lookup",
+      "rows": [
+       {
+        "key": "TK/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/1",
+        "value": "A"
+       },
+       {
+        "key": "K/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/2",
+        "value": "B"
+       },
+       {
+        "key": "TK/3",
+        "value": "B"
+       },
+       {
+        "key": "K/1",
+        "value": "B"
+       },
+       {
+        "key": "K/2",
+        "value": "B"
+       },
+       {
+        "key": "K/3",
+        "value": "C"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf a",
+        "quote": "kategori A diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf c",
+        "quote": "kategori C diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak kawin dengan jumlah tanggungan sebanyak 3 (tiga) orang.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.RUNNING",
+      "recorded_on": "2023-12-27",
+      "label": "PPh 21 of non-final periods with the monthly effective rate (TER)",
+      "label_id": "PPh Pasal 21 masa selain masa pajak terakhir dengan tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(bracket('ter_monthly', lookup('ter_category', ptkp_status_effective), gross_income) * gross_income, 1, param('pph_round_mode')) if gross_income > 0 else 0",
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "Tarif efektif bulanan sebagaimana dimaksud pada ayat (2) huruf a dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (5)",
+        "quote": "efektif bulanan pemotongan Pajak Penghasilan Pasal yaitu penghasilan yang diterima Wajib Pajak orang pribadi dalam satu masa pajak.",
+        "page": 10
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "From January 2024 the non-final-period PPh 21 is TER rate (category by effective PTKP status at the start of the year) times the period's gross income; the new rule beats REG.P16.RUNNING by lex posterior, while the final period keeps the existing annual Pasal 17 computation. Pasal 4 (revoking PP 80/2010 Pasal 2 ayat (3)) and the daily TER for non-permanent employees do not affect permanent employees and are not modelled."
+   },
+   "initial_delta": {
+    "delta_id": "e2-regulasi-m5-E03-cand4",
+    "event_id": "E03",
+    "document": {
+     "id": "PP-58-2023",
+     "title": "PP 58/2023: Tarif pemotongan PPh 21: TER bulanan A/B/C dan TER harian",
+     "issued": "2023-12-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.TER_MONTHLY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "monthly effective withholding rates (TER) categories A, B and C",
+      "label_id": "tarif efektif bulanan kategori A, B, dan C",
+      "valid_from": "2024-01-01",
+      "name": "ter_monthly",
+      "table_kind": "bracket",
+      "rows_ref": {
+       "extracted_table": "PP-58-2023/LAMPIRAN-ABC",
+       "columns": {
+        "key": "kategori",
+        "lower": "batas_bawah",
+        "upper": "batas_atas",
+        "value": "tarif_persen"
+       },
+       "value_scale": "percent"
+      },
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (5)",
+        "quote": "Perincian atas tarif efektif bulanan dari masing-masing kategori sebagaimana dimaksud pada ayat (4) beserta besaran penghasilan bruto bulanan untuk masing-masing tarif dimaksud sebagaimana tercantum dalam Lampiran huruf A, huruf B, dan huruf C",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_CATEGORY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "TER category by PTKP status",
+      "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+      "valid_from": "2024-01-01",
+      "name": "ter_category",
+      "table_kind": "lookup",
+      "rows": [
+       {
+        "key": "TK/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/1",
+        "value": "A"
+       },
+       {
+        "key": "K/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/2",
+        "value": "B"
+       },
+       {
+        "key": "TK/3",
+        "value": "B"
+       },
+       {
+        "key": "K/1",
+        "value": "B"
+       },
+       {
+        "key": "K/2",
+        "value": "B"
+       },
+       {
+        "key": "K/3",
+        "value": "C"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf a",
+        "quote": "kategori A diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf c",
+        "quote": "kategori C diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak kawin dengan jumlah tanggungan sebanyak 3 (tiga) orang.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.RUNNING",
+      "recorded_on": "2023-12-27",
+      "label": "PPh 21 of non-final periods with the monthly effective rate (TER)",
+      "label_id": "PPh Pasal 21 masa selain masa pajak terakhir dengan tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(bracket('ter_monthly', lookup('ter_category', ptkp_status_effective), gross_income) * gross_income, 1, param('pph_round_mode')) if gross_income > 0 else 0",
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "Tarif efektif bulanan sebagaimana dimaksud pada ayat (2) huruf a dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (5)",
+        "quote": "efektif bulanan pemotongan Pajak Penghasilan Pasal yaitu penghasilan yang diterima Wajib Pajak orang pribadi dalam satu masa pajak.",
+        "page": 10
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "From January 2024 the non-final-period PPh 21 is TER rate (category by effective PTKP status at the start of the year) times the period's gross income; the new rule beats REG.P16.RUNNING by lex posterior, while the final period keeps the existing annual Pasal 17 computation. Pasal 4 (revoking PP 80/2010 Pasal 2 ayat (3)) and the daily TER for non-permanent employees do not affect permanent employees and are not modelled."
+   }
+  },
+  {
+   "n": 5,
+   "order": 4,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "fail: ter_category: valid_from 2024-01-01 is not supported by a quote of this element; TAB.TER_CATEGORY.2024: valid_from 2024-01-01 is not supported by a quote of this element; TAB.TER_MONTHLY.2024: valid_from 2024-01-01 is not supported by a quote of this element; REG.TER.CATEGORY: valid_from 2024-01-01 is not supported by a quote of this element"
+   },
+   "sg_size": 300,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "fact",
+      "id": "ter_category",
+      "label": "monthly effective rate (TER) category",
+      "label_id": "kategori tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "fact_type",
+        "value": "category"
+       },
+       {
+        "name": "fact_scope",
+        "value": "year"
+       },
+       {
+        "name": "output",
+        "value": "false"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "Tarif efektif bulanan sebagaimana dimaksud pada ayat (2) huruf a dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A"
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_CATEGORY.2024",
+      "label": "TER category by PTKP status",
+      "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "name",
+        "value": "ter_category"
+       },
+       {
+        "name": "table_kind",
+        "value": "lookup"
+       },
+       {
+        "name": "rows",
+        "value": "[{\"key\": \"TK/0\", \"value\": \"A\"}, {\"key\": \"TK/1\", \"value\": \"A\"}, {\"key\": \"K/0\", \"value\": \"A\"}, {\"key\": \"TK/2\", \"value\": \"B\"}, {\"key\": \"TK/3\", \"value\": \"B\"}, {\"key\": \"K/1\", \"value\": \"B\"}, {\"key\": \"K/2\", \"value\": \"B\"}, {\"key\": \"K/3\", \"value\": \"C\"}]"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf a",
+        "page": 4,
+        "quote": "kategori A diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak:"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf b",
+        "page": 4,
+        "quote": "kategori B diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak:"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf c",
+        "page": 4,
+        "quote": "dengan status Penghasilan Tidak Kena Pajak kawin dengan jumlah tanggungan sebanyak 3 (tiga) orang."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A"
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_MONTHLY.2024",
+      "label": "monthly effective withholding rates (TER) A, B, C",
+      "label_id": "tarif efektif bulanan kategori A, B, C",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "name",
+        "value": "ter_monthly"
+       },
+       {
+        "name": "table_kind",
+        "value": "bracket"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PP-58-2023/LAMPIRAN-ABC\", \"columns\": {\"key\": \"kategori\", \"lower\": \"batas_bawah\", \"upper\": \"batas_atas\", \"value\": \"tarif_persen\"}, \"value_scale\": \"percent\"}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (5)",
+        "page": 5,
+        "quote": "Perincian atas tarif efektif bulanan dari masing-masing kategori sebagaimana dimaksud pada ayat (4) beserta besaran penghasilan bruto bulanan untuk masing-masing tarif dimaksud sebagaimana tercantum dalam Lampiran huruf A, huruf B, dan huruf C"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.CATEGORY",
+      "label": "TER category from PTKP status at the start of the year",
+      "label_id": "kategori tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "ter_category"
+       },
+       {
+        "name": "expression",
+        "value": "lookup('ter_category', ptkp_status_effective)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "page": 4,
+        "quote": "Tarif efektif bulanan sebagaimana dimaksud pada ayat (2) huruf a dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.RUNNING",
+      "label": "PPh 21 of non-final periods with the monthly effective rate",
+      "label_id": "PPh Pasal 21 masa dengan tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_running"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "expression",
+        "value": "round(bracket('ter_monthly', ter_category, gross_income) * gross_income, 1, param('pph_round_mode'))"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.P16.RUNNING"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "Besaran Pajak Penghasilan Pasal 21 per bulan yang dipotong oleh PI AEIC atas penghasilan Tuan R untuk masa pajak Januari sampai November 2024 adalah sebesar Rp10.000.000,OO x 2o/o = Rp200.000,00."
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (5)",
+        "page": 10,
+        "quote": "Penghasilan bruto bulanan yang menjadi dasar penerapan tarif"
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "page": 8,
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Monthly TER (Lampiran A-C, by category from the PTKP status used for the year) replaces the annualised Pasal 17 method for non-final periods from January 2024 (start date supported by the Penjelasan example since the Pasal 5 text is OCR-garbled); the final period keeps the existing annual Pasal 17 reconciliation. Rounding of the TER amount follows the existing pph_round_mode parameter."
+   },
+   "delta": {
+    "delta_id": "e2-regulasi-m5-E03-cand5",
+    "event_id": "E03",
+    "document": {
+     "id": "PP-58-2023",
+     "title": "PP 58/2023: Tarif pemotongan PPh 21: TER bulanan A/B/C dan TER harian",
+     "issued": "2023-12-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "fact",
+      "id": "ter_category",
+      "recorded_on": "2023-12-27",
+      "label": "monthly effective rate (TER) category",
+      "label_id": "kategori tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "fact_type": "category",
+      "fact_scope": "year",
+      "output": false,
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "Tarif efektif bulanan sebagaimana dimaksud pada ayat (2) huruf a dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_CATEGORY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "TER category by PTKP status",
+      "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+      "valid_from": "2024-01-01",
+      "name": "ter_category",
+      "table_kind": "lookup",
+      "rows": [
+       {
+        "key": "TK/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/1",
+        "value": "A"
+       },
+       {
+        "key": "K/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/2",
+        "value": "B"
+       },
+       {
+        "key": "TK/3",
+        "value": "B"
+       },
+       {
+        "key": "K/1",
+        "value": "B"
+       },
+       {
+        "key": "K/2",
+        "value": "B"
+       },
+       {
+        "key": "K/3",
+        "value": "C"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf a",
+        "quote": "kategori A diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak:",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf b",
+        "quote": "kategori B diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak:",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf c",
+        "quote": "dengan status Penghasilan Tidak Kena Pajak kawin dengan jumlah tanggungan sebanyak 3 (tiga) orang.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_MONTHLY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "monthly effective withholding rates (TER) A, B, C",
+      "label_id": "tarif efektif bulanan kategori A, B, C",
+      "valid_from": "2024-01-01",
+      "name": "ter_monthly",
+      "table_kind": "bracket",
+      "rows_ref": {
+       "extracted_table": "PP-58-2023/LAMPIRAN-ABC",
+       "columns": {
+        "key": "kategori",
+        "lower": "batas_bawah",
+        "upper": "batas_atas",
+        "value": "tarif_persen"
+       },
+       "value_scale": "percent"
+      },
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (5)",
+        "quote": "Perincian atas tarif efektif bulanan dari masing-masing kategori sebagaimana dimaksud pada ayat (4) beserta besaran penghasilan bruto bulanan untuk masing-masing tarif dimaksud sebagaimana tercantum dalam Lampiran huruf A, huruf B, dan huruf C",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.CATEGORY",
+      "recorded_on": "2023-12-27",
+      "label": "TER category from PTKP status at the start of the year",
+      "label_id": "kategori tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "ter_category",
+      "expression": "lookup('ter_category', ptkp_status_effective)",
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "Tarif efektif bulanan sebagaimana dimaksud pada ayat (2) huruf a dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.RUNNING",
+      "recorded_on": "2023-12-27",
+      "label": "PPh 21 of non-final periods with the monthly effective rate",
+      "label_id": "PPh Pasal 21 masa dengan tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(bracket('ter_monthly', ter_category, gross_income) * gross_income, 1, param('pph_round_mode'))",
+      "overrides": [
+       "REG.P16.RUNNING"
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "Besaran Pajak Penghasilan Pasal 21 per bulan yang dipotong oleh PI AEIC atas penghasilan Tuan R untuk masa pajak Januari sampai November 2024 adalah sebesar Rp10.000.000,OO x 2o/o = Rp200.000,00.",
+        "page": 8
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (5)",
+        "quote": "Penghasilan bruto bulanan yang menjadi dasar penerapan tarif",
+        "page": 10
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024 sampai November 2024 dilakukan dengan menggunakan tarif efektif Kategori A",
+        "page": 8
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Monthly TER (Lampiran A-C, by category from the PTKP status used for the year) replaces the annualised Pasal 17 method for non-final periods from January 2024 (start date supported by the Penjelasan example since the Pasal 5 text is OCR-garbled); the final period keeps the existing annual Pasal 17 reconciliation. Rounding of the TER amount follows the existing pph_round_mode parameter."
+   },
+   "initial_delta": {
+    "delta_id": "e2-regulasi-m5-E03-cand5",
+    "event_id": "E03",
+    "document": {
+     "id": "PP-58-2023",
+     "title": "PP 58/2023: Tarif pemotongan PPh 21: TER bulanan A/B/C dan TER harian",
+     "issued": "2023-12-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "fact",
+      "id": "ter_category",
+      "recorded_on": "2023-12-27",
+      "label": "monthly effective rate (TER) category",
+      "label_id": "kategori tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "fact_type": "category",
+      "fact_scope": "year",
+      "output": false,
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "Tarif efektif bulanan sebagaimana dimaksud pada ayat (2) huruf a dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_CATEGORY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "TER category by PTKP status",
+      "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+      "valid_from": "2024-01-01",
+      "name": "ter_category",
+      "table_kind": "lookup",
+      "rows": [
+       {
+        "key": "TK/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/1",
+        "value": "A"
+       },
+       {
+        "key": "K/0",
+        "value": "A"
+       },
+       {
+        "key": "TK/2",
+        "value": "B"
+       },
+       {
+        "key": "TK/3",
+        "value": "B"
+       },
+       {
+        "key": "K/1",
+        "value": "B"
+       },
+       {
+        "key": "K/2",
+        "value": "B"
+       },
+       {
+        "key": "K/3",
+        "value": "C"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf a",
+        "quote": "kategori A diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak:",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf b",
+        "quote": "kategori B diterapkan atas penghasilan bruto bulanan yang diterima atau diperoleh penerima penghasilan dengan status Penghasilan Tidak Kena Pajak:",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (4) huruf c",
+        "quote": "dengan status Penghasilan Tidak Kena Pajak kawin dengan jumlah tanggungan sebanyak 3 (tiga) orang.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       }
+      ]
+     },
+     {
+      "kind": "table",
+      "id": "TAB.TER_MONTHLY.2024",
+      "recorded_on": "2023-12-27",
+      "label": "monthly effective withholding rates (TER) A, B, C",
+      "label_id": "tarif efektif bulanan kategori A, B, C",
+      "valid_from": "2024-01-01",
+      "name": "ter_monthly",
+      "table_kind": "bracket",
+      "rows_ref": {
+       "extracted_table": "PP-58-2023/LAMPIRAN-ABC",
+       "columns": {
+        "key": "kategori",
+        "lower": "batas_bawah",
+        "upper": "batas_atas",
+        "value": "tarif_persen"
+       },
+       "value_scale": "percent"
+      },
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (5)",
+        "quote": "Perincian atas tarif efektif bulanan dari masing-masing kategori sebagaimana dimaksud pada ayat (4) beserta besaran penghasilan bruto bulanan untuk masing-masing tarif dimaksud sebagaimana tercantum dalam Lampiran huruf A, huruf B, dan huruf C",
+        "page": 5
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.CATEGORY",
+      "recorded_on": "2023-12-27",
+      "label": "TER category from PTKP status at the start of the year",
+      "label_id": "kategori tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "ter_category",
+      "expression": "lookup('ter_category', ptkp_status_effective)",
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 2 ayat (3)",
+        "quote": "Tarif efektif bulanan sebagaimana dimaksud pada ayat (2) huruf a dikategorikan berdasarkan besarnya Penghasilan Tidak Kena Pajak sesuai status perkawinan dan jumlah tanggungan Wajib Pajak pada awal tahun pajak.",
+        "page": 4
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.TER.RUNNING",
+      "recorded_on": "2023-12-27",
+      "label": "PPh 21 of non-final periods with the monthly effective rate",
+      "label_id": "PPh Pasal 21 masa dengan tarif efektif bulanan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(bracket('ter_monthly', ter_category, gross_income) * gross_income, 1, param('pph_round_mode'))",
+      "overrides": [
+       "REG.P16.RUNNING"
+      ],
+      "source": [
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (1)",
+        "quote": "Besaran Pajak Penghasilan Pasal 21 per bulan yang dipotong oleh PI AEIC atas penghasilan Tuan R untuk masa pajak Januari sampai November 2024 adalah sebesar Rp10.000.000,OO x 2o/o = Rp200.000,00.",
+        "page": 8
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Penjelasan Pasal 2 ayat (5)",
+        "quote": "Penghasilan bruto bulanan yang menjadi dasar penerapan tarif",
+        "page": 10
+       },
+       {
+        "document": "PP-58-2023",
+        "provision": "Pasal 5",
+        "quote": "Peraturan Pemerintah ini mulai berlaku pada I tanggal Jamtari2024.",
+        "page": 5
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Monthly TER (Lampiran A-C, by category from the PTKP status used for the year) replaces the annualised Pasal 17 method for non-final periods from January 2024; the final period keeps the existing annual Pasal 17 reconciliation, and the old annualisation rules are superseded (not revoked by this PP). Rounding of the TER amount follows the existing pph_round_mode parameter."
+   }
+  }
+ ],
+ "groups": [
+  [
+   1,
+   3,
+   2,
+   4,
+   5
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-regulasi-E03-cand1",
+  "event_id": "E03",
+  "document": {
+   "id": "PP-58-2023",
+   "title": "PP 58/2023: Tarif pemotongan PPh 21: TER bulanan A/B/C dan TER harian",
+   "issued": "2023-12-27"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "table",
+    "id": "TAB.TER_CATEGORY.2024",
+    "recorded_on": "2023-12-27",
+    "label": "monthly effective rate category by PTKP status",
+    "label_id": "kategori tarif efektif bulanan menurut status PTKP",
+    "valid_from": "2024-01-01",
+    "name": "ter_category",
+    "table_kind": "lookup",
+    "rows": [
+     {
+      "key": "TK/0",
+      "value": "A"
+     },
+     {
+      "key": "TK/1",
+      "value": "A"
+     },
+     {
+      "key": "K/0",
+      "value": "A"
+     },
+     {
+      "key": "TK/2",
+      "value": "B"
+     },
+     {
+      "key": "TK/3",
+      "value": "B"
+     },
+     {
+      "key": "K/1",
+      "value": "B"
+     },
+     {
+      "key": "K/2",
+      "value": "B"
+     },
+     {
+      "key": "K/3",
+      "value": "C"
+     }
+    ],
+    "source": [
+     {
+      "document": "PP-58-2023",
+      "provision": "Pasal 2 ayat (4) huruf a",
+      "quote": "a. kategori A diterapkan atas penghasilan bruto bulanan",
+      "page": 4
+     },
+     {
+      "document": "PP-58-2023",
+      "provision": "Pasal 2 ayat (4) huruf b",
+      "quote": "b. kategori B diterapkan atas penghasilan bruto bulanan",
+      "page": 4
+     },
+     {
+      "document": "PP-58-2023",
+      "provision": "Pasal 2 ayat (4) huruf c",
+      "quote": "c. kategori C diterapkan atas penghasilan bruto bulanan",
+      "page": 4
+     },
+     {
+      "document": "PP-58-2023",
+      "provision": "Pasal 5",
+      "quote": "Peraturan Pemerintah ini mulai berlaku pada",
+      "page": 5
+     },
+     {
+      "document": "PP-58-2023",
+      "provision": "Penjelasan Pasal 2 ayat (1)",
+      "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024",
+      "page": 8
+     }
+    ]
+   },
+   {
+    "kind": "table",
+    "id": "TAB.TER_MONTHLY.2024",
+    "recorded_on": "2023-12-27",
+    "label": "monthly effective withholding rates (TER) categories A, B, C",
+    "label_id": "tarif efektif bulanan kategori A, B, C",
+    "valid_from": "2024-01-01",
+    "name": "ter_monthly",
+    "table_kind": "bracket",
+    "rows_ref": {
+     "extracted_table": "PP-58-2023/LAMPIRAN-ABC",
+     "columns": {
+      "key": "kategori",
+      "lower": "batas_bawah",
+      "upper": "batas_atas",
+      "value": "tarif_persen"
+     },
+     "value_scale": "percent"
+    },
+    "source": [
+     {
+      "document": "PP-58-2023",
+      "provision": "Pasal 2 ayat (5)",
+      "quote": "tarif dimaksud sebagaimana tercantum dalam Lampiran",
+      "page": 5
+     },
+     {
+      "document": "PP-58-2023",
+      "provision": "Pasal 5",
+      "quote": "Peraturan Pemerintah ini mulai berlaku pada",
+      "page": 5
+     },
+     {
+      "document": "PP-58-2023",
+      "provision": "Penjelasan Pasal 2 ayat (1)",
+      "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024",
+      "page": 8
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "REG.TER.RUNNING",
+    "recorded_on": "2023-12-27",
+    "label": "PPh 21 of non-final periods with the monthly effective rate (TER)",
+    "label_id": "PPh Pasal 21 masa selain masa terakhir dengan tarif efektif bulanan",
+    "valid_from": "2024-01-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "pph21_running",
+    "condition": "not is_final_period",
+    "expression": "round(bracket('ter_monthly', lookup('ter_category', ptkp_status_effective), gross_income) * gross_income, 1, param('pph_round_mode'))",
+    "overrides": [
+     "REG.P16.RUNNING"
+    ],
+    "source": [
+     {
+      "document": "PP-58-2023",
+      "provision": "Pasal 2 ayat (1) huruf b",
+      "quote": "b. tarif efektif pemotongan Pajak Penghasilan Pasal 21.",
+      "page": 3
+     },
+     {
+      "document": "PP-58-2023",
+      "provision": "Pasal 2 ayat (3)",
+      "quote": "Tidak Kena Pajak sesuai status perkawinan dan jumlah",
+      "page": 4
+     },
+     {
+      "document": "PP-58-2023",
+      "provision": "Penjelasan Pasal 2 ayat (5)",
+      "quote": "penghasilan yang diterima Wajib Pajak orang pribadi dalam satu",
+      "page": 10
+     },
+     {
+      "document": "PP-58-2023",
+      "provision": "Pasal 5",
+      "quote": "Peraturan Pemerintah ini mulai berlaku pada",
+      "page": 5
+     },
+     {
+      "document": "PP-58-2023",
+      "provision": "Penjelasan Pasal 2 ayat (1)",
+      "quote": "atau diperoleh Tuan R untuk masa pajak Januari 2024",
+      "page": 8
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "From January 2024 the non-final-period PPh 21 is TER x monthly gross income, with the category taken from the effective PTKP status at the start of the year; the final period keeps the existing annual Pasal 17 reconciliation (confirmed by the Penjelasan example). Daily TER (Lampiran D) concerns non-permanent employees and the revoked PP 80/2010 provision is not in the KB, so both are omitted."
+ },
+ "cost_usd": 0.444482,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "PP 58/2023 introduces the monthly effective withholding rates (TER categories A, B, C) based on PTKP status and monthly gross income, applied to permanent employees for January–November. The annual Article 17 rates are applied in December. This changes the PPh 21 calculation method and rate tables for pegawai tetap from 1 January 2024.",
+   "quotes": [
+    {
+     "provision": "Pasal 2 ayat (1)",
+     "quote": "Tarif pemotongan Pajak Penghasilan Pasal 21 terdiri atas:"
+    },
+    {
+     "provision": "Pasal 2 ayat (3)",
+     "quote": "dikategorikan berdasarkan besarnya Penghasilan\nTidak Kena Pajak sesuai status perkawinan dan jumlah\ntanggungan Wajib Pajak pada awal tahun pajak."
+    },
+    {
+     "provision": "Pasal 2 ayat (4) huruf a",
+     "quote": "kategori A diterapkan atas penghasilan bruto bulanan"
+    },
+    {
+     "provision": "Pasal 2 ayat (5)",
+     "quote": "tercantum dalam Lampiran\nhuruf A, huruf B, dan huruf C yang merupakan bagian\nyang tidak terpisahkan dari Peraturan Pemerintah ini."
+    },
+    {
+     "provision": "Penjelasan Pasal 2 ayat (1)",
+     "quote": "Tuan R bekerja sebagai pegawai tetap pada perusahaan PT ABC."
+    },
+    {
+     "provision": "Penjelasan Pasal 2 ayat (2) huruf a",
+     "quote": "Penentuan tarif efektif bulanan dalam ketentuan ini telah\nmempertimbangkan biaya jabatan atau biaya pensiun, iuran\npensiun, dan/atau Penghasilan Tidak Kena Pajak yang\nseharusnya menjadi pengurang penghasilan bruto."
+    }
+   ],
+   "effective_from": "2024-01-01",
+   "effective_from_quote": "Peraturan Pemerintah ini mulai berlaku pada\nI\ntanggal Jamtari2024.",
+   "effective_until": null,
+   "effective_until_quote": null,
+   "subjects": []
+  },
+  "quotes_ok": true
+ },
+ "extended_from": "e2-regulasi"
+}

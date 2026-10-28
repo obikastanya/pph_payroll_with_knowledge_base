@@ -1,0 +1,1151 @@
+{
+ "run": "e2-ab2-regulasi",
+ "event": "E07",
+ "condition": "proposed",
+ "documents": [
+  "PP-7-2025"
+ ],
+ "selection": {
+  "PP-7-2025": {
+   "tokens": 3572,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "fail: REG.BPJS.JKK_RATE_PADAT_KARYA_2025: no effect on any S^G case (vacuous element); stated effective date 2025-02-01 is not reflected: no S^G case changes in that month"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "fail: SG-000 y2025: engine error on K': EvaluationError(jkk_rate@2) [REG.BPJS.JKK_RATE_PADAT_KARYA_2025]: condition: cannot order False and 50; SG-001 y2025: engine error on K': EvaluationError(jkk_rate@2) [REG.BPJS.JKK_RATE_PADAT_KARYA_2025]: condition: cannot order False and 50; SG-002 y2025: engine error on K': EvaluationError(jkk_rate@2) [REG.BPJS.JKK_RATE_PADAT_KARYA_2025]: condition: cannot order False and 50; SG-003 y2025: engine error on K': EvaluationError(jkk_rate@2) [REG.BPJS.JKK_RATE_PADAT"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.PADAT_KARYA_INDUSTRIES.2025",
+      "label": "labour-intensive industries eligible for JKK relief",
+      "label_id": "industri padat karya tertentu penerima keringanan iuran JKK",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "name",
+        "value": "padat_karya_industries"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows",
+        "value": "[{\"key\": \"food_beverage_tobacco\"}, {\"key\": \"textile_apparel\"}, {\"key\": \"leather_goods\"}, {\"key\": \"footwear\"}, {\"key\": \"toys\"}, {\"key\": \"furniture\"}]"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf a",
+        "page": 4,
+        "quote": "industri makanan, minuman, dan tembakau;"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf b",
+        "page": 4,
+        "quote": "industri tekstil dan pakaian jadi;"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf c",
+        "page": 4,
+        "quote": "industri kulit dan barang kulit;"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf e",
+        "page": 4,
+        "quote": "industri mainan anak; dan"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "sampai dengan Iuran JKK bulan Juli 2O25."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE_PADAT_KARYA_2025",
+      "label": "50% JKK rate relief for certain labour-intensive industries",
+      "label_id": "keringanan 50% iuran JKK industri padat karya tertentu",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "condition",
+        "value": "in_table('padat_karya_industries', employer('industry')) and ((employer('bpjs_active_participants') if employer('bpjs_active_participants') != None else 0) >= 50)"
+       },
+       {
+        "name": "expression",
+        "value": "lookup('jkk_rates', employer('jkk_risk_group')) * 50 / 100"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "page": 4,
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (3)",
+        "page": 3,
+        "quote": "jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "sampai dengan Iuran JKK bulan Juli 2O25."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The relief halves every risk-group rate exactly (0,24%->0,120% ... 1,74%->0,870%), so it is modelled as 50% of the existing jkk_rates lookup for eligible employers (employer attributes industry, bpjs_active_participants, jkk_risk_group assumed; a missing participant count is treated as 0), overriding the general rule by lex posterior for February-July 2025. The JKP recomposition is funded from the JKK contribution and does not change gross income, so it is not modelled."
+   },
+   "delta": {
+    "delta_id": "e2-ab2-regulasi-E07-cand1",
+    "event_id": "E07",
+    "document": {
+     "id": "PP-7-2025",
+     "title": "PP 7/2025: Keringanan 50% iuran JKK industri padat karya tertentu",
+     "issued": "2025-02-07"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.PADAT_KARYA_INDUSTRIES.2025",
+      "recorded_on": "2025-02-07",
+      "label": "labour-intensive industries eligible for JKK relief",
+      "label_id": "industri padat karya tertentu penerima keringanan iuran JKK",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "name": "padat_karya_industries",
+      "table_kind": "set",
+      "rows": [
+       {
+        "key": "food_beverage_tobacco"
+       },
+       {
+        "key": "textile_apparel"
+       },
+       {
+        "key": "leather_goods"
+       },
+       {
+        "key": "footwear"
+       },
+       {
+        "key": "toys"
+       },
+       {
+        "key": "furniture"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf a",
+        "quote": "industri makanan, minuman, dan tembakau;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf b",
+        "quote": "industri tekstil dan pakaian jadi;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf c",
+        "quote": "industri kulit dan barang kulit;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf e",
+        "quote": "industri mainan anak; dan",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25",
+        "page": 6
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "sampai dengan Iuran JKK bulan Juli 2O25.",
+        "page": 6
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE_PADAT_KARYA_2025",
+      "recorded_on": "2025-02-07",
+      "label": "50% JKK rate relief for certain labour-intensive industries",
+      "label_id": "keringanan 50% iuran JKK industri padat karya tertentu",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "in_table('padat_karya_industries', employer('industry')) and ((employer('bpjs_active_participants') if employer('bpjs_active_participants') != None else 0) >= 50)",
+      "expression": "lookup('jkk_rates', employer('jkk_risk_group')) * 50 / 100",
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (3)",
+        "quote": "jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang",
+        "page": 3
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25",
+        "page": 6
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "sampai dengan Iuran JKK bulan Juli 2O25.",
+        "page": 6
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The relief halves every risk-group rate exactly (0,24%->0,120% ... 1,74%->0,870%), so it is modelled as 50% of the existing jkk_rates lookup for eligible employers (employer attributes industry, bpjs_active_participants, jkk_risk_group assumed; a missing participant count is treated as 0), overriding the general rule by lex posterior for February-July 2025. The JKP recomposition is funded from the JKK contribution and does not change gross income, so it is not modelled."
+   },
+   "initial_delta": {
+    "delta_id": "e2-ab2-regulasi-E07-cand1",
+    "event_id": "E07",
+    "document": {
+     "id": "PP-7-2025",
+     "title": "PP 7/2025: Keringanan 50% iuran JKK industri padat karya tertentu",
+     "issued": "2025-02-07"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.PADAT_KARYA_INDUSTRIES.2025",
+      "recorded_on": "2025-02-07",
+      "label": "labour-intensive industries eligible for JKK relief",
+      "label_id": "industri padat karya tertentu penerima keringanan iuran JKK",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "name": "padat_karya_industries",
+      "table_kind": "set",
+      "rows": [
+       {
+        "key": "food_beverage_tobacco"
+       },
+       {
+        "key": "textile_apparel"
+       },
+       {
+        "key": "leather_goods"
+       },
+       {
+        "key": "footwear"
+       },
+       {
+        "key": "toys"
+       },
+       {
+        "key": "furniture"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf a",
+        "quote": "industri makanan, minuman, dan tembakau;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf b",
+        "quote": "industri tekstil dan pakaian jadi;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf c",
+        "quote": "industri kulit dan barang kulit;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf e",
+        "quote": "industri mainan anak; dan",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25",
+        "page": 6
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "sampai dengan Iuran JKK bulan Juli 2O25.",
+        "page": 6
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE_PADAT_KARYA_2025",
+      "recorded_on": "2025-02-07",
+      "label": "50% JKK rate relief for certain labour-intensive industries",
+      "label_id": "keringanan 50% iuran JKK industri padat karya tertentu",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "in_table('padat_karya_industries', employer('industry')) and (employer('bpjs_active_participants') or 0) >= 50",
+      "expression": "lookup('jkk_rates', employer('jkk_risk_group')) * 50 / 100",
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (3)",
+        "quote": "jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang",
+        "page": 3
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25",
+        "page": 6
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "sampai dengan Iuran JKK bulan Juli 2O25.",
+        "page": 6
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The relief halves every risk-group rate exactly (0,24%->0,120% ... 1,74%->0,870%), so it is modelled as 50% of the existing jkk_rates lookup for eligible employers (employer attributes industry, bpjs_active_participants, jkk_risk_group assumed), overriding the general rule by lex posterior for February-July 2025. The JKP recomposition is funded from the JKK contribution and does not change gross income, so it is not modelled."
+   }
+  },
+  {
+   "n": 2,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "fail: application: REG.BPJS.JKK_PREMIUM_PADAT_KARYA_2025: condition: comparison IsNot not allowed in \"in_table('jkk_relief_industries', employer('industry_group')) and employer('active_bpjs_participants') is not None and employer('active_bpjs_participants') >= 50\""
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.JKK_RELIEF_INDUSTRIES.2025",
+      "label": "labour-intensive industries eligible for the 2025 JKK relief",
+      "label_id": "industri padat karya tertentu penerima keringanan iuran JKK 2025",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "name",
+        "value": "jkk_relief_industries"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows",
+        "value": "[{\"key\": \"food_beverage_tobacco\", \"label\": \"industri makanan, minuman, dan tembakau\"}, {\"key\": \"textile_apparel\", \"label\": \"industri tekstil dan pakaian jadi\"}, {\"key\": \"leather_goods\", \"label\": \"industri kulit dan barang kulit\"}, {\"key\": \"footwear\", \"label\": \"industri alas kaki\"}, {\"key\": \"toys\", \"label\": \"industri mainan anak\"}, {\"key\": \"furniture\", \"label\": \"industri furnitur\"}]"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4)",
+        "page": 4,
+        "quote": "Industri padat karya tertentu sebagaimana dimaksud pada ayat (1) meliputi:"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf a",
+        "page": 4,
+        "quote": "industri makanan, minuman, dan tembakau;"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf b",
+        "page": 4,
+        "quote": "industri tekstil dan pakaian jadi;"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf c",
+        "page": 4,
+        "quote": "industri kulit dan barang kulit;"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf e",
+        "page": 4,
+        "quote": "industri mainan anak; dan"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_PREMIUM_PADAT_KARYA_2025",
+      "label": "JKK premium with 50% relief for certain labour-intensive industries (Feb-Jul 2025)",
+      "label_id": "iuran JKK dengan keringanan 50% bagi perusahaan industri padat karya tertentu",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_premium"
+       },
+       {
+        "name": "condition",
+        "value": "in_table('jkk_relief_industries', employer('industry_group')) and employer('active_bpjs_participants') != None and employer('active_bpjs_participants') >= 50"
+       },
+       {
+        "name": "expression",
+        "value": "round(bpjs_wage * jkk_rate * 50 / 100, 1, param('bpjs_round_mode'))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "page": 4,
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (3)",
+        "page": 3,
+        "quote": "jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The 50% relief is modelled as a conditional mandatory rule halving the employer JKK premium (jkk_rate from the existing jkk_rates table x 50%), winning over the general JKK rule by lex posterior only for employers in the listed industries with at least 50 active BPJS participants; the JKP recomposition (Pasal 9) is not modelled because JKP contributions are not part of the PPh 21 computation in the KB."
+   },
+   "delta": {
+    "delta_id": "e2-ab2-regulasi-E07-cand2",
+    "event_id": "E07",
+    "document": {
+     "id": "PP-7-2025",
+     "title": "PP 7/2025: Keringanan 50% iuran JKK industri padat karya tertentu",
+     "issued": "2025-02-07"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.JKK_RELIEF_INDUSTRIES.2025",
+      "recorded_on": "2025-02-07",
+      "label": "labour-intensive industries eligible for the 2025 JKK relief",
+      "label_id": "industri padat karya tertentu penerima keringanan iuran JKK 2025",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "name": "jkk_relief_industries",
+      "table_kind": "set",
+      "rows": [
+       {
+        "key": "food_beverage_tobacco",
+        "label": "industri makanan, minuman, dan tembakau"
+       },
+       {
+        "key": "textile_apparel",
+        "label": "industri tekstil dan pakaian jadi"
+       },
+       {
+        "key": "leather_goods",
+        "label": "industri kulit dan barang kulit"
+       },
+       {
+        "key": "footwear",
+        "label": "industri alas kaki"
+       },
+       {
+        "key": "toys",
+        "label": "industri mainan anak"
+       },
+       {
+        "key": "furniture",
+        "label": "industri furnitur"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4)",
+        "quote": "Industri padat karya tertentu sebagaimana dimaksud pada ayat (1) meliputi:",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf a",
+        "quote": "industri makanan, minuman, dan tembakau;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf b",
+        "quote": "industri tekstil dan pakaian jadi;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf c",
+        "quote": "industri kulit dan barang kulit;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf e",
+        "quote": "industri mainan anak; dan",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25.",
+        "page": 6
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_PREMIUM_PADAT_KARYA_2025",
+      "recorded_on": "2025-02-07",
+      "label": "JKK premium with 50% relief for certain labour-intensive industries (Feb-Jul 2025)",
+      "label_id": "iuran JKK dengan keringanan 50% bagi perusahaan industri padat karya tertentu",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_premium",
+      "condition": "in_table('jkk_relief_industries', employer('industry_group')) and employer('active_bpjs_participants') != None and employer('active_bpjs_participants') >= 50",
+      "expression": "round(bpjs_wage * jkk_rate * 50 / 100, 1, param('bpjs_round_mode'))",
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (3)",
+        "quote": "jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang",
+        "page": 3
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25.",
+        "page": 6
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The 50% relief is modelled as a conditional mandatory rule halving the employer JKK premium (jkk_rate from the existing jkk_rates table x 50%), winning over the general JKK rule by lex posterior only for employers in the listed industries with at least 50 active BPJS participants; the JKP recomposition (Pasal 9) is not modelled because JKP contributions are not part of the PPh 21 computation in the KB."
+   },
+   "initial_delta": {
+    "delta_id": "e2-ab2-regulasi-E07-cand2",
+    "event_id": "E07",
+    "document": {
+     "id": "PP-7-2025",
+     "title": "PP 7/2025: Keringanan 50% iuran JKK industri padat karya tertentu",
+     "issued": "2025-02-07"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.JKK_RELIEF_INDUSTRIES.2025",
+      "recorded_on": "2025-02-07",
+      "label": "labour-intensive industries eligible for the 2025 JKK relief",
+      "label_id": "industri padat karya tertentu penerima keringanan iuran JKK 2025",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "name": "jkk_relief_industries",
+      "table_kind": "set",
+      "rows": [
+       {
+        "key": "food_beverage_tobacco",
+        "label": "industri makanan, minuman, dan tembakau"
+       },
+       {
+        "key": "textile_apparel",
+        "label": "industri tekstil dan pakaian jadi"
+       },
+       {
+        "key": "leather_goods",
+        "label": "industri kulit dan barang kulit"
+       },
+       {
+        "key": "footwear",
+        "label": "industri alas kaki"
+       },
+       {
+        "key": "toys",
+        "label": "industri mainan anak"
+       },
+       {
+        "key": "furniture",
+        "label": "industri furnitur"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4)",
+        "quote": "Industri padat karya tertentu sebagaimana dimaksud pada ayat (1) meliputi:",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf a-c",
+        "quote": "industri makanan, minuman, dan tembakau;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf b",
+        "quote": "industri tekstil dan pakaian jadi;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf c",
+        "quote": "industri kulit dan barang kulit;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25.",
+        "page": 6
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_PREMIUM_PADAT_KARYA_2025",
+      "recorded_on": "2025-02-07",
+      "label": "JKK premium with 50% relief for certain labour-intensive industries (Feb-Jul 2025)",
+      "label_id": "iuran JKK dengan keringanan 50% bagi perusahaan industri padat karya tertentu",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_premium",
+      "condition": "in_table('jkk_relief_industries', employer('industry_group')) and employer('active_bpjs_participants') is not None and employer('active_bpjs_participants') >= 50",
+      "expression": "round(bpjs_wage * jkk_rate * 50 / 100, 1, param('bpjs_round_mode'))",
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh persen), sehingga Iuran JKK untuk setiap kelompok",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (3)",
+        "quote": "jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang",
+        "page": 3
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25 sampai dengan Iuran JKK bulan Juli 2O25.",
+        "page": 6
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The 50% relief is modelled as a conditional mandatory rule halving the employer JKK premium (jkk_rate from the existing jkk_rates table x 50%), which wins over the general JKK rule by lex posterior only for employers whose industry_group is in the listed industries and that have at least 50 active BPJS participants; the JKP recomposition (Pasal 9) is not modelled because JKP contributions are not part of the PPh 21 computation in the KB."
+   }
+  },
+  {
+   "n": 3,
+   "order": 2,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.PADAT_KARYA_INDUSTRIES.2025",
+      "label": "labour-intensive industries eligible for the JKK relief",
+      "label_id": "industri padat karya tertentu penerima keringanan iuran JKK",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "name",
+        "value": "padat_karya_industries"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows",
+        "value": "[{\"key\": \"food_beverage_tobacco\"}, {\"key\": \"textile_apparel\"}, {\"key\": \"leather_goods\"}, {\"key\": \"footwear\"}, {\"key\": \"toys\"}, {\"key\": \"furniture\"}]"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4)",
+        "page": 4,
+        "quote": "industri makanan, minuman, dan tembakau;"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4)",
+        "page": 4,
+        "quote": "industri tekstil dan pakaian jadi;"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4)",
+        "page": 4,
+        "quote": "industri kulit dan barang kulit;"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf d-f",
+        "page": 4,
+        "quote": "industri mainan anak; dan"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25\nsampai dengan Iuran JKK bulan Juli 2O25"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.JKK.PADAT_KARYA_RELIEF_2025",
+      "label": "JKK premium with 50% relief for certain labour-intensive industries",
+      "label_id": "iuran JKK dengan keringanan 50% bagi industri padat karya tertentu",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2025-02-07",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_premium"
+       },
+       {
+        "name": "condition",
+        "value": "in_table('padat_karya_industries', employer('industry')) and employer('bpjs_active_participants') >= 50"
+       },
+       {
+        "name": "expression",
+        "value": "round(bpjs_wage * jkk_rate * 50 / 100, 1, param('bpjs_round_mode'))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "page": 4,
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh\npersen), sehingga Iuran JKK untuk setiap kelompok\ntingkat risiko lingkungan kerja menjadi:"
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (3)",
+        "page": 3,
+        "quote": "merupakan industri yang memiliki\njumlah Pekerja paling sedikit 5O (Iima puluh) orang yang\nterdaftar sslagai peserta aktif di BPJS Ketenagakerjaan."
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "page": 6,
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25\nsampai dengan Iuran JKK bulan Juli 2O25"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The relief is modelled as half of the normal risk-group JKK rate (which reproduces every reduced rate listed in Pasal 4, e.g. 0,24% to 0,120%) for employers in the listed industries with at least 50 active participants, assuming employer attributes 'industry' and 'bpjs_active_participants'; the later valid_from makes it prevail over the general JKK rule when its condition holds. The JKP recomposition (Pasal 9) and the payment obligation of Pasal 11 do not change the employer premium included in gross income and are not modelled."
+   },
+   "delta": {
+    "delta_id": "e2-ab2-regulasi-E07-cand3",
+    "event_id": "E07",
+    "document": {
+     "id": "PP-7-2025",
+     "title": "PP 7/2025: Keringanan 50% iuran JKK industri padat karya tertentu",
+     "issued": "2025-02-07"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.PADAT_KARYA_INDUSTRIES.2025",
+      "recorded_on": "2025-02-07",
+      "label": "labour-intensive industries eligible for the JKK relief",
+      "label_id": "industri padat karya tertentu penerima keringanan iuran JKK",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "name": "padat_karya_industries",
+      "table_kind": "set",
+      "rows": [
+       {
+        "key": "food_beverage_tobacco"
+       },
+       {
+        "key": "textile_apparel"
+       },
+       {
+        "key": "leather_goods"
+       },
+       {
+        "key": "footwear"
+       },
+       {
+        "key": "toys"
+       },
+       {
+        "key": "furniture"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4)",
+        "quote": "industri makanan, minuman, dan tembakau;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4)",
+        "quote": "industri tekstil dan pakaian jadi;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4)",
+        "quote": "industri kulit dan barang kulit;",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (4) huruf d-f",
+        "quote": "industri mainan anak; dan",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25\nsampai dengan Iuran JKK bulan Juli 2O25",
+        "page": 6
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.JKK.PADAT_KARYA_RELIEF_2025",
+      "recorded_on": "2025-02-07",
+      "label": "JKK premium with 50% relief for certain labour-intensive industries",
+      "label_id": "iuran JKK dengan keringanan 50% bagi industri padat karya tertentu",
+      "valid_from": "2025-02-01",
+      "valid_until": "2025-07-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_premium",
+      "condition": "in_table('padat_karya_industries', employer('industry')) and employer('bpjs_active_participants') >= 50",
+      "expression": "round(bpjs_wage * jkk_rate * 50 / 100, 1, param('bpjs_round_mode'))",
+      "source": [
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 4 ayat (1)",
+        "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh\npersen), sehingga Iuran JKK untuk setiap kelompok\ntingkat risiko lingkungan kerja menjadi:",
+        "page": 4
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 3 ayat (3)",
+        "quote": "merupakan industri yang memiliki\njumlah Pekerja paling sedikit 5O (Iima puluh) orang yang\nterdaftar sslagai peserta aktif di BPJS Ketenagakerjaan.",
+        "page": 3
+       },
+       {
+        "document": "PP-7-2025",
+        "provision": "Pasal 10",
+        "quote": "berlaku untuk Iuran JKK bulan Februari 2O25\nsampai dengan Iuran JKK bulan Juli 2O25",
+        "page": 6
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The relief is modelled as half of the normal risk-group JKK rate (which reproduces every reduced rate listed in Pasal 4, e.g. 0,24% to 0,120%) for employers in the listed industries with at least 50 active participants, assuming employer attributes 'industry' and 'bpjs_active_participants'; the later valid_from makes it prevail over the general JKK rule when its condition holds. The JKP recomposition (Pasal 9) and the payment obligation of Pasal 11 do not change the employer premium included in gross income and are not modelled."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   2
+  ],
+  [
+   3
+  ]
+ ],
+ "selected": null,
+ "status": "abstain",
+ "delta": null,
+ "cost_usd": 0.43352,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "Employer-paid JKK premiums are added to a permanent employee's gross income for PPh 21. This regulation cuts the JKK contribution rate by 50% for every risk group, for example from 0.24% to 0.120% of monthly wages. The cut applies to qualifying labour-intensive industries with at least 50 active BPJS participants, for contribution months February to July 2025. It therefore changes the JKK amount that enters gross income for these employees. Part of the reduced JKK rate is also reallocated to the JKP contribution.",
+   "quotes": [
+    {
+     "provision": "Pasal 4 ayat (1)",
+     "quote": "Keringanan Iuran JKK diberikan sebesar 50% (lima puluh"
+    },
+    {
+     "provision": "Pasal 4 ayat (1) huruf a",
+     "quote": "keringanan sehingga menjadi O,l2Oo/o (nol koma satu"
+    },
+    {
+     "provision": "Pasal 4 ayat (1) huruf e",
+     "quote": "diberikan keringanan sehingga menjadi 0,870% (nol"
+    },
+    {
+     "provision": "Pasal 9 ayat (1)",
+     "quote": "direkomposisi untuk Iuran JKP sebesar O,L2Oo/o (noL"
+    },
+    {
+     "provision": "Pasal 3 ayat (2)",
+     "quote": "ayat (l) berupa keringanan Iuran JKK."
+    }
+   ],
+   "effective_from": "2025-02-01",
+   "effective_from_quote": "berlaku untuk Iuran JKK bulan Februari 2O25",
+   "effective_until": "2025-07-31",
+   "effective_until_quote": "sampai dengan Iuran JKK bulan Juli 2O25",
+   "subjects": [
+    {
+     "kind": "sector",
+     "value": "industri makanan, minuman, dan tembakau",
+     "quote": "industri makanan, minuman, dan tembakau;"
+    },
+    {
+     "kind": "sector",
+     "value": "industri tekstil dan pakaian jadi",
+     "quote": "industri tekstil dan pakaian jadi;"
+    },
+    {
+     "kind": "sector",
+     "value": "industri kulit dan barang kulit",
+     "quote": "industri kulit dan barang kulit;"
+    },
+    {
+     "kind": "sector",
+     "value": "industri alas kaki",
+     "quote": "industri alas kaki;"
+    },
+    {
+     "kind": "sector",
+     "value": "industri mainan anak",
+     "quote": "industri mainan anak; dan"
+    },
+    {
+     "kind": "sector",
+     "value": "industri furnitur",
+     "quote": "industri furnitur."
+    },
+    {
+     "kind": "employer_group",
+     "value": "Perusahaan industri padat karya tertentu dengan paling sedikit 50 pekerja peserta aktif BPJS Ketenagakerjaan",
+     "quote": "jumlah Pekerja paling sedikit 5O (Iima puluh) orang yang"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

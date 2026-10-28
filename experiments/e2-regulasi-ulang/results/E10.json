@@ -1,0 +1,997 @@
+{
+ "run": "e2-regulasi-ulang",
+ "event": "E10",
+ "condition": "proposed",
+ "documents": [
+  "PMK-72-2025"
+ ],
+ "selection": {
+  "PMK-72-2025": {
+   "tokens": 3320,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU_TOURISM.2025",
+      "label": "business classification codes of the tourism sector eligible for PPh 21 DTP",
+      "label_id": "kode klasifikasi lapangan usaha sektor pariwisata",
+      "valid_from": "2025-10-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_klu_tourism"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PMK-72-2025/LAMPIRAN-A\", \"columns\": {\"key\": \"klu\", \"sector\": \"sektor\"}, \"filter\": {\"sektor\": \"pariwisata\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "page": 3,
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini."
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "page": 4,
+        "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.ELIGIBLE.TOURISM",
+      "label": "DTP eligibility extended to employers in the tourism sector (October-December 2025)",
+      "label_id": "pegawai tetap tertentu penerima insentif termasuk sektor pariwisata",
+      "valid_from": "2025-10-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_eligible"
+       },
+       {
+        "name": "expression",
+        "value": "(in_table('dtp_klu', employer('klu')) or in_table('dtp_klu_tourism', employer('klu'))) and dtp_income_test <= param('dtp_fixed_income_cap') and employee('tax_id_valid') != False and employee('other_dtp_incentive') != True"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.DTP.ELIGIBLE"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf a",
+        "page": 3,
+        "quote": "melakukan kegiatan usaha pada bidang industri: 1. alas kaki; 2. tekstil dan pakaian jadi; 3. furnitur; 4. kulit dan barang dari kulit; atau 5. pariwisata; dan"
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "page": 4,
+        "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5."
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY",
+      "label": "DTP facility periods: January-December 2025 for footwear, textile, furniture, leather; October-December 2025 for tourism",
+      "label_id": "masa pajak insentif PPh 21 DTP",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_facility"
+       },
+       {
+        "name": "expression",
+        "value": "dtp_eligible and (in_table('dtp_klu', employer('klu')) or month >= 10)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf a",
+        "page": 4,
+        "quote": "Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 1 sampai dengan angka 4;"
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "page": 4,
+        "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5."
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "adopts": [],
+    "note": "The tourism KLU list is a separate set table (filtered on sektor=pariwisata) and a new eligibility rule from October 2025 covers both the original sectors and tourism, while the facility rule limits tourism employers to Masa Pajak October-December 2025 (Pasal 4A replaces the deleted Pasal 2 ayat (3)). Pasal 5 ayat (5a) needs no change because REG.DTP.REFUND already refunds only the over-withholding not borne by the government."
+   },
+   "delta": {
+    "delta_id": "e2-regulasi-ulang-E10-cand1",
+    "event_id": "E10",
+    "document": {
+     "id": "PMK-72-2025",
+     "title": "PMK 72/2025: Perubahan PMK 10/2025: DTP sektor pariwisata",
+     "issued": "2025-10-28"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU_TOURISM.2025",
+      "recorded_on": "2025-10-28",
+      "label": "business classification codes of the tourism sector eligible for PPh 21 DTP",
+      "label_id": "kode klasifikasi lapangan usaha sektor pariwisata",
+      "valid_from": "2025-10-01",
+      "valid_until": "2025-12-31",
+      "name": "dtp_klu_tourism",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-72-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu",
+        "sector": "sektor"
+       },
+       "filter": {
+        "sektor": "pariwisata"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf b",
+        "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini.",
+        "page": 3
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5.",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.ELIGIBLE.TOURISM",
+      "recorded_on": "2025-10-28",
+      "label": "DTP eligibility extended to employers in the tourism sector (October-December 2025)",
+      "label_id": "pegawai tetap tertentu penerima insentif termasuk sektor pariwisata",
+      "valid_from": "2025-10-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "dtp_eligible",
+      "expression": "(in_table('dtp_klu', employer('klu')) or in_table('dtp_klu_tourism', employer('klu'))) and dtp_income_test <= param('dtp_fixed_income_cap') and employee('tax_id_valid') != False and employee('other_dtp_incentive') != True",
+      "overrides": [
+       "REG.DTP.ELIGIBLE"
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf a",
+        "quote": "melakukan kegiatan usaha pada bidang industri: 1. alas kaki; 2. tekstil dan pakaian jadi; 3. furnitur; 4. kulit dan barang dari kulit; atau 5. pariwisata; dan",
+        "page": 3
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5.",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY",
+      "recorded_on": "2025-10-28",
+      "label": "DTP facility periods: January-December 2025 for footwear, textile, furniture, leather; October-December 2025 for tourism",
+      "label_id": "masa pajak insentif PPh 21 DTP",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "dtp_facility",
+      "expression": "dtp_eligible and (in_table('dtp_klu', employer('klu')) or month >= 10)",
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf a",
+        "quote": "Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 1 sampai dengan angka 4;",
+        "page": 4
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5.",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "note": "The tourism KLU list is a separate set table (filtered on sektor=pariwisata) and a new eligibility rule from October 2025 covers both the original sectors and tourism, while the facility rule limits tourism employers to Masa Pajak October-December 2025 (Pasal 4A replaces the deleted Pasal 2 ayat (3)). Pasal 5 ayat (5a) needs no change because REG.DTP.REFUND already refunds only the over-withholding not borne by the government."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 2,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU_TOURISM.2025",
+      "label": "business classification codes of the tourism sector eligible for PPh 21 DTP",
+      "label_id": "kode klasifikasi lapangan usaha sektor pariwisata",
+      "valid_from": "2025-10-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_klu_tourism"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PMK-72-2025/LAMPIRAN-A\", \"columns\": {\"key\": \"klu\", \"sector\": \"sektor\"}, \"filter\": {\"sektor\": \"pariwisata\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1)",
+        "page": 3,
+        "quote": "kulit dan barang dari kulit; atau 5. pariwisata; dan b. memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A"
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "page": 4,
+        "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.ELIGIBLE.TOURISM",
+      "label": "eligibility for PPh 21 DTP of employees of tourism-sector employers",
+      "label_id": "pegawai tetap tertentu penerima insentif sektor pariwisata",
+      "valid_from": "2025-10-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_eligible"
+       },
+       {
+        "name": "condition",
+        "value": "in_table('dtp_klu_tourism', employer('klu'))"
+       },
+       {
+        "name": "expression",
+        "value": "dtp_income_test <= param('dtp_fixed_income_cap') and employee('tax_id_valid') != False and employee('other_dtp_incentive') != True"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.DTP.ELIGIBLE"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf a",
+        "page": 3,
+        "quote": "melakukan kegiatan usaha pada bidang industri: 1. alas kaki; 2. tekstil dan pakaian jadi; 3. furnitur; 4. kulit dan barang dari kulit; atau 5. pariwisata"
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "page": 4,
+        "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY.TOURISM",
+      "label": "DTP facility for tourism-sector employers in tax periods October to December 2025",
+      "label_id": "masa pajak insentif sektor pariwisata",
+      "valid_from": "2025-10-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_facility"
+       },
+       {
+        "name": "condition",
+        "value": "in_table('dtp_klu_tourism', employer('klu'))"
+       },
+       {
+        "name": "expression",
+        "value": "dtp_eligible"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.DTP.FACILITY"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "page": 4,
+        "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5"
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY",
+      "label": "DTP facility for footwear, textile and apparel, furniture and leather employers in tax periods January to December 2025",
+      "label_id": "masa pajak insentif industri alas kaki, tekstil, furnitur, kulit",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_facility"
+       },
+       {
+        "name": "expression",
+        "value": "dtp_eligible and in_table('dtp_klu', employer('klu'))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf a",
+        "page": 4,
+        "quote": "Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 1 sampai dengan angka 4"
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "adopts": [],
+    "note": "Pasal 2 ayat (3) is replaced by Pasal 4A: the existing facility rule is restricted to the four original sectors (Jan-Dec 2025) and a new tourism table, eligibility and facility rule cover tourism employers for Oct-Dec 2025 only; the tourism KLUs are taken from the new Lampiran A filtered on sektor=pariwisata while the original KLU table is kept for the other sectors. Pasal 5 ayat (5a) (refund of only the non-DTP part of over-withholding) is treated as already implemented by REG.DTP.REFUND, which refunds the excess beyond the DTP of earlier periods, so it is not restated."
+   },
+   "delta": {
+    "delta_id": "e2-regulasi-ulang-E10-cand2",
+    "event_id": "E10",
+    "document": {
+     "id": "PMK-72-2025",
+     "title": "PMK 72/2025: Perubahan PMK 10/2025: DTP sektor pariwisata",
+     "issued": "2025-10-28"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU_TOURISM.2025",
+      "recorded_on": "2025-10-28",
+      "label": "business classification codes of the tourism sector eligible for PPh 21 DTP",
+      "label_id": "kode klasifikasi lapangan usaha sektor pariwisata",
+      "valid_from": "2025-10-01",
+      "valid_until": "2025-12-31",
+      "name": "dtp_klu_tourism",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-72-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu",
+        "sector": "sektor"
+       },
+       "filter": {
+        "sektor": "pariwisata"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1)",
+        "quote": "kulit dan barang dari kulit; atau 5. pariwisata; dan b. memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A",
+        "page": 3
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.ELIGIBLE.TOURISM",
+      "recorded_on": "2025-10-28",
+      "label": "eligibility for PPh 21 DTP of employees of tourism-sector employers",
+      "label_id": "pegawai tetap tertentu penerima insentif sektor pariwisata",
+      "valid_from": "2025-10-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "dtp_eligible",
+      "condition": "in_table('dtp_klu_tourism', employer('klu'))",
+      "expression": "dtp_income_test <= param('dtp_fixed_income_cap') and employee('tax_id_valid') != False and employee('other_dtp_incentive') != True",
+      "overrides": [
+       "REG.DTP.ELIGIBLE"
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 3 ayat (1) huruf a",
+        "quote": "melakukan kegiatan usaha pada bidang industri: 1. alas kaki; 2. tekstil dan pakaian jadi; 3. furnitur; 4. kulit dan barang dari kulit; atau 5. pariwisata",
+        "page": 3
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY.TOURISM",
+      "recorded_on": "2025-10-28",
+      "label": "DTP facility for tourism-sector employers in tax periods October to December 2025",
+      "label_id": "masa pajak insentif sektor pariwisata",
+      "valid_from": "2025-10-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "dtp_facility",
+      "condition": "in_table('dtp_klu_tourism', employer('klu'))",
+      "expression": "dtp_eligible",
+      "overrides": [
+       "REG.DTP.FACILITY"
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf b",
+        "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY",
+      "recorded_on": "2025-10-28",
+      "label": "DTP facility for footwear, textile and apparel, furniture and leather employers in tax periods January to December 2025",
+      "label_id": "masa pajak insentif industri alas kaki, tekstil, furnitur, kulit",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "dtp_facility",
+      "expression": "dtp_eligible and in_table('dtp_klu', employer('klu'))",
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal 4A huruf a",
+        "quote": "Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 1 sampai dengan angka 4",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "note": "Pasal 2 ayat (3) is replaced by Pasal 4A: the existing facility rule is restricted to the four original sectors (Jan-Dec 2025) and a new tourism table, eligibility and facility rule cover tourism employers for Oct-Dec 2025 only; the tourism KLUs are taken from the new Lampiran A filtered on sektor=pariwisata while the original KLU table is kept for the other sectors. Pasal 5 ayat (5a) (refund of only the non-DTP part of over-withholding) is treated as already implemented by REG.DTP.REFUND, which refunds the excess beyond the DTP of earlier periods, so it is not restated."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 3,
+   "order": 2,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [],
+    "change": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2025",
+      "label": "business classification codes eligible for PPh 21 DTP 2025 (incl. tourism)",
+      "label_id": "kode klasifikasi lapangan usaha",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "name",
+        "value": "dtp_klu"
+       },
+       {
+        "name": "table_kind",
+        "value": "set"
+       },
+       {
+        "name": "rows_ref",
+        "value": "{\"extracted_table\": \"PMK-72-2025/LAMPIRAN-A\", \"columns\": {\"key\": \"klu\", \"sector\": \"sektor\"}}"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 3 (Pasal 3 ayat (1) huruf a dan b)",
+        "page": 3,
+        "quote": "kulit dan barang dari kulit; atau 5. pariwisata; dan b. memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini."
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 4 (Pasal 4A huruf a)",
+        "page": 4,
+        "quote": "Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY",
+      "label": "DTP facility applies in the period: January-December 2025 for footwear/textile/furniture/leather, October-December 2025 for tourism",
+      "label_id": "masa pajak insentif PPh 21 DTP",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2025-10-28",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "dtp_facility"
+       },
+       {
+        "name": "expression",
+        "value": "dtp_eligible and (table_attr('dtp_klu', employer('klu'), 'sector') != 'pariwisata' or month >= 10)"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 4 (Pasal 4A huruf a)",
+        "page": 4,
+        "quote": "Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 1 sampai dengan angka 4;"
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 4 (Pasal 4A huruf b)",
+        "page": 4,
+        "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5."
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "adopts": [],
+    "note": "The replaced Lampiran A (with a sektor column) now includes tourism KLU codes, and the facility period is restricted to Masa Pajak October-December 2025 for employers whose KLU sector is pariwisata (Pasal 4A replaces the deleted Pasal 2 ayat (3)). The tourism refund rule of Pasal 5 ayat (5a) (refund only the non-DTP part of over-withholding) is already computed by the existing REG.DTP.REFUND expression, so it is not restated."
+   },
+   "delta": {
+    "delta_id": "e2-regulasi-ulang-E10-cand3",
+    "event_id": "E10",
+    "document": {
+     "id": "PMK-72-2025",
+     "title": "PMK 72/2025: Perubahan PMK 10/2025: DTP sektor pariwisata",
+     "issued": "2025-10-28"
+    },
+    "relevant": true,
+    "add": [],
+    "change": [
+     {
+      "kind": "table",
+      "id": "TAB.DTP_KLU.2025",
+      "recorded_on": "2025-10-28",
+      "label": "business classification codes eligible for PPh 21 DTP 2025 (incl. tourism)",
+      "label_id": "kode klasifikasi lapangan usaha",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "name": "dtp_klu",
+      "table_kind": "set",
+      "rows_ref": {
+       "extracted_table": "PMK-72-2025/LAMPIRAN-A",
+       "columns": {
+        "key": "klu",
+        "sector": "sektor"
+       }
+      },
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 3 (Pasal 3 ayat (1) huruf a dan b)",
+        "quote": "kulit dan barang dari kulit; atau 5. pariwisata; dan b. memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini.",
+        "page": 3
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 4 (Pasal 4A huruf a)",
+        "quote": "Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu",
+        "page": 4
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.DTP.FACILITY",
+      "recorded_on": "2025-10-28",
+      "label": "DTP facility applies in the period: January-December 2025 for footwear/textile/furniture/leather, October-December 2025 for tourism",
+      "label_id": "masa pajak insentif PPh 21 DTP",
+      "valid_from": "2025-01-01",
+      "valid_until": "2025-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "dtp_facility",
+      "expression": "dtp_eligible and (table_attr('dtp_klu', employer('klu'), 'sector') != 'pariwisata' or month >= 10)",
+      "source": [
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 4 (Pasal 4A huruf a)",
+        "quote": "Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 1 sampai dengan angka 4;",
+        "page": 4
+       },
+       {
+        "document": "PMK-72-2025",
+        "provision": "Pasal I angka 4 (Pasal 4A huruf b)",
+        "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5.",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "note": "The replaced Lampiran A (with a sektor column) now includes tourism KLU codes, and the facility period is restricted to Masa Pajak October-December 2025 for employers whose KLU sector is pariwisata (Pasal 4A replaces the deleted Pasal 2 ayat (3)). The tourism refund rule of Pasal 5 ayat (5a) (refund only the non-DTP part of over-withholding) is already computed by the existing REG.DTP.REFUND expression, so it is not restated."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   1,
+   2
+  ],
+  [
+   3
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-regulasi-ulang-E10-cand1",
+  "event_id": "E10",
+  "document": {
+   "id": "PMK-72-2025",
+   "title": "PMK 72/2025: Perubahan PMK 10/2025: DTP sektor pariwisata",
+   "issued": "2025-10-28"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "table",
+    "id": "TAB.DTP_KLU_TOURISM.2025",
+    "recorded_on": "2025-10-28",
+    "label": "business classification codes of the tourism sector eligible for PPh 21 DTP",
+    "label_id": "kode klasifikasi lapangan usaha sektor pariwisata",
+    "valid_from": "2025-10-01",
+    "valid_until": "2025-12-31",
+    "name": "dtp_klu_tourism",
+    "table_kind": "set",
+    "rows_ref": {
+     "extracted_table": "PMK-72-2025/LAMPIRAN-A",
+     "columns": {
+      "key": "klu",
+      "sector": "sektor"
+     },
+     "filter": {
+      "sektor": "pariwisata"
+     }
+    },
+    "source": [
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal 3 ayat (1) huruf b",
+      "quote": "memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran huruf A yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini.",
+      "page": 3
+     },
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal 4A huruf b",
+      "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5.",
+      "page": 4
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "REG.DTP.ELIGIBLE.TOURISM",
+    "recorded_on": "2025-10-28",
+    "label": "DTP eligibility extended to employers in the tourism sector (October-December 2025)",
+    "label_id": "pegawai tetap tertentu penerima insentif termasuk sektor pariwisata",
+    "valid_from": "2025-10-01",
+    "valid_until": "2025-12-31",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "dtp_eligible",
+    "expression": "(in_table('dtp_klu', employer('klu')) or in_table('dtp_klu_tourism', employer('klu'))) and dtp_income_test <= param('dtp_fixed_income_cap') and employee('tax_id_valid') != False and employee('other_dtp_incentive') != True",
+    "overrides": [
+     "REG.DTP.ELIGIBLE"
+    ],
+    "source": [
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal 3 ayat (1) huruf a",
+      "quote": "melakukan kegiatan usaha pada bidang industri: 1. alas kaki; 2. tekstil dan pakaian jadi; 3. furnitur; 4. kulit dan barang dari kulit; atau 5. pariwisata; dan",
+      "page": 3
+     },
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal 4A huruf b",
+      "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5.",
+      "page": 4
+     }
+    ]
+   }
+  ],
+  "change": [
+   {
+    "kind": "rule",
+    "id": "REG.DTP.FACILITY",
+    "recorded_on": "2025-10-28",
+    "label": "DTP facility periods: January-December 2025 for footwear, textile, furniture, leather; October-December 2025 for tourism",
+    "label_id": "masa pajak insentif PPh 21 DTP",
+    "valid_from": "2025-01-01",
+    "valid_until": "2025-12-31",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "dtp_facility",
+    "expression": "dtp_eligible and (in_table('dtp_klu', employer('klu')) or month >= 10)",
+    "source": [
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal 4A huruf a",
+      "quote": "Masa Pajak Januari 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 1 sampai dengan angka 4;",
+      "page": 4
+     },
+     {
+      "document": "PMK-72-2025",
+      "provision": "Pasal 4A huruf b",
+      "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak Desember 2025, bagi Pegawai tertentu dari Pemberi Kerja tertentu yang melakukan kegiatan usaha pada bidang sebagaimana dimaksud dalam Pasal 3 ayat (1) huruf a angka 5.",
+      "page": 4
+     }
+    ]
+   }
+  ],
+  "remove": [],
+  "note": "The tourism KLU list is a separate set table (filtered on sektor=pariwisata) and a new eligibility rule from October 2025 covers both the original sectors and tourism, while the facility rule limits tourism employers to Masa Pajak October-December 2025 (Pasal 4A replaces the deleted Pasal 2 ayat (3)). Pasal 5 ayat (5a) needs no change because REG.DTP.REFUND already refunds only the over-withholding not borne by the government."
+ },
+ "cost_usd": 0.535053,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "PMK 72/2025 amends PMK 10/2025 to extend the PPh 21 DTP (government-borne) facility to employees of employers in the tourism sector (pariwisata), with listed KLU codes, for Masa Pajak October–December 2025. It also adds rules on refunding the non-DTP part of over-withholding to permanent employees in tourism. This changes a facility and its validity period for permanent employees.",
+   "quotes": [
+    {
+     "provision": "Pasal 3 ayat (1) huruf a",
+     "quote": "melakukan kegiatan usaha pada bidang industri:"
+    },
+    {
+     "provision": "Pasal 3 ayat (1) huruf a angka 5",
+     "quote": "4. kulit dan barang dari kulit; atau\n5. pariwisata; dan"
+    },
+    {
+     "provision": "Pasal 4A huruf b",
+     "quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025, bagi Pegawai tertentu dari Pemberi\nKerja tertentu yang melakukan kegiatan usaha pada\nbidang sebagaimana dimaksud dalam Pasal 3 ayat (1)\nhuruf a angka 5."
+    },
+    {
+     "provision": "Pasal 5 ayat (5a)",
+     "quote": "kelebihan Pajak Penghasilan Pasal 21\ndapat dikembalikan oleh Pemberi Kerja kepada\nPegawai Tetap bersangkutan hanya sebesar bagian\nkelebihan pemotongan pajak yang tidak\nditanggung pemerintah."
+    }
+   ],
+   "effective_from": "2025-10-01",
+   "effective_from_quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025",
+   "effective_until": "2025-12-31",
+   "effective_until_quote": "Masa Pajak Oktober 2025 sampai dengan Masa Pajak\nDesember 2025",
+   "subjects": [
+    {
+     "kind": "sector",
+     "value": "pariwisata",
+     "quote": "perluasan pemberian fasilitas fiskal Pajak\nPenghasilan Pasal 21 ditanggung pemerintah untuk sektor\npariwisata"
+    },
+    {
+     "kind": "klu",
+     "value": "KLU codes listed in Lampiran huruf A (e.g. 49425, 50113, 50122, 55110, 55120, 55130)",
+     "quote": "memiliki kode klasifikasi lapangan usaha\nsebagaimana tercantum dalam Lampiran huruf A"
+    },
+    {
+     "kind": "employee_group",
+     "value": "Pegawai tertentu",
+     "quote": "bagi Pegawai tertentu dari Pemberi\nKerja tertentu"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

@@ -1,0 +1,385 @@
+{
+ "run": "e2-sintetis",
+ "event": "SP03",
+ "condition": "proposed",
+ "documents": [
+  "SP03"
+ ],
+ "selection": {
+  "SP03": {
+   "tokens": 695,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.DTP_RETAINED",
+      "label": "PPh 21 DTP incentive retained by the company for collective welfare, not paid to individual workers (employee bears the full PPh 21)",
+      "label_id": "insentif PPh 21 DTP dikelola perusahaan untuk kesejahteraan kolektif, tidak dibayarkan perorangan",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-03-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employee_tax_burden"
+       },
+       {
+        "name": "condition",
+        "value": "pph21_dtp != 0"
+       },
+       {
+        "name": "expression",
+        "value": "0 if withholding_method == 'employer_borne' else (pph21_due if (not is_final_period or pph21_due >= 0) else (0 - refund_to_employee))"
+       },
+       {
+        "name": "policy",
+        "value": "SP03"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C7"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 40 ayat (3)",
+        "page": 1,
+        "quote": "Setiap insentif, keringanan, atau fasilitas perpajakan yang diberikan Pemerintah sehubungan dengan Pajak Penghasilan Pasal 21 pekerja diterima dan dikelola oleh Perusahaan untuk mendukung program kesejahteraan pekerja secara kolektif, dan tidak dibayarkan secara perorangan kepada pekerja."
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Pasal 40(3) is modelled as a company rule on employee_tax_burden that ignores the DTP (the employee bears the full PPh 21 and the company keeps the incentive), which contradicts the regulatory requirement that DTP be paid in cash to the employee and is therefore tagged with a conflict code; Pasal 38(3) and 40(1) restate existing rules and are not repeated."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP03-cand1",
+    "event_id": "SP03",
+    "document": {
+     "id": "SP03",
+     "title": "PT Samudra Biru Hospitality: Perjanjian Kerja Bersama",
+     "issued": "2025-03-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.DTP_RETAINED",
+      "recorded_on": "2025-03-01",
+      "label": "PPh 21 DTP incentive retained by the company for collective welfare, not paid to individual workers (employee bears the full PPh 21)",
+      "label_id": "insentif PPh 21 DTP dikelola perusahaan untuk kesejahteraan kolektif, tidak dibayarkan perorangan",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employee_tax_burden",
+      "condition": "pph21_dtp != 0",
+      "expression": "0 if withholding_method == 'employer_borne' else (pph21_due if (not is_final_period or pph21_due >= 0) else (0 - refund_to_employee))",
+      "policy": "SP03",
+      "conflict_code": "C7",
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 40 ayat (3)",
+        "quote": "Setiap insentif, keringanan, atau fasilitas perpajakan yang diberikan Pemerintah sehubungan dengan Pajak Penghasilan Pasal 21 pekerja diterima dan dikelola oleh Perusahaan untuk mendukung program kesejahteraan pekerja secara kolektif, dan tidak dibayarkan secara perorangan kepada pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Pasal 40(3) is modelled as a company rule on employee_tax_burden that ignores the DTP (the employee bears the full PPh 21 and the company keeps the incentive), which contradicts the regulatory requirement that DTP be paid in cash to the employee and is therefore tagged with a conflict code; Pasal 38(3) and 40(1) restate existing rules and are not repeated."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.DTP_RETAINED",
+      "label": "Government PPh 21 facilities (DTP) are retained by the company for collective welfare and not paid to the individual employee",
+      "label_id": "insentif PPh 21 DTP dikelola perusahaan untuk kesejahteraan kolektif dan tidak dibayarkan perorangan",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-03-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employee_tax_burden"
+       },
+       {
+        "name": "condition",
+        "value": "pph21_dtp != 0"
+       },
+       {
+        "name": "expression",
+        "value": "0 if withholding_method == 'employer_borne' else (pph21_due if (not is_final_period or pph21_due >= 0) else (0 - refund_to_employee))"
+       },
+       {
+        "name": "policy",
+        "value": "SP03"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C4"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 40 ayat (3)",
+        "page": 1,
+        "quote": "Setiap insentif, keringanan, atau fasilitas perpajakan yang diberikan Pemerintah sehubungan dengan Pajak Penghasilan Pasal 21 pekerja diterima dan dikelola oleh Perusahaan untuk mendukung program kesejahteraan pekerja secara kolektif, dan tidak dibayarkan secara perorangan kepada pekerja."
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Pasal 40(3) is modelled as a company rule on the employee's tax burden: the DTP amount is not passed on to take-home pay. This conflicts with the regulatory duty to pay the DTP in cash to the employee (PMK-10-2025), so it carries a conflict code. Pasal 38(3) and Pasal 40(1) restate existing rules and need no records."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP03-cand2",
+    "event_id": "SP03",
+    "document": {
+     "id": "SP03",
+     "title": "PT Samudra Biru Hospitality: Perjanjian Kerja Bersama",
+     "issued": "2025-03-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.DTP_RETAINED",
+      "recorded_on": "2025-03-01",
+      "label": "Government PPh 21 facilities (DTP) are retained by the company for collective welfare and not paid to the individual employee",
+      "label_id": "insentif PPh 21 DTP dikelola perusahaan untuk kesejahteraan kolektif dan tidak dibayarkan perorangan",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employee_tax_burden",
+      "condition": "pph21_dtp != 0",
+      "expression": "0 if withholding_method == 'employer_borne' else (pph21_due if (not is_final_period or pph21_due >= 0) else (0 - refund_to_employee))",
+      "policy": "SP03",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 40 ayat (3)",
+        "quote": "Setiap insentif, keringanan, atau fasilitas perpajakan yang diberikan Pemerintah sehubungan dengan Pajak Penghasilan Pasal 21 pekerja diterima dan dikelola oleh Perusahaan untuk mendukung program kesejahteraan pekerja secara kolektif, dan tidak dibayarkan secara perorangan kepada pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Pasal 40(3) is modelled as a company rule on the employee's tax burden: the DTP amount is not passed on to take-home pay. This conflicts with the regulatory duty to pay the DTP in cash to the employee (PMK-10-2025), so it carries a conflict code. Pasal 38(3) and Pasal 40(1) restate existing rules and need no records."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   2,
+   1
+  ]
+ ],
+ "selected": 2,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-sintetis-SP03-cand2",
+  "event_id": "SP03",
+  "document": {
+   "id": "SP03",
+   "title": "PT Samudra Biru Hospitality: Perjanjian Kerja Bersama",
+   "issued": "2025-03-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP03.DTP_RETAINED",
+    "recorded_on": "2025-03-01",
+    "label": "Government PPh 21 facilities (DTP) are retained by the company for collective welfare and not paid to the individual employee",
+    "label_id": "insentif PPh 21 DTP dikelola perusahaan untuk kesejahteraan kolektif dan tidak dibayarkan perorangan",
+    "valid_from": "2025-03-01",
+    "valid_until": "2026-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "employee_tax_burden",
+    "condition": "pph21_dtp != 0",
+    "expression": "0 if withholding_method == 'employer_borne' else (pph21_due if (not is_final_period or pph21_due >= 0) else (0 - refund_to_employee))",
+    "policy": "SP03",
+    "conflict_code": "C4",
+    "source": [
+     {
+      "document": "SP03",
+      "provision": "Pasal 40 ayat (3)",
+      "quote": "Setiap insentif, keringanan, atau fasilitas perpajakan yang diberikan Pemerintah sehubungan dengan Pajak Penghasilan Pasal 21 pekerja diterima dan dikelola oleh Perusahaan untuk mendukung program kesejahteraan pekerja secara kolektif, dan tidak dibayarkan secara perorangan kepada pekerja.",
+      "page": 1
+     },
+     {
+      "document": "SP03",
+      "provision": "Pasal 60 ayat (1)",
+      "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026.",
+      "page": 1
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "Pasal 40(3) is modelled as a company rule on the employee's tax burden: the DTP amount is not passed on to take-home pay. This conflicts with the regulatory duty to pay the DTP in cash to the employee (PMK-10-2025), so it carries a conflict code. Pasal 38(3) and Pasal 40(1) restate existing rules and need no records."
+ },
+ "cost_usd": 0.211546,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "This company collective labour agreement sets a payroll rule on how government PPh 21 facilities (such as PPh 21 DTP incentives) are treated. Under Pasal 40(3), these facilities are kept by the company for collective welfare programs and are not paid to individual workers. That changes how a facility is applied to permanent employees' pay. Pasal 38(3) and Pasal 40(1) mostly restate existing rules: employer JKK, JKM and JK contributions count as gross income, and PPh 21 is borne by the employee and withheld monthly.",
+   "quotes": [
+    {
+     "provision": "Pasal 40 ayat (3)",
+     "quote": "Setiap insentif, keringanan, atau fasilitas perpajakan yang diberikan Pemerintah sehubungan dengan Pajak Penghasilan Pasal 21 pekerja diterima dan dikelola oleh Perusahaan untuk mendukung program kesejahteraan pekerja secara kolektif, dan tidak dibayarkan secara perorangan kepada pekerja."
+    },
+    {
+     "provision": "Pasal 40 ayat (1)",
+     "quote": "Pajak Penghasilan Pasal 21 atas upah dan penghasilan lain pekerja menjadi beban pekerja dan dipotong oleh Perusahaan setiap bulan sesuai ketentuan perpajakan."
+    },
+    {
+     "provision": "Pasal 38 ayat (3)",
+     "quote": "Iuran JKK, iuran JKM, dan iuran Jaminan Kesehatan bagian Perusahaan diperhitungkan sebagai penghasilan bruto pekerja dalam penghitungan Pajak Penghasilan Pasal 21."
+    }
+   ],
+   "effective_from": "2025-03-01",
+   "effective_from_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026.",
+   "effective_until": "2026-12-31",
+   "effective_until_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026.",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT Samudra Biru Hospitality",
+     "quote": "PERJANJIAN KERJA BERSAMA ANTARA PT SAMUDRA BIRU HOSPITALITY DAN PIMPINAN UNIT KERJA SERIKAT PEKERJA PARIWISATA"
+    },
+    {
+     "kind": "sector",
+     "value": "Hospitality / pariwisata",
+     "quote": "PIMPINAN UNIT KERJA SERIKAT PEKERJA PARIWISATA PERIODE 2025-2026"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

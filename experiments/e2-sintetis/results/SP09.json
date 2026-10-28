@@ -1,0 +1,346 @@
+{
+ "run": "e2-sintetis",
+ "event": "SP09",
+ "condition": "proposed",
+ "documents": [
+  "SP09"
+ ],
+ "selection": {
+  "SP09": {
+   "tokens": 588,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP09.PREMIUMS_NOT_TAXABLE, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C1)"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2023-08-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": false,
+    "add": [],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The JKK 0,54%, JKM 0,30%, health 4%, JHT 2% and JP 1% rates, and the deduction of employee JHT/JP, only restate rules and parameters already in the knowledge base, so they change no result. The clause excluding employer premiums from PPh 21 gross income contradicts the mandatory REG.PREMIUMS.TAXABLE and cannot change the computation. Because no case result changes from August 2023, the document is treated as not relevant and nothing is added."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP09-cand1",
+    "event_id": "SP09",
+    "document": {
+     "id": "SP09",
+     "title": "PT Cahaya Farmasi Sejahtera: Peraturan Perusahaan",
+     "issued": "2023-08-01"
+    },
+    "relevant": false,
+    "add": [],
+    "change": [],
+    "remove": [],
+    "note": "The JKK 0,54%, JKM 0,30%, health 4%, JHT 2% and JP 1% rates, and the deduction of employee JHT/JP, only restate rules and parameters already in the knowledge base, so they change no result. The clause excluding employer premiums from PPh 21 gross income contradicts the mandatory REG.PREMIUMS.TAXABLE and cannot change the computation. Because no case result changes from August 2023, the document is treated as not relevant and nothing is added."
+   },
+   "initial_delta": {
+    "delta_id": "e2-sintetis-SP09-cand1",
+    "event_id": "SP09",
+    "document": {
+     "id": "SP09",
+     "title": "PT Cahaya Farmasi Sejahtera: Peraturan Perusahaan",
+     "issued": "2023-08-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.PREMIUMS_NOT_TAXABLE",
+      "recorded_on": "2023-08-01",
+      "label": "employer social security premiums excluded from gross income (company policy)",
+      "label_id": "iuran jaminan sosial bagian perusahaan tidak dimasukkan dalam penghasilan bruto",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "0",
+      "policy": "SP09",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (2)",
+        "quote": "bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The company excludes employer-paid JKK, JKM and health premiums from PPh 21 gross income, contrary to the mandatory REG.PREMIUMS.TAXABLE, so it is modelled as a company rule that loses and is reported as a conflict (code assumed C1). The rates in the document (JKM 0,30%, health 4%, JHT 2%, JP 1%, and JKK 0,54% for the low risk group) match existing parameters and tables, so no further records were added."
+   }
+  },
+  {
+   "n": 2,
+   "order": 1,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP09.PREMIUMS_NOT_INCOME, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C2)"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2023-08-01 is not reflected: no S^G case changes in that month"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP09.PREMIUMS_NOT_INCOME, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C2)"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2023-08-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.PREMIUMS_NOT_INCOME",
+      "label": "company policy: employer JKK, JKM and health premiums excluded from gross income",
+      "label_id": "iuran JKK, JKM dan Jaminan Kesehatan bagian perusahaan tidak dimasukkan dalam penghasilan bruto",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employer_premiums_taxable"
+       },
+       {
+        "name": "expression",
+        "value": "0"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C2"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (2)",
+        "page": 1,
+        "quote": "Iuran sebagaimana dimaksud pada ayat (1) merupakan kewajiban Perusahaan kepada badan penyelenggara, bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21."
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The only provision departing from the KB is Pasal 25 ayat (2): it excludes employer JKK, JKM and health premiums from gross income. This contradicts mandatory REG.PREMIUMS.TAXABLE, so the company rule always loses and is only reported as conflict C2. Computed tax values therefore do not change from August 2023. The rates in Pasal 25 ayat (1) and Pasal 26 ayat (2) match existing regulation parameters and are not restated."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP09-cand2",
+    "event_id": "SP09",
+    "document": {
+     "id": "SP09",
+     "title": "PT Cahaya Farmasi Sejahtera: Peraturan Perusahaan",
+     "issued": "2023-08-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.PREMIUMS_NOT_INCOME",
+      "recorded_on": "2023-08-01",
+      "label": "company policy: employer JKK, JKM and health premiums excluded from gross income",
+      "label_id": "iuran JKK, JKM dan Jaminan Kesehatan bagian perusahaan tidak dimasukkan dalam penghasilan bruto",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "0",
+      "policy": "SP09",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (2)",
+        "quote": "Iuran sebagaimana dimaksud pada ayat (1) merupakan kewajiban Perusahaan kepada badan penyelenggara, bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21.",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The only provision departing from the KB is Pasal 25 ayat (2): it excludes employer JKK, JKM and health premiums from gross income. This contradicts mandatory REG.PREMIUMS.TAXABLE, so the company rule always loses and is only reported as conflict C2. Computed tax values therefore do not change from August 2023. The rates in Pasal 25 ayat (1) and Pasal 26 ayat (2) match existing regulation parameters and are not restated."
+   },
+   "initial_delta": {
+    "delta_id": "e2-sintetis-SP09-cand2",
+    "event_id": "SP09",
+    "document": {
+     "id": "SP09",
+     "title": "PT Cahaya Farmasi Sejahtera: Peraturan Perusahaan",
+     "issued": "2023-08-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.PREMIUMS_NOT_INCOME",
+      "recorded_on": "2023-08-01",
+      "label": "company policy: employer JKK, JKM and health premiums excluded from gross income",
+      "label_id": "iuran JKK, JKM dan Jaminan Kesehatan bagian perusahaan tidak dimasukkan dalam penghasilan bruto",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "0",
+      "policy": "SP09",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (2)",
+        "quote": "Iuran sebagaimana dimaksud pada ayat (1) merupakan kewajiban Perusahaan kepada badan penyelenggara, bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21.",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The company excludes employer-paid JKK, JKM and health premiums from gross income. This contradicts the mandatory REG.PREMIUMS.TAXABLE, so the company rule loses and is reported as a conflict. The rates in Pasal 25 ayat (1) and Pasal 26 ayat (2) (JKM 0,30%, health 4%, JHT 2%, JP 1%, JKK 0,54% = low risk group) match the existing regulation, so they are not restated."
+   }
+  }
+ ],
+ "groups": [
+  [
+   1
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-sintetis-SP09-cand1",
+  "event_id": "SP09",
+  "document": {
+   "id": "SP09",
+   "title": "PT Cahaya Farmasi Sejahtera: Peraturan Perusahaan",
+   "issued": "2023-08-01"
+  },
+  "relevant": false,
+  "add": [],
+  "change": [],
+  "remove": [],
+  "note": "The JKK 0,54%, JKM 0,30%, health 4%, JHT 2% and JP 1% rates, and the deduction of employee JHT/JP, only restate rules and parameters already in the knowledge base, so they change no result. The clause excluding employer premiums from PPh 21 gross income contradicts the mandatory REG.PREMIUMS.TAXABLE and cannot change the computation. Because no case result changes from August 2023, the document is treated as not relevant and nothing is added."
+ },
+ "cost_usd": 0.317077,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "Company regulation setting payroll rules that affect the PPh 21 calculation for its workers. It sets employer JKK at 0.54%, JKM at 0.30% and health insurance at 4% of monthly wages, and directs that these employer-paid contributions are excluded from employees' gross income for PPh 21. This departs from the statutory treatment, under which employer-paid JKK/JKM premiums are added to gross income. It also confirms that the employee's 2% JHT and 1% JP contributions are deductible.",
+   "quotes": [
+    {
+     "provision": "Pasal 25 ayat (1)",
+     "quote": "Perusahaan menanggung iuran JKK sebesar 0,54% (nol koma lima puluh empat persen), iuran JKM sebesar 0,30% (nol koma tiga puluh persen), dan iuran Jaminan Kesehatan sebesar 4% (empat persen) dari upah sebulan dengan batas upah sesuai ketentuan."
+    },
+    {
+     "provision": "Pasal 25 ayat (2)",
+     "quote": "bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21"
+    },
+    {
+     "provision": "Pasal 26 ayat (2)",
+     "quote": "Iuran JHT sebesar 2% (dua persen) dan iuran JP sebesar 1% (satu persen) bagian pekerja, dengan batas upah JP sesuai ketentuan BPJS Ketenagakerjaan, dikurangkan dalam penghitungan Pajak Penghasilan Pasal 21."
+    }
+   ],
+   "effective_from": "2023-08-01",
+   "effective_from_quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+   "effective_until": "2025-07-31",
+   "effective_until_quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT Cahaya Farmasi Sejahtera",
+     "quote": "PERATURAN PERUSAHAAN PT CAHAYA FARMASI SEJAHTERA PERIODE 2023-2025"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

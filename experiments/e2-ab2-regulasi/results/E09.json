@@ -1,0 +1,628 @@
+{
+ "run": "e2-ab2-regulasi",
+ "event": "E09",
+ "condition": "proposed",
+ "documents": [
+  "PP-36-2025"
+ ],
+ "selection": {
+  "PP-36-2025": {
+   "tokens": 2642,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "fail: dangling REG.BPJS.JKK_RATE_RELIEF_EXT_2025 jkk_rates_relief: table has no valid producer in 2025-08..2026-01",
+    "G3_warnings": []
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE_RELIEF_EXT_2025",
+      "label": "reduced JKK rate for certain labour-intensive industry companies, extension August 2025 to January 2026",
+      "label_id": "tarif iuran JKK keringanan bagi perusahaan industri padat karya tertentu, perpanjangan Agustus 2025 s.d. Januari 2026",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "recorded_on": "2025-09-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "condition",
+        "value": "employer('labour_intensive_industry') == True"
+       },
+       {
+        "name": "expression",
+        "value": "lookup('jkk_rates', employer('jkk_risk_group')) / 2"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2 (Pasal 10A)",
+        "page": 4,
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk\nprogram JKP sebagaimana dimaksud dalam Pasal 10\ndilakukan perpanjangan sampai dengan Iuran JKK\nbulan Januari 2026."
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "page": 4,
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran\nbulan berikutnya dan terdapat kelebihan maka kelebihan\npembayaran Iuran JKK tersebut diperhitungkan untuk\nIuran JKK bulan berikutnya."
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Penjelasan Umum",
+        "page": 6,
+        "quote": "perpanjangan jangka waktu pemberian keringanan Iuran JKK"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The PP 7/2025 relief (half of the normal JKK rate, which ended with the July 2025 contribution) is extended for the August 2025 to January 2026 contribution months; because the jkk_rates_relief table is only valid until July 2025, the rate is computed as half of the regular jkk_rates value, with the eligibility condition and risk-group attribute assumed to match the existing PP 7/2025 relief rule. Late-payment penalties do not affect the PPh 21 computation and are not modelled."
+   },
+   "delta": {
+    "delta_id": "e2-ab2-regulasi-E09-cand1",
+    "event_id": "E09",
+    "document": {
+     "id": "PP-36-2025",
+     "title": "PP 36/2025: Perpanjangan keringanan iuran JKK s.d. iuran Januari 2026",
+     "issued": "2025-09-04"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE_RELIEF_EXT_2025",
+      "recorded_on": "2025-09-04",
+      "label": "reduced JKK rate for certain labour-intensive industry companies, extension August 2025 to January 2026",
+      "label_id": "tarif iuran JKK keringanan bagi perusahaan industri padat karya tertentu, perpanjangan Agustus 2025 s.d. Januari 2026",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('labour_intensive_industry') == True",
+      "expression": "lookup('jkk_rates', employer('jkk_risk_group')) / 2",
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2 (Pasal 10A)",
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk\nprogram JKP sebagaimana dimaksud dalam Pasal 10\ndilakukan perpanjangan sampai dengan Iuran JKK\nbulan Januari 2026.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran\nbulan berikutnya dan terdapat kelebihan maka kelebihan\npembayaran Iuran JKK tersebut diperhitungkan untuk\nIuran JKK bulan berikutnya.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Penjelasan Umum",
+        "quote": "perpanjangan jangka waktu pemberian keringanan Iuran JKK",
+        "page": 6
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The PP 7/2025 relief (half of the normal JKK rate, which ended with the July 2025 contribution) is extended for the August 2025 to January 2026 contribution months; because the jkk_rates_relief table is only valid until July 2025, the rate is computed as half of the regular jkk_rates value, with the eligibility condition and risk-group attribute assumed to match the existing PP 7/2025 relief rule. Late-payment penalties do not affect the PPh 21 computation and are not modelled."
+   },
+   "initial_delta": {
+    "delta_id": "e2-ab2-regulasi-E09-cand1",
+    "event_id": "E09",
+    "document": {
+     "id": "PP-36-2025",
+     "title": "PP 36/2025: Perpanjangan keringanan iuran JKK s.d. iuran Januari 2026",
+     "issued": "2025-09-04"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.BPJS.JKK_RATE_RELIEF_EXT_2025",
+      "recorded_on": "2025-09-04",
+      "label": "reduced JKK rate for certain labour-intensive industry companies, extension August 2025 to January 2026",
+      "label_id": "tarif iuran JKK keringanan bagi perusahaan industri padat karya tertentu, perpanjangan Agustus 2025 s.d. Januari 2026",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('labour_intensive_industry') == True",
+      "expression": "lookup('jkk_rates_relief', employer('jkk_risk_group'))",
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2 (Pasal 10A)",
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk\nprogram JKP sebagaimana dimaksud dalam Pasal 10\ndilakukan perpanjangan sampai dengan Iuran JKK\nbulan Januari 2026.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran\nbulan berikutnya dan terdapat kelebihan maka kelebihan\npembayaran Iuran JKK tersebut diperhitungkan untuk\nIuran JKK bulan berikutnya.",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The PP 7/2025 relief (originally ending with the July 2025 contribution) is extended by a new rule reusing the existing jkk_rates_relief table for the August 2025 to January 2026 contribution months; the eligibility condition and risk-group attribute names are assumed to match those used by the existing PP 7/2025 relief rule. Late-payment penalties (2% per month) do not affect the PPh 21 computation and are not modelled."
+   }
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "fail: dangling REG.JKK.RATE_RELIEF_EXT_2025 jkk_rates_relief: table has no valid producer in 2025-08..2026-01",
+    "G3_warnings": []
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.JKK.RATE_RELIEF_EXT_2025",
+      "label": "reduced JKK rate for certain labour-intensive industries, extension August 2025 to January 2026",
+      "label_id": "penyesuaian (keringanan) iuran JKK perusahaan industri padat karya tertentu, perpanjangan s.d. iuran Januari 2026",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "recorded_on": "2025-09-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "condition",
+        "value": "employer('labour_intensive_industry') == True"
+       },
+       {
+        "name": "expression",
+        "value": "lookup('jkk_rates', employer('jkk_risk_group')) / 2"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2 (Pasal 10A)",
+        "page": 4,
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk program JKP sebagaimana dimaksud dalam Pasal 10 dilakukan perpanjangan sampai dengan Iuran JKK bulan Januari 2026."
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "page": 4,
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The extension is modelled as a new mandatory rule producing jkk_rate for the August 2025 to January 2026 contribution months. The relief table from PP 7/2025 is no longer valid in these months, so the rule applies the PP 7/2025 relief (half of the normal rate) directly to the regular jkk_rates table. The JKP recomposition, payment deadline and late-payment fines do not affect PPh 21 and are not modelled."
+   },
+   "delta": {
+    "delta_id": "e2-ab2-regulasi-E09-cand2",
+    "event_id": "E09",
+    "document": {
+     "id": "PP-36-2025",
+     "title": "PP 36/2025: Perpanjangan keringanan iuran JKK s.d. iuran Januari 2026",
+     "issued": "2025-09-04"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.JKK.RATE_RELIEF_EXT_2025",
+      "recorded_on": "2025-09-04",
+      "label": "reduced JKK rate for certain labour-intensive industries, extension August 2025 to January 2026",
+      "label_id": "penyesuaian (keringanan) iuran JKK perusahaan industri padat karya tertentu, perpanjangan s.d. iuran Januari 2026",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('labour_intensive_industry') == True",
+      "expression": "lookup('jkk_rates', employer('jkk_risk_group')) / 2",
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2 (Pasal 10A)",
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk program JKP sebagaimana dimaksud dalam Pasal 10 dilakukan perpanjangan sampai dengan Iuran JKK bulan Januari 2026.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The extension is modelled as a new mandatory rule producing jkk_rate for the August 2025 to January 2026 contribution months. The relief table from PP 7/2025 is no longer valid in these months, so the rule applies the PP 7/2025 relief (half of the normal rate) directly to the regular jkk_rates table. The JKP recomposition, payment deadline and late-payment fines do not affect PPh 21 and are not modelled."
+   },
+   "initial_delta": {
+    "delta_id": "e2-ab2-regulasi-E09-cand2",
+    "event_id": "E09",
+    "document": {
+     "id": "PP-36-2025",
+     "title": "PP 36/2025: Perpanjangan keringanan iuran JKK s.d. iuran Januari 2026",
+     "issued": "2025-09-04"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.JKK.RATE_RELIEF_EXT_2025",
+      "recorded_on": "2025-09-04",
+      "label": "reduced JKK rate for certain labour-intensive industries, extension August 2025 to January 2026",
+      "label_id": "penyesuaian (keringanan) iuran JKK perusahaan industri padat karya tertentu, perpanjangan s.d. iuran Januari 2026",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('labour_intensive_industry') == True",
+      "expression": "lookup('jkk_rates_relief', employer('jkk_risk_group'))",
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2 (Pasal 10A)",
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk program JKP sebagaimana dimaksud dalam Pasal 10 dilakukan perpanjangan sampai dengan Iuran JKK bulan Januari 2026.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran",
+        "page": 4
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The extension is modelled as a new mandatory rule producing jkk_rate for the August 2025 to January 2026 contribution months. It reuses the existing jkk_rates_relief table from PP 7/2025, keyed by the employer's risk group, and assumes that table stays valid for these months. The JKP recomposition, the payment deadline and the late-payment fines do not affect the PPh 21 computation, so they are not modelled."
+   }
+  },
+  {
+   "n": 3,
+   "order": 2,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "fail: dangling REG.JKK.RELIEF_RATE_EXT_2025 jkk_rates_relief: table has no valid producer in 2025-08..2026-01",
+    "G3_warnings": []
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.JKK.RELIEF_RATE_EXT_2025",
+      "label": "reduced JKK rate for certain labour-intensive industry companies, extension to the January 2026 contribution",
+      "label_id": "penyesuaian tarif iuran JKK perusahaan industri padat karya tertentu, perpanjangan sampai iuran Januari 2026",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "recorded_on": "2025-09-04",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "condition",
+        "value": "employer('labour_intensive_industry') == True"
+       },
+       {
+        "name": "expression",
+        "value": "lookup('jkk_rates', employer('jkk_risk_group')) / 2"
+       }
+      ],
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2 (Pasal 10A)",
+        "page": 4,
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk program JKP sebagaimana dimaksud dalam Pasal 10 dilakukan perpanjangan sampai dengan Iuran JKK bulan Januari 2026."
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "page": 5,
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran bulan berikutnya dan terdapat kelebihan maka kelebihan pembayaran Iuran JKK tersebut diperhitungkan untuk Iuran JKK bulan berikutnya."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Because the jkk_rates_relief table is not valid after July 2025 and this document gives no rates, the extended relief (August 2025 to January 2026 contributions, start inferred from the Pasal II reference to the August 2025 contribution) is expressed as the PP 7/2025 50% reduction of the regular jkk_rates table rate. The employer attribute names are assumed to match the original relief rule; the late-payment fine provisions do not affect PPh 21."
+   },
+   "delta": {
+    "delta_id": "e2-ab2-regulasi-E09-cand3",
+    "event_id": "E09",
+    "document": {
+     "id": "PP-36-2025",
+     "title": "PP 36/2025: Perpanjangan keringanan iuran JKK s.d. iuran Januari 2026",
+     "issued": "2025-09-04"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.JKK.RELIEF_RATE_EXT_2025",
+      "recorded_on": "2025-09-04",
+      "label": "reduced JKK rate for certain labour-intensive industry companies, extension to the January 2026 contribution",
+      "label_id": "penyesuaian tarif iuran JKK perusahaan industri padat karya tertentu, perpanjangan sampai iuran Januari 2026",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('labour_intensive_industry') == True",
+      "expression": "lookup('jkk_rates', employer('jkk_risk_group')) / 2",
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2 (Pasal 10A)",
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk program JKP sebagaimana dimaksud dalam Pasal 10 dilakukan perpanjangan sampai dengan Iuran JKK bulan Januari 2026.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran bulan berikutnya dan terdapat kelebihan maka kelebihan pembayaran Iuran JKK tersebut diperhitungkan untuk Iuran JKK bulan berikutnya.",
+        "page": 5
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Because the jkk_rates_relief table is not valid after July 2025 and this document gives no rates, the extended relief (August 2025 to January 2026 contributions, start inferred from the Pasal II reference to the August 2025 contribution) is expressed as the PP 7/2025 50% reduction of the regular jkk_rates table rate. The employer attribute names are assumed to match the original relief rule; the late-payment fine provisions do not affect PPh 21."
+   },
+   "initial_delta": {
+    "delta_id": "e2-ab2-regulasi-E09-cand3",
+    "event_id": "E09",
+    "document": {
+     "id": "PP-36-2025",
+     "title": "PP 36/2025: Perpanjangan keringanan iuran JKK s.d. iuran Januari 2026",
+     "issued": "2025-09-04"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.JKK.RELIEF_RATE_EXT_2025",
+      "recorded_on": "2025-09-04",
+      "label": "reduced JKK rate for certain labour-intensive industry companies, extension to the January 2026 contribution",
+      "label_id": "penyesuaian tarif iuran JKK perusahaan industri padat karya tertentu, perpanjangan sampai iuran Januari 2026",
+      "valid_from": "2025-08-01",
+      "valid_until": "2026-01-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('labour_intensive_industry') == True",
+      "expression": "lookup('jkk_rates_relief', employer('jkk_risk_group'))",
+      "source": [
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal I angka 2 (Pasal 10A)",
+        "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk program JKP sebagaimana dimaksud dalam Pasal 10 dilakukan perpanjangan sampai dengan Iuran JKK bulan Januari 2026.",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "quote": "Perusahaan industri padat karya tertentu yang telah",
+        "page": 4
+       },
+       {
+        "document": "PP-36-2025",
+        "provision": "Pasal II angka 1",
+        "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran bulan berikutnya dan terdapat kelebihan maka kelebihan pembayaran Iuran JKK tersebut diperhitungkan untuk Iuran JKK bulan berikutnya.",
+        "page": 5
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The extension is read as continuing the PP 7/2025 reduced JKK rate, using the existing jkk_rates_relief table, for the August 2025 to January 2026 contribution months. The start is inferred from the Pasal II reference to the August 2025 contribution. The condition and key attribute names, employer('labour_intensive_industry') and employer('jkk_risk_group'), are assumed to match the original relief rule; the late-payment fine rules do not affect PPh 21."
+   }
+  }
+ ],
+ "groups": [
+  [
+   2,
+   1,
+   3
+  ]
+ ],
+ "selected": 2,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-ab2-regulasi-E09-cand2",
+  "event_id": "E09",
+  "document": {
+   "id": "PP-36-2025",
+   "title": "PP 36/2025: Perpanjangan keringanan iuran JKK s.d. iuran Januari 2026",
+   "issued": "2025-09-04"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "REG.JKK.RATE_RELIEF_EXT_2025",
+    "recorded_on": "2025-09-04",
+    "label": "reduced JKK rate for certain labour-intensive industries, extension August 2025 to January 2026",
+    "label_id": "penyesuaian (keringanan) iuran JKK perusahaan industri padat karya tertentu, perpanjangan s.d. iuran Januari 2026",
+    "valid_from": "2025-08-01",
+    "valid_until": "2026-01-31",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "jkk_rate",
+    "condition": "employer('labour_intensive_industry') == True",
+    "expression": "lookup('jkk_rates', employer('jkk_risk_group')) / 2",
+    "source": [
+     {
+      "document": "PP-36-2025",
+      "provision": "Pasal I angka 2 (Pasal 10A)",
+      "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk program JKP sebagaimana dimaksud dalam Pasal 10 dilakukan perpanjangan sampai dengan Iuran JKK bulan Januari 2026.",
+      "page": 4
+     },
+     {
+      "document": "PP-36-2025",
+      "provision": "Pasal II angka 1",
+      "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran",
+      "page": 4
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "The extension is modelled as a new mandatory rule producing jkk_rate for the August 2025 to January 2026 contribution months. The relief table from PP 7/2025 is no longer valid in these months, so the rule applies the PP 7/2025 relief (half of the normal rate) directly to the regular jkk_rates table. The JKP recomposition, payment deadline and late-payment fines do not affect PPh 21 and are not modelled."
+ },
+ "cost_usd": 0.387774,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "This regulation extends the JKK (work accident insurance) contribution adjustment for certain labour-intensive industry companies from PP 7/2025 up to the January 2026 contribution. The employer-paid JKK premium is part of a permanent employee's gross income for PPh 21. Extending the reduced contribution therefore lengthens the period in which a lower JKK amount enters the PPh 21 calculation for employees of these companies. Since the original facility covered contributions through July 2025 and Pasal II refers to August 2025 contributions, the extension appears to cover the August 2025 to January 2026 contribution months.",
+   "quotes": [
+    {
+     "provision": "Pasal I angka 2 (Pasal 10A)",
+     "quote": "Penyesuaian Iuran JKK dan rekomposisi Iuran JKK untuk program JKP sebagaimana dimaksud dalam Pasal 10 dilakukan perpanjangan sampai dengan Iuran JKK bulan Januari 2026."
+    },
+    {
+     "provision": "Penjelasan Umum",
+     "quote": "maka perlu memperpanjang jangka waktu penyesuaian Iuran JKK sebagaimana diatur dalam Peraturan Pemerintah"
+    },
+    {
+     "provision": "Pasal II angka 1",
+     "quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran bulan berikutnya dan terdapat kelebihan maka kelebihan pembayaran Iuran JKK tersebut diperhitungkan untuk Iuran JKK bulan berikutnya."
+    }
+   ],
+   "effective_from": "2025-08-01",
+   "effective_from_quote": "melunasi Iuran JKK bulan Agustus 2O25 dan/ atau Iuran bulan berikutnya dan terdapat kelebihan",
+   "effective_until": "2026-01-31",
+   "effective_until_quote": "dilakukan perpanjangan sampai dengan Iuran JKK bulan Januari 2026",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "Perusahaan industri padat karya tertentu (certain labour-intensive industry companies)",
+     "quote": "PERUSAHAAN INDUSTRI PADAT KARYA TERTENTU TAHUN 2025"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

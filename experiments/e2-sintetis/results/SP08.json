@@ -1,0 +1,1559 @@
+{
+ "run": "e2-sintetis",
+ "event": "SP08",
+ "condition": "proposed",
+ "documents": [
+  "SP08"
+ ],
+ "selection": {
+  "SP08": {
+   "tokens": 683,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP08.ANNUAL_DEDUCTIONS, REG.YEAR.DEDUCTIONS annual_deductions: company rule always loses to mandatory REG.YEAR.DEDUCTIONS (conflict C1)",
+     "overridden PRS.SP08.TAXABLE_ROUNDING, REG.YEAR.TAXABLE taxable_income: company rule always loses to mandatory REG.YEAR.TAXABLE (conflict C3)"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2024-02-01 is not reflected: no S^G case changes in that month"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP08.ANNUAL_DEDUCTIONS, REG.YEAR.DEDUCTIONS annual_deductions: company rule always loses to mandatory REG.YEAR.DEDUCTIONS (conflict C1)",
+     "overridden PRS.SP08.JOB_EXPENSE, REG.YEAR.JOB_EXPENSE job_expense: company rule always loses to mandatory REG.YEAR.JOB_EXPENSE (conflict C2)",
+     "overridden PRS.SP08.TAXABLE_ROUNDING, REG.YEAR.TAXABLE taxable_income: company rule always loses to mandatory REG.YEAR.TAXABLE (conflict C3)"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2024-02-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.ANNUAL_DEDUCTIONS",
+      "label": "company policy: annual deductions also include the employee health contribution",
+      "label_id": "pengurang setahun termasuk iuran Jaminan Kesehatan bagian pekerja",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2024-02-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_deductions"
+       },
+       {
+        "name": "expression",
+        "value": "job_expense + annual_pension_contributions + sum_periods('health_employee') + annual_zakat_deduction"
+       },
+       {
+        "name": "policy",
+        "value": "SP08"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C1"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf c",
+        "page": 1,
+        "quote": "mengurangkan iuran JHT, iuran JP, dan iuran Jaminan Kesehatan bagian pekerja setahun"
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.TAXABLE_ROUNDING",
+      "label": "company policy: taxable income rounded to the nearest thousand (500 or more up)",
+      "label_id": "PKP dibulatkan ke ribuan rupiah terdekat",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2024-02-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "taxable_income"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, round(annual_net - ptkp_amount, 1000, 'half_up'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP08"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C3"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf e",
+        "page": 1,
+        "quote": "membulatkan Penghasilan Kena Pajak ke ribuan rupiah terdekat, dengan sisa Rp500,00 (lima ratus rupiah) atau lebih dibulatkan ke atas"
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.PPH_DUE_RUNNING_ROUNDING",
+      "label": "company policy: PPh 21 due of each non-final period rounded up to full hundreds",
+      "label_id": "PPh Pasal 21 terutang masa dibulatkan ke atas hingga ratusan rupiah penuh",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2024-02-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_due"
+       },
+       {
+        "name": "expression",
+        "value": "round(pph21_running, 100, 'up')"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "policy",
+        "value": "SP08"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C4"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (3)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh."
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.PPH_FINAL_ROUNDING",
+      "label": "company policy: final-period PPh 21 rounded up to full hundreds",
+      "label_id": "PPh Pasal 21 masa terakhir dibulatkan ke atas hingga ratusan rupiah penuh",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2024-02-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_due"
+       },
+       {
+        "name": "expression",
+        "value": "round(final_period_tax, 100, 'up')"
+       },
+       {
+        "name": "condition",
+        "value": "is_final_period"
+       },
+       {
+        "name": "policy",
+        "value": "SP08"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C4"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (3)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh."
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The monthly rounding up to hundreds now targets the output fact pph21_due (from February 2024), so its conflict with the mandatory withholding is visible in each period; the health-contribution deduction and half-up PKP rounding are company deviations that lose to mandatory rules and are reported as conflicts. The 5% biaya jabatan restates the statutory rate (the cap is left to the law per Pasal 39 ayat (2)), so no job-expense rule is added."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP08-cand1",
+    "event_id": "SP08",
+    "document": {
+     "id": "SP08",
+     "title": "PT Kreasi Digital Nusantara: Peraturan Perusahaan (Lampiran Prosedur Penggajian)",
+     "issued": "2024-02-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.ANNUAL_DEDUCTIONS",
+      "recorded_on": "2024-02-01",
+      "label": "company policy: annual deductions also include the employee health contribution",
+      "label_id": "pengurang setahun termasuk iuran Jaminan Kesehatan bagian pekerja",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "annual_deductions",
+      "expression": "job_expense + annual_pension_contributions + sum_periods('health_employee') + annual_zakat_deduction",
+      "policy": "SP08",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf c",
+        "quote": "mengurangkan iuran JHT, iuran JP, dan iuran Jaminan Kesehatan bagian pekerja setahun",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.TAXABLE_ROUNDING",
+      "recorded_on": "2024-02-01",
+      "label": "company policy: taxable income rounded to the nearest thousand (500 or more up)",
+      "label_id": "PKP dibulatkan ke ribuan rupiah terdekat",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "taxable_income",
+      "expression": "max(0, round(annual_net - ptkp_amount, 1000, 'half_up'))",
+      "policy": "SP08",
+      "conflict_code": "C3",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf e",
+        "quote": "membulatkan Penghasilan Kena Pajak ke ribuan rupiah terdekat, dengan sisa Rp500,00 (lima ratus rupiah) atau lebih dibulatkan ke atas",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.PPH_DUE_RUNNING_ROUNDING",
+      "recorded_on": "2024-02-01",
+      "label": "company policy: PPh 21 due of each non-final period rounded up to full hundreds",
+      "label_id": "PPh Pasal 21 terutang masa dibulatkan ke atas hingga ratusan rupiah penuh",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "not is_final_period",
+      "expression": "round(pph21_running, 100, 'up')",
+      "policy": "SP08",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (3)",
+        "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh.",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.PPH_FINAL_ROUNDING",
+      "recorded_on": "2024-02-01",
+      "label": "company policy: final-period PPh 21 rounded up to full hundreds",
+      "label_id": "PPh Pasal 21 masa terakhir dibulatkan ke atas hingga ratusan rupiah penuh",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "is_final_period",
+      "expression": "round(final_period_tax, 100, 'up')",
+      "policy": "SP08",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (3)",
+        "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh.",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The monthly rounding up to hundreds now targets the output fact pph21_due (from February 2024), so its conflict with the mandatory withholding is visible in each period; the health-contribution deduction and half-up PKP rounding are company deviations that lose to mandatory rules and are reported as conflicts. The 5% biaya jabatan restates the statutory rate (the cap is left to the law per Pasal 39 ayat (2)), so no job-expense rule is added."
+   },
+   "initial_delta": {
+    "delta_id": "e2-sintetis-SP08-cand1",
+    "event_id": "SP08",
+    "document": {
+     "id": "SP08",
+     "title": "PT Kreasi Digital Nusantara: Peraturan Perusahaan (Lampiran Prosedur Penggajian)",
+     "issued": "2024-02-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.ANNUAL_DEDUCTIONS",
+      "recorded_on": "2024-02-01",
+      "label": "company policy: annual deductions also include the employee health contribution",
+      "label_id": "pengurang setahun termasuk iuran Jaminan Kesehatan bagian pekerja",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "annual_deductions",
+      "expression": "job_expense + annual_pension_contributions + sum_periods('health_employee') + annual_zakat_deduction",
+      "policy": "SP08",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf c",
+        "quote": "mengurangkan iuran JHT, iuran JP, dan iuran Jaminan Kesehatan bagian pekerja setahun",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.JOB_EXPENSE",
+      "recorded_on": "2024-02-01",
+      "label": "company policy: job expense 5% of annual gross without cap",
+      "label_id": "biaya jabatan 5% dari penghasilan bruto setahun tanpa batas",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "job_expense",
+      "expression": "round(5 / 100 * annual_gross, 1, 'down')",
+      "policy": "SP08",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf b",
+        "quote": "mengurangkan biaya jabatan sebesar 5% (lima persen) dari penghasilan bruto setahun",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.TAXABLE_ROUNDING",
+      "recorded_on": "2024-02-01",
+      "label": "company policy: taxable income rounded to the nearest thousand (500 or more up)",
+      "label_id": "PKP dibulatkan ke ribuan rupiah terdekat",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "taxable_income",
+      "expression": "max(0, round(annual_net - ptkp_amount, 1000, 'half_up'))",
+      "policy": "SP08",
+      "conflict_code": "C3",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf e",
+        "quote": "membulatkan Penghasilan Kena Pajak ke ribuan rupiah terdekat, dengan sisa Rp500,00 (lima ratus rupiah) atau lebih dibulatkan ke atas",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.PPH_RUNNING_ROUNDING",
+      "recorded_on": "2024-02-01",
+      "label": "company policy: monthly PPh 21 (January-November) rounded up to full hundreds",
+      "label_id": "PPh Pasal 21 masa dibulatkan ke atas hingga ratusan rupiah penuh",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(ter_rate * gross_income, 100, 'up')",
+      "policy": "SP08",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (3)",
+        "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh.",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.PPH_FINAL_ROUNDING",
+      "recorded_on": "2024-02-01",
+      "label": "company policy: final-period PPh 21 rounded up to full hundreds",
+      "label_id": "PPh Pasal 21 masa terakhir dibulatkan ke atas hingga ratusan rupiah penuh",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "is_final_period",
+      "expression": "round(final_period_tax, 100, 'up')",
+      "policy": "SP08",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (3)",
+        "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh.",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The company's departures from statutory method are modelled as company-layer default rules for policy SP08. They cover the extra Jaminan Kesehatan deduction, 5% biaya jabatan with no cap, half-up rounding of PKP to thousands, and rounding up of each period's PPh 21 (running and December) to hundreds. These lose to the mandatory rules and are reported as conflicts. Zakat stays in annual deductions because the policy defers unregulated matters to the law; conflict codes C1-C4 were assigned by interpretation."
+   }
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP08.ANNUAL_DEDUCTIONS, REG.YEAR.DEDUCTIONS annual_deductions: company rule always loses to mandatory REG.YEAR.DEDUCTIONS (conflict C3)",
+     "overridden PRS.SP08.JOB_EXPENSE, REG.YEAR.JOB_EXPENSE job_expense: company rule always loses to mandatory REG.YEAR.JOB_EXPENSE (conflict C2)",
+     "overridden PRS.SP08.TAXABLE_INCOME, REG.YEAR.TAXABLE taxable_income: company rule always loses to mandatory REG.YEAR.TAXABLE (conflict C5)"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP08.ANNUAL_DEDUCTIONS, REG.YEAR.DEDUCTIONS annual_deductions: company rule always loses to mandatory REG.YEAR.DEDUCTIONS (conflict C3)",
+     "overridden PRS.SP08.JOB_EXPENSE, REG.YEAR.JOB_EXPENSE job_expense: company rule always loses to mandatory REG.YEAR.JOB_EXPENSE (conflict C2)",
+     "overridden PRS.SP08.TAXABLE_INCOME, REG.YEAR.TAXABLE taxable_income: company rule always loses to mandatory REG.YEAR.TAXABLE (conflict C5)"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2024-02-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.ANNUAL_DEDUCTIONS",
+      "label": "company: December deductions include the employee health contribution",
+      "label_id": "pengurang setahun termasuk iuran Jaminan Kesehatan pekerja",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2024-02-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "annual_deductions"
+       },
+       {
+        "name": "expression",
+        "value": "job_expense + annual_pension_contributions + sum_periods('health_employee') + annual_zakat_deduction"
+       },
+       {
+        "name": "policy",
+        "value": "SP08"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C3"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf c",
+        "page": 1,
+        "quote": "mengurangkan iuran JHT, iuran JP, dan iuran Jaminan Kesehatan bagian pekerja setahun"
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.JOB_EXPENSE",
+      "label": "company: job expense 5% of annual gross without cap",
+      "label_id": "biaya jabatan 5% dari penghasilan bruto setahun tanpa batas",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2024-02-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "job_expense"
+       },
+       {
+        "name": "expression",
+        "value": "round(5 / 100 * annual_gross, 1, 'down')"
+       },
+       {
+        "name": "policy",
+        "value": "SP08"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C2"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf b",
+        "page": 1,
+        "quote": "mengurangkan biaya jabatan sebesar 5% (lima persen) dari penghasilan bruto setahun"
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.TAXABLE_INCOME",
+      "label": "company: taxable income rounded to the nearest thousand (half up)",
+      "label_id": "PKP dibulatkan ke ribuan terdekat",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2024-02-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "taxable_income"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, round(annual_net - ptkp_amount, 1000, 'half_up'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP08"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C5"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf e",
+        "page": 1,
+        "quote": "membulatkan Penghasilan Kena Pajak ke ribuan rupiah terdekat, dengan sisa Rp500,00 (lima ratus rupiah) atau lebih dibulatkan ke atas"
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.RUNNING_ROUND",
+      "label": "company: monthly TER withholding rounded up to full hundreds",
+      "label_id": "PPh 21 masa dibulatkan ke atas ratusan rupiah",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2024-02-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_running"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "expression",
+        "value": "round(ter_rate * gross_income, 100, 'up')"
+       },
+       {
+        "name": "policy",
+        "value": "SP08"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C6"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (3)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh."
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.FINAL_ROUND",
+      "label": "company: December PPh 21 rounded up to full hundreds",
+      "label_id": "PPh 21 Masa Desember dibulatkan ke atas ratusan rupiah",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2024-02-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_due"
+       },
+       {
+        "name": "condition",
+        "value": "is_final_period"
+       },
+       {
+        "name": "expression",
+        "value": "round(final_period_tax, 100, 'up')"
+       },
+       {
+        "name": "policy",
+        "value": "SP08"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C6"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (3)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh."
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.TAX_BURDEN_ROUND",
+      "label": "company: PPh 21 charged to the employee each period rounded up to full hundreds",
+      "label_id": "PPh 21 yang dipotong dari pegawai dibulatkan ke atas ratusan rupiah",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "recorded_on": "2024-02-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employee_tax_burden"
+       },
+       {
+        "name": "expression",
+        "value": "0 if withholding_method == 'employer_borne' else (round(pph21_due - pph21_dtp, 100, 'up') if (not is_final_period or pph21_due >= 0) else (0 - refund_to_employee))"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.THP.TAX_BURDEN"
+       },
+       {
+        "name": "policy",
+        "value": "SP08"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (3)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh."
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Steps of Pasal 18 that depart from the statutory method (health contribution deduction, uncapped 5% job expense, half-up PKP rounding, rounding PPh 21 up to hundreds) are company rules that lose to mandatory rules and are reported as conflicts; the rounding-up is additionally applied where the company has latitude, namely the PPh 21 amount charged to the employee in payroll (employee_tax_burden), which takes effect from February 2024."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP08-cand2",
+    "event_id": "SP08",
+    "document": {
+     "id": "SP08",
+     "title": "PT Kreasi Digital Nusantara: Peraturan Perusahaan (Lampiran Prosedur Penggajian)",
+     "issued": "2024-02-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.ANNUAL_DEDUCTIONS",
+      "recorded_on": "2024-02-01",
+      "label": "company: December deductions include the employee health contribution",
+      "label_id": "pengurang setahun termasuk iuran Jaminan Kesehatan pekerja",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "annual_deductions",
+      "expression": "job_expense + annual_pension_contributions + sum_periods('health_employee') + annual_zakat_deduction",
+      "policy": "SP08",
+      "conflict_code": "C3",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf c",
+        "quote": "mengurangkan iuran JHT, iuran JP, dan iuran Jaminan Kesehatan bagian pekerja setahun",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.JOB_EXPENSE",
+      "recorded_on": "2024-02-01",
+      "label": "company: job expense 5% of annual gross without cap",
+      "label_id": "biaya jabatan 5% dari penghasilan bruto setahun tanpa batas",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "job_expense",
+      "expression": "round(5 / 100 * annual_gross, 1, 'down')",
+      "policy": "SP08",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf b",
+        "quote": "mengurangkan biaya jabatan sebesar 5% (lima persen) dari penghasilan bruto setahun",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.TAXABLE_INCOME",
+      "recorded_on": "2024-02-01",
+      "label": "company: taxable income rounded to the nearest thousand (half up)",
+      "label_id": "PKP dibulatkan ke ribuan terdekat",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "taxable_income",
+      "expression": "max(0, round(annual_net - ptkp_amount, 1000, 'half_up'))",
+      "policy": "SP08",
+      "conflict_code": "C5",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf e",
+        "quote": "membulatkan Penghasilan Kena Pajak ke ribuan rupiah terdekat, dengan sisa Rp500,00 (lima ratus rupiah) atau lebih dibulatkan ke atas",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.RUNNING_ROUND",
+      "recorded_on": "2024-02-01",
+      "label": "company: monthly TER withholding rounded up to full hundreds",
+      "label_id": "PPh 21 masa dibulatkan ke atas ratusan rupiah",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(ter_rate * gross_income, 100, 'up')",
+      "policy": "SP08",
+      "conflict_code": "C6",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (3)",
+        "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh.",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.FINAL_ROUND",
+      "recorded_on": "2024-02-01",
+      "label": "company: December PPh 21 rounded up to full hundreds",
+      "label_id": "PPh 21 Masa Desember dibulatkan ke atas ratusan rupiah",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "is_final_period",
+      "expression": "round(final_period_tax, 100, 'up')",
+      "policy": "SP08",
+      "conflict_code": "C6",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (3)",
+        "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh.",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.TAX_BURDEN_ROUND",
+      "recorded_on": "2024-02-01",
+      "label": "company: PPh 21 charged to the employee each period rounded up to full hundreds",
+      "label_id": "PPh 21 yang dipotong dari pegawai dibulatkan ke atas ratusan rupiah",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employee_tax_burden",
+      "expression": "0 if withholding_method == 'employer_borne' else (round(pph21_due - pph21_dtp, 100, 'up') if (not is_final_period or pph21_due >= 0) else (0 - refund_to_employee))",
+      "policy": "SP08",
+      "overrides": [
+       "REG.THP.TAX_BURDEN"
+      ],
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (3)",
+        "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh.",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Steps of Pasal 18 that depart from the statutory method (health contribution deduction, uncapped 5% job expense, half-up PKP rounding, rounding PPh 21 up to hundreds) are company rules that lose to mandatory rules and are reported as conflicts; the rounding-up is additionally applied where the company has latitude, namely the PPh 21 amount charged to the employee in payroll (employee_tax_burden), which takes effect from February 2024."
+   },
+   "initial_delta": {
+    "delta_id": "e2-sintetis-SP08-cand2",
+    "event_id": "SP08",
+    "document": {
+     "id": "SP08",
+     "title": "PT Kreasi Digital Nusantara: Peraturan Perusahaan (Lampiran Prosedur Penggajian)",
+     "issued": "2024-02-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.ANNUAL_DEDUCTIONS",
+      "recorded_on": "2024-02-01",
+      "label": "company: December deductions include the employee health contribution",
+      "label_id": "pengurang setahun termasuk iuran Jaminan Kesehatan pekerja",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "annual_deductions",
+      "expression": "job_expense + annual_pension_contributions + sum_periods('health_employee') + annual_zakat_deduction",
+      "policy": "SP08",
+      "conflict_code": "C3",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf c",
+        "quote": "mengurangkan iuran JHT, iuran JP, dan iuran Jaminan Kesehatan bagian pekerja setahun",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.JOB_EXPENSE",
+      "recorded_on": "2024-02-01",
+      "label": "company: job expense 5% of annual gross without cap",
+      "label_id": "biaya jabatan 5% dari penghasilan bruto setahun tanpa batas",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "job_expense",
+      "expression": "round(5 / 100 * annual_gross, 1, 'down')",
+      "policy": "SP08",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf b",
+        "quote": "mengurangkan biaya jabatan sebesar 5% (lima persen) dari penghasilan bruto setahun",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.TAXABLE_INCOME",
+      "recorded_on": "2024-02-01",
+      "label": "company: taxable income rounded to the nearest thousand (half up)",
+      "label_id": "PKP dibulatkan ke ribuan terdekat",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "taxable_income",
+      "expression": "max(0, round(annual_net - ptkp_amount, 1000, 'half_up'))",
+      "policy": "SP08",
+      "conflict_code": "C5",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (2) huruf e",
+        "quote": "membulatkan Penghasilan Kena Pajak ke ribuan rupiah terdekat, dengan sisa Rp500,00 (lima ratus rupiah) atau lebih dibulatkan ke atas",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.RUNNING_ROUND",
+      "recorded_on": "2024-02-01",
+      "label": "company: monthly TER withholding rounded up to full hundreds",
+      "label_id": "PPh 21 masa dibulatkan ke atas ratusan rupiah",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "round(ter_rate * gross_income, 100, 'up')",
+      "policy": "SP08",
+      "conflict_code": "C6",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (3)",
+        "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh.",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP08.FINAL_ROUND",
+      "recorded_on": "2024-02-01",
+      "label": "company: December PPh 21 rounded up to full hundreds",
+      "label_id": "PPh 21 Masa Desember dibulatkan ke atas ratusan rupiah",
+      "valid_from": "2024-02-01",
+      "valid_until": "2025-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "is_final_period",
+      "expression": "round(final_period_tax, 100, 'up')",
+      "policy": "SP08",
+      "conflict_code": "C6",
+      "source": [
+       {
+        "document": "SP08",
+        "provision": "Pasal 18 ayat (3)",
+        "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh.",
+        "page": 1
+       },
+       {
+        "document": "SP08",
+        "provision": "Pasal 39 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only the steps of Pasal 18 that depart from the statutory method are modelled as company rules (health contribution deduction, uncapped 5% job expense read literally since no cap is stated, half-up PKP rounding, rounding each period's PPh 21 up to hundreds). These rules lose to the mandatory regulation rules and are reported as conflicts; the steps that match the regulation are not restated."
+   }
+  }
+ ],
+ "groups": [
+  [
+   2
+  ]
+ ],
+ "selected": 2,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-sintetis-SP08-cand2",
+  "event_id": "SP08",
+  "document": {
+   "id": "SP08",
+   "title": "PT Kreasi Digital Nusantara: Peraturan Perusahaan (Lampiran Prosedur Penggajian)",
+   "issued": "2024-02-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP08.ANNUAL_DEDUCTIONS",
+    "recorded_on": "2024-02-01",
+    "label": "company: December deductions include the employee health contribution",
+    "label_id": "pengurang setahun termasuk iuran Jaminan Kesehatan pekerja",
+    "valid_from": "2024-02-01",
+    "valid_until": "2025-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "annual_deductions",
+    "expression": "job_expense + annual_pension_contributions + sum_periods('health_employee') + annual_zakat_deduction",
+    "policy": "SP08",
+    "conflict_code": "C3",
+    "source": [
+     {
+      "document": "SP08",
+      "provision": "Pasal 18 ayat (2) huruf c",
+      "quote": "mengurangkan iuran JHT, iuran JP, dan iuran Jaminan Kesehatan bagian pekerja setahun",
+      "page": 1
+     },
+     {
+      "document": "SP08",
+      "provision": "Pasal 39 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP08.JOB_EXPENSE",
+    "recorded_on": "2024-02-01",
+    "label": "company: job expense 5% of annual gross without cap",
+    "label_id": "biaya jabatan 5% dari penghasilan bruto setahun tanpa batas",
+    "valid_from": "2024-02-01",
+    "valid_until": "2025-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "job_expense",
+    "expression": "round(5 / 100 * annual_gross, 1, 'down')",
+    "policy": "SP08",
+    "conflict_code": "C2",
+    "source": [
+     {
+      "document": "SP08",
+      "provision": "Pasal 18 ayat (2) huruf b",
+      "quote": "mengurangkan biaya jabatan sebesar 5% (lima persen) dari penghasilan bruto setahun",
+      "page": 1
+     },
+     {
+      "document": "SP08",
+      "provision": "Pasal 39 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP08.TAXABLE_INCOME",
+    "recorded_on": "2024-02-01",
+    "label": "company: taxable income rounded to the nearest thousand (half up)",
+    "label_id": "PKP dibulatkan ke ribuan terdekat",
+    "valid_from": "2024-02-01",
+    "valid_until": "2025-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "taxable_income",
+    "expression": "max(0, round(annual_net - ptkp_amount, 1000, 'half_up'))",
+    "policy": "SP08",
+    "conflict_code": "C5",
+    "source": [
+     {
+      "document": "SP08",
+      "provision": "Pasal 18 ayat (2) huruf e",
+      "quote": "membulatkan Penghasilan Kena Pajak ke ribuan rupiah terdekat, dengan sisa Rp500,00 (lima ratus rupiah) atau lebih dibulatkan ke atas",
+      "page": 1
+     },
+     {
+      "document": "SP08",
+      "provision": "Pasal 39 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP08.RUNNING_ROUND",
+    "recorded_on": "2024-02-01",
+    "label": "company: monthly TER withholding rounded up to full hundreds",
+    "label_id": "PPh 21 masa dibulatkan ke atas ratusan rupiah",
+    "valid_from": "2024-02-01",
+    "valid_until": "2025-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "pph21_running",
+    "condition": "not is_final_period",
+    "expression": "round(ter_rate * gross_income, 100, 'up')",
+    "policy": "SP08",
+    "conflict_code": "C6",
+    "source": [
+     {
+      "document": "SP08",
+      "provision": "Pasal 18 ayat (3)",
+      "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh.",
+      "page": 1
+     },
+     {
+      "document": "SP08",
+      "provision": "Pasal 39 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP08.FINAL_ROUND",
+    "recorded_on": "2024-02-01",
+    "label": "company: December PPh 21 rounded up to full hundreds",
+    "label_id": "PPh 21 Masa Desember dibulatkan ke atas ratusan rupiah",
+    "valid_from": "2024-02-01",
+    "valid_until": "2025-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "pph21_due",
+    "condition": "is_final_period",
+    "expression": "round(final_period_tax, 100, 'up')",
+    "policy": "SP08",
+    "conflict_code": "C6",
+    "source": [
+     {
+      "document": "SP08",
+      "provision": "Pasal 18 ayat (3)",
+      "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh.",
+      "page": 1
+     },
+     {
+      "document": "SP08",
+      "provision": "Pasal 39 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP08.TAX_BURDEN_ROUND",
+    "recorded_on": "2024-02-01",
+    "label": "company: PPh 21 charged to the employee each period rounded up to full hundreds",
+    "label_id": "PPh 21 yang dipotong dari pegawai dibulatkan ke atas ratusan rupiah",
+    "valid_from": "2024-02-01",
+    "valid_until": "2025-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "employee_tax_burden",
+    "expression": "0 if withholding_method == 'employer_borne' else (round(pph21_due - pph21_dtp, 100, 'up') if (not is_final_period or pph21_due >= 0) else (0 - refund_to_employee))",
+    "policy": "SP08",
+    "overrides": [
+     "REG.THP.TAX_BURDEN"
+    ],
+    "source": [
+     {
+      "document": "SP08",
+      "provision": "Pasal 18 ayat (3)",
+      "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh.",
+      "page": 1
+     },
+     {
+      "document": "SP08",
+      "provision": "Pasal 39 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025",
+      "page": 1
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "Steps of Pasal 18 that depart from the statutory method (health contribution deduction, uncapped 5% job expense, half-up PKP rounding, rounding PPh 21 up to hundreds) are company rules that lose to mandatory rules and are reported as conflicts; the rounding-up is additionally applied where the company has latitude, namely the PPh 21 amount charged to the employee in payroll (employee_tax_burden), which takes effect from February 2024."
+ },
+ "cost_usd": 0.555722,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "This company regulation sets its own PPh 21 calculation steps for payroll, and several of them depart from the statutory method. The December annualisation deducts the employee's Jaminan Kesehatan contribution in addition to JHT and JP. It applies 5% biaya jabatan with no annual cap stated. It rounds taxable income (PKP) to the nearest thousand, with Rp500 or more rounded up. It also rounds each period's PPh 21 up to full hundreds of rupiah. These are changes to deductions, rounding and calculation steps for employees of the company.",
+   "quotes": [
+    {
+     "provision": "Pasal 18 ayat (2) huruf c",
+     "quote": "mengurangkan iuran JHT, iuran JP, dan iuran Jaminan Kesehatan bagian pekerja setahun"
+    },
+    {
+     "provision": "Pasal 18 ayat (2) huruf b",
+     "quote": "mengurangkan biaya jabatan sebesar 5% (lima persen) dari penghasilan bruto setahun"
+    },
+    {
+     "provision": "Pasal 18 ayat (2) huruf e",
+     "quote": "membulatkan Penghasilan Kena Pajak ke ribuan rupiah terdekat, dengan sisa Rp500,00 (lima ratus rupiah) atau lebih dibulatkan ke atas"
+    },
+    {
+     "provision": "Pasal 18 ayat (3)",
+     "quote": "Pajak Penghasilan Pasal 21 setiap Masa Pajak dibulatkan ke atas hingga ratusan rupiah penuh."
+    }
+   ],
+   "effective_from": "2024-02-01",
+   "effective_from_quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025.",
+   "effective_until": "2025-12-31",
+   "effective_until_quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Februari 2024 sampai dengan tanggal 31 Desember 2025.",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT Kreasi Digital Nusantara",
+     "quote": "PERATURAN PERUSAHAAN PT KREASI DIGITAL NUSANTARA TENTANG PROSEDUR PENGGAJIAN DAN PEMOTONGAN PAJAK"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

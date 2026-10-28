@@ -1,0 +1,285 @@
+{
+ "run": "e2-sintetis",
+ "event": "SP04",
+ "condition": "proposed",
+ "documents": [
+  "SP04"
+ ],
+ "selection": {
+  "SP04": {
+   "tokens": 658,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "redundant REG.DEFAULT.BENEFITS_REGULAR, PRS.SP04.BENEFITS_NOT_INCOME benefits_taxable_regular: same condition and expression"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2023-01-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": false,
+    "add": [],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Pasal 28 (in-kind facilities not counted as PPh 21 income) changes no result. Natura was not yet withheld by employers in early 2023, and once the mandatory natura rules apply they outrank a company rule, so the clause changes no case and is treated as non-operative. Pasal 29 only restates existing withholding and JHT/JP deduction rules."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP04-cand1",
+    "event_id": "SP04",
+    "document": {
+     "id": "SP04",
+     "title": "PT Arunika Energi Mandiri: Peraturan Perusahaan",
+     "issued": "2023-01-01"
+    },
+    "relevant": false,
+    "add": [],
+    "change": [],
+    "remove": [],
+    "note": "Pasal 28 (in-kind facilities not counted as PPh 21 income) changes no result. Natura was not yet withheld by employers in early 2023, and once the mandatory natura rules apply they outrank a company rule, so the clause changes no case and is treated as non-operative. Pasal 29 only restates existing withholding and JHT/JP deduction rules."
+   },
+   "initial_delta": {
+    "delta_id": "e2-sintetis-SP04-cand1",
+    "event_id": "SP04",
+    "document": {
+     "id": "SP04",
+     "title": "PT Arunika Energi Mandiri: Peraturan Perusahaan",
+     "issued": "2023-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP04.BENEFITS_NOT_INCOME",
+      "recorded_on": "2023-01-01",
+      "label": "company policy: in-kind facilities not counted as income for PPh 21",
+      "label_id": "kebijakan perusahaan: fasilitas natura/kenikmatan tidak diperhitungkan sebagai penghasilan PPh 21",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "benefits_taxable_regular",
+      "expression": "0",
+      "policy": "SP04",
+      "conflict_code": "C3",
+      "source": [
+       {
+        "document": "SP04",
+        "provision": "Pasal 28",
+        "quote": "Fasilitas sebagaimana dimaksud dalam Pasal 27 diberikan dalam bentuk natura dan/atau kenikmatan, tidak merupakan bagian dari upah, dan tidak diperhitungkan sebagai penghasilan pekerja dalam penghitungan Pajak Penghasilan Pasal 21 yang dipotong oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP04",
+        "provision": "Pasal 49 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Pasal 28 is modelled as a company rule setting regular taxable benefits in kind (canteen lunch, manager apartment, work clothing/PPE) to zero for the policy period; where a mandatory natura regulation applies (e.g. the apartment), the company rule loses and is reported as a conflict. The conflict code C3 is an assumed mapping. Pasal 29 only restates existing withholding and JHT/JP deduction rules, so it adds nothing."
+   }
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "redundant REG.DEFAULT.BENEFITS_IRREGULAR, PRS.SP04.BENEFITS_IRREGULAR benefits_taxable_irregular: same condition and expression",
+     "redundant REG.DEFAULT.BENEFITS_REGULAR, PRS.SP04.BENEFITS_REGULAR benefits_taxable_regular: same condition and expression"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2023-01-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": false,
+    "add": [],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Pasal 28 declares benefits in kind non-taxable, but binding regulation decides their tax treatment and a company policy cannot change it. Modelling it as zero-value company rules changed no case in the stated start month (1 Januari 2023), so the document is treated as not changing the computation. Pasal 29 only restates the existing PPh 21 withholding and the JHT/JP deductions already in the KB."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP04-cand2",
+    "event_id": "SP04",
+    "document": {
+     "id": "SP04",
+     "title": "PT Arunika Energi Mandiri: Peraturan Perusahaan",
+     "issued": "2023-01-01"
+    },
+    "relevant": false,
+    "add": [],
+    "change": [],
+    "remove": [],
+    "note": "Pasal 28 declares benefits in kind non-taxable, but binding regulation decides their tax treatment and a company policy cannot change it. Modelling it as zero-value company rules changed no case in the stated start month (1 Januari 2023), so the document is treated as not changing the computation. Pasal 29 only restates the existing PPh 21 withholding and the JHT/JP deductions already in the KB."
+   },
+   "initial_delta": {
+    "delta_id": "e2-sintetis-SP04-cand2",
+    "event_id": "SP04",
+    "document": {
+     "id": "SP04",
+     "title": "PT Arunika Energi Mandiri: Peraturan Perusahaan",
+     "issued": "2023-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP04.BENEFITS_REGULAR",
+      "recorded_on": "2023-01-01",
+      "label": "company policy: benefits in kind not counted as income (regular)",
+      "label_id": "kebijakan perusahaan: natura dan kenikmatan tidak diperhitungkan sebagai penghasilan (teratur)",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "benefits_taxable_regular",
+      "expression": "0",
+      "policy": "SP04",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP04",
+        "provision": "Pasal 28",
+        "quote": "diberikan dalam bentuk natura dan/atau kenikmatan, tidak merupakan bagian dari upah, dan tidak diperhitungkan sebagai penghasilan pekerja dalam penghitungan Pajak Penghasilan Pasal 21 yang dipotong oleh Perusahaan",
+        "page": 1
+       },
+       {
+        "document": "SP04",
+        "provision": "Pasal 49 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP04.BENEFITS_IRREGULAR",
+      "recorded_on": "2023-01-01",
+      "label": "company policy: benefits in kind not counted as income (irregular)",
+      "label_id": "kebijakan perusahaan: natura dan kenikmatan tidak diperhitungkan sebagai penghasilan (tidak teratur)",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "benefits_taxable_irregular",
+      "expression": "0",
+      "policy": "SP04",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP04",
+        "provision": "Pasal 28",
+        "quote": "diberikan dalam bentuk natura dan/atau kenikmatan, tidak merupakan bagian dari upah, dan tidak diperhitungkan sebagai penghasilan pekerja dalam penghitungan Pajak Penghasilan Pasal 21 yang dipotong oleh Perusahaan",
+        "page": 1
+       },
+       {
+        "document": "SP04",
+        "provision": "Pasal 49 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Pasal 28 is modelled as company rules setting taxable benefits in kind (regular and irregular) to zero for the policy period. Where mandatory natura rules (taxable from 2023) yield a different value, these rules lose and are reported as conflicts. Pasal 29 only restates existing withholding and JHT/JP deductions, so it adds nothing."
+   }
+  }
+ ],
+ "groups": [
+  [
+   2,
+   1
+  ]
+ ],
+ "selected": 2,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-sintetis-SP04-cand2",
+  "event_id": "SP04",
+  "document": {
+   "id": "SP04",
+   "title": "PT Arunika Energi Mandiri: Peraturan Perusahaan",
+   "issued": "2023-01-01"
+  },
+  "relevant": false,
+  "add": [],
+  "change": [],
+  "remove": [],
+  "note": "Pasal 28 declares benefits in kind non-taxable, but binding regulation decides their tax treatment and a company policy cannot change it. Modelling it as zero-value company rules changed no case in the stated start month (1 Januari 2023), so the document is treated as not changing the computation. Pasal 29 only restates the existing PPh 21 withholding and the JHT/JP deductions already in the KB."
+ },
+ "cost_usd": 0.229928,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "This company regulation sets a payroll rule that changes how benefits are classified for PPh 21 withholding on permanent employees. It provides benefits in kind: a canteen lunch for all workers, a company-leased apartment of up to Rp6,000,000 per month for managers and above at head office, and work clothing/PPE. Pasal 28 states these in-kind benefits are not part of wages and are not counted as employee income when the company computes PPh 21. That rule determines which benefits enter gross income. Pasal 29 only restates the general withholding rule and the JHT/JP employee-contribution deductions without changing them.",
+   "quotes": [
+    {
+     "provision": "Pasal 27 ayat (2)",
+     "quote": "Pekerja dengan jabatan Manajer ke atas yang ditempatkan di kantor pusat diberikan fasilitas tempat tinggal berupa satu unit apartemen yang disewa Perusahaan, dengan nilai sewa termasuk biaya pengelolaan paling banyak Rp6.000.000,00 (enam juta rupiah) per bulan."
+    },
+    {
+     "provision": "Pasal 27 ayat (1)",
+     "quote": "Perusahaan menyediakan makan siang di kantin kantor bagi seluruh pekerja pada hari kerja."
+    },
+    {
+     "provision": "Pasal 28",
+     "quote": "Fasilitas sebagaimana dimaksud dalam Pasal 27 diberikan dalam bentuk natura dan/atau kenikmatan, tidak merupakan bagian dari upah, dan tidak diperhitungkan sebagai penghasilan pekerja dalam penghitungan Pajak Penghasilan Pasal 21 yang dipotong oleh Perusahaan."
+    }
+   ],
+   "effective_from": "2023-01-01",
+   "effective_from_quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+   "effective_until": "2024-12-31",
+   "effective_until_quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+   "subjects": []
+  },
+  "quotes_ok": true
+ }
+}

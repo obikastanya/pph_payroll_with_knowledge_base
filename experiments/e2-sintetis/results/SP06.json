@@ -1,0 +1,588 @@
+{
+ "run": "e2-sintetis",
+ "event": "SP06",
+ "condition": "proposed",
+ "documents": [
+  "SP06"
+ ],
+ "selection": {
+  "SP06": {
+   "tokens": 554,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP06.METHOD",
+      "label": "PKB: PPh 21 borne through a monthly tax allowance computed with the gross-up method",
+      "label_id": "PKB: tunjangan PPh Pasal 21 dengan metode gross-up",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross_up'"
+       },
+       {
+        "name": "policy",
+        "value": "SP06"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP06",
+        "provision": "Pasal 33 ayat (1)",
+        "page": 1,
+        "quote": "Perusahaan memberikan tunjangan Pajak Penghasilan Pasal 21 setiap bulan sebesar Pajak Penghasilan Pasal 21 terutang atas penghasilan pekerja"
+       },
+       {
+        "document": "SP06",
+        "provision": "Pasal 33 ayat (2)",
+        "page": 1,
+        "quote": "Tunjangan sebagaimana dimaksud pada ayat (1) merupakan penghasilan bruto pekerja dan dihitung dengan metode gross-up."
+       },
+       {
+        "document": "SP06",
+        "provision": "Pasal 53 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP06.CASH_DTP",
+      "label": "PKB: government-borne PPh 21 counts as fulfilment of the tax allowance, no extra cash paid",
+      "label_id": "PKB: insentif PPh 21 DTP diperhitungkan sebagai pemenuhan tunjangan pajak",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "cash_income"
+       },
+       {
+        "name": "condition",
+        "value": "withholding_method == 'gross_up'"
+       },
+       {
+        "name": "expression",
+        "value": "base_salary + fixed_allowance + other_regular_income + overtime_pay + thr + bonus + other_irregular_income + max(0, tax_allowance - pph21_dtp)"
+       },
+       {
+        "name": "policy",
+        "value": "SP06"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP06",
+        "provision": "Pasal 33 ayat (3)",
+        "page": 1,
+        "quote": "insentif tersebut diperhitungkan sebagai pemenuhan tunjangan sebagaimana dimaksud pada ayat (1) untuk Masa Pajak yang bersangkutan, dan Perusahaan tidak melakukan pembayaran tambahan kepada pekerja."
+       },
+       {
+        "document": "SP06",
+        "provision": "Pasal 53 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The PKB is modelled as selecting the gross-up withholding method (existing regulation gross-up rules then compute tax_allowance as part of gross income); the DTP clause is modelled by reducing the cash part of the tax allowance by pph21_dtp so the employee receives no extra payment when the government bears the tax."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP06-cand1",
+    "event_id": "SP06",
+    "document": {
+     "id": "SP06",
+     "title": "PT Mitra Niaga Sandang: Perjanjian Kerja Bersama",
+     "issued": "2025-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP06.METHOD",
+      "recorded_on": "2025-01-01",
+      "label": "PKB: PPh 21 borne through a monthly tax allowance computed with the gross-up method",
+      "label_id": "PKB: tunjangan PPh Pasal 21 dengan metode gross-up",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross_up'",
+      "policy": "SP06",
+      "source": [
+       {
+        "document": "SP06",
+        "provision": "Pasal 33 ayat (1)",
+        "quote": "Perusahaan memberikan tunjangan Pajak Penghasilan Pasal 21 setiap bulan sebesar Pajak Penghasilan Pasal 21 terutang atas penghasilan pekerja",
+        "page": 1
+       },
+       {
+        "document": "SP06",
+        "provision": "Pasal 33 ayat (2)",
+        "quote": "Tunjangan sebagaimana dimaksud pada ayat (1) merupakan penghasilan bruto pekerja dan dihitung dengan metode gross-up.",
+        "page": 1
+       },
+       {
+        "document": "SP06",
+        "provision": "Pasal 53 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP06.CASH_DTP",
+      "recorded_on": "2025-01-01",
+      "label": "PKB: government-borne PPh 21 counts as fulfilment of the tax allowance, no extra cash paid",
+      "label_id": "PKB: insentif PPh 21 DTP diperhitungkan sebagai pemenuhan tunjangan pajak",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "cash_income",
+      "condition": "withholding_method == 'gross_up'",
+      "expression": "base_salary + fixed_allowance + other_regular_income + overtime_pay + thr + bonus + other_irregular_income + max(0, tax_allowance - pph21_dtp)",
+      "policy": "SP06",
+      "source": [
+       {
+        "document": "SP06",
+        "provision": "Pasal 33 ayat (3)",
+        "quote": "insentif tersebut diperhitungkan sebagai pemenuhan tunjangan sebagaimana dimaksud pada ayat (1) untuk Masa Pajak yang bersangkutan, dan Perusahaan tidak melakukan pembayaran tambahan kepada pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP06",
+        "provision": "Pasal 53 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The PKB is modelled as selecting the gross-up withholding method (existing regulation gross-up rules then compute tax_allowance as part of gross income); the DTP clause is modelled by reducing the cash part of the tax allowance by pph21_dtp so the employee receives no extra payment when the government bears the tax."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP06.METHOD",
+      "label": "PKB: PPh 21 borne through a monthly tax allowance computed with the gross-up method",
+      "label_id": "PKB: tunjangan PPh Pasal 21 dengan metode gross-up",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross_up'"
+       },
+       {
+        "name": "policy",
+        "value": "SP06"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP06",
+        "provision": "Pasal 33 ayat (1)",
+        "page": 1,
+        "quote": "Perusahaan memberikan tunjangan Pajak Penghasilan Pasal 21 setiap bulan sebesar Pajak Penghasilan Pasal 21 terutang atas penghasilan pekerja"
+       },
+       {
+        "document": "SP06",
+        "provision": "Pasal 33 ayat (2)",
+        "page": 1,
+        "quote": "merupakan penghasilan bruto pekerja dan dihitung dengan metode gross-up"
+       },
+       {
+        "document": "SP06",
+        "provision": "Pasal 53 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP06.CASH_DTP",
+      "label": "PKB: government-borne PPh 21 counts as fulfilment of the tax allowance; no extra cash payment",
+      "label_id": "PKB: PPh 21 DTP diperhitungkan sebagai pemenuhan tunjangan pajak",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "cash_income"
+       },
+       {
+        "name": "expression",
+        "value": "base_salary + fixed_allowance + other_regular_income + overtime_pay + thr + bonus + other_irregular_income + (max(0, tax_allowance - pph21_dtp) if withholding_method == 'gross_up' else 0)"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.THP.CASH"
+       },
+       {
+        "name": "policy",
+        "value": "SP06"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP06",
+        "provision": "Pasal 33 ayat (3)",
+        "page": 1,
+        "quote": "insentif tersebut diperhitungkan sebagai pemenuhan tunjangan sebagaimana dimaksud pada ayat (1) untuk Masa Pajak yang bersangkutan, dan Perusahaan tidak melakukan pembayaran tambahan kepada pekerja"
+       },
+       {
+        "document": "SP06",
+        "provision": "Pasal 53 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The PKB's monthly PPh 21 allowance with gross-up is modelled by setting withholding_method to 'gross_up', so the existing gross-up rules compute tax_allowance. For DTP months the allowance stays in gross income, but the cash paid by the company is reduced by the government-borne amount, so the employee receives no extra payment."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP06-cand2",
+    "event_id": "SP06",
+    "document": {
+     "id": "SP06",
+     "title": "PT Mitra Niaga Sandang: Perjanjian Kerja Bersama",
+     "issued": "2025-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP06.METHOD",
+      "recorded_on": "2025-01-01",
+      "label": "PKB: PPh 21 borne through a monthly tax allowance computed with the gross-up method",
+      "label_id": "PKB: tunjangan PPh Pasal 21 dengan metode gross-up",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross_up'",
+      "policy": "SP06",
+      "source": [
+       {
+        "document": "SP06",
+        "provision": "Pasal 33 ayat (1)",
+        "quote": "Perusahaan memberikan tunjangan Pajak Penghasilan Pasal 21 setiap bulan sebesar Pajak Penghasilan Pasal 21 terutang atas penghasilan pekerja",
+        "page": 1
+       },
+       {
+        "document": "SP06",
+        "provision": "Pasal 33 ayat (2)",
+        "quote": "merupakan penghasilan bruto pekerja dan dihitung dengan metode gross-up",
+        "page": 1
+       },
+       {
+        "document": "SP06",
+        "provision": "Pasal 53 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP06.CASH_DTP",
+      "recorded_on": "2025-01-01",
+      "label": "PKB: government-borne PPh 21 counts as fulfilment of the tax allowance; no extra cash payment",
+      "label_id": "PKB: PPh 21 DTP diperhitungkan sebagai pemenuhan tunjangan pajak",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "cash_income",
+      "expression": "base_salary + fixed_allowance + other_regular_income + overtime_pay + thr + bonus + other_irregular_income + (max(0, tax_allowance - pph21_dtp) if withholding_method == 'gross_up' else 0)",
+      "policy": "SP06",
+      "overrides": [
+       "REG.THP.CASH"
+      ],
+      "source": [
+       {
+        "document": "SP06",
+        "provision": "Pasal 33 ayat (3)",
+        "quote": "insentif tersebut diperhitungkan sebagai pemenuhan tunjangan sebagaimana dimaksud pada ayat (1) untuk Masa Pajak yang bersangkutan, dan Perusahaan tidak melakukan pembayaran tambahan kepada pekerja",
+        "page": 1
+       },
+       {
+        "document": "SP06",
+        "provision": "Pasal 53 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The PKB's monthly PPh 21 allowance with gross-up is modelled by setting withholding_method to 'gross_up', so the existing gross-up rules compute tax_allowance. For DTP months the allowance stays in gross income, but the cash paid by the company is reduced by the government-borne amount, so the employee receives no extra payment."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   2,
+   1
+  ]
+ ],
+ "selected": 2,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-sintetis-SP06-cand2",
+  "event_id": "SP06",
+  "document": {
+   "id": "SP06",
+   "title": "PT Mitra Niaga Sandang: Perjanjian Kerja Bersama",
+   "issued": "2025-01-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP06.METHOD",
+    "recorded_on": "2025-01-01",
+    "label": "PKB: PPh 21 borne through a monthly tax allowance computed with the gross-up method",
+    "label_id": "PKB: tunjangan PPh Pasal 21 dengan metode gross-up",
+    "valid_from": "2025-01-01",
+    "valid_until": "2026-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "expression": "'gross_up'",
+    "policy": "SP06",
+    "source": [
+     {
+      "document": "SP06",
+      "provision": "Pasal 33 ayat (1)",
+      "quote": "Perusahaan memberikan tunjangan Pajak Penghasilan Pasal 21 setiap bulan sebesar Pajak Penghasilan Pasal 21 terutang atas penghasilan pekerja",
+      "page": 1
+     },
+     {
+      "document": "SP06",
+      "provision": "Pasal 33 ayat (2)",
+      "quote": "merupakan penghasilan bruto pekerja dan dihitung dengan metode gross-up",
+      "page": 1
+     },
+     {
+      "document": "SP06",
+      "provision": "Pasal 53 ayat (1)",
+      "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP06.CASH_DTP",
+    "recorded_on": "2025-01-01",
+    "label": "PKB: government-borne PPh 21 counts as fulfilment of the tax allowance; no extra cash payment",
+    "label_id": "PKB: PPh 21 DTP diperhitungkan sebagai pemenuhan tunjangan pajak",
+    "valid_from": "2025-01-01",
+    "valid_until": "2026-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "cash_income",
+    "expression": "base_salary + fixed_allowance + other_regular_income + overtime_pay + thr + bonus + other_irregular_income + (max(0, tax_allowance - pph21_dtp) if withholding_method == 'gross_up' else 0)",
+    "policy": "SP06",
+    "overrides": [
+     "REG.THP.CASH"
+    ],
+    "source": [
+     {
+      "document": "SP06",
+      "provision": "Pasal 33 ayat (3)",
+      "quote": "insentif tersebut diperhitungkan sebagai pemenuhan tunjangan sebagaimana dimaksud pada ayat (1) untuk Masa Pajak yang bersangkutan, dan Perusahaan tidak melakukan pembayaran tambahan kepada pekerja",
+      "page": 1
+     },
+     {
+      "document": "SP06",
+      "provision": "Pasal 53 ayat (1)",
+      "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026",
+      "page": 1
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "The PKB's monthly PPh 21 allowance with gross-up is modelled by setting withholding_method to 'gross_up', so the existing gross-up rules compute tax_allowance. For DTP months the allowance stays in gross income, but the cash paid by the company is reduced by the government-borne amount, so the employee receives no extra payment."
+ },
+ "cost_usd": 0.176154,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "The company collective labour agreement (PKB) sets payroll rules that affect the PPh 21 computation for its employees. The company pays a monthly PPh 21 allowance equal to the tax due, and this allowance is part of gross income computed with the gross-up method. Where the government grants a DTP (government-borne) PPh 21 incentive, the incentive is counted as fulfilling the allowance and no extra payment is made. Validity runs from January 2025 to December 2026.",
+   "quotes": [
+    {
+     "provision": "Pasal 33 ayat (1)",
+     "quote": "Perusahaan memberikan tunjangan Pajak Penghasilan Pasal 21 setiap bulan sebesar Pajak Penghasilan Pasal 21 terutang atas penghasilan pekerja"
+    },
+    {
+     "provision": "Pasal 33 ayat (2)",
+     "quote": "Tunjangan sebagaimana dimaksud pada ayat (1) merupakan penghasilan bruto pekerja dan dihitung dengan metode gross-up."
+    },
+    {
+     "provision": "Pasal 33 ayat (3)",
+     "quote": "insentif tersebut diperhitungkan sebagai pemenuhan tunjangan sebagaimana dimaksud pada ayat (1) untuk Masa Pajak yang bersangkutan, dan Perusahaan tidak melakukan pembayaran tambahan kepada pekerja."
+    }
+   ],
+   "effective_from": "2025-01-01",
+   "effective_from_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+   "effective_until": "2026-12-31",
+   "effective_until_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT Mitra Niaga Sandang",
+     "quote": "PERJANJIAN KERJA BERSAMA PT MITRA NIAGA SANDANG PERIODE 2025-2026"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

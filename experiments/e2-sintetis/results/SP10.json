@@ -1,0 +1,975 @@
+{
+ "run": "e2-sintetis",
+ "event": "SP10",
+ "condition": "proposed",
+ "documents": [
+  "SP10"
+ ],
+ "selection": {
+  "SP10": {
+   "tokens": 683,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2024-04-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.JHT_EMPLOYEE",
+      "label": "PKB split: employee JHT contribution 3% of monthly wage",
+      "label_id": "pembagian iuran PKB: iuran JHT pekerja 3% dari upah sebulan",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "recorded_on": "2024-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jht_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(3 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP10"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C2"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (1)",
+        "page": 1,
+        "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan dibayar oleh Perusahaan sebesar 2,7% (dua koma tujuh persen) dan oleh pekerja sebesar 3% (tiga persen)."
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.HEALTH_EMPLOYER",
+      "label": "PKB split: employer health contribution 3% of capped wage",
+      "label_id": "pembagian iuran PKB: iuran jaminan kesehatan bagian perusahaan 3%",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "recorded_on": "2024-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_premium_employer"
+       },
+       {
+        "name": "expression",
+        "value": "round(3 / 100 * health_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP10"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C2"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (3)",
+        "page": 1,
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen)."
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.HEALTH_EMPLOYEE",
+      "label": "PKB split: employee health contribution 2% of capped wage",
+      "label_id": "pembagian iuran PKB: iuran jaminan kesehatan bagian pekerja 2%",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "recorded_on": "2024-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(2 / 100 * health_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP10"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C2"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (3)",
+        "page": 1,
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen)."
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The PKB's JHT (3% employee) and health (3%/2%) splits deviate from the statutory shares; they are company rules active from April 2024 without the premiums_as_billed condition, so they lose to the mandatory BPJS/JKN rules (reported as conflicts) and replace only the default/input rules where those would otherwise apply. The JP split, JKK 0.54%, JKM 0.30%, the Rp12.000.000 cap and Pasal 42 match the existing KB and are not restated."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP10-cand1",
+    "event_id": "SP10",
+    "document": {
+     "id": "SP10",
+     "title": "PT Kemas Plastindo Jaya: Perjanjian Kerja Bersama",
+     "issued": "2024-04-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.JHT_EMPLOYEE",
+      "recorded_on": "2024-04-01",
+      "label": "PKB split: employee JHT contribution 3% of monthly wage",
+      "label_id": "pembagian iuran PKB: iuran JHT pekerja 3% dari upah sebulan",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jht_employee",
+      "expression": "round(3 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP10",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (1)",
+        "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan dibayar oleh Perusahaan sebesar 2,7% (dua koma tujuh persen) dan oleh pekerja sebesar 3% (tiga persen).",
+        "page": 1
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.HEALTH_EMPLOYER",
+      "recorded_on": "2024-04-01",
+      "label": "PKB split: employer health contribution 3% of capped wage",
+      "label_id": "pembagian iuran PKB: iuran jaminan kesehatan bagian perusahaan 3%",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_premium_employer",
+      "expression": "round(3 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP10",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (3)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen).",
+        "page": 1
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.HEALTH_EMPLOYEE",
+      "recorded_on": "2024-04-01",
+      "label": "PKB split: employee health contribution 2% of capped wage",
+      "label_id": "pembagian iuran PKB: iuran jaminan kesehatan bagian pekerja 2%",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_employee",
+      "expression": "round(2 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP10",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (3)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen).",
+        "page": 1
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The PKB's JHT (3% employee) and health (3%/2%) splits deviate from the statutory shares; they are company rules active from April 2024 without the premiums_as_billed condition, so they lose to the mandatory BPJS/JKN rules (reported as conflicts) and replace only the default/input rules where those would otherwise apply. The JP split, JKK 0.54%, JKM 0.30%, the Rp12.000.000 cap and Pasal 42 match the existing KB and are not restated."
+   },
+   "initial_delta": {
+    "delta_id": "e2-sintetis-SP10-cand1",
+    "event_id": "SP10",
+    "document": {
+     "id": "SP10",
+     "title": "PT Kemas Plastindo Jaya: Perjanjian Kerja Bersama",
+     "issued": "2024-04-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.JHT_EMPLOYEE",
+      "recorded_on": "2024-04-01",
+      "label": "PKB split: employee JHT contribution 3% of monthly wage",
+      "label_id": "pembagian iuran PKB: iuran JHT pekerja 3% dari upah sebulan",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jht_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(3 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP10",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (1)",
+        "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan dibayar oleh Perusahaan sebesar 2,7% (dua koma tujuh persen) dan oleh pekerja sebesar 3% (tiga persen).",
+        "page": 1
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.HEALTH_EMPLOYER",
+      "recorded_on": "2024-04-01",
+      "label": "PKB split: employer health contribution 3% of capped wage",
+      "label_id": "pembagian iuran PKB: iuran jaminan kesehatan bagian perusahaan 3%",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_premium_employer",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(3 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP10",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (3)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen).",
+        "page": 1
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.HEALTH_EMPLOYEE",
+      "recorded_on": "2024-04-01",
+      "label": "PKB split: employee health contribution 2% of capped wage",
+      "label_id": "pembagian iuran PKB: iuran jaminan kesehatan bagian pekerja 2%",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(2 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP10",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (3)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen).",
+        "page": 1
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The PKB's JHT (3% employee) and health (3%/2%) splits deviate from the statutory shares; they are modelled as company rules that lose to the mandatory BPJS/JKN rules and are reported as conflicts. The conflict code C2 was assigned without a code definition to check it against. The JP split, JKK 0.54%, JKM 0.30%, the Rp12.000.000 health cap and the tax treatment in Pasal 42 match the existing KB, so they are not restated."
+   }
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2024-04-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.JHT_EMPLOYEE",
+      "label": "PKB split: employee JHT contribution 3% of monthly wage",
+      "label_id": "pembagian PKB: iuran JHT pekerja 3% dari upah sebulan",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "recorded_on": "2024-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jht_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(3 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP10"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C4"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (1)",
+        "page": 1,
+        "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan dibayar oleh Perusahaan sebesar 2,7% (dua koma tujuh persen) dan oleh pekerja sebesar 3% (tiga persen)."
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.HEALTH_EMPLOYER",
+      "label": "PKB split: employer health contribution 3% of monthly wage",
+      "label_id": "pembagian PKB: iuran jaminan kesehatan bagian perusahaan 3%",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "recorded_on": "2024-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_premium_employer"
+       },
+       {
+        "name": "expression",
+        "value": "round(3 / 100 * health_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP10"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C4"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (3)",
+        "page": 1,
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen)."
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.HEALTH_EMPLOYEE",
+      "label": "PKB split: employee health contribution 2% of monthly wage",
+      "label_id": "pembagian PKB: iuran jaminan kesehatan bagian pekerja 2%",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "recorded_on": "2024-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(2 / 100 * health_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP10"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C4"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (3)",
+        "page": 1,
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen)."
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Only the JHT and health splits of Pasal 41 ayat (1) and (3) deviate from the statutory shares, so three company rules are added without the premiums-as-billed condition: they replace the billed/default inputs and, where the mandatory BPJS/JKN rules apply, lose to them and are reported as conflicts. JP, JKK, JKM and the tax treatment in Pasal 42 match existing rules."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP10-cand2",
+    "event_id": "SP10",
+    "document": {
+     "id": "SP10",
+     "title": "PT Kemas Plastindo Jaya: Perjanjian Kerja Bersama",
+     "issued": "2024-04-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.JHT_EMPLOYEE",
+      "recorded_on": "2024-04-01",
+      "label": "PKB split: employee JHT contribution 3% of monthly wage",
+      "label_id": "pembagian PKB: iuran JHT pekerja 3% dari upah sebulan",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jht_employee",
+      "expression": "round(3 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP10",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (1)",
+        "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan dibayar oleh Perusahaan sebesar 2,7% (dua koma tujuh persen) dan oleh pekerja sebesar 3% (tiga persen).",
+        "page": 1
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.HEALTH_EMPLOYER",
+      "recorded_on": "2024-04-01",
+      "label": "PKB split: employer health contribution 3% of monthly wage",
+      "label_id": "pembagian PKB: iuran jaminan kesehatan bagian perusahaan 3%",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_premium_employer",
+      "expression": "round(3 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP10",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (3)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen).",
+        "page": 1
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.HEALTH_EMPLOYEE",
+      "recorded_on": "2024-04-01",
+      "label": "PKB split: employee health contribution 2% of monthly wage",
+      "label_id": "pembagian PKB: iuran jaminan kesehatan bagian pekerja 2%",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_employee",
+      "expression": "round(2 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP10",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (3)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen).",
+        "page": 1
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only the JHT and health splits of Pasal 41 ayat (1) and (3) deviate from the statutory shares, so three company rules are added without the premiums-as-billed condition: they replace the billed/default inputs and, where the mandatory BPJS/JKN rules apply, lose to them and are reported as conflicts. JP, JKK, JKM and the tax treatment in Pasal 42 match existing rules."
+   },
+   "initial_delta": {
+    "delta_id": "e2-sintetis-SP10-cand2",
+    "event_id": "SP10",
+    "document": {
+     "id": "SP10",
+     "title": "PT Kemas Plastindo Jaya: Perjanjian Kerja Bersama",
+     "issued": "2024-04-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.JHT_EMPLOYEE",
+      "recorded_on": "2024-04-01",
+      "label": "PKB split: employee JHT contribution 3% of monthly wage",
+      "label_id": "pembagian PKB: iuran JHT pekerja 3% dari upah sebulan",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jht_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(3 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP10",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (1)",
+        "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan dibayar oleh Perusahaan sebesar 2,7% (dua koma tujuh persen) dan oleh pekerja sebesar 3% (tiga persen).",
+        "page": 1
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.HEALTH_EMPLOYER",
+      "recorded_on": "2024-04-01",
+      "label": "PKB split: employer health contribution 3% of monthly wage",
+      "label_id": "pembagian PKB: iuran jaminan kesehatan bagian perusahaan 3%",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_premium_employer",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(3 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP10",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (3)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen).",
+        "page": 1
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP10.HEALTH_EMPLOYEE",
+      "recorded_on": "2024-04-01",
+      "label": "PKB split: employee health contribution 2% of monthly wage",
+      "label_id": "pembagian PKB: iuran jaminan kesehatan bagian pekerja 2%",
+      "valid_from": "2024-04-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(2 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP10",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP10",
+        "provision": "Pasal 41 ayat (3)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen).",
+        "page": 1
+       },
+       {
+        "document": "SP10",
+        "provision": "Pasal 62 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only the JHT and health splits differ from the statutory shares (JP, JKK, JKM and the tax treatment of Pasal 42 match existing rules), so three company rules are added; they lose to the mandatory BPJS/JKN rules and are reported as conflicts. The health rules use the existing health_wage fact because the PKB cap of Rp12.000.000 equals the statutory cap."
+   }
+  }
+ ],
+ "groups": [
+  [
+   2,
+   1
+  ]
+ ],
+ "selected": 2,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-sintetis-SP10-cand2",
+  "event_id": "SP10",
+  "document": {
+   "id": "SP10",
+   "title": "PT Kemas Plastindo Jaya: Perjanjian Kerja Bersama",
+   "issued": "2024-04-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP10.JHT_EMPLOYEE",
+    "recorded_on": "2024-04-01",
+    "label": "PKB split: employee JHT contribution 3% of monthly wage",
+    "label_id": "pembagian PKB: iuran JHT pekerja 3% dari upah sebulan",
+    "valid_from": "2024-04-01",
+    "valid_until": "2026-03-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "jht_employee",
+    "expression": "round(3 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))",
+    "policy": "SP10",
+    "conflict_code": "C4",
+    "source": [
+     {
+      "document": "SP10",
+      "provision": "Pasal 41 ayat (1)",
+      "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan dibayar oleh Perusahaan sebesar 2,7% (dua koma tujuh persen) dan oleh pekerja sebesar 3% (tiga persen).",
+      "page": 1
+     },
+     {
+      "document": "SP10",
+      "provision": "Pasal 62 ayat (1)",
+      "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP10.HEALTH_EMPLOYER",
+    "recorded_on": "2024-04-01",
+    "label": "PKB split: employer health contribution 3% of monthly wage",
+    "label_id": "pembagian PKB: iuran jaminan kesehatan bagian perusahaan 3%",
+    "valid_from": "2024-04-01",
+    "valid_until": "2026-03-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "health_premium_employer",
+    "expression": "round(3 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+    "policy": "SP10",
+    "conflict_code": "C4",
+    "source": [
+     {
+      "document": "SP10",
+      "provision": "Pasal 41 ayat (3)",
+      "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen).",
+      "page": 1
+     },
+     {
+      "document": "SP10",
+      "provision": "Pasal 62 ayat (1)",
+      "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP10.HEALTH_EMPLOYEE",
+    "recorded_on": "2024-04-01",
+    "label": "PKB split: employee health contribution 2% of monthly wage",
+    "label_id": "pembagian PKB: iuran jaminan kesehatan bagian pekerja 2%",
+    "valid_from": "2024-04-01",
+    "valid_until": "2026-03-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "health_employee",
+    "expression": "round(2 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+    "policy": "SP10",
+    "conflict_code": "C4",
+    "source": [
+     {
+      "document": "SP10",
+      "provision": "Pasal 41 ayat (3)",
+      "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen).",
+      "page": 1
+     },
+     {
+      "document": "SP10",
+      "provision": "Pasal 62 ayat (1)",
+      "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024 sampai dengan tanggal 31 Maret 2026.",
+      "page": 1
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "Only the JHT and health splits of Pasal 41 ayat (1) and (3) deviate from the statutory shares, so three company rules are added without the premiums-as-billed condition: they replace the billed/default inputs and, where the mandatory BPJS/JKN rules apply, lose to them and are reported as conflicts. JP, JKK, JKM and the tax treatment in Pasal 42 match existing rules."
+ },
+ "cost_usd": 0.403224,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "This collective labour agreement (PKB) changes the split of social security contributions, which feeds directly into the PPh 21 calculation for permanent employees. JHT (5.7%) is split 2.7% employer and 3% employee, instead of the statutory 3.7%/2%. Health insurance (5%) is split 3% employer and 2% employee, instead of the statutory 4%/1%. Under Pasal 42, the employer's health contribution counts as gross income and the employee's JHT and JP contributions are deductible. So the gross-income addition and the JHT deduction amounts both change for the agreement period.",
+   "quotes": [
+    {
+     "provision": "Pasal 41 ayat (1)",
+     "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan dibayar oleh Perusahaan sebesar 2,7% (dua koma tujuh persen) dan oleh pekerja sebesar 3% (tiga persen)."
+    },
+    {
+     "provision": "Pasal 41 ayat (3)",
+     "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen) dari upah sebulan dengan batas upah Rp12.000.000,00 (dua belas juta rupiah) dibayar oleh Perusahaan sebesar 3% (tiga persen) dan oleh pekerja sebesar 2% (dua persen)."
+    },
+    {
+     "provision": "Pasal 42",
+     "quote": "Iuran JKK, JKM, dan Jaminan Kesehatan bagian Perusahaan diperhitungkan sebagai penghasilan bruto pekerja, sedangkan iuran JHT dan JP bagian pekerja dikurangkan dalam penghitungan Pajak Penghasilan Pasal 21."
+    }
+   ],
+   "effective_from": "2024-04-01",
+   "effective_from_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 April 2024",
+   "effective_until": "2026-03-31",
+   "effective_until_quote": "sampai dengan tanggal 31 Maret 2026",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT Kemas Plastindo Jaya",
+     "quote": "PERJANJIAN KERJA BERSAMA PT KEMAS PLASTINDO JAYA PERIODE 2024-2026"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

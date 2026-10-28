@@ -1,0 +1,3584 @@
+{
+ "run": "e2-regulasi-ulang",
+ "event": "E04",
+ "condition": "proposed",
+ "documents": [
+  "PMK-168-2023"
+ ],
+ "selection": {
+  "PMK-168-2023": {
+   "tokens": 13999,
+   "dropped": [
+    "Pasal 2",
+    "Pasal 3",
+    "Pasal 4",
+    "Pasal 6",
+    "Pasal 7",
+    "Pasal 11",
+    "Pasal 14",
+    "Pasal 22",
+    "Pasal 23",
+    "Pasal 21 (2)"
+   ]
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "fail: REG.PREMIUMS.TAXABLE.2024: no effect on any S^G case (vacuous element); stated effective date 2024-01-01 is not reflected: no S^G case changes in that month"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2024-01-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.ZAKAT.DEDUCTIBLE",
+      "label": "mandatory zakat paid through the employer is a deduction in withholding",
+      "label_id": "zakat melalui pemberi kerja sebagai pengurang",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "zakat_deductible"
+       },
+       {
+        "name": "expression",
+        "value": "zakat_withheld"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "page": 12,
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja kepada badan amil zakat, lembaga amil zakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh pemerintah."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PREMIUMS.TAXABLE.2024",
+      "label": "employer-paid social security and insurance premiums are income of the permanent employee",
+      "label_id": "iuran dan premi asuransi yang dibayar pemberi kerja sebagai penghasilan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employer_premiums_taxable"
+       },
+       {
+        "name": "expression",
+        "value": "jkk_premium + jkm_premium + health_premium_employer + income('insurance_premium_employer')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 5 ayat (3) huruf d dan huruf e",
+        "page": 9,
+        "quote": "pembayaran iuran jaminan kecelakaan kerja dan iuran jaminan kematian kepada badan penyelenggara jaminan sosial ketenagakerjaan, yang dibayarkan oleh pemberi kerja;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 5 ayat (3) huruf f",
+        "page": 9,
+        "quote": "pembayaran premi asuransi kesehatan, asuransi kecelakaan kerja, asuransi jiwa, asuransi dwiguna, dan asuransi beasiswa yang dibayarkan oleh pemberi kerja."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.P16.JOB_EXPENSE_MONTH",
+      "label": "monthly job expense (annualised method)",
+      "label_id": "biaya jabatan sebulan (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "job_expense_month"
+       },
+       {
+        "name": "expression",
+        "value": "min(round(param('job_expense_rate') * regular_gross, 1, 'down'), param('job_expense_max_month'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.NET_MONTH",
+      "label": "monthly net regular income (annualised method)",
+      "label_id": "penghasilan neto sebulan (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "net_regular_month"
+       },
+       {
+        "name": "expression",
+        "value": "regular_gross - job_expense_month - employee_pension_contributions"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_ANNUAL",
+      "label": "annual tax on annualised regular income (annualised method)",
+      "label_id": "PPh setahun atas penghasilan teratur disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_regular_annual"
+       },
+       {
+        "name": "expression",
+        "value": "round(progressive('pasal17', taxable_regular_annualized), 1, 'down')"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR",
+      "label": "tax on irregular income of the month (annualised method)",
+      "label_id": "PPh atas penghasilan tidak teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_irregular_month"
+       },
+       {
+        "name": "expression",
+        "value": "round(progressive('pasal17', taxable_with_irregular), 1, 'down') - round(progressive('pasal17', taxable_without_irregular), 1, 'down')"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period and irregular_gross > 0"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR.NONE",
+      "label": "no irregular income: zero tax on irregular income (annualised method)",
+      "label_id": "tanpa penghasilan tidak teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_irregular_month"
+       },
+       {
+        "name": "expression",
+        "value": "0"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period and irregular_gross <= 0"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_MONTH",
+      "label": "monthly tax on regular income (annualised method)",
+      "label_id": "PPh sebulan atas penghasilan teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_regular_month"
+       },
+       {
+        "name": "expression",
+        "value": "round(pph_regular_annual / annualization_factor, 1, param('pph_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.RUNNING",
+      "label": "PPh 21 of a non-final period (annualised method)",
+      "label_id": "PPh Pasal 21 masa (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_running"
+       },
+       {
+        "name": "expression",
+        "value": "pph_regular_month + pph_irregular_month"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "page": 15,
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_ANNUALIZED",
+      "label": "annualised taxable regular income (annualised method)",
+      "label_id": "penghasilan kena pajak disetahunkan (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "taxable_regular_annualized"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, round(net_regular_month * annualization_factor - ptkp_amount, 1000, 'down'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (4)",
+        "page": 10,
+        "quote": "Jumlah penghasilan kena pajak sebagaimana dimaksud pada ayat (3) dibulatkan ke bawah hingga ribuan rupiah"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_WITHOUT_IRREGULAR",
+      "label": "annualised taxable income without irregular income (annualised method)",
+      "label_id": "penghasilan kena pajak tanpa tidak teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "taxable_without_irregular"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, round(annualization_factor * regular_gross - min(round(param('job_expense_rate') * annualization_factor * regular_gross, 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 1000, 'down'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period and irregular_gross > 0"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (4)",
+        "page": 10,
+        "quote": "Jumlah penghasilan kena pajak sebagaimana dimaksud pada ayat (3) dibulatkan ke bawah hingga ribuan rupiah"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_WITH_IRREGULAR",
+      "label": "annualised taxable income including irregular income (annualised method)",
+      "label_id": "penghasilan kena pajak termasuk tidak teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "taxable_with_irregular"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, round((annualization_factor * regular_gross + irregular_gross) - min(round(param('job_expense_rate') * (annualization_factor * regular_gross + irregular_gross), 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 1000, 'down'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period and irregular_gross > 0"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (4)",
+        "page": 10,
+        "quote": "Jumlah penghasilan kena pajak sebagaimana dimaksud pada ayat (3) dibulatkan ke bawah hingga ribuan rupiah"
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "adopts": [],
+    "note": "The annualised monthly method of PMK 252/2008 is closed at 31 December 2023 (TER rules already in the KB take over), zakat paid through the employer becomes a withholding deduction, and from January 2024 the gross income of the month also includes employer-paid private insurance premiums (Pasal 5 ayat (3) huruf f), read from the case income component 'insurance_premium_employer', so the TER base changes from the first 2024 period."
+   },
+   "delta": {
+    "delta_id": "e2-regulasi-ulang-E04-cand1",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.ZAKAT.DEDUCTIBLE",
+      "recorded_on": "2023-12-29",
+      "label": "mandatory zakat paid through the employer is a deduction in withholding",
+      "label_id": "zakat melalui pemberi kerja sebagai pengurang",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "zakat_deductible",
+      "expression": "zakat_withheld",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja kepada badan amil zakat, lembaga amil zakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh pemerintah.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PREMIUMS.TAXABLE.2024",
+      "recorded_on": "2023-12-29",
+      "label": "employer-paid social security and insurance premiums are income of the permanent employee",
+      "label_id": "iuran dan premi asuransi yang dibayar pemberi kerja sebagai penghasilan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "jkk_premium + jkm_premium + health_premium_employer + income('insurance_premium_employer')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 5 ayat (3) huruf d dan huruf e",
+        "quote": "pembayaran iuran jaminan kecelakaan kerja dan iuran jaminan kematian kepada badan penyelenggara jaminan sosial ketenagakerjaan, yang dibayarkan oleh pemberi kerja;",
+        "page": 9
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 5 ayat (3) huruf f",
+        "quote": "pembayaran premi asuransi kesehatan, asuransi kecelakaan kerja, asuransi jiwa, asuransi dwiguna, dan asuransi beasiswa yang dibayarkan oleh pemberi kerja.",
+        "page": 9
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.P16.JOB_EXPENSE_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "monthly job expense (annualised method)",
+      "label_id": "biaya jabatan sebulan (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "job_expense_month",
+      "condition": "not is_final_period",
+      "expression": "min(round(param('job_expense_rate') * regular_gross, 1, 'down'), param('job_expense_max_month'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.NET_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "monthly net regular income (annualised method)",
+      "label_id": "penghasilan neto sebulan (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "net_regular_month",
+      "condition": "not is_final_period",
+      "expression": "regular_gross - job_expense_month - employee_pension_contributions",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_ANNUAL",
+      "recorded_on": "2023-12-29",
+      "label": "annual tax on annualised regular income (annualised method)",
+      "label_id": "PPh setahun atas penghasilan teratur disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_regular_annual",
+      "condition": "not is_final_period",
+      "expression": "round(progressive('pasal17', taxable_regular_annualized), 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR",
+      "recorded_on": "2023-12-29",
+      "label": "tax on irregular income of the month (annualised method)",
+      "label_id": "PPh atas penghasilan tidak teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_irregular_month",
+      "condition": "not is_final_period and irregular_gross > 0",
+      "expression": "round(progressive('pasal17', taxable_with_irregular), 1, 'down') - round(progressive('pasal17', taxable_without_irregular), 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR.NONE",
+      "recorded_on": "2023-12-29",
+      "label": "no irregular income: zero tax on irregular income (annualised method)",
+      "label_id": "tanpa penghasilan tidak teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_irregular_month",
+      "condition": "not is_final_period and irregular_gross <= 0",
+      "expression": "0",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "monthly tax on regular income (annualised method)",
+      "label_id": "PPh sebulan atas penghasilan teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_regular_month",
+      "condition": "not is_final_period",
+      "expression": "round(pph_regular_annual / annualization_factor, 1, param('pph_round_mode'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.RUNNING",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 of a non-final period (annualised method)",
+      "label_id": "PPh Pasal 21 masa (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "pph_regular_month + pph_irregular_month",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_ANNUALIZED",
+      "recorded_on": "2023-12-29",
+      "label": "annualised taxable regular income (annualised method)",
+      "label_id": "penghasilan kena pajak disetahunkan (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "taxable_regular_annualized",
+      "condition": "not is_final_period",
+      "expression": "max(0, round(net_regular_month * annualization_factor - ptkp_amount, 1000, 'down'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (4)",
+        "quote": "Jumlah penghasilan kena pajak sebagaimana dimaksud pada ayat (3) dibulatkan ke bawah hingga ribuan rupiah",
+        "page": 10
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_WITHOUT_IRREGULAR",
+      "recorded_on": "2023-12-29",
+      "label": "annualised taxable income without irregular income (annualised method)",
+      "label_id": "penghasilan kena pajak tanpa tidak teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "taxable_without_irregular",
+      "condition": "not is_final_period and irregular_gross > 0",
+      "expression": "max(0, round(annualization_factor * regular_gross - min(round(param('job_expense_rate') * annualization_factor * regular_gross, 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (4)",
+        "quote": "Jumlah penghasilan kena pajak sebagaimana dimaksud pada ayat (3) dibulatkan ke bawah hingga ribuan rupiah",
+        "page": 10
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_WITH_IRREGULAR",
+      "recorded_on": "2023-12-29",
+      "label": "annualised taxable income including irregular income (annualised method)",
+      "label_id": "penghasilan kena pajak termasuk tidak teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "taxable_with_irregular",
+      "condition": "not is_final_period and irregular_gross > 0",
+      "expression": "max(0, round((annualization_factor * regular_gross + irregular_gross) - min(round(param('job_expense_rate') * (annualization_factor * regular_gross + irregular_gross), 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (4)",
+        "quote": "Jumlah penghasilan kena pajak sebagaimana dimaksud pada ayat (3) dibulatkan ke bawah hingga ribuan rupiah",
+        "page": 10
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "note": "The annualised monthly method of PMK 252/2008 is closed at 31 December 2023 (TER rules already in the KB take over), zakat paid through the employer becomes a withholding deduction, and from January 2024 the gross income of the month also includes employer-paid private insurance premiums (Pasal 5 ayat (3) huruf f), read from the case income component 'insurance_premium_employer', so the TER base changes from the first 2024 period."
+   },
+   "initial_delta": {
+    "delta_id": "e2-regulasi-ulang-E04-cand1",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.ZAKAT.DEDUCTIBLE",
+      "recorded_on": "2023-12-29",
+      "label": "mandatory zakat paid through the employer is a deduction in withholding",
+      "label_id": "zakat melalui pemberi kerja sebagai pengurang",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "zakat_deductible",
+      "expression": "zakat_withheld",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja kepada badan amil zakat, lembaga amil zakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh pemerintah.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.P16.JOB_EXPENSE_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "monthly job expense (annualised method)",
+      "label_id": "biaya jabatan sebulan (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "job_expense_month",
+      "condition": "not is_final_period",
+      "expression": "min(round(param('job_expense_rate') * regular_gross, 1, 'down'), param('job_expense_max_month'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.NET_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "monthly net regular income (annualised method)",
+      "label_id": "penghasilan neto sebulan (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "net_regular_month",
+      "condition": "not is_final_period",
+      "expression": "regular_gross - job_expense_month - employee_pension_contributions",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_ANNUAL",
+      "recorded_on": "2023-12-29",
+      "label": "annual tax on annualised regular income (annualised method)",
+      "label_id": "PPh setahun atas penghasilan teratur disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_regular_annual",
+      "condition": "not is_final_period",
+      "expression": "round(progressive('pasal17', taxable_regular_annualized), 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR",
+      "recorded_on": "2023-12-29",
+      "label": "tax on irregular income of the month (annualised method)",
+      "label_id": "PPh atas penghasilan tidak teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_irregular_month",
+      "condition": "not is_final_period and irregular_gross > 0",
+      "expression": "round(progressive('pasal17', taxable_with_irregular), 1, 'down') - round(progressive('pasal17', taxable_without_irregular), 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR.NONE",
+      "recorded_on": "2023-12-29",
+      "label": "no irregular income: zero tax on irregular income (annualised method)",
+      "label_id": "tanpa penghasilan tidak teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_irregular_month",
+      "condition": "not is_final_period and irregular_gross <= 0",
+      "expression": "0",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "monthly tax on regular income (annualised method)",
+      "label_id": "PPh sebulan atas penghasilan teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_regular_month",
+      "condition": "not is_final_period",
+      "expression": "round(pph_regular_annual / annualization_factor, 1, param('pph_round_mode'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.RUNNING",
+      "recorded_on": "2023-12-29",
+      "label": "PPh 21 of a non-final period (annualised method)",
+      "label_id": "PPh Pasal 21 masa (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "pph_regular_month + pph_irregular_month",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_ANNUALIZED",
+      "recorded_on": "2023-12-29",
+      "label": "annualised taxable regular income (annualised method)",
+      "label_id": "penghasilan kena pajak disetahunkan (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "taxable_regular_annualized",
+      "condition": "not is_final_period",
+      "expression": "max(0, round(net_regular_month * annualization_factor - ptkp_amount, 1000, 'down'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (4)",
+        "quote": "Jumlah penghasilan kena pajak sebagaimana dimaksud pada ayat (3) dibulatkan ke bawah hingga ribuan rupiah",
+        "page": 10
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_WITHOUT_IRREGULAR",
+      "recorded_on": "2023-12-29",
+      "label": "annualised taxable income without irregular income (annualised method)",
+      "label_id": "penghasilan kena pajak tanpa tidak teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "taxable_without_irregular",
+      "condition": "not is_final_period and irregular_gross > 0",
+      "expression": "max(0, round(annualization_factor * regular_gross - min(round(param('job_expense_rate') * annualization_factor * regular_gross, 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (4)",
+        "quote": "Jumlah penghasilan kena pajak sebagaimana dimaksud pada ayat (3) dibulatkan ke bawah hingga ribuan rupiah",
+        "page": 10
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_WITH_IRREGULAR",
+      "recorded_on": "2023-12-29",
+      "label": "annualised taxable income including irregular income (annualised method)",
+      "label_id": "penghasilan kena pajak termasuk tidak teratur (metode disetahunkan)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "taxable_with_irregular",
+      "condition": "not is_final_period and irregular_gross > 0",
+      "expression": "max(0, round((annualization_factor * regular_gross + irregular_gross) - min(round(param('job_expense_rate') * (annualization_factor * regular_gross + irregular_gross), 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 8 ayat (4)",
+        "quote": "Jumlah penghasilan kena pajak sebagaimana dimaksud pada ayat (3) dibulatkan ke bawah hingga ribuan rupiah",
+        "page": 10
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "note": "The annualised monthly method (PMK 252/2008 via PER-16) is closed at 31 December 2023, because Pasal 15 replaces it with the TER rules already in the KB; the final-period reconciliation, job expense caps and rounding are unchanged. The one new element is zakat paid through the employer, which becomes a deduction in withholding from January 2024 (Pasal 10 ayat (1) huruf c)."
+   }
+  },
+  {
+   "n": 2,
+   "order": 2,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "fail: REG.PMK168.PTKP_FEMALE: no effect on any S^G case (vacuous element); stated effective date 2024-01-01 is not reflected: no S^G case changes in that month"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2024-01-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ZAKAT_DEDUCTIBLE",
+      "label": "zakat paid through the employer is deductible in withholding",
+      "label_id": "zakat melalui pemberi kerja sebagai pengurang",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "zakat_deductible"
+       },
+       {
+        "name": "expression",
+        "value": "zakat_withheld"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.DEFAULT.ZAKAT_DEDUCTIBLE"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "page": 12,
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja kepada badan amil zakat, lembaga amil zakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh pemerintah."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_FEMALE",
+      "label": "PTKP status of a married female employee is her own status unless her husband has no income",
+      "label_id": "status PTKP karyawati kawin",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "ptkp_status_effective"
+       },
+       {
+        "name": "expression",
+        "value": "'TK/0' if ((employee('gender') == 'F' or employee('gender') == 'female') and startswith(ptkp_status_input, 'K/') and employee('husband_no_income_letter') != True) else ptkp_status_input"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (2) huruf a",
+        "page": 11,
+        "quote": "bagi karyawati kawin, sebesar Penghasilan Tidak Kena Pajak untuk dirinya sendiri"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (3)",
+        "page": 11,
+        "quote": "Dalam hal karyawati kawin dapat menunjukkan keterangan tertulis dari pemerintah daerah setempat serendah-rendahnya kecamatan yang menyatakan bahwa suaminya tidak menerima atau memperoleh penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.P16.RUNNING",
+      "label": "monthly PPh 21 under the annualised method (ended)",
+      "label_id": "PPh Pasal 21 masa metode disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_running"
+       },
+       {
+        "name": "expression",
+        "value": "pph_regular_month + pph_irregular_month"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "page": 15,
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.JOB_EXPENSE_MONTH",
+      "label": "monthly job expense under the annualised method (ended)",
+      "label_id": "biaya jabatan sebulan metode disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "job_expense_month"
+       },
+       {
+        "name": "expression",
+        "value": "min(round(param('job_expense_rate') * regular_gross, 1, 'down'), param('job_expense_max_month'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.NET_MONTH",
+      "label": "monthly net regular income under the annualised method (ended)",
+      "label_id": "penghasilan neto sebulan metode disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "net_regular_month"
+       },
+       {
+        "name": "expression",
+        "value": "regular_gross - job_expense_month - employee_pension_contributions"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_ANNUALIZED",
+      "label": "annualised taxable regular income (ended)",
+      "label_id": "penghasilan kena pajak disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "taxable_regular_annualized"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, round(net_regular_month * annualization_factor - ptkp_amount, 1000, 'down'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_ANNUAL",
+      "label": "annual tax on annualised regular income (ended)",
+      "label_id": "PPh setahun atas penghasilan teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_regular_annual"
+       },
+       {
+        "name": "expression",
+        "value": "round(progressive('pasal17', taxable_regular_annualized), 1, 'down')"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_MONTH",
+      "label": "monthly tax on regular income (ended)",
+      "label_id": "PPh sebulan atas penghasilan teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_regular_month"
+       },
+       {
+        "name": "expression",
+        "value": "round(pph_regular_annual / annualization_factor, 1, param('pph_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR",
+      "label": "tax on irregular income of the month (ended)",
+      "label_id": "PPh atas penghasilan tidak teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_irregular_month"
+       },
+       {
+        "name": "expression",
+        "value": "round(progressive('pasal17', taxable_with_irregular), 1, 'down') - round(progressive('pasal17', taxable_without_irregular), 1, 'down')"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period and irregular_gross > 0"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR.NONE",
+      "label": "no tax on irregular income when there is none (ended)",
+      "label_id": "PPh atas penghasilan tidak teratur nihil",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_irregular_month"
+       },
+       {
+        "name": "expression",
+        "value": "0"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period and irregular_gross <= 0"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_WITHOUT_IRREGULAR",
+      "label": "annualised taxable income without irregular income (ended)",
+      "label_id": "penghasilan kena pajak tanpa tidak teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "taxable_without_irregular"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, round(annualization_factor * regular_gross - min(round(param('job_expense_rate') * annualization_factor * regular_gross, 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 1000, 'down'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period and irregular_gross > 0"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_WITH_IRREGULAR",
+      "label": "annualised taxable income including irregular income (ended)",
+      "label_id": "penghasilan kena pajak termasuk tidak teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "taxable_with_irregular"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, round((annualization_factor * regular_gross + irregular_gross) - min(round(param('job_expense_rate') * (annualization_factor * regular_gross + irregular_gross), 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 1000, 'down'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period and irregular_gross > 0"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "adopts": [],
+    "note": "The annualised monthly method of PMK 252/2008 (REG.P16.*) is closed at 31 December 2023 (Pasal 24) and the existing TER rules take over; zakat paid through the employer becomes deductible from January 2024. Pasal 9 ayat (2)-(3) is modelled as a PTKP status rule: a married female employee uses TK/0 (which also drives the TER category from January 2024) unless she shows a letter that her husband has no income, assuming case attributes employee('gender') and employee('husband_no_income_letter')."
+   },
+   "delta": {
+    "delta_id": "e2-regulasi-ulang-E04-cand2",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ZAKAT_DEDUCTIBLE",
+      "recorded_on": "2023-12-29",
+      "label": "zakat paid through the employer is deductible in withholding",
+      "label_id": "zakat melalui pemberi kerja sebagai pengurang",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "zakat_deductible",
+      "expression": "zakat_withheld",
+      "overrides": [
+       "REG.DEFAULT.ZAKAT_DEDUCTIBLE"
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja kepada badan amil zakat, lembaga amil zakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh pemerintah.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.PTKP_FEMALE",
+      "recorded_on": "2023-12-29",
+      "label": "PTKP status of a married female employee is her own status unless her husband has no income",
+      "label_id": "status PTKP karyawati kawin",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "year",
+      "produces": "ptkp_status_effective",
+      "expression": "'TK/0' if ((employee('gender') == 'F' or employee('gender') == 'female') and startswith(ptkp_status_input, 'K/') and employee('husband_no_income_letter') != True) else ptkp_status_input",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (2) huruf a",
+        "quote": "bagi karyawati kawin, sebesar Penghasilan Tidak Kena Pajak untuk dirinya sendiri",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 9 ayat (3)",
+        "quote": "Dalam hal karyawati kawin dapat menunjukkan keterangan tertulis dari pemerintah daerah setempat serendah-rendahnya kecamatan yang menyatakan bahwa suaminya tidak menerima atau memperoleh penghasilan",
+        "page": 11
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.P16.RUNNING",
+      "recorded_on": "2023-12-29",
+      "label": "monthly PPh 21 under the annualised method (ended)",
+      "label_id": "PPh Pasal 21 masa metode disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "pph_regular_month + pph_irregular_month",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan",
+        "page": 15
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.JOB_EXPENSE_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "monthly job expense under the annualised method (ended)",
+      "label_id": "biaya jabatan sebulan metode disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "job_expense_month",
+      "condition": "not is_final_period",
+      "expression": "min(round(param('job_expense_rate') * regular_gross, 1, 'down'), param('job_expense_max_month'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.NET_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "monthly net regular income under the annualised method (ended)",
+      "label_id": "penghasilan neto sebulan metode disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "net_regular_month",
+      "condition": "not is_final_period",
+      "expression": "regular_gross - job_expense_month - employee_pension_contributions",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_ANNUALIZED",
+      "recorded_on": "2023-12-29",
+      "label": "annualised taxable regular income (ended)",
+      "label_id": "penghasilan kena pajak disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "taxable_regular_annualized",
+      "condition": "not is_final_period",
+      "expression": "max(0, round(net_regular_month * annualization_factor - ptkp_amount, 1000, 'down'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_ANNUAL",
+      "recorded_on": "2023-12-29",
+      "label": "annual tax on annualised regular income (ended)",
+      "label_id": "PPh setahun atas penghasilan teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_regular_annual",
+      "condition": "not is_final_period",
+      "expression": "round(progressive('pasal17', taxable_regular_annualized), 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "monthly tax on regular income (ended)",
+      "label_id": "PPh sebulan atas penghasilan teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_regular_month",
+      "condition": "not is_final_period",
+      "expression": "round(pph_regular_annual / annualization_factor, 1, param('pph_round_mode'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR",
+      "recorded_on": "2023-12-29",
+      "label": "tax on irregular income of the month (ended)",
+      "label_id": "PPh atas penghasilan tidak teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_irregular_month",
+      "condition": "not is_final_period and irregular_gross > 0",
+      "expression": "round(progressive('pasal17', taxable_with_irregular), 1, 'down') - round(progressive('pasal17', taxable_without_irregular), 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR.NONE",
+      "recorded_on": "2023-12-29",
+      "label": "no tax on irregular income when there is none (ended)",
+      "label_id": "PPh atas penghasilan tidak teratur nihil",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_irregular_month",
+      "condition": "not is_final_period and irregular_gross <= 0",
+      "expression": "0",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_WITHOUT_IRREGULAR",
+      "recorded_on": "2023-12-29",
+      "label": "annualised taxable income without irregular income (ended)",
+      "label_id": "penghasilan kena pajak tanpa tidak teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "taxable_without_irregular",
+      "condition": "not is_final_period and irregular_gross > 0",
+      "expression": "max(0, round(annualization_factor * regular_gross - min(round(param('job_expense_rate') * annualization_factor * regular_gross, 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_WITH_IRREGULAR",
+      "recorded_on": "2023-12-29",
+      "label": "annualised taxable income including irregular income (ended)",
+      "label_id": "penghasilan kena pajak termasuk tidak teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "taxable_with_irregular",
+      "condition": "not is_final_period and irregular_gross > 0",
+      "expression": "max(0, round((annualization_factor * regular_gross + irregular_gross) - min(round(param('job_expense_rate') * (annualization_factor * regular_gross + irregular_gross), 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "note": "The annualised monthly method of PMK 252/2008 (REG.P16.*) is closed at 31 December 2023 (Pasal 24) and the existing TER rules take over; zakat paid through the employer becomes deductible from January 2024. Pasal 9 ayat (2)-(3) is modelled as a PTKP status rule: a married female employee uses TK/0 (which also drives the TER category from January 2024) unless she shows a letter that her husband has no income, assuming case attributes employee('gender') and employee('husband_no_income_letter')."
+   },
+   "initial_delta": {
+    "delta_id": "e2-regulasi-ulang-E04-cand2",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.PMK168.ZAKAT_DEDUCTIBLE",
+      "recorded_on": "2023-12-29",
+      "label": "zakat paid through the employer is deductible in withholding",
+      "label_id": "zakat melalui pemberi kerja sebagai pengurang",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "zakat_deductible",
+      "expression": "zakat_withheld",
+      "overrides": [
+       "REG.DEFAULT.ZAKAT_DEDUCTIBLE"
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja kepada badan amil zakat, lembaga amil zakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh pemerintah.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.P16.RUNNING",
+      "recorded_on": "2023-12-29",
+      "label": "monthly PPh 21 under the annualised method (ended)",
+      "label_id": "PPh Pasal 21 masa metode disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "pph_regular_month + pph_irregular_month",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan",
+        "page": 15
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.JOB_EXPENSE_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "monthly job expense under the annualised method (ended)",
+      "label_id": "biaya jabatan sebulan metode disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "job_expense_month",
+      "condition": "not is_final_period",
+      "expression": "min(round(param('job_expense_rate') * regular_gross, 1, 'down'), param('job_expense_max_month'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.NET_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "monthly net regular income under the annualised method (ended)",
+      "label_id": "penghasilan neto sebulan metode disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "net_regular_month",
+      "condition": "not is_final_period",
+      "expression": "regular_gross - job_expense_month - employee_pension_contributions",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_ANNUALIZED",
+      "recorded_on": "2023-12-29",
+      "label": "annualised taxable regular income (ended)",
+      "label_id": "penghasilan kena pajak disetahunkan",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "taxable_regular_annualized",
+      "condition": "not is_final_period",
+      "expression": "max(0, round(net_regular_month * annualization_factor - ptkp_amount, 1000, 'down'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_ANNUAL",
+      "recorded_on": "2023-12-29",
+      "label": "annual tax on annualised regular income (ended)",
+      "label_id": "PPh setahun atas penghasilan teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_regular_annual",
+      "condition": "not is_final_period",
+      "expression": "round(progressive('pasal17', taxable_regular_annualized), 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "monthly tax on regular income (ended)",
+      "label_id": "PPh sebulan atas penghasilan teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_regular_month",
+      "condition": "not is_final_period",
+      "expression": "round(pph_regular_annual / annualization_factor, 1, param('pph_round_mode'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR",
+      "recorded_on": "2023-12-29",
+      "label": "tax on irregular income of the month (ended)",
+      "label_id": "PPh atas penghasilan tidak teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_irregular_month",
+      "condition": "not is_final_period and irregular_gross > 0",
+      "expression": "round(progressive('pasal17', taxable_with_irregular), 1, 'down') - round(progressive('pasal17', taxable_without_irregular), 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR.NONE",
+      "recorded_on": "2023-12-29",
+      "label": "no tax on irregular income when there is none (ended)",
+      "label_id": "PPh atas penghasilan tidak teratur nihil",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_irregular_month",
+      "condition": "not is_final_period and irregular_gross <= 0",
+      "expression": "0",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_WITHOUT_IRREGULAR",
+      "recorded_on": "2023-12-29",
+      "label": "annualised taxable income without irregular income (ended)",
+      "label_id": "penghasilan kena pajak tanpa tidak teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "taxable_without_irregular",
+      "condition": "not is_final_period and irregular_gross > 0",
+      "expression": "max(0, round(annualization_factor * regular_gross - min(round(param('job_expense_rate') * annualization_factor * regular_gross, 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.TAXABLE_WITH_IRREGULAR",
+      "recorded_on": "2023-12-29",
+      "label": "annualised taxable income including irregular income (ended)",
+      "label_id": "penghasilan kena pajak termasuk tidak teratur",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "taxable_with_irregular",
+      "condition": "not is_final_period and irregular_gross > 0",
+      "expression": "max(0, round((annualization_factor * regular_gross + irregular_gross) - min(round(param('job_expense_rate') * (annualization_factor * regular_gross + irregular_gross), 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan Sehubungan dengan Pekerjaan Jasa, dan Kegiatan Orang Pribadi;",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "note": "The annualised monthly method of PMK 252/2008 (REG.P16.*) is closed at 31 December 2023 because Pasal 24 revokes it, and the existing TER rules from PP 58/2023 take over for non-final periods. Zakat paid through the employer becomes a deduction in withholding from January 2024; job expense limits, PTKP, final-period reconciliation and part-year annualisation are unchanged and already in the KB."
+   }
+  },
+  {
+   "n": 3,
+   "order": 1,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "fail: dangling REG.P16.TAXABLE_ANNUALIZED net_regular_month: fact has no valid producer in 2024-01..2027-12",
+    "G3_warnings": []
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2024-01-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 0,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.ZAKAT.DEDUCTIBLE",
+      "label": "zakat paid through the employer is an allowable deduction for permanent employees",
+      "label_id": "zakat melalui pemberi kerja sebagai pengurangan yang diperbolehkan",
+      "valid_from": "2024-01-01",
+      "valid_until": null,
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "zakat_deductible"
+       },
+       {
+        "name": "expression",
+        "value": "zakat_withheld"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "page": 12,
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja kepada badan amil zakat, lembaga amil zakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh pemerintah."
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.P16.RUNNING",
+      "label": "monthly withholding by the annualisation method (ended; replaced by the monthly effective rate)",
+      "label_id": "PPh 21 masa metode penghasilan disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_running"
+       },
+       {
+        "name": "expression",
+        "value": "pph_regular_month + pph_irregular_month"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "page": 15,
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_MONTH",
+      "label": "monthly tax on annualised regular income (annualisation method ended)",
+      "label_id": "PPh sebulan atas penghasilan teratur metode disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_regular_month"
+       },
+       {
+        "name": "expression",
+        "value": "round(pph_regular_annual / annualization_factor, 1, param('pph_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_ANNUAL",
+      "label": "annual tax on annualised regular income (annualisation method ended)",
+      "label_id": "PPh setahun atas penghasilan teratur metode disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_regular_annual"
+       },
+       {
+        "name": "expression",
+        "value": "round(progressive('pasal17', taxable_regular_annualized), 1, 'down')"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR",
+      "label": "tax on irregular income by the annualisation method (ended)",
+      "label_id": "PPh atas penghasilan tidak teratur metode disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_irregular_month"
+       },
+       {
+        "name": "expression",
+        "value": "round(progressive('pasal17', taxable_with_irregular), 1, 'down') - round(progressive('pasal17', taxable_without_irregular), 1, 'down')"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period and irregular_gross > 0"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR.NONE",
+      "label": "no tax on irregular income when there is none (annualisation method ended)",
+      "label_id": "PPh tidak teratur nihil metode disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_irregular_month"
+       },
+       {
+        "name": "expression",
+        "value": "0"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period and irregular_gross <= 0"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.NET_MONTH",
+      "label": "net regular income of the month for the annualisation method (ended)",
+      "label_id": "penghasilan neto sebulan metode disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "net_regular_month"
+       },
+       {
+        "name": "expression",
+        "value": "regular_gross - job_expense_month - employee_pension_contributions"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.JOB_EXPENSE_MONTH",
+      "label": "monthly job expense for the annualisation method (ended)",
+      "label_id": "biaya jabatan sebulan metode disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "recorded_on": "2023-12-29",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "job_expense_month"
+       },
+       {
+        "name": "expression",
+        "value": "min(round(param('job_expense_rate') * regular_gross, 1, 'down'), param('job_expense_max_month'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf a",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 250/PMK.03/2008 tentang Besarnya Biaya Jabatan atau Biaya Pensiun"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "page": 22,
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan"
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "page": 23,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024."
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "adopts": [],
+    "note": "PMK 168/2023 revokes PMK 252/2008 from 1 January 2024 and prescribes the monthly effective rate (already in the KB) for periods other than the final one, so the PER-16 annualisation-method running rules are closed at 31 December 2023 and zakat paid through the employer becomes an allowable deduction. The three annualised taxable-income helper rules only feed the closed rules and are left untouched."
+   },
+   "delta": {
+    "delta_id": "e2-regulasi-ulang-E04-cand3",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.ZAKAT.DEDUCTIBLE",
+      "recorded_on": "2023-12-29",
+      "label": "zakat paid through the employer is an allowable deduction for permanent employees",
+      "label_id": "zakat melalui pemberi kerja sebagai pengurangan yang diperbolehkan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "zakat_deductible",
+      "expression": "zakat_withheld",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja kepada badan amil zakat, lembaga amil zakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh pemerintah.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.P16.RUNNING",
+      "recorded_on": "2023-12-29",
+      "label": "monthly withholding by the annualisation method (ended; replaced by the monthly effective rate)",
+      "label_id": "PPh 21 masa metode penghasilan disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "pph_regular_month + pph_irregular_month",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "monthly tax on annualised regular income (annualisation method ended)",
+      "label_id": "PPh sebulan atas penghasilan teratur metode disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_regular_month",
+      "condition": "not is_final_period",
+      "expression": "round(pph_regular_annual / annualization_factor, 1, param('pph_round_mode'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_ANNUAL",
+      "recorded_on": "2023-12-29",
+      "label": "annual tax on annualised regular income (annualisation method ended)",
+      "label_id": "PPh setahun atas penghasilan teratur metode disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_regular_annual",
+      "condition": "not is_final_period",
+      "expression": "round(progressive('pasal17', taxable_regular_annualized), 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR",
+      "recorded_on": "2023-12-29",
+      "label": "tax on irregular income by the annualisation method (ended)",
+      "label_id": "PPh atas penghasilan tidak teratur metode disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_irregular_month",
+      "condition": "not is_final_period and irregular_gross > 0",
+      "expression": "round(progressive('pasal17', taxable_with_irregular), 1, 'down') - round(progressive('pasal17', taxable_without_irregular), 1, 'down')",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.PPH_IRREGULAR.NONE",
+      "recorded_on": "2023-12-29",
+      "label": "no tax on irregular income when there is none (annualisation method ended)",
+      "label_id": "PPh tidak teratur nihil metode disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph_irregular_month",
+      "condition": "not is_final_period and irregular_gross <= 0",
+      "expression": "0",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.NET_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "net regular income of the month for the annualisation method (ended)",
+      "label_id": "penghasilan neto sebulan metode disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "net_regular_month",
+      "condition": "not is_final_period",
+      "expression": "regular_gross - job_expense_month - employee_pension_contributions",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.P16.JOB_EXPENSE_MONTH",
+      "recorded_on": "2023-12-29",
+      "label": "monthly job expense for the annualisation method (ended)",
+      "label_id": "biaya jabatan sebulan metode disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "job_expense_month",
+      "condition": "not is_final_period",
+      "expression": "min(round(param('job_expense_rate') * regular_gross, 1, 'down'), param('job_expense_max_month'))",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf a",
+        "quote": "Peraturan Menteri Keuangan Nomor 250/PMK.03/2008 tentang Besarnya Biaya Jabatan atau Biaya Pensiun",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "note": "PMK 168/2023 revokes PMK 252/2008 from 1 January 2024 and prescribes the monthly effective rate (already in the KB) for periods other than the final one, so the PER-16 annualisation-method running rules are closed at 31 December 2023 and zakat paid through the employer becomes an allowable deduction. The three annualised taxable-income helper rules only feed the closed rules and are left untouched."
+   },
+   "initial_delta": {
+    "delta_id": "e2-regulasi-ulang-E04-cand3",
+    "event_id": "E04",
+    "document": {
+     "id": "PMK-168-2023",
+     "title": "PMK 168/2023: Juklak pemotongan PPh 21/26 (TER), mencabut PMK 250/252/2008",
+     "issued": "2023-12-29"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "REG.ZAKAT.DEDUCTIBLE",
+      "recorded_on": "2023-12-29",
+      "label": "zakat paid through the employer is an allowable deduction for permanent employees",
+      "label_id": "zakat melalui pemberi kerja sebagai pengurangan yang diperbolehkan",
+      "valid_from": "2024-01-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "zakat_deductible",
+      "expression": "zakat_withheld",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 10 ayat (1) huruf c",
+        "quote": "zakat atau sumbangan keagamaan yang sifatnya wajib bagi pemeluk agama yang diakui di Indonesia, yang dibayarkan melalui pemberi kerja kepada badan amil zakat, lembaga amil zakat, dan lembaga keagamaan yang dibentuk atau disahkan oleh pemerintah.",
+        "page": 12
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "change": [
+     {
+      "kind": "rule",
+      "id": "REG.P16.RUNNING",
+      "recorded_on": "2023-12-29",
+      "label": "monthly withholding by the annualisation method (ended; replaced by the monthly effective rate)",
+      "label_id": "PPh 21 masa metode penghasilan disetahunkan (berakhir)",
+      "valid_from": "2009-01-01",
+      "valid_until": "2023-12-31",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "pph21_running",
+      "condition": "not is_final_period",
+      "expression": "pph_regular_month + pph_irregular_month",
+      "source": [
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 15 ayat (1) huruf a",
+        "quote": "setiap Masa Pajak selain Masa Pajak Terakhir dihitung menggunakan tarif efektif bulanan",
+        "page": 15
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 24 huruf b",
+        "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008 tentang Petunjuk Pelaksanaan Pemotongan Pajak atas Penghasilan",
+        "page": 22
+       },
+       {
+        "document": "PMK-168-2023",
+        "provision": "Pasal 25",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2024.",
+        "page": 23
+       }
+      ]
+     }
+    ],
+    "remove": [],
+    "note": "The TER running method, final-period reconciliation, job expense caps, premiums in gross income and part-year rules already exist in the KB with the same values, so only the newly allowed zakat deduction is added and the annualisation running rule is closed at 31 December 2023. Its intermediate PER-16 rules become unused once it is closed."
+   }
+  }
+ ],
+ "groups": [],
+ "selected": null,
+ "status": "abstain",
+ "delta": null,
+ "cost_usd": 1.704008,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "PMK 168/2023 replaces PMK 252/PMK.03/2008 and PMK 250/PMK.03/2008 and changes how PPh 21 is computed for permanent employees (Pegawai Tetap) from 1 January 2024. In every tax period other than the last, the monthly effective rate (TER) is applied to monthly gross income. In the last tax period, annual tax under the Article 17 rates is reconciled against the tax already withheld. The regulation also defines gross income for permanent employees, including employer-paid JKK, JKM and health insurance contributions. It sets the allowable deductions: biaya jabatan at 5% capped at Rp6,000,000 per year or Rp500,000 per month, pension/JHT contributions, and zakat. It further covers the PTKP rules, rounding of taxable income down to full thousands, annualisation for partial years, and the refund of over-withholding.",
+   "quotes": [
+    {
+     "provision": "Pasal 15 ayat (1)",
+     "quote": "setiap Masa Pajak selain Masa Pajak Terakhir\ndihitung menggunakan tarif efektif bulanan"
+    },
+    {
+     "provision": "Pasal 15 ayat (2)",
+     "quote": "dihitung menggunakan\ntarif Pasal 17 ayat (1) huruf a Undang-Undang Pajak\nPenghasilan dikalikan dengan dasar pengenaan dan\npemotongan sebagaimana dimaksud dalam Pasal 8 ayat\n(1) huruf b"
+    },
+    {
+     "provision": "Pasal 5 ayat (3) huruf d",
+     "quote": "pembayaran iuran jaminan kecelakaan kerja dan\niuran jaminan kematian kepada badan penyelenggara\njaminan sosial ketenagakerjaan, yang dibayarkan oleh\npemberi kerja"
+    },
+    {
+     "provision": "Pasal 10 ayat (2)",
+     "quote": "ditetapkan sebesar 5% (lima persen) dari\npenghasilan bruto, paling banyak Rp6.000.000,00 (enam\njuta rupiah) setahun atau paling banyak Rp500.000,00\n(lima ratus ribu rupiah) sebulan"
+    },
+    {
+     "provision": "Pasal 8 ayat (4)",
+     "quote": "dibulatkan ke bawah hingga ribuan rupiah\npen uh"
+    },
+    {
+     "provision": "Pasal 15 ayat (3)",
+     "quote": "berdasarkan penghasilan neto yang disetahunkan dan\npajaknya dihitung secara proporsional terhadap jumlah\nbulan dalam bagian Tahun Pajak yang bersangkutan"
+    },
+    {
+     "provision": "Pasal 24",
+     "quote": "Peraturan Menteri Keuangan Nomor 252/PMK.03/2008\ntentang Petunjuk Pelaksanaan Pemotongan Pajak atas\nPenghasilan"
+    }
+   ],
+   "effective_from": "2024-01-01",
+   "effective_from_quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari\n2024.",
+   "effective_until": null,
+   "effective_until_quote": null,
+   "subjects": []
+  },
+  "quotes_ok": true
+ }
+}

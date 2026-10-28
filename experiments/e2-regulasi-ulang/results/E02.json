@@ -1,0 +1,996 @@
+{
+ "run": "e2-regulasi-ulang",
+ "event": "E02",
+ "condition": "proposed",
+ "documents": [
+  "PMK-66-2023"
+ ],
+ "selection": {
+  "PMK-66-2023": {
+   "tokens": 12766,
+   "dropped": [
+    "Lampiran 1"
+   ]
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "parameter",
+      "id": "PAR.MEAL_COUPON_EXEMPT.2023",
+      "label": "monthly exempt value of meal coupons per employee",
+      "label_id": "batas nilai kupon makanan dan/atau minuman yang dikecualikan per bulan",
+      "valid_from": "2023-07-01",
+      "valid_until": null,
+      "recorded_on": "2023-06-27",
+      "fields": [
+       {
+        "name": "name",
+        "value": "meal_coupon_exempt_month"
+       },
+       {
+        "name": "value",
+        "value": "2000000"
+       },
+       {
+        "name": "value_type",
+        "value": "money"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 5 ayat (4) huruf a",
+        "page": 6,
+        "quote": "Rp2.000.000,00 (dua juta rupiah) untuk tiap Pegawai dalam jangka waktu 1 (satu) bulan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "page": 19,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.NATURA.REGULAR",
+      "label": "taxable regular benefits in kind including excess of meal coupons",
+      "label_id": "natura dan/atau kenikmatan teratur yang menjadi objek pajak termasuk selisih lebih kupon makanan",
+      "valid_from": "2023-07-01",
+      "valid_until": null,
+      "recorded_on": "2023-06-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "benefits_taxable_regular"
+       },
+       {
+        "name": "expression",
+        "value": "benefit('natura_regular') + max(0, benefit('meal_coupon') - max(param('meal_coupon_exempt_month'), hr('onsite_meal_cost')))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 3 ayat (1)",
+        "page": 5,
+        "quote": "Penggantian atau imbalan sehubungan dengan pekerjaan atau jasa yang diterima atau diperoleh dalam bentuk natura dan/atau kenikmatan merupakan penghasilan yang menjadi objek Pajak Penghasilan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 5 ayat (5)",
+        "page": 7,
+        "quote": "Selisih lebih dart nilai kupon yang sebenarnya setelah dikurangi nilai sebagaimana dimaksud pada ayat (4) huruf a atau huruf b merupakan objek Pajak Penghasilan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 23 ayat (1)",
+        "page": 17,
+        "quote": "Pemberi kerja atau pemberi penggantian atau imbalan dalam bentuk natura dan/atau kenikmatan wajib melakukan pemotongan Pajak Penghasilan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 23 ayat (4)",
+        "page": 18,
+        "quote": "yang diterima atau diperoleh pada Masa Pajak Januari 2023 sampai dengan Masa Pajak Juni 2023 dikecualikan dari pemotongan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "page": 19,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.NATURA.IRREGULAR",
+      "label": "taxable irregular benefits in kind",
+      "label_id": "natura dan/atau kenikmatan tidak teratur yang menjadi objek pajak",
+      "valid_from": "2023-07-01",
+      "valid_until": null,
+      "recorded_on": "2023-06-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "benefits_taxable_irregular"
+       },
+       {
+        "name": "expression",
+        "value": "benefit('natura_irregular')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 3 ayat (1)",
+        "page": 5,
+        "quote": "Penggantian atau imbalan sehubungan dengan pekerjaan atau jasa yang diterima atau diperoleh dalam bentuk natura dan/atau kenikmatan merupakan penghasilan yang menjadi objek Pajak Penghasilan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 23 ayat (4)",
+        "page": 18,
+        "quote": "yang diterima atau diperoleh pada Masa Pajak Januari 2023 sampai dengan Masa Pajak Juni 2023 dikecualikan dari pemotongan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "page": 19,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Benefits in kind enter withholding from Masa Pajak July 2023 (January-June 2023 excluded from withholding); case benefit kinds 'natura_regular' and 'natura_irregular' are assumed to be valued per Pasal 22 and already net of the Pasal 4 exclusions and Lampiran limits, while meal coupons ('meal_coupon') are capped here at the greater of Rp2,000,000 and the on-site meal cost per employee (hr 'onsite_meal_cost')."
+   },
+   "delta": {
+    "delta_id": "e2-regulasi-ulang-E02-cand1",
+    "event_id": "E02",
+    "document": {
+     "id": "PMK-66-2023",
+     "title": "PMK 66/2023: Perlakuan PPh atas natura dan/atau kenikmatan",
+     "issued": "2023-06-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "parameter",
+      "id": "PAR.MEAL_COUPON_EXEMPT.2023",
+      "recorded_on": "2023-06-27",
+      "label": "monthly exempt value of meal coupons per employee",
+      "label_id": "batas nilai kupon makanan dan/atau minuman yang dikecualikan per bulan",
+      "valid_from": "2023-07-01",
+      "name": "meal_coupon_exempt_month",
+      "value_type": "money",
+      "value": 2000000,
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 5 ayat (4) huruf a",
+        "quote": "Rp2.000.000,00 (dua juta rupiah) untuk tiap Pegawai dalam jangka waktu 1 (satu) bulan",
+        "page": 6
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023.",
+        "page": 19
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.NATURA.REGULAR",
+      "recorded_on": "2023-06-27",
+      "label": "taxable regular benefits in kind including excess of meal coupons",
+      "label_id": "natura dan/atau kenikmatan teratur yang menjadi objek pajak termasuk selisih lebih kupon makanan",
+      "valid_from": "2023-07-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "benefits_taxable_regular",
+      "expression": "benefit('natura_regular') + max(0, benefit('meal_coupon') - max(param('meal_coupon_exempt_month'), hr('onsite_meal_cost')))",
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 3 ayat (1)",
+        "quote": "Penggantian atau imbalan sehubungan dengan pekerjaan atau jasa yang diterima atau diperoleh dalam bentuk natura dan/atau kenikmatan merupakan penghasilan yang menjadi objek Pajak Penghasilan",
+        "page": 5
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 5 ayat (5)",
+        "quote": "Selisih lebih dart nilai kupon yang sebenarnya setelah dikurangi nilai sebagaimana dimaksud pada ayat (4) huruf a atau huruf b merupakan objek Pajak Penghasilan",
+        "page": 7
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 23 ayat (1)",
+        "quote": "Pemberi kerja atau pemberi penggantian atau imbalan dalam bentuk natura dan/atau kenikmatan wajib melakukan pemotongan Pajak Penghasilan",
+        "page": 17
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 23 ayat (4)",
+        "quote": "yang diterima atau diperoleh pada Masa Pajak Januari 2023 sampai dengan Masa Pajak Juni 2023 dikecualikan dari pemotongan",
+        "page": 18
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023.",
+        "page": 19
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.NATURA.IRREGULAR",
+      "recorded_on": "2023-06-27",
+      "label": "taxable irregular benefits in kind",
+      "label_id": "natura dan/atau kenikmatan tidak teratur yang menjadi objek pajak",
+      "valid_from": "2023-07-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "benefits_taxable_irregular",
+      "expression": "benefit('natura_irregular')",
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 3 ayat (1)",
+        "quote": "Penggantian atau imbalan sehubungan dengan pekerjaan atau jasa yang diterima atau diperoleh dalam bentuk natura dan/atau kenikmatan merupakan penghasilan yang menjadi objek Pajak Penghasilan",
+        "page": 5
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 23 ayat (4)",
+        "quote": "yang diterima atau diperoleh pada Masa Pajak Januari 2023 sampai dengan Masa Pajak Juni 2023 dikecualikan dari pemotongan",
+        "page": 18
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023.",
+        "page": 19
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Benefits in kind enter withholding from Masa Pajak July 2023 (January-June 2023 excluded from withholding); case benefit kinds 'natura_regular' and 'natura_irregular' are assumed to be valued per Pasal 22 and already net of the Pasal 4 exclusions and Lampiran limits, while meal coupons ('meal_coupon') are capped here at the greater of Rp2,000,000 and the on-site meal cost per employee (hr 'onsite_meal_cost')."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 2,
+   "order": 2,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "parameter",
+      "id": "PAR.MEAL_COUPON_EXEMPT_CAP.2023",
+      "label": "monthly exempt value of meal coupons per employee",
+      "label_id": "batas nilai kupon makanan dan/atau minuman yang dikecualikan per Pegawai sebulan",
+      "valid_from": "2023-07-01",
+      "valid_until": null,
+      "recorded_on": "2023-06-27",
+      "fields": [
+       {
+        "name": "name",
+        "value": "meal_coupon_exempt_cap"
+       },
+       {
+        "name": "value",
+        "value": "2000000"
+       },
+       {
+        "name": "value_type",
+        "value": "money"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 5 ayat (4) huruf a",
+        "page": 6,
+        "quote": "a. Rp2.000.000,00 (dua juta rupiah) untuk tiap Pegawai dalam jangka waktu 1 (satu) bulan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "page": 19,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.NATURA.REGULAR",
+      "label": "taxable regular benefits in kind including excess meal coupons",
+      "label_id": "natura dan/atau kenikmatan teratur yang menjadi objek PPh termasuk selisih lebih kupon makanan",
+      "valid_from": "2023-07-01",
+      "valid_until": null,
+      "recorded_on": "2023-06-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "benefits_taxable_regular"
+       },
+       {
+        "name": "expression",
+        "value": "benefit('taxable_regular') + max(0, benefit('meal_coupon') - max(param('meal_coupon_exempt_cap'), hr('workplace_meal_cost')))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 3 ayat (1)",
+        "page": 5,
+        "quote": "Penggantian atau imbalan sehubungan dengan pekerjaan atau jasa yang diterima atau diperoleh dalam bentuk natura dan/atau kenikmatan merupakan penghasilan yang menjadi objek Pajak Penghasilan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 4",
+        "page": 6,
+        "quote": "Dikecualikan dart objek Pajak Penghasilan atas penggantian atau imbalan dalam bentuk natura dan/atau kenikmatan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 5 ayat (4) huruf a",
+        "page": 6,
+        "quote": "a. Rp2.000.000,00 (dua juta rupiah) untuk tiap Pegawai dalam jangka waktu 1 (satu) bulan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 5 ayat (4) huruf b",
+        "page": 7,
+        "quote": "dalam hal nilai pengeluaran oleh pemberi kerja dimaksud lebih dart Rp2.000.000,00 (dua juta rupiah) untuk tiap Pegawai dalam jangka waktu 1 (satu) bulan."
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 23 ayat (1)",
+        "page": 17,
+        "quote": "Pemberi kerja atau pemberi penggantian atau imbalan dalam bentuk natura dan/atau kenikmatan wajib melakukan pemotongan Pajak Penghasilan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "page": 19,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.NATURA.IRREGULAR",
+      "label": "taxable irregular benefits in kind",
+      "label_id": "natura dan/atau kenikmatan tidak teratur yang menjadi objek PPh",
+      "valid_from": "2023-07-01",
+      "valid_until": null,
+      "recorded_on": "2023-06-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "benefits_taxable_irregular"
+       },
+       {
+        "name": "expression",
+        "value": "benefit('taxable_irregular')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 3 ayat (1)",
+        "page": 5,
+        "quote": "Penggantian atau imbalan sehubungan dengan pekerjaan atau jasa yang diterima atau diperoleh dalam bentuk natura dan/atau kenikmatan merupakan penghasilan yang menjadi objek Pajak Penghasilan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 23 ayat (1)",
+        "page": 17,
+        "quote": "Pemberi kerja atau pemberi penggantian atau imbalan dalam bentuk natura dan/atau kenikmatan wajib melakukan pemotongan Pajak Penghasilan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "page": 19,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Benefits in kind enter PPh 21 withholding from the July 2023 tax period, because January–June 2023 is excluded from withholding (Pasal 23 ayat (4)). The case supplies benefits already valued under Pasal 22 and already net of the Pasal 4 exclusions and annex limits as benefit('taxable_regular') or benefit('taxable_irregular'). Meal coupons are taxed only above the larger of Rp2,000,000 and the employer's per-employee workplace meal cost, supplied as hr('workplace_meal_cost')."
+   },
+   "delta": {
+    "delta_id": "e2-regulasi-ulang-E02-cand2",
+    "event_id": "E02",
+    "document": {
+     "id": "PMK-66-2023",
+     "title": "PMK 66/2023: Perlakuan PPh atas natura dan/atau kenikmatan",
+     "issued": "2023-06-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "parameter",
+      "id": "PAR.MEAL_COUPON_EXEMPT_CAP.2023",
+      "recorded_on": "2023-06-27",
+      "label": "monthly exempt value of meal coupons per employee",
+      "label_id": "batas nilai kupon makanan dan/atau minuman yang dikecualikan per Pegawai sebulan",
+      "valid_from": "2023-07-01",
+      "name": "meal_coupon_exempt_cap",
+      "value_type": "money",
+      "value": 2000000,
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 5 ayat (4) huruf a",
+        "quote": "a. Rp2.000.000,00 (dua juta rupiah) untuk tiap Pegawai dalam jangka waktu 1 (satu) bulan",
+        "page": 6
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023.",
+        "page": 19
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.NATURA.REGULAR",
+      "recorded_on": "2023-06-27",
+      "label": "taxable regular benefits in kind including excess meal coupons",
+      "label_id": "natura dan/atau kenikmatan teratur yang menjadi objek PPh termasuk selisih lebih kupon makanan",
+      "valid_from": "2023-07-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "benefits_taxable_regular",
+      "expression": "benefit('taxable_regular') + max(0, benefit('meal_coupon') - max(param('meal_coupon_exempt_cap'), hr('workplace_meal_cost')))",
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 3 ayat (1)",
+        "quote": "Penggantian atau imbalan sehubungan dengan pekerjaan atau jasa yang diterima atau diperoleh dalam bentuk natura dan/atau kenikmatan merupakan penghasilan yang menjadi objek Pajak Penghasilan",
+        "page": 5
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 4",
+        "quote": "Dikecualikan dart objek Pajak Penghasilan atas penggantian atau imbalan dalam bentuk natura dan/atau kenikmatan",
+        "page": 6
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 5 ayat (4) huruf a",
+        "quote": "a. Rp2.000.000,00 (dua juta rupiah) untuk tiap Pegawai dalam jangka waktu 1 (satu) bulan",
+        "page": 6
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 5 ayat (4) huruf b",
+        "quote": "dalam hal nilai pengeluaran oleh pemberi kerja dimaksud lebih dart Rp2.000.000,00 (dua juta rupiah) untuk tiap Pegawai dalam jangka waktu 1 (satu) bulan.",
+        "page": 7
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 23 ayat (1)",
+        "quote": "Pemberi kerja atau pemberi penggantian atau imbalan dalam bentuk natura dan/atau kenikmatan wajib melakukan pemotongan Pajak Penghasilan",
+        "page": 17
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023.",
+        "page": 19
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.NATURA.IRREGULAR",
+      "recorded_on": "2023-06-27",
+      "label": "taxable irregular benefits in kind",
+      "label_id": "natura dan/atau kenikmatan tidak teratur yang menjadi objek PPh",
+      "valid_from": "2023-07-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "benefits_taxable_irregular",
+      "expression": "benefit('taxable_irregular')",
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 3 ayat (1)",
+        "quote": "Penggantian atau imbalan sehubungan dengan pekerjaan atau jasa yang diterima atau diperoleh dalam bentuk natura dan/atau kenikmatan merupakan penghasilan yang menjadi objek Pajak Penghasilan",
+        "page": 5
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 23 ayat (1)",
+        "quote": "Pemberi kerja atau pemberi penggantian atau imbalan dalam bentuk natura dan/atau kenikmatan wajib melakukan pemotongan Pajak Penghasilan",
+        "page": 17
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023.",
+        "page": 19
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Benefits in kind enter PPh 21 withholding from the July 2023 tax period, because January–June 2023 is excluded from withholding (Pasal 23 ayat (4)). The case supplies benefits already valued under Pasal 22 and already net of the Pasal 4 exclusions and annex limits as benefit('taxable_regular') or benefit('taxable_irregular'). Meal coupons are taxed only above the larger of Rp2,000,000 and the employer's per-employee workplace meal cost, supplied as hr('workplace_meal_cost')."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 3,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "dead REG.INPUT.ZAKAT zakat_withheld: no output depends on the fact it produces"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "parameter",
+      "id": "PAR.MEAL_COUPON_EXEMPT_CAP.2023",
+      "label": "monthly exempt value of meal coupons per employee",
+      "label_id": "batas nilai kupon makanan dikecualikan dari objek pajak per bulan",
+      "valid_from": "2023-07-01",
+      "valid_until": null,
+      "recorded_on": "2023-06-27",
+      "fields": [
+       {
+        "name": "name",
+        "value": "meal_coupon_exempt_cap"
+       },
+       {
+        "name": "value",
+        "value": "2000000"
+       },
+       {
+        "name": "value_type",
+        "value": "money"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 5 ayat (4) huruf a",
+        "page": 6,
+        "quote": "dikecualikan dart objek Pajak Penghasilan sepanjang tidak melebihi: a. Rp2.000.000,00 (dua juta rupiah) untuk tiap Pegawai dalam jangka waktu 1 (satu) bulan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "page": 19,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.NATURA.REGULAR",
+      "label": "taxable regular benefits in kind incl. excess meal coupons",
+      "label_id": "natura dan/atau kenikmatan teratur yang menjadi objek pajak termasuk selisih lebih kupon makanan",
+      "valid_from": "2023-07-01",
+      "valid_until": null,
+      "recorded_on": "2023-06-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "benefits_taxable_regular"
+       },
+       {
+        "name": "expression",
+        "value": "benefit('natura_regular') + max(0, benefit('meal_coupon') - max(param('meal_coupon_exempt_cap'), benefit('meal_onsite_cost')))"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 3 ayat (1)",
+        "page": 5,
+        "quote": "Penggantian atau imbalan sehubungan dengan pekerjaan atau jasa yang diterima atau diperoleh dalam bentuk natura dan/atau kenikmatan merupakan penghasilan yang menjadi objek Pajak Penghasilan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 5 ayat (5)",
+        "page": 7,
+        "quote": "Selisih lebih dart nilai kupon yang sebenarnya setelah dikurangi nilai sebagaimana dimaksud pada ayat (4) huruf a atau huruf b merupakan objek Pajak Penghasilan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 23 ayat (1)",
+        "page": 17,
+        "quote": "dalam bentuk natura dan/atau kenikmatan wajib melakukan pemotongan Pajak Penghasilan sesuai dengan ketentuan peraturan perundang-undangan di bidang perpajakan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "page": 19,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.NATURA.IRREGULAR",
+      "label": "taxable irregular benefits in kind",
+      "label_id": "natura dan/atau kenikmatan tidak teratur yang menjadi objek pajak",
+      "valid_from": "2023-07-01",
+      "valid_until": null,
+      "recorded_on": "2023-06-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "regulation"
+       },
+       {
+        "name": "modality",
+        "value": "mandatory"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "benefits_taxable_irregular"
+       },
+       {
+        "name": "expression",
+        "value": "benefit('natura_irregular')"
+       }
+      ],
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 3 ayat (1)",
+        "page": 5,
+        "quote": "Penggantian atau imbalan sehubungan dengan pekerjaan atau jasa yang diterima atau diperoleh dalam bentuk natura dan/atau kenikmatan merupakan penghasilan yang menjadi objek Pajak Penghasilan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 23 ayat (4)",
+        "page": 18,
+        "quote": "diterima atau diperoleh pada Masa Pajak Januari 2023 sampai dengan Masa Pajak Juni 2023 dikecualikan dari pemotongan"
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "page": 19,
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Benefit values are assumed to be entered already valued (market value or cost, Pasal 22) and net of the Pasal 4-8 exclusions, under kinds natura_regular, natura_irregular, meal_coupon and meal_onsite_cost; withholding starts July 2023 since January-June 2023 is excluded, and the existing gross rules are assumed to include benefits_taxable_regular/irregular."
+   },
+   "delta": {
+    "delta_id": "e2-regulasi-ulang-E02-cand3",
+    "event_id": "E02",
+    "document": {
+     "id": "PMK-66-2023",
+     "title": "PMK 66/2023: Perlakuan PPh atas natura dan/atau kenikmatan",
+     "issued": "2023-06-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "parameter",
+      "id": "PAR.MEAL_COUPON_EXEMPT_CAP.2023",
+      "recorded_on": "2023-06-27",
+      "label": "monthly exempt value of meal coupons per employee",
+      "label_id": "batas nilai kupon makanan dikecualikan dari objek pajak per bulan",
+      "valid_from": "2023-07-01",
+      "name": "meal_coupon_exempt_cap",
+      "value_type": "money",
+      "value": 2000000,
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 5 ayat (4) huruf a",
+        "quote": "dikecualikan dart objek Pajak Penghasilan sepanjang tidak melebihi: a. Rp2.000.000,00 (dua juta rupiah) untuk tiap Pegawai dalam jangka waktu 1 (satu) bulan",
+        "page": 6
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023.",
+        "page": 19
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.NATURA.REGULAR",
+      "recorded_on": "2023-06-27",
+      "label": "taxable regular benefits in kind incl. excess meal coupons",
+      "label_id": "natura dan/atau kenikmatan teratur yang menjadi objek pajak termasuk selisih lebih kupon makanan",
+      "valid_from": "2023-07-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "benefits_taxable_regular",
+      "expression": "benefit('natura_regular') + max(0, benefit('meal_coupon') - max(param('meal_coupon_exempt_cap'), benefit('meal_onsite_cost')))",
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 3 ayat (1)",
+        "quote": "Penggantian atau imbalan sehubungan dengan pekerjaan atau jasa yang diterima atau diperoleh dalam bentuk natura dan/atau kenikmatan merupakan penghasilan yang menjadi objek Pajak Penghasilan",
+        "page": 5
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 5 ayat (5)",
+        "quote": "Selisih lebih dart nilai kupon yang sebenarnya setelah dikurangi nilai sebagaimana dimaksud pada ayat (4) huruf a atau huruf b merupakan objek Pajak Penghasilan",
+        "page": 7
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 23 ayat (1)",
+        "quote": "dalam bentuk natura dan/atau kenikmatan wajib melakukan pemotongan Pajak Penghasilan sesuai dengan ketentuan peraturan perundang-undangan di bidang perpajakan",
+        "page": 17
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023.",
+        "page": 19
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "REG.NATURA.IRREGULAR",
+      "recorded_on": "2023-06-27",
+      "label": "taxable irregular benefits in kind",
+      "label_id": "natura dan/atau kenikmatan tidak teratur yang menjadi objek pajak",
+      "valid_from": "2023-07-01",
+      "layer": "regulation",
+      "modality": "mandatory",
+      "scope": "period",
+      "produces": "benefits_taxable_irregular",
+      "expression": "benefit('natura_irregular')",
+      "source": [
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 3 ayat (1)",
+        "quote": "Penggantian atau imbalan sehubungan dengan pekerjaan atau jasa yang diterima atau diperoleh dalam bentuk natura dan/atau kenikmatan merupakan penghasilan yang menjadi objek Pajak Penghasilan",
+        "page": 5
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 23 ayat (4)",
+        "quote": "diterima atau diperoleh pada Masa Pajak Januari 2023 sampai dengan Masa Pajak Juni 2023 dikecualikan dari pemotongan",
+        "page": 18
+       },
+       {
+        "document": "PMK-66-2023",
+        "provision": "Pasal 27",
+        "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023.",
+        "page": 19
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Benefit values are assumed to be entered already valued (market value or cost, Pasal 22) and net of the Pasal 4-8 exclusions, under kinds natura_regular, natura_irregular, meal_coupon and meal_onsite_cost; withholding starts July 2023 since January-June 2023 is excluded, and the existing gross rules are assumed to include benefits_taxable_regular/irregular."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   3
+  ],
+  [
+   1
+  ],
+  [
+   2
+  ]
+ ],
+ "selected": null,
+ "status": "abstain",
+ "delta": null,
+ "cost_usd": 0.505806,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "regulation",
+   "reason": "PMK 66/2023 governs benefits in kind (natura/kenikmatan) received by employees, including permanent employees. It classifies these benefits as income subject to PPh and sets the exclusions, e.g. meal coupons up to Rp2,000,000 per month and benefits in remote areas. It also sets the valuation rules (market value or cost) and requires the employer to withhold PPh 21 from July 2023, with the January–June 2023 period excluded from withholding. These provisions change the gross income base used in the PPh 21 calculation for permanent employees.",
+   "quotes": [
+    {
+     "provision": "Pasal 3 ayat (1)",
+     "quote": "Penggantian atau imbalan sehubungan dengan pekerjaan\natau jasa yang diterima atau diperoleh dalam bentuk\nnatura dan/atau kenikmatan merupakan penghasilan\nyang menjadi objek Pajak Penghasilan"
+    },
+    {
+     "provision": "Pasal 5 ayat (4)",
+     "quote": "a. Rp2.000.000,00 (dua juta rupiah) untuk tiap Pegawai\ndalam jangka waktu 1 (satu) bulan"
+    },
+    {
+     "provision": "Pasal 22 ayat (1)",
+     "quote": "a. nilai pasar untuk penggantian atau imbalan dalam\nbentuk natura; dan/atau\nb. jumlah biaya yang dikeluarkan atau seharusnya\ndikeluarkan pemberi untuk penggantian atau imbalan\ndalam bentuk kenikmatan."
+    },
+    {
+     "provision": "Pasal 23 ayat (1)",
+     "quote": "dalam bentuk natura dan/atau kenikmatan wajib\nmelakukan pemotongan Pajak Penghasilan sesuai dengan\nketentuan peraturan perundang-undangan di bidang\nperpajakan."
+    },
+    {
+     "provision": "Pasal 23 ayat (4)",
+     "quote": "kenikmatan yang diterima atau diperoleh pada Masa Pajak\nJanuari 2023 sampai dengan Masa Pajak Juni 2023\ndikecualikan dari pemotongan sebagaimana dimaksud\npada ayat (1)."
+    },
+    {
+     "provision": "Pasal 4",
+     "quote": "a. makanan, bahan makanan, bahan minuman, dan/atau\nminuman bagi seluruh Pegawai;"
+    }
+   ],
+   "effective_from": "2023-07-01",
+   "effective_from_quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Juli 2023.",
+   "effective_until": null,
+   "effective_until_quote": null,
+   "subjects": []
+  },
+  "quotes_ok": true
+ }
+}

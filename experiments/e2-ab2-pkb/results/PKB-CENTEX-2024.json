@@ -1,0 +1,714 @@
+{
+ "run": "e2-ab2-pkb",
+ "event": "PKB-CENTEX-2024",
+ "condition": "proposed",
+ "documents": [
+  "PKB-CENTEX-2024"
+ ],
+ "selection": {
+  "PKB-CENTEX-2024": {
+   "tokens": 13988,
+   "dropped": [
+    "Pasal 1",
+    "Pasal 6",
+    "Pasal 7",
+    "Pasal 8",
+    "Pasal 11",
+    "Pasal 12",
+    "Pasal 13",
+    "Pasal 14",
+    "Pasal 16",
+    "Pasal 18",
+    "Pasal 23",
+    "Pasal 28",
+    "Pasal 29",
+    "Pasal 30",
+    "Pasal 31",
+    "Pasal 38",
+    "Pasal 39",
+    "Pasal 40",
+    "Pasal 41",
+    "Pasal 42",
+    "Pasal 43",
+    "Pasal 44",
+    "Pasal 47",
+    "Pasal 48",
+    "Pasal 49",
+    "Pasal 50",
+    "Pasal 53",
+    "Pasal 54",
+    "Pasal 58"
+   ]
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.CENTEX.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "fail: PRS.CENTEX.JKK_RATE: valid_from 2024-03-01 is not supported by a quote of this element; PRS.CENTEX.JKK_RATE: valid_until 2026-03-31 is not supported by a quote of this element; PRS.CENTEX.THR: valid_from 2024-03-01 is not supported by a quote of this element; PRS.CENTEX.THR: valid_until 2026-03-31 is not supported by a quote of this element"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.CENTEX.JKK_RATE",
+      "label": "PT Centex work accident premium rate",
+      "label_id": "tarif iuran JKK PT Centex",
+      "valid_from": "2024-03-01",
+      "valid_until": null,
+      "recorded_on": "2024-03-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "89 / 10000"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-CENTEX-2024"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 33 ayat 3",
+        "page": 1,
+        "quote": "Jaminan Kecelakaan Kerja 0,89% dari upah, dibayar Pengusaha."
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Surat Pernyataan Bersama",
+        "page": 1,
+        "quote": "Pada hari Rabu, 27 Maret 2024 , kami team Perunding P.K.B."
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 55",
+        "page": 1,
+        "quote": "tanggal PKB ini ditandatangani (27 Maret 2024)"
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 4 ayat 4",
+        "page": 1,
+        "quote": "Selama perundingan termaksud dalam ayat 3 belum menghasilkan P.K.B. baru"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.CENTEX.THR",
+      "label": "PT Centex religious holiday allowance of 120% of one month's wage",
+      "label_id": "THR PT Centex 120% x satu bulan upah",
+      "valid_from": "2024-03-01",
+      "valid_until": null,
+      "recorded_on": "2024-03-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "thr"
+       },
+       {
+        "name": "condition",
+        "value": "hr('thr_month') == 1 and months_employed >= 1"
+       },
+       {
+        "name": "expression",
+        "value": "round(120 / 100 * (base_salary + fixed_allowance), 1, 'half_up')"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-CENTEX-2024"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 24",
+        "page": 1,
+        "quote": "Tunjangan Hari Raya (Tahun Baru) sebesar 120% x satu bulan upah"
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 24",
+        "page": 1,
+        "quote": "telah bekerja pada Perusahaan sekurang-kurangnya satu bulan terus menerus"
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Surat Pernyataan Bersama",
+        "page": 1,
+        "quote": "Pada hari Rabu, 27 Maret 2024 , kami team Perunding P.K.B."
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 55",
+        "page": 1,
+        "quote": "tanggal PKB ini ditandatangani (27 Maret 2024)"
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 4 ayat 4",
+        "page": 1,
+        "quote": "Selama perundingan termaksud dalam ayat 3 belum menghasilkan P.K.B. baru"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Only the JKK rate (0,89%) and the THR of 120% of one month's wage (base salary plus fixed allowances, paid in the THR month flagged by HR data) change the computation; other contribution rates equal statutory ones and the bonus alpha is unspecified. Validity starts March 2024 (signed 27 Maret 2024) and is left open-ended because Pasal 4 keeps the PKB in force (auto-extension and during renegotiation)."
+   },
+   "delta": {
+    "delta_id": "e2-ab2-pkb-PKB-CENTEX-2024-cand1",
+    "event_id": "PKB-CENTEX-2024",
+    "document": {
+     "id": "PKB-CENTEX-2024",
+     "title": "PKB PT Century Textile Industry 2024-2026",
+     "issued": "2024-03-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.CENTEX.JKK_RATE",
+      "recorded_on": "2024-03-27",
+      "label": "PT Centex work accident premium rate",
+      "label_id": "tarif iuran JKK PT Centex",
+      "valid_from": "2024-03-01",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "89 / 10000",
+      "policy": "PKB-CENTEX-2024",
+      "source": [
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 33 ayat 3",
+        "quote": "Jaminan Kecelakaan Kerja 0,89% dari upah, dibayar Pengusaha.",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Surat Pernyataan Bersama",
+        "quote": "Pada hari Rabu, 27 Maret 2024 , kami team Perunding P.K.B.",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 55",
+        "quote": "tanggal PKB ini ditandatangani (27 Maret 2024)",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 4 ayat 4",
+        "quote": "Selama perundingan termaksud dalam ayat 3 belum menghasilkan P.K.B. baru",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.CENTEX.THR",
+      "recorded_on": "2024-03-27",
+      "label": "PT Centex religious holiday allowance of 120% of one month's wage",
+      "label_id": "THR PT Centex 120% x satu bulan upah",
+      "valid_from": "2024-03-01",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "condition": "hr('thr_month') == 1 and months_employed >= 1",
+      "expression": "round(120 / 100 * (base_salary + fixed_allowance), 1, 'half_up')",
+      "policy": "PKB-CENTEX-2024",
+      "source": [
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 24",
+        "quote": "Tunjangan Hari Raya (Tahun Baru) sebesar 120% x satu bulan upah",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 24",
+        "quote": "telah bekerja pada Perusahaan sekurang-kurangnya satu bulan terus menerus",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Surat Pernyataan Bersama",
+        "quote": "Pada hari Rabu, 27 Maret 2024 , kami team Perunding P.K.B.",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 55",
+        "quote": "tanggal PKB ini ditandatangani (27 Maret 2024)",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 4 ayat 4",
+        "quote": "Selama perundingan termaksud dalam ayat 3 belum menghasilkan P.K.B. baru",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only the JKK rate (0,89%) and the THR of 120% of one month's wage (base salary plus fixed allowances, paid in the THR month flagged by HR data) change the computation; other contribution rates equal statutory ones and the bonus alpha is unspecified. Validity starts March 2024 (signed 27 Maret 2024) and is left open-ended because Pasal 4 keeps the PKB in force (auto-extension and during renegotiation)."
+   },
+   "initial_delta": {
+    "delta_id": "e2-ab2-pkb-PKB-CENTEX-2024-cand1",
+    "event_id": "PKB-CENTEX-2024",
+    "document": {
+     "id": "PKB-CENTEX-2024",
+     "title": "PKB PT Century Textile Industry 2024-2026",
+     "issued": "2024-03-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.CENTEX.JKK_RATE",
+      "recorded_on": "2024-03-27",
+      "label": "PT Centex work accident premium rate",
+      "label_id": "tarif iuran JKK PT Centex",
+      "valid_from": "2024-03-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "89 / 10000",
+      "policy": "PKB-CENTEX-2024",
+      "source": [
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 33 ayat 3",
+        "quote": "Jaminan Kecelakaan Kerja 0,89% dari upah, dibayar Pengusaha.",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Penutup (data perjanjian)",
+        "quote": "Tanggal dimulainya perjanjian: → 2024-03-27",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Penutup (data perjanjian)",
+        "quote": "Tanggal berakhirnya perjanjian: → 2026-03-26",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.CENTEX.THR",
+      "recorded_on": "2024-03-27",
+      "label": "PT Centex religious holiday allowance of 120% of one month's wage",
+      "label_id": "THR PT Centex 120% x satu bulan upah",
+      "valid_from": "2024-03-01",
+      "valid_until": "2026-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "condition": "hr('thr_month') == 1 and months_employed >= 1",
+      "expression": "round(120 / 100 * (base_salary + fixed_allowance), 1, 'half_up')",
+      "policy": "PKB-CENTEX-2024",
+      "source": [
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 24",
+        "quote": "Tunjangan Hari Raya (Tahun Baru) sebesar 120% x satu bulan upah",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 24",
+        "quote": "telah bekerja pada Perusahaan sekurang-kurangnya satu bulan terus menerus",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Penutup (data perjanjian)",
+        "quote": "Tanggal dimulainya perjanjian: → 2024-03-27",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Penutup (data perjanjian)",
+        "quote": "Tanggal berakhirnya perjanjian: → 2026-03-26",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only the JKK rate (0,89%) and the THR of 120% of one month's wage (base salary plus fixed allowances, paid in the THR month flagged by HR data) change the computation; the JKM, JHT, JP and health rates equal the statutory ones, and the bonus (one month plus an unspecified alpha) cannot be computed. Validity runs from March 2024 to the end of March 2026, covering the agreement term."
+   }
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.CENTEX.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C1)"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.CENTEX.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C1)"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.CENTEX.THR",
+      "label": "Centex religious holiday allowance of 120% of one month's wage",
+      "label_id": "THR Centex sebesar 120% x satu bulan upah",
+      "valid_from": "2024-03-01",
+      "valid_until": null,
+      "recorded_on": "2024-03-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "thr"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-CENTEX-2024"
+       },
+       {
+        "name": "condition",
+        "value": "income('thr') > 0"
+       },
+       {
+        "name": "expression",
+        "value": "max(income('thr'), round(120 / 100 * (base_salary + fixed_allowance), 1, 'half_up'))"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C2"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 24",
+        "page": 1,
+        "quote": "Tunjangan Hari Raya (Tahun Baru) sebesar 120% x satu bulan upah"
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 2 angka 14",
+        "page": 1,
+        "quote": "termasuk tunjangan bagi karyawan / Karyawati maupun"
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 55",
+        "page": 1,
+        "quote": "tanggal PKB ini ditandatangani (27 Maret 2024)"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.CENTEX.JKK_RATE",
+      "label": "Centex work accident premium rate 0.89%",
+      "label_id": "tarif iuran JKK Centex 0,89%",
+      "valid_from": "2024-03-01",
+      "valid_until": null,
+      "recorded_on": "2024-03-27",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-CENTEX-2024"
+       },
+       {
+        "name": "expression",
+        "value": "89 / 10000"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C1"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 33 ayat 3",
+        "page": 1,
+        "quote": "Jaminan Kecelakaan Kerja 0,89% dari upah, dibayar Pengusaha."
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 55",
+        "page": 1,
+        "quote": "tanggal PKB ini ditandatangani (27 Maret 2024)"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Only the 120% THR (wage = base salary plus fixed allowances per Pasal 2 angka 14) and the 0.89% JKK rate differ from or specify the regulatory defaults; JKM, JHT, JP and BPJS Kesehatan rates restate the regulation and the bonus alpha is unquantified, so they are not modelled. The validity is left open-ended because Pasal 4 extends the PKB automatically until a new one is concluded."
+   },
+   "delta": {
+    "delta_id": "e2-ab2-pkb-PKB-CENTEX-2024-cand2",
+    "event_id": "PKB-CENTEX-2024",
+    "document": {
+     "id": "PKB-CENTEX-2024",
+     "title": "PKB PT Century Textile Industry 2024-2026",
+     "issued": "2024-03-27"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.CENTEX.THR",
+      "recorded_on": "2024-03-27",
+      "label": "Centex religious holiday allowance of 120% of one month's wage",
+      "label_id": "THR Centex sebesar 120% x satu bulan upah",
+      "valid_from": "2024-03-01",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "condition": "income('thr') > 0",
+      "expression": "max(income('thr'), round(120 / 100 * (base_salary + fixed_allowance), 1, 'half_up'))",
+      "policy": "PKB-CENTEX-2024",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 24",
+        "quote": "Tunjangan Hari Raya (Tahun Baru) sebesar 120% x satu bulan upah",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 2 angka 14",
+        "quote": "termasuk tunjangan bagi karyawan / Karyawati maupun",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 55",
+        "quote": "tanggal PKB ini ditandatangani (27 Maret 2024)",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.CENTEX.JKK_RATE",
+      "recorded_on": "2024-03-27",
+      "label": "Centex work accident premium rate 0.89%",
+      "label_id": "tarif iuran JKK Centex 0,89%",
+      "valid_from": "2024-03-01",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "89 / 10000",
+      "policy": "PKB-CENTEX-2024",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 33 ayat 3",
+        "quote": "Jaminan Kecelakaan Kerja 0,89% dari upah, dibayar Pengusaha.",
+        "page": 1
+       },
+       {
+        "document": "PKB-CENTEX-2024",
+        "provision": "Pasal 55",
+        "quote": "tanggal PKB ini ditandatangani (27 Maret 2024)",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only the 120% THR (wage = base salary plus fixed allowances per Pasal 2 angka 14) and the 0.89% JKK rate differ from or specify the regulatory defaults; JKM, JHT, JP and BPJS Kesehatan rates restate the regulation and the bonus alpha is unquantified, so they are not modelled. The validity is left open-ended because Pasal 4 extends the PKB automatically until a new one is concluded."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   2
+  ],
+  [
+   1
+  ]
+ ],
+ "selected": null,
+ "status": "abstain",
+ "delta": null,
+ "cost_usd": 0.50504,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "The collective labour agreement sets PT Centex payroll components that feed into PPh 21 for permanent employees. Gross income includes basic wage, allowances, THR of 120% of monthly wage and an annual bonus. It also includes employer-paid JKK 0.89%, JKM 0.30% and BPJS Kesehatan 4% premiums. The employee-paid JHT 2% and JP 1% contributions are deductible.",
+   "quotes": [
+    {
+     "provision": "Pasal 2 angka 22",
+     "quote": "Karyawan / Karyawati adalah yang melakukan hubungan kerja dengan\nPerusahaan, menerima upah dari Perusahaan yang disebut pula Karyawan /\nKaryawati Pekerja\ntetap."
+    },
+    {
+     "provision": "Pasal 20 ayat 1",
+     "quote": "Perusahaan memberikan kepada\nPekerja upah terdiri dari komponen-komponen sebagai berikut :"
+    },
+    {
+     "provision": "Pasal 24",
+     "quote": "Tunjangan Hari Raya (Tahun Baru) sebesar 120% x satu bulan upah"
+    },
+    {
+     "provision": "Pasal 25",
+     "quote": "Perusahaan memberi bonus kepada Pekerja setiap tahun sebesar satu bulan upah\nditambah α (alfa)."
+    },
+    {
+     "provision": "Pasal 33 ayat 3",
+     "quote": "- Jaminan Kecelakaan Kerja 0,89% dari upah, dibayar Pengusaha.\n- Jaminan Kematian 0.30% dari upah, dibayar Pengusaha."
+    },
+    {
+     "provision": "Pasal 33 ayat 3",
+     "quote": "- Jaminan Hari Tua 5,70% dari upah, dibayar Pengusaha 3,70% dan dibayar\nPekerja 2%."
+    },
+    {
+     "provision": "Pasal 33 ayat 3",
+     "quote": "yang mana dibayar oleh Pengusaha 2.0% dan\noleh Pekerja 1.0%."
+    },
+    {
+     "provision": "Pasal 34",
+     "quote": "a. Pengusaha membayar sebesar 4.0 %.\nb. Karyawan/karyawati membayar sebesar 1.0%."
+    }
+   ],
+   "effective_from": "2024-03-01",
+   "effective_from_quote": "Tanggal dimulainya perjanjian: → 2024-03-27",
+   "effective_until": "2026-03-31",
+   "effective_until_quote": "Tanggal berakhirnya perjanjian: → 2026-03-26",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT Century Textile Industry Tbk (PT Centex)",
+     "quote": "Perusahaan yang dimaksud dalam Kesepakatan Kerja Bersama ini adalah\nPerseroan terbatas CENTEX"
+    },
+    {
+     "kind": "employee_group",
+     "value": "Permanent employees of PT Centex",
+     "quote": "hasil kerjanya yang berstatus karyawan atau karyawati tetap PT. Centex."
+    },
+    {
+     "kind": "sector",
+     "value": "Textile manufacturing",
+     "quote": "Nama industri: → Pabrik Manufaktur Textil"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

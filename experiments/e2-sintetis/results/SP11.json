@@ -1,0 +1,1378 @@
+{
+ "run": "e2-sintetis",
+ "event": "SP11",
+ "condition": "proposed",
+ "documents": [
+  "SP11"
+ ],
+ "selection": {
+  "SP11": {
+   "tokens": 732,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP11.HEALTH_WAGE, REG.JKN.WAGE health_wage: company rule always loses to mandatory REG.JKN.WAGE (conflict C1)",
+     "overridden PRS.SP11.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C1)",
+     "overridden PRS.SP11.JP_WAGE, REG.BPJS.JP_WAGE jp_wage: company rule always loses to mandatory REG.BPJS.JP_WAGE (conflict C1)"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2025-01-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.JP_EMPLOYEE",
+      "label": "employee JP contribution of 1% on the whole monthly wage without wage cap (collective agreement)",
+      "label_id": "iuran JP bagian pekerja 1% dari seluruh upah sebulan tanpa batas upah (PKB)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jp_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(dec('0.01') * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP11"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C1"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (1)",
+        "page": 1,
+        "quote": "Iuran JP sebesar 3% (tiga persen), terdiri atas 2% (dua persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan (gaji pokok dan tunjangan tetap) tanpa batas upah."
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.HEALTH_EMPLOYER",
+      "label": "employer health insurance contribution of 4% on the whole monthly wage without wage cap (collective agreement)",
+      "label_id": "iuran Jaminan Kesehatan bagian Perusahaan 4% tanpa batas upah (PKB)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_premium_employer"
+       },
+       {
+        "name": "expression",
+        "value": "round(dec('0.04') * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP11"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C1"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (2)",
+        "page": 1,
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen), terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan tanpa batas upah."
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.HEALTH_EMPLOYEE",
+      "label": "employee health insurance contribution of 1% on the whole monthly wage without wage cap (collective agreement)",
+      "label_id": "iuran Jaminan Kesehatan bagian pekerja 1% tanpa batas upah (PKB)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(dec('0.01') * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP11"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C1"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (2)",
+        "page": 1,
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen), terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan tanpa batas upah."
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.JKK",
+      "label": "JKK premium at the high risk group rate of 1.27% (collective agreement)",
+      "label_id": "iuran JKK 1,27% kelompok risiko tinggi (PKB)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_premium"
+       },
+       {
+        "name": "expression",
+        "value": "round(dec('0.0127') * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP11"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C1"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (3)",
+        "page": 1,
+        "quote": "Iuran JKK sebesar 1,27% (satu koma dua puluh tujuh persen) sesuai kelompok tingkat risiko tinggi"
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.PPH_DUE_LEAVER",
+      "label": "last month of an employee leaving before December taxed at the monthly effective rate (collective agreement)",
+      "label_id": "PPh 21 bulan terakhir pekerja berhenti sebelum Desember dengan tarif efektif bulanan (PKB)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_due"
+       },
+       {
+        "name": "condition",
+        "value": "is_final_period and final_month < 12"
+       },
+       {
+        "name": "expression",
+        "value": "round(bracket('ter_monthly', ter_category, gross_income) * gross_income, 1, param('pph_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP11"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C3"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 51 ayat (2)",
+        "page": 1,
+        "quote": "Bagi pekerja yang berhenti bekerja sebelum bulan Desember, Pajak Penghasilan Pasal 21 pada bulan terakhir bekerja dihitung dengan tarif efektif bulanan sebagaimana bulan-bulan sebelumnya, dan kekurangan atau kelebihan Pajak Penghasilan Pasal 21 diselesaikan sendiri oleh pekerja dalam Surat Pemberitahuan Tahunan."
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The uncapped JP and health contributions and the fixed high-risk JKK rate are modelled directly on the contribution facts (which feed gross income and deductions from January 2025), so they apply where no mandatory rule decides and are reported as conflicts where the mandatory wage caps or risk group give a different amount; the TER-based last month for leavers conflicts with the mandatory annual recomputation. JKM, JHT and the TER-on-gross provision equal existing rules and are not restated."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP11-cand1",
+    "event_id": "SP11",
+    "document": {
+     "id": "SP11",
+     "title": "PT Bumi Konstruksi Persada: Perjanjian Kerja Bersama",
+     "issued": "2025-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.JP_EMPLOYEE",
+      "recorded_on": "2025-01-01",
+      "label": "employee JP contribution of 1% on the whole monthly wage without wage cap (collective agreement)",
+      "label_id": "iuran JP bagian pekerja 1% dari seluruh upah sebulan tanpa batas upah (PKB)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_employee",
+      "expression": "round(dec('0.01') * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP11",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (1)",
+        "quote": "Iuran JP sebesar 3% (tiga persen), terdiri atas 2% (dua persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan (gaji pokok dan tunjangan tetap) tanpa batas upah.",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.HEALTH_EMPLOYER",
+      "recorded_on": "2025-01-01",
+      "label": "employer health insurance contribution of 4% on the whole monthly wage without wage cap (collective agreement)",
+      "label_id": "iuran Jaminan Kesehatan bagian Perusahaan 4% tanpa batas upah (PKB)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_premium_employer",
+      "expression": "round(dec('0.04') * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP11",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (2)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen), terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan tanpa batas upah.",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.HEALTH_EMPLOYEE",
+      "recorded_on": "2025-01-01",
+      "label": "employee health insurance contribution of 1% on the whole monthly wage without wage cap (collective agreement)",
+      "label_id": "iuran Jaminan Kesehatan bagian pekerja 1% tanpa batas upah (PKB)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_employee",
+      "expression": "round(dec('0.01') * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP11",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (2)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen), terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan tanpa batas upah.",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.JKK",
+      "recorded_on": "2025-01-01",
+      "label": "JKK premium at the high risk group rate of 1.27% (collective agreement)",
+      "label_id": "iuran JKK 1,27% kelompok risiko tinggi (PKB)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_premium",
+      "expression": "round(dec('0.0127') * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP11",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (3)",
+        "quote": "Iuran JKK sebesar 1,27% (satu koma dua puluh tujuh persen) sesuai kelompok tingkat risiko tinggi",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.PPH_DUE_LEAVER",
+      "recorded_on": "2025-01-01",
+      "label": "last month of an employee leaving before December taxed at the monthly effective rate (collective agreement)",
+      "label_id": "PPh 21 bulan terakhir pekerja berhenti sebelum Desember dengan tarif efektif bulanan (PKB)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "is_final_period and final_month < 12",
+      "expression": "round(bracket('ter_monthly', ter_category, gross_income) * gross_income, 1, param('pph_round_mode'))",
+      "policy": "SP11",
+      "conflict_code": "C3",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 51 ayat (2)",
+        "quote": "Bagi pekerja yang berhenti bekerja sebelum bulan Desember, Pajak Penghasilan Pasal 21 pada bulan terakhir bekerja dihitung dengan tarif efektif bulanan sebagaimana bulan-bulan sebelumnya, dan kekurangan atau kelebihan Pajak Penghasilan Pasal 21 diselesaikan sendiri oleh pekerja dalam Surat Pemberitahuan Tahunan.",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The uncapped JP and health contributions and the fixed high-risk JKK rate are modelled directly on the contribution facts (which feed gross income and deductions from January 2025), so they apply where no mandatory rule decides and are reported as conflicts where the mandatory wage caps or risk group give a different amount; the TER-based last month for leavers conflicts with the mandatory annual recomputation. JKM, JHT and the TER-on-gross provision equal existing rules and are not restated."
+   },
+   "initial_delta": {
+    "delta_id": "e2-sintetis-SP11-cand1",
+    "event_id": "SP11",
+    "document": {
+     "id": "SP11",
+     "title": "PT Bumi Konstruksi Persada: Perjanjian Kerja Bersama",
+     "issued": "2025-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.JP_WAGE",
+      "recorded_on": "2025-01-01",
+      "label": "JP contribution wage base without wage cap (collective agreement)",
+      "label_id": "dasar upah iuran JP tanpa batas upah (PKB)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_wage",
+      "expression": "bpjs_wage",
+      "policy": "SP11",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (1)",
+        "quote": "Iuran JP sebesar 3% (tiga persen), terdiri atas 2% (dua persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan (gaji pokok dan tunjangan tetap) tanpa batas upah.",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.HEALTH_WAGE",
+      "recorded_on": "2025-01-01",
+      "label": "health insurance contribution wage base without wage cap (collective agreement)",
+      "label_id": "dasar upah iuran Jaminan Kesehatan tanpa batas upah (PKB)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_wage",
+      "expression": "bpjs_wage",
+      "policy": "SP11",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (2)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen), terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan tanpa batas upah.",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.JKK_RATE",
+      "recorded_on": "2025-01-01",
+      "label": "JKK rate of the high risk group (collective agreement)",
+      "label_id": "tarif iuran JKK kelompok risiko tinggi (PKB)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "lookup('jkk_rates', 'high')",
+      "policy": "SP11",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (3)",
+        "quote": "Iuran JKK sebesar 1,27% (satu koma dua puluh tujuh persen) sesuai kelompok tingkat risiko tinggi",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.PPH_DUE_LEAVER",
+      "recorded_on": "2025-01-01",
+      "label": "last month of an employee leaving before December taxed at the monthly effective rate (collective agreement)",
+      "label_id": "PPh 21 bulan terakhir pekerja berhenti sebelum Desember dengan tarif efektif bulanan (PKB)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "is_final_period and final_month < 12",
+      "expression": "round(bracket('ter_monthly', ter_category, gross_income) * gross_income, 1, param('pph_round_mode'))",
+      "policy": "SP11",
+      "conflict_code": "C3",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 51 ayat (2)",
+        "quote": "Bagi pekerja yang berhenti bekerja sebelum bulan Desember, Pajak Penghasilan Pasal 21 pada bulan terakhir bekerja dihitung dengan tarif efektif bulanan sebagaimana bulan-bulan sebelumnya, dan kekurangan atau kelebihan Pajak Penghasilan Pasal 21 diselesaikan sendiri oleh pekerja dalam Surat Pemberitahuan Tahunan.",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The uncapped JP and health wage bases and the TER-based last month for leavers are modelled as company rules that lose to the mandatory regulatory rules (wage caps, annual recomputation in the final period) and are reported as conflicts; the JKK rate is fixed to the high-risk group, while the JKM, JHT and contribution rates equal the existing parameters and are not restated."
+   }
+  },
+  {
+   "n": 2,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP11.HEALTH_WAGE, REG.JKN.WAGE health_wage: company rule always loses to mandatory REG.JKN.WAGE (conflict C2)",
+     "overridden PRS.SP11.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C3)",
+     "overridden PRS.SP11.JP_WAGE, REG.BPJS.JP_WAGE jp_wage: company rule always loses to mandatory REG.BPJS.JP_WAGE (conflict C1)"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP11.HEALTH_WAGE, REG.JKN.WAGE health_wage: company rule always loses to mandatory REG.JKN.WAGE (conflict C2)",
+     "overridden PRS.SP11.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C3)",
+     "overridden PRS.SP11.JP_WAGE, REG.BPJS.JP_WAGE jp_wage: company rule always loses to mandatory REG.BPJS.JP_WAGE (conflict C1)"
+    ],
+    "G4": "pass",
+    "G5": "fail: stated effective date 2025-01-01 is not reflected: no S^G case changes in that month"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.JP_WAGE",
+      "label": "JP wage base without cap (PKB BKP)",
+      "label_id": "dasar upah iuran JP tanpa batas upah (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jp_wage"
+       },
+       {
+        "name": "expression",
+        "value": "bpjs_wage"
+       },
+       {
+        "name": "policy",
+        "value": "SP11"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C1"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (1)",
+        "page": 1,
+        "quote": "dihitung dari seluruh upah sebulan (gaji pokok dan tunjangan tetap) tanpa batas upah"
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.HEALTH_WAGE",
+      "label": "health insurance wage base without cap (PKB BKP)",
+      "label_id": "dasar upah iuran jaminan kesehatan tanpa batas upah (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_wage"
+       },
+       {
+        "name": "expression",
+        "value": "bpjs_wage"
+       },
+       {
+        "name": "policy",
+        "value": "SP11"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C2"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (2)",
+        "page": 1,
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen), terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan tanpa batas upah."
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.HEALTH_EMPLOYER",
+      "label": "employer health premium 4% of the whole monthly wage (PKB BKP)",
+      "label_id": "iuran jaminan kesehatan bagian perusahaan 4% dari seluruh upah sebulan (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_premium_employer"
+       },
+       {
+        "name": "expression",
+        "value": "round(4 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP11"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C2"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (2)",
+        "page": 1,
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen), terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan tanpa batas upah."
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.HEALTH_EMPLOYEE",
+      "label": "employee health contribution 1% of the whole monthly wage (PKB BKP)",
+      "label_id": "iuran jaminan kesehatan bagian pekerja 1% dari seluruh upah sebulan (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(1 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP11"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C2"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (2)",
+        "page": 1,
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen), terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan tanpa batas upah."
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.JKK_RATE",
+      "label": "JKK rate of the high-risk group (PKB BKP)",
+      "label_id": "tarif iuran JKK kelompok risiko tinggi (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "dec('0.0127')"
+       },
+       {
+        "name": "policy",
+        "value": "SP11"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C3"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (3)",
+        "page": 1,
+        "quote": "Iuran JKK sebesar 1,27% (satu koma dua puluh tujuh persen) sesuai kelompok tingkat risiko tinggi"
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.FINAL_PERIOD_TER",
+      "label": "last month of employees leaving before December taxed with the monthly effective rate (PKB BKP)",
+      "label_id": "PPh 21 bulan terakhir pekerja yang berhenti sebelum Desember dengan tarif efektif bulanan (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_due"
+       },
+       {
+        "name": "condition",
+        "value": "is_final_period and final_month < 12"
+       },
+       {
+        "name": "expression",
+        "value": "round(bracket('ter_monthly', ter_category, gross_income) * gross_income, 1, param('pph_round_mode'))"
+       },
+       {
+        "name": "policy",
+        "value": "SP11"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C4"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 51 ayat (2)",
+        "page": 1,
+        "quote": "Bagi pekerja yang berhenti bekerja sebelum bulan Desember, Pajak Penghasilan Pasal 21 pada bulan terakhir bekerja dihitung dengan tarif efektif bulanan sebagaimana bulan-bulan sebelumnya"
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Besides the uncapped wage bases, the health premiums (4% employer, 1% employee of the whole monthly wage) are modelled directly as company rules so the uncapped employer premium enters gross income from January 2025; where a mandatory capped rule exists the company rules are reported as conflicts. The TER-only last month for leavers before December conflicts with the mandatory annual recalculation."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP11-cand2",
+    "event_id": "SP11",
+    "document": {
+     "id": "SP11",
+     "title": "PT Bumi Konstruksi Persada: Perjanjian Kerja Bersama",
+     "issued": "2025-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.JP_WAGE",
+      "recorded_on": "2025-01-01",
+      "label": "JP wage base without cap (PKB BKP)",
+      "label_id": "dasar upah iuran JP tanpa batas upah (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_wage",
+      "expression": "bpjs_wage",
+      "policy": "SP11",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (1)",
+        "quote": "dihitung dari seluruh upah sebulan (gaji pokok dan tunjangan tetap) tanpa batas upah",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.HEALTH_WAGE",
+      "recorded_on": "2025-01-01",
+      "label": "health insurance wage base without cap (PKB BKP)",
+      "label_id": "dasar upah iuran jaminan kesehatan tanpa batas upah (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_wage",
+      "expression": "bpjs_wage",
+      "policy": "SP11",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (2)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen), terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan tanpa batas upah.",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.HEALTH_EMPLOYER",
+      "recorded_on": "2025-01-01",
+      "label": "employer health premium 4% of the whole monthly wage (PKB BKP)",
+      "label_id": "iuran jaminan kesehatan bagian perusahaan 4% dari seluruh upah sebulan (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_premium_employer",
+      "expression": "round(4 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP11",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (2)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen), terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan tanpa batas upah.",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.HEALTH_EMPLOYEE",
+      "recorded_on": "2025-01-01",
+      "label": "employee health contribution 1% of the whole monthly wage (PKB BKP)",
+      "label_id": "iuran jaminan kesehatan bagian pekerja 1% dari seluruh upah sebulan (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_employee",
+      "expression": "round(1 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP11",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (2)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen), terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan tanpa batas upah.",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.JKK_RATE",
+      "recorded_on": "2025-01-01",
+      "label": "JKK rate of the high-risk group (PKB BKP)",
+      "label_id": "tarif iuran JKK kelompok risiko tinggi (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "dec('0.0127')",
+      "policy": "SP11",
+      "conflict_code": "C3",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (3)",
+        "quote": "Iuran JKK sebesar 1,27% (satu koma dua puluh tujuh persen) sesuai kelompok tingkat risiko tinggi",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.FINAL_PERIOD_TER",
+      "recorded_on": "2025-01-01",
+      "label": "last month of employees leaving before December taxed with the monthly effective rate (PKB BKP)",
+      "label_id": "PPh 21 bulan terakhir pekerja yang berhenti sebelum Desember dengan tarif efektif bulanan (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "is_final_period and final_month < 12",
+      "expression": "round(bracket('ter_monthly', ter_category, gross_income) * gross_income, 1, param('pph_round_mode'))",
+      "policy": "SP11",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 51 ayat (2)",
+        "quote": "Bagi pekerja yang berhenti bekerja sebelum bulan Desember, Pajak Penghasilan Pasal 21 pada bulan terakhir bekerja dihitung dengan tarif efektif bulanan sebagaimana bulan-bulan sebelumnya",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Besides the uncapped wage bases, the health premiums (4% employer, 1% employee of the whole monthly wage) are modelled directly as company rules so the uncapped employer premium enters gross income from January 2025; where a mandatory capped rule exists the company rules are reported as conflicts. The TER-only last month for leavers before December conflicts with the mandatory annual recalculation."
+   },
+   "initial_delta": {
+    "delta_id": "e2-sintetis-SP11-cand2",
+    "event_id": "SP11",
+    "document": {
+     "id": "SP11",
+     "title": "PT Bumi Konstruksi Persada: Perjanjian Kerja Bersama",
+     "issued": "2025-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.JP_WAGE",
+      "recorded_on": "2025-01-01",
+      "label": "JP wage base without cap (PKB BKP)",
+      "label_id": "dasar upah iuran JP tanpa batas upah (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_wage",
+      "expression": "bpjs_wage",
+      "policy": "SP11",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (1)",
+        "quote": "dihitung dari seluruh upah sebulan (gaji pokok dan tunjangan tetap) tanpa batas upah",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.HEALTH_WAGE",
+      "recorded_on": "2025-01-01",
+      "label": "health insurance wage base without cap (PKB BKP)",
+      "label_id": "dasar upah iuran jaminan kesehatan tanpa batas upah (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_wage",
+      "expression": "bpjs_wage",
+      "policy": "SP11",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (2)",
+        "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen), terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan tanpa batas upah.",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.JKK_RATE",
+      "recorded_on": "2025-01-01",
+      "label": "JKK rate of the high-risk group (PKB BKP)",
+      "label_id": "tarif iuran JKK kelompok risiko tinggi (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "dec('0.0127')",
+      "policy": "SP11",
+      "conflict_code": "C3",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 50 ayat (3)",
+        "quote": "Iuran JKK sebesar 1,27% (satu koma dua puluh tujuh persen) sesuai kelompok tingkat risiko tinggi",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP11.FINAL_PERIOD_TER",
+      "recorded_on": "2025-01-01",
+      "label": "last month of employees leaving before December taxed with the monthly effective rate (PKB BKP)",
+      "label_id": "PPh 21 bulan terakhir pekerja yang berhenti sebelum Desember dengan tarif efektif bulanan (PKB BKP)",
+      "valid_from": "2025-01-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "is_final_period and final_month < 12",
+      "expression": "round(bracket('ter_monthly', ter_category, gross_income) * gross_income, 1, param('pph_round_mode'))",
+      "policy": "SP11",
+      "conflict_code": "C4",
+      "source": [
+       {
+        "document": "SP11",
+        "provision": "Pasal 51 ayat (2)",
+        "quote": "Bagi pekerja yang berhenti bekerja sebelum bulan Desember, Pajak Penghasilan Pasal 21 pada bulan terakhir bekerja dihitung dengan tarif efektif bulanan sebagaimana bulan-bulan sebelumnya",
+        "page": 1
+       },
+       {
+        "document": "SP11",
+        "provision": "Pasal 71 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The uncapped JP and health wage bases and the TER-only last month for leavers before December are company rules that lose to the mandatory regulation and are reported as conflicts; the JKK rate is fixed at the high-risk 1.27%, while the JKM, JHT and health rates equal the regulation and need no change."
+   }
+  }
+ ],
+ "groups": [
+  [
+   1
+  ],
+  [
+   2
+  ]
+ ],
+ "selected": null,
+ "status": "abstain",
+ "delta": null,
+ "cost_usd": 0.691768,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "This collective labour agreement (company layer) sets payroll rules that change the PPh 21 computation for permanent employees. It applies uncapped wage bases for the JP and health insurance contributions, which changes the employee JP deduction and the employer health contribution added to gross income. It sets the JKK rate at 1.27% (high-risk class), plus JKM and JHT rates, which affect gross income and deductions. It also departs from the regulatory method for employees who leave before December: their last month is taxed at the monthly effective rate (TER) instead of being recomputed on an annual basis, with any difference settled by the employee in the annual tax return.",
+   "quotes": [
+    {
+     "provision": "Pasal 50 ayat (1)",
+     "quote": "terdiri atas 2% (dua persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan (gaji pokok dan tunjangan tetap) tanpa batas upah"
+    },
+    {
+     "provision": "Pasal 50 ayat (2)",
+     "quote": "Iuran Jaminan Kesehatan sebesar 5% (lima persen), terdiri atas 4% (empat persen) bagian Perusahaan dan 1% (satu persen) bagian pekerja, dihitung dari seluruh upah sebulan tanpa batas upah."
+    },
+    {
+     "provision": "Pasal 50 ayat (3)",
+     "quote": "Iuran JKK sebesar 1,27% (satu koma dua puluh tujuh persen) sesuai kelompok tingkat risiko tinggi dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) ditanggung Perusahaan."
+    },
+    {
+     "provision": "Pasal 50 ayat (4)",
+     "quote": "Iuran JHT sebesar 3,7% (tiga koma tujuh persen) bagian Perusahaan dan 2% (dua persen) bagian pekerja."
+    },
+    {
+     "provision": "Pasal 51 ayat (1)",
+     "quote": "Pajak Penghasilan Pasal 21 dipotong setiap bulan dengan tarif efektif bulanan atas penghasilan bruto, termasuk iuran JKK, JKM, dan Jaminan Kesehatan bagian Perusahaan."
+    },
+    {
+     "provision": "Pasal 51 ayat (2)",
+     "quote": "Pajak Penghasilan Pasal 21 pada bulan terakhir bekerja dihitung dengan tarif efektif bulanan sebagaimana bulan-bulan sebelumnya, dan kekurangan atau kelebihan Pajak Penghasilan Pasal 21 diselesaikan sendiri oleh pekerja dalam Surat Pemberitahuan Tahunan."
+    }
+   ],
+   "effective_from": "2025-01-01",
+   "effective_from_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+   "effective_until": "2026-12-31",
+   "effective_until_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2026.",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT Bumi Konstruksi Persada",
+     "quote": "PERJANJIAN KERJA BERSAMA PT BUMI KONSTRUKSI PERSADA PERIODE 2025-2026"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

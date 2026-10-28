@@ -1,0 +1,1279 @@
+{
+ "run": "e2-pkb-m5",
+ "event": "PKB-SANSAN-2021",
+ "condition": "proposed",
+ "documents": [
+  "PKB-SANSAN-2021"
+ ],
+ "selection": {
+  "PKB-SANSAN-2021": {
+   "tokens": 13968,
+   "dropped": [
+    "Pasal 2",
+    "Pasal 3",
+    "Pasal 4",
+    "Pasal 5",
+    "Pasal 7",
+    "Pasal 8",
+    "Pasal 9",
+    "Pasal 10",
+    "Pasal 12",
+    "Pasal 13",
+    "Pasal 14",
+    "Pasal 15",
+    "Pasal 16",
+    "Pasal 17",
+    "Pasal 18",
+    "Pasal 19",
+    "Pasal 20",
+    "Pasal 21",
+    "Pasal 22",
+    "Pasal 24",
+    "Pasal 26",
+    "Pasal 27",
+    "Pasal 28",
+    "Pasal 29",
+    "Pasal 30",
+    "Pasal 38",
+    "Pasal 42",
+    "Pasal 43",
+    "Pasal 44",
+    "Pasal 45",
+    "Pasal 46",
+    "Pasal 47",
+    "Pasal 48",
+    "Pasal 49",
+    "Pasal 50",
+    "Pasal 51",
+    "Pasal 54",
+    "Pasal 56",
+    "Pasal 59",
+    "Pasal 60",
+    "Pasal 61",
+    "Pasal 62",
+    "Pasal 63",
+    "Pasal 64",
+    "Pasal 65",
+    "Pasal 66",
+    "Pasal 67",
+    "Pasal 68",
+    "Pasal 69",
+    "Pasal 70",
+    "Pasal 71",
+    "Pasal 72",
+    "Pasal 73",
+    "Pasal 75",
+    "Pasal 76",
+    "Pasal 78",
+    "Pasal 79",
+    "Pasal 80",
+    "Pasal 81",
+    "Pasal 83",
+    "Pasal 84",
+    "Pasal 85",
+    "Pasal 86",
+    "Pasal 87",
+    "Pasal 88",
+    "Pasal 89",
+    "Pasal 90",
+    "Pasal 94",
+    "Pasal 95",
+    "Pasal 96",
+    "Pasal 97",
+    "Pasal 98",
+    "Pasal 99",
+    "Pasal 101",
+    "Pasal 103"
+   ]
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.WITHHOLDING_METHOD",
+      "label": "PPh 21 borne by the employee (no gross-up, not borne by employer)",
+      "label_id": "PPh Pasal 21 menjadi tanggungan pekerja",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross'"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 8",
+        "page": 1,
+        "quote": "Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai peraturan pemerintah."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "page": 1,
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir tanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.THR",
+      "label": "THR of one month's wage, proportional below 12 months of service",
+      "label_id": "THR sebesar 1 bulan upah atau proporsional",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "thr"
+       },
+       {
+        "name": "condition",
+        "value": "hr('thr_holiday') == 1"
+       },
+       {
+        "name": "expression",
+        "value": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat 1",
+        "page": 1,
+        "quote": "Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada Pekerja/Buruh sebesar 1 bulan upah/proporsional bagi Pekerja/Buruh yang memiliki masa kerja 12 bulan (1 tahun) atau lebih."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat 2",
+        "page": 1,
+        "quote": "(Masa Kerja/12) x 1 bulan upah"
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 3",
+        "page": 1,
+        "quote": "Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang memiliki jabatan."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "page": 1,
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir tanggal 23 September 2024"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "PPh 21 borne by the employee is modelled as withholding_method 'gross'; THR wage (gaji pokok + tunjangan jabatan) is mapped to base_salary + fixed_allowance, keeping the regulatory 1-month threshold and the 30-day termination rule. The BPJS rates in Pasal 52 (JKK 0,24%/0,89%, JKM 0,30%, JHT 2%, JP 1%) equal the existing regulatory rates, so no records were added for them."
+   },
+   "delta": {
+    "delta_id": "e2-pkb-PKB-SANSAN-2021-cand1",
+    "event_id": "PKB-SANSAN-2021",
+    "document": {
+     "id": "PKB-SANSAN-2021",
+     "title": "PKB PT Sansan Saudaratex Jaya 2021-2024",
+     "issued": "2021-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.WITHHOLDING_METHOD",
+      "recorded_on": "2021-01-01",
+      "label": "PPh 21 borne by the employee (no gross-up, not borne by employer)",
+      "label_id": "PPh Pasal 21 menjadi tanggungan pekerja",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "PKB-SANSAN-2021",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 8",
+        "quote": "Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai peraturan pemerintah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir tanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.THR",
+      "recorded_on": "2021-01-01",
+      "label": "THR of one month's wage, proportional below 12 months of service",
+      "label_id": "THR sebesar 1 bulan upah atau proporsional",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "condition": "hr('thr_holiday') == 1",
+      "expression": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0",
+      "policy": "PKB-SANSAN-2021",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat 1",
+        "quote": "Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada Pekerja/Buruh sebesar 1 bulan upah/proporsional bagi Pekerja/Buruh yang memiliki masa kerja 12 bulan (1 tahun) atau lebih.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat 2",
+        "quote": "(Masa Kerja/12) x 1 bulan upah",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 3",
+        "quote": "Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang memiliki jabatan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir tanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "PPh 21 borne by the employee is modelled as withholding_method 'gross'; THR wage (gaji pokok + tunjangan jabatan) is mapped to base_salary + fixed_allowance, keeping the regulatory 1-month threshold and the 30-day termination rule. The BPJS rates in Pasal 52 (JKK 0,24%/0,89%, JKM 0,30%, JHT 2%, JP 1%) equal the existing regulatory rates, so no records were added for them."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.WITHHOLDING_METHOD",
+      "label": "PPh 21 borne by the employee (gross method, no tax allowance)",
+      "label_id": "PPh Pasal 21 menjadi tanggungan pekerja/buruh (metode gross)",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross'"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 8",
+        "page": 1,
+        "quote": "Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai peraturan pemerintah."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "page": 1,
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir tanggal 23 September 2024"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Only the employee-borne PPh 21 clause changes the computation; it is modelled as withholding_method 'gross' for the PKB period (September 2021 to September 2024). The BPJS rates (JKK 0,24%/0,89%, JKM 0,30%, JHT 2%, JP 1%) and the THR of one month's wage repeat the existing regulatory rules, so they are not restated."
+   },
+   "delta": {
+    "delta_id": "e2-pkb-PKB-SANSAN-2021-cand2",
+    "event_id": "PKB-SANSAN-2021",
+    "document": {
+     "id": "PKB-SANSAN-2021",
+     "title": "PKB PT Sansan Saudaratex Jaya 2021-2024",
+     "issued": "2021-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.WITHHOLDING_METHOD",
+      "recorded_on": "2021-01-01",
+      "label": "PPh 21 borne by the employee (gross method, no tax allowance)",
+      "label_id": "PPh Pasal 21 menjadi tanggungan pekerja/buruh (metode gross)",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "PKB-SANSAN-2021",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 8",
+        "quote": "Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai peraturan pemerintah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir tanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only the employee-borne PPh 21 clause changes the computation; it is modelled as withholding_method 'gross' for the PKB period (September 2021 to September 2024). The BPJS rates (JKK 0,24%/0,89%, JKM 0,30%, JHT 2%, JP 1%) and the THR of one month's wage repeat the existing regulatory rules, so they are not restated."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 3,
+   "order": 2,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SANSAN.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SANSAN.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.WITHHOLDING_METHOD",
+      "label": "PPh 21 borne by the employee (no gross-up, not borne by employer)",
+      "label_id": "PPh Pasal 21 menjadi tanggungan pekerja",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross'"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 8",
+        "page": 1,
+        "quote": "Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai"
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "page": 1,
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir"
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "page": 1,
+        "quote": "tanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.THR",
+      "label": "THR of one month's wage, proportional below 12 months of service",
+      "label_id": "THR sebesar 1 bulan upah, proporsional untuk masa kerja kurang dari 12 bulan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "thr"
+       },
+       {
+        "name": "condition",
+        "value": "hr('thr_holiday') == 1"
+       },
+       {
+        "name": "expression",
+        "value": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 else 0"
+       },
+       {
+        "name": "overrides",
+        "value": "REG.INPUT.THR"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat 1",
+        "page": 1,
+        "quote": "Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada"
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat 2",
+        "page": 1,
+        "quote": "(Masa Kerja/12) x 1 bulan upah"
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 3",
+        "page": 1,
+        "quote": "Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang"
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "page": 1,
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir"
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "page": 1,
+        "quote": "tanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.JKK_RATE",
+      "label": "JKK rate by division: 0.24% garment, 0.89% textile",
+      "label_id": "tarif iuran JKK per divisi: garmen 0,24%, tekstil 0,89%",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "condition",
+        "value": "employer('division') == 'garment' or employer('division') == 'textile'"
+       },
+       {
+        "name": "expression",
+        "value": "dec('0.0024') if employer('division') == 'garment' else dec('0.0089')"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat 2 huruf a",
+        "page": 1,
+        "quote": "Ketentuan iuran divisi garmen= 0,24 % x upah"
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat 2 huruf a",
+        "page": 1,
+        "quote": "Ketentuan iuran divisi tekstil= 0,89 % x upah"
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "page": 1,
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir"
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "page": 1,
+        "quote": "tanggal 23 September 2024"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The PKB runs from 23 September 2021 to 23 September 2024, mapped to the months September 2021 to September 2024; PPh 21 borne by the employee is encoded as withholding method 'gross', and THR uses base_salary + fixed_allowance as the PKB wage (gaji pokok + tunjangan jabatan). JKM 0.30%, JHT 2% and JP 1% equal the existing regulatory parameters and are not restated; the JKK rate by division only mirrors the regulatory risk-group rates."
+   },
+   "delta": {
+    "delta_id": "e2-pkb-m5-PKB-SANSAN-2021-cand3",
+    "event_id": "PKB-SANSAN-2021",
+    "document": {
+     "id": "PKB-SANSAN-2021",
+     "title": "PKB PT Sansan Saudaratex Jaya 2021-2024",
+     "issued": "2021-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.WITHHOLDING_METHOD",
+      "recorded_on": "2021-01-01",
+      "label": "PPh 21 borne by the employee (no gross-up, not borne by employer)",
+      "label_id": "PPh Pasal 21 menjadi tanggungan pekerja",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "PKB-SANSAN-2021",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 8",
+        "quote": "Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "quote": "tanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.THR",
+      "recorded_on": "2021-01-01",
+      "label": "THR of one month's wage, proportional below 12 months of service",
+      "label_id": "THR sebesar 1 bulan upah, proporsional untuk masa kerja kurang dari 12 bulan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "condition": "hr('thr_holiday') == 1",
+      "expression": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 else 0",
+      "policy": "PKB-SANSAN-2021",
+      "overrides": [
+       "REG.INPUT.THR"
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat 1",
+        "quote": "Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat 2",
+        "quote": "(Masa Kerja/12) x 1 bulan upah",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 3",
+        "quote": "Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "quote": "tanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.JKK_RATE",
+      "recorded_on": "2021-01-01",
+      "label": "JKK rate by division: 0.24% garment, 0.89% textile",
+      "label_id": "tarif iuran JKK per divisi: garmen 0,24%, tekstil 0,89%",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "condition": "employer('division') == 'garment' or employer('division') == 'textile'",
+      "expression": "dec('0.0024') if employer('division') == 'garment' else dec('0.0089')",
+      "policy": "PKB-SANSAN-2021",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat 2 huruf a",
+        "quote": "Ketentuan iuran divisi garmen= 0,24 % x upah",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 52 ayat 2 huruf a",
+        "quote": "Ketentuan iuran divisi tekstil= 0,89 % x upah",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "quote": "tanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The PKB runs from 23 September 2021 to 23 September 2024, mapped to the months September 2021 to September 2024; PPh 21 borne by the employee is encoded as withholding method 'gross', and THR uses base_salary + fixed_allowance as the PKB wage (gaji pokok + tunjangan jabatan). JKM 0.30%, JHT 2% and JP 1% equal the existing regulatory parameters and are not restated; the JKK rate by division only mirrors the regulatory risk-group rates."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 4,
+   "order": 3,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.WITHHOLDING_METHOD",
+      "label": "PPh 21 borne by the employee (gross method, no gross-up)",
+      "label_id": "PPh Pasal 21 menjadi tanggungan pekerja (metode gross)",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross'"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 8",
+        "page": 1,
+        "quote": "Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai peraturan pemerintah."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "page": 1,
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir tanggal 23 September 2024"
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.THR",
+      "label": "THR of one month's wage, proportional below 12 months of service",
+      "label_id": "THR sebesar 1 bulan upah, proporsional untuk masa kerja kurang dari 12 bulan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "thr"
+       },
+       {
+        "name": "condition",
+        "value": "hr('thr_holiday') == 1"
+       },
+       {
+        "name": "expression",
+        "value": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat 1",
+        "page": 1,
+        "quote": "Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada Pekerja/Buruh sebesar 1 bulan upah/proporsional bagi Pekerja/Buruh yang memiliki masa kerja 12 bulan (1 tahun) atau lebih."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat 2",
+        "page": 1,
+        "quote": "(Masa Kerja/12) x 1 bulan upah"
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat 4",
+        "page": 1,
+        "quote": "Bagi Pekerja/Buruh yang mengundurkan diri atau terkena Pemutusan Hubungan Kerja (PHK) 30 (tiga puluh) hari sebelum tanggal pembayaran, maka perusahaan tetap memberikan Tunjangan Hari Raya tersebut."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 3",
+        "page": 1,
+        "quote": "Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang memiliki jabatan."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "page": 1,
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir tanggal 23 September 2024"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "PPh 21 borne by the employee is encoded as withholding_method 'gross' (no gross-up, not employer-borne), and the wage for THR (gaji pokok + tunjangan jabatan) is approximated by base_salary + fixed_allowance; validity runs from September 2021 to September 2024 per Pasal 102. The BPJS rates in Pasal 52 (JKK 0,24%/0,89%, JKM 0,30%, JHT 3,70%/2,00%, JP 2,00%/1,00%) restate the regulatory rates already in the KB and are not added."
+   },
+   "delta": {
+    "delta_id": "e2-pkb-m5-PKB-SANSAN-2021-cand4",
+    "event_id": "PKB-SANSAN-2021",
+    "document": {
+     "id": "PKB-SANSAN-2021",
+     "title": "PKB PT Sansan Saudaratex Jaya 2021-2024",
+     "issued": "2021-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.WITHHOLDING_METHOD",
+      "recorded_on": "2021-01-01",
+      "label": "PPh 21 borne by the employee (gross method, no gross-up)",
+      "label_id": "PPh Pasal 21 menjadi tanggungan pekerja (metode gross)",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "PKB-SANSAN-2021",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 8",
+        "quote": "Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai peraturan pemerintah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir tanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.THR",
+      "recorded_on": "2021-01-01",
+      "label": "THR of one month's wage, proportional below 12 months of service",
+      "label_id": "THR sebesar 1 bulan upah, proporsional untuk masa kerja kurang dari 12 bulan",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "thr",
+      "condition": "hr('thr_holiday') == 1",
+      "expression": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0",
+      "policy": "PKB-SANSAN-2021",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat 1",
+        "quote": "Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada Pekerja/Buruh sebesar 1 bulan upah/proporsional bagi Pekerja/Buruh yang memiliki masa kerja 12 bulan (1 tahun) atau lebih.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat 2",
+        "quote": "(Masa Kerja/12) x 1 bulan upah",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 41 ayat 4",
+        "quote": "Bagi Pekerja/Buruh yang mengundurkan diri atau terkena Pemutusan Hubungan Kerja (PHK) 30 (tiga puluh) hari sebelum tanggal pembayaran, maka perusahaan tetap memberikan Tunjangan Hari Raya tersebut.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 3",
+        "quote": "Yang disebut upah adalah gaji pokok ditambah tunjangan jabatan bagi yang memiliki jabatan.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir tanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "PPh 21 borne by the employee is encoded as withholding_method 'gross' (no gross-up, not employer-borne), and the wage for THR (gaji pokok + tunjangan jabatan) is approximated by base_salary + fixed_allowance; validity runs from September 2021 to September 2024 per Pasal 102. The BPJS rates in Pasal 52 (JKK 0,24%/0,89%, JKM 0,30%, JHT 3,70%/2,00%, JP 2,00%/1,00%) restate the regulatory rates already in the KB and are not added."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 5,
+   "order": 4,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.WITHHOLDING_METHOD",
+      "label": "PPh 21 borne by the employee (gross method, no tax allowance)",
+      "label_id": "PPh Pasal 21 menjadi tanggungan pekerja (metode gross)",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "recorded_on": "2021-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross'"
+       },
+       {
+        "name": "policy",
+        "value": "PKB-SANSAN-2021"
+       }
+      ],
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 8",
+        "page": 1,
+        "quote": "Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai peraturan pemerintah."
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "page": 1,
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir tanggal 23 September 2024"
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Only the employee-borne PPh 21 (gross method, assumed category value 'gross') is added. The BPJS rates in Pasal 52 (JKK 0,24%/0,89%, JKM 0,30%, JHT 2%, JP 1%) and the THR of one month's wage, prorated, in Pasal 41 match the existing mandatory regulation rules and the THR minimum, so they are not restated. The validity runs from September 2021 to September 2024 per Pasal 102."
+   },
+   "delta": {
+    "delta_id": "e2-pkb-m5-PKB-SANSAN-2021-cand5",
+    "event_id": "PKB-SANSAN-2021",
+    "document": {
+     "id": "PKB-SANSAN-2021",
+     "title": "PKB PT Sansan Saudaratex Jaya 2021-2024",
+     "issued": "2021-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SANSAN.WITHHOLDING_METHOD",
+      "recorded_on": "2021-01-01",
+      "label": "PPh 21 borne by the employee (gross method, no tax allowance)",
+      "label_id": "PPh Pasal 21 menjadi tanggungan pekerja (metode gross)",
+      "valid_from": "2021-09-01",
+      "valid_until": "2024-09-30",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "PKB-SANSAN-2021",
+      "source": [
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 31 ayat 8",
+        "quote": "Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai peraturan pemerintah.",
+        "page": 1
+       },
+       {
+        "document": "PKB-SANSAN-2021",
+        "provision": "Pasal 102 ayat 1",
+        "quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021 dan berakhir tanggal 23 September 2024",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Only the employee-borne PPh 21 (gross method, assumed category value 'gross') is added. The BPJS rates in Pasal 52 (JKK 0,24%/0,89%, JKM 0,30%, JHT 2%, JP 1%) and the THR of one month's wage, prorated, in Pasal 41 match the existing mandatory regulation rules and the THR minimum, so they are not restated. The validity runs from September 2021 to September 2024 per Pasal 102."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   2,
+   5
+  ],
+  [
+   1,
+   4
+  ],
+  [
+   3
+  ]
+ ],
+ "selected": null,
+ "status": "abstain",
+ "delta": null,
+ "cost_usd": 0.447085,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "This collective labour agreement (PKB) sets company payroll rules that feed into the PPh 21 computation for permanent employees. It provides that PPh 21 is borne by the employee, so there is no gross-up. It defines the wage structure and THR of one month's wage. It fixes BPJS Ketenagakerjaan contribution rates: employer-paid JKK (0.24% garment, 0.89% textile) and JKM (0.30%) enter gross income, while the employee-paid JHT (2%) and JP (1%) are deductible.",
+   "quotes": [
+    {
+     "provision": "Pasal 31 ayat 8",
+     "quote": "Pajak penghasilan (PPH pasal 21) menjadi tanggungan Pekerja/Buruh sesuai\nperaturan pemerintah."
+    },
+    {
+     "provision": "Pasal 31 ayat 2",
+     "quote": "Struktur pendapatan Pekerja/Buruh terdiri dari :\na. Gaji pokok\nb. Tunjangan tetap\nc. Tunjangan tidak tetap"
+    },
+    {
+     "provision": "Pasal 52 ayat 2 huruf a",
+     "quote": "- Ketentuan iuran divisi garmen= 0,24 % x upah\nsebulan ditanggung oleh Perusahaan.\n- Ketentuan iuran divisi tekstil= 0,89 % x upah\nsebulan ditanggung oleh Perusahaan."
+    },
+    {
+     "provision": "Pasal 52 ayat 2 huruf b",
+     "quote": "- Ketentuan iuran= 0.30 % x upah sebulan, ditanggung\noleh Perusahaan."
+    },
+    {
+     "provision": "Pasal 52 ayat 2 huruf c",
+     "quote": "- Ketentuan iuran= 3.70 % x upah sebulan, ditanggung\noleh Perusahaan\n= 2.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh."
+    },
+    {
+     "provision": "Pasal 52 ayat 2 huruf d",
+     "quote": "- Ketentuan iuran= 2.00 % x upah sebulan, ditanggung\noleh Perusahaan\n= 1.00 % x upah sebulan, ditanggung oleh\nPekerja/Buruh."
+    },
+    {
+     "provision": "Pasal 41 ayat 1",
+     "quote": "Setiap tahun Perusahaan memberikan Tunjangan Hari Raya (THR) kepada\nPekerja/Buruh sebesar 1 bulan upah/proporsional"
+    }
+   ],
+   "effective_from": "2021-09-01",
+   "effective_from_quote": "selama 3 (tiga) tahun sejak ditetapkan tanggal 23 September 2021",
+   "effective_until": "2024-09-30",
+   "effective_until_quote": "berakhir\ntanggal 23 September 2024",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT Sansan Saudaratex Jaya",
+     "quote": "Perjanjian Kerja Bersama antara PT. SANSAN SAUDARATEX JAYA dengan Serikat\nPekerja/Buruh PT. SANSAN SAUDARATEX JAYA Periode 2021 – 2024"
+    },
+    {
+     "kind": "sector",
+     "value": "Garment and textile manufacturing",
+     "quote": "Pabrik Manufaktur Garmen (garmen, pakaian jadi), Pabrik Manufaktur Textil"
+    }
+   ]
+  },
+  "quotes_ok": true
+ },
+ "extended_from": "e2-pkb"
+}

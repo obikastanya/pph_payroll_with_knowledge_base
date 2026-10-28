@@ -1,0 +1,565 @@
+{
+ "run": "e2-sintetis",
+ "event": "SP13",
+ "condition": "proposed",
+ "documents": [
+  "SP13"
+ ],
+ "selection": {
+  "SP13": {
+   "tokens": 591,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP13.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP13.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP13.WITHHOLDING_METHOD",
+      "label": "PPh 21 borne entirely by the company (PKB Kencana Pelayaran)",
+      "label_id": "PPh Pasal 21 ditanggung sepenuhnya oleh perusahaan",
+      "valid_from": "2023-06-01",
+      "valid_until": "2025-05-31",
+      "recorded_on": "2023-06-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'employer_borne'"
+       },
+       {
+        "name": "policy",
+        "value": "SP13"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP13",
+        "provision": "Pasal 61 ayat (1)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 atas seluruh penghasilan pekerja ditanggung sepenuhnya oleh Perusahaan."
+       },
+       {
+        "document": "SP13",
+        "provision": "Pasal 82 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juni 2023 sampai dengan tanggal 31 Mei 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP13.JKK_RATE",
+      "label": "JKK premium rate set by the collective agreement",
+      "label_id": "tarif iuran JKK menurut PKB",
+      "valid_from": "2023-06-01",
+      "valid_until": "2025-05-31",
+      "recorded_on": "2023-06-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "dec('0.0127')"
+       },
+       {
+        "name": "policy",
+        "value": "SP13"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP13",
+        "provision": "Pasal 62",
+        "page": 1,
+        "quote": "Iuran JKK sebesar 1,27% (satu koma dua puluh tujuh persen), JKM, JHT, JP, dan Jaminan Kesehatan dihitung dan dibagi sesuai ketentuan peraturan perundang-undangan."
+       },
+       {
+        "document": "SP13",
+        "provision": "Pasal 82 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juni 2023 sampai dengan tanggal 31 Mei 2025."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Pasal 61 is modelled as withholding_method 'employer_borne' (tax treated per existing tax rules); the 1.27% JKK rate is a company rule that the mandatory risk-group lookup still overrides if it differs. The crew mess (Pasal 60) defers to tax law and is not modelled."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP13-cand1",
+    "event_id": "SP13",
+    "document": {
+     "id": "SP13",
+     "title": "PT Kencana Pelayaran Nusantara: Perjanjian Kerja Bersama",
+     "issued": "2023-06-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP13.WITHHOLDING_METHOD",
+      "recorded_on": "2023-06-01",
+      "label": "PPh 21 borne entirely by the company (PKB Kencana Pelayaran)",
+      "label_id": "PPh Pasal 21 ditanggung sepenuhnya oleh perusahaan",
+      "valid_from": "2023-06-01",
+      "valid_until": "2025-05-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'employer_borne'",
+      "policy": "SP13",
+      "source": [
+       {
+        "document": "SP13",
+        "provision": "Pasal 61 ayat (1)",
+        "quote": "Pajak Penghasilan Pasal 21 atas seluruh penghasilan pekerja ditanggung sepenuhnya oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP13",
+        "provision": "Pasal 82 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juni 2023 sampai dengan tanggal 31 Mei 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP13.JKK_RATE",
+      "recorded_on": "2023-06-01",
+      "label": "JKK premium rate set by the collective agreement",
+      "label_id": "tarif iuran JKK menurut PKB",
+      "valid_from": "2023-06-01",
+      "valid_until": "2025-05-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "dec('0.0127')",
+      "policy": "SP13",
+      "source": [
+       {
+        "document": "SP13",
+        "provision": "Pasal 62",
+        "quote": "Iuran JKK sebesar 1,27% (satu koma dua puluh tujuh persen), JKM, JHT, JP, dan Jaminan Kesehatan dihitung dan dibagi sesuai ketentuan peraturan perundang-undangan.",
+        "page": 1
+       },
+       {
+        "document": "SP13",
+        "provision": "Pasal 82 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juni 2023 sampai dengan tanggal 31 Mei 2025.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Pasal 61 is modelled as withholding_method 'employer_borne' (tax treated per existing tax rules); the 1.27% JKK rate is a company rule that the mandatory risk-group lookup still overrides if it differs. The crew mess (Pasal 60) defers to tax law and is not modelled."
+   },
+   "initial_delta": null
+  },
+  {
+   "n": 2,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP13.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP13.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)"
+    ],
+    "G4": "pass",
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP13.WITHHOLDING_METHOD",
+      "label": "PPh 21 borne entirely by the company (PKB KPN)",
+      "label_id": "PPh Pasal 21 ditanggung sepenuhnya oleh Perusahaan (PKB KPN)",
+      "valid_from": "2023-06-01",
+      "valid_until": "2025-05-31",
+      "recorded_on": "2023-06-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'employer_borne'"
+       },
+       {
+        "name": "policy",
+        "value": "SP13"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP13",
+        "provision": "Pasal 61 ayat (1)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 atas seluruh penghasilan pekerja ditanggung sepenuhnya oleh Perusahaan."
+       },
+       {
+        "document": "SP13",
+        "provision": "Pasal 82 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juni 2023 sampai dengan tanggal 31 Mei 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP13.JKK_RATE",
+      "label": "JKK premium rate of 1.27% (PKB KPN)",
+      "label_id": "tarif iuran JKK 1,27% (PKB KPN)",
+      "valid_from": "2023-06-01",
+      "valid_until": "2025-05-31",
+      "recorded_on": "2023-06-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "127 / 10000"
+       },
+       {
+        "name": "policy",
+        "value": "SP13"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP13",
+        "provision": "Pasal 62",
+        "page": 1,
+        "quote": "Iuran JKK sebesar 1,27% (satu koma dua puluh tujuh persen), JKM, JHT, JP, dan Jaminan Kesehatan dihitung dan dibagi sesuai ketentuan peraturan perundang-undangan."
+       },
+       {
+        "document": "SP13",
+        "provision": "Pasal 82 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juni 2023 sampai dengan tanggal 31 Mei 2025."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "PPh 21 borne by the company is modelled as withholding_method 'employer_borne' (no gross-up allowance), and the 1.27% JKK rate as a company rule that the mandatory risk-group lookup overrides if it differs. The crew mess (Pasal 60) defers to tax rules ('sepanjang sesuai ketentuan perpajakan'), so no element is added for it."
+   },
+   "delta": {
+    "delta_id": "e2-sintetis-SP13-cand2",
+    "event_id": "SP13",
+    "document": {
+     "id": "SP13",
+     "title": "PT Kencana Pelayaran Nusantara: Perjanjian Kerja Bersama",
+     "issued": "2023-06-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP13.WITHHOLDING_METHOD",
+      "recorded_on": "2023-06-01",
+      "label": "PPh 21 borne entirely by the company (PKB KPN)",
+      "label_id": "PPh Pasal 21 ditanggung sepenuhnya oleh Perusahaan (PKB KPN)",
+      "valid_from": "2023-06-01",
+      "valid_until": "2025-05-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'employer_borne'",
+      "policy": "SP13",
+      "source": [
+       {
+        "document": "SP13",
+        "provision": "Pasal 61 ayat (1)",
+        "quote": "Pajak Penghasilan Pasal 21 atas seluruh penghasilan pekerja ditanggung sepenuhnya oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP13",
+        "provision": "Pasal 82 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juni 2023 sampai dengan tanggal 31 Mei 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP13.JKK_RATE",
+      "recorded_on": "2023-06-01",
+      "label": "JKK premium rate of 1.27% (PKB KPN)",
+      "label_id": "tarif iuran JKK 1,27% (PKB KPN)",
+      "valid_from": "2023-06-01",
+      "valid_until": "2025-05-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "127 / 10000",
+      "policy": "SP13",
+      "source": [
+       {
+        "document": "SP13",
+        "provision": "Pasal 62",
+        "quote": "Iuran JKK sebesar 1,27% (satu koma dua puluh tujuh persen), JKM, JHT, JP, dan Jaminan Kesehatan dihitung dan dibagi sesuai ketentuan peraturan perundang-undangan.",
+        "page": 1
+       },
+       {
+        "document": "SP13",
+        "provision": "Pasal 82 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juni 2023 sampai dengan tanggal 31 Mei 2025.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "PPh 21 borne by the company is modelled as withholding_method 'employer_borne' (no gross-up allowance), and the 1.27% JKK rate as a company rule that the mandatory risk-group lookup overrides if it differs. The crew mess (Pasal 60) defers to tax rules ('sepanjang sesuai ketentuan perpajakan'), so no element is added for it."
+   },
+   "initial_delta": null
+  }
+ ],
+ "groups": [
+  [
+   1,
+   2
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "e2-sintetis-SP13-cand1",
+  "event_id": "SP13",
+  "document": {
+   "id": "SP13",
+   "title": "PT Kencana Pelayaran Nusantara: Perjanjian Kerja Bersama",
+   "issued": "2023-06-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP13.WITHHOLDING_METHOD",
+    "recorded_on": "2023-06-01",
+    "label": "PPh 21 borne entirely by the company (PKB Kencana Pelayaran)",
+    "label_id": "PPh Pasal 21 ditanggung sepenuhnya oleh perusahaan",
+    "valid_from": "2023-06-01",
+    "valid_until": "2025-05-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "expression": "'employer_borne'",
+    "policy": "SP13",
+    "source": [
+     {
+      "document": "SP13",
+      "provision": "Pasal 61 ayat (1)",
+      "quote": "Pajak Penghasilan Pasal 21 atas seluruh penghasilan pekerja ditanggung sepenuhnya oleh Perusahaan.",
+      "page": 1
+     },
+     {
+      "document": "SP13",
+      "provision": "Pasal 82 ayat (1)",
+      "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juni 2023 sampai dengan tanggal 31 Mei 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP13.JKK_RATE",
+    "recorded_on": "2023-06-01",
+    "label": "JKK premium rate set by the collective agreement",
+    "label_id": "tarif iuran JKK menurut PKB",
+    "valid_from": "2023-06-01",
+    "valid_until": "2025-05-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "jkk_rate",
+    "expression": "dec('0.0127')",
+    "policy": "SP13",
+    "source": [
+     {
+      "document": "SP13",
+      "provision": "Pasal 62",
+      "quote": "Iuran JKK sebesar 1,27% (satu koma dua puluh tujuh persen), JKM, JHT, JP, dan Jaminan Kesehatan dihitung dan dibagi sesuai ketentuan peraturan perundang-undangan.",
+      "page": 1
+     },
+     {
+      "document": "SP13",
+      "provision": "Pasal 82 ayat (1)",
+      "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juni 2023 sampai dengan tanggal 31 Mei 2025.",
+      "page": 1
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "Pasal 61 is modelled as withholding_method 'employer_borne' (tax treated per existing tax rules); the 1.27% JKK rate is a company rule that the mandatory risk-group lookup still overrides if it differs. The crew mess (Pasal 60) defers to tax law and is not modelled."
+ },
+ "cost_usd": 0.18481,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "This company collective labour agreement sets payroll rules that change the PPh 21 computation for its permanent employees. First, PPh 21 on all employee income is borne entirely by the company, so the borne tax enters the calculation. Second, it fixes the employer-paid JKK rate at 1.27%, which enters gross income. Third, crew mess (housing) provided while the ship is docked is treated as non-income in-kind benefit for awak kapal.",
+   "quotes": [
+    {
+     "provision": "Pasal 61 ayat (1)",
+     "quote": "Pajak Penghasilan Pasal 21 atas seluruh penghasilan pekerja ditanggung sepenuhnya oleh Perusahaan."
+    },
+    {
+     "provision": "Pasal 61 ayat (2)",
+     "quote": "Pajak yang ditanggung sebagaimana dimaksud pada ayat (1) diperhitungkan dalam penghitungan Pajak Penghasilan Pasal 21 sesuai ketentuan perpajakan yang berlaku."
+    },
+    {
+     "provision": "Pasal 62",
+     "quote": "Iuran JKK sebesar 1,27% (satu koma dua puluh tujuh persen), JKM, JHT, JP, dan Jaminan Kesehatan dihitung dan dibagi sesuai ketentuan peraturan perundang-undangan."
+    },
+    {
+     "provision": "Pasal 60 ayat (2)",
+     "quote": "Mes sebagaimana dimaksud pada ayat (1) disediakan dalam rangka pelaksanaan pekerjaan dan tidak diperhitungkan sebagai penghasilan pekerja, sepanjang sesuai ketentuan perpajakan."
+    }
+   ],
+   "effective_from": "2023-06-01",
+   "effective_from_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juni 2023 sampai dengan tanggal 31 Mei 2025.",
+   "effective_until": "2025-05-31",
+   "effective_until_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Juni 2023 sampai dengan tanggal 31 Mei 2025.",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT Kencana Pelayaran Nusantara",
+     "quote": "PERJANJIAN KERJA BERSAMA PT KENCANA PELAYARAN NUSANTARA PERIODE 2023-2025"
+    },
+    {
+     "kind": "sector",
+     "value": "Pelayaran (shipping)",
+     "quote": "PT KENCANA PELAYARAN NUSANTARA"
+    },
+    {
+     "kind": "employee_group",
+     "value": "Awak kapal (ship crew), for the mess facility",
+     "quote": "Perusahaan menyediakan mes bagi awak kapal di pelabuhan pangkalan selama kapal sandar."
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

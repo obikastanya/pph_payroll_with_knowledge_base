@@ -136,6 +136,25 @@ def main():
                     and c.get("criterion") in ("combinatorial", "operational", "boundary_ter", "boundary_p17")]
             cases = rng.sample(sorted(pool, key=lambda c: c["case_id"]), min(args.sample, len(pool)))
             row[label] = {"year": year, "cases": len(cases), "wrong": wrong(kb, gold, cases, state)}
+        # descriptive: every candidate that applies, scored whatever the gates said (AB1 without gates)
+        row["candidates_ungated"] = []
+        for c in res.get("candidates", []):
+            if not c.get("delta"):
+                continue
+            try:
+                kc = apply_delta(base, c["delta"])
+            except (UpdateError, ValueError, KeyError) as e:
+                row["candidates_ungated"].append({"n": c["n"], "applies": False, "error": str(e)[:120]})
+                continue
+            rng2 = random.Random(sid)
+            item = {"n": c["n"], "applies": True, "elements": len(c["delta"]["add"]),
+                    "gates_failed": sorted(g for g, v in (c.get("gate_log") or {}).items() if str(v).startswith("fail"))}
+            for label, year in (("state_year", state.year), ("previous_year", state.year - 1)):
+                pool = [x for x in list(test_cases.values()) + list(dev_cases.values()) if x["tax_year"] == year
+                        and x.get("criterion") in ("combinatorial", "operational", "boundary_ter", "boundary_p17")]
+                cs = rng2.sample(sorted(pool, key=lambda x: x["case_id"]), min(args.sample, len(pool)))
+                item[label] = {"cases": len(cs), "wrong": wrong(kc, gold, cs, state)}
+            row["candidates_ungated"].append(item)
         summary[sid] = row
         print(sid, json.dumps(row, default=str), flush=True)
     (out / "ab1_ringkasan.json").write_text(json.dumps(summary, indent=1, default=str) + "\n", encoding="utf-8")

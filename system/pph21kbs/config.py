@@ -16,8 +16,8 @@ SECOND_MODEL = os.environ.get("PPH21_SECOND_MODEL", "gpt-6.1-sol")
 SECOND_EFFORT = "high"
 # LLM budget per provider, cumulative over all runs under experiments/. 2026-10-27: USD 15; 2026-10-28: at most USD 100
 # more per provider; 2026-10-29: the researcher reports about USD 23 Claude credit left (no top-up), cap set at the
-# spend logged then (78.54) + 21, so a call in flight cannot cross the credit
-BUDGET_USD = {"anthropic": 99.54, "openai": 98.0}
+# spend logged then (78.54) + 11: at least ~USD 12 of the credit stays for a demo (decision 2026-10-29)
+BUDGET_USD = {"anthropic": 89.5, "openai": 98.0}
 
 GRAPHDB_URL = os.environ.get("PPH21_GRAPHDB_URL", "http://localhost:7200")
 GRAPHDB_REPOSITORY = os.environ.get("PPH21_GRAPHDB_REPOSITORY", "pph21")

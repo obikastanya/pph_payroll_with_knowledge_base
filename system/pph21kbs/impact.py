@@ -70,14 +70,14 @@ def _graph(kb, update_id, omega, remote):
     return _Remote(ds) if remote else ds
 
 
-def detect(kb, update_id, policies, omega, remote=False):
+def detect(kb, update_id, policies, omega, remote=False, query="impact_policy"):
     """{policy: {"kinds": set of "a"/"b"/"c", "hits": [(kind, company rule, delta element, fact)]}} for each
     policy whose rules are in kb (installed as K_n (+) P). remote=True evaluates the queries in GraphDB."""
     ds = _graph(kb, update_id, omega, remote)
     facts = affected_facts(ds)
     # F_Delta is passed as FILTER ... IN: rdflib ignores an inline VALUES block inside a UNION branch
     members = ", ".join(f"<{rdf.fact_iri(f)}>" for f in facts) or "<urn:pph21kbs:none>"
-    q = query_text("impact_policy").replace("FILTER_AFFECTED", f"FILTER(?fact IN ({members}))")
+    q = query_text(query).replace("FILTER_AFFECTED", f"FILTER(?fact IN ({members}))")
     out = {}
     for p in policies:
         hits = []

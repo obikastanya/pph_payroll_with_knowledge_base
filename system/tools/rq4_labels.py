@@ -139,12 +139,15 @@ def main():
                                                                                   date(2026, 12, 31)).year]
             a, b, c = exec_labels(k_prev, k_new, rules, ev_cases, ev)
             det = impact.detect(k_new, gold_of[ev.id], [pe.document], ev.issued, remote=True)[pe.document]["kinds"]
+            det2 = impact.detect(k_new, gold_of[ev.id], [pe.document], ev.issued, remote=True,
+                                 query="impact_policy_v2")[pe.document]["kinds"]
             b5i = impact.flag_all(k_new, gold_of[ev.id], [pe.document], ev.issued, remote=True)[pe.document]
             b5ii = flat_scan(k_new, gold_of[ev.id], rules)
             man = manual.get((pe.id, ev.id))
             rows.append({"policy": pe.id, "part": pe.part, "event": ev.id, "cases": len(ev_cases),
                          "a": a, "b": b, "c": c, "positive": a or b or c,
                          "detector": bool(det), "detector_kinds": "".join(sorted(det)), "b5_flag_all": b5i,
+                         "detector_v2": bool(det2), "detector_v2_kinds": "".join(sorted(det2)),
                          "b5_flat_scan": b5ii, "manual": "" if man is None else man[0],
                          "manual_type": "" if man is None else man[1]})
             print(f"{pe.id} {ev.id}: exec a={a} b={b} c={c} | detector {''.join(sorted(det)) or '-'} | "
@@ -157,7 +160,7 @@ def main():
     clusters = defaultdict(list)
     for r in rows:
         clusters[r["event"]].append(r)
-    for name in ("detector", "b5_flag_all", "b5_flat_scan"):
+    for name in ("detector", "detector_v2", "b5_flag_all", "b5_flat_scan"):
         def f2(rs, name=name):
             tp = sum(r[name] and r["positive"] for r in rs)
             fp = sum(r[name] and not r["positive"] for r in rs)
@@ -169,6 +172,19 @@ def main():
         summary[name] = {"precision": p, "recall": rec, "F2": f,
                          "F2_CI": stats.cluster_bootstrap(clusters, lambda rs: f2(rs)[2], b=1000),
                          "recall_CI": stats.cluster_bootstrap(clusters, lambda rs: f2(rs)[1], b=1000)}
+    def f2_of(rs, name):
+        tp = sum(r[name] and r["positive"] for r in rs)
+        fp = sum(r[name] and not r["positive"] for r in rs)
+        fn = sum((not r[name]) and r["positive"] for r in rs)
+        p = tp / (tp + fp) if tp + fp else 0
+        rec = tp / (tp + fn) if tp + fn else 0
+        return stats.f_beta(p, rec) if p and rec else 0.0
+    for det_name in ("detector", "detector_v2"):          # H4b: paired differences with event-cluster bootstrap
+        for other in ("b5_flag_all", "b5_flat_scan"):
+            summary[f"F2_diff_{det_name}_minus_{other}"] = {
+                "diff": f2_of(rows, det_name) - f2_of(rows, other),
+                "CI": stats.cluster_bootstrap(clusters, lambda rs, a=det_name, b=other: f2_of(rs, a) - f2_of(rs, b),
+                                              b=2000)}
     prev = summary["positives"] / summary["pairs"] if summary["pairs"] else 0
     summary["prevalence"] = prev
     summary["F2_flag_everything"] = stats.f2_flag_all(prev) if prev else None

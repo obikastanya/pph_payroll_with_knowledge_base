@@ -1,5 +1,29 @@
 # KB PPh 21: Kalkulator Payroll PPh Pasal 21 Berbasis Knowledge Base Dua Lapis
 
+## Mulai di sini
+
+Repositori ini berisi dua generasi sistem:
+
+| | Folder | Setup dan cara menjalankan |
+|---|---|---|
+| **Sistem penelitian** (yang dipakai sekarang): KB bitemporal dua lapis sebagai *knowledge graph* RDF, akuisisi LLM, eksperimen E0–E5, aplikasi, dan demo | `system/`, `system/app/`, `mini_demo/mockup/` | **[SETUP.md](SETUP.md)**: Python, `.env`, GraphDB di Docker, Tesseract, pemeriksa setup, menjalankan aplikasi dan demo, tes |
+| Sistem awal: kalkulator YAML/CSV, UI Streamlit `ui/`, web Laravel `web/` | `engine/`, `kb/`, `ui/`, `web/`, `baselines/` | bagian selanjutnya di README ini |
+
+Ringkasnya, setelah setup:
+
+```
+env\Scripts\python system\tools\check_setup.py                              # cek semua prasyarat
+env\Scripts\streamlit run system\app\main.py                               # aplikasi
+env\Scripts\streamlit run mini_demo\mockup\main.py --server.port 8503      # demo
+```
+
+Panduan penelitian ada di [PANDUAN_PENELITIAN.md](PANDUAN_PENELITIAN.md), dan bahan paper di
+[docs/BAHAN_PAPER.md](docs/BAHAN_PAPER.md).
+
+---
+
+## Sistem awal
+
 Kalkulator gaji, BPJS, THR, dan PPh 21 untuk pegawai tetap. Cakupan tahun pajaknya 2016–2026: rezim disetahunkan PER-16 sampai 2023, lalu rezim TER (PMK 168/2023) ditambah fasilitas DTP 2025–2026.
 
 - **Pengetahuan ada di knowledge base.** Semua aturan pajak pemerintah dan kebijakan perusahaan disimpan di berkas YAML/CSV di `kb/` dan `dataset/01_regulasi/tables/`. Kodenya hanya **mesin inferensi** generik.
@@ -18,7 +42,7 @@ Kalkulator gaji, BPJS, THR, dan PPh 21 untuk pegawai tetap. Cakupan tahun pajakn
 | Kebutuhan | Keterangan |
 |---|---|
 | **Python 3.12** | Diuji dengan Python 3.12.4. Cek dengan `python --version`; di Windows bisa juga `py -3.12 --version` |
-| Koneksi internet | Hanya saat instalasi paket pertama kali (±500 MB, terutama Streamlit, pandas, pyarrow) |
+| Koneksi internet | Saat instalasi paket pertama kali. `requirements.txt` sekarang juga memasang paket sistem penelitian (Docling dengan torch dan transformers), totalnya beberapa GB; lihat [SETUP.md](SETUP.md) |
 | Git | Opsional. Dipakai untuk mencatat versi KB (commit) di metadata audit; tanpa git, versi KB tertulis `tidak-diketahui` (akhiran `+belum-dikomit` = ada perubahan di `kb/` atau `engine/` yang belum di-commit) |
 | Sistem operasi | Diuji di Windows 11 (PowerShell). Perintah untuk macOS/Linux disertakan |
 

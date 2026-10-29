@@ -13,7 +13,15 @@ Decisions this implementation follows are in the decision log at the end of [PAN
    - put the code in `.env` as `GRAPHDB_LICENSE` (one line);
    - `env\Scripts\python system\tools\graphdb_setup.py` decodes it to `graphdb/graphdb.license`, starts the container, and creates the `pph21` repository;
    - Workbench and SPARQL endpoint at http://localhost:7200.
-4. Check everything: `env\Scripts\python system\tools\check_setup.py`. It only lists models and repositories, so it costs nothing.
+4. Optional, for OCR of scanned PDFs: Tesseract with the Indonesian language (`ind`) in `C:\Program Files\Tesseract-OCR`
+   or on the PATH; without it Docling uses RapidOCR.
+5. Check everything: `env\Scripts\python system\tools\check_setup.py`. It only lists models and repositories, so it costs
+   nothing (expected: `5/5 checks passed`).
+6. Tests: `env\Scripts\python -m pytest system\tests -q` (about 2 minutes; `test_impact.py` compares with GraphDB and is
+   skipped when GraphDB is not running).
+
+Step by step, with the `.env` variables (`.env.example`), troubleshooting, and how to run the app and the demo:
+[SETUP.md](../SETUP.md).
 
 ## GraphDB repository
 

@@ -2,6 +2,8 @@
 
 A deliberately tiny version of the system described in [paper/draft/skeleton.tex](../paper/draft/skeleton.tex). It runs the whole pipeline once, from the initial knowledge base to the four research questions, and shows every screen the full system will have. Parts that only show what the full system will do are marked **Mockup** on screen.
 
+**UI mockup v2 for finance admins** (calculator, knowledge base viewer, knowledge base management with an assistant, research results in plain language) is in [mockup/](mockup/README.md): `env\Scripts\streamlit run mini_demo\mockup\main.py --server.port 8503`.
+
 **Start with [BLUEPRINT.md](BLUEPRINT.md)**: what is being built, what each screen looks like, the data contracts, the datasets the study needs, how each experiment fills the paper, the build order, and what building this mockup taught us.
 
 What "tiny" means here:

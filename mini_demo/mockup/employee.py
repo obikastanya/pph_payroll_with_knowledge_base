@@ -74,26 +74,18 @@ def cell(rec, m, col):
     return (rec["grid"].get(str(m)) or {}).get(col)
 
 
-def to_case(rec, policy_installed=True):
-    """The engine case. Months after the month asked for are filled with the recurring values of that month, so that
-    the final month stays December or the month the employee leaves (engine limitation, see README)."""
+def to_case(rec, policy_installed=True, employer_pays_tax=False):
+    """The engine case: the months from the start up to the month asked for (the engine knows the final month from the
+    employment end and gives the year values only when it is reached). PPh 21 the admin says was actually withheld is
+    sent as a recorded value; when the employer pays the tax (gross-up, borne by the employer, or a company policy
+    that makes it so) the tax allowance of that month equals it and is recorded with it."""
     cat = {**rec.get("component_keys", {}), **catalog()}
     year, start, end = rec["year"], rec["start"], max(rec["end"], rec["start"])
     asked = min(max(rec["month"], start), end)
     periods = []
-    last = rec["grid"].get(str(asked)) or {}
-    for i, m in enumerate(range(start, end + 1)):
-        if m <= asked:
-            row = rec["grid"].get(str(m)) or {}
-        else:      # recurring values only; counters go on counting
-            row = {}
-            for col, v in last.items():
-                key = col[5:] if col.startswith("data:") else cat.get(col)
-                df = inputs.definition(key) if key else None
-                if df and df.get("repeat") and v not in (None, "", 0, False):
-                    row[col] = v + (df.get("increment") or 0) * (m - asked)
+    for m in range(start, asked + 1):
         p = {"month": m, "income": {}, "benefits": {}, "hr": {}, "zakat": 0}
-        for col, v in row.items():
+        for col, v in (rec["grid"].get(str(m)) or {}).items():
             if v in (None, "", 0, False):
                 continue
             key = col[5:] if col.startswith("data:") else cat.get(col)
@@ -107,6 +99,11 @@ def to_case(rec, policy_installed=True):
                 bucket[k] = bucket.get(k, 0) + int(v)
             elif b == "hr":
                 p["hr"][k] = int(v) if isinstance(v, (bool, int, float)) else str(v)
+        w = rec["withheld"].get(str(m))
+        if w is not None and m < end:
+            p["recorded"] = {"pph21_due": int(w)}
+            if employer_pays_tax:
+                p["recorded"]["tax_allowance"] = int(w)
         periods.append(p)
     emp, er, method = {}, {"policy": rec.get("policy") if policy_installed else None}, "gross"
     for key, v in rec["fields"].items():

@@ -20,6 +20,20 @@ import inputs
 import ui
 
 
+# ---------------------------------------------------------------- engine case
+def case_of(rec, omega):
+    """The case for the engine. When PPh 21 actually withheld is recorded and the employer pays the tax (method, or a
+    company policy that sets it, read from the engine), the tax allowance of that month is recorded with it."""
+    installed = rec.get("policy") in demo.installed_policies()
+    case = emp.to_case(rec, policy_installed=installed)
+    if not rec["withheld"]:
+        return case
+    r0, _ = d.compute(case, omega)
+    method = (d.value(r0, "withholding_method") if r0 else None) or case["method"]
+    pays = method != "gross" or bool(r0 and any(r0.periods[m].get("tax_allowance") for m in r0.periods))
+    return emp.to_case(rec, policy_installed=installed, employer_pays_tax=pays)
+
+
 # ---------------------------------------------------------------- record state
 def _norm(rec):
     """The record as text, with empty cells left out (an empty cell and 0 mean the same)."""
@@ -72,7 +86,7 @@ def _on_open():
 def _save(name):
     s = st.session_state
     s.rec["name"] = name
-    r, _ = d.compute(emp.to_case(s.rec, policy_installed=s.rec.get("policy") in demo.installed_policies()), s.k_omega_v)
+    r, _ = d.compute(case_of(s.rec, s.k_omega_v), s.k_omega_v)
     found = inputs.discover(s.rec["year"], s.rec.get("policy"), s.k_omega_v)
     demo.save_employee(name, {"record": s.rec, "saved": datetime.now().strftime("%d/%m/%Y %H:%M"),
                               "approved": len(demo.load()["approved"]),
@@ -517,8 +531,8 @@ def year_card(r, rec):
     end = max(rec["end"], rec["start"])
     pension = (y.get("annual_deductions") or 0) - (y.get("job_expense") or 0)
     status = d.value(r, "ptkp_status_effective")
-    actual = sum(rec["withheld"].get(str(m), r.periods[m].get("pph21_due") or 0) for m in r.periods if m < end)
-    diff = (y.get("annual_pph21") or 0) - actual
+    actual = d.value(r, "withheld_before_final") or 0          # the engine sums recorded and computed PPh 21
+    diff = d.value(r, "final_period_tax") or 0
     rows = [("", g.term("bruto", "Penghasilan bruto setahun"), y.get("annual_gross")),
             ("−", g.term("biaya jabatan", "Biaya jabatan"), y.get("job_expense")),
             ("−", g.term("iuran pensiun", "Iuran pensiun pegawai") + " dan zakat", pension),
@@ -533,9 +547,8 @@ def year_card(r, rec):
              f"{g.term('kurang bayar') if diff >= 0 else g.term('lebih bayar')}</td><td class='r'>{d.money(diff)}</td></tr>")
     note = ""
     if rec["withheld"]:
-        note = (f"Memakai PPh yang diisi di kolom 'PPh sudah dipotong' (hitungan sistem: "
-                f"{d.money(d.value(r, 'withheld_before_final'))}). <span class='mock'>Mockup: selisih ini dihitung "
-                "aplikasi; direncanakan dihitung engine.</span>")
+        note = ("'Sudah dipotong' memakai PPh yang diisi di kolom 'PPh sudah dipotong' untuk bulan "
+                + ", ".join(d.MON[int(m) - 1] for m in sorted(rec["withheld"], key=int)) + "; bulan lain dari hitungan sistem.")
     if end < 12:
         note += f" Pegawai keluar di {d.MONTHS[end - 1]}: bulan itu bulan penutup, tanpa disetahunkan."
     ui.html(f"<div class='card'><h4>Hitung ulang setahun {rec['year']}</h4><table class='lines'>{html}</table>"
@@ -627,7 +640,7 @@ def basis(r, m, final, autos):
 
 def results(rec, cols, found, autos):
     s = st.session_state
-    case = emp.to_case(rec, policy_installed=rec.get("policy") in demo.installed_policies())
+    case = case_of(rec, s.k_omega_v)
     r, err = d.compute(case, s.k_omega_v)
     changed_banner(r, rec)
     blocked = warnings(r, rec, cols, found)
@@ -669,8 +682,9 @@ def results(rec, cols, found, autos):
         with st.expander("Kenapa angkanya segini? (aturan dan pasal)"):
             basis(r, m, m == end, autos)
         with st.expander("Data yang dikirim ke engine"):
-            st.caption("Bulan sesudah bulan perhitungan diisi nilai berulang supaya bulan penutup tetap bulan yang benar "
-                       "(perubahan engine yang direncanakan).")
+            st.caption("Hanya bulan sampai bulan perhitungan yang dikirim; engine mengenali bulan penutup dari bulan selesai "
+                       "bekerja dan baru memberi nilai setahun di bulan itu. PPh yang diisi di 'PPh sudah dipotong' dikirim "
+                       "sebagai nilai tercatat.")
             st.json(case, expanded=False)
 
 
@@ -688,7 +702,7 @@ def show():
     profile()
     rec = s.rec
     before = _norm(rec)
-    pre, _ = d.compute(emp.to_case(rec, policy_installed=rec.get("policy") in demo.installed_policies()), s.k_omega_v)
+    pre, _ = d.compute(case_of(rec, s.k_omega_v), s.k_omega_v)
     cols, found, autos = grid(pre)
     if _norm(rec) != before and any(c[3] == "computed" for c in cols):
         st.rerun()        # an edit changed what the rules compute: show the locked columns up to date

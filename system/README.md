@@ -44,7 +44,7 @@ Built stage by stage, following PANDUAN. Each module takes over a mini-demo modu
 | `pph21kbs/config.py` | - | Keys, models, budget, GraphDB endpoint | 0 |
 | `pph21kbs/store.py` | `repository.py` | GraphDB repository, one named graph per version, append-only Delta log in git | 5 |
 | `pph21kbs/kg.py` | `kg.py` | Ontology with ELI, OWL-Time, PROV-O; SHACL; versioned rule records (add, change, remove) | 3, 5 |
-| `pph21kbs/engine.py` | `reasoner.py` | Whole tax year, December recalculation, irregular income, gross-up, explicit lex specialis, rounding registry | 5 |
+| `pph21kbs/engine.py` | `reasoner.py` | Whole tax year, December recalculation, irregular income, gross-up, explicit lex specialis, rounding registry; months so far (final period = employment end), recorded values (e.g. PPh 21 actually withheld), missing inputs reported (engine-v2) | 5 |
 | `pph21kbs/migrate.py` | - | Legacy YAML KB to the graph, equivalence check against `engine/` | 5 |
 | `pph21kbs/llm.py` | `mock_llm.py` | Claude and OpenAI clients, structured output, Batch API, caching, call log with cost | 9 |
 | `pph21kbs/pdf_extract.py` | - | Docling extraction of new PDFs: text per page, OCR of scanned pages (Tesseract `ind`), tables to `tabel/*.csv`; the locked corpus texts stay pdfplumber | - |

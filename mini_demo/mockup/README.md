@@ -94,13 +94,13 @@ Lalu buka http://localhost:8503. Tidak butuh kunci API dan tidak memakai kredit.
 7. **Asisten:** "Batas upah JP 2027 menjadi Rp11.600.000" → review → setujui.
 8. **Kembalikan ke keadaan awal demo.**
 
-## Yang berbeda dari sistem penelitian (rencana perubahan)
+## Yang berbeda dari sistem penelitian
 
-- **Masa terakhir:** engine masih menganggap bulan terakhir yang diisi sebagai masa terakhir. Untuk menyiasatinya,
-  kalkulator mengisi bulan sesudah bulan perhitungan dengan gaji tetap. Perlu diperbaiki di engine.
-- **PPh yang sudah dipotong:** pemakaiannya di masa terakhir dihitung aplikasi. Di sistem penuh, engine menerimanya
-  sebagai data.
-- **Definisi data (label dan penjelasan input)** ada di `inputs.py`. Di sistem penuh disimpan di KB, dan pemeriksaan
-  otomatis memperingatkan input tanpa definisi; Cek KB sudah menampilkannya.
+- **Bulan penutup dan PPh yang sudah dipotong:** sudah ditangani engine (`engine-v2`). Kalkulator mengirim bulan
+  sampai bulan perhitungan saja, dan isian "PPh sudah dipotong" dikirim sebagai nilai tercatat. Bila perusahaan
+  menanggung pajaknya (gross-up, ditanggung, atau karena kebijakan perusahaan), tunjangan pajak bulan itu ikut
+  dicatat. Verifikasi dan evaluasinya ada di `docs/LOG_PENELITIAN.md`.
+- **Definisi data (label dan penjelasan input)** ada di berkas data KB demo (`kb_ext/`), ikut pembaruan yang membawanya.
+  Di sistem penuh menjadi unsur KB; Cek KB sudah menampilkan data tanpa definisi.
 - **Perbaikan dengan catatan manusia:** belum ada di alur penelitian. Rencananya memakai putaran perbaikan yang sudah
   ada (`repair_user`), dan hasilnya dicatat terpisah dari E2.

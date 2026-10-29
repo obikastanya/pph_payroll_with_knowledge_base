@@ -592,6 +592,26 @@ tetapi kehilangan keunggulan presisi.
 `system/tools/calculate.py` (baris perintah, jejak sampai sumber) dan `system/app/calculator_app.py` (Streamlit), tanpa
 menyentuh prototipe lama di `ui/` dan `web/`.
 
+### Engine untuk payroll bulan berjalan (2026-10-30, sesudah penelitian)
+
+Kalkulator demo (mini_demo/mockup, rancangan `mini_demo/RANCANGAN_KALKULATOR.md`) menghitung sampai bulan tertentu.
+Engine `engine-v1` menganggap periode terakhir yang diisi sebagai masa pajak terakhir, sehingga Januari–Maret untuk
+pegawai yang bekerja sampai Desember salah dihitung sebagai masa terakhir. Perubahan (tag `engine-v2`):
+
+- bulan penutup = `employment.end_month`; periode yang berhenti lebih awal memberi nilai per bulan saja
+  (`Result.partial`, tanpa nilai setahun dan tanpa batasan lingkup tahun);
+- `periods[].recorded`: nilai fakta tercatat (PPh 21 yang benar-benar dipotong pada bulan yang sudah ditutup) dipakai
+  apa adanya; aturan KB `REG.YEAR.WITHHELD` menjumlahkannya tanpa perubahan KB;
+- `Result.missing_inputs`: data yang dibaca aturan tetapi tidak ada di kasus (sebelumnya diam-diam 0).
+
+Verifikasi: `system/tools/verify_expected.py` menghitung ulang 69.298 baris harapan terkunci (56 berkas) dan semuanya
+sama; acuan GT1 pengembangan, GT2, GT3, GT5, dan GT1 *holdout* terkoreksi sama persis; tes 79 lulus. Evaluasi
+`system/tools/eval_monthly.py` pada kasus $S^E$ dan kasus kebijakan (2 sampel, 6.088 dan 4.056 hitungan sebagian) lolos.
+Temuan evaluasi: pada gross-up, ditanggung perusahaan, atau kebijakan perusahaan yang menanggung PPh (mis. PKB WIKA,
+SP12), PPh yang dicatat harus disertai tunjangan pajak bulan itu (nilainya sama), karena tunjangan itu penghasilan
+bulan itu; aplikasi memakai metode efektif dari engine. Kekurangan di kalkulator demo yang ditemukan dan diperbaiki:
+angka bulan penutup mengabaikan PPh tercatat sementara kartu setahun memakainya.
+
 ### Bahan paper
 
 Semua angka di atas masuk `docs/BAHAN_PAPER.md` (diperbarui sesudah penilaian model kedua).

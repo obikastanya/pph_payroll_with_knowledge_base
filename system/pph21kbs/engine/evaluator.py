@@ -85,6 +85,9 @@ class Result:
     winners: dict = field(default_factory=dict)       # (fact, month|0) -> rule id
     warnings: list = field(default_factory=list)
     trace: dict | None = None
+    final_month: int = 0                              # the final period: employment end month (or last period)
+    partial: bool = False                             # the periods stop before the final month: no year values
+    missing_inputs: list = field(default_factory=list)   # (bucket, key, month|0) read by a rule, absent from the case
 
     def conflict_keys(self):
         return {conflict_key(c) for c in self.conflicts}
@@ -99,6 +102,7 @@ def conflict_key(c):
 
 
 ERROR_VALUE = "ERROR"
+RECORDED = "RECORDED"            # winner of a value recorded in the case data
 
 
 class Evaluator:
@@ -116,7 +120,21 @@ class Evaluator:
         self.months = sorted(self.periods)
         if not self.months:
             raise ValueError(f"case {case.get('case_id')} has no periods")
-        self.first, self.final = self.months[0], self.months[-1]
+        # The final period is the employment end month. Periods may stop earlier (the months paid so far): then the
+        # months given are not final and the year values are not produced yet. Without an end month, or with one
+        # before the last period, the last period is final (the behaviour of engine-v1).
+        end = (case.get("employment") or {}).get("end_month")
+        self.first = self.months[0]
+        self.final = end if isinstance(end, int) and end > self.months[-1] else self.months[-1]
+        self.complete = self.final in self.periods
+        # Values recorded in the case (e.g. PPh 21 actually withheld in a closed month) are used as they are.
+        self.recorded = {}
+        for p in case["periods"]:
+            for name, v in (p.get("recorded") or {}).items():
+                if name not in view.facts:
+                    raise UnknownFact(f"recorded value for unknown fact {name}", fact=name, month=int(p["month"]))
+                self.recorded[(name, int(p["month"]))] = normalize(Fraction(v)) if isinstance(v, (int, str)) else v
+        self.missing = set()
         self.memo = {}
         self.in_progress = {}      # key -> stack of fixed-point levels at which evaluation of the key started
         self.fp_level = 0          # depth of nested fixed-point iterations
@@ -155,7 +173,7 @@ class Evaluator:
         if name == "final_month":
             return self.final
         if name == "months_employed":
-            return len(self.months)
+            return len(self.months) if self.complete else self.final - self.first + 1
         raise UnknownFact(f"unknown built-in {name}")
 
     def key_of(self, name, ctx):
@@ -180,6 +198,14 @@ class Evaluator:
             self._reads[-1].add(key)
         if key in self.fixed:
             return self.fixed[key]
+        if key in self.recorded:
+            v = self.recorded[key]
+            self.winners[key] = RECORDED
+            if self.trace is not None:
+                self.trace[key] = {"rule": RECORDED, "layer": "case", "modality": "recorded", "value": v, "reads": [],
+                                   "losers": [], "source": [{"document": "CASE", "provision": "recorded",
+                                                             "quote": "value recorded in the case data"}]}
+            return v
         v = self.memo.get(key, _MISSING)
         if v is not _MISSING:
             if isinstance(v, _Failed):
@@ -431,16 +457,22 @@ class Evaluator:
                 return int(p.get("zakat", 0) or 0)
             bucket = {"income": "income", "benefit": "benefits", "hr": "hr"}[fname]
             self.read_inputs.add((bucket, args[0]))
-            return (p.get(bucket) or {}).get(args[0], 0)
+            data = p.get(bucket) or {}
+            if args[0] not in data:
+                self.missing.add((bucket, args[0], ctx))
+            return data.get(args[0], 0)
         if fname in ("employee", "employer"):
-            return (self.case.get(fname) or {}).get(args[0])
+            data = self.case.get(fname) or {}
+            if args[0] not in data:
+                self.missing.add((fname, args[0], 0))
+            return data.get(args[0])
         if fname == "case":
             a = args[0]
             if a in ("start_month", "end_month"):
                 return (self.case.get("employment") or {}).get(a)
             return self.case.get(a)
         if fname in ("sum_periods", "sum_periods_before_final"):
-            months = self.months if fname == "sum_periods" else self.months[:-1]
+            months = self.months if fname == "sum_periods" else [m for m in self.months if m < self.final]
             return self._sum(args[0], months)
         if fname in ("sum_to_date", "sum_before"):
             if ctx == YEAR:
@@ -470,6 +502,8 @@ class Evaluator:
                 return True if fname == "defined" else self.memo[key]
             if key in self.fixed:
                 return True if fname == "defined" else self.fixed[key]
+            if key in self.recorded:
+                return True if fname == "defined" else self.recorded[key]
             has = bool(self.active_rules(key[0], key[1]))
             if fname == "defined":
                 return has
@@ -542,7 +576,7 @@ class Evaluator:
     def check_constraints(self):
         errors = []
         for c in self.view.constraints:
-            ctxs = [YEAR] if c.scope == "year" else self.months
+            ctxs = ([YEAR] if self.complete else []) if c.scope == "year" else self.months
             for ctx in ctxs:
                 if not c.valid_on(self.eval_date(ctx)):
                     continue
@@ -584,8 +618,10 @@ class Evaluator:
             for name in period_out:
                 row[name] = self._output(name, m, errors)
             res.periods[m] = row
-        for name in year_out:
-            res.year[name] = self._output(name, YEAR, errors)
+        if self.complete:               # year values only once the final period is in the case
+            for name in year_out:
+                res.year[name] = self._output(name, YEAR, errors)
+        res.final_month, res.partial = self.final, not self.complete
         errors += self.check_constraints()
         res.conflicts = sorted(self.conflicts.values(), key=lambda c: str(conflict_key(c)))
         res.errors = errors
@@ -596,6 +632,7 @@ class Evaluator:
                     if v and (bucket, k) not in self.read_inputs:
                         self.warnings.append(f"UnreadInput({bucket}.{k})")
         res.warnings = sorted(set(self.warnings))
+        res.missing_inputs = sorted(self.missing, key=str)
         res.trace = self.trace
         return res
 

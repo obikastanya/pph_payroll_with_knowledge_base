@@ -188,9 +188,9 @@ nama komponen perusahaan.
 | Perubahan | Wajib untuk | Catatan |
 |---|---|---|
 | Definisi data sebagai unsur KB (jenis unsur baru di Δ, SHACL, pemeriksaan "data dibaca tanpa definisi" → peringatan) | 3, 7, uji 6–9 | Di mockup: disimpan sebagai berkas data KB demo yang ikut pembaruan (bukan kode). Definisi untuk dokumen tersimpan ditulis terpisah, karena hasil AI penelitian belum memuatnya; di sistem penuh AI menyusunnya bersama usulan. |
-| Engine: bulan penutup = Desember atau bulan keluar | hasil sampai bulan tertentu | Mockup v3 menyiasatinya dengan mengisi bulan berikutnya. |
-| Engine: PPh sudah dipotong sebagai data | kolom "PPh sudah dipotong" | Mockup v3 menghitung selisihnya di aplikasi. |
-| Engine: peringatan "data dibutuhkan tetapi kosong" | peringatan hasil | Sekarang diam-diam 0. |
+| Engine: bulan penutup = Desember atau bulan keluar | hasil sampai bulan tertentu | **Selesai** (`engine-v2`, hasil penelitian identik). |
+| Engine: PPh sudah dipotong sebagai data | kolom "PPh sudah dipotong" | **Selesai** (`periods[].recorded`); untuk gross-up/ditanggung, tunjangan pajak bulan itu ikut dicatat. |
+| Engine: peringatan "data dibutuhkan tetapi kosong" | peringatan hasil | **Selesai** (`Result.missing_inputs`). |
 | Engine menerima tanggal + aturan turunan di KB (masa kerja dari tanggal masuk, hari kerja) | isian lebih sedikit | Bisa ditunda; sementara diisi sebagai angka. |
 | Prorata sebagai aturan kebijakan perusahaan (membaca hari kerja) | gaji berubah di tengah bulan | Bisa ditunda; sementara admin mengetik angka sebenarnya. |
 

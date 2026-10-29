@@ -1,0 +1,90 @@
+% ============================================================================
+\section{Metodologi evaluasi}
+\label{sec:evaluasi}
+% ============================================================================
+
+Evaluasi memakai empat prinsip. Setiap RQ punya satu metrik utama yang ditetapkan sebelum eksperimen. Kebenaran diukur dari hasil perhitungan sampai rupiah, bukan dari kemiripan bentuk aturan, dan rata-rata selisih seperti MAE tidak dipakai karena dapat menyembunyikan kasus yang salah. Data yang dipakai sistem terpisah dari data yang dipakai untuk menilainya. Karena jumlah peristiwa nyata kecil, hasil dilaporkan sebagai estimasi dengan selang kepercayaan eksak.
+
+\subsection{Desain dan pembagian data}
+Penelitian ini mengikuti \en{design science research}. Hipotesis, metrik, ambang, dan pembagian data didaftarkan ke layanan pra-registrasi sebelum eksperimen pada data uji. Data pengembangan terdiri atas regulasi fiktif, perubahan sebelum 2023, dan sebagian kecil kebijakan buatan, dan dipakai untuk merancang \en{prompt} dan gerbang sebelum keduanya dibekukan. Data uji adalah seluruh peristiwa nyata 2023--2026. Data uji prospektif adalah regulasi yang terbit sesudah pra-registrasi. Karena representasi dirancang ketika perubahan 2023--2026 sudah diketahui, klaim tanpa mengubah kode juga diuji pada perubahan struktural sintetis yang ditulis orang lain beserta contoh perhitungannya (perubahan tak terlihat), dan pada peristiwa prospektif.
+
+\subsection{Acuan dan ruang uji}
+Kebenaran $\K^{\emas}$ divalidasi terhadap lima acuan: contoh perhitungan resmi dalam regulasi (GT1, sebagian disimpan sebagai \en{holdout}), kalkulator otoritas pajak (GT2), perhitungan manual independen (GT3), kalkulator pihak ketiga (GT4), dan contoh perhitungan kebijakan perusahaan (GT5). $\K^{\emas}$ lalu menghasilkan nilai harapan $\SE$, yang ketajamannya diukur dengan \en{mutation score}~\cite{petrovic2021mutation} sebelum dipakai menilai pembaruan dari LLM. Ruang uji mencakup kombinasi 2-arah semua dimensi di Tabel~\ref{tab:ruang-pajak} yang sah, setiap batas lapisan di tiga titik (tepat, di bawah, dan di atasnya), yaitu 48 titik untuk Pasal 17 pada empat tahun pajak dan 366 titik untuk 122 batas TER, serta sedikitnya 2.995 kasus acak dari distribusi upah BPS. Bila seluruh kasus acak lulus, laju kesalahan dapat diklaim di bawah 0,1\% pada keyakinan 95\%.
+
+\subsection{Korpus}
+Korpus uji berisi peristiwa perubahan nyata yang memengaruhi PPh 21 pegawai tetap pada 2023--2026 (Tabel~\ref{tab:korpus}). Korpus juga memuat dokumen pengecoh, yaitu regulasi pada periode yang sama yang tidak mengubah perhitungan, seperti ketentuan Coretax dan DTP untuk peserta pemagangan, dengan jawaban benar berupa pembaruan kosong. Dokumen kontrafaktual mengubah nilai dan tanggal di dokumen nyata untuk memeriksa apakah LLM membaca dokumen atau mengingat data latihnya. Kebijakan perusahaan diambil dari perjanjian kerja bersama yang dipublikasikan, dilengkapi kebijakan buatan untuk jenis konflik yang tidak muncul di dokumen nyata.
+
+\begin{table}[t]
+\centering
+\caption{Peristiwa perubahan nyata dalam korpus uji}
+\label{tab:korpus}
+\scriptsize
+\begin{tabularx}{\columnwidth}{@{}L P{1.45cm} P{2.2cm}@{}}
+\toprule
+\textbf{Dokumen} & \textbf{Berlaku} & \textbf{Jenis} \\
+\midrule
+Batas upah iuran pensiun (tahunan) & Maret 2023--2026 & parameter \\
+PMK 66/2023 (natura) & Jul 2023 & klasifikasi \\
+PP 58/2023 dan PMK 168/2023 & Jan 2024 & metode, tabel tarif, pencabutan \\
+PMK 10/2025 (terbit Februari) & Jan 2025 & fasilitas baru, berlaku surut \\
+PMK 72/2025 & Okt 2025 & kondisi atau cakupan \\
+PMK 105/2025 & Jan 2026 & fasilitas baru \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Mode evaluasi dan pembanding}
+Pada mode terisolasi (RQ2), $\hat{\Delta}_n$ diterapkan pada $\K^{\emas}_{n-1}$. Pada mode berantai (RQ3), $\hat{\Delta}_n$ diterapkan pada hasil pembaruan sistem sendiri, $\K^{\mathrm{sis}}_{n-1}$. Kedua mode berjalan tanpa peninjau manusia, sehingga hasilnya adalah batas bawah kinerja. Setiap dokumen relevan berakhir sebagai benar-diterapkan, salah-diterapkan (kesalahan senyap), atau \en{abstain}. Tabel~\ref{tab:pembanding} memuat pembanding dan ablasi.
+
+\begin{table}[t]
+\centering
+\caption{Pembanding dan ablasi}
+\label{tab:pembanding}
+\scriptsize
+\begin{tabularx}{\columnwidth}{@{}P{0.55cm} L P{0.85cm}@{}}
+\toprule
+\textbf{ID} & \textbf{Kondisi} & \textbf{RQ} \\
+\midrule
+B1 & Praktik saat ini: riwayat perubahan kode kalkulator PPh 21 \en{open source} saat pergantian ke TER & RQ3 \\
+B2 & LLM menghitung PPh 21 langsung dari dokumen & motivasi \\
+B3 & Satu kandidat, gerbang G1--G2 saja & RQ2, RQ3 \\
+B4 & Banyak kandidat dengan anggaran setara, suara terbanyak, tanpa gerbang & RQ2 \\
+B5 & Analisis dampak naif: tandai semua, dependensi tanpa eksekusi, penilaian LLM & RQ4 \\
+AB1 & Formalisasi dari nol pada beberapa keadaan hukum terpilih & RQ2, RQ3 \\
+AB2--AB5 & Tanpa konteks graf; tanpa G4 atau G5; cara pemilihan lain; skema biasa tanpa graf & RQ2, RQ4 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Hipotesis dan metrik utama}
+Tabel~\ref{tab:lacak} menghubungkan setiap RQ dengan hipotesis dan metrik utamanya. RA adalah proporsi perubahan yang dapat dinyatakan tanpa mengubah \en{engine}. Atas himpunan $D$ dokumen sumber nyata yang relevan,
+\begin{align}
+\mathrm{SER} &= \tfrac{1}{|D|}\textstyle\sum_{d \in D} \mathbf{1}[d \text{ salah-diterapkan}], \label{eq:ser}\\
+\mathrm{CAR} &= \tfrac{1}{|D|}\textstyle\sum_{d \in D} \mathbf{1}[d \text{ benar-diterapkan}]. \nonumber
+\end{align}
+SER mengukur keamanan dan CAR mengukur kegunaan. Keduanya dilaporkan bersama, karena sistem yang selalu \en{abstain} punya SER nol tetapi tidak berguna. OAR adalah proporsi peristiwa yang tidak memperkenalkan kesalahan baru pada mode berantai. Kesalahan terpicu pada peristiwa $n$ adalah
+\begin{equation}
+I_n = E^{\mathrm{ber}}_n \setminus \big(E^{\mathrm{iso}}_n \cup H_n\big),
+\label{eq:terpicu}
+\end{equation}
+yaitu tupel yang salah pada mode berantai tetapi tidak salah pada mode terisolasi dan belum salah sebelumnya ($H_n$). Untuk RQ4, \en{recall} diutamakan karena kebijakan terdampak yang terlewat lebih berbahaya daripada peringatan palsu, dan $F_2 = 5PR/(4P+R)$ memberi bobot \en{recall} dua kali \en{precision}.
+
+\begin{table*}[t]
+\centering
+\caption{Keterlacakan RQ, hipotesis, dan metrik utama}
+\label{tab:lacak}
+\scriptsize
+\begin{tabularx}{\textwidth}{@{}P{0.8cm} L P{3.6cm} P{3.4cm} P{1.1cm}@{}}
+\toprule
+\textbf{RQ} & \textbf{Hipotesis} & \textbf{Metrik utama} & \textbf{Analisis} & \textbf{Eksperimen} \\
+\midrule
+-- & Invarian A1 dan A3$_\omega$ tanpa pelanggaran & jumlah pelanggaran & pemeriksaan & semua \\
+RQ1 & H1: RA pada perubahan tak terlihat $\geq \theta_1$ & RA; juga untuk perubahan nyata dan korpus kebijakan & proporsi, CI eksak Clopper--Pearson & E1 \\
+RQ2 & H2a: batas atas SER $\leq \theta_2$. H2b: CAR lebih tinggi daripada B3 dan B4, dengan SER tidak lebih buruk (margin $\delta_S$) & SER dan CAR per lapisan & CI eksak; selisih risiko berpasangan (Newcombe); non-inferioritas & E2 \\
+RQ3 & H3a: OAR $\geq \theta_3$. H3b: kesalahan terpicu tidak melebihi batas derau pembangkitan & OAR dan $I_n$ & CI eksak; deskriptif atas beberapa pengulangan & E3 \\
+RQ4 & H4a: \en{recall} $\geq \theta_4$. H4b: $F_2$ lebih tinggi daripada setiap B5 & \en{recall} dan $F_2$ & \en{bootstrap} klaster per peristiwa & E4 \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+Ambang $\theta$ ditetapkan sesuai jumlah data. Contohnya, dengan sepuluh dokumen uji tanpa kesalahan, batas atas eksak SER pada keyakinan 95\% hanya 26\%, sehingga klaim SER $\leq 5\%$ baru mungkin dengan sedikitnya 59 dokumen. Perbandingan antarkondisi dikoreksi dengan metode Holm per RQ, dan hasil dilaporkan per jenis perubahan. Metrik diagnostik, seperti \en{pass@k}, matriks konfusi per gerbang, laju hafalan pada dokumen kontrafaktual, dan selisih akhir dalam rupiah, dipakai untuk menjelaskan hasil, bukan untuk menguji hipotesis. Eksperimen E0 memvalidasi $\K^{\emas}$ dan $\SE$ dan menjadi prasyarat E1--E4.

@@ -1,0 +1,34 @@
+% ============================================================================
+\section{Penelitian terkait}
+\label{sec:terkait}
+% ============================================================================
+
+\subsection{\en{Rules as code} dan sistem pajak berbasis aturan}
+Catala menerjemahkan undang-undang menjadi program dengan \en{default logic} dan menemukan \en{bug} pada implementasi resmi tunjangan keluarga Prancis~\cite{merigoux2021catala}. DataLex dan Logical English menyediakan bahasa aturan yang dapat dieksekusi beserta penjelasannya~\cite{mowbray2023scaling,kowalski2022logicalenglish}, dan OpenFisca\footnote{\url{https://openfisca.org}} menyimpan parameter pajak sebagai berkas bertanggal. Pada payroll, Dumancic dkk. memformalkan legislasi pajak dan jaminan sosial menjadi \en{constraint} untuk mencari kebijakan yang optimal~\cite{dumancic2021payroll}, sedangkan sistem PPh 21 di Indonesia umumnya menanam rumus pajak di kode aplikasi~\cite{ramadhani2021grossup,kusuma2026pph21}. Pada semua karya ini pengetahuan ditulis manusia, dan pemisahan aturan negara dari kebijakan pemberi kerja tidak menjadi fokus.
+
+\subsection{Akuisisi pengetahuan dan formalisasi dengan LLM}
+\en{Ripple-Down Rules} menambah aturan secara inkremental dengan \en{cornerstone case} sebagai pengaman regresi~\cite{compton2021rippledown}, dan revisi hukum temporal membedakan saat ketentuan berlaku dari saat ia masuk ke sistem hukum~\cite{moguillansky2024temporalised}. Keduanya tetap bergantung pada pakar untuk menulis setiap perubahan. LLM mulai mengambil peran itu. NTOL menggabungkan LLM dengan penalar simbolik di atas \en{knowledge graph} statuta pajak India dan mencapai akurasi 80\% pada 20 skenario~\cite{veeramani2026neurosymbolic}. LLM juga dipakai untuk menerjemahkan pasal \en{Internal Revenue Code} ke Prolog~\cite{yadamsuren2026formalization}, hukum pajak ke Catala~\cite{lorenzo2025translating}, dan penalaran pajak ke program logika~\cite{jurayj2026tax}. Semua karya ini memformalkan satu keadaan hukum dari nol. Gagasan yang paling dekat diajukan Gogani-Khiabani dkk., yaitu LLM yang menerapkan perubahan dari publikasi otoritas pajak ke versi perangkat lunak sebelumnya, tetapi karya itu baru membahas tantangan teknisnya tanpa evaluasi atas rangkaian perubahan~\cite{goganikhiabani2025maintaining}.
+
+\subsection{Pembaruan berulang dan representasi temporal}
+Penyuntingan pengetahuan LLM yang berurutan menimbulkan lupa bertahap dan merusak kemampuan umum model~\cite{gupta2024forgetting,gu2024harms}, walaupun penyuntingan dengan bantuan temu kembali dapat lebih stabil~\cite{seo2025koleg}. Pada konsolidasi undang-undang, kemiripan teks yang tinggi menyembunyikan hasil yang salah, dan kesalahan bertambah pada rangkaian amandemen~\cite{prior2025risks}. Evaluasi berbasis eksekusi seperti \en{pass@k}~\cite{chen2021evaluating,li2022alphacode} dan prediksi selektif~\cite{varshney2022selective} menjadi dasar metrik penelitian ini. Untuk representasi, \en{knowledge graph} norma berversi~\cite{demartim2025satgraph} dan standar ELI, OWL-Time, PROV-O, serta SHACL~\cite{publicationsoffice2026eli,cox2017owltime,lebo2013provo,knublauch2017shacl} menyediakan kosakata waktu dan asal-usul, tetapi belum dipakai untuk aturan yang dieksekusi dan diperbarui mesin. Tabel~\ref{tab:posisi} merangkum posisi penelitian ini.
+
+\begin{table*}[t]
+\centering
+\caption{Posisi penelitian terhadap karya terkait (-- berarti tidak dinyatakan di abstrak atau bukan fokus karya tersebut)}
+\label{tab:posisi}
+\scriptsize
+\begin{tabularx}{\textwidth}{@{}P{2.7cm} P{2.2cm} L P{2.0cm} P{1.7cm} P{1.6cm} P{1.5cm}@{}}
+\toprule
+\textbf{Karya} & \textbf{Domain} & \textbf{Representasi} & \textbf{Penyusun pengetahuan} & \textbf{Pembaruan inkremental} & \textbf{Perambatan kesalahan diukur} & \textbf{Lapisan perusahaan} \\
+\midrule
+Catala~\cite{merigoux2021catala} & pajak dan tunjangan (AS, Prancis) & DSL dengan \en{default logic} & manusia & -- & -- & -- \\
+Dumancic dkk.~\cite{dumancic2021payroll} & payroll (Belgia) & representasi formal ke \en{constraint} & manusia & -- & -- & -- \\
+NTOL~\cite{veeramani2026neurosymbolic} & PPh (India) & \en{knowledge graph} dan aturan simbolik & -- & -- & -- & -- \\
+Yadamsuren dkk.~\cite{yadamsuren2026formalization} & IRC (AS) & Prolog & LLM & -- & -- & -- \\
+Lorenzo dkk.~\cite{lorenzo2025translating} & hukum pajak & Catala & LLM & -- & -- & -- \\
+Gogani-Khiabani dkk.~\cite{goganikhiabani2025maintaining} & perangkat lunak pajak (AS) & kode program & LLM (usulan) & gagasan & -- & -- \\
+\midrule
+\textbf{Penelitian ini} & PPh 21 (Indonesia) & \en{knowledge graph} temporal dua lapis dan aturan yang dieksekusi & LLM dengan gerbang verifikasi & ya & ya & ya \\
+\bottomrule
+\end{tabularx}
+\end{table*}

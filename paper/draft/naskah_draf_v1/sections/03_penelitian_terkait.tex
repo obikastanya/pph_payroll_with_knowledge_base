@@ -1,0 +1,76 @@
+% ============================================================================
+\section{Penelitian terkait}
+\label{sec:terkait}
+% ============================================================================
+
+Bagian ini menunjukkan bahwa celah yang dirumuskan di Bagian~\ref{sec:pendahuluan} memang ada. Setiap subbagian ditutup dengan apa yang belum dikerjakan kelompok penelitian itu dan bagaimana penelitian ini berbeda. Tabel~\ref{tab:posisi} merangkum posisinya.
+
+\subsection{\en{Rules as code} dan formalisasi peraturan pajak}
+\label{subsec:rac}
+
+Gerakan \en{rules as code} menuliskan peraturan sebagai spesifikasi yang dapat dieksekusi, sehingga aturan terpisah dari kode aplikasi. Catala adalah bahasa pemrograman untuk menerjemahkan teks undang-undang secara sistematis, termasuk pola kasus umum dan pengecualian yang dimodelkan dengan \en{default logic}. Evaluasinya pada pajak penghasilan Amerika Serikat dan tunjangan keluarga Prancis menemukan \en{bug} pada implementasi resmi tunjangan tersebut~\cite{merigoux2021catala}. Huttner dan Merigoux menegaskan bahwa proses pengembangan perangkat lunak konvensional sulit mengikuti arus perubahan peraturan~\cite{huttner2022catala}. Mlang menggantikan \en{compiler} warisan mesin pajak penghasilan Prancis yang makin sulit dipelihara setiap kali undang-undang berubah~\cite{merigoux2021mlang}. Ekosistem Catala kemudian menambahkan formalisasi aritmetika tanggal~\cite{monat2024date} dan pembangkitan kasus uji dengan \en{concolic execution}~\cite{goutagny2025cutecat}. Di luar Catala, DataLex merepresentasikan peraturan dalam bahasa aturan semi-alami yang dijalankan \en{inference engine} beserta penjelasannya~\cite{mowbray2023scaling,mowbray2023xai}, dan Logical English menawarkan bahasa alami terkendali yang dapat dieksekusi sebagai program logika~\cite{kowalski2022logicalenglish}. Witt dkk. membedakan validasi teknis dari \en{legal alignment}, yaitu kesamaan makna kode dengan undang-undang~\cite{witt2024encoding}. Pembedaan ini dipakai di penelitian ini untuk menyatakan batas klaim, karena kecocokan dengan acuan belum tentu berarti kesesuaian hukum. OpenFisca menyimpan parameter pajak dan tunjangan sebagai berkas bertanggal, sehingga nilai parameter mengikuti masa berlakunya~\cite{openfisca2026rules}.
+
+Pada payroll, Dumancic dkk. menerjemahkan legislasi pajak dan jaminan sosial ke representasi formal yang dikompilasi menjadi \en{constraint} untuk mencari kebijakan payroll yang optimal~\cite{dumancic2021payroll}. Makowski dan Tr\k{a}bka memakai \en{Decision Model and Notation} dengan dukungan AI generatif untuk aturan pajak di kantor akuntan Swiss~\cite{makowski2025dmn}. Di Indonesia, sistem PPh 21 umumnya berupa aplikasi prosedural atau \en{spreadsheet} yang rumusnya ditanam di kode~\cite{ramadhani2021grossup,yulistyawati2022payroll,kusuma2026pph21}, dan penerapan TER menimbulkan lebih bayar pada pegawai dengan penghasilan tidak teratur~\cite{sherra2025ter}.
+
+Pada semua karya ini, pengetahuan ditulis manusia. Parameter bertanggal sudah ada, tetapi pembaruan \en{knowledge base} oleh mesin mengikuti perubahan hukum belum dievaluasi. Penelitian ini juga memisahkan lapisan regulasi dari lapisan kebijakan pemberi kerja secara eksplisit, yang tidak menjadi fokus karya-karya tersebut.
+
+\subsection{Akuisisi pengetahuan inkremental}
+\label{subsec:inkremental}
+
+\en{Ripple-Down Rules} menambah aturan secara inkremental ketika pakar menemukan kasus yang salah. Setiap aturan baru disertai \en{cornerstone case}, yaitu kasus yang membenarkan aturan itu, sehingga perubahan berikutnya tidak boleh merusak kasus-kasus tersebut~\cite{compton1990philosophical,compton2021rippledown}. Di bidang hukum, perubahan sistem hukum seperti abrogasi dan anulasi telah dimodelkan dengan \en{defeasible logic}~\cite{governatori2010changing}. Moguillansky dkk. membedakan saat suatu ketentuan masuk ke sistem hukum, saat ketentuan itu berlaku, dan saat ia menimbulkan akibat hukum, termasuk akibat yang berlaku surut, lalu merumuskan operator revisi yang menjaga konsistensi berbasis waktu~\cite{moguillansky2024temporalised}. Olivieri dkk. menunjukkan bahwa merevisi teori \en{defeasible logic} dengan perubahan seminimal mungkin adalah masalah yang sulit secara komputasi~\cite{olivieri2025revising}.
+
+Gerbang regresi G4 dalam penelitian ini setara dengan \en{cornerstone case}, dan pemisahan masa berlaku dari tanggal pencatatan mengikuti pembedaan waktu pada revisi hukum temporal. Bedanya, pada karya-karya tersebut pakar manusia tetap menulis setiap perubahan, sedangkan penelitian ini mengukur seberapa jauh penulisan itu dapat diusulkan LLM tanpa merusak hasil lama.
+
+\subsection{LLM untuk formalisasi hukum dan pajak}
+\label{subsec:llm-formal}
+
+LLM tidak andal bila diminta menalar atau menjawab pertanyaan hukum secara langsung. GPT-3 membuat kesalahan yang jelas pada penalaran undang-undang pajak, bahkan pada undang-undang sintetis sederhana~\cite{blairstanek2023gpt3}. Akurasi LLM dalam menerapkan hukum pajak meningkat antargenerasi model tetapi belum setara ahli~\cite{nay2024taxattorneys}. LLM publik berhalusinasi pada 58\% sampai 88\% pertanyaan faktual yang dapat diverifikasi tentang putusan pengadilan federal Amerika Serikat~\cite{dahl2024legalfictions}, dan alat riset hukum komersial berbasis \en{retrieval-augmented generation} masih berhalusinasi pada 17\% sampai 33\% kasus~\cite{magesh2025hallucination}.
+
+Karena itu, kelompok karya terdekat memakai LLM untuk menyusun representasi, bukan untuk menghitung. Pada studi Janatian dkk., sekitar 60\% struktur yang dihasilkan LLM dari teks hukum dinilai setara atau lebih baik daripada hasil manual~\cite{janatian2023texttostructure}. Karya 2025--2026 menerapkan pola ini pada pajak. NTOL menggabungkan LLM dengan penalar simbolik deterministik di atas \en{knowledge graph} statuta pajak penghasilan India. Pada 20 skenario, akurasinya 80\%, dibanding 75\% untuk LLM saja, dan sebagian besar kesalahannya berasal dari cakupan graf yang belum lengkap~\cite{veeramani2026neurosymbolic}. Yadamsuren dkk. memakai LLM untuk menerjemahkan satu pasal \en{Internal Revenue Code} Amerika Serikat ke Prolog, lalu mendeteksi inkonsistensi undang-undang secara deterministik~\cite{yadamsuren2026formalization}. Lorenzo dkk. menyusun \en{benchmark} dan kerangka evaluasi untuk penerjemahan hukum pajak ke Catala dengan LLM~\cite{lorenzo2025translating}. Graus membangkitkan model keputusan yang dapat dieksekusi dari peraturan lingkungan dan tata ruang Belanda. Masukan terstruktur menaikkan kemiripan hasilnya dengan model produksi, tetapi kesetaraan fungsionalnya pada skenario uji masih terbatas~\cite{graus2026executable}. Law\&Order mengubah formulir dan petunjuk pengisian pajak menjadi program simbolik lewat sintesis LLM, verifikasi per sel, dan perbaikan berulang. Pada 51 SPT \en{holdout}, ketepatannya 100\%, sedangkan LLM terbaik tanpa kerangka itu hanya 66\%~\cite{han2026autoformalization}. Jurayj dkk. memadukan LLM dengan program logika untuk penalaran pajak~\cite{jurayj2026tax}. Pada pengujian perangkat lunak pajak, LLM dipakai untuk menurunkan spesifikasi metamorfik dari dokumen pajak~\cite{srinivas2023fewshot,khiabani2026agentic}.
+
+Gagasan yang paling dekat dengan penelitian ini diajukan Gogani-Khiabani dkk. Mereka mengusulkan LLM untuk mengekstraksi perubahan kode dari publikasi otoritas pajak Amerika Serikat dan menerapkannya pada versi perangkat lunak pajak sebelumnya. Abstraknya membahas tantangan teknis gagasan itu dan tidak melaporkan evaluasi atas rangkaian perubahan~\cite{goganikhiabani2025maintaining}.
+
+Karya-karya lain di kelompok ini memformalkan hukum untuk keadaan hukum pada satu waktu. Sejauh dapat dinilai dari abstraknya, belum ada yang mengevaluasi pembaruan berulang atas basis aturan yang sudah berjalan, perambatan kesalahan antarpembaruan, atau lapisan kebijakan pemberi kerja. Ketiga hal itu menjadi fokus penelitian ini.
+
+\subsection{Pembaruan berulang oleh LLM dan evaluasinya}
+\label{subsec:pembaruan-llm}
+
+Penelitian penyuntingan pengetahuan LLM mengubah fakta yang tersimpan di bobot model. Suntingan berurutan dalam jumlah besar terbukti menimbulkan lupa yang bertahap sampai katastrofik~\cite{gupta2024forgetting} dan merusak kemampuan umum model~\cite{gu2024harms}. KoLEG melaporkan kinerja yang tetap baik pada penyuntingan berurutan pengetahuan hukum Korea dengan bantuan temu kembali berkelanjutan~\cite{seo2025koleg}, tetapi pengetahuan yang disunting tetap berada di model, bukan di basis aturan yang dapat diperiksa. Pada konsolidasi undang-undang dengan LLM, kemiripan teks hasilnya mencapai 93--99\%, sedangkan kecocokan persisnya hanya 50,3\% untuk amandemen satu langkah dan 20,51\% untuk rangkaian amandemen~\cite{prior2025risks}. Pada kode, CodeUpdateArena dan ReCode menguji apakah LLM dapat memakai versi API yang sudah berubah~\cite{liu2024codeupdatearena,wu2026recode}. Evaluasi berbasis eksekusi seperti \en{pass@k} dan \en{n@k} menilai program buatan LLM dari hasil menjalankannya, bukan dari kemiripan teksnya~\cite{chen2021evaluating,li2022alphacode}. Prediksi selektif dengan kurva risiko terhadap cakupan memberi kerangka untuk sistem yang boleh menolak menjawab~\cite{geifman2017selective}.
+
+Kelompok ini menjadi dasar metrik RQ2 dan RQ3. SER dan CAR adalah bentuk risiko dan cakupan pada prediksi selektif, konsensus perilaku memakai gagasan penilaian berbasis eksekusi, dan hasil konsolidasi undang-undang di atas menunjukkan mengapa kebenaran tidak boleh diukur dari kemiripan teks. Celahnya, metrik-metrik ini belum diterapkan pada basis aturan hukum yang dieksekusi dan berversi waktu. Penyuntingan pengetahuan juga mengubah bobot model, sedangkan penelitian ini menyunting \en{knowledge base} eksternal yang dapat diperiksa dan dikembalikan.
+
+\subsection{Representasi temporal dan \en{knowledge graph} hukum}
+\label{subsec:kg-hukum}
+
+De Martim memodelkan norma hukum dalam \en{knowledge graph} berbasis ontologi yang hierarkis dan temporal, dengan ekspresi berversi agar jawaban tidak memakai versi hukum yang salah~\cite{demartim2025satgraph}. Standar ELI, OWL-Time, PROV-O, SHACL, dan LegalRuleML menyediakan kosakata untuk identitas peraturan, waktu, asal-usul, batasan graf, dan aturan hukum~\cite{publicationsoffice2026eli,cox2017owltime,lebo2013provo,knublauch2017shacl,palmirani2021legalruleml}. \en{Benchmark} 2026 menunjukkan bahwa LLM sering menerapkan ketentuan yang sudah diganti amandemen~\cite{prior2026asking}, salah memilih versi hukum yang berlaku~\cite{huang2026wrong}, dan bahwa sistem RAG statis gagal mengambil versi pasal pajak yang berlaku pada tanggal yang ditanyakan~\cite{cymbler2026temporal}. Rodrigues dkk. memakai pola yang mirip dengan penelitian ini, yaitu LLM mengekstraksi peristiwa perubahan dan gerbang deterministik memutuskan penerimaannya, tetapi untuk memperbarui indeks temu kembali, bukan aturan yang dieksekusi~\cite{rodrigues2026retrieving}. Penelitian ini memakai ulang standar-standar tersebut. Bedanya, graf di penelitian ini memuat aturan yang dieksekusi untuk menghasilkan angka pajak, dan versi waktunya dipakai untuk menjaga hasil masa lampau.
+
+\subsection{Konflik norma, verifikasi \en{knowledge base}, dan pengujian perangkat lunak pajak}
+\label{subsec:konflik-uji}
+
+Deteksi konflik norma telah dikaji untuk \en{compliance checking} dengan norma yang saling bertentangan~\cite{robaldo2024compliance}, logika normatif berwaktu~\cite{kharraz2024conflicts}, dan klausul kontrak~\cite{khoja2026consistency}. Anomali pada \en{rule base} yang terus diperbarui dapat dideteksi dari relasi dependensi antaraturan~\cite{boujelben2025anomalies}. Pada pengujian perangkat lunak pajak, spesifikasi eksplisit dan acuan kebenaran umumnya tidak tersedia, sehingga \en{metamorphic testing} dipakai untuk menemukan \en{bug}~\cite{tizpaz2023metamorphic,li2025mrgeneration}. \en{Mutation analysis} dipandang sebagai salah satu kriteria kecukupan uji yang terkuat, dan mutan terbukti berkaitan dengan \en{fault} nyata~\cite{petrovic2021mutation,petrovic2022mutation}. Penelitian ini memakai karya-karya tersebut sebagai dasar rancangan \en{ground truth} dan gerbang G3, bukan sebagai kontribusi.
+
+\begin{table*}[t]
+\centering
+\caption{Posisi penelitian terhadap karya terkait. Tanda -- berarti aspek itu tidak dinyatakan di abstrak atau bukan fokus karya tersebut}
+\label{tab:posisi}
+\scriptsize
+\begin{tabularx}{\textwidth}{@{}P{2.6cm} P{1.9cm} L P{1.9cm} P{1.6cm} P{1.5cm} P{1.4cm} P{2.3cm}@{}}
+\toprule
+\textbf{Karya} & \textbf{Domain} & \textbf{Representasi} & \textbf{Penyusun pengetahuan} & \textbf{Pembaruan inkremental} & \textbf{Perambatan kesalahan diukur} & \textbf{Lapisan perusahaan} & \textbf{Evaluasi} \\
+\midrule
+Catala~\cite{merigoux2021catala} & pajak dan tunjangan (AS, Prancis) & DSL dengan \en{default logic} & manusia & -- & -- & -- & menemukan \en{bug} implementasi resmi \\
+Dumancic dkk.~\cite{dumancic2021payroll} & payroll (Belgia) & representasi formal ke \en{constraint} & manusia & -- & -- & -- (optimasi kebijakan) & dipakai lembaga jaminan sosial \\
+Makowski dan Tr\k{a}bka~\cite{makowski2025dmn} & akuntansi pajak (Swiss) & DMN & AI generatif dan manusia & -- & -- & -- & studi kasus \\
+NTOL~\cite{veeramani2026neurosymbolic} & PPh (India) & \en{knowledge graph} statuta dan aturan simbolik & -- & -- & -- & -- & 20 skenario; akurasi 80\% \\
+Yadamsuren dkk.~\cite{yadamsuren2026formalization} & IRC \S121 (AS) & Prolog & LLM, lalu disempurnakan & -- & -- & -- & deteksi inkonsistensi \\
+Lorenzo dkk.~\cite{lorenzo2025translating} & hukum pajak & Catala & LLM & -- & -- & -- & \en{benchmark} generasi kode \\
+Graus~\cite{graus2026executable} & perizinan (Belanda) & model keputusan yang dieksekusi & LLM & -- & -- & -- & kesetaraan fungsional pada skenario uji \\
+Law\&Order~\cite{han2026autoformalization} & formulir pajak (AS) & program simbolik & LLM dengan verifikasi dan perbaikan & -- & -- & -- & 100\% pada 51 SPT \en{holdout} \\
+Gogani-Khiabani dkk.~\cite{goganikhiabani2025maintaining} & perangkat lunak pajak (AS) & kode program & LLM (usulan) & ya, sebagai gagasan & -- & -- & kajian tantangan teknis \\
+\midrule
+\textbf{Penelitian ini} & PPh 21 (Indonesia) & \en{knowledge graph} temporal dua lapis dan aturan yang dieksekusi & LLM dengan gerbang & ya & ya & ya & \en{regulation replay} \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\status{Sel karya 2025--2026 diisi dari abstrak. Metadata karya-karya itu diverifikasi lewat Crossref, arXiv, dan ACL Anthology, tetapi naskah lengkapnya belum dibaca. Kolom pembaruan inkremental dan perambatan kesalahan harus dicek ulang dari naskah lengkap sebelum klaim kebaruan dianggap berdiri (Tahap 1), terutama untuk Gogani-Khiabani dkk., Law\&Order, dan NTOL. Beberapa rujukan adalah \en{preprint} (Law\&Order, Huang dkk., Gogani-Khiabani dkk., CodeUpdateArena, Chen dkk.) atau terbit sebelum 2021. Keduanya bergantung pada keputusan terbuka tentang kriteria rujukan.}

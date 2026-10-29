@@ -123,7 +123,7 @@ def _usage(signature):
 
 def label(key, at=None):
     df = definition(key, at)
-    return df["label"] if df else key.split(".", 1)[1].replace("_", " ")
+    return df["label"] if df else d.fact_label(key.split(".", 1)[1])     # else the label of the fact of that name
 
 
 def help_text(key, at=None):

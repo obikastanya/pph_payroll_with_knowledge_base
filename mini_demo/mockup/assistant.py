@@ -52,27 +52,33 @@ def _explain(pid, delta):
             "Buka tab *Review* untuk melihat contoh sebelum dan sesudahnya pada skenario umum.")
 
 
-def _check(pid, delta):
-    """Real check: is every quote in the document text, and does every number of a parameter appear in its quote?"""
+def quote_status(delta):
+    """Per element: (what, provision, quote found in the document text or None when the text is not available,
+    every number of a money parameter appears in its quote). The quote gate (G2), run here and now."""
     from pph21kbs.text import normalize, normalized
-    lines, problems = [], 0
+    out = []
     for e in delta.get("add", []) + delta.get("change", []):
         for s in (e.get("source") or [])[:1]:
-            doc = s.get("document")
             try:
-                found = normalize(s.get("quote", "")) in normalized(doc)
+                found = normalize(s.get("quote", "")) in normalized(s.get("document"))
             except Exception:  # noqa: BLE001 - document text not available
                 found = None
             num_ok = True
             if e.get("kind") == "parameter" and e.get("value_type") == "money":
-                digits = re.sub(r"\D", "", s.get("quote", ""))
-                num_ok = str(int(float(e["value"]))) in digits
-            mark = "✓" if found and num_ok else ("?" if found is None else "⚠")
-            problems += mark == "⚠"
-            what = d.fact_label(e.get("produces") or e.get("name") or e["id"])
-            note = "" if found else " · kutipan tidak ditemukan di dokumen" if found is False else " · teks dokumen tidak ada"
-            note += "" if num_ok else " · angka tidak ada di kutipan"
-            lines.append(f"{mark} {what} ({s.get('provision', '')}){note}")
+                num_ok = str(int(float(e["value"]))) in re.sub(r"\D", "", s.get("quote", ""))
+            out.append((d.fact_label(e.get("produces") or e.get("name") or e["id"]), s.get("provision", ""), found, num_ok))
+    return out
+
+
+def _check(pid, delta):
+    """Real check: is every quote in the document text, and does every number of a parameter appear in its quote?"""
+    lines, problems = [], 0
+    for what, provision, found, num_ok in quote_status(delta):
+        mark = "✓" if found and num_ok else ("?" if found is None else "⚠")
+        problems += mark == "⚠"
+        note = "" if found else " · kutipan tidak ditemukan di dokumen" if found is False else " · teks dokumen tidak ada"
+        note += "" if num_ok else " · angka tidak ada di kutipan"
+        lines.append(f"{mark} {what} ({provision}){note}")
     head = ("Semua kutipan ada di dokumen dan angkanya cocok." if not problems else
             f"{problems} bagian perlu dicek manusia.")
     return (f"{head}\n\n" + "\n".join(f"- {x}" for x in lines[:14]) +
@@ -121,17 +127,29 @@ def _calc_why():
     if not last:
         return "Buka Kalkulator dan hitung dulu; saya menjelaskan dari hasil terakhir di sana."
     m = last["month"]
-    due, gross = last["due"], last["gross"]
+    due, work = last["due"], last["work"]
+
+    def said(x):
+        rid, expr, reads = work[x]
+        parts = ", ".join(f"{d.fact_label(k[0]).lower()} {d.fmt(k[0], v)}" for k, v in reads if v not in (None, 0))
+        return rid, expr, parts
+    rid, expr, parts = said(m)
+    text = (f"PPh {d.MONTHS[m - 1]}: **{d.money(due[m])}**, dihitung aturan `{rid}`: {d.readable(expr) if expr else '-'}"
+            f" (dengan {parts or '-'}).")
     prev = max((x for x in due if x < m), default=None)
-    text = f"PPh {d.MONTHS[m - 1]}: **{d.money(due[m])}** dari bruto {d.money(gross[m])}."
     if prev:
-        text += f" Bulan sebelumnya {d.money(due[prev])} dari bruto {d.money(gross[prev])}."
-        if gross[m] != gross[prev]:
-            text += (" Bedanya karena bruto berubah; tarif TER mengikuti besar bruto bulan itu, jadi THR, bonus, atau "
-                     "lembur bisa menaikkan tarifnya.")
-    if m == last["case"]["employment"]["end_month"]:
-        text += " Bulan ini masa terakhir: pajak setahun dihitung ulang dengan Pasal 17 dan dikurangi yang sudah dipotong."
-    return text + "\n\nRincian dan pasalnya ada di tab *Dasar hukum* di bawah hasil."
+        prid, _, _ = said(prev)
+        before = {k[0]: v for k, v in work[prev][2]}
+        moved = [f"{d.fact_label(k[0]).lower()} {d.fmt(k[0], before.get(k[0]))} → {d.fmt(k[0], v)}"
+                 for k, v in work[m][2] if k[0] in before and before[k[0]] != v]
+        text += f" Bulan sebelumnya {d.money(due[prev])}."
+        if prid != rid:
+            text += f" Bulan ini memakai aturan lain (`{prid}` → `{rid}`)."
+        elif moved:
+            text += " Yang berubah: " + "; ".join(moved) + "."
+    if last.get("final"):
+        text += " Bulan ini bulan penutup: pajak setahun dihitung ulang dan dikurangi yang sudah dipotong."
+    return text + "\n\nRincian dan pasalnya ada di bagian *Kenapa angkanya segini?* di bawah hasil."
 
 
 def reply(q):
@@ -195,9 +213,9 @@ def reply(q):
     if "apa itu" in ql:
         import glossary
         word = ql.split("apa itu", 1)[1].strip(" ?")
-        for k, (lab, expl) in glossary.TERMS.items():
+        for k, (lab, _) in glossary.TERMS.items():
             if word and (word in k.lower() or word in lab.lower()):
-                return f"**{lab}**: {expl}", None
+                return glossary.tip(k), None
     name = _param(q)
     if name and ("berapa" in ql or "nilai" in ql):
         return _lookup(name), None

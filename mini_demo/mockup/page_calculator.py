@@ -7,6 +7,7 @@ computes, and the choices. Scenarios fill the form in company words; the employe
 told when the knowledge base changed its results.
 """
 import json
+import re
 from datetime import date, datetime
 
 import pandas as pd
@@ -15,6 +16,7 @@ import streamlit as st
 import data as d
 import demo
 import employee as emp
+import explain as ex
 import glossary as g
 import inputs
 import ui
@@ -235,12 +237,34 @@ def profile():
                 _field(k, rec, year, v)
             klu = rec["fields"].get("employer.klu")
             if klu:
-                lists = [n for n in ("dtp_klu", "dtp_klu_tourism") if klu in inputs.table_keys(n, year)]
-                st.caption(f"KLU {klu} " + (f"ada di daftar penerima DTP tahun {year} menurut knowledge base."
-                                            if lists else f"tidak ada di daftar DTP tahun {year} yang dikenal knowledge base."))
+                lists = _lookup_tables("employer('klu')", year, omega)
+                hit = [(n, rid) for n, rid in lists if klu in inputs.table_keys(n, year)]
+                if not lists:
+                    st.caption(f"Tidak ada aturan tahun {year} yang memakai KLU.")
+                else:
+                    def names(xs):
+                        tabs = {n: d.table_at(n, date(year, 12, 31)) or d.table_at(n, date(year, 1, 1)) for n, _ in xs}
+                        return ", ".join(f"'{(tabs[n].label_id if tabs[n] and tabs[n].label_id else n)}' ({rid})"
+                                         for n, rid in xs)
+                    st.caption(f"KLU {klu} " + (f"ada di daftar {names(hit)} tahun {year}." if hit else
+                                                f"tidak ada di daftar yang dipakai aturan tahun {year}: {names(lists)}."))
             with st.expander(f"Data perusahaan lain yang dibaca aturan ({len(more)})"):
                 for k in more:
                     _field(k, rec, year, v)
+
+
+def _lookup_tables(read, year, omega):
+    """(table, rule) for every table that a rule in force in the year looks this input up in, e.g. the KLU lists of
+    the DTP rules. Read from the rules, so a new list in the knowledge base is found without changing the program."""
+    lo, hi = date(year, 1, 1), date(year, 12, 31)
+    out = []
+    for r in d.kb().view(omega).rules.values():
+        if (r.valid_from and r.valid_from > hi) or (r.valid_until and r.valid_until < lo):
+            continue
+        text = " ".join(e.text for e in (r.expression, r.condition) if e is not None)
+        for name in re.findall(r"in_table\('([a-z0-9_]+)',\s*" + re.escape(read), text):
+            out.append((name, r.id))
+    return out
 
 
 # ---------------------------------------------------------------- the grid
@@ -463,96 +487,111 @@ def quick_fill(rec, cols, shown):
 
 
 # ---------------------------------------------------------------- results
-def month_card(r, rec, cols, autos, m, final):
-    p = r.periods[m]
-    gross, due, dtp = p.get("gross_income"), p.get("pph21_due"), p.get("pph21_dtp") or 0
-    rate, cat_ = d.value(r, "ter_rate", m), d.value(r, "ter_category")
-    rows, natura = [], 0
+def _label(f):
+    """The fact's label from the KB, with a hover explanation when the glossary has one."""
+    key = g.FOR_FACT.get(f)
+    return g.term(key, d.fact_label(f)) if key else d.fact_label(f)
+
+
+def _components(rec, cols, m):
+    """Input fact -> names of the company components (and their values) that feed it in month m."""
+    fact_of = {k: fact for k, (_, fact) in inputs.input_rules().items()}
+    out = {}
     for col, lab, key, state in cols:
-        if col.startswith(("data:", "auto:")) or state in ("unused", "retired") or not key:
-            continue          # premiums computed by the rules are shown on their own line below
-        if state == "computed":
-            val, lab = autos[col]["vals"].get(m, 0), lab + " ⚙"
+        val = emp.cell(rec, m, col) if state != "computed" else None
+        if key in fact_of and val:
+            out.setdefault(fact_of[key], []).append((lab, val))
+    return out
+
+
+def _parts(r, key, omega, depth=0):
+    """A subtotal split into the non-zero values it adds up, as deep as the formulas are plain sums."""
+    kids = [k for k in ex.children(r, key, omega) if k[1] == key[1] and ex._number(ex.value(r, k))]
+    if depth < 4 and kids and sum(ex.value(r, k) for k in kids) == ex.value(r, key):
+        return [p for k in kids for p in _parts(r, k, omega, depth + 1)]
+    return [key]
+
+
+def _line(r, k, comps, op=""):
+    f = k[0]
+    names = comps.get(f) or []
+    note = ""
+    if names and not (len(names) == 1 and names[0][0].lower() == d.fact_label(f).lower()):
+        note = " <span class='muted'>(" + ", ".join(n for n, _ in names) + ")</span>"
+    return (f"<tr class='sub'><td>{op}</td><td>{_label(f)}{note}</td>"
+            f"<td class='r'>{d.fmt(f, ex.value(r, k))}</td></tr>")
+
+
+def month_card(r, rec, cols, m, omega):
+    """The PPh 21 of month m, explained by the rules that computed it (read from the trace)."""
+    root = (ex.ROOT, m)
+    due = ex.value(r, root)
+    work = ex.working(r, root, omega)
+    rule = ex.rule(r, work, omega)
+    comps = _components(rec, cols, m)
+    rows = []
+    kids = ex.children(r, work, omega)
+    split = {k: (_parts(r, k, omega) if k[1] == m else [k]) for k in kids}
+    for k in sorted(kids, key=lambda k: len(split[k]) == 1):      # subtotals with their parts first, in formula order
+        v = ex.value(r, k)
+        if v in (None, ""):
+            continue
+        parts = split[k]
+        if len(parts) > 1:
+            rows += [_line(r, p, comps, "+") for p in parts]
+            rows.append(f"<tr><td class='op'>=</td><td>{_label(k[0])}</td><td class='r'>{d.fmt(k[0], v)}</td></tr>")
         else:
-            val = emp.cell(rec, m, col) or 0
-        b = key.split(".")[0]
-        if val and b in ("income", "benefit") and not key.endswith(("deductions", "_employee")):
-            rows.append(f"<tr class='sub'><td></td><td>{lab}</td><td class='r'>{d.money(val)}</td></tr>")
-            natura += val if b == "benefit" else 0
-    taxable_natura = sum(d.value(r, f, m) or 0 for f in ("benefits_taxable_regular", "benefits_taxable_irregular"))
-    if natura and taxable_natura != natura:
-        rows.append(f"<tr class='sub'><td>−</td><td>{g.term('natura')} yang tidak kena pajak bulan ini</td>"
-                    f"<td class='r'>{d.money(natura - taxable_natura)}</td></tr>")
-    prem = sum(p.get(f) or 0 for f in ("jkk_premium", "jkm_premium", "health_premium_employer"))
-    if prem:
-        rows.append(f"<tr class='sub'><td>+</td><td>Premi {g.term('JKK')}, {g.term('JKM')}, {g.term('BPJS Kesehatan')} "
-                    f"dibayar perusahaan</td><td class='r'>{d.money(prem)}</td></tr>")
-    if p.get("tax_allowance"):
-        rows.append(f"<tr class='sub'><td>+</td><td>{g.term('gross-up', 'Tunjangan pajak')}</td>"
-                    f"<td class='r'>{d.money(p['tax_allowance'])}</td></tr>")
-    rows.append(f"<tr><td class='op'>=</td><td>{g.term('bruto', 'Penghasilan bruto')}</td><td class='r'>{d.money(gross)}</td></tr>")
-    old = rate is None and not final
-    if final:
-        rows.append(f"<tr><td class='op'></td><td>{g.term('PPh setahun')} (lihat hitung ulang setahun)</td>"
-                    f"<td class='r'>{d.money(d.value(r, 'annual_pph21'))}</td></tr>")
-        badge = ui.badge("Bulan penutup", "orange") + g.term("masa terakhir", "apa ini?")
-        diff = d.value(r, "final_period_tax") or 0
-        expl = (f"Bulan penutup: pajak setahun dihitung ulang dan dikurangi yang sudah dipotong = <b>{d.money(diff)}</b> "
-                + ("(kurang bayar, dipotong bulan ini)." if diff >= 0 else
-                   "(lebih bayar, dikembalikan ke pegawai paling lambat akhir bulan berikutnya)."))
-    elif old:
-        reg, irr = d.value(r, "pph_regular_month", m), d.value(r, "pph_irregular_month", m) or 0
-        rows.append(f"<tr><td class='op'></td><td>PPh penghasilan rutin: neto sebulan × 12, dikurangi {g.term('PTKP')}, "
-                    f"tarif {g.term('Pasal 17')}, ÷ 12</td><td class='r'>{d.money(reg)}</td></tr>")
-        if irr:
-            rows.append(f"<tr><td class='op'>+</td><td>PPh {g.term('THR')} / {g.term('bonus')}: selisih pajak setahun dengan "
-                        f"dan tanpa THR/bonus</td><td class='r'>{d.money(irr)}</td></tr>")
-        badge = ui.badge("Cara sebelum 2024: disetahunkan", "grey")
-        expl = f"{d.money(reg)}" + (f" + {d.money(irr)}" if irr else "") + f" = <b>{d.money(due)}</b>."
-    else:
-        rows.append(f"<tr><td class='op'>×</td><td>Tarif {g.term('TER')} {g.term('kategori TER', 'kategori ' + str(cat_))}"
-                    f"</td><td class='r'>{d.pct(rate)}</td></tr>")
-        badge = ui.badge("Bulan biasa · TER", "blue") + g.term("TER", "apa ini?")
-        expl = f"{d.money(gross)} × {d.pct(rate)} = <b>{d.money(due)}</b>."
+            rows.append(f"<tr><td class='op'></td><td>{_label(k[0])}" + ("" if k[1] == m else
+                        " <span class='muted'>(setahun)</span>") + f"</td><td class='r'>{d.fmt(k[0], v)}</td></tr>")
+    rows.append(f"<tr class='sub'><td></td><td colspan=2><span class='muted'>Rumus: {d.readable(rule.expression)}"
+                f"</span></td></tr>" if rule is not None else "")
     rows.append(f"<tr class='total'><td class='op'>=</td><td>{g.term('PPh 21')} {d.MONTHS[m - 1]}</td>"
                 f"<td class='r'>{d.money(due)}</td></tr>")
-    if dtp:
-        rows.append(f"<tr class='sub'><td></td><td>· {g.term('DTP', 'ditanggung pemerintah')}, dibayar tunai ke pegawai</td>"
-                    f"<td class='r'>{d.money(dtp)}</td></tr>")
-        expl += " Karena insentif DTP, jumlah itu dibayarkan tunai ke pegawai."
+    for f in ex.downstream(r, m, omega):
+        v = ex.value(r, (f, m))
+        if ex._number(v):
+            rows.append(f"<tr class='sub'><td>·</td><td>{_label(f)}</td><td class='r'>{d.fmt(f, v)}</td></tr>")
+    final = not r.partial and r.final_month == m
+    src = ex.source_of(r, work)
+    where = f"{d.short_doc(src['document'])} {src['provision']}" if src else ""
+    badge = (ui.badge("Bulan penutup", "orange") + g.term("masa terakhir", "apa ini?") if final
+             else ui.badge(f"Bulan biasa · {d.short_doc(src['document'])}" if src else "Bulan biasa", "blue"))
+    expl = (f"Dihitung dengan aturan <code>{rule.id if rule else '-'}</code> ({where})."
+            + (" Pajak setahun dihitung ulang di kartu di bawah." if final else ""))
     neg = due is not None and due < 0
     ui.html(f"<div class='card'><h4>{'Lebih bayar' if neg else 'PPh 21'} · {d.MONTHS[m - 1]} {rec['year']}</h4>{badge}"
             f"<div class='big{' neg' if neg else ''}'>{d.money(abs(due) if neg else due)}</div>"
             f"<table class='lines'>{''.join(rows)}</table><div class='explain'>{expl}</div></div>")
+    return [work] + ex.children(r, work, omega)
 
 
-def year_card(r, rec):
-    y = r.year
-    end = max(rec["end"], rec["start"])
-    pension = (y.get("annual_deductions") or 0) - (y.get("job_expense") or 0)
-    status = d.value(r, "ptkp_status_effective")
-    actual = d.value(r, "withheld_before_final") or 0          # the engine sums recorded and computed PPh 21
-    diff = d.value(r, "final_period_tax") or 0
-    rows = [("", g.term("bruto", "Penghasilan bruto setahun"), y.get("annual_gross")),
-            ("−", g.term("biaya jabatan", "Biaya jabatan"), y.get("job_expense")),
-            ("−", g.term("iuran pensiun", "Iuran pensiun pegawai") + " dan zakat", pension),
-            ("=", g.term("neto", "Penghasilan neto"), y.get("annual_net")),
-            ("−", g.term("PTKP") + f" ({status})", y.get("ptkp_amount")),
-            ("=", g.term("PKP", "Penghasilan kena pajak"), y.get("taxable_income")),
-            ("=", g.term("PPh setahun") + " (" + g.term("Pasal 17", "tarif Pasal 17") + ")", y.get("annual_pph21")),
-            ("−", g.term("sudah dipotong", "Sudah dipotong") + f" {d.MON[rec['start'] - 1]}–{d.MON[max(end - 2, 0)]}", actual)]
-    html = "".join(f"<tr{' class=total' if i == 6 else ''}><td class='op'>{o}</td><td>{t}</td><td class='r'>{d.money(v)}</td></tr>"
-                   for i, (o, t, v) in enumerate(rows))
-    html += (f"<tr class='total'><td class='op'>=</td><td>{d.MONTHS[end - 1]}: "
-             f"{g.term('kurang bayar') if diff >= 0 else g.term('lebih bayar')}</td><td class='r'>{d.money(diff)}</td></tr>")
+def year_card(r, rec, omega):
+    """The year calculation of the final month: every year value under the PPh of the final month, from the first
+    step to the result, each with the formula of its rule. Read from the trace, not from a fixed list."""
+    end = r.final_month
+    top = ex.working(r, (ex.ROOT, end), omega)
+    steps = ex.ladder(r, top, omega)
+    rows = []
+    for k, level in steps:
+        rl = ex.rule(r, k, omega)
+        has = any(c[1] == 0 for c in ex.children(r, k, omega))
+        formula = (f"<br><span class='muted'>{d.readable(rl.expression)}</span>" if rl is not None and has else "")
+        cls = " class='total'" if k == top else ""
+        rows.append(f"<tr{cls}><td class='op'>{'=' if has else ''}</td><td>{_label(k[0])}{formula}</td>"
+                    f"<td class='r'>{d.fmt(k[0], ex.value(r, k))}</td></tr>")
+    v = ex.value(r, top)
     note = ""
     if rec["withheld"]:
-        note = ("'Sudah dipotong' memakai PPh yang diisi di kolom 'PPh sudah dipotong' untuk bulan "
-                + ", ".join(d.MON[int(m) - 1] for m in sorted(rec["withheld"], key=int)) + "; bulan lain dari hitungan sistem.")
+        note = ("PPh yang sudah dipotong memakai isian 'PPh sudah dipotong' untuk bulan "
+                + ", ".join(d.MON[int(x) - 1] for x in sorted(rec["withheld"], key=int)) + "; bulan lain dari hitungan sistem.")
     if end < 12:
-        note += f" Pegawai keluar di {d.MONTHS[end - 1]}: bulan itu bulan penutup, tanpa disetahunkan."
-    ui.html(f"<div class='card'><h4>Hitung ulang setahun {rec['year']}</h4><table class='lines'>{html}</table>"
+        note += f" Pegawai keluar di {d.MONTHS[end - 1]}: bulan itu bulan penutup."
+    if isinstance(v, (int,)) or hasattr(v, "denominator"):
+        note = (f"{g.term('kurang bayar') if v >= 0 else g.term('lebih bayar')} {d.MONTHS[end - 1]}: "
+                f"<b>{d.money(abs(v))}</b>. " + note)
+    ui.html(f"<div class='card'><h4>Hitung ulang setahun {rec['year']}</h4><table class='lines'>{''.join(rows)}</table>"
             + (f"<div class='explain'>{note}</div>" if note else "") + "</div>")
+    return [k for k, _ in steps]
 
 
 def warnings(r, rec, cols, found):
@@ -618,21 +657,20 @@ def changed_banner(r, rec):
                    icon=":material/update:")
 
 
-def basis(r, m, final, autos):
-    facts = [("gross_income", m), ("ter_rate", m), ("pph21_due", m), ("pph21_dtp", m)]
-    facts += [(a["fact"], m) for a in autos.values()]
-    if final:
-        facts += [("ptkp_amount", 0), ("job_expense", 0), ("taxable_income", 0), ("annual_pph21", 0)]
-    for f, mm in facts:
-        t = (r.trace or {}).get((f, mm))
-        if not t or t["value"] in (None, 0):
+def basis(r, nodes):
+    """The rules behind the values shown in the cards, with what they read and their article and quote."""
+    seen = set()
+    for key in nodes:
+        t = (r.trace or {}).get(key)
+        if not t or key in seen or ex.is_input(r, key) or t["value"] in (None, 0):
             continue
+        seen.add(key)
+        f, mm = key
         src = t["source"][0] if t["source"] else None
-        val = d.pct(t["value"]) if f == "ter_rate" else d.money(t["value"])
-        reads = ", ".join(d.fact_label(k) for k, _ in t.get("reads", [])[:6])
+        reads = ", ".join(d.fact_label(k[0]) for k in ex.children(r, key, st.session_state.k_omega_v)[:6])
         layer = ui.badge("kebijakan perusahaan", "orange") if t["layer"] == "company" else ""
-        ui.html(f"<div class='rule{' company' if t['layer'] == 'company' else ''}'>{layer}<b>{d.fact_label(f)}</b> = {val}"
-                f" <span class='muted'>({'bulan ' + d.MONTHS[mm - 1] if mm else 'setahun'})</span><br>"
+        ui.html(f"<div class='rule{' company' if t['layer'] == 'company' else ''}'>{layer}<b>{d.fact_label(f)}</b> = "
+                f"{d.fmt(f, t['value'])} <span class='muted'>({'bulan ' + d.MONTHS[mm - 1] if mm else 'setahun'})</span><br>"
                 f"<span class='muted'>Membaca: {reads or '-'} · {g.term('sumber', 'Sumber')}: "
                 f"{d.short_doc(src['document']) + ' · ' + src['provision'] if src else '-'} · aturan <code>{t['rule']}</code>"
                 f"</span>" + (f"<div class='quote'>“{src['quote']}”</div>" if src else "") + "</div>")
@@ -650,37 +688,45 @@ def results(rec, cols, found, autos):
     if blocked:
         return
     m = rec["month"]
-    end = max(rec["end"], rec["start"])
+    omega = s.k_omega_v
     shown = list(range(rec["start"], m + 1))
-    s.k_last = {"case": case, "month": m, "due": {x: r.periods[x].get("pph21_due") for x in shown},
-                "gross": {x: r.periods[x].get("gross_income") for x in shown}}
-    total = sum(rec["withheld"].get(str(x), r.periods[x].get("pph21_due") or 0) for x in shown)
-    dtp = sum(r.periods[x].get("pph21_dtp") or 0 for x in shown)
-    c = st.columns(3)
-    c[0].metric(f"PPh 21 {d.MONTHS[m - 1]}", d.money(r.periods[m].get("pph21_due")), help=g.tip("PPh 21"))
+    final = not r.partial and r.final_month == m
+    work = {x: ex.working(r, (ex.ROOT, x), omega) for x in shown}
+    s.k_last = {"case": case, "month": m, "final": final, "due": {x: r.periods[x].get(ex.ROOT) for x in shown},
+                "work": {x: (getattr(ex.rule(r, work[x], omega), "id", "-"), getattr(ex.rule(r, work[x], omega), "expression", None),
+                             [(k, ex.value(r, k)) for k in ex.children(r, work[x], omega)]) for x in shown}}
+    total = sum(rec["withheld"].get(str(x), r.periods[x].get(ex.ROOT) or 0) for x in shown)
+    after = [f for f in ex.downstream(r, m, omega)
+             if any(ex._number(r.periods[x].get(f)) for x in shown)][:2]      # e.g. PPh borne by the government
+    c = st.columns(2 + len(after))
+    c[0].metric(f"PPh 21 {d.MONTHS[m - 1]}", d.money(r.periods[m].get(ex.ROOT)), help=g.tip("PPh 21"))
     c[1].metric(f"Total {d.MON[shown[0] - 1]}–{d.MON[m - 1]}", d.money(total), help="Jumlah PPh 21 sampai bulan ini.")
-    c[2].metric(f"DTP {d.MON[shown[0] - 1]}–{d.MON[m - 1]}", d.money(dtp), help=g.tip("DTP"))
+    for col, f in zip(c[2:], after):
+        col.metric(f"{d.fact_label(f)} {d.MON[shown[0] - 1]}–{d.MON[m - 1]}",
+                   d.money(sum(r.periods[x].get(f) or 0 for x in shown)))
     left, right = st.columns([1, 1], gap="large")
     with left:
-        month_card(r, rec, cols, autos, m, m == end)
-        if m == end:
-            year_card(r, rec)
+        nodes = month_card(r, rec, cols, m, omega)
+        if final:
+            nodes += year_card(r, rec, omega)
         else:
-            st.caption(f"Hitung ulang setahun muncul di bulan penutup ({d.MONTHS[end - 1]}).")
+            st.caption(f"Hitung ulang setahun muncul di bulan penutup ({d.MONTHS[max(rec['end'], rec['start']) - 1]}).")
     with right:
+        names = ex.outputs(r, shown, omega)        # the results the knowledge base marks as output
+        names = [f for f in names if f == ex.ROOT] + [f for f in names if f != ex.ROOT]
         rows = []
         for x in shown:
             p = r.periods[x]
-            rate = d.value(r, "ter_rate", x)
-            rows.append({"Bulan": d.MONTHS[x - 1], "Bruto": d.money(p.get("gross_income")),
-                         "Tarif": "setahun" if x == end else (d.pct(rate) if rate is not None else "disetahunkan"),
-                         "PPh 21": d.money(p.get("pph21_due")), "DTP": d.money(p.get("pph21_dtp") or 0),
+            src = ex.source_of(r, work[x])
+            rows.append({"Bulan": d.MONTHS[x - 1], **{d.fact_label(f): d.fmt(f, p.get(f)) for f in names},
+                         "Dihitung dengan": (d.short_doc(src["document"]) + " " + src["provision"]) if src else "",
                          "Sudah dipotong (isian)": d.money(rec["withheld"][str(x)]) if str(x) in rec["withheld"] else ""})
         st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
+        st.caption("Kolom tabel: nilai yang ditandai knowledge base sebagai hasil, yang tidak nol di bulan-bulan ini.")
         st.download_button("Unduh rincian (CSV)", pd.DataFrame(rows).to_csv(index=False).encode(),
                            f"pph21_{rec['name'] or 'pegawai'}_{rec['year']}.csv", icon=":material/download:")
         with st.expander("Kenapa angkanya segini? (aturan dan pasal)"):
-            basis(r, m, m == end, autos)
+            basis(r, nodes)
         with st.expander("Data yang dikirim ke engine"):
             st.caption("Hanya bulan sampai bulan perhitungan yang dikirim; engine mengenali bulan penutup dari bulan selesai "
                        "bekerja dan baru memberi nilai setahun di bulan itu. PPh yang diisi di 'PPh sudah dipotong' dikirim "
@@ -699,6 +745,7 @@ def show():
          "ikon ⓘ untuk penjelasannya.")
     top_bar()
     period_bar()
+    s.g_date = date(s.rec["year"], s.rec["month"], 1)     # glossary numbers of that tax month
     profile()
     rec = s.rec
     before = _norm(rec)

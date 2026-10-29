@@ -23,40 +23,34 @@ TODAY = date.today()
 MONTHS = ("Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober",
           "November", "Desember")
 MON = tuple(m[:3] for m in MONTHS)
-STATUSES = ("TK/0", "TK/1", "TK/2", "TK/3", "K/0", "K/1", "K/2", "K/3")
-METHODS = {"gross": "Gross: dipotong dari gaji", "gross_up": "Gross-up: diberi tunjangan pajak",
-           "employer_borne": "Ditanggung perusahaan"}
-METHOD_TERM = {"gross": "gross", "gross_up": "gross-up", "employer_borne": "ditanggung"}
-JKK = {"very_low": "Sangat rendah (0,24%)", "low": "Rendah (0,54%)", "medium": "Sedang (0,89%)",
-       "high": "Tinggi (1,27%)", "very_high": "Sangat tinggi (1,74%)"}
-KLU = {"": "Tidak diisi", "62019": "62019 · Aktivitas pemrograman", "47111": "47111 · Perdagangan eceran",
-       "13921": "13921 · Tekstil rumah tangga (padat karya)", "14111": "14111 · Pakaian jadi (padat karya)",
-       "55110": "55110 · Hotel bintang (pariwisata)"}
 
-# Topics of the viewer: (title, icon, one-line explanation, facts or parameter/table names that belong to it)
+# Topics of the viewer: (title, icon, one-line explanation, anchor facts). The titles are a reading guide; which topic
+# a rule, number, or table belongs to is decided by the knowledge graph: the topic of the nearest anchor that reads
+# its value (topic_of). A new rule lands in the right topic without changing this list; when it reaches no anchor, it
+# gets a topic named after the output value it leads to.
 TOPICS = [
     ("Penghasilan bruto", ":material/payments:", "Komponen apa saja yang dijumlahkan menjadi penghasilan bruto.",
-     ("base_salary", "fixed_allowance", "overtime_pay", "thr", "bonus", "gross_income", "regular_gross",
-      "irregular_gross", "cash_income", "other_regular_income", "other_irregular_income", "tax_allowance")),
+     ("gross_income", "regular_gross", "irregular_gross", "cash_income")),
     ("Natura dan fasilitas", ":material/home_work:", "Fasilitas dan barang dari perusahaan yang ikut kena pajak.",
-     ("benefit_", "benefits_", "natura_")),
-    ("BPJS dan iuran", ":material/health_and_safety:", "Iuran JHT, JP, JKK, JKM, dan BPJS Kesehatan beserta batas upahnya.",
-     ("jht", "jp_", "jkk", "jkm", "health", "bpjs", "employer_premiums_taxable", "pension")),
+     ("benefits_taxable_regular", "benefits_taxable_irregular")),
+    ("BPJS dan iuran", ":material/health_and_safety:", "Iuran dan premi jaminan sosial beserta batas upahnya.",
+     ("jkk_premium", "jkm_premium", "health_premium_employer", "jht_employee", "jp_employee", "employer_premiums_taxable",
+      "employee_pension_contributions", "annual_pension_contributions", "health_employee")),
     ("PTKP dan status", ":material/family_restroom:", "Penghasilan bebas pajak menurut status kawin dan tanggungan.",
-     ("ptkp", "subjective")),
-    ("Tarif bulanan (TER)", ":material/percent:", "Tarif Januari sampai November: bruto sebulan × tarif TER.",
-     ("ter_", "pph21_running", "pph_regular_month", "pph_irregular_month", "job_expense_month", "net_regular_month",
-      "taxable_regular_annualized", "taxable_with", "taxable_without", "pph_regular_annual")),
-    ("Akhir tahun (Pasal 17)", ":material/event_available:", "Hitung ulang setahun di masa pajak terakhir.",
-     ("annual_", "job_expense", "taxable_income", "final_period_tax", "withheld_before_final", "refund_to_employee",
-      "annualization", "pasal17", "pph_round")),
-    ("Insentif DTP", ":material/volunteer_activism:", "PPh 21 yang ditanggung pemerintah untuk sektor tertentu.",
-     ("dtp", "covid")),
-    ("Metode dan gaji bersih", ":material/account_balance_wallet:", "Gross, gross-up, ditanggung, zakat, gaji bersih.",
-     ("withholding_method", "employee_tax_burden", "take_home_pay", "pph21_due", "company_deductions", "zakat")),
-    ("Ketenagakerjaan", ":material/work_history:", "THR minimum dan ketentuan ketenagakerjaan lain.",
-     ("thr_minimum", "CON.")),
+     ("ptkp_amount", "ptkp_status_effective", "subjective_months")),
+    ("PPh bulan biasa", ":material/percent:", "Cara menghitung PPh 21 bulan selain masa pajak terakhir.",
+     ("pph21_running",)),
+    ("Akhir tahun", ":material/event_available:", "Hitung ulang setahun di masa pajak terakhir.",
+     ("annual_gross", "job_expense", "annual_deductions", "annual_net", "taxable_income", "annual_pph21",
+      "withheld_before_final", "final_period_tax", "refund_to_employee")),
+    ("Insentif DTP", ":material/volunteer_activism:", "PPh 21 yang ditanggung pemerintah untuk pegawai tertentu.",
+     ("pph21_dtp", "dtp_eligible", "dtp_facility")),
+    ("Metode dan gaji bersih", ":material/account_balance_wallet:", "Siapa menanggung pajak, dan gaji yang diterima.",
+     ("pph21_due", "withholding_method", "tax_allowance", "employee_tax_burden", "take_home_pay")),
+    ("Ketenagakerjaan", ":material/work_history:", "Ketentuan ketenagakerjaan yang diperiksa, misalnya THR minimum.",
+     ("thr_minimum",)),
 ]
+QUOTED = re.compile(r"[a-z_]+\('([a-z0-9_]+)'")       # first quoted argument of a function call
 
 
 def kb():
@@ -85,14 +79,55 @@ def params():
     return _params(demo.signature())
 
 
+@st.cache_resource
+def _current(signature):
+    """The latest record of every id: a later version that ends or revokes an element wins over the earlier one."""
+    best = {}
+    for r in kb().records:
+        if r.id not in best or r.seq > best[r.id].seq:
+            best[r.id] = r
+    return list(best.values())
+
+
+def current():
+    return _current(demo.signature())
+
+
+def in_force(r, t):
+    return r.valid_from is None or (r.valid_from <= t and (r.valid_until is None or t <= r.valid_until))
+
+
+def _named_at(kind, name, t):
+    found = [r for r in current() if r.kind == kind and r.name == name and in_force(r, t)]
+    return max(found, key=lambda r: (r.valid_from, r.seq)) if found else None     # the newer one wins, as in the engine
+
+
+def param_at(name, t):
+    """The parameter record in force at t, or None."""
+    return _named_at("parameter", name, t)
+
+
+def table_at(name, t):
+    """The table version in force at t, or None."""
+    return _named_at("table", name, t)
+
+
 def doc_title(doc_id):
-    return registry().get(doc_id, {}).get("title", doc_id)
+    """Title from the document registry of the research, else from the knowledge base (documents added later)."""
+    t = registry().get(doc_id, {}).get("title")
+    if t:
+        return t
+    doc = kb().documents.get(doc_id)
+    return (doc.title if doc and doc.title else doc_id)
 
 
 def short_doc(doc_id):
-    """'PMK 168/2023' from the registry title, or the id."""
+    """'PMK 168/2023' from the registry title; for a document added later its own title, shortened."""
+    if registry().get(doc_id, {}).get("title"):
+        t = doc_title(doc_id)
+        return t.split(":")[0] if ":" in t else doc_id
     t = doc_title(doc_id)
-    return t.split(":")[0] if ":" in t else doc_id
+    return t if len(t) <= 40 else t[:38] + "…"
 
 
 def fact_label(name):
@@ -105,14 +140,93 @@ def fact_label(name):
     return name.replace("_", " ")
 
 
+@st.cache_resource
+def _names(signature):
+    return {r.name for r in kb().records if r.kind in ("parameter", "table")}
+
+
+def names():
+    """Names of the parameters and tables of the knowledge base."""
+    return _names(demo.signature())
+
+
+def _deps(r):
+    exprs = [e for e in (getattr(r, "expression", None), getattr(r, "condition", None), getattr(r, "assertion", None))
+             if e is not None]
+    return {f for e in exprs for f in e.dependencies()}, {n for e in exprs for n in QUOTED.findall(expr_text(e))} & names()
+
+
+@st.cache_resource
+def _topic_index(signature):
+    """fact -> topic and parameter/table name -> topic, from the graph of every rule of the knowledge base."""
+    rules = [r for r in current() if r.kind == "rule" and r.layer != "company"]      # input conventions link too
+    readers, users, by_fact = {}, {}, {}
+    for r in rules:
+        by_fact.setdefault(r.produces, []).append(r)
+        facts_read, names = _deps(r)
+        for f in facts_read:
+            readers.setdefault(f, set()).add(r.produces)
+        for n in names:
+            users.setdefault(n, []).append((r.produces, in_force(r, TODAY)))
+    anchor = {f: title for title, _, _, fs in TOPICS for f in fs}
+    outputs = {n for n, f in facts().items() if f.output}
+
+    level = {}
+
+    def depth(f, stack=()):
+        """Position in the order of calculation: 1 + the deepest value its rules read."""
+        if f not in level:
+            ds = [g for r in by_fact.get(f, ()) for g in _deps(r)[0] if g not in stack]
+            level[f] = 1 + max((depth(g, stack + (f,)) for g in ds), default=0)
+        return level[f]
+    # A value belongs where it is used: it takes the topic most of the values that read it have (anchors keep
+    # theirs), repeated until nothing changes; at a tie, the topic of the reader earliest in the calculation. A new
+    # rule therefore joins the topic of what it feeds, whatever its name.
+    fact_topic = dict(anchor)
+    neighbours = set(readers) | {r.produces for r in rules}
+    for _ in range(40):
+        changed = False
+        for f in sorted(neighbours):
+            if f in anchor:
+                continue
+            voters = [x for x in readers.get(f, ()) if x in fact_topic]
+            if not voters:
+                continue
+            votes = [fact_topic[x] for x in voters]
+            best = max(votes.count(v) for v in set(votes))
+            pick = fact_topic[min((x for x in voters if votes.count(fact_topic[x]) == best), key=lambda x: (depth(x), x))]
+            if fact_topic.get(f) != pick:
+                fact_topic[f], changed = pick, True
+        if not changed:
+            break
+    for f in neighbours:                      # a part of the graph no topic reaches: named by the output it leads to
+        if f not in fact_topic:
+            seen, frontier, named = {f}, [f], None
+            while frontier and named is None:
+                named = next((x for x in frontier if x in outputs and x != f), None)
+                frontier = [y for x in frontier for y in sorted(readers.get(x, ())) if not (y in seen or seen.add(y))]
+            fact_topic[f] = fact_label(named or f)
+    name_topic = {}
+    for n, fs in users.items():         # a number or table belongs where it is used now (else where it was used)
+        now = [f for f, live in fs if live] or [f for f, _ in fs]
+        votes = [fact_topic[f] for f in now if f in fact_topic]
+        name_topic[n] = max(set(votes), key=votes.count) if votes else "Lainnya"
+    return fact_topic, name_topic
+
+
 def topic_of(rec):
     if getattr(rec, "layer", "") == "company":
         return "Kebijakan perusahaan"
-    key = getattr(rec, "produces", None) or getattr(rec, "name", None) or rec.id
-    for title, _, _, keys in TOPICS:
-        if any(key.startswith(k) or k in key or rec.id.startswith(k) for k in keys):
-            return title
-    return "Lainnya"
+    fact_topic, name_topic = _topic_index(demo.signature())
+    if rec.kind == "rule":
+        return fact_topic.get(rec.produces, "Lainnya")
+    if rec.kind in ("parameter", "table"):
+        return name_topic.get(rec.name, "Lainnya")
+    if rec.kind == "fact":
+        return fact_topic.get(rec.id, "Lainnya")
+    facts_read, _ = _deps(rec)
+    votes = [fact_topic[f] for f in facts_read if f in fact_topic]
+    return max(set(votes), key=votes.count) if votes else "Lainnya"
 
 
 def is_input_convention(rec):
@@ -164,6 +278,20 @@ def money(x):
 
 def pct(x):
     return "-" if x is None else f"{float(x) * 100:.2f}".rstrip("0").rstrip(",.").replace(".", ",") + "%"
+
+
+def fmt(fact, v):
+    """A value of a fact as text, by the type the knowledge base gives the fact."""
+    kind = getattr(facts().get(fact), "fact_type", "money")
+    if v is None:
+        return "-"
+    if kind == "bool" or isinstance(v, bool):
+        return "ya" if v else "tidak"
+    if kind == "rate":
+        return pct(v)
+    if kind == "money":
+        return money(v)
+    return str(v)
 
 
 def compute(case, omega=None, knowledge=None):

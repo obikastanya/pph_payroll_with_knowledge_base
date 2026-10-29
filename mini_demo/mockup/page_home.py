@@ -76,8 +76,8 @@ def show():
     s = demo.load()
     c = st.columns(4)
     c[0].metric("Knowledge base diketahui sampai", d.tgl(demo.known_until()), help=g.tip("dicatat"))
-    c[1].metric("Aturan berlaku hari ini", len([r for r in d.kb().view(demo.TODAY).rules.values()
-                                                if not d.is_input_convention(r)]), help=g.tip("aturan"))
+    c[1].metric("Aturan berlaku hari ini", sum(r.kind == "rule" and d.in_force(r, demo.TODAY) and not d.is_input_convention(r)
+                                               for r in d.current()), help=g.tip("aturan"))
     c[2].metric("Disetujui selama demo", len(s["approved"]), help=g.tip("pembaruan"))
     c[3].metric("Dokumen menunggu", sum(demo.status(p["id"], s) in ("review", "ragu") for p in demo.PENDING),
                 help="Dokumen baru yang belum disetujui atau ditolak.")

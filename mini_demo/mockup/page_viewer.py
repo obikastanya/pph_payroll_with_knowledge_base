@@ -8,43 +8,11 @@ import streamlit as st
 
 import data as d
 import demo
+import explain as ex
 import glossary as g
 import inputs
 import ui
-
-FLOW = {  # step of the picture -> facts whose rules explain it
-    "Komponen penghasilan": ("base_salary", "fixed_allowance", "overtime_pay", "thr", "bonus", "other_regular_income"),
-    "Natura dan premi": ("benefits_taxable_regular", "benefits_taxable_irregular", "benefit_housing_taxable",
-                         "employer_premiums_taxable", "jkk_premium", "jkm_premium", "health_premium_employer"),
-    "Bruto sebulan": ("regular_gross", "irregular_gross", "gross_income"),
-    "Tarif TER": ("ter_category", "ter_rate"),
-    "PPh 21 masa": ("pph21_running", "pph21_due"),
-    "Bruto setahun": ("annual_gross",),
-    "Biaya jabatan dan iuran": ("job_expense", "employee_pension_contributions", "annual_pension_contributions",
-                                "annual_deductions", "jht_employee", "jp_employee"),
-    "PTKP": ("ptkp_status_effective", "ptkp_amount"),
-    "PKP dan Pasal 17": ("annual_net", "taxable_income", "annual_pph21"),
-    "Masa terakhir": ("withheld_before_final", "final_period_tax", "refund_to_employee"),
-    "Insentif DTP": ("dtp_eligible", "dtp_facility", "pph21_dtp"),
-    "Gaji bersih": ("withholding_method", "tax_allowance", "employee_tax_burden", "take_home_pay"),
-}
-
-FLOW_DOT = """digraph F { rankdir=LR; bgcolor=transparent; nodesep=.25; ranksep=.35;
-node [shape=box style="rounded,filled" fontname="Helvetica" fontsize=11 color="#b4b3ae" fillcolor="#ffffff"];
-edge [color="#8a8984" arrowsize=.7 fontname="Helvetica" fontsize=9 fontcolor="#6b6a66"];
-inc [label="Komponen penghasilan\\ngaji, tunjangan, lembur,\\nTHR, bonus" fillcolor="#f7f7f5"];
-nat [label="Natura dan premi\\nyang dibayar perusahaan" fillcolor="#f7f7f5"];
-gross [label="Bruto sebulan"];
-ter [label="Tarif TER\\n(kategori dari PTKP)" fillcolor="#e8f1fc" color="#2a78d6"];
-pm [label="PPh 21 masa\\nJan–Nov" penwidth=2 color="#2a78d6"];
-ag [label="Bruto setahun"]; dj [label="− Biaya jabatan\\n− iuran pensiun"]; pt [label="− PTKP"];
-pkp [label="PKP × Pasal 17\\n= PPh setahun" fillcolor="#fdeee7" color="#eb6834"];
-fin [label="Masa terakhir\\n= PPh setahun − sudah dipotong" penwidth=2 color="#eb6834"];
-dtp [label="Insentif DTP" style="rounded,dashed"]; thp [label="Gaji bersih" penwidth=2];
-inc -> gross; nat -> gross; gross -> ter -> pm; gross -> ag [label="dijumlah"];
-ag -> dj -> pt -> pkp -> fin; pm -> fin [label="sudah dipotong" style=dashed];
-pm -> dtp [style=dashed]; pm -> thp; fin -> thp; }"""
-
+import viewer_tech
 
 def in_force(rec, t):
     if rec.kind == "fact" or rec.valid_from is None:
@@ -54,13 +22,13 @@ def in_force(rec, t):
 
 @st.cache_data
 def snapshot(signature, t):
-    """Records in force at t: the latest version of every id. Returned as ids (cache friendly)."""
+    """Records in force at t: the latest version of every id, kept when that version is in force (a later version that
+    ends the validity, as a revocation does, wins over the earlier open one). Returned as seqs (cache friendly)."""
     best = {}
     for r in d.kb().records:
-        if r.kind in ("rule", "parameter", "table", "constraint") and in_force(r, t):
-            if r.id not in best or r.seq > best[r.id][1]:
-                best[r.id] = (r.id, r.seq)
-    return {seq for _, seq in best.values()}
+        if r.kind in ("rule", "parameter", "table", "constraint") and (r.id not in best or r.seq > best[r.id].seq):
+            best[r.id] = r
+    return {r.seq for r in best.values() if in_force(r, t)}
 
 
 def records_at(t):
@@ -120,6 +88,11 @@ def tab_topics(recs, t):
     for r in visible:
         counts[d.topic_of(r)] = counts.get(d.topic_of(r), 0) + 1
     topics = [x for x in d.TOPICS if counts.get(x[0])]
+    known = {x[0] for x in topics}
+    topics += [(t_, ":material/apartment:", "Aturan dari kebijakan perusahaan yang terpasang.", ())
+               if t_ == "Kebijakan perusahaan" else
+               (t_, ":material/category:", "Bagian knowledge base yang tidak masuk topik di atas; namanya dari nilai "
+                "yang dihasilkannya.", ()) for t_ in sorted(counts) if t_ not in known]
     cols = st.columns(3)
     for i, (title, icon, expl, _) in enumerate(topics):
         with cols[i % 3].container(border=True):
@@ -148,15 +121,88 @@ def _table_frame(r):
     return pd.DataFrame(rows)
 
 
-def tab_flow(recs):
-    st.caption("Gambaran urutan perhitungan PPh 21 pegawai tetap. Pilih satu langkah untuk melihat aturan di baliknya.")
-    st.graphviz_chart(FLOW_DOT, width="stretch")
-    pick = st.segmented_control("Langkah", list(FLOW), default="Tarif TER", key="v_flow")
-    if pick:
-        found = [r for r in recs if r.kind == "rule" and r.produces in FLOW[pick] and not d.is_input_convention(r)]
-        st.markdown(f"**{len(found)} aturan** untuk langkah *{pick}* pada tanggal yang dipilih:")
-        for r in found:
-            card(r)
+@st.cache_data
+def flow(signature, t):
+    """The calculation at date t as the knowledge base has it: the main steps (values the KB marks as output, and values
+    whose rules read a table), and which step feeds which, through the helper values in between. Nothing here is
+    written for a particular regulation: a new step, or another way of computing, comes from the rules in force."""
+    rules = [r for r in d.current() if r.kind == "rule" and r.layer == "regulation" and d.in_force(r, t)]
+    tables = {r.name for r in d.kb().records if r.kind == "table"}
+    reads, uses_table, real = {}, set(), set()
+    for r in rules:
+        facts_read, names = d._deps(r)
+        reads.setdefault(r.produces, set()).update(facts_read)
+        if not d.is_input_convention(r):
+            real.add(r.produces)
+            if names & tables:
+                uses_table.add(r.produces)
+    outputs = {n for n, f in d.facts().items() if f.output}
+    main = (outputs & real) | uses_table
+    inputs = set(reads) - real                 # values only read from the case data
+    edges, owner = set(), {}
+    for b in main:
+        stack, seen = list(reads.get(b, ())), set()
+        while stack:
+            f = stack.pop()
+            if f in seen or f == b:
+                continue
+            seen.add(f)
+            if f in main:
+                edges.add((f, b))
+            elif f in inputs or f not in reads:
+                edges.add(("_input", b))
+            else:
+                owner.setdefault(f, set()).add(b)        # a helper value on the way to b
+                stack.extend(reads.get(f, ()))
+    # values the KB computes by fixed point (gross-up) feed back into what they are computed from: those edges are
+    # the loop, drawn but not used to order the steps
+    fixed = {r.produces for r in rules if r.fixed_point}
+    loops = {(a, b) for a, b in edges if a in fixed}
+    level = {}
+
+    def depth(f, stack=()):
+        if f not in level:
+            ups = [a for a, b in edges if b == f and a != "_input" and a not in stack and (a, b) not in loops]
+            level[f] = 1 + max((depth(a, stack + (f,)) for a in ups), default=0)
+        return level[f]
+    order = sorted(main, key=lambda f: (depth(f), d.fact_label(f)))
+    helpers = {b: sorted(f for f, bs in owner.items() if b in bs) for b in main}
+    return order, sorted(edges), helpers, loops
+
+
+def flow_dot(order, edges, pick, loops):
+    out = ['digraph F { rankdir=LR; bgcolor=transparent; nodesep=.18; ranksep=.45;',
+           'node [shape=box style="rounded,filled" fontname="Helvetica" fontsize=10 color="#b4b3ae" fillcolor="#ffffff"];',
+           'edge [color="#8a8984" arrowsize=.6];']
+    for f in order:
+        out.append(f'"{f}" [label="{d.fact_label(f)}"' + (' penwidth=2.4 color="#2a78d6" fillcolor="#e8f1fc"' if f == pick
+                                                           else "") + "];")
+    for a, b in edges:
+        if a == "_input":
+            continue
+        back = (a, b) in loops                              # the fixed-point loop: drawn, but not for the layout
+        out.append(f'"{a}" -> "{b}"' + (' [style=dashed color="#eb6834" constraint=false]' if back else "") + ";")
+    return "\n".join(out) + "}"
+
+
+def tab_flow(recs, t):
+    order, edges, helpers, loops = flow(demo.signature(), t)
+    st.caption(f"Urutan perhitungan pada {d.tgl(t)}, digambar dari aturan yang berlaku di knowledge base: langkah utama "
+               "adalah nilai yang ditandai KB sebagai hasil dan nilai yang memakai tabel. Ganti tanggal di atas untuk "
+               "melihat cara hitung tahun lain.")
+    default = ex.ROOT if ex.ROOT in order else order[-1]
+    pick = st.selectbox("Langkah", order, index=order.index(default), key=f"v_flow_{t}",
+                        format_func=lambda f: f"{d.fact_label(f)} ({f})")
+    st.graphviz_chart(flow_dot(order, edges, pick, loops), width="stretch")
+    st.caption("Langkah tanpa panah masuk dihitung langsung dari data pegawai dan perusahaan. Garis oranye putus-putus = "
+               "perhitungan yang berputar (misalnya gross-up: tunjangan pajak ikut menaikkan bruto).")
+    facts = {pick, *helpers.get(pick, [])}
+    found = [r for r in recs if r.kind == "rule" and r.produces in facts and not d.is_input_convention(r)]
+    st.markdown(f"**{len(found)} aturan** untuk langkah *{d.fact_label(pick)}*"
+                + (f", termasuk nilai antara: {', '.join(d.fact_label(f).lower() for f in helpers[pick])}"
+                   if helpers.get(pick) else "") + ":")
+    for r in found:
+        card(r)
 
 
 def tab_numbers():
@@ -269,10 +315,20 @@ def tab_search(recs):
 def show():
     st.session_state.page_ctx = "kb"
     st.title("Penampil knowledge base")
-    g.md(f"Apa yang diketahui sistem tentang PPh 21: {g.term('aturan')}, {g.term('parameter', 'angka')}, dan "
-         f"{g.term('tabel')}, masing-masing dengan {g.term('berlaku', 'tanggal berlaku')} dan {g.term('sumber')} pasalnya.")
+    mode = st.segmented_control("Tampilan", ["Isi KB", "Sistem knowledge base (teknis)"], default="Isi KB",
+                                key="v_mode", label_visibility="collapsed") or "Isi KB"
+    technical = mode != "Isi KB"
+    if technical:
+        g.md(f"Cara sistem menyimpan dan memakai pengetahuan: {g.term('knowledge graph')} {g.term('RDF')} yang "
+             f"{g.term('bitemporal')} dan {g.term('dua lapis')}, {g.term('ontologi')}, pemeriksaan, versi per "
+             f"{g.term('named graph')}, dan {g.term('jejak')} engine. Semua dari KB demo saat ini.")
+    else:
+        g.md(f"Apa yang diketahui sistem tentang PPh 21: {g.term('aturan')}, {g.term('parameter', 'angka')}, dan "
+             f"{g.term('tabel')}, masing-masing dengan {g.term('berlaku', 'tanggal berlaku')} dan {g.term('sumber')} "
+             "pasalnya.")
     c1, c2 = st.columns([1, 3])
     t = c1.date_input("Tampilkan yang berlaku pada", d.TODAY, key="v_t", help=g.tip("berlaku"))
+    st.session_state.g_date = t
     recs = records_at(t)
     visible = [r for r in recs if not d.is_input_convention(r)]
     docs = {s.document for r in visible for s in r.source}
@@ -282,12 +338,15 @@ def show():
         m[1].metric("Angka", sum(r.kind == "parameter" for r in visible), help=g.tip("parameter"))
         m[2].metric("Tabel", sum(r.kind == "table" for r in visible), help=g.tip("tabel"))
         m[3].metric("Dokumen sumber", len(docs), help=g.tip("sumber"))
+    if technical:
+        viewer_tech.show(t, recs)
+        return
     tabs = st.tabs(["Peta topik", "Alur perhitungan", "Angka dari waktu ke waktu", "Riwayat perubahan",
                     "Bandingkan dua tanggal", "Cari", "Data yang dibutuhkan", "Kebijakan perusahaan"])
     with tabs[0]:
         tab_topics(recs, t)
     with tabs[1]:
-        tab_flow(recs)
+        tab_flow(recs, t)
     with tabs[2]:
         tab_numbers()
     with tabs[3]:
@@ -300,7 +359,6 @@ def show():
         tab_inputs(t)
     with tabs[7]:
         tab_policies()
-    ui.mock("Tampilan untuk ahli (graf lengkap, SPARQL, ekspor TriG) tetap ada di aplikasi sistem.")
 
 
 def tab_policies():

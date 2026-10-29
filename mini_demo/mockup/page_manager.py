@@ -217,22 +217,88 @@ def check(delta, kb):
     return kb2, [(f.severity, f"{f.kind}: {f.detail}") for f in rep.findings]
 
 
+@st.cache_data(show_spinner="Validasi SHACL ...")
+def shacl_new(signature, delta_json):
+    """SHACL violations that the update would add to the current knowledge base of the demo."""
+    from pph21kbs.kb import shacl
+    kb = demo.kb()
+    kb2 = apply_delta(kb, json.loads(delta_json))
+    docs = sorted(set(shacl.corpus_documents()) | set(kb2.documents))
+    before = set(shacl.validate(kb, docs))
+    return [v for v in shacl.validate(kb2, docs) if v not in before]
+
+
+def research_gates(signature, pid, delta_json):
+    """Gates G1-G5 of the research (pipeline.run.check, the same code and S^G generator as the experiments), run on
+    the current knowledge base of the demo. Returns (passed, {gate: summary})."""
+    from types import SimpleNamespace
+    from pph21kbs import corpus
+    from pph21kbs.pipeline.run import Config, check as gate_check
+    delta = json.loads(delta_json)
+    els = delta.get("add", []) + delta.get("change", [])
+    company = any(e.get("layer") == "company" for e in els)
+    try:
+        ev = corpus.event(pid)
+    except KeyError:              # a draft made in the demo: its own document and date
+        doc = delta.get("document") or {}
+        ev = SimpleNamespace(id=pid, layer="company" if company else "regulation",
+                             issued=date.fromisoformat(doc["issued"]) if doc.get("issued") else demo.TODAY,
+                             documents=tuple(sorted({s["document"] for e in els for s in e.get("source") or []
+                                                     if s.get("document")})))
+    pols = tuple(sorted({e["policy"] for e in els if e.get("policy")}))
+    ok, log, _, _ = gate_check(demo.kb(), delta, ev, ev.issued, None, Config(), policies=pols)
+    return ok, {k: str(v) for k, v in log.items() if k in ("G1", "G2", "G3", "G4", "G5")}
+
+
+def research_gates_panel(pid, delta_json):
+    st.markdown("**Gerbang G1–G5 penelitian**",
+                help="Kode pemeriksaan yang sama dengan penelitian, termasuk contoh kasus S^G yang dibuat otomatis, "
+                     "dijalankan pada knowledge base demo sekarang. Lolos gerbang belum berarti benar: penelitian "
+                     "menemukan usulan yang lolos kelima gerbang tetapi salah, jadi isinya tetap perlu Anda periksa.")
+    store = st.session_state.setdefault("mg_gates", {})
+    key = (demo.signature(), pid, delta_json)
+    if key not in store:
+        if st.button("Jalankan gerbang (± 15 detik)", icon=":material/fact_check:", key=f"mg_gate_{pid}",
+                     width="stretch"):
+            with st.spinner("Menjalankan G1–G5 ..."):
+                try:
+                    store[key] = research_gates(*key)
+                except Exception as e:  # noqa: BLE001 - shown to the user
+                    store[key] = (False, {"G1": f"tidak bisa dijalankan: {type(e).__name__}: {e}"[:200]})
+        else:
+            return
+    ok, log = store[key]
+    for gate, summary in log.items():
+        good = summary.startswith("pass")
+        if "known document" in summary:
+            summary = ("dokumen sumbernya belum terdaftar. Di penelitian setiap dokumen didaftarkan dulu (judul, tanggal "
+                       "terbit, teks) sebelum dibaca; draf demo memakai dokumen yang belum terdaftar.")
+        st.markdown(f"{':material/check_circle:' if good else ':material/cancel:'} {gate} · {GATES.get(gate, gate)}"
+                    + ("" if good else f": {summary[:160]}"))
+    if ok:
+        st.caption("Lolos kelima gerbang. Tetap periksa isi perubahannya.")
+
+
 def regression(kb, kb2, policies):
     """Every scenario before and after: PPh of the scenario's month and of the year."""
+    outputs = {n for n, f in kb2.view(demo.TODAY).facts.items() if f.output}     # the results the KB declares
     rows = []
     for sc in emp.scenarios().values():
         case = emp.scenario_case(sc)
         m = sc["month"]
-        out = []
-        for k in (kb, kb2):
-            r, err = d.compute(case, demo.TODAY, k)
-            out.append((r.periods[m].get("pph21_due"), r.year.get("annual_pph21")) if r else (None, None))
-        (a, ya), (b, yb) = out
-        changed = a != b or ya != yb
+        res = [d.compute(case, demo.TODAY, k)[0] for k in (kb, kb2)]
+        vals = [{(f, mm): v for mm, p in (r.periods.items() if r else ()) for f, v in p.items() if f in outputs}
+                | {(f, 0): v for f, v in ((r.year or {}).items() if r else ()) if f in outputs} for r in res]
+        moved = sorted({f for key in set(vals[0]) | set(vals[1]) if vals[0].get(key) != vals[1].get(key)
+                        for f in [key[0]]}, key=d.fact_label)
+        a, b = (r.periods[m].get("pph21_due") if r else None for r in res)
+        ya, yb = ((r.year or {}).get("annual_pph21") if r else None for r in res)
         rows.append({"Skenario": sc["title"], "Bulan": f"{d.MON[m - 1]} {case['tax_year']}",
                      "PPh sebelum": d.money(a), "PPh sesudah": d.money(b),
                      "Setahun sebelum → sesudah": f"{d.money(ya)} → {d.money(yb)}" if ya != yb else d.money(ya),
-                     "Hasil": "berubah" if changed else "sama"})
+                     "Hasil": "berubah" if moved else "sama",
+                     "Nilai yang berubah": ", ".join(d.fact_label(f) for f in moved[:4])
+                                           + (f" +{len(moved) - 4}" if len(moved) > 4 else "")})
     return pd.DataFrame(rows)
 
 
@@ -284,22 +350,38 @@ def tab_review():
         for el in delta.get("change", []) + delta.get("add", []):
             card(el, kb)
     with right:
-        st.markdown("**Pemeriksaan**")
-        run = demo.run(pid) if pid in demo.PENDING_BY_ID and pid not in s["fixed"] else None
-        if run:
-            sel = next((c for c in run["candidates"] if c.get("n") == run.get("selected")), run["candidates"][0])
-            for k, v in GATES.items():
-                ok = (sel.get("gate_log") or {}).get(k) == "pass"
-                st.markdown(f"{':material/check_circle:' if ok else ':material/cancel:'} {v}",
-                            help="Hasil pemeriksaan saat AI menyusun usulan.")
+        st.markdown("**Pemeriksaan pada knowledge base demo sekarang**", help=g.tip("pemeriksaan"))
         errors = [m for sev, m in msgs if sev == "error"]
         if kb2 is None:
             st.error(errors[0] if errors else msgs[0][1])
         else:
-            st.markdown(":material/check_circle: Bisa diterapkan pada knowledge base sekarang",
-                        help="Diperiksa ulang sekarang: format, penerapan, dan pemeriksa statis.")
+            dj = json.dumps(delta, sort_keys=True, default=str)
+            st.markdown(":material/check_circle: Format benar dan bisa diterapkan")
+            new_v = shacl_new(demo.signature(), dj)
+            st.markdown(f"{':material/cancel:' if new_v else ':material/check_circle:'} Bentuk graf sesuai SHACL"
+                        + (f": {len(new_v)} pelanggaran baru" if new_v else ""), help=g.tip("SHACL"))
+            for e, m in new_v[:3]:
+                st.caption(f"⚠ {e}: {m}")
+            qs = assistant.quote_status(delta)
+            bad = [q for q in qs if q[2] is False or not q[3]]
+            unknown = [q for q in qs if q[2] is None]
+            st.markdown(f"{':material/cancel:' if bad else ':material/check_circle:'} Kutipan ada di dokumen"
+                        + (f": {len(bad)} perlu dicek" if bad else "")
+                        + (f" · {len(unknown)} tanpa teks dokumen" if unknown else ""), help=g.tip("kutipan"))
+            st.markdown(f"{':material/warning:' if msgs else ':material/check_circle:'} Pemeriksa statis"
+                        + (f": {len(msgs)} catatan" if msgs else ""), help=g.tip("pemeriksa statis"))
             for sev, m in msgs[:4]:
                 st.caption(f"⚠ {m}")
+            research_gates_panel(pid, dj)
+        run = demo.run(pid) if pid in demo.PENDING_BY_ID and pid not in s["fixed"] else None
+        if run:
+            sel = next((c for c in run["candidates"] if c.get("n") == run.get("selected")), run["candidates"][0])
+            with st.expander("Hasil pemeriksaan saat AI menyusun usulan"):
+                st.caption("Dari jalan penelitian, terhadap knowledge base pada waktu itu, bukan terhadap knowledge base "
+                           "demo sekarang.")
+                for k, v in GATES.items():
+                    ok = (sel.get("gate_log") or {}).get(k) == "pass"
+                    st.markdown(f"{':material/check_circle:' if ok else ':material/cancel:'} {v}")
         if st.button("Tanya asisten tentang usulan ini", icon=":material/forum:", width="stretch"):
             assistant.open_with("Periksa usulan ini terhadap kutipan pasalnya")
             st.rerun()

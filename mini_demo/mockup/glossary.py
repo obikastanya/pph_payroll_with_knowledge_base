@@ -4,6 +4,7 @@ term("PTKP") renders the word with a dotted underline and a small "?"; hovering 
 tip("PTKP") is the same explanation for the help= tooltip of a widget or metric.
 """
 import html
+import re
 
 import streamlit as st
 
@@ -15,25 +16,24 @@ TERMS = {
     "masa pajak": ("Masa pajak", "Satu bulan kalender. PPh 21 dihitung, dipotong, dan dilaporkan per bulan."),
     "masa terakhir": ("Masa pajak terakhir", "Desember, atau bulan terakhir pegawai bekerja kalau ia keluar di tengah "
                                              "tahun. Di bulan ini pajak setahun dihitung ulang dengan tarif Pasal 17."),
-    "TER": ("Tarif efektif bulanan (TER)", "Persentase siap pakai untuk Januari sampai November: PPh sebulan = bruto "
-                                           "sebulan × tarif TER. Berlaku sejak 2024 (PP 58/2023)."),
-    "kategori TER": ("Kategori TER (A, B, C)", "Tabel TER yang dipakai, ditentukan oleh status PTKP. A: TK/0, TK/1, "
-                                               "K/0. B: TK/2, TK/3, K/1, K/2. C: K/3."),
+    "TER": ("Tarif efektif bulanan (TER)", "Persentase siap pakai untuk bulan selain masa pajak terakhir: PPh sebulan = "
+                                           "bruto sebulan × tarif TER. Tabelnya {since:ter_monthly}."),
+    "kategori TER": ("Kategori TER (A, B, C)", "Tabel TER yang dipakai, ditentukan oleh status PTKP. "
+                                               "{groups:ter_category}."),
     "bruto": ("Penghasilan bruto", "Semua penghasilan sebelum dipotong apa pun: gaji, tunjangan, lembur, THR, bonus, "
                                    "natura yang kena pajak, dan premi asuransi yang dibayar perusahaan."),
-    "biaya jabatan": ("Biaya jabatan", "Pengurang otomatis 5% dari bruto setahun, paling banyak Rp6.000.000 setahun "
-                                       "(Rp500.000 sebulan). Tidak perlu bukti."),
+    "biaya jabatan": ("Biaya jabatan", "Pengurang otomatis {pct:job_expense_rate} dari bruto setahun, paling banyak "
+                                       "{money:job_expense_max_year} setahun. Tidak perlu bukti."),
     "iuran pensiun": ("Iuran pensiun pegawai", "Iuran JHT dan JP yang dibayar pegawai sendiri. Mengurangi penghasilan "
                                                "yang kena pajak."),
     "neto": ("Penghasilan neto", "Bruto dikurangi biaya jabatan dan iuran pensiun pegawai."),
     "PTKP": ("Penghasilan tidak kena pajak (PTKP)", "Bagian penghasilan setahun yang bebas pajak. Besarnya tergantung "
-                                                    "status kawin dan jumlah tanggungan (paling banyak 3) per 1 Januari."),
+                                                    "status kawin dan jumlah tanggungan per 1 Januari: {values:ptkp}."),
     "status PTKP": ("Status PTKP", "TK = tidak kawin, K = kawin; angka = jumlah tanggungan (0 sampai 3). Dipakai status "
                                    "pada 1 Januari; menikah atau punya anak di tengah tahun baru berlaku tahun depan."),
     "PKP": ("Penghasilan kena pajak (PKP)", "Neto setahun dikurangi PTKP, dibulatkan ke bawah ke ribuan. Inilah yang "
                                             "dikenai tarif Pasal 17."),
-    "Pasal 17": ("Tarif Pasal 17", "Tarif bertingkat atas PKP setahun: 5% sampai Rp60 jt, 15% sampai Rp250 jt, 25% sampai "
-                                   "Rp500 jt, 30% sampai Rp5 M, 35% di atasnya."),
+    "Pasal 17": ("Tarif Pasal 17", "Tarif bertingkat atas PKP setahun: {brackets:pasal17}."),
     "PPh setahun": ("PPh 21 setahun", "Pajak yang seharusnya untuk seluruh tahun: PKP × tarif Pasal 17."),
     "sudah dipotong": ("Sudah dipotong", "Jumlah PPh 21 yang dipotong pada bulan-bulan sebelum masa pajak terakhir."),
     "kurang bayar": ("Kurang bayar", "PPh setahun lebih besar daripada yang sudah dipotong; selisihnya dipotong di masa "
@@ -52,22 +52,23 @@ TERMS = {
                                                "mendapat insentif DTP."),
     "NPWP": ("NPWP / NIK valid", "Pegawai yang tidak punya NPWP atau NIK yang terdaftar dapat dikenai tarif lebih tinggi "
                                  "atau tidak berhak atas insentif."),
-    "natura": ("Natura dan kenikmatan", "Imbalan dalam bentuk barang atau fasilitas (rumah, kendaraan, makan). Sejak 2023 "
-                                        "sebagian menjadi penghasilan yang kena pajak, sebagian dikecualikan sampai batas tertentu."),
+    "natura": ("Natura dan kenikmatan", "Imbalan dalam bentuk barang atau fasilitas (rumah, kendaraan, makan). Sebagian "
+                                        "menjadi penghasilan yang kena pajak, sebagian dikecualikan sampai batas tertentu, "
+                                        "misalnya kupon makanan sampai {money:natura_meal_coupon_cap} sebulan."),
     "THR": ("Tunjangan hari raya (THR)", "Penghasilan tidak teratur. Ditambahkan ke bruto bulan dibayarnya, sehingga TER "
                                          "bulan itu bisa naik."),
     "bonus": ("Bonus", "Penghasilan tidak teratur, ditambahkan ke bruto bulan dibayarnya."),
     "lembur": ("Upah lembur", "Penghasilan teratur yang besarnya bisa berbeda tiap bulan."),
     "tunjangan tetap": ("Tunjangan tetap", "Tunjangan yang dibayar tetap setiap bulan (jabatan, keluarga, transport)."),
-    "JHT": ("Jaminan hari tua (JHT)", "Iuran BPJS Ketenagakerjaan: 2% dibayar pegawai (mengurangi pajak), 3,7% dibayar "
-                                      "perusahaan (bukan penghasilan pegawai)."),
-    "JP": ("Jaminan pensiun (JP)", "Iuran BPJS Ketenagakerjaan: 1% dibayar pegawai, 2% perusahaan, dari upah sampai batas "
-                                   "upah JP yang naik setiap tahun."),
-    "JKK": ("Jaminan kecelakaan kerja (JKK)", "Premi dibayar perusahaan, 0,24% sampai 1,74% dari upah sesuai risiko "
+    "JHT": ("Jaminan hari tua (JHT)", "Iuran BPJS Ketenagakerjaan. Bagian pegawai {pct:jht_employee_rate} dari upah "
+                                      "mengurangi pajak; bagian perusahaan bukan penghasilan pegawai."),
+    "JP": ("Jaminan pensiun (JP)", "Iuran BPJS Ketenagakerjaan. Bagian pegawai {pct:jp_employee_rate} dari upah sampai "
+                                   "{money:jp_wage_cap} sebulan, mengurangi pajak."),
+    "JKK": ("Jaminan kecelakaan kerja (JKK)", "Premi dibayar perusahaan, {range:jkk_rates} dari upah sesuai risiko "
                                               "pekerjaan. Premi ini menambah bruto pegawai."),
-    "JKM": ("Jaminan kematian (JKM)", "Premi 0,3% dibayar perusahaan; menambah bruto pegawai."),
-    "BPJS Kesehatan": ("BPJS Kesehatan", "Iuran 5% dari upah sampai batas tertentu: 4% perusahaan (menambah bruto), "
-                                         "1% pegawai."),
+    "JKM": ("Jaminan kematian (JKM)", "Premi {pct:jkm_rate} dari upah dibayar perusahaan; menambah bruto pegawai."),
+    "BPJS Kesehatan": ("BPJS Kesehatan", "Iuran dari upah sampai {money:health_wage_cap} sebulan: "
+                                         "{pct:health_employer_rate} perusahaan (menambah bruto), {pct:health_employee_rate} pegawai."),
     "risiko JKK": ("Kelompok risiko JKK", "Tingkat risiko pekerjaan di perusahaan yang menentukan tarif premi JKK."),
     "zakat": ("Zakat lewat pemberi kerja", "Zakat atau sumbangan keagamaan wajib yang dipotong lewat perusahaan; boleh "
                                            "mengurangi penghasilan neto."),
@@ -80,8 +81,10 @@ TERMS = {
     # knowledge base
     "knowledge base": ("Knowledge base (KB)", "Kumpulan aturan, angka, dan tabel pajak yang dipakai sistem untuk menghitung. "
                                               "Setiap isinya punya tanggal berlaku dan sumber pasal."),
-    "aturan": ("Aturan", "Satu cara menghitung satu nilai, misalnya 'biaya jabatan = 5% × bruto, paling banyak ...'."),
-    "parameter": ("Parameter", "Satu angka yang dipakai aturan, misalnya tarif 5% atau batas Rp6.000.000. Saat angka berubah "
+    "aturan": ("Aturan", "Satu cara menghitung satu nilai, misalnya 'biaya jabatan = {pct:job_expense_rate} × bruto, paling "
+                       "banyak ...'."),
+    "parameter": ("Parameter", "Satu angka yang dipakai aturan, misalnya tarif {pct:job_expense_rate} atau batas "
+                               "{money:job_expense_max_year}. Saat angka berubah "
                                "cukup parameternya yang diganti."),
     "tabel": ("Tabel", "Daftar nilai yang dipakai aturan, misalnya tabel PTKP atau tabel tarif TER."),
     "berlaku": ("Tanggal berlaku", "Sejak kapan (dan sampai kapan) aturan berlaku untuk perhitungan, sesuai peraturannya."),
@@ -121,6 +124,27 @@ TERMS = {
     "relevan": ("Relevan", "Dokumen berisi sesuatu yang mengubah perhitungan PPh 21. Dokumen lain diabaikan."),
     "asisten": ("Asisten AI", "Chat AI di jendela pop-up yang membantu memeriksa usulan, memperbaikinya sesuai catatan "
                               "Anda, dan menyiapkan draf perubahan. Semua perubahan tetap lewat review Anda."),
+    # technical view of the knowledge base
+    "knowledge graph": ("Knowledge graph", "Cara KB disimpan: setiap aturan, angka, fakta, dan pasal adalah titik, dan "
+                                           "hubungannya (menghasilkan, membaca, bersumber dari) adalah garis."),
+    "RDF": ("RDF", "Standar W3C untuk menyimpan graf sebagai kalimat tiga bagian (triple): subjek, hubungan, objek."),
+    "named graph": ("Named graph", "Satu kelompok triple yang diberi nama. Di sini satu pembaruan = satu named graph, "
+                                   "sehingga setiap versi KB bisa disusun ulang."),
+    "ontologi": ("Ontologi", "Daftar jenis benda di KB (aturan, parameter, pasal, pembaruan, ...) dan hubungan yang boleh "
+                             "ada di antaranya. Memakai standar ELI (peraturan), OWL-Time (waktu), dan PROV-O (asal-usul)."),
+    "SHACL": ("SHACL", "Standar W3C untuk memeriksa bentuk graf, misalnya 'setiap aturan harus punya sumber dan tanggal "
+                       "berlaku'. Dipakai sebagai pemeriksaan G1."),
+    "SPARQL": ("SPARQL", "Bahasa kueri untuk graf RDF, seperti SQL untuk tabel."),
+    "bitemporal": ("Bitemporal", "Setiap unsur punya dua waktu: kapan berlaku menurut peraturan, dan kapan dicatat ke KB. "
+                                 "Dengan begitu hitungan bisa diulang 'seperti yang diketahui pada tanggal itu'."),
+    "dua lapis": ("Dua lapis", "Aturan negara dan aturan perusahaan disimpan terpisah di KB yang sama, lalu engine "
+                               "memutuskan mana yang dipakai saat keduanya mengatur nilai yang sama."),
+    "jejak": ("Jejak perhitungan", "Catatan engine untuk setiap nilai: aturan yang dipakai, nilai lain yang dibacanya, "
+                                   "aturan yang kalah, dan pasal sumbernya."),
+    "resolusi konflik": ("Penyelesaian konflik", "Urutan engine memilih satu aturan bila beberapa aturan berlaku untuk "
+                                                 "nilai yang sama: lebih tinggi kedudukannya, lebih khusus, lalu lebih baru."),
+    "pemeriksa statis": ("Pemeriksa statis", "Pemeriksaan KB tanpa menghitung kasus: aturan yang tidak pernah terpakai, "
+                                             "selalu kalah, atau bertentangan antarlapis. Dipakai sebagai pemeriksaan G3."),
 }
 
 
@@ -143,9 +167,83 @@ def setup():
     st.markdown(CSS, unsafe_allow_html=True)
 
 
+# Facts that have a glossary entry, so a line about the fact can carry the hover explanation. Decoration only: a fact
+# that is not here (for instance one added by a new regulation) is shown with its label from the knowledge base.
+FOR_FACT = {"gross_income": "bruto", "ter_rate": "TER", "ter_category": "kategori TER", "job_expense": "biaya jabatan",
+            "annual_net": "neto", "ptkp_amount": "PTKP", "ptkp_status_effective": "status PTKP", "taxable_income": "PKP",
+            "annual_pph21": "PPh setahun", "withheld_before_final": "sudah dipotong", "pph21_dtp": "DTP",
+            "take_home_pay": "gaji bersih", "tax_allowance": "gross-up", "thr": "THR", "bonus": "bonus",
+            "overtime_pay": "lembur", "fixed_allowance": "tunjangan tetap", "jkk_premium": "JKK", "jkm_premium": "JKM",
+            "health_premium_employer": "BPJS Kesehatan", "jht_employee": "JHT", "jp_employee": "JP",
+            "annual_pension_contributions": "iuran pensiun", "zakat_paid": "zakat"}
+
+SLOT = re.compile(r"\{(pct|money|brackets|range|groups|values|since):([a-z_0-9]+)\}")
+MISSING = "(belum ada di knowledge base pada tanggal ini)"
+
+
+def at():
+    """The date the explanations speak about: set by the page (tax month in the calculator, the date chosen in the
+    viewer), today otherwise."""
+    import data as d
+    return st.session_state.get("g_date") or d.TODAY
+
+
+def _short_money(x):
+    import data as d
+    x = int(x)
+    for unit, name in ((1_000_000_000, "M"), (1_000_000, "jt")):
+        if x >= unit:
+            v = x / unit
+            return f"Rp{v:g} {name}".replace(".", ",")
+    return d.money(x)
+
+
+def _slot(m, t):
+    import data as d
+    kind, name = m.group(1), m.group(2)
+    if kind in ("pct", "money"):
+        p = d.param_at(name, t)
+        return MISSING if p is None else (d.pct(p.value) if kind == "pct" else d.money(p.value))
+    if kind == "since":
+        versions = [r for r in d.current() if r.kind == "table" and r.name == name and r.valid_from]
+        if not versions:
+            return MISSING
+        first = min(versions, key=lambda r: r.valid_from)
+        src = d.short_doc(first.source[0].document) if first.source else ""
+        when = "berlaku" if first.valid_from <= t else "baru berlaku"
+        return f"{when} sejak {d.tgl(first.valid_from)} ({src})"
+    tab = d.table_at(name, t)
+    if tab is None or not tab.rows:
+        return MISSING
+    rows = list(tab.rows)
+    if kind == "brackets":
+        parts = [f"{d.pct(r['rate'])} sampai {_short_money(r['upper'])}" for r in rows if r.get("upper")]
+        parts += [f"{d.pct(r['rate'])} di atasnya" for r in rows if not r.get("upper")]
+        return ", ".join(parts)
+    if kind == "range":
+        vals = sorted(r["value"] for r in rows)
+        return f"{d.pct(vals[0])} sampai {d.pct(vals[-1])}"
+    if kind == "groups":
+        groups = {}
+        for r in rows:
+            groups.setdefault(r["value"], []).append(r["key"])
+        return ". ".join(f"{v}: {', '.join(ks)}" for v, ks in sorted(groups.items()))
+    return f"{rows[0]['key']} {_short_money(rows[0]['value'])} sampai {rows[-1]['key']} {_short_money(rows[-1]['value'])}"
+
+
+def explain(key):
+    """(label, explanation) with the numbers of the knowledge base in force at the date of the page."""
+    label, expl = TERMS[key]
+    if "{" not in expl:
+        return label, expl
+    import data as d
+    t = at()
+    return label, SLOT.sub(lambda m: _slot(m, t), expl) + f" (menurut knowledge base, berlaku {d.tgl(t)})"
+
+
 def term(key, text=None):
     """HTML: the word with a hover explanation. Use inside st.markdown(..., unsafe_allow_html=True)."""
-    label, expl = TERMS[key]
+    label, expl = explain(key)
     shown = html.escape(text or key)
     return (f'<span class="term">{shown}<span class="q">?</span>'
             f'<span class="tip"><b>{html.escape(label)}</b>{html.escape(expl)}</span></span>')
@@ -153,7 +251,7 @@ def term(key, text=None):
 
 def tip(key):
     """Plain text explanation for help= of a widget or metric."""
-    label, expl = TERMS[key]
+    label, expl = explain(key)
     return f"**{label}**: {expl}"
 
 
@@ -166,7 +264,8 @@ def dictionary():
     """Searchable list of every term (sidebar)."""
     q = st.text_input("Cari istilah", "", placeholder="mis. PTKP, TER, natura", key="gl_q")
     shown = [(k, v) for k, v in TERMS.items() if q.lower() in (k + v[0] + v[1]).lower()] if q else []
-    for _, (label, expl) in shown[:8]:
+    for k, _ in shown[:8]:
+        label, expl = explain(k)
         st.markdown(f"**{label}**  \n{expl}")
     if q and not shown:
         st.caption("Tidak ditemukan.")

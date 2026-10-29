@@ -37,6 +37,7 @@ pages = st.navigation({
         st.Page(page_results.show, title="Hasil penelitian", icon=":material/science:", url_path="hasil"),
     ],
 })
+st.session_state.g_date = None     # each page sets the date its explanations speak about
 with st.sidebar:
     s = demo.load()
     st.caption(f"Knowledge base diketahui sampai **{d.tgl(demo.known_until())}** · {len(s['approved'])} pembaruan "

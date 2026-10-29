@@ -51,10 +51,21 @@ Lalu buka http://localhost:8503. Tidak butuh kunci API dan tidak memakai kredit.
 - **Kolom dibentuk dari KB:** data yang dibaca aturan yang berlaku tahun itu (`inputs.py`). Setelah SP14 disetujui,
   kolom *Bulan hari raya*, *Masa kerja*, dan *Hari sejak berhenti sebelum hari raya* muncul sendiri.
 
-**Penampil knowledge base**
-- Peta topik, alur perhitungan, angka dari waktu ke waktu, riwayat, bandingkan dua tanggal, cari.
-- **Data yang dibutuhkan:** input yang dibaca aturan, beserta aturan mana yang membacanya.
-- Kebijakan perusahaan.
+**Penampil knowledge base**, dengan dua tampilan sejajar di bagian atas halaman:
+- **Isi KB:**
+  - peta topik, alur perhitungan, angka dari waktu ke waktu, riwayat, bandingkan dua tanggal, cari;
+  - **Data yang dibutuhkan:** input yang dibaca aturan, beserta aturan mana yang membacanya;
+  - kebijakan perusahaan.
+- **Sistem knowledge base (teknis):** sistem KB itu sendiri, langsung dari KB demo (`viewer_tech.py`, `kbviz.py`):
+  - **Arsitektur sistem:** dari dokumen sampai hitungan, dengan jumlah unsur dari KB saat ini;
+  - **Knowledge graph:** graf di sekitar satu nilai (hulu/hilir, lapis, pasal sumber), dan semua aturan untuk nilai
+    itu beserta urutan pilih engine;
+  - **Satu unsur sebagai RDF:** triple satu rekaman di named graph pembaruannya (graf, tabel, Turtle);
+  - **Dua waktu (bitemporal):** tanggal berlaku vs tanggal dicatat, serta garis waktu per nilai;
+  - **Versi dan named graph:** rantai pembaruan, isi tiap pembaruan, dan perbandingan dua versi;
+  - **Jejak perhitungan:** jejak engine untuk satu skenario kalkulator, termasuk aturan yang kalah dan alasannya;
+  - **Ontologi dan pemeriksaan:** kelas dan hubungan, shapes SHACL (G1), pemeriksa statis (G3), dan validasi SHACL;
+  - **SPARQL dan ekspor:** kueri contoh, unduh TriG, ontologi, dan shapes.
 
 **Manajemen knowledge base**
 - **Dokumen baru:** pekerjaan AI per langkah (relevansi, versi usulan, pemeriksaan, kesepakatan) dan catatan untuk
@@ -93,6 +104,31 @@ Lalu buka http://localhost:8503. Tidak butuh kunci API dan tidak memakai kredit.
 6. **PKB WIKA:** tanyakan ke asisten kenapa sistem ragu, lalu minta AI mengerjakan ulang.
 7. **Asisten:** "Batas upah JP 2027 menjadi Rp11.600.000" → review → setujui.
 8. **Kembalikan ke keadaan awal demo.**
+
+## Tampilan yang mengikuti knowledge base
+
+Tidak ada langkah hitung PPh 21 yang ditulis di program tampilan. Kalau KB berubah, bagian-bagian ini ikut berubah:
+
+- **Kartu hasil kalkulator** (`explain.py`): disusun dari rumus aturan yang menang di jejak engine. Rinciannya bisa
+  berupa bruto × tarif, penyetahunan, atau cara hitung baru. Kolom tabel hasil dan angka ringkasan adalah nilai yang
+  ditandai KB sebagai hasil (`output`).
+- **Kamus istilah:** angka dan tanggal diambil dari parameter dan tabel KB yang berlaku pada bulan di kalkulator atau
+  tanggal di penampil.
+- **Topik di penampil:** nama topik adalah panduan baca. Isinya ditentukan graf: sebuah nilai masuk ke topik tempat
+  nilai itu dipakai.
+- **Alur perhitungan:** digambar dari aturan yang berlaku pada tanggal yang dipilih.
+- **Daftar KLU, judul dokumen, label input tanpa definisi:** dari aturan dan isi KB.
+- **Review:** gerbang G1–G5 penelitian (`pipeline.run.check`, termasuk S^G) bisa dijalankan pada KB demo. Hasil
+  pemeriksaan saat AI menyusun usulan diberi label sebagai hasil jalan penelitian.
+
+Diuji dengan perubahan dari penelitian sendiri: peraturan fiktif FR01 (cara hitung baru), FR04 (komponen baru), FR05
+(angka berubah), serta E10, E11, E12, dan SP14 dari daftar tunggu demo.
+
+Yang masih ditulis tangan:
+- **Penjelasan istilah dan nama topik:** kalimatnya ditulis tangan, angkanya dari KB.
+- **Tautan nilai ke kamus** (`glossary.FOR_FACT`).
+- **Definisi data input** (`kb_ext/`).
+- **Nilai yang dijelaskan kalkulator:** `pph21_due`.
 
 ## Yang berbeda dari sistem penelitian
 

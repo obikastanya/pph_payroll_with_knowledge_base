@@ -173,9 +173,22 @@ def _impact(ev, delta):
         st.success("Tidak ada kebijakan perusahaan yang terdampak.")
 
 
+def _pdf_text(file):
+    """Text layer of a PDF, page by page, in the locked-text format of the corpus ("=== PDF hlm. N ===")."""
+    import pdfplumber
+    parts = []
+    with pdfplumber.open(file) as pdf:
+        for i, page in enumerate(pdf.pages, start=1):
+            parts.append(f"=== PDF hlm. {i} ===\n{page.extract_text() or ''}")
+    return "\n".join(parts)
+
+
 def _upload_event(file, title, issued, layer):
     import build_texts
-    raw = file.read().decode("utf-8", errors="replace")
+    if file.name.lower().endswith(".pdf"):
+        raw = _pdf_text(file)
+    else:
+        raw = file.read().decode("utf-8", errors="replace")
     doc_id = "UPLOAD-" + re.sub(r"[^A-Za-z0-9]+", "-", title).strip("-").upper()[:40]
     folder = TEXT_DIR / doc_id
     folder.mkdir(parents=True, exist_ok=True)
@@ -186,7 +199,23 @@ def _upload_event(file, title, issued, layer):
                                         encoding="utf-8")
     registry()[doc_id] = {"id": doc_id, "event": doc_id, "role": "upload", "issued": issued.isoformat(), "title": title,
                           "files": ""}
+    from pph21kbs import text
+    for cached in (text.pages, text.normalized, text.segments):     # a new upload under the same title
+        cached.cache_clear()
     return Event(doc_id, "unggahan", True, (doc_id,), issued, None, None, "", layer, title)
+
+
+def _upload_preview(ev):
+    from pph21kbs import text
+    pages = text.pages(ev.document)
+    chars = sum(len(t.strip()) for _, t in pages)
+    segs = text.segments(ev.document)
+    st.caption(f"{len(pages)} halaman · {chars:,} karakter teks · {len(segs)} segmen (pasal/lampiran)".replace(",", "."))
+    if chars < 40 * max(1, len(pages)):              # under ~40 characters a page: no text layer
+        st.warning("Teks yang terambil sangat sedikit. PDF ini kemungkinan hasil pindai (gambar) tanpa lapisan teks; "
+                   "jalankan OCR dulu lalu unggah teksnya (.txt).", icon=":material/document_scanner:")
+    with st.expander("Pratinjau teks"):
+        st.text("\n".join(t for _, t in pages)[:4000])
 
 
 def _live_run(ev):
@@ -204,7 +233,8 @@ def _live_run(ev):
 
 
 def tab_inbox():
-    source = st.radio("Sumber dokumen", ("Korpus penelitian", "Unggah dokumen (.txt)"), horizontal=True, key="ib_src")
+    source = st.radio("Sumber dokumen", ("Korpus penelitian", "Unggah dokumen (PDF atau .txt)"), horizontal=True,
+                      key="ib_src")
     ev = None
     if source.startswith("Korpus"):
         events = state.events()
@@ -217,7 +247,8 @@ def tab_inbox():
                           format_func=lambda e: f"{e.id} · {reg.get(e.document, {}).get('title', e.title)[:90]}")
     else:
         with st.form("upload"):
-            f = st.file_uploader("Teks dokumen (.txt)", type="txt")
+            f = st.file_uploader("Dokumen peraturan atau kebijakan (PDF dengan lapisan teks, atau .txt)",
+                                 type=["pdf", "txt"])
             c1, c2, c3 = st.columns([2, 1, 1])
             title = c1.text_input("Judul", "Peraturan baru")
             issued = c2.date_input("Tanggal terbit", state.TODAY)
@@ -226,8 +257,9 @@ def tab_inbox():
                 st.session_state.upload_event = _upload_event(f, title, issued, layer)
         ev = st.session_state.get("upload_event")
         if ev is None:
-            st.info("Unggah teks dokumen untuk diproses. Dokumen unggahan hanya bisa dijalankan langsung dengan LLM.")
+            st.info("Unggah dokumen untuk diproses. Dokumen unggahan hanya bisa dijalankan langsung dengan LLM.")
             return
+        _upload_preview(ev)
     st.markdown(f"**{ev.id}** · terbit {ev.issued} · lapis {ev.layer} · dokumen {', '.join(ev.documents)}")
     runs = state.stored_runs(ev.id)
     modes = (["Putar ulang jalan tersimpan"] if runs else []) + ["Jalankan LLM sekarang"]

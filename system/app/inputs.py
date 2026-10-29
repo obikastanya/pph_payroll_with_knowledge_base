@@ -18,7 +18,7 @@ from pathlib import Path
 import streamlit as st
 
 import data as d
-import demo
+import store
 
 EXT = Path(__file__).resolve().parent / "kb_ext"
 CALL = re.compile(r"\b(income|benefit|hr|employee|employer|case)\('([a-z_0-9]+)'\)")
@@ -35,7 +35,7 @@ def _defs(signature):
     out = {}
     for df in json.loads((EXT / "input_defs.json").read_text(encoding="utf-8"))["defs"]:
         out.setdefault(df["key"], []).append(dict(df, origin="keadaan awal"))
-    for a in demo.load()["approved"]:
+    for a in store.load()["approved"]:
         for df in a.get("inputs") or []:
             out.setdefault(df["key"], []).append(dict(df, origin=a["title"]))
     return out
@@ -48,10 +48,10 @@ def pending_defs(pid):
 
 def definition(key, at=None):
     """The definition valid at a date (the latest one if none is valid then), or None."""
-    versions = _defs(demo.signature()).get(key)
+    versions = _defs(store.signature()).get(key)
     if not versions:
         return None
-    at = at or demo.TODAY
+    at = at or store.TODAY
     live = [v for v in versions if (not v.get("valid_from") or _iso(v["valid_from"]) <= at)
             and (not v.get("valid_until") or at <= _iso(v["valid_until"]))]
     return (live or versions)[-1]
@@ -70,7 +70,7 @@ def _texts(r):
 @st.cache_data
 def _discover(signature, year, policy, omega):
     """{key: {"months": [..], "layer": .., "rules": [..]}} for the rules in force in each month of the year."""
-    kb = demo.kb()
+    kb = store.kb()
     found = {}
     for r in kb.view(omega).rules.values():
         if r.layer == "company" and r.policy != policy:
@@ -98,12 +98,12 @@ def _month_end(year, m):
 
 
 def discover(year, policy=None, omega=None):
-    return _discover(demo.signature(), year, policy or None, omega or demo.TODAY)
+    return _discover(store.signature(), year, policy or None, omega or store.TODAY)
 
 
 def years():
     """Tax years the knowledge base can be asked about (from the rules' own dates, last four)."""
-    last = max(demo.known_until().year + 1, demo.TODAY.year)
+    last = max(store.known_until().year + 1, store.TODAY.year)
     return list(range(last - 3, last + 1))
 
 
@@ -112,7 +112,7 @@ def years():
 def _usage(signature):
     """For every key: texts it is compared with, and whether it is compared with 1/True (yes/no)."""
     texts, flags = {}, set()
-    for r in demo.kb().view(demo.TODAY).rules.values():
+    for r in store.kb().view(store.TODAY).rules.values():
         t = _texts(r)
         for b, k, lit in re.findall(r"\b(income|benefit|hr|employee|employer|case)\('([a-z_0-9]+)'\)\s*[!=]=\s*'([^']*)'", t):
             texts.setdefault(f"{b}.{k}", set()).add(lit)
@@ -137,7 +137,7 @@ def kind(key, at=None):
     df = definition(key, at)
     if df:
         return df["type"]
-    texts, flags = _usage(demo.signature())
+    texts, flags = _usage(store.signature())
     if key in texts:
         return "choice"
     if key in flags:
@@ -154,14 +154,14 @@ def options(key, year):
     if src.startswith("table:"):
         names = df.get("labels") or {}
         return [(k, names.get(k, k)) for k in table_keys(src.split(":", 1)[1], year)]
-    texts, _ = _usage(demo.signature())
+    texts, _ = _usage(store.signature())
     return [(t, t) for t in texts.get(key, [])]
 
 
 def table_keys(name, year):
     at = date(year, 1, 1)
     best = None
-    for r in demo.kb().records:
+    for r in store.kb().records:
         if r.kind == "table" and r.name == name and r.valid_from and r.valid_from <= date(year, 12, 31) \
                 and (not r.valid_until or r.valid_until >= at) and (best is None or r.seq > best.seq):
             best = r
@@ -202,7 +202,7 @@ def profile_fields(group, year, policy=None, omega=None):
 @st.cache_data
 def _input_rules(signature):
     out = {}
-    for r in demo.kb().view(demo.TODAY).rules.values():
+    for r in store.kb().view(store.TODAY).rules.values():
         m = re.fullmatch(r"\s*(income|benefit|hr|employee|employer|case)\('([a-z_0-9]+)'\)\s*", d.expr_text(r.expression))
         if m:
             out[f"{m.group(1)}.{m.group(2)}"] = (r.id, r.produces)
@@ -211,12 +211,12 @@ def _input_rules(signature):
 
 def input_rules():
     """{data key: (id of the rule that reads it as is, fact it produces)}."""
-    return _input_rules(demo.signature())
+    return _input_rules(store.signature())
 
 
 def input_fact(key):
     """The fact an input rule turns this data into (income('thr') -> thr), if any."""
-    for r in demo.kb().view(demo.TODAY).rules.values():
+    for r in store.kb().view(store.TODAY).rules.values():
         if d.expr_text(r.expression).strip() == f"{key.split('.')[0]}('{key.split('.', 1)[1]}')":
             return r.produces
     return None
@@ -227,7 +227,7 @@ def policy_computed(year, policy, omega=None):
     if not policy:
         return {}
     out = {}
-    produced = {r.produces for r in demo.kb().view(omega or demo.TODAY).rules.values()
+    produced = {r.produces for r in store.kb().view(omega or store.TODAY).rules.values()
                 if r.layer == "company" and r.policy == policy
                 and (not r.valid_from or r.valid_from <= date(year, 12, 31))
                 and (not r.valid_until or r.valid_until >= date(year, 1, 1))}

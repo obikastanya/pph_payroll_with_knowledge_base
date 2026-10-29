@@ -67,7 +67,3 @@ def step(n, title):
 def flow(steps):
     """steps: [(label, state)] with state done | now | fail | skip | todo."""
     html('<div class="flow">' + "".join(f'<span class="s {s}">{label}</span>' for label, s in steps) + "</div>")
-
-
-def mock(text):
-    st.caption(f":orange-badge[Mockup] {text}")

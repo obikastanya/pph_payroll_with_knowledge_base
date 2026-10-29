@@ -51,4 +51,4 @@ Built stage by stage, following PANDUAN. Each module takes over a mini-demo modu
 | `pph21kbs/acquisition.py` | `acquisition.py` | PDF segmentation, relevance, m = 5 candidates, G1-G5 with date grounding, consensus with abstain on ties | 9 |
 | `pph21kbs/testspace.py` | `evaluation.evaluation_cases` | Constrained 2-way and 3-way combinations, inverse boundaries, operational sample | 8 |
 | `pph21kbs/evaluation.py` | `evaluation.py`, `experiments.py` | E0-E5, baselines, ablations, statistics | 10, 13-18 |
-| `app/` | `mini_demo/app/` | The same screens on the full system | - |
+| `app/` | `mini_demo/app/` | The application (calculator, KB viewer, KB management with the AI, assistant); `mini_demo/mockup/main.py` runs it as the demo | - |

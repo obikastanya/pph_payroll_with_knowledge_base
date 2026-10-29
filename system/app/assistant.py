@@ -1,30 +1,26 @@
 """AI assistant as a pop-up: a floating button on every page opens a separate chat window. The conversation is kept
-when the window is closed (workspace/chat.json, also after a reload) and can be cleared. The model can be chosen;
-the cheap one is the default.
+when the window is closed (workspace/chat.json, also after a reload) and can be cleared.
 
-What it does, by page:
-- Knowledge base management: explain or check a proposal, ask the AI to fix it with your notes, explain why the
-  system was unsure, draft a new rule, a new number, a revocation or a company policy. Drafts go to Review; the
-  assistant never approves.
-- Calculator: why a month's tax is what it is (from the engine's trace).
-- Anywhere: look up a number of the knowledge base with its source.
-
-Mockup: answers come from intent matching over the real knowledge base and the stored AI runs; checks, drafts and
-lookups are real, the wording is prepared, and no API is called. "Fix with my notes" is simulated with the
-research's reference answer and says so.
+The model (gpt-5.4-mini by default, through ai.chat) answers from the knowledge base context and picks at most one
+action; the app carries it out with its own code: explain or check the proposal under review, prepare a fix note for
+the reviewer, explain why the system was unsure, draft a new number, a revocation or a company policy (drafts go to
+Review), explain the calculator result, look up a number. It never approves. Without a key or budget, or when chosen,
+the keyword matching below answers instead (no API).
 """
 import re
 from datetime import date
 
 import streamlit as st
 
+import ai
 import data as d
-import demo
 import drafts
+import store
 
+OFFLINE = "tanpa-ai"
 MODELS = {"gpt-5.4-mini": "OpenAI · murah, bawaan (USD 0,75 / 4,50 per juta token)",
           "gpt-6.1-sol": "OpenAI · model kedua penelitian (USD 2 / 10)",
-          "claude-opus-5-5": "Anthropic · model utama penelitian, paling mahal"}
+          OFFLINE: "Tanpa AI · pencocokan kata kunci, gratis"}
 SUGGEST = {
     "kelola": ["Jelaskan usulan yang sedang direview", "Periksa usulan ini terhadap kutipan pasalnya",
                "Kenapa sistem ragu pada PKB WIKA?", "Buat aturan uang makan Rp50 ribu per hari hadir",
@@ -39,7 +35,7 @@ def _current_item():
     pid = st.session_state.get("mg_open")
     if not pid:
         return None, None
-    return pid, demo.proposal(pid)
+    return pid, store.proposal(pid)
 
 
 def _explain(pid, delta):
@@ -87,7 +83,7 @@ def _check(pid, delta):
 
 
 def _why_unsure(pid):
-    r = demo.run(pid)
+    r = store.run(pid)
     if not r:
         return "Tidak ada hasil AI tersimpan untuk dokumen itu."
     groups = r.get("groups") or []
@@ -112,14 +108,14 @@ def _param(q):
 
 def _lookup(name):
     vs = sorted((r for r in d.kb().records if r.kind == "parameter" and r.name == name), key=lambda r: r.valid_from)
-    cur = [r for r in vs if r.valid_from <= demo.TODAY and (r.valid_until is None or demo.TODAY <= r.valid_until)]
+    cur = [r for r in vs if r.valid_from <= store.TODAY and (r.valid_until is None or store.TODAY <= r.valid_until)]
     r = cur[-1] if cur else vs[-1]
     fmt = lambda v: d.money(v.value) if v.value_type == "money" else d.pct(v.value) if v.value_type == "rate" else v.value  # noqa: E731
     src = r.source[0]
     return (f"**{d.fact_label(name)}** menurut knowledge base sekarang: **{fmt(r)}**, berlaku sejak {d.tgl(r.valid_from)}."
             f"\n\nSumber: {d.short_doc(src.document)} {src.provision}, “{src.quote}”.\n\nRiwayat: "
             + ", ".join(f"{v.valid_from.year}: {fmt(v)}" for v in vs[-4:]) +
-            f"\n\nKnowledge base demo diketahui sampai {d.tgl(demo.known_until())}.")
+            f"\n\nKnowledge base diketahui sampai {d.tgl(store.known_until())}.")
 
 
 def _calc_why():
@@ -163,20 +159,14 @@ def reply(q):
     if "perbaiki" in ql:
         if not pid:
             return "Pilih dulu usulan di tab *Review*, lalu tulis catatan Anda.", None
-        ref = demo.gold_delta(pid)
-        if not ref:
-            return "Untuk usulan ini belum ada contoh perbaikan di demo.", None
-        demo.set_fixed(pid, ref, q, "AI (simulasi)")
-        return ("Catatan Anda saya kirim bersama usulan lama dan teks dokumen, lalu usulan disusun ulang dan diperiksa "
-                "lagi. Versi baru sudah ada di tab *Review*.\n\n*Mockup: hasil perbaikan di demo ini memakai jawaban "
-                "acuan penelitian; di sistem penuh ini satu putaran AI (± USD 0,1–0,8).*"), "perbaikan"
+        return act("fix_proposal", {"note": q}, q), "perbaikan"
     if "ragu" in ql or "pkb" in ql:
         return _why_unsure("PKB-WIKA-2025" if "wika" in ql or not pid else pid), None
     if ("buat" in ql or "tambah" in ql) and ("per hari" in ql or "uang makan" in ql):
         amt = re.search(r"(\d+)\s*(ribu|rb|k)?", ql)
         n = int(amt.group(1)) * (1000 if amt and amt.group(2) else 1) if amt else 50_000
         delta = drafts.meal_policy(n)
-        demo.add_draft(delta["delta_id"], delta["document"]["title"], delta, "asisten", inputs=[
+        store.add_draft(delta["delta_id"], delta["document"]["title"], delta, "asisten", inputs=[
             {"key": "hr.days_present", "label": "Hari hadir", "help": "Jumlah hari hadir bulan itu.", "type": "int",
              "group": "bulanan", "order": 65, "source": delta["document"]["title"]}])
         amount = f"{n:,}".replace(",", ".")
@@ -187,10 +177,10 @@ def reply(q):
         rule = drafts.find_rule(q)
         if not rule:
             return "Aturan mana yang ingin dicabut? Sebutkan namanya, mis. \"cabut aturan bingkisan\".", None
-        delta = drafts.revoke(rule, date(demo.TODAY.year, 12, 31), "permintaan lewat asisten", "-")
-        demo.add_draft(delta["delta_id"], delta["document"]["title"], delta, "asisten")
+        delta = drafts.revoke(rule, date(store.TODAY.year, 12, 31), "permintaan lewat asisten", "-")
+        store.add_draft(delta["delta_id"], delta["document"]["title"], delta, "asisten")
         return (f"Draf pencabutan **{d.fact_label(rule.produces)}** ({d.short_doc(rule.source[0].document)} "
-                f"{rule.source[0].provision}) sudah ada di tab *Review*, berlaku sampai 31 Desember {demo.TODAY.year}. "
+                f"{rule.source[0].provision}) sudah ada di tab *Review*, berlaku sampai 31 Desember {store.TODAY.year}. "
                 "Aturannya tidak dihapus, hanya diberi tanggal akhir, jadi hitungan lama tetap sama. Lengkapi dasar "
                 "hukumnya sebelum disetujui."), "draf"
     if "menjadi" in ql:
@@ -199,9 +189,9 @@ def reply(q):
         year = re.search(r"\b(20\d\d)\b", ql)
         if name and num:
             value = int(num.group(1).replace(".", ""))
-            start = date(int(year.group(1)) if year else demo.TODAY.year + 1, 1, 1)
+            start = date(int(year.group(1)) if year else store.TODAY.year + 1, 1, 1)
             delta = drafts.new_value(name, value, start, "permintaan lewat asisten", "-", "")
-            demo.add_draft(delta["delta_id"], delta["document"]["title"], delta, "asisten")
+            store.add_draft(delta["delta_id"], delta["document"]["title"], delta, "asisten")
             return (f"Draf angka baru: **{d.fact_label(name)} = {d.money(value)}** mulai {d.tgl(start)}; nilai lama "
                     "berakhir sehari sebelumnya. Ada di tab *Review*. Tambahkan dokumen dan pasal dasarnya sebelum "
                     "disetujui."), "draf"
@@ -225,6 +215,113 @@ def reply(q):
             "masuk ke *Review*; saya tidak menyetujui apa pun."), None
 
 
+# ---------------------------------------------------------------- the model (OpenAI) and its actions
+def _context(q):
+    """What the model may use: the page, the numbers of the knowledge base with their source, the latest updates, the
+    proposal under review, and the last calculator result. No employee name is sent."""
+    s = st.session_state
+    lines = [f"Page: {s.get('page_ctx', 'kelola')}. Today: {store.TODAY}. Knowledge base known until "
+             f"{store.known_until()}."]
+    lines.append("NUMBERS OF THE KNOWLEDGE BASE IN FORCE TODAY (parameter name | label | value | source):")
+    for name in sorted(d.params()):
+        r = d.param_at(name, store.TODAY)
+        if r is not None:
+            src = r.source[0] if r.source else None
+            value = (d.money(r.value) if r.value_type == "money" else d.pct(r.value) if r.value_type == "rate"
+                     else str(r.value))
+            lines.append(f"- {name} | {d.fact_label(name)} | {value}"
+                         f" | {d.short_doc(src.document) + ' ' + src.provision if src else '-'}")
+    lines.append("LATEST UPDATES: " + "; ".join(f"{d.doc_title(u.document)} ({u.recorded_on})" for u in d.kb().updates[-5:]))
+    pid, delta = _current_item()
+    if delta:
+        lines.append(f"PROPOSAL UNDER REVIEW ({pid}): " + _explain(pid, delta))
+        for e in (delta.get("change", []) + delta.get("add", []))[:12]:
+            src = (e.get("source") or [{}])[0]
+            lines.append(f"- {e.get('kind')} {e.get('id')} {e.get('produces') or e.get('name') or ''}: "
+                         f"{e.get('expression') or e.get('value') or ''} from {e.get('valid_from')} until "
+                         f"{e.get('valid_until') or '-'}; source {src.get('provision', '')}: \"{src.get('quote', '')[:160]}\"")
+    if s.get("k_last"):
+        lines.append("LAST CALCULATOR RESULT: " + _calc_why().split("\n\n")[0])
+    return "\n".join(lines)
+
+
+def act(action, args, q):
+    """Carry out the action the model picked, with the app's own code. Returns the text to add, or None."""
+    pid, delta = _current_item()
+    args = args or {}
+    if action in ("explain_proposal", "check_proposal", "fix_proposal") and not delta:
+        return "Pilih dulu usulan di tab *Review*."
+    if action == "explain_proposal":
+        return _explain(pid, delta)
+    if action == "check_proposal":
+        return _check(pid, delta)
+    if action == "fix_proposal":
+        st.session_state.mg_open, st.session_state.mg_fix = pid, pid
+        st.session_state.setdefault("mg_prefill", {})[pid] = args.get("note") or q
+        return ("Catatan Anda sudah saya isikan di *Review* → **Minta AI perbaiki**. Periksa catatannya, lalu tekan "
+                "*Kirim ke AI*: perbaikan memakai kredit Claude dan hasilnya diperiksa G1–G5 lagi.")
+    if action == "why_unsure":
+        return _why_unsure(pid or "PKB-WIKA-2025")
+    if action == "calc_why":
+        return _calc_why()
+    if action == "lookup":
+        name = args.get("param") if args.get("param") in d.params() else _param(q)
+        return _lookup(name) if name else None
+    if action == "new_value":
+        name = args.get("param") if args.get("param") in d.params() else _param(q)
+        if not name or args.get("value") is None:
+            return None
+        try:
+            start = date.fromisoformat(args.get("start")) if args.get("start") else date(store.TODAY.year + 1, 1, 1)
+        except ValueError:
+            start = date(store.TODAY.year + 1, 1, 1)
+        value = args["value"]
+        value = int(value) if float(value).is_integer() else value
+        delta = drafts.new_value(name, value, start, "permintaan lewat asisten", "-", "")
+        store.add_draft(delta["delta_id"], delta["document"]["title"], delta, "asisten")
+        return (f"Draf angka baru: **{d.fact_label(name)} = {d.fmt(name, value)}** mulai {d.tgl(start)}; nilai lama "
+                "berakhir sehari sebelumnya. Ada di tab *Review*. Tambahkan dokumen dan pasal dasarnya sebelum disetujui.")
+    if action == "revoke":
+        rule = drafts.find_rule(args.get("rule") or q)
+        if not rule:
+            return "Aturan itu tidak saya temukan. Sebutkan namanya, mis. \"cabut aturan bingkisan\"."
+        delta = drafts.revoke(rule, date(store.TODAY.year, 12, 31), "permintaan lewat asisten", "-")
+        store.add_draft(delta["delta_id"], delta["document"]["title"], delta, "asisten")
+        return (f"Draf pencabutan **{d.fact_label(rule.produces)}** ({d.short_doc(rule.source[0].document)} "
+                f"{rule.source[0].provision}) ada di tab *Review*, berlaku sampai 31 Desember {store.TODAY.year}.")
+    if action == "meal_policy":
+        n = int(args.get("amount") or 50_000)
+        delta = drafts.meal_policy(n)
+        store.add_draft(delta["delta_id"], delta["document"]["title"], delta, "asisten", inputs=[
+            {"key": "hr.days_present", "label": "Hari hadir", "help": "Jumlah hari hadir bulan itu.", "type": "int",
+             "group": "bulanan", "order": 65, "source": delta["document"]["title"]}])
+        return (f"Draf kebijakan perusahaan **uang makan {d.money(n)} × hari hadir** ada di tab *Review*. Setelah "
+                "disetujui, kolom *hari hadir* muncul sendiri di kalkulator.")
+    return None
+
+
+def answer(q, msgs):
+    """The reply to a question: the model when one is chosen and usable, else the keyword matching."""
+    model = st.session_state.get("as_model") or default_model()
+    if model == OFFLINE:
+        return reply(q)[0]
+    ok, why = ai.ready("asisten")
+    if not ok:
+        return reply(q)[0] + f"\n\n*Tanpa AI: {why}.*"
+    try:
+        text, action, args, cost = ai.chat(q, msgs, _context(q), model=model)
+    except Exception as e:  # noqa: BLE001 - the keyword matching still answers
+        return reply(q)[0] + f"\n\n*Model tidak bisa dipakai ({type(e).__name__}); dijawab tanpa AI.*"
+    extra = act(action, args, q) if action != "none" else None
+    if extra and action not in ("new_value", "revoke", "meal_policy", "fix_proposal"):
+        text = ""             # facts come from the knowledge base through the app's own text, not the model's wording
+    return (text + (f"\n\n{extra}" if extra else "")).strip() + f"\n\n<sub>{model} · USD {cost:.4f}</sub>"
+
+
+def default_model():
+    return ai.ASSISTANT_MODEL if ai.ready("asisten")[0] else OFFLINE
+
+
 # ---------------------------------------------------------------- pop-up
 def _close():
     st.session_state.as_open = False
@@ -233,14 +330,18 @@ def _close():
 @st.dialog("Asisten AI", width="large", on_dismiss=_close)
 def window():
     s = st.session_state
-    msgs = demo.chat_load()
+    msgs = store.chat_load()
     c1, c2 = st.columns([3, 1])
+    if "as_model" not in s:
+        s.as_model = default_model()
     c1.selectbox("Model", list(MODELS), key="as_model", format_func=lambda m: f"{m} · {MODELS[m]}",
                  label_visibility="collapsed")
     if c2.button("Hapus percakapan", icon=":material/delete:", width="stretch"):
-        demo.chat_clear()
+        store.chat_clear()
         st.rerun(scope="fragment")
-    st.caption("Mockup: jawaban disusun tanpa memanggil API. Data pribadi pegawai tidak dikirim ke model.")
+    st.caption(("Tanpa AI: jawaban dari pencocokan kata kunci." if s.as_model == OFFLINE else
+                f"Model menerima angka KB, usulan yang direview, dan hasil kalkulator terakhir, tanpa nama pegawai. "
+                f"{ai.budget_text('asisten')}") + " Asisten tidak menyetujui apa pun.")
     box = st.container(height=300)
     with box:
         if not msgs:
@@ -253,9 +354,10 @@ def window():
                     label_visibility="collapsed")
     q = st.chat_input("Tanya atau minta dikerjakan ...", key="as_in") or pick
     if q:
-        text, action = reply(q)
+        with st.spinner("Asisten menjawab ..."):
+            text = answer(q, msgs)
         msgs += [{"role": "user", "content": q}, {"role": "assistant", "content": text}]
-        demo.chat_save(msgs)
+        store.chat_save(msgs)
         st.rerun(scope="fragment")
 
 
@@ -270,7 +372,8 @@ def button():
 
 def open_with(question):
     """Open the pop-up and ask a question (used by buttons on the pages)."""
-    text, _ = reply(question)
-    msgs = demo.chat_load() + [{"role": "user", "content": question}, {"role": "assistant", "content": text}]
-    demo.chat_save(msgs)
+    msgs = store.chat_load()
+    text = answer(question, msgs)
+    msgs = msgs + [{"role": "user", "content": question}, {"role": "assistant", "content": text}]
+    store.chat_save(msgs)
     st.session_state.as_open = True

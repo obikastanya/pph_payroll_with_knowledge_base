@@ -1,11 +1,15 @@
-"""The fixed demo state and everything done on top of it.
+"""State of the application: the knowledge base in use, everything done on top of it, and the documents waiting.
 
-Initial state: the gold knowledge base of the research up to the 2025 JP wage cap (recorded 27 Feb 2025), no company
-policy installed, and eight documents waiting, each with the real result of the AI from the research runs
-(experiments/*/results). Everything done during a demo (approved updates, drafts, rejections, uploads, chat) is kept in
-mini_demo/mockup/workspace/. Reset deletes that folder, so the system is back in the initial state.
+Two modes, one program:
+- sistem (default): the full gold knowledge base of the research plus the updates approved in the app. Documents come
+  in through the inbox (upload) and are read by the research's acquisition pipeline with the real LLM. Kept in
+  system/app/workspace/.
+- demo (PPH21_APP_MODE=demo, started by mini_demo/mockup/main.py): a fixed initial state, the gold knowledge base up to
+  the 2025 JP wage cap (recorded 27 Feb 2025), no company policy, and eight documents waiting with the real AI results of
+  the research runs (experiments/*/results). Kept in mini_demo/mockup/workspace/; Reset deletes it.
 """
 import json
+import os
 import shutil
 import sys
 from datetime import date, datetime
@@ -21,15 +25,17 @@ for p in (ROOT / "system", ROOT / "system" / "tools"):
 import build_gold  # noqa: E402
 from pph21kbs.kb import apply_delta  # noqa: E402
 
-WORKSPACE = Path(__file__).resolve().parent / "workspace"
+MODE = "demo" if os.environ.get("PPH21_APP_MODE") == "demo" else "sistem"
+DEMO = MODE == "demo"
+WORKSPACE = (ROOT / "mini_demo" / "mockup" / "workspace") if DEMO else (ROOT / "system" / "app" / "workspace")
 STATE = WORKSPACE / "state.json"
 CHAT = WORKSPACE / "chat.json"
+RUNS = WORKSPACE / "runs"                    # acquisition runs of the documents read in the app
 EXP = ROOT / "experiments"
-BASE_UPDATE = "GOLD-E08"
-BASE_LABEL = "27 Februari 2025"
+BASE_UPDATE = "GOLD-E08" if DEMO else None   # None: the whole gold chain
 
-# documents waiting in the initial state: (id, kind, run file, what the research found)
-PENDING = [
+# demo: documents waiting in the initial state (id, kind, run file, what the research found)
+DEMO_PENDING = [
     {"id": "E13", "doc": "PER-11-PJ-2025", "kind": "regulasi", "run": "e2-regulasi/results/E13.json",
      "research": "benar", "why": "Aturan pembulatan yang berlaku surut: hitungan lama berubah bila dihitung ulang."},
     {"id": "E09", "doc": "PP-36-2025", "kind": "regulasi", "run": "e2-regulasi/results/E09.json",
@@ -50,13 +56,21 @@ PENDING = [
     {"id": "P05", "doc": "PMK-81-2024", "kind": "regulasi", "run": "e2-pengecoh/results/P05.json",
      "research": "tidak relevan", "why": "Dokumen administrasi Coretax: tidak mengubah perhitungan."},
 ]
-PENDING_BY_ID = {p["id"]: p for p in PENDING}
+
+
+def pending(s=None):
+    """Documents in the inbox: the fixed list of the demo, or the documents uploaded in the app."""
+    return (DEMO_PENDING if DEMO else []) + (s or load())["inbox"]
+
+
+def pending_by_id(s=None):
+    return {p["id"]: p for p in pending(s)}
 
 
 # ---------------------------------------------------------------- state file
 def _empty():
     return {"approved": [], "decided": {}, "drafts": [], "uploads": [], "log": [], "fixed": {}, "catalog": [],
-            "employees": {}}
+            "employees": {}, "inbox": []}
 
 
 def load():
@@ -66,7 +80,7 @@ def load():
 
 
 def save(s):
-    WORKSPACE.mkdir(exist_ok=True)
+    WORKSPACE.mkdir(parents=True, exist_ok=True)
     STATE.write_text(json.dumps(s, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
 
 
@@ -92,10 +106,16 @@ def gold():
 
 @st.cache_resource
 def base():
-    return gold().until(BASE_UPDATE)
+    """The knowledge base before anything approved in the app: the gold chain (demo: up to its initial state)."""
+    return gold().until(BASE_UPDATE) if BASE_UPDATE else gold()
 
 
-@st.cache_resource(show_spinner="Menerapkan pembaruan demo ...")
+def base_label():
+    from data import tgl
+    return tgl(max(u.recorded_on for u in base().updates if u.recorded_on))
+
+
+@st.cache_resource(show_spinner="Menerapkan pembaruan ...")
 def _kb_cached(signature):
     k = base()
     for a in load()["approved"]:
@@ -139,11 +159,19 @@ def installed_policies():
     return out
 
 
-# ---------------------------------------------------------------- stored AI results
+# ---------------------------------------------------------------- AI results
 @st.cache_data
+def _read(path, mtime):
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
 def run(pid):
-    p = PENDING_BY_ID.get(pid)
-    return json.loads((EXP / p["run"]).read_text(encoding="utf-8")) if p else None
+    """The acquisition run of a waiting document: stored from the research (demo) or made in the app (sistem)."""
+    p = pending_by_id().get(pid)
+    if not p or not p.get("run"):
+        return None
+    path = (WORKSPACE if p.get("upload") else EXP) / p["run"]
+    return _read(str(path), path.stat().st_mtime) if path.exists() else None
 
 
 @st.cache_data
@@ -165,7 +193,10 @@ def status(pid, s=None):
     if any(x["id"] == pid for x in s["drafts"]) or pid in s["fixed"]:
         return "review"
     r = run(pid)
-    return {"applied": "review", "abstain": "ragu", "empty": "tidak relevan"}.get(r["status"], r["status"]) if r else "review"
+    if r is None:
+        return "menunggu AI"
+    return {"applied": "review", "abstain": "ragu", "empty": "tidak relevan", "budget": "anggaran habis"}.get(
+        r["status"], r["status"])
 
 
 def proposal(pid, s=None):
@@ -217,15 +248,17 @@ def add_draft(pid, title, delta, origin, inputs=None):
     save(s)
 
 
-def set_fixed(pid, delta, note, by):
+def set_fixed(pid, delta, note, by, llm=None):
+    """A new version of the proposal: edited by hand, or repaired by the AI (llm = the model's own output, kept for a
+    further repair round)."""
     s = load()
-    s["fixed"][pid] = {"delta": delta, "note": note, "by": by}
+    s["fixed"][pid] = {"delta": delta, "note": note, "by": by, "llm": llm}
     log(s, f"Usulan diperbaiki ({by}): {pid}")
     save(s)
 
 
 def rollback(n):
-    """Keep only the first n approved updates of the demo."""
+    """Keep only the first n updates approved in the app."""
     s = load()
     removed = s["approved"][n:]
     s["approved"] = s["approved"][:n]
@@ -265,3 +298,25 @@ def chat_clear():
 
 
 TODAY = date.today()
+
+
+# ---------------------------------------------------------------- inbox (sistem): uploaded documents and their AI runs
+def add_inbox(item):
+    s = load()
+    s["inbox"] = [x for x in s["inbox"] if x["id"] != item["id"]] + [item]
+    s["decided"].pop(item["id"], None)
+    s["fixed"].pop(item["id"], None)
+    log(s, f"Dokumen masuk: {item['title']}")
+    save(s)
+
+
+def set_run(pid, relpath, cost):
+    s = load()
+    for x in s["inbox"]:
+        if x["id"] == pid:
+            x["run"] = relpath
+            x["cost_usd"] = round((x.get("cost_usd") or 0) + cost, 4)
+    s["fixed"].pop(pid, None)
+    s["decided"].pop(pid, None)
+    log(s, f"AI selesai membaca: {pid} (USD {cost:.3f})")
+    save(s)

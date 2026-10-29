@@ -1,299 +1,399 @@
-"""Knowledge base viewer: graph around a fact, rules with their status, table versions, bitemporal timeline,
-quality checks, a SPARQL console, and export."""
-import io
+"""Knowledge base viewer: see and understand what the system knows. Topics instead of rule ids, a picture of the
+calculation, numbers over time, what changed and when, and a comparison of two dates."""
 from datetime import date
 
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-import state
-import widgets as ui
-from pph21kbs import static
-from pph21kbs.kb import rdf
-from pph21kbs.kb.model import Constraint, FactDef, Parameter, Rule, TableVersion
+import data as d
+import explain as ex
+import glossary as g
+import inputs
+import store
+import ui
+import viewer_tech
 
-KINDS = {Rule: "aturan", Parameter: "parameter", TableVersion: "tabel", Constraint: "batasan", FactDef: "fakta"}
-PRESETS = {
-    "Aturan yang menghasilkan pph21_due": """PREFIX pph: <https://w3id.org/pph21kbs/ontology#>
-SELECT ?rule ?id ?validFrom ?validUntil WHERE {
-  GRAPH ?g { ?rule pph:produces ?f ; pph:elementId ?id ; pph:validFrom ?validFrom .
-             OPTIONAL { ?rule pph:validUntil ?validUntil }
-             FILTER(STRENDS(STR(?f), "/pph21_due")) }
-} ORDER BY ?validFrom""",
-    "Aturan perusahaan dan kebijakannya": """PREFIX pph: <https://w3id.org/pph21kbs/ontology#>
-SELECT ?id ?policy ?fact WHERE {
-  GRAPH ?g { ?r pph:policy ?policy ; pph:elementId ?id ; pph:produces ?fact }
-} ORDER BY ?policy ?id""",
-    "Rekaman per dokumen sumber": """PREFIX pph: <https://w3id.org/pph21kbs/ontology#>
-PREFIX eli: <http://data.europa.eu/eli/ontology#>
-SELECT ?doc (COUNT(DISTINCT ?r) AS ?records) WHERE {
-  GRAPH ?g { ?r pph:hasSource ?q . ?q pph:provision ?p . ?p eli:is_part_of ?doc }
-} GROUP BY ?doc ORDER BY DESC(?records)""",
-    "Fakta yang dibaca aturan TER": """PREFIX pph: <https://w3id.org/pph21kbs/ontology#>
-SELECT DISTINCT ?id ?reads WHERE {
-  GRAPH ?g { ?r pph:elementId ?id ; pph:reads ?reads . FILTER(CONTAINS(?id, "TER")) }
-} ORDER BY ?id""",
-}
+def in_force(rec, t):
+    if rec.kind == "fact" or rec.valid_from is None:
+        return True
+    return rec.valid_from <= t and (rec.valid_until is None or t <= rec.valid_until)
 
 
-def _period_controls(key):
-    c1, c2, c3 = st.columns([1, 1.3, 1.5])
-    with c1:
-        year, month = ui.period_picker(key, 2025, 3)
-    with c2:
-        omega = ui.knowledge_picker(key)
-    with c3:
-        update_id = ui.version_picker(f"{key}_v")
-        policy = ui.policy_picker(f"{key}_p")
-    return date(year, month, 1), omega, update_id, policy
+@st.cache_data
+def snapshot(signature, t):
+    """Records in force at t: the latest version of every id, kept when that version is in force (a later version that
+    ends the validity, as a revocation does, wins over the earlier open one). Returned as seqs (cache friendly)."""
+    best = {}
+    for r in d.kb().records:
+        if r.kind in ("rule", "parameter", "table", "constraint") and (r.id not in best or r.seq > best[r.id].seq):
+            best[r.id] = r
+    return {r.seq for r in best.values() if in_force(r, t)}
 
 
-def tab_graph(view, t, omega):
-    facts = sorted({r.produces for r in view.rules.values()})
-    c1, c2, c3, c4 = st.columns([1.6, 1, 1.2, 1.4])
-    focus = c1.selectbox("Fokus fakta", facts, index=facts.index("pph21_due") if "pph21_due" in facts else 0,
-                         key="g_focus")
-    depth = c2.slider("Kedalaman", 1, 5, 2, key="g_depth")
-    way = c3.radio("Arah", ("hulu", "hilir", "keduanya"), horizontal=False, key="g_way")
-    with c4:
-        only = st.toggle("Hanya yang berlaku", True, key="g_only")
-        layers = st.multiselect("Lapis", ["regulation", "company"], default=["regulation", "company"], key="g_layers")
-    dot, n = ui.dependency_dot(view, focus, depth, upstream=way != "hilir", downstream=way != "hulu",
-                               layers=tuple(layers), t=t, omega=omega, only_in_force=only)
-    st.graphviz_chart(dot, width="stretch")
-    st.caption(f"{n} aturan ditampilkan. Elips = fakta, kotak biru = aturan regulasi, kotak oranye = aturan perusahaan, "
-               "silinder = parameter/tabel; garis putus = fakta yang dibaca, garis merah = override.")
+def records_at(t):
+    seqs = snapshot(store.signature(), t)
+    return [r for r in d.kb().records if r.seq in seqs]
 
 
-def _records_frame(view, t, omega):
+def _period(r):
+    a = f"{d.tgl(r.valid_from)}" if r.valid_from else "-"
+    return a + (f" s.d. {d.tgl(r.valid_until)}" if r.valid_until else " · masih berlaku")
+
+
+def _value(r):
+    if r.kind == "parameter":
+        v = r.value
+        if r.value_type == "rate":
+            return d.pct(v)
+        if r.value_type == "money":
+            return d.money(v)
+        return str(v)
+    return None
+
+
+def card(r, show_topic=False):
+    src = r.source[0] if r.source else None
+    where = f"{d.short_doc(src.document)} · {src.provision}" if src else "-"
+    if r.kind == "rule":
+        title = d.fact_label(r.produces)
+        mod = {"mandatory": ("wajib", "blue"), "default": ("standar", "grey"), "optional": ("pilihan", "yellow")}.get(
+            r.modality, (r.modality, "grey"))
+        body = f"<b>Rumus:</b> {d.readable(r.expression)}"
+        if r.condition:
+            body = f"<b>Jika:</b> {d.readable(r.condition)}<br>" + body
+        badge = ui.badge(mod[0], mod[1])
+    elif r.kind == "parameter":
+        title = (r.label_id or r.name).capitalize()
+        body = f"<b>Nilai:</b> {_value(r)}"
+        badge = ui.badge("angka", "green")
+    elif r.kind == "table":
+        title = (r.label_id or r.name).capitalize()
+        body = f"<b>Tabel</b> {len(r.rows or ())} baris" + (" (dari lampiran)" if r.rows_ref else "")
+        badge = ui.badge("tabel", "yellow")
+    else:
+        title, body, badge = (r.label_id or r.id), "Batasan yang diperiksa", ui.badge("batasan", "red")
+    topic = f" · {d.topic_of(r)}" if show_topic else ""
+    quote = f"<div class='quote'>“{src.quote}”</div>" if src and src.quote else ""
+    old = " old" if r.valid_until and r.valid_until < d.TODAY else ""
+    ui.html(f"<div class='rule{old}'>{badge}<b>{title}</b><span class='muted'>{topic}</span><br>{body}<br>"
+            f"<span class='muted'>{g.term('berlaku', 'Berlaku')}: {_period(r)} · {g.term('sumber', 'Sumber')}: {where}"
+            f"</span>{quote}</div>")
+    return r
+
+
+def tab_topics(recs, t):
+    visible = [r for r in recs if not d.is_input_convention(r)]
+    counts = {}
+    for r in visible:
+        counts[d.topic_of(r)] = counts.get(d.topic_of(r), 0) + 1
+    topics = [x for x in d.TOPICS if counts.get(x[0])]
+    known = {x[0] for x in topics}
+    topics += [(t_, ":material/apartment:", "Aturan dari kebijakan perusahaan yang terpasang.", ())
+               if t_ == "Kebijakan perusahaan" else
+               (t_, ":material/category:", "Bagian knowledge base yang tidak masuk topik di atas; namanya dari nilai "
+                "yang dihasilkannya.", ()) for t_ in sorted(counts) if t_ not in known]
+    cols = st.columns(3)
+    for i, (title, icon, expl, _) in enumerate(topics):
+        with cols[i % 3].container(border=True):
+            st.markdown(f"**{icon} {title}**  \n{expl}")
+            st.caption(f"{counts[title]} aturan, angka, dan tabel")
+    pick = st.pills("Buka topik", [x[0] for x in topics], default=topics[0][0], key="v_topic")
+    if not pick:
+        return
+    items = sorted((r for r in visible if d.topic_of(r) == pick), key=lambda r: (r.kind != "parameter", r.kind, r.id))
+    st.markdown(f"#### {pick}")
+    g.md(f"<span class='muted'>Label: {ui.badge('wajib', 'blue')}{g.term('wajib', 'apa itu?')} &nbsp; "
+         f"{ui.badge('standar', 'grey')}{g.term('standar', 'apa itu?')} &nbsp; {ui.badge('angka', 'green')}"
+         f"{g.term('parameter', 'apa itu?')} &nbsp; {ui.badge('tabel', 'yellow')}{g.term('tabel', 'apa itu?')}</span>")
+    for r in items:
+        card(r)
+        if r.kind == "table" and r.rows:
+            with st.expander("Lihat isi tabel"):
+                st.dataframe(_table_frame(r), hide_index=True, width="stretch")
+
+
+def _table_frame(r):
     rows = []
-    for r in view.records:
-        kind = KINDS.get(type(r))
-        if kind is None:
-            continue
-        rows.append({"id": r.id, "jenis": kind, "fakta": getattr(r, "produces", "") or getattr(r, "name", ""),
-                     "lapis": getattr(r, "layer", ""), "modalitas": getattr(r, "modality", ""),
-                     "berlaku dari": r.valid_from, "berlaku sampai": r.valid_until, "dicatat": r.recorded_on,
-                     "status": ui.status(r, t, omega), "sumber": ui.sources(r), "pembaruan": r.update_id})
+    for row in r.rows:
+        rows.append({k: (d.pct(v) if hasattr(v, "denominator") and v < 1 else
+                         d.money(v) if hasattr(v, "denominator") else v) for k, v in row.items()})
     return pd.DataFrame(rows)
 
 
-def tab_rules(kb, view, t, omega):
-    df = _records_frame(view, t, omega)
-    c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
-    q = c1.text_input("Cari (id, fakta, sumber)", "", key="r_q")
-    kinds = c2.multiselect("Jenis", sorted(df["jenis"].unique()), default=["aturan"], key="r_kind")
-    stat = c3.multiselect("Status", sorted(df["status"].unique()), key="r_status")
-    layer = c4.multiselect("Lapis", ["regulation", "company"], key="r_layer")
-    sel = df
-    if q:
-        m = sel.apply(lambda r: q.lower() in " ".join(map(str, r.values)).lower(), axis=1)
-        sel = sel[m]
-    if kinds:
-        sel = sel[sel["jenis"].isin(kinds)]
-    if stat:
-        sel = sel[sel["status"].isin(stat)]
-    if layer:
-        sel = sel[sel["lapis"].isin(layer)]
-    st.caption(f"{len(sel)} dari {len(df)} rekaman efektif pada ω.")
-    event = st.dataframe(sel, hide_index=True, width="stretch", height=330, on_select="rerun",
-                         selection_mode="single-row", key="r_table")
-    rows = event.selection.rows if event and event.selection else []
-    if not rows:
-        st.info("Pilih satu baris untuk melihat kartu detailnya.")
-        return
-    rid = sel.iloc[rows[0]]["id"]
-    rec = next(r for r in view.records if r.id == rid)
-    with st.container(border=True):
-        layer_pill = ui.pill("regulasi", "reg") if getattr(rec, "layer", "regulation") == "regulation" else ui.pill("perusahaan", "com")
-        st.markdown(f"#### {rid} {layer_pill}", unsafe_allow_html=True)
-        if rec.label:
-            st.caption(rec.label)
-        c1, c2 = st.columns(2)
-        with c1:
-            if isinstance(rec, Rule):
-                st.markdown(f"**Menghasilkan** `{rec.produces}` · {rec.modality} · lingkup {rec.scope}")
-                st.code(rec.expression.text if rec.expression else "", language="python")
-                if rec.condition is not None:
-                    st.markdown("**Syarat**")
-                    st.code(rec.condition.text, language="python")
-                if rec.overrides:
-                    st.markdown("**Mengalahkan (lex specialis):** " + ", ".join(rec.overrides))
-            elif isinstance(rec, Parameter):
-                st.markdown(f"**Parameter** `{rec.name}` = **{ui.number(rec.value)}** ({rec.value_type})")
-            elif isinstance(rec, TableVersion):
-                st.markdown(f"**Tabel** `{rec.name}` ({rec.table_kind}), {len(rec.rows)} baris")
-                st.dataframe(ui.frame(rec.rows).head(50), hide_index=True, width="stretch")
-            elif isinstance(rec, Constraint):
-                st.markdown(f"**Batasan** kode {rec.conflict_code}")
-                st.code(rec.assertion.text if rec.assertion else "", language="python")
-            st.markdown(f"Berlaku {rec.valid_from or '-'} s.d. {rec.valid_until or 'tanpa batas'} · dicatat "
-                        f"{rec.recorded_on} · pembaruan `{rec.update_id}`")
-        with c2:
-            st.markdown("**Sumber**")
-            for s in rec.source or ():
-                st.markdown(f"- {s.document} {s.provision}" + (f", hlm. {s.page}" if s.page else "") + f"  \n  *“{s.quote}”*")
-            if isinstance(rec, Rule):
-                readers = [r.id for r in view.rules.values()
-                           if any(rec.produces in (e.dependencies() if e is not None else ()) for e in (r.expression, r.condition))]
-                rivals = [r.id for r in view.rules_by_fact.get(rec.produces, []) if r.id != rec.id]
-                st.markdown("**Dibaca oleh:** " + (", ".join(readers[:12]) or "-"))
-                st.markdown("**Pesaing (fakta sama):** " + (", ".join(rivals) or "-"))
-            hist = kb.history(rid)
-            if len(hist) > 1:
-                st.markdown("**Riwayat rekaman:** " + " → ".join(f"{h.update_id} ({h.recorded_on})" for h in hist))
+@st.cache_data
+def flow(signature, t):
+    """The calculation at date t as the knowledge base has it: the main steps (values the KB marks as output, and values
+    whose rules read a table), and which step feeds which, through the helper values in between. Nothing here is
+    written for a particular regulation: a new step, or another way of computing, comes from the rules in force."""
+    rules = [r for r in d.current() if r.kind == "rule" and r.layer == "regulation" and d.in_force(r, t)]
+    tables = {r.name for r in d.kb().records if r.kind == "table"}
+    reads, uses_table, real = {}, set(), set()
+    for r in rules:
+        facts_read, names = d._deps(r)
+        reads.setdefault(r.produces, set()).update(facts_read)
+        if not d.is_input_convention(r):
+            real.add(r.produces)
+            if names & tables:
+                uses_table.add(r.produces)
+    outputs = {n for n, f in d.facts().items() if f.output}
+    main = (outputs & real) | uses_table
+    inputs = set(reads) - real                 # values only read from the case data
+    edges, owner = set(), {}
+    for b in main:
+        stack, seen = list(reads.get(b, ())), set()
+        while stack:
+            f = stack.pop()
+            if f in seen or f == b:
+                continue
+            seen.add(f)
+            if f in main:
+                edges.add((f, b))
+            elif f in inputs or f not in reads:
+                edges.add(("_input", b))
+            else:
+                owner.setdefault(f, set()).add(b)        # a helper value on the way to b
+                stack.extend(reads.get(f, ()))
+    # values the KB computes by fixed point (gross-up) feed back into what they are computed from: those edges are
+    # the loop, drawn but not used to order the steps
+    fixed = {r.produces for r in rules if r.fixed_point}
+    loops = {(a, b) for a, b in edges if a in fixed}
+    level = {}
+
+    def depth(f, stack=()):
+        if f not in level:
+            ups = [a for a, b in edges if b == f and a != "_input" and a not in stack and (a, b) not in loops]
+            level[f] = 1 + max((depth(a, stack + (f,)) for a in ups), default=0)
+        return level[f]
+    order = sorted(main, key=lambda f: (depth(f), d.fact_label(f)))
+    helpers = {b: sorted(f for f, bs in owner.items() if b in bs) for b in main}
+    return order, sorted(edges), helpers, loops
 
 
-def tab_tables(view):
-    names = sorted(view.tables)
-    if not names:
-        st.info("Tidak ada tabel.")
-        return
-    name = st.selectbox("Tabel", names, index=names.index("ter_monthly") if "ter_monthly" in names else 0, key="t_name")
-    versions = sorted(view.tables[name], key=lambda v: (v.valid_from or date.min))
-    labels = [f"{v.id} · {v.valid_from}..{v.valid_until or ''}" for v in versions]
-    i = st.selectbox("Versi", range(len(versions)), index=len(versions) - 1, format_func=lambda k: labels[k], key="t_ver")
-    v = versions[i]
-    rows = ui.frame(v.rows)
-    st.caption(f"{v.table_kind} · {len(rows)} baris · sumber: {ui.sources(v)}")
-    c1, c2 = st.columns([1, 1.3])
-    c1.dataframe(rows, hide_index=True, width="stretch", height=380)
+def flow_dot(order, edges, pick, loops):
+    out = ['digraph F { rankdir=LR; bgcolor=transparent; nodesep=.18; ranksep=.45;',
+           'node [shape=box style="rounded,filled" fontname="Helvetica" fontsize=10 color="#b4b3ae" fillcolor="#ffffff"];',
+           'edge [color="#8a8984" arrowsize=.6];']
+    for f in order:
+        out.append(f'"{f}" [label="{d.fact_label(f)}"' + (' penwidth=2.4 color="#2a78d6" fillcolor="#e8f1fc"' if f == pick
+                                                           else "") + "];")
+    for a, b in edges:
+        if a == "_input":
+            continue
+        back = (a, b) in loops                              # the fixed-point loop: drawn, but not for the layout
+        out.append(f'"{a}" -> "{b}"' + (' [style=dashed color="#eb6834" constraint=false]' if back else "") + ";")
+    return "\n".join(out) + "}"
+
+
+def tab_flow(recs, t):
+    order, edges, helpers, loops = flow(store.signature(), t)
+    st.caption(f"Urutan perhitungan pada {d.tgl(t)}, digambar dari aturan yang berlaku di knowledge base: langkah utama "
+               "adalah nilai yang ditandai KB sebagai hasil dan nilai yang memakai tabel. Ganti tanggal di atas untuk "
+               "melihat cara hitung tahun lain.")
+    default = ex.ROOT if ex.ROOT in order else order[-1]
+    pick = st.selectbox("Langkah", order, index=order.index(default), key=f"v_flow_{t}",
+                        format_func=lambda f: f"{d.fact_label(f)} ({f})")
+    st.graphviz_chart(flow_dot(order, edges, pick, loops), width="stretch")
+    st.caption("Langkah tanpa panah masuk dihitung langsung dari data pegawai dan perusahaan. Garis oranye putus-putus = "
+               "perhitungan yang berputar (misalnya gross-up: tunjangan pajak ikut menaikkan bruto).")
+    facts = {pick, *helpers.get(pick, [])}
+    found = [r for r in recs if r.kind == "rule" and r.produces in facts and not d.is_input_convention(r)]
+    st.markdown(f"**{len(found)} aturan** untuk langkah *{d.fact_label(pick)}*"
+                + (f", termasuk nilai antara: {', '.join(d.fact_label(f).lower() for f in helpers[pick])}"
+                   if helpers.get(pick) else "") + ":")
+    for r in found:
+        card(r)
+
+
+def tab_numbers():
+    ps = {}
+    for r in d.kb().records:
+        if r.kind == "parameter" and r.value_type in ("money", "rate"):
+            ps.setdefault(r.name, []).append(r)
+    labels = {n: (v[0].label_id or n).capitalize() for n, v in ps.items()}
+    c1, c2 = st.columns([1, 2])
+    with c1:
+        name = st.radio("Angka", sorted(ps, key=lambda n: labels[n]), format_func=labels.get, key="v_param")
     with c2:
-        if {"lower", "rate"} <= set(rows.columns):
-            fig = go.Figure()
-            group = "key" if "key" in rows.columns else None
-            for k, sub in (rows.groupby(group) if group else [(name, rows)]):
-                sub = sub.sort_values("lower")
-                fig.add_trace(go.Scatter(x=[float(x) for x in sub["lower"]], y=[float(x) * 100 for x in sub["rate"]],
-                                         mode="lines", line_shape="hv", name=str(k)))
-            fig.update_layout(height=380, margin=dict(l=10, r=10, t=10, b=10), xaxis_title="batas bawah (Rp)",
-                              yaxis_title="tarif (%)")
-            st.plotly_chart(fig, width="stretch")
-        else:
-            st.info("Grafik tangga ditampilkan untuk tabel tarif berlapis (kolom lower dan rate).")
+        vs = sorted(ps[name], key=lambda r: r.valid_from)
+        money = vs[0].value_type == "money"
+        x, y = [], []
+        for r in vs:
+            x += [r.valid_from, r.valid_until or date(2026, 12, 31)]
+            y += [float(r.value) * (1 if money else 100)] * 2
+        fig = go.Figure(go.Scatter(x=x, y=y, mode="lines", line_shape="hv", line=dict(color="#2a78d6", width=3)))
+        fig.update_layout(height=260, margin=dict(l=0, r=0, t=10, b=0), yaxis_title="Rp" if money else "%",
+                          yaxis_tickformat=",.0f" if money else ".2f", plot_bgcolor="rgba(0,0,0,0)")
+        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+        for r in reversed(vs):
+            card(r)
+    st.divider()
+    tables = {}
+    for r in d.kb().records:
+        if r.kind == "table" and r.rows:
+            tables.setdefault(r.name, []).append(r)
+    c1, c2 = st.columns([1, 2])
+    name = c1.selectbox("Tabel", sorted(tables), format_func=lambda n: (tables[n][0].label_id or n).capitalize(),
+                        key="v_table")
+    ver = c2.selectbox("Versi", sorted(tables[name], key=lambda r: r.valid_from, reverse=True), key="v_tver",
+                       format_func=lambda r: f"{_period(r)} · {d.short_doc(r.source[0].document) if r.source else ''}")
+    st.dataframe(_table_frame(ver), hide_index=True, width="stretch", height=300)
 
 
-def tab_timeline(kb, view, t, omega):
-    st.markdown("Batang = masa berlaku [mulai, akhir]; belah ketupat = tanggal dicatat (diketahui). Belah ketupat di "
-                "kanan awal batang berarti aturan berlaku surut. Garis biru = periode dipilih, garis oranye = ω.")
-    facts = sorted({r.produces for r in kb.records if isinstance(r, Rule)})
-    focus = st.multiselect("Fakta", facts, default=[f for f in ("ptkp_amount", "pph21_running", "pph21_dtp",
-                                                                   "jp_wage", "ter_rate") if f in facts], key="tl_facts")
-    recs = [r for r in kb.records if isinstance(r, Rule) and r.produces in focus and r.valid_from]
-    recs.sort(key=lambda r: (r.produces, r.valid_from))
-    if not recs:
+def tab_history():
+    st.caption("Setiap pembaruan berasal dari satu dokumen. Yang terbaru di atas.")
+    by_update = {}
+    for r in d.kb().records:
+        if r.kind != "fact":
+            by_update.setdefault(r.update_id, []).append(r)
+    for u in reversed(d.kb().updates):
+        recs = by_update.get(u.update_id, [])
+        if not recs:
+            continue
+        kinds = {}
+        for r in recs:
+            kinds[r.kind] = kinds.get(r.kind, 0) + 1
+        what = ", ".join(f"{n} {dict(rule='aturan', parameter='angka', table='tabel', constraint='batasan')[k]}"
+                         for k, n in kinds.items())
+        with st.expander(f"{d.tgl(u.recorded_on)} · {d.doc_title(u.document)} — {what}"):
+            for r in recs[:25]:
+                card(r, show_topic=True)
+
+
+def tab_compare():
+    c1, c2 = st.columns(2)
+    a = c1.date_input("Tanggal pertama", date(2023, 12, 31), key="v_a")
+    b = c2.date_input("Tanggal kedua", date(2024, 1, 1), key="v_b")
+    ra = {r.id: r for r in records_at(a)}
+    rb = {r.id: r for r in records_at(b)}
+    added = [rb[i] for i in rb if i not in ra and not d.is_input_convention(rb[i])]
+    gone = [ra[i] for i in ra if i not in rb and not d.is_input_convention(ra[i])]
+    changed = [(ra[i], rb[i]) for i in ra if i in rb and ra[i].seq != rb[i].seq]
+    by_name_a = {r.name: r for r in ra.values() if r.kind == "parameter"}
+    by_name_b = {r.name: r for r in rb.values() if r.kind == "parameter"}
+    moved = [(by_name_a[n], by_name_b[n]) for n in by_name_a if n in by_name_b and by_name_a[n].value != by_name_b[n].value]
+    m = st.columns(4)
+    m[0].metric("Mulai berlaku", len(added))
+    m[1].metric("Berhenti berlaku", len(gone))
+    m[2].metric("Aturan diubah", len(changed))
+    m[3].metric("Angka berubah", len(moved))
+    for x, y in moved:
+        ui.html(f"<div class='rule'><b>{(x.label_id or x.name).capitalize()}</b>: <span class='diff-old'>{_value(x)}</span>"
+                f" → <span class='diff-new'>{_value(y)}</span> <span class='muted'>({d.short_doc(y.source[0].document)})"
+                f"</span></div>")
+    if added:
+        st.markdown("**Mulai berlaku**")
+        for r in added:
+            if r.kind != "parameter" or r.name not in by_name_a:
+                card(r, show_topic=True)
+    if gone:
+        st.markdown("**Berhenti berlaku**")
+        for r in gone:
+            if r.kind != "parameter" or r.name not in by_name_b:
+                card(r, show_topic=True)
+
+
+def tab_search(recs):
+    q = st.text_input("Cari", placeholder="mis. biaya jabatan, natura, PMK 168, Pasal 17", key="v_q")
+    if not q:
+        st.caption("Cari di nama, rumus, pasal, kutipan, dan nama dokumen.")
         return
-    end = date(2027, 6, 30)
-    fig = go.Figure()
-    for i, r in enumerate(recs):
-        color = ui.REG if r.layer == "regulation" else ui.COMPANY
-        fig.add_trace(go.Scatter(x=[r.valid_from, r.valid_until or end], y=[i, i], mode="lines",
-                                 line=dict(color=color, width=9), hovertext=f"{r.id}<br>{r.produces}",
-                                 hoverinfo="text", showlegend=False))
-        fig.add_trace(go.Scatter(x=[r.recorded_on], y=[i], mode="markers", marker=dict(symbol="diamond", size=9,
-                                 color="#3b3a37"), hovertext=f"dicatat {r.recorded_on}", hoverinfo="text",
-                                 showlegend=False))
-    fig.add_vline(x=t, line_color=ui.REG, line_dash="dash")
-    fig.add_vline(x=omega, line_color=ui.COMPANY, line_dash="dot")
-    fig.update_layout(height=max(320, 22 * len(recs)), margin=dict(l=10, r=10, t=10, b=10),
-                      yaxis=dict(tickvals=list(range(len(recs))), ticktext=[r.id for r in recs], autorange="reversed"),
-                      xaxis=dict(range=[date(2012, 1, 1), end]))
-    st.plotly_chart(fig, width="stretch")
-
-
-@st.cache_data(show_spinner="Menjalankan pemeriksa statis ...")
-def _static(sig, update_id, policy, omega):
-    kb = state.kb_for(update_id, policy)
-    rep = static.check(kb, omega, policies=(policy,) if policy else ())
-    return [{"tingkat": f.severity, "jenis": f.kind, "unsur": ", ".join(f.ids), "fakta": f.fact, "keterangan": f.detail}
-            for f in rep.findings]
-
-
-@st.cache_data(show_spinner="Validasi SHACL (bisa memakan waktu) ...")
-def _shacl(sig, update_id, policy):
-    from pph21kbs.kb import shacl
-    return [{"unsur": str(e), "pesan": m} for e, m in shacl.validate(state.kb_for(update_id, policy))]
-
-
-def tab_quality(update_id, policy, omega):
-    sig = state._signature()
-    rows = _static(sig, update_id, policy, omega)
-    errors = [r for r in rows if r["tingkat"] == "error"]
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Galat statis", len(errors))
-    c2.metric("Peringatan", len(rows) - len(errors))
-    c3.metric("Tanggal ω", f"{omega:%d/%m/%Y}")
-    st.markdown("**Pemeriksa statis (gerbang G3):** aturan mati, aturan yang selalu kalah, konflik lintas lapis")
-    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch", height=300)
-    if st.button("Jalankan validasi SHACL (gerbang G1)", icon=":material/rule:"):
-        v = _shacl(sig, update_id, policy)
-        if v:
-            st.error(f"{len(v)} pelanggaran shape")
-            st.dataframe(pd.DataFrame(v), hide_index=True, width="stretch")
-        else:
-            st.success("Semua shape SHACL terpenuhi.")
-
-
-@st.cache_resource(show_spinner="Membangun graf RDF ...")
-def _dataset(sig, update_id, policy):
-    return rdf.to_dataset(state.kb_for(update_id, policy))
-
-
-def tab_sparql(update_id, policy):
-    st.markdown("Kueri SPARQL atas *knowledge graph* (satu *named graph* per pembaruan).")
-    preset = st.selectbox("Kueri contoh", list(PRESETS), key="s_preset")
-    q = st.text_area("Kueri", PRESETS[preset], height=200, key=f"s_q_{preset}")
-    if st.button("Jalankan", icon=":material/play_arrow:"):
-        ds = _dataset(state._signature(), update_id, policy)
-        try:
-            res = ds.query(q)
-            rows = [{str(v): (str(row[i]).rsplit("/", 1)[-1] if row[i] is not None else "") for i, v in enumerate(res.vars)}
-                    for row in res]
-            st.caption(f"{len(rows)} baris")
-            st.dataframe(pd.DataFrame(rows[:1000]), hide_index=True, width="stretch")
-        except Exception as e:  # noqa: BLE001 - shown to the user
-            st.error(f"{type(e).__name__}: {e}")
-
-
-def tab_export(update_id, policy):
-    kb = state.kb_for(update_id, policy)
-    st.markdown("Unduh *knowledge base* versi terpilih sebagai TriG (RDF), beserta ontologi dan *shapes* SHACL. "
-                "Bisa dibuka di Protégé (ontologi) atau GraphDB / Apache Jena Fuseki (graf dan SPARQL).")
-    if st.button("Siapkan TriG", icon=":material/data_object:"):
-        buf = io.BytesIO()
-        ds = _dataset(state._signature(), update_id, policy)
-        buf.write(ds.serialize(format="trig").encode("utf-8"))
-        st.download_button("Unduh knowledge base (.trig)", buf.getvalue(), f"kb_{update_id or 'kini'}.trig",
-                           "application/trig", icon=":material/download:")
-    for name in ("ontology.ttl", "shapes.ttl"):
-        path = state.ROOT / "system" / "ontology" / name
-        st.download_button(f"Unduh {name}", path.read_bytes(), name, "text/turtle", key=f"dl_{name}")
-    st.caption(f"Sidik jari versi: `{kb.fingerprint()[:16]}` · {len(kb.records)} rekaman · {len(kb.updates)} pembaruan")
+    ql = q.lower()
+    hits = []
+    for r in recs:
+        hay = " ".join([r.id, getattr(r, "label_id", "") or "", getattr(r, "name", "") or "",
+                        d.fact_label(getattr(r, "produces", "") or "") if getattr(r, "produces", None) else "",
+                        d.expr_text(getattr(r, "expression", "") or "")]
+                       + [f"{s.document} {d.doc_title(s.document)} {s.provision} {s.quote}" for s in r.source])
+        if ql in hay.lower():
+            hits.append(r)
+    st.caption(f"{len(hits)} hasil")
+    for r in hits[:40]:
+        card(r, show_topic=True)
 
 
 def show():
+    st.session_state.page_ctx = "kb"
     st.title("Penampil knowledge base")
-    t, omega, update_id, policy = _period_controls("v")
-    kb = state.kb_for(update_id, policy)
-    view = kb.view(omega)
-    m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Rekaman efektif", len(view.records))
-    m2.metric("Aturan", len(view.rules))
-    m3.metric("Tabel", sum(len(v) for v in view.tables.values()))
-    m4.metric("Pembaruan", len(kb.updates))
-    tabs = st.tabs(["Graf", "Aturan", "Tabel", "Timeline", "Kualitas", "SPARQL", "Ekspor"])
+    mode = st.segmented_control("Tampilan", ["Isi KB", "Sistem knowledge base (teknis)"], default="Isi KB",
+                                key="v_mode", label_visibility="collapsed") or "Isi KB"
+    technical = mode != "Isi KB"
+    if technical:
+        g.md(f"Cara sistem menyimpan dan memakai pengetahuan: {g.term('knowledge graph')} {g.term('RDF')} yang "
+             f"{g.term('bitemporal')} dan {g.term('dua lapis')}, {g.term('ontologi')}, pemeriksaan, versi per "
+             f"{g.term('named graph')}, dan {g.term('jejak')} engine. Semua dari KB yang dipakai sekarang.")
+    else:
+        g.md(f"Apa yang diketahui sistem tentang PPh 21: {g.term('aturan')}, {g.term('parameter', 'angka')}, dan "
+             f"{g.term('tabel')}, masing-masing dengan {g.term('berlaku', 'tanggal berlaku')} dan {g.term('sumber')} "
+             "pasalnya.")
+    c1, c2 = st.columns([1, 3])
+    t = c1.date_input("Tampilkan yang berlaku pada", d.TODAY, key="v_t", help=g.tip("berlaku"))
+    st.session_state.g_date = t
+    recs = records_at(t)
+    visible = [r for r in recs if not d.is_input_convention(r)]
+    docs = {s.document for r in visible for s in r.source}
+    with c2:
+        m = st.columns(4)
+        m[0].metric("Aturan", sum(r.kind == "rule" for r in visible), help=g.tip("aturan"))
+        m[1].metric("Angka", sum(r.kind == "parameter" for r in visible), help=g.tip("parameter"))
+        m[2].metric("Tabel", sum(r.kind == "table" for r in visible), help=g.tip("tabel"))
+        m[3].metric("Dokumen sumber", len(docs), help=g.tip("sumber"))
+    if technical:
+        viewer_tech.show(t, recs)
+        return
+    tabs = st.tabs(["Peta topik", "Alur perhitungan", "Angka dari waktu ke waktu", "Riwayat perubahan",
+                    "Bandingkan dua tanggal", "Cari", "Data yang dibutuhkan", "Kebijakan perusahaan"])
     with tabs[0]:
-        tab_graph(view, t, omega)
+        tab_topics(recs, t)
     with tabs[1]:
-        tab_rules(kb, view, t, omega)
+        tab_flow(recs, t)
     with tabs[2]:
-        tab_tables(view)
+        tab_numbers()
     with tabs[3]:
-        tab_timeline(kb, view, t, omega)
+        tab_history()
     with tabs[4]:
-        tab_quality(update_id, policy, omega)
+        tab_compare()
     with tabs[5]:
-        tab_sparql(update_id, policy)
+        tab_search(recs)
     with tabs[6]:
-        tab_export(update_id, policy)
+        tab_inputs(t)
+    with tabs[7]:
+        tab_policies()
+
+
+def tab_policies():
+    g.md(f"{g.term('kebijakan perusahaan', 'Kebijakan perusahaan')} yang terpasang di knowledge base. Dipakai kalkulator "
+         "bila dipilih." + (" Di keadaan awal demo belum ada; setujui SP14 di Manajemen KB." if store.DEMO else ""))
+    pols = store.installed_policies()
+    if not pols:
+        st.caption("Belum ada kebijakan perusahaan terpasang.")
+        return
+    pick = st.selectbox("Kebijakan", list(pols), key="v_pol", format_func=lambda i: f"{i} · {pols[i]}")
+    for r in d.kb().view(store.TODAY).rules.values():
+        if r.layer == "company" and r.policy == pick:
+            src = r.source[0] if r.source else None
+            ui.html(f"<div class='rule company'>{ui.badge('perusahaan', 'orange')}<b>{d.fact_label(r.produces)}</b><br>"
+                    f"<b>Rumus:</b> {d.readable(r.expression)}<br><span class='muted'>Berlaku: {_period(r)}"
+                    f"{' · ' + src.provision if src else ''}</span>"
+                    + (f"<div class='quote'>“{src.quote}”</div>" if src else "") + "</div>")
+
+
+def tab_inputs(t):
+    g.md("Data yang ditanyakan kalkulator, langsung dari aturan yang berlaku pada tahun itu. Saat peraturan atau kebijakan "
+         "perusahaan baru membaca data baru, data itu muncul di sini dan menjadi kolom di kalkulator tanpa mengubah "
+         "program.")
+    pols = store.installed_policies()
+    policy = st.selectbox("Dengan kebijakan perusahaan", [None] + list(pols), key="v_in_pol",
+                          format_func=lambda p: "Tidak ada" if p is None else f"{p} · {pols[p]}")
+    found = inputs.discover(t.year, policy)
+    group = {"income": "Penghasilan per bulan", "benefit": "Natura per bulan", "hr": "Data HR per bulan",
+             "zakat": "Penghasilan per bulan", "employee": "Data pegawai", "employer": "Data perusahaan",
+             "case": "Data pegawai"}
+    rows = [{"Data": inputs.label(k), "Kelompok": group[k.split(".")[0]],
+             "Dari": "kebijakan perusahaan" if e["layer"] == "company" else "peraturan",
+             "Bulan": "semua" if len(e["months"]) == 12 else f"{d.MON[e['months'][0] - 1]}–{d.MON[e['months'][-1] - 1]}",
+             "Dibaca oleh": ", ".join(e["rules"][:3]) + (" ..." if len(e["rules"]) > 3 else ""),
+             "Definisi": (inputs.definition(k) or {}).get("origin", "belum ada")} for k, e in found.items()]
+    st.dataframe(pd.DataFrame(rows).sort_values(["Kelompok", "Data"]), hide_index=True, width="stretch")
+    st.caption("Definisi data (label dan penjelasan input) disimpan di berkas kb_ext/ yang ikut pembaruan, belum sebagai unsur "
+            "knowledge base bersama aturan yang pertama kali membacanya.")

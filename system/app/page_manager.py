@@ -1,553 +1,777 @@
-"""Knowledge base management: inbox and the acquisition pipeline step by step (replay of a stored run, or a live run
-with the LLM), review and approval, a manual Delta, the company policy editor, and the version history."""
-import csv
+"""Knowledge base management: new documents with the AI's real work from the research runs, review (approve, edit,
+ask the AI to fix with your notes, reject), add / change / revoke by hand or by asking the AI, company policies,
+knowledge base check, and version history. Everything is kept in the demo workspace and undone by Reset.
+"""
 import json
-import re
-from datetime import date
+from datetime import date, timedelta
 
 import pandas as pd
 import streamlit as st
 
-import state
-import widgets as ui
-from kb_context import base_for
-from pph21kbs import corpus, static
-from pph21kbs.corpus import Event
-from pph21kbs.engine import evaluate_case
+import ai
+import assistant
+import data as d
+import drafts
+import employee as emp
+import glossary as g
+import inputs
+import store
+import ui
+from pph21kbs import static
 from pph21kbs.kb import apply_delta
 from pph21kbs.kb.delta import validate_delta_json
-from pph21kbs.kb.model import Rule
-from pph21kbs.text import TEXT_DIR, registry
 
-PARTS = {"uji": "Peristiwa uji (regulasi nyata 2023–2026)", "pengecoh": "Pengecoh", "pengembangan": "Pengembangan",
-         "fiktif": "Regulasi fiktif", "kontrafaktual": "Kontrafaktual", "uji_kebijakan": "PKB nyata",
-         "sintetis": "Kebijakan buatan"}
-GATES = ("G1", "G2", "G3", "G4", "G5")
-GATE_NAMES = {"G1": "skema + SHACL", "G2": "kutipan, angka, tanggal", "G3": "pemeriksa statis",
-              "G4": "regresi masa lalu", "G5": "setiap unsur berefek"}
+STATUS = {"review": ("Siap direview", "blue"), "ragu": ("Sistem ragu", "yellow"), "tidak relevan": ("Tidak relevan", "grey"),
+          "disetujui": ("Disetujui", "green"), "ditolak": ("Ditolak", "red"), "menunggu AI": ("Menunggu AI", "grey"),
+          "anggaran habis": ("Anggaran habis", "red")}
+GATES = {"G1": "Format dan struktur benar", "G2": "Kutipan, angka, dan tanggal ada di dokumen",
+         "G3": "Tidak bertabrakan dengan aturan lain", "G4": "Hitungan masa lalu tidak berubah",
+         "G5": "Setiap bagian usulan berpengaruh"}
 
 
-def _part(e):
-    if e.layer == "company":
-        return "uji_kebijakan" if e.part == "uji" else ("sintetis" if e.part == "sintetis" else e.part)
-    return e.part
+def _title(pid):
+    p = store.pending_by_id().get(pid)
+    return d.doc_title(p["doc"]) if p else pid
 
 
-def _scores(run, event_id):
-    path = state.EXPERIMENTS / run / "scores.csv"
-    if not path.exists():
-        return None
-    for r in csv.DictReader(open(path, encoding="utf-8")):
-        if r["event"] == event_id and r["condition"] == "proposed":
-            return r
-    return None
+# ---------------------------------------------------------------- new documents
+def _ai_steps(pid, stat):
+    r = store.run(pid)
+    n = len(r.get("candidates", [])) if r else 0
+    passed = sum(1 for c in (r or {}).get("candidates", []) if c.get("passed"))
+    groups = (r or {}).get("groups") or []
+    steps = [("Baca teks", "done")]
+    if stat == "tidak relevan":
+        return steps + [("Cek relevan: tidak relevan", "skip")]
+    steps += [("Cek relevan", "done"), (f"Susun {n} versi usulan", "done"), (f"Pemeriksaan: {passed}/{n} lolos", "done")]
+    if stat == "ragu":
+        return steps + [(f"Cek kesepakatan: {len(groups)} kelompok berbeda", "skip")]
+    steps.append((f"Cek kesepakatan: {max(map(len, groups)) if groups else 0}/{passed} sama", "done"))
+    label = {"disetujui": ("Disetujui", "done"), "ditolak": ("Ditolak", "fail")}.get(stat, ("Review Anda", "now"))
+    return steps + [label]
 
 
-def _elements_frame(delta):
+def _ai_detail(pid):
+    r = store.run(pid)
+    rel = (r.get("relevance") or {}).get("output") or {}
+    st.markdown(f"**Alasan AI soal relevansi** (ditulis AI dalam bahasa Inggris): _{rel.get('reason', '-')}_")
+    sel = r.get("selection") or {}
+    st.caption("Bagian dokumen yang dibaca: " + ", ".join(f"{k} ({v.get('tokens', 0):,} token)".replace(",", ".")
+                                                          for k, v in sel.items()))
     rows = []
-    for op in ("add", "change", "remove"):
-        for e in delta.get(op, []):
-            content = e.get("expression") or e.get("value") or e.get("assertion") or ""
-            if e.get("kind") == "table":
-                content = f"{len(e.get('rows') or [])} baris" if e.get("rows") else json.dumps(e.get("rows_ref"))
-            rows.append({"operasi": op, "jenis": e.get("kind", "hapus"), "id": e["id"], "menghasilkan": e.get("produces", ""),
-                         "isi": str(content)[:160], "syarat": e.get("condition") or "", "berlaku dari": e.get("valid_from", ""),
-                         "sampai": e.get("valid_until") or "", "sumber": "; ".join(f"{s.get('document')} {s.get('provision')}"
-                                                                                  for s in e.get("source") or [])})
-    return pd.DataFrame(rows)
-
-
-def _gate_cell(log, g):
-    v = (log or {}).get(g)
-    if v is None:
-        return ui.pill("–", "na")
-    return ui.pill("lolos", "ok") if str(v).startswith("pass") else ui.pill("gagal", "no")
-
-
-def render_run(res, ev, run=None):
-    """The eight pipeline steps of one result record."""
-    st.markdown("<div class='step'>1 · Dokumen dan segmen terpilih</div>", unsafe_allow_html=True)
-    for doc, s in (res.get("selection") or {}).items():
-        st.markdown(f"`{doc}` · {s.get('tokens')} token terpilih · {len(s.get('dropped') or [])} segmen dibuang karena anggaran")
-    rel = (res.get("relevance") or {}).get("output") or {}
-    st.markdown("<div class='step'>2 · Relevansi dan kutipan</div>", unsafe_allow_html=True)
-    if rel:
-        c1, c2 = st.columns([1, 2])
-        c1.markdown(("✅ relevan" if rel.get("relevant") else "⛔ tidak relevan") + f"  \nlapis: {rel.get('layer', '')}  \n"
-                    f"berlaku: {rel.get('effective_from') or '-'} s.d. {rel.get('effective_until') or '-'}  \n"
-                    f"kutipan ditemukan: {'ya' if (res.get('relevance') or {}).get('quotes_ok') else 'tidak'}")
-        c2.markdown(f"*{rel.get('reason', '')}*")
-        for q in rel.get("quotes") or []:
-            c2.caption(f"{q.get('provision')}: “{q.get('quote')}”")
-    else:
-        st.info("Tidak ada keluaran relevansi.")
-    cands = res.get("candidates") or []
-    if not cands:
-        st.markdown(f"**Status: {res.get('status')}** (tidak ada kandidat; dokumen dinilai tidak relevan atau anggaran habis)")
-        return
-    st.markdown("<div class='step'>3 · Kandidat pembaruan dari LLM</div>", unsafe_allow_html=True)
-    tabs = st.tabs([f"Kandidat {c['n']}" + (" (diperbaiki)" if c.get("repaired") else "") for c in cands])
-    for tab, c in zip(tabs, cands):
-        with tab:
-            if c.get("delta"):
-                st.dataframe(_elements_frame(c["delta"]), hide_index=True, width="stretch")
-                with st.expander("JSON Δ"):
-                    st.json(c["delta"], expanded=False)
-            else:
-                st.warning(f"Tidak dapat dibaca sebagai Δ: {c.get('error', '')[:300]}")
-    st.markdown("<div class='step'>4 · Gerbang verifikasi (percobaan pertama → sesudah perbaikan)</div>",
-                unsafe_allow_html=True)
-    head = "<tr><th>Gerbang</th>" + "".join(f"<th>Kandidat {c['n']}</th>" for c in cands) + "</tr>"
-    body = ""
-    for g in GATES:
-        body += f"<tr><td><b>{g}</b> <span class='muted'>{GATE_NAMES[g]}</span></td>"
-        for c in cands:
-            first, final = _gate_cell(c.get("first_gate_log"), g), _gate_cell(c.get("gate_log"), g)
-            body += f"<td>{first}{' → ' + final if c.get('repaired') else ''}</td>"
-        body += "</tr>"
-    st.markdown(f"<div class='card'><table style='width:100%'>{head}{body}</table></div>", unsafe_allow_html=True)
-    with st.expander("Pesan gerbang"):
-        for c in cands:
-            msgs = {g: v for g, v in (c.get("gate_log") or {}).items() if str(v).startswith("fail")}
-            st.markdown(f"**Kandidat {c['n']}**: " + ("semua lolos" if c.get("passed") else ""))
-            for g, v in msgs.items():
-                st.caption(f"{g}: {v[:600]}")
-    st.markdown("<div class='step'>5 · Ruang uji gerbang S<sup>G</sup></div>", unsafe_allow_html=True)
-    st.markdown(" · ".join(f"kandidat {c['n']}: {c.get('sg_size', 0)} kasus" for c in cands))
-    st.markdown("<div class='step'>6 · Konsensus perilaku</div>", unsafe_allow_html=True)
-    groups = res.get("groups") or []
-    st.markdown(f"Kelompok perilaku: `{groups}` → **{res.get('status')}**"
-                + (f", kandidat terpilih {res.get('selected')}" if res.get("selected") else ""))
-    ui.note("Kandidat yang lolos semua gerbang dikelompokkan menurut hasil hitungnya; kelompok terbesar menang, seri = "
-            "abstain (sistem menahan diri).")
-    if run:
-        sc = _scores(run, ev.id)
-        if sc:
-            word = {"benar": "✅ benar", "salah": "❌ salah", "abstain": "⏸ abstain"}[sc["outcome"]]
-            st.markdown(f"**Penilaian penelitian (ruang uji S<sup>E</sup>)**: {word}"
-                        + (f" · {sc['wrong_tuples']} dari {sc['tuples']} tupel salah" if sc["outcome"] == "salah" else ""),
-                        unsafe_allow_html=True)
-    st.markdown("<div class='step'>7 · Pembaruan terpilih dan dampak lintas lapis</div>", unsafe_allow_html=True)
-    if res.get("delta"):
-        d = res["delta"]
-        st.dataframe(_elements_frame(d), hide_index=True, width="stretch")
-        if st.button("Hitung dampak terhadap kebijakan perusahaan", key=f"impact_{ev.id}_{run}",
-                     icon=":material/account_tree:"):
-            _impact(ev, d)
-        if st.button("Kirim ke review", type="primary", key=f"send_{ev.id}_{run}", icon=":material/send:"):
-            st.session_state.review = {"delta": d, "event": ev.id, "from": run or "jalan langsung"}
-            st.success("Dikirim ke tab Review.")
-    else:
-        st.info("Tidak ada pembaruan yang diterapkan (abstain atau Δ kosong).")
-
-
-def _impact(ev, delta):
-    from pph21kbs import impact
-    from pph21kbs.kb import graphdb
-    base, _ = base_for(ev, state.kb())
-    try:
-        kb2 = apply_delta(base, dict(delta, delta_id="APP-IMPACT"))
-    except Exception as e:  # noqa: BLE001
-        st.error(f"Δ tidak dapat diterapkan pada basisnya: {e}")
-        return
-    remote = graphdb.available()
-    if not remote:
-        st.warning("GraphDB tidak aktif; kueri dijalankan di memori dan bisa lambat.")
-    pols = state.policy_deltas()
-    rows = []
-    with st.spinner("Menjalankan detektor dampak (SPARQL) ..."):
-        for pid, pd_ in pols.items():
-            try:
-                kp = apply_delta(kb2, pd_)
-                det = impact.detect(kp, "APP-IMPACT", [pid], ev.issued, remote=remote)[pid]
-            except Exception:  # noqa: BLE001 - policy outside the base's period
-                continue
-            if det["kinds"]:
-                rows.append({"kebijakan": pid, "jenis dampak": "".join(sorted(det["kinds"])),
-                             "aturan perusahaan": ", ".join(sorted({h[1] for h in det["hits"]}))[:120]})
+    for c in r.get("candidates", []):
+        log = c.get("gate_log") or {}
+        rows.append({"Versi": c.get("n"), "Lolos": "ya" if c.get("passed") else "tidak",
+                     "Diperbaiki otomatis": "ya" if c.get("repaired") else "-",
+                     **{GATES[k]: ("✓" if log.get(k) == "pass" else "✗" if log.get(k) else "-") for k in GATES},
+                     "Catatan": (c.get("error") or "")[:80]})
     if rows:
         st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
-        st.caption("(a) aturan kebijakan membaca fakta yang berubah; (b) menghasilkan fakta yang juga diatur Δ; "
-                   "(c) bertentangan dengan aturan wajib baru.")
-    else:
-        st.success("Tidak ada kebijakan perusahaan yang terdampak.")
+    groups = r.get("groups") or []
+    if groups:
+        st.caption("Versi yang hasil hitungnya sama: " + " · ".join("versi " + ", ".join(map(str, g_)) for g_ in groups)
+                   + f". Dipilih: versi {r.get('selected') or '-'}. Biaya AI: USD {r.get('cost_usd', 0):.2f}.")
 
 
-def _upload_event(file, title, issued, layer, force_ocr=False):
-    """The uploaded document as an event of the inbox. A PDF is extracted with Docling (text layer, OCR for scanned
-    pages, tables), in the locked-text format of the corpus; its tables go to tabel/*.csv, where the pipeline offers
-    them to the LLM for rows_ref."""
-    import shutil
-
-    import build_texts
-    from pph21kbs import pdf_extract
-    doc_id = "UPLOAD-" + re.sub(r"[^A-Za-z0-9]+", "-", title).strip("-").upper()[:40]
-    folder = TEXT_DIR / doc_id
-    shutil.rmtree(folder, ignore_errors=True)                       # a new upload under the same title
-    folder.mkdir(parents=True)
-    if file.name.lower().endswith(".pdf"):
-        source = folder / "sumber.pdf"
-        source.write_bytes(file.getvalue())
-        with st.spinner(f"Docling mengekstrak PDF: tata letak, tabel, OCR {pdf_extract.ocr_engine()} "
-                        "(sekitar 5 detik per halaman) ..."):
-            ext = pdf_extract.extract(source, force_ocr=force_ocr)
-        pdf_extract.write(ext, folder)
-        raw = ext.text()
-    else:
-        raw = file.read().decode("utf-8", errors="replace")
-        if "=== PDF hlm." not in raw:
-            raw = "=== PDF hlm. 1 ===\n" + raw
-        (folder / "teks.txt").write_text(raw, encoding="utf-8")
-    (folder / "segmen.json").write_text(json.dumps(build_texts.segment(raw, layer == "company"), ensure_ascii=False),
-                                        encoding="utf-8")
-    registry()[doc_id] = {"id": doc_id, "event": doc_id, "role": "upload", "issued": issued.isoformat(), "title": title,
-                          "files": ""}
-    from pph21kbs import text
-    for cached in (text.pages, text.normalized, text.segments):     # a new upload under the same title
-        cached.cache_clear()
-    return Event(doc_id, "unggahan", True, (doc_id,), issued, None, None, "", layer, title)
-
-
-def _upload_preview(ev):
-    from pph21kbs import text
-    pages = text.pages(ev.document)
-    chars = sum(len(t.strip()) for _, t in pages)
-    segs = text.segments(ev.document)
-    tables = sorted((TEXT_DIR / ev.document / "tabel").glob("*.csv"))
-    st.caption(f"{len(pages)} halaman · {chars:,} karakter teks · {len(segs)} segmen (pasal/lampiran) · "
-               f"{len(tables)} tabel".replace(",", "."))
-    if chars < 40 * max(1, len(pages)):              # under ~40 characters a page, even after OCR
-        st.warning("Teks yang terambil sangat sedikit, juga setelah OCR. Periksa kualitas pindaian, atau unggah ulang "
-                   "dengan 'Paksa OCR semua halaman'.", icon=":material/document_scanner:")
-    with st.expander("Pratinjau teks"):
-        st.text("\n".join(t for _, t in pages)[:4000])
-    if tables:
-        with st.expander(f"Tabel hasil ekstraksi ({len(tables)})"):
-            name = st.selectbox("Tabel", [p.stem for p in tables], key="up_table",
-                                help="Nama T<halaman>-<urutan>. Pipeline menawarkan tabel ini ke LLM untuk rows_ref.")
-            st.dataframe(pd.read_csv(TEXT_DIR / ev.document / "tabel" / f"{name}.csv", dtype=str),
-                         hide_index=True, width="stretch")
-
-
-def _live_run(ev):
-    from pph21kbs.pipeline import llm
-    from pph21kbs.pipeline.run import Config, run_document
-    base, _ = base_for(ev, state.kb()) if not ev.part == "unggahan" else (state.kb(), ev.issued)
-    ledger = llm.Ledger("app-demo", run_limit_usd=3.0)
-    client = llm.AnthropicClient(ledger)
-    policies = (ev.document,) if ev.layer == "company" else ()
-    with st.spinner("LLM membaca dokumen dan menyusun kandidat (beberapa menit) ..."):
-        res = run_document(ev, base, client, ledger, Config(m=3), run_id="app-demo",
-                           out_dir=state.WORKSPACE / "runs", policies=policies)
-    st.session_state.live = {ev.id: res}
-    return res
-
-
-def tab_inbox():
-    source = st.radio("Sumber dokumen", ("Korpus penelitian", "Unggah dokumen (PDF atau .txt)"), horizontal=True,
-                      key="ib_src")
-    ev = None
-    if source.startswith("Korpus"):
-        events = state.events()
-        parts = [p for p in PARTS if any(_part(e) == p for e in events)]
-        c1, c2 = st.columns([1, 2.5])
-        part = c1.selectbox("Kelompok", parts, format_func=PARTS.get, key="ib_part")
-        group = [e for e in events if _part(e) == part]
-        reg = registry()
-        ev = c2.selectbox("Dokumen", group, key="ib_event",
-                          format_func=lambda e: f"{e.id} · {reg.get(e.document, {}).get('title', e.title)[:90]}")
-    else:
-        with st.form("upload"):
-            f = st.file_uploader("Dokumen peraturan atau kebijakan (PDF, juga hasil pindai, atau .txt)",
-                                 type=["pdf", "txt"],
-                                 help="PDF diekstrak dengan Docling: teks per halaman, OCR untuk halaman pindaian, "
-                                      "dan struktur tabel.")
-            c1, c2, c3 = st.columns([2, 1, 1])
-            title = c1.text_input("Judul", "Peraturan baru")
-            issued = c2.date_input("Tanggal terbit", state.TODAY)
-            layer = c3.selectbox("Lapis", ("regulation", "company"))
-            force_ocr = st.checkbox("Paksa OCR semua halaman", False,
-                                    help="Untuk PDF yang lapisan teksnya rusak (teks terambil kacau).")
-            if st.form_submit_button("Masukkan ke kotak masuk") and f:
-                st.session_state.upload_event = _upload_event(f, title, issued, layer, force_ocr)
-        ev = st.session_state.get("upload_event")
-        if ev is None:
-            st.info("Unggah dokumen untuk diproses. Dokumen unggahan hanya bisa dijalankan langsung dengan LLM.")
+def _upload_form(s):
+    with st.container(border=True):
+        st.markdown("**Unggah dokumen**")
+        with st.form("mg_upload", clear_on_submit=True, border=False):
+            up = st.file_uploader("PDF, TXT, atau JSON", type=["pdf", "txt", "json"], key="mg_up",
+                                  help="PDF/TXT dibaca AI lalu diusulkan menjadi pembaruan. PDF hasil pindai dibaca "
+                                       "dengan OCR. JSON adalah pembaruan yang sudah jadi: langsung masuk Review.")
+            c1, c2, c3 = st.columns([2.2, 1, 1.3])
+            title = c1.text_input("Judul dokumen", placeholder="mis. PMK 12/2027 tentang ...")
+            issued = c2.date_input("Tanggal terbit", store.TODAY, help=g.tip("dicatat"))
+            kind = c3.radio("Isi dokumen", ("regulasi", "kebijakan"), horizontal=True,
+                            format_func={"regulasi": "Peraturan negara", "kebijakan": "Kebijakan perusahaan"}.get,
+                            help=g.tip("regulasi") + "\n\n" + g.tip("kebijakan perusahaan"))
+            ocr = st.checkbox("Baca ulang semua halaman dengan OCR", help="Untuk PDF yang teksnya terambil kacau.")
+            sent = st.form_submit_button("Masukkan ke daftar dokumen", type="primary", icon=":material/upload:")
+        if not (sent and up):
             return
-        _upload_preview(ev)
-    st.markdown(f"**{ev.id}** · terbit {ev.issued} · lapis {ev.layer} · dokumen {', '.join(ev.documents)}")
-    runs = state.stored_runs(ev.id)
-    modes = (["Putar ulang jalan tersimpan"] if runs else []) + ["Jalankan LLM sekarang"]
-    mode = st.radio("Mode", modes, horizontal=True, key="ib_mode")
-    if mode.startswith("Putar"):
-        run = st.selectbox("Jalan eksperimen", list(runs), key="ib_run",
-                           help="Hasil yang tersimpan dari eksperimen penelitian; tidak memanggil API.")
-        res = state.load_json(runs[run])
-        st.caption(f"Biaya jalan ini saat dijalankan: USD {res.get('cost_usd', 0):.3f}")
-        render_run(res, ev, run)
+        if up.name.lower().endswith(".json"):
+            try:
+                delta = json.loads(up.getvalue())
+                validate_delta_json(delta)
+                store.add_draft(delta["delta_id"], (delta.get("document") or {}).get("title", up.name), delta,
+                                "unggah JSON")
+                st.success("Pembaruan JSON valid dan masuk ke Review.")
+            except Exception as e:  # noqa: BLE001
+                st.error(f"JSON tidak bisa dipakai: {str(e)[:250]}")
+            return
+        if not title.strip():
+            st.error("Isi judul dokumen dulu.")
+            return
+        with st.spinner("Membaca teks dokumen (PDF: tata letak, tabel, dan OCR; sekitar 5 detik per halaman) ..."):
+            item = ai.upload(up, title.strip(), issued, kind, force_ocr=ocr)
+        store.add_inbox(item)
+        st.success("Dokumen masuk daftar. Periksa teksnya, lalu jalankan AI.")
+
+
+def _waiting(p):
+    """An uploaded document the AI has not read yet: its text, and the button that runs the AI."""
+    pages, tables = ai.text_stats(p)
+    chars = sum(len(t.strip()) for _, t in pages)
+    st.caption(f"{len(pages)} halaman · {chars:,} karakter · {len(tables)} tabel · terbit "
+               f"{d.tgl(date.fromisoformat(p['issued']))}".replace(",", "."))
+    if chars < 40 * max(1, len(pages)):
+        st.warning("Teks yang terambil sangat sedikit. Periksa hasil pindaian, atau unggah ulang dengan OCR.",
+                   icon=":material/document_scanner:")
+    with st.expander("Lihat teks yang akan dibaca AI"):
+        st.text("\n".join(t for _, t in pages)[:4000])
+    ok, why = ai.ready("akuisisi")
+    c1, c2 = st.columns([1, 2])
+    m = c1.radio("Jumlah versi usulan", (3, 1), horizontal=True, key=f"mg_m_{p['id']}",
+                 help=g.tip("versi usulan") + " Satu versi lebih murah, tetapi tanpa cek kesepakatan.")
+    c2.caption(f"Claude ({ai.llm.MAIN_MODEL}) membaca dokumen dengan alur penelitian: relevansi, versi usulan, "
+               f"pemeriksaan G1–G5, satu putaran perbaikan, cek kesepakatan. Perkiraan USD 0,1–0,9 per dokumen "
+               f"(3 versi). {ai.budget_text('akuisisi')}")
+    if not ok:
+        st.warning(f"AI tidak bisa dijalankan: {why}.", icon=":material/payments:")
+        return
+    sure = st.checkbox("Saya paham ini memakai kredit API", key=f"mg_ok_{p['id']}")
+    if st.button("Jalankan AI", type="primary", icon=":material/smart_toy:", key=f"mg_run_{p['id']}", disabled=not sure):
+        with st.spinner("AI membaca dokumen dan menyusun usulan (beberapa menit) ..."):
+            try:
+                res = ai.read(p, m=m)
+                st.toast(f"Selesai. Biaya USD {res.get('cost_usd', 0):.3f}.")
+            except Exception as e:  # noqa: BLE001 - shown to the user
+                st.error(f"AI gagal: {type(e).__name__}: {str(e)[:300]}")
+                return
+        st.rerun()
+
+
+def tab_documents():
+    s = store.load()
+    _upload_form(s)
+    items = store.pending(s)
+    if not items:
+        st.caption("Belum ada dokumen. Unggah peraturan atau kebijakan perusahaan di atas.")
+        return
+    presenter = store.DEMO and st.toggle(
+        "Tampilkan catatan untuk presenter", key="mg_presenter",
+        help="Menampilkan hasil penelitian untuk setiap dokumen. Matikan saat demo agar penonton menilai sendiri.")
+    for p in reversed(items):
+        stat = store.status(p["id"], s)
+        label, colour = STATUS.get(stat, (stat, "grey"))
+        reg = p["kind"] == "regulasi"
+        with st.container(border=True):
+            ui.html(f"{ui.badge(label, colour)}"
+                    f"{ui.badge('peraturan negara' if reg else 'kebijakan perusahaan', 'blue' if reg else 'orange')}"
+                    f"<b>{_title(p['id'])}</b>" + (" <span class='muted'>· unggahan</span>" if p.get("upload") else ""))
+            if stat == "menunggu AI":
+                _waiting(p)
+                continue
+            ui.flow(_ai_steps(p["id"], stat))
+            if presenter and p.get("research"):
+                st.caption(f"Catatan presenter · hasil di penelitian: **{p['research']}**. {p['why']}")
+            if p.get("cost_usd"):
+                st.caption(f"Biaya AI dokumen ini: USD {p['cost_usd']:.3f}")
+            c1, c2, c3 = st.columns(3)
+            if stat == "review" and c1.button("Review", key=f"rv_{p['id']}", icon=":material/rate_review:",
+                                              width="stretch"):
+                st.session_state.mg_open = p["id"]
+                st.toast("Buka tab Review.")
+            if stat in ("ragu", "anggaran habis"):
+                g.md(f"Versi-versi usulan AI tidak sepakat, jadi sistem {g.term('ragu')} dan tidak menebak."
+                     if stat == "ragu" else "AI berhenti karena batas anggaran tercapai.")
+                if p.get("upload"):
+                    if c1.button("Jalankan AI lagi", key=f"redo_{p['id']}", icon=":material/smart_toy:",
+                                 width="stretch", disabled=not ai.ready("akuisisi")[0], help=ai.budget_text("akuisisi")):
+                        with st.spinner("AI membaca ulang dokumen ..."):
+                            ai.read(p)
+                        st.rerun()
+                elif c1.button("Minta AI mengerjakan ulang (simulasi)", key=f"redo_{p['id']}",
+                               icon=":material/smart_toy:", width="stretch",
+                               help="Demo: hasilnya jawaban acuan penelitian, tanpa memanggil API."):
+                    ref = store.gold_delta(p["id"])
+                    store.add_draft(p["id"], _title(p["id"]), ref, "jawaban acuan penelitian (simulasi)")
+                    st.session_state.mg_open = p["id"]
+                    st.rerun()
+                if c2.button("Kerjakan manual", key=f"man_{p['id']}", icon=":material/edit:", width="stretch"):
+                    st.toast("Tulis aturannya di tab Kebijakan perusahaan atau Tambah, ubah, cabut.")
+            if stat == "tidak relevan":
+                g.md(f"AI menilai dokumen ini tidak {g.term('relevan')} untuk PPh 21 pegawai tetap. Tidak ada yang berubah.")
+            if store.run(p["id"]):
+                with st.expander("Lihat pekerjaan AI"):
+                    _ai_detail(p["id"])
+
+
+# ---------------------------------------------------------------- review
+def _prev(rec_id, kb):
+    found = [r for r in kb.records if r.id == rec_id]
+    return max(found, key=lambda r: r.seq) if found else None
+
+
+def _iso(x):
+    return d.tgl(date.fromisoformat(str(x))) if x else "-"
+
+
+def card(el, kb):
+    kind = el.get("kind")
+    src = (el.get("source") or [{}])[0]
+    quote = f"<div class='quote'>“{src.get('quote', '')}” · {src.get('provision', '')}</div>"
+    period = f"berlaku {_iso(el.get('valid_from'))}" + (f" s.d. {_iso(el['valid_until'])}" if el.get("valid_until") else "")
+    old = _prev(el["id"], kb)
+    if kind == "parameter":
+        title = (el.get("label_id") or d.fact_label(el.get("name", ""))).capitalize()
+        same = [r for r in kb.records if r.kind == "parameter" and r.name == el.get("name") and r.id != el["id"]]
+        ref = old or (max(same, key=lambda r: r.valid_from) if same else None)
+        fmt = lambda v, t: d.money(int(float(v))) if t == "money" else (d.pct(float(v)) if t == "rate" else str(v))  # noqa: E731
+        new = fmt(el.get("value"), el.get("value_type"))
+        oldv = fmt(ref.value, ref.value_type) if ref else None
+        body = (f"<span class='diff-old'>{oldv}</span> → " if oldv and oldv != new else "") + f"<span class='diff-new'>{new}</span>"
+        what = "Angka diubah" if old else ("Angka baru" if not oldv else "Angka baru (nilai lama berakhir)")
+    elif kind == "rule":
+        title = d.fact_label(el["produces"])
+        body = f"<b>Rumus:</b> {d.readable(el['expression'])}"
+        if el.get("condition"):
+            body = f"<b>Jika:</b> {d.readable(el['condition'])}<br>" + body
+        if old and d.expr_text(old.expression) == el["expression"]:
+            what = "Masa berlaku diubah"
+            body += (f"<br><span class='diff-old'>s.d. {d.tgl(old.valid_until) if old.valid_until else 'tanpa batas'}</span>"
+                     f" → <span class='diff-new'>s.d. {_iso(el.get('valid_until')) if el.get('valid_until') else 'tanpa batas'}</span>")
+        elif old:
+            what = "Aturan diubah"
+            body = f"<span class='diff-old'>{d.readable(old.expression)}</span><br>" + body
+        else:
+            what = "Aturan baru" + (" (perusahaan)" if el.get("layer") == "company" else "")
+            # the rule already in the knowledge base for the same value, so the reviewer can compare
+            same = [r for r in kb.view(store.TODAY).rules.values() if r.produces == el["produces"]
+                    and r.layer == el.get("layer", "regulation") and not d.is_input_convention(r)]
+            if same:
+                prev = max(same, key=lambda r: r.valid_from or date.min)
+                body += (f"<br><span class='muted'>Aturan yang sudah ada untuk nilai ini "
+                         f"({d.tgl(prev.valid_from)}{' s.d. ' + d.tgl(prev.valid_until) if prev.valid_until else ''}): "
+                         f"</span><span class='diff-old' style='text-decoration:none'>{d.readable(prev.expression)}</span>")
+                if prev.condition:
+                    body += f" <span class='muted'>jika {d.readable(prev.condition)}</span>"
+    elif kind == "table":
+        title, what = (el.get("label_id") or el.get("name", "")).capitalize(), "Tabel " + ("diubah" if old else "baru")
+        body = (f"Diambil dari tabel lampiran dokumen ({el['rows_ref'].split('/')[-1]})" if el.get("rows_ref")
+                else f"{len(el.get('rows') or [])} baris")
+    elif kind == "fact":
+        title, what, body = (el.get("label_id") or el["id"]).capitalize(), "Istilah baru", el.get("label", "")
+        period = ""
     else:
-        st.warning("Mode ini memanggil API Claude dan memakai kredit (±USD 0,1–0,9 per dokumen, m = 3).",
-                   icon=":material/payments:")
-        ok = st.checkbox("Saya paham dan ingin menjalankannya", key="ib_ok")
-        if st.button("Jalankan alur akuisisi", type="primary", disabled=not ok, icon=":material/smart_toy:"):
-            _live_run(ev)
-        res = (st.session_state.get("live") or {}).get(ev.id)
-        if res:
-            st.caption(f"Biaya jalan ini: USD {res.get('cost_usd', 0):.3f}")
-            render_run(res, ev)
+        title, what, body = el.get("id", ""), kind, ""
+    cls = "rule company" if el.get("layer") == "company" else "rule"
+    ui.html(f"<div class='{cls}'>{ui.badge(what, 'green' if 'baru' in what else 'blue')}<b>{title}</b> "
+            f"<span class='muted'>· {period}</span><br>{body}{quote}</div>")
 
 
-def _check(delta, kb):
-    """Schema, strict application, static check. Returns (K' or None, messages)."""
-    msgs = []
+def check(delta, kb):
+    """Schema, application, static check: the gates that run without the AI, here and now."""
     try:
         validate_delta_json(delta)
     except Exception as e:  # noqa: BLE001
-        return None, [("error", f"Skema Δ: {str(e)[:300]}")]
+        return None, [("error", f"Format: {str(e)[:250]}")]
     try:
         kb2 = apply_delta(kb, delta)
     except Exception as e:  # noqa: BLE001
-        return None, [("error", f"Tidak dapat diterapkan: {str(e)[:300]}")]
-    omega = date.fromisoformat(delta["document"]["issued"]) if delta.get("document", {}).get("issued") else state.TODAY
-    pols = tuple({e.get("policy") for e in delta.get("add", []) if e.get("policy")})
-    rep = static.check(kb2, max(omega, date(2013, 1, 1)), policies=pols)
-    for f in rep.findings:
-        msgs.append((f.severity, f"{f.kind}: {', '.join(f.ids)} {f.detail}"))
-    return kb2, msgs
+        return None, [("error", f"Tidak bisa diterapkan pada knowledge base sekarang: {str(e)[:250]}")]
+    pols = tuple({e.get("policy") for e in delta.get("add", []) + delta.get("change", []) if e.get("policy")})
+    issued = (delta.get("document") or {}).get("issued")
+    at = max(date.fromisoformat(issued) if issued else store.TODAY, date(2013, 1, 1))
+    rep = static.check(kb2, at, policies=pols)
+    return kb2, [(f.severity, f"{f.kind}: {f.detail}") for f in rep.findings]
 
 
-def _simulate(kb_before, kb_after, policy=None, year=None, salary=9_500_000, omega=None):
-    year = year or 2025
-    omega = omega or state.TODAY
-    case = {"case_id": "sim", "tax_year": year, "method": "gross",
-            "employee": {"ptkp_status": "K/1", "sex": "M", "tax_id_valid": True},
-            "employer": {"klu": "13921", "jkk_risk_group": "very_low", "policy": policy},
-            "employment": {"start_month": 1, "end_month": 12},
-            "periods": [{"month": m, "income": {"base_salary": salary, **({"thr": salary} if m == 4 else {})},
-                         "benefits": {}, "zakat": 0} for m in range(1, 13)]}
-    rows, conflicts = [], []
-    for name, k in (("sebelum", kb_before), ("sesudah", kb_after)):
-        try:
-            r = evaluate_case(k, case, omega)
-            rows.append({"versi": name, **{ui.MONTHS[m - 1]: r.periods[m].get("pph21_due") for m in sorted(r.periods)},
-                         "setahun": r.year.get("annual_pph21")})
-            if name == "sesudah":
-                conflicts = r.conflicts
-        except Exception as e:  # noqa: BLE001
-            rows.append({"versi": name, "galat": str(e)[:200]})
-    return pd.DataFrame(rows), conflicts
+@st.cache_data(show_spinner="Validasi SHACL ...")
+def shacl_new(signature, delta_json):
+    """SHACL violations that the update would add to the current knowledge base of the demo."""
+    from pph21kbs.kb import shacl
+    kb = store.kb()
+    kb2 = apply_delta(kb, json.loads(delta_json))
+    docs = sorted(set(shacl.corpus_documents()) | set(kb2.documents))
+    before = set(shacl.validate(kb, docs))
+    return [v for v in shacl.validate(kb2, docs) if v not in before]
 
 
-def _review_box(delta, key, policy=None):
-    kb = state.kb()
-    kb2, msgs = _check(delta, kb)
-    errors = [m for s, m in msgs if s == "error"]
-    if kb2 is None or errors:
-        for m in errors or [m for _, m in msgs]:
-            st.error(m)
-        return
-    st.success(f"Δ valid dan dapat diterapkan · {sum(len(delta.get(o, [])) for o in ('add', 'change', 'remove'))} unsur"
-               + (f" · {len(msgs)} peringatan statis" if msgs else ""))
-    for _, m in msgs[:8]:
-        st.caption(f"⚠ {m}")
-    # the year the update starts to apply, known as of its recording date (or today, whichever is later)
-    starts = [date.fromisoformat(e["valid_from"]) for e in delta.get("add", []) + delta.get("change", [])
-              if e.get("valid_from")]
-    issued = date.fromisoformat(delta["document"]["issued"]) if delta.get("document", {}).get("issued") else state.TODAY
-    year = max([d.year for d in starts if d >= date(2013, 1, 1)] or [issued.year])
-    year = min(max(year, 2023), 2027)
-    omega = max(state.TODAY, issued)
-    c1, c2 = st.columns(2)
-    salary = c1.number_input("Gaji pegawai contoh", 0, 10**10, 15_000_000, 500_000, key=f"{key}_sal")
-    year = c2.number_input("Tahun simulasi", 2013, 2027, year, key=f"{key}_year")
-    df, conflicts = _simulate(kb, kb2, policy, int(year), int(salary), omega)
-    st.markdown(f"**Simulasi** pegawai contoh (K/1, THR April, KLU 13921) tahun {year}, pengetahuan per {omega:%d/%m/%Y}: "
-                "PPh 21 per bulan sebelum dan sesudah")
-    st.dataframe(df, hide_index=True, width="stretch")
-    for c in conflicts:
-        st.warning(f"Konflik dilaporkan: {c.get('code', '')} · {c.get('source') or c.get('company_rules')} · {c.get('fact', '')}")
-    c1, c2 = st.columns([2, 1])
-    reviewer = c1.text_input("Nama peninjau", "", key=f"{key}_who")
-    if c2.button("Setujui dan terapkan", type="primary", key=f"{key}_ok", disabled=not reviewer.strip(),
-                 icon=":material/check:"):
-        path = state.save_update(delta, note=f"disetujui {reviewer} {date.today()}")
-        st.session_state.pop("review", None)
-        st.success(f"Diterapkan ke ruang kerja: {path.name}")
-        st.rerun()
+def research_gates(signature, pid, delta_json):
+    """Gates G1-G5 of the research (pipeline.run.check, the same code and S^G generator as the experiments), run on
+    the current knowledge base of the demo. Returns (passed, {gate: summary})."""
+    from types import SimpleNamespace
+    from pph21kbs import corpus
+    from pph21kbs.pipeline.run import Config, check as gate_check
+    delta = json.loads(delta_json)
+    els = delta.get("add", []) + delta.get("change", [])
+    company = any(e.get("layer") == "company" for e in els)
+    try:
+        ev = corpus.event(pid)
+    except KeyError:              # a draft made in the demo: its own document and date
+        doc = delta.get("document") or {}
+        ev = SimpleNamespace(id=pid, layer="company" if company else "regulation",
+                             issued=date.fromisoformat(doc["issued"]) if doc.get("issued") else store.TODAY,
+                             documents=tuple(sorted({s["document"] for e in els for s in e.get("source") or []
+                                                     if s.get("document")})))
+    pols = tuple(sorted({e["policy"] for e in els if e.get("policy")}))
+    ok, log, _, _ = gate_check(store.kb(), delta, ev, ev.issued, None, Config(), policies=pols)
+    return ok, {k: str(v) for k, v in log.items() if k in ("G1", "G2", "G3", "G4", "G5")}
+
+
+def research_gates_panel(pid, delta_json):
+    st.markdown("**Gerbang G1–G5 penelitian**",
+                help="Kode pemeriksaan yang sama dengan penelitian, termasuk contoh kasus S^G yang dibuat otomatis, "
+                     "dijalankan pada knowledge base sekarang. Lolos gerbang belum berarti benar: penelitian "
+                     "menemukan usulan yang lolos kelima gerbang tetapi salah, jadi isinya tetap perlu Anda periksa.")
+    done = st.session_state.setdefault("mg_gates", {})
+    key = (store.signature(), pid, delta_json)
+    if key not in done:
+        if st.button("Jalankan gerbang (± 15 detik)", icon=":material/fact_check:", key=f"mg_gate_{pid}",
+                     width="stretch"):
+            with st.spinner("Menjalankan G1–G5 ..."):
+                try:
+                    done[key] = research_gates(*key)
+                except Exception as e:  # noqa: BLE001 - shown to the user
+                    done[key] = (False, {"G1": f"tidak bisa dijalankan: {type(e).__name__}: {e}"[:200]})
+        else:
+            return
+    ok, log = done[key]
+    for gate, summary in log.items():
+        good = summary.startswith("pass")
+        if "known document" in summary:
+            summary = ("dokumen sumbernya belum terdaftar. Di penelitian setiap dokumen didaftarkan dulu (judul, tanggal "
+                       "terbit, teks) sebelum dibaca; draf ini memakai dokumen yang belum terdaftar.")
+        st.markdown(f"{':material/check_circle:' if good else ':material/cancel:'} {gate} · {GATES.get(gate, gate)}"
+                    + ("" if good else f": {summary[:160]}"))
+    if ok:
+        st.caption("Lolos kelima gerbang. Tetap periksa isi perubahannya.")
+
+
+def regression(kb, kb2, policies):
+    """Every scenario before and after: PPh of the scenario's month and of the year."""
+    outputs = {n for n, f in kb2.view(store.TODAY).facts.items() if f.output}     # the results the KB declares
+    rows = []
+    for sc in emp.scenarios().values():
+        case = emp.scenario_case(sc)
+        m = sc["month"]
+        res = [d.compute(case, store.TODAY, k)[0] for k in (kb, kb2)]
+        vals = [{(f, mm): v for mm, p in (r.periods.items() if r else ()) for f, v in p.items() if f in outputs}
+                | {(f, 0): v for f, v in ((r.year or {}).items() if r else ()) if f in outputs} for r in res]
+        moved = sorted({f for key in set(vals[0]) | set(vals[1]) if vals[0].get(key) != vals[1].get(key)
+                        for f in [key[0]]}, key=d.fact_label)
+        a, b = (r.periods[m].get("pph21_due") if r else None for r in res)
+        ya, yb = ((r.year or {}).get("annual_pph21") if r else None for r in res)
+        rows.append({"Skenario": sc["title"], "Bulan": f"{d.MON[m - 1]} {case['tax_year']}",
+                     "PPh sebelum": d.money(a), "PPh sesudah": d.money(b),
+                     "Setahun sebelum → sesudah": f"{d.money(ya)} → {d.money(yb)}" if ya != yb else d.money(ya),
+                     "Hasil": "berubah" if moved else "sama",
+                     "Nilai yang berubah": ", ".join(d.fact_label(f) for f in moved[:4])
+                                           + (f" +{len(moved) - 4}" if len(moved) > 4 else "")})
+    return pd.DataFrame(rows)
+
+
+def affected_policies(delta, kb):
+    """Installed company policies whose rules read or produce a value this update touches (static, like RQ4)."""
+    touched = set()
+    for e in delta.get("add", []) + delta.get("change", []):
+        if e.get("kind") == "rule":
+            touched.add(e["produces"])
+        elif e.get("kind") in ("parameter", "table"):
+            for r in kb.view(store.TODAY).rules.values():
+                if f"'{e.get('name')}'" in d.expr_text(r.expression) + d.expr_text(r.condition or ""):
+                    touched.add(r.produces)
+    out = []
+    for r in kb.view(store.TODAY).rules.values():
+        if r.layer != "company":
+            continue
+        text = d.expr_text(r.expression) + " " + d.expr_text(r.condition or "")
+        hit = [f for f in touched if f == r.produces or f in text]
+        if hit:
+            out.append((r.policy, r.id, hit))
+    return out
 
 
 def tab_review():
-    rv = st.session_state.get("review")
-    if not rv:
-        st.info("Belum ada pembaruan yang dikirim ke review. Kirim dari tab Kotak masuk, atau tulis Δ di tab Δ manual.")
+    s = store.load()
+    items = [p["id"] for p in store.pending(s) if store.status(p["id"], s) == "review"]
+    items += [x["id"] for x in s["drafts"] if x["id"] not in items]
+    if not items:
+        st.success("Tidak ada yang menunggu review.")
         return
-    st.markdown(f"Pembaruan dari **{rv['from']}** untuk peristiwa **{rv['event']}**. Ubah JSON bila perlu "
-                "(koreksi peninjau), lalu periksa dan setujui.")
-    text = st.text_area("Δ (JSON)", json.dumps(rv["delta"], ensure_ascii=False, indent=1), height=320, key="rv_text")
-    try:
-        delta = json.loads(text)
-    except json.JSONDecodeError as e:
-        st.error(f"JSON tidak valid: {e}")
-        return
-    edited = delta != rv["delta"]
-    if edited:
-        st.caption("Δ diubah peninjau (upaya koreksi dicatat di catatan pembaruan).")
-    _review_box(delta, "rv")
-    if st.button("Tolak", key="rv_reject", icon=":material/close:"):
-        st.session_state.pop("review", None)
-        st.rerun()
-
-
-EXAMPLE_DELTA = {
-    "delta_id": "CONTOH-BIAYA-JABATAN-2027", "event_id": None,
-    "document": {"id": "CONTOH", "title": "Contoh: kenaikan batas biaya jabatan mulai 2027", "issued": "2026-12-15"},
-    "relevant": True,
-    "add": [{"kind": "parameter", "id": "PAR.JOB_EXPENSE_MAX_YEAR.2027", "name": "job_expense_max_year",
-             "value": 7200000, "value_type": "money", "valid_from": "2027-01-01", "recorded_on": "2026-12-15",
-             "source": [{"document": "CONTOH", "provision": "Pasal 1 ayat (1)",
-                         "quote": "biaya jabatan paling banyak Rp7.200.000,00 setahun"}]},
-            {"kind": "parameter", "id": "PAR.JOB_EXPENSE_MAX_MONTH.2027", "name": "job_expense_max_month",
-             "value": 600000, "value_type": "money", "valid_from": "2027-01-01", "recorded_on": "2026-12-15",
-             "source": [{"document": "CONTOH", "provision": "Pasal 1 ayat (2)",
-                         "quote": "atau Rp600.000,00 sebulan"}]}],
-    "change": [{"kind": "parameter", "id": "PAR.JOB_EXPENSE_MAX_YEAR.2009", "name": "job_expense_max_year",
-                "value": 6000000, "value_type": "money", "valid_from": "2009-01-01", "valid_until": "2026-12-31",
-                "recorded_on": "2026-12-15",
-                "source": [{"document": "CONTOH", "provision": "Pasal 2", "quote": "ketentuan lama dinyatakan tidak berlaku"}]},
-               {"kind": "parameter", "id": "PAR.JOB_EXPENSE_MAX_MONTH.2009", "name": "job_expense_max_month",
-                "value": 500000, "value_type": "money", "valid_from": "2009-01-01", "valid_until": "2026-12-31",
-                "recorded_on": "2026-12-15",
-                "source": [{"document": "CONTOH", "provision": "Pasal 2", "quote": "ketentuan lama dinyatakan tidak berlaku"}]}],
-    "remove": [], "note": "contoh perubahan parameter (jenis T1)"}
-
-
-def tab_manual():
-    st.markdown("Tulis atau unggah Δ dalam bahasa representasi (format `docs/spesifikasi/format_data.md`). Δ diperiksa "
-                "skema, diterapkan ketat, dicek statis, dan disimulasikan sebelum disetujui. Dipakai pada E1 untuk "
-                "perubahan tak terlihat.")
-    up = st.file_uploader("Unggah Δ (.json)", type="json", key="man_up")
-    start = json.loads(up.read()) if up else EXAMPLE_DELTA
-    text = st.text_area("Δ (JSON)", json.dumps(start, ensure_ascii=False, indent=1), height=320, key="man_text")
-    try:
-        delta = json.loads(text)
-    except json.JSONDecodeError as e:
-        st.error(f"JSON tidak valid: {e}")
-        return
-    if st.button("Periksa", key="man_check", icon=":material/fact_check:"):
-        st.session_state.man_delta = delta
-    if st.session_state.get("man_delta") == delta:
-        _review_box(delta, "man")
-
-
-def tab_policy():
-    pols = state.policy_deltas()
-    reg = registry()
-    st.markdown("**Kebijakan perusahaan di korpus**")
-    pid = st.selectbox("Kebijakan", sorted(pols), key="pol_pick",
-                       format_func=lambda p: f"{p} · {reg.get(p, {}).get('title', '')[:80]}")
-    st.dataframe(_elements_frame(pols[pid]), hide_index=True, width="stretch", height=240)
+    names = {i: _title(i) for i in items}
+    names.update({x["id"]: f"{x['title']} ({x['origin']})" for x in s["drafts"]})
+    cur = st.session_state.get("mg_open")
+    pid = st.selectbox("Yang direview", items, index=items.index(cur) if cur in items else 0, format_func=names.get)
+    st.session_state.mg_open = pid
+    delta = store.proposal(pid, s)
+    kb = store.kb()
+    if pid in s["fixed"]:
+        st.info(f"Ini versi yang diperbaiki ({s['fixed'][pid]['by']}). Catatan: “{s['fixed'][pid]['note']}”",
+                icon=":material/auto_fix_high:")
+        last = st.session_state.get(f"mg_fixlog_{pid}")
+        if last:
+            passed, log, cost = last
+            st.caption(f"Hasil perbaikan AI: {'lolos' if passed else 'belum lolos'} G1–G5 "
+                       f"({', '.join(f'{k} {v[:30]}' for k, v in log.items())}) · biaya USD {cost:.3f}")
+    elif pid in store.pending_by_id(s):
+        r0 = store.run(pid) or {}
+        st.caption("Usulan asli AI dari penelitian (claude-opus-5-5)." if not store.pending_by_id(s)[pid].get("upload")
+                   else f"Usulan AI ({r0.get('run', 'aplikasi')}).")
+    kb2, msgs = check(delta, kb)
+    left, right = st.columns([1.6, 1], gap="large")
+    with left:
+        st.markdown(f"**Perubahan yang diusulkan** · {len(delta.get('add', []))} tambahan, "
+                    f"{len(delta.get('change', []))} perubahan")
+        for el in delta.get("change", []) + delta.get("add", []):
+            card(el, kb)
+    with right:
+        st.markdown("**Pemeriksaan pada knowledge base sekarang**", help=g.tip("pemeriksaan"))
+        errors = [m for sev, m in msgs if sev == "error"]
+        if kb2 is None:
+            st.error(errors[0] if errors else msgs[0][1])
+        else:
+            dj = json.dumps(delta, sort_keys=True, default=str)
+            st.markdown(":material/check_circle: Format benar dan bisa diterapkan")
+            new_v = shacl_new(store.signature(), dj)
+            st.markdown(f"{':material/cancel:' if new_v else ':material/check_circle:'} Bentuk graf sesuai SHACL"
+                        + (f": {len(new_v)} pelanggaran baru" if new_v else ""), help=g.tip("SHACL"))
+            for e, m in new_v[:3]:
+                st.caption(f"⚠ {e}: {m}")
+            qs = assistant.quote_status(delta)
+            bad = [q for q in qs if q[2] is False or not q[3]]
+            unknown = [q for q in qs if q[2] is None]
+            st.markdown(f"{':material/cancel:' if bad else ':material/check_circle:'} Kutipan ada di dokumen"
+                        + (f": {len(bad)} perlu dicek" if bad else "")
+                        + (f" · {len(unknown)} tanpa teks dokumen" if unknown else ""), help=g.tip("kutipan"))
+            st.markdown(f"{':material/warning:' if msgs else ':material/check_circle:'} Pemeriksa statis"
+                        + (f": {len(msgs)} catatan" if msgs else ""), help=g.tip("pemeriksa statis"))
+            for sev, m in msgs[:4]:
+                st.caption(f"⚠ {m}")
+            research_gates_panel(pid, dj)
+        run = store.run(pid) if pid in store.pending_by_id(s) and pid not in s["fixed"] else None
+        if run:
+            sel = next((c for c in run["candidates"] if c.get("n") == run.get("selected")), run["candidates"][0])
+            with st.expander("Hasil pemeriksaan saat AI menyusun usulan"):
+                st.caption("Dicatat saat AI menyusun usulan, terhadap knowledge base pada waktu itu, bukan terhadap knowledge base "
+                           "sekarang.")
+                for k, v in GATES.items():
+                    ok = (sel.get("gate_log") or {}).get(k) == "pass"
+                    st.markdown(f"{':material/check_circle:' if ok else ':material/cancel:'} {v}")
+        if st.button("Tanya asisten tentang usulan ini", icon=":material/forum:", width="stretch"):
+            assistant.open_with("Periksa usulan ini terhadap kutipan pasalnya")
+            st.rerun()
+    if kb2 is not None:
+        st.markdown("**Contoh sebelum dan sesudah** · semua skenario umum dihitung dengan knowledge base sekarang dan "
+                    "sesudah usulan ini. Hasil tahun-tahun sebelum tanggal berlaku harus sama.")
+        with st.spinner("Menghitung skenario ..."):
+            df = regression(kb, kb2, tuple(store.installed_policies()))
+        st.dataframe(df.style.apply(lambda r: ["background-color: #fff4d6" if r["Hasil"] == "berubah" else ""] * len(r),
+                                    axis=1), hide_index=True, width="stretch")
+        affected = affected_policies(delta, kb2)
+        st.markdown("**Kebijakan perusahaan yang terdampak**", help=g.tip("dampak"))
+        if affected:
+            for pol, rid, facts in affected:
+                ui.html(f"<div class='rule company'><b>{pol}</b> · aturan <code>{rid}</code> membaca atau menghasilkan "
+                        f"nilai yang berubah: {', '.join(d.fact_label(f) for f in facts)}. Periksa apakah kebijakan ini "
+                        "masih sesuai.</div>")
+        else:
+            st.caption("Tidak ada kebijakan perusahaan terpasang yang membaca nilai yang berubah.")
     st.divider()
-    st.markdown("**Buat kebijakan baru** — aturan perusahaan dalam representasi yang sama. Aturan yang menyimpangi "
-                "ketentuan wajib tetap disimpan, tetapi engine menerapkan regulasi dan melaporkan konfliknya.")
-    c1, c2, c3 = st.columns([1, 2, 1])
-    new_id = c1.text_input("Id kebijakan", "PT-CONTOH", key="pol_id").strip().upper().replace(" ", "-")
-    title = c2.text_input("Judul", "Peraturan Perusahaan PT Contoh", key="pol_title")
-    start = c3.date_input("Berlaku mulai", date(2025, 1, 1), key="pol_start")
-    facts = sorted({r.produces for r in state.kb().view(state.TODAY).rules.values()})
-    default = pd.DataFrame([
-        {"nama": "MEAL_ALLOWANCE", "fakta": "other_regular_income", "ekspresi": "income('other_regular') + 750000",
-         "syarat": "", "kode konflik": "", "pasal": "Pasal 10", "kutipan": "tunjangan makan sebesar Rp750.000 per bulan"},
-        {"nama": "METHOD", "fakta": "withholding_method", "ekspresi": "'gross_up'", "syarat": "", "kode konflik": "",
-         "pasal": "Pasal 12", "kutipan": "pajak penghasilan pekerja ditanggung perusahaan melalui tunjangan pajak"},
-    ])
-    rules = st.data_editor(default, num_rows="dynamic", width="stretch", key="pol_rules",
-                           column_config={"fakta": st.column_config.SelectboxColumn(options=facts)})
-    adds = []
-    for _, r in rules.iterrows():
-        if not (r["nama"] and r["fakta"] and r["ekspresi"]):
-            continue
-        e = {"kind": "rule", "id": f"PRS.{new_id}.{str(r['nama']).upper()}", "layer": "company", "modality": "default",
-             "scope": "year" if r["fakta"] == "withholding_method" else "period", "produces": r["fakta"],
-             "expression": str(r["ekspresi"]), "valid_from": start.isoformat(), "policy": new_id,
-             "recorded_on": start.isoformat(),
-             "source": [{"document": new_id, "provision": str(r["pasal"] or "Pasal 1"),
-                         "quote": str(r["kutipan"] or "ketentuan kebijakan perusahaan")}]}
-        if r["syarat"]:
-            e["condition"] = str(r["syarat"])
-        if r["kode konflik"]:
-            e["conflict_code"] = str(r["kode konflik"])
-        adds.append(e)
-    delta = {"delta_id": f"POL-{new_id}", "event_id": None,
-             "document": {"id": new_id, "title": title, "issued": start.isoformat()}, "relevant": True,
-             "add": adds, "change": [], "remove": [], "note": "dibuat di editor kebijakan"}
-    registry()[new_id] = {"id": new_id, "event": "", "role": "policy", "issued": start.isoformat(), "title": title,
-                          "files": ""}
-    with st.expander("JSON Δ kebijakan"):
-        st.json(delta, expanded=False)
-    if st.button("Periksa dan simulasikan", key="pol_check", icon=":material/fact_check:"):
-        st.session_state.pol_delta = delta
-    if st.session_state.get("pol_delta") == delta:
-        _review_box(delta, "pol", policy=new_id)
+    c1, c2 = st.columns([1, 2])
+    reviewer = c1.text_input("Nama reviewer", "Admin", key="mg_reviewer")
+    note = c2.text_input("Catatan", key=f"mg_note_{pid}", placeholder="opsional")
+    b = st.columns(4)
+    if b[0].button("Setujui", type="primary", icon=":material/check:", width="stretch", disabled=kb2 is None):
+        store.approve(pid, names[pid].split(" (")[0], delta, reviewer, note)
+        st.session_state.mg_open = None
+        st.toast("Disetujui. Knowledge base diperbarui.")
+        st.rerun()
+    if b[1].button("Sunting", icon=":material/edit:", width="stretch"):
+        st.session_state.mg_edit = pid
+    if b[2].button("Minta AI perbaiki", icon=":material/auto_fix_high:", width="stretch"):
+        st.session_state.mg_fix = pid
+    if b[3].button("Tolak", icon=":material/close:", width="stretch"):
+        store.reject(pid, names[pid], note or "-")
+        st.session_state.mg_open = None
+        st.rerun()
+    if st.session_state.get("mg_fix") == pid:
+        fix_panel(pid, delta)
+    if st.session_state.get("mg_edit") == pid:
+        with st.container(border=True):
+            text = st.text_area("Usulan (JSON)", json.dumps(delta, ensure_ascii=False, indent=1), height=300,
+                                key=f"mg_json_{pid}")
+            if st.button("Simpan suntingan", icon=":material/save:"):
+                try:
+                    new = json.loads(text)
+                    store.set_fixed(pid, new, "disunting manual", "Admin")
+                    st.session_state.mg_edit = None
+                    st.rerun()
+                except json.JSONDecodeError as e:
+                    st.error(f"JSON tidak valid: {e}")
 
 
-def tab_history():
-    kb = state.kb()
-    rows = []
-    for i, u in enumerate(kb.updates, start=1):
-        rows.append({"versi": f"v{i:02d}", "pembaruan": u.update_id, "peristiwa": u.event_id or "", "dokumen": u.document,
-                     "dicatat": u.recorded_on, "rekaman": u.last_seq - u.first_seq + 1,
-                     "asal": "ruang kerja" if u.update_id.startswith("WS-") else "emas", "catatan": (u.note or "")[:80]})
-    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch", height=300)
-    st.caption(f"Sidik jari KB kini: `{kb.fingerprint()[:16]}` · riwayat hanya bertambah (append-only), sehingga hasil "
-               "per tanggal pengetahuan selalu dapat direproduksi (A3ω).")
-    st.markdown("**Perbedaan dua versi**")
-    opts = state.versions()
-    labels = [o[0] for o in opts]
-    c1, c2 = st.columns(2)
-    a = c1.selectbox("Dari", labels, index=max(0, len(labels) - 2), key="h_a")
-    b = c2.selectbox("Ke", labels, index=len(labels) - 1, key="h_b")
-    ka, kb_ = state.kb_at(dict(opts)[a]), state.kb_at(dict(opts)[b])
-    va = {r.id: r for r in ka.view(state.TODAY).records}
-    vb = {r.id: r for r in kb_.view(state.TODAY).records}
-
-    def content(r):
-        return (getattr(r, "expression", None) and r.expression.text) or str(getattr(r, "value", "")) or \
-               str(len(getattr(r, "rows", ()) or ())) + " baris"
-
-    diff = [{"perubahan": "ditambah", "id": i, "isi": content(vb[i])[:140]} for i in sorted(set(vb) - set(va))]
-    diff += [{"perubahan": "dihapus", "id": i, "isi": content(va[i])[:140]} for i in sorted(set(va) - set(vb))]
-    diff += [{"perubahan": "diubah", "id": i, "isi": f"{content(va[i])[:60]} → {content(vb[i])[:60]}"
-              + (f" · berlaku sampai {va[i].valid_until} → {vb[i].valid_until}" if va[i].valid_until != vb[i].valid_until else "")}
-             for i in sorted(set(va) & set(vb)) if va[i].seq != vb[i].seq]
-    st.dataframe(pd.DataFrame(diff), hide_index=True, width="stretch")
-    st.markdown("**Unduh Δ**")
-    uid = st.selectbox("Pembaruan", [r["pembaruan"] for r in rows], index=len(rows) - 1, key="h_dl")
-    gold = state.ROOT / "dataset" / "12_emas" / "delta" / f"{uid}.json"
-    ws = [f for f in state.workspace_files() if uid in f.name]
-    path = gold if gold.exists() else (ws[0] if ws else None)
-    if path:
-        st.download_button(f"Unduh {path.name}", path.read_bytes(), path.name, "application/json",
-                           icon=":material/download:")
-    if state.workspace_files():
-        st.divider()
-        if st.button("Kosongkan ruang kerja (kembali ke KB emas)", icon=":material/restart_alt:"):
-            state.reset_workspace()
+def fix_panel(pid, delta):
+    """The reviewer's note goes to the AI with the old proposal and the document text (the research's repair round),
+    and the new version is checked with gates G1-G5 again. In the demo, a research document can also take the
+    research's reference answer instead (free, labelled as a simulation)."""
+    with st.container(border=True):
+        prefill = (st.session_state.get("mg_prefill") or {}).pop(pid, None)    # a note written through the assistant
+        if prefill:
+            st.session_state[f"mg_fixnote_{pid}"] = prefill
+        note = st.text_area("Catatan untuk AI", key=f"mg_fixnote_{pid}",
+                            placeholder="mis. Batas penghasilan DTP Rp10 juta dihitung dari gaji dan tunjangan tetap "
+                                        "saja; natura mobil dinas jangan ikut.")
+        real = ai.can_repair(pid, delta)
+        ok, why = ai.ready("perbaikan")
+        reference = store.DEMO and not store.pending_by_id().get(pid, {}).get("upload") and store.gold_delta(pid)
+        options = (["AI sungguhan"] if real else []) + (["Jawaban acuan penelitian (simulasi, gratis)"] if reference else [])
+        if not options:
+            st.caption("Usulan ini tidak berasal dari AI (draf atau suntingan), jadi tidak bisa diperbaiki AI. Sunting "
+                       "langsung, atau minta asisten membuat draf baru.")
+            return
+        how = st.radio("Cara memperbaiki", options, horizontal=True, key=f"mg_fixhow_{pid}")
+        if how == "AI sungguhan":
+            st.caption(f"Satu putaran perbaikan dengan {ai.llm.MAIN_MODEL}, lalu G1–G5 dijalankan lagi. Perkiraan "
+                       f"USD 0,1–0,4. {ai.budget_text('perbaikan')}")
+            if not ok:
+                st.warning(f"AI tidak bisa dijalankan: {why}.", icon=":material/payments:")
+                return
+        if st.button("Kirim ke AI", icon=":material/send:", disabled=not note.strip()):
+            if how == "AI sungguhan":
+                with st.spinner("AI memperbaiki usulan dan memeriksanya lagi ..."):
+                    try:
+                        new, passed, log, cost = ai.repair(pid, delta, note.strip())
+                    except Exception as e:  # noqa: BLE001 - shown to the user
+                        st.error(f"AI gagal: {type(e).__name__}: {str(e)[:300]}")
+                        return
+                st.session_state[f"mg_fixlog_{pid}"] = (passed, log, cost)
+                if new is None:
+                    st.error("AI tidak menghasilkan usulan yang bisa dipakai: " + "; ".join(log.values())[:300])
+                    return
+            else:
+                store.set_fixed(pid, reference, note.strip(), "jawaban acuan penelitian (simulasi)")
+            st.session_state.mg_fix = None
             st.rerun()
 
 
+# ---------------------------------------------------------------- add, change, revoke
+def _source(key):
+    c1, c2 = st.columns(2)
+    doc = c1.text_input("Dokumen dasar", key=f"{key}_doc", placeholder="mis. PMK 168/2023")
+    prov = c2.text_input("Pasal", key=f"{key}_prov", placeholder="mis. Pasal 2 ayat (1)")
+    quote = st.text_input("Kutipan kalimat", key=f"{key}_quote", help=g.tip("kutipan"))
+    return doc, prov, quote
+
+
+def tab_edit():
+    with st.container(border=True):
+        g.md(f"**Minta AI mengerjakan**: tulis perubahannya dengan kalimat biasa; {g.term('asisten')} membuat draf dan "
+             "memasukkannya ke Review.")
+        c1, c2 = st.columns([4, 1])
+        ask = c1.text_input("Permintaan", key="mg_ask", label_visibility="collapsed",
+                            placeholder="mis. Batas upah JP 2027 menjadi Rp11.600.000 · Cabut aturan bingkisan")
+        if c2.button("Minta AI", icon=":material/smart_toy:", width="stretch") and ask:
+            assistant.open_with(ask)
+            st.rerun()
+    st.markdown("**Atau kerjakan manual**")
+    what = st.segmented_control("Jenis", ["Angka baru", "Aturan baru", "Ubah aturan", "Cabut aturan"],
+                                default="Angka baru", key="mg_what", label_visibility="collapsed")
+    if what == "Angka baru":
+        names = sorted({r.name for r in d.kb().records if r.kind == "parameter" and r.value_type in ("money", "rate")},
+                       key=d.fact_label)
+        name = st.selectbox("Angka", names, format_func=d.fact_label, key="mg_p")
+        cur = drafts.current_param(name)
+        cv = d.money(cur.value) if cur.value_type == "money" else d.pct(cur.value)
+        st.caption(f"Sekarang **{cv}**, berlaku sejak {d.tgl(cur.valid_from)} ({d.short_doc(cur.source[0].document)}).")
+        c1, c2 = st.columns(2)
+        value = c1.number_input("Nilai baru" + (" (Rp)" if cur.value_type == "money" else " (desimal, mis. 0.01)"),
+                                0.0, 1e11, None, key="mg_pv")
+        start = c2.date_input("Berlaku mulai", date(store.TODAY.year + 1, 1, 1), key="mg_ps")
+        doc, prov, quote = _source("mg_pp")
+        if value is not None and st.button("Kirim ke Review", type="primary", icon=":material/send:"):
+            v = int(value) if cur.value_type == "money" else value
+            delta = drafts.new_value(name, v, start, doc, prov, quote)
+            store.add_draft(delta["delta_id"], delta["document"]["title"], delta, "manual")
+            st.success("Masuk ke Review.")
+    elif what == "Aturan baru":
+        facts = sorted(d.facts(), key=d.fact_label)
+        c1, c2 = st.columns(2)
+        produces = c1.selectbox("Nilai yang dihitung", facts, format_func=d.fact_label, key="mg_rf")
+        company = c2.radio("Berlaku untuk", ("Peraturan negara", "Kebijakan perusahaan"), key="mg_rl") != "Peraturan negara"
+        policy = st.text_input("Kode kebijakan", "PRS-DEMO", key="mg_rpol") if company else None
+        cond = st.text_input("Berlaku jika (opsional)", key="mg_rc", placeholder="mis. gross_income > 10000000")
+        expr = st.text_input("Rumus", key="mg_re", placeholder="mis. 50000 * hr('days_present') + income('other_regular')")
+        with st.expander("Nama nilai dan data yang bisa dipakai"):
+            st.dataframe(pd.DataFrame([{"Nama": f, "Arti": d.fact_label(f)} for f in facts]), hide_index=True,
+                         height=200, width="stretch")
+            st.caption("Data kasus dibaca dengan income('…'), benefit('…'), hr('…'), employee('…'), employer('…'). "
+                       "Data baru lewat hr('…') otomatis menjadi kolom di kalkulator.")
+        c1, c2 = st.columns(2)
+        start = c1.date_input("Berlaku mulai", date(store.TODAY.year + 1, 1, 1), key="mg_rs")
+        end = c2.date_input("Berlaku sampai (kosongkan bila tanpa batas)", None, key="mg_ru")
+        doc, prov, quote = _source("mg_rp")
+        if expr:
+            ui.html(f"<div class='rule{' company' if company else ''}'><b>{d.fact_label(produces)}</b> = {d.readable(expr)}"
+                    + (f" <i>jika {d.readable(cond)}</i>" if cond else "") + "</div>")
+            if st.button("Kirim ke Review", type="primary", icon=":material/send:", key="mg_rsend"):
+                delta = drafts.new_rule(produces, expr, cond, start, end, company, policy, doc, prov, quote)
+                store.add_draft(delta["delta_id"], delta["document"]["title"], delta, "manual")
+                st.success("Masuk ke Review.")
+    else:
+        rules = {r.id: r for r in d.kb().view(store.TODAY).rules.values()
+                 if not d.is_input_convention(r) and (r.valid_until is None or r.valid_until >= store.TODAY)}
+        ids = sorted(rules, key=lambda i: d.fact_label(rules[i].produces))
+        rid = st.selectbox("Aturan", ids, key="mg_cr", format_func=lambda i: f"{d.fact_label(rules[i].produces)} · "
+                           f"{d.short_doc(rules[i].source[0].document) if rules[i].source else ''}")
+        r = rules[rid]
+        ui.html(f"<div class='rule'><b>{d.fact_label(r.produces)}</b><br><b>Rumus:</b> {d.readable(r.expression)}<br>"
+                f"<span class='muted'>Berlaku {d.tgl(r.valid_from)}{' s.d. ' + d.tgl(r.valid_until) if r.valid_until else ''}"
+                f"</span></div>")
+        if what == "Cabut aturan":
+            g.md(f"{g.term('pencabutan', 'Mencabut')} = memberi tanggal akhir. Aturan tidak dihapus, jadi hitungan "
+                 "lama tetap sama.")
+            end = st.date_input("Tidak berlaku lagi sesudah", date(store.TODAY.year, 12, 31), key="mg_ce")
+            others = [x for x in d.kb().view(store.TODAY).rules.values() if x.produces == r.produces and x.id != r.id
+                      and (x.valid_until is None or x.valid_until > end)]
+            readers = [x.id for x in d.kb().view(store.TODAY).rules.values()
+                       if r.produces in d.expr_text(x.expression) + d.expr_text(x.condition or "")]
+            if not others:
+                st.warning(f"Sesudah {d.tgl(end)} tidak ada aturan lain yang menghitung *{d.fact_label(r.produces)}*, "
+                           f"padahal {len(readers)} aturan memakainya. Tambahkan pengganti, atau pastikan peraturannya "
+                           "memang menghapus.", icon=":material/warning:")
+            doc, prov, quote = _source("mg_cp")
+            if st.button("Kirim ke Review", type="primary", icon=":material/send:", key="mg_csend"):
+                delta = drafts.revoke(r, end, doc, prov, quote)
+                store.add_draft(delta["delta_id"], delta["document"]["title"], delta, "manual")
+                st.success("Masuk ke Review.")
+        else:
+            expr = st.text_input("Rumus baru", d.expr_text(r.expression), key="mg_ue")
+            start = st.date_input("Berlaku mulai", date(store.TODAY.year + 1, 1, 1), key="mg_us",
+                                  help="Versi lama tetap dipakai untuk bulan-bulan sebelumnya.")
+            doc, prov, quote = _source("mg_up_")
+            if expr != d.expr_text(r.expression) and st.button("Kirim ke Review", type="primary", icon=":material/send:",
+                                                               key="mg_usend"):
+                delta = drafts.change_rule(r, expr, start, doc, prov, quote)
+                store.add_draft(delta["delta_id"], delta["document"]["title"], delta, "manual")
+                st.success("Masuk ke Review.")
+
+
+# ---------------------------------------------------------------- company policies
+def tab_policy():
+    pols = store.installed_policies()
+    g.md(f"{g.term('kebijakan perusahaan', 'Kebijakan perusahaan')} yang terpasang dipakai kalkulator bila dipilih. "
+         "Aturan perusahaan tidak boleh bertentangan dengan peraturan; sistem memeriksanya.")
+    if pols:
+        for pid, title in pols.items():
+            with st.expander(f"{pid} · {title}"):
+                for r in d.kb().view(store.TODAY).rules.values():
+                    if r.layer == "company" and r.policy == pid:
+                        ui.html(f"<div class='rule company'><b>{d.fact_label(r.produces)}</b>: {d.readable(r.expression)}"
+                                f"<br><span class='muted'>berlaku {d.tgl(r.valid_from)}"
+                                f"{' s.d. ' + d.tgl(r.valid_until) if r.valid_until else ''}</span></div>")
+                found = inputs.discover(store.TODAY.year, pid)
+                new_cols = [inputs.label(k) for k, e in found.items() if e["layer"] == "company"]
+                if new_cols:
+                    st.caption("Data yang ditanyakan kalkulator karena kebijakan ini: " + ", ".join(new_cols))
+    else:
+        st.caption("Belum ada kebijakan perusahaan terpasang. Setujui SP14 di Dokumen baru, atau buat dari contoh di "
+                   "bawah.")
+    st.markdown("**Buat dari contoh**")
+    c1, c2 = st.columns(2)
+    pid = c1.text_input("Kode kebijakan", "PRS-DEMO", key="mg_pol_id")
+    tpl = c2.selectbox("Contoh", ["Uang makan per hari hadir", "THR kelipatan upah", "Bonus tahunan"], key="mg_pol_tpl")
+    start = st.date_input("Berlaku mulai", date(store.TODAY.year + 1, 1, 1), key="mg_pol_start")
+    if tpl == "Uang makan per hari hadir":
+        n = st.number_input("Rupiah per hari hadir", 0, 1_000_000, 50_000, 5_000, key="mg_pol_n")
+        delta = drafts.meal_policy(int(n), pid, start)
+    elif tpl == "THR kelipatan upah":
+        n = st.number_input("Kelipatan upah", 0.5, 5.0, 1.5, 0.5, key="mg_pol_t")
+        delta = drafts.thr_policy(n, pid, start)
+    else:
+        c1, c2 = st.columns(2)
+        n = c1.number_input("Persen gaji pokok", 1, 500, 100, key="mg_pol_b")
+        m = c2.selectbox("Bulan dibayar", range(1, 13), 11, format_func=lambda x: d.MONTHS[x - 1], key="mg_pol_m")
+        delta = drafts.bonus_policy(n, m, pid, start)
+    for el in delta["add"]:
+        card(el, d.kb())
+    if st.button("Kirim ke Review", type="primary", icon=":material/send:", key="mg_pol_send"):
+        store.add_draft(delta["delta_id"], delta["document"]["title"], delta, "contoh")
+        st.success("Masuk ke Review.")
+
+
+# ---------------------------------------------------------------- check and history
+@st.cache_data
+def _health(signature, today):
+    kb = store.kb()
+    out = []
+    by_name = {}
+    for r in kb.records:
+        if r.kind == "parameter":
+            by_name.setdefault(r.name, []).append(r)
+    for name, vs in by_name.items():
+        years = sorted({v.valid_from.year for v in vs})
+        if len(years) >= 3 and years[-1] - years[-2] == 1 and years[-1] < today.year + 1:
+            out.append(("warn", f"{d.fact_label(name)} berganti tiap tahun; nilai {years[-1] + 1} belum ada.",
+                        f"Terakhir: {d.short_doc(vs[-1].source[0].document)} ({years[-1]})."))
+    ending = {}
+    for r in kb.view(today).rules.values():
+        if r.valid_until and r.valid_until >= today - timedelta(days=400) and r.valid_until.year <= today.year:
+            ending.setdefault((r.valid_until, d.topic_of(r)), []).append(r)
+    for (until, topic), rs in sorted(ending.items())[-4:]:
+        out.append(("info", f"{topic}: {len(rs)} aturan berakhir {d.tgl(until)}.",
+                    "Bila diperpanjang, unggah peraturan barunya di Dokumen baru."))
+    found = inputs.discover(today.year, None)
+    undefined = [k for k in found if not inputs.has_def(k)]
+    if undefined:
+        out.append(("warn", f"{len(undefined)} data yang dibaca aturan belum punya definisi (label dan penjelasan).",
+                    ", ".join(undefined[:6])))
+    for f in static.check(kb, today).findings[:8]:
+        out.append(("error" if f.severity == "error" else "warn", f"{f.kind}: {f.detail}", ", ".join(f.ids)))
+    return out
+
+
+def tab_health():
+    g.md("Pemeriksaan rutin atas isi knowledge base, supaya masalah ketahuan sebelum perhitungan salah.")
+    items = _health(store.signature(), store.TODAY)
+    for level, title, detail in items:
+        icon = {"warn": ":material/schedule:", "info": ":material/event:", "error": ":material/error:"}[level]
+        (st.warning if level == "warn" else st.error if level == "error" else st.info)(f"**{title}**  \n{detail}", icon=icon)
+    if not items:
+        st.success("Tidak ada temuan.")
+
+
+def tab_history():
+    s = store.load()
+    base = store.base()
+    ui.html(f"<div class='rule'><b>{'Keadaan awal demo' if store.DEMO else 'Knowledge base emas penelitian'}</b> · "
+            f"{len(base.updates)} pembaruan, diketahui sampai {store.base_label()}.</div>")
+    for i, a in enumerate(s["approved"]):
+        c1, c2 = st.columns([4, 1])
+        c1.markdown(f"**v{i + 1}** · {a['title']} · disetujui {a['when']} oleh {a['reviewer']}"
+                    + (f"  \n_{a['note']}_" if a.get("note") else ""))
+        if c2.button("Kembalikan ke sebelum ini", key=f"rb_{i}", icon=":material/history:", width="stretch",
+                     help="Pembaruan ini dan sesudahnya dibatalkan; dokumennya kembali menunggu review."):
+            store.rollback(i)
+            st.rerun()
+    if s["log"]:
+        st.markdown("**Catatan aktivitas**")
+        for e in s["log"][:20]:
+            st.caption(f"{e['when']} · {e['what']}")
+
+
 def show():
+    st.session_state.page_ctx = "kelola"
     st.title("Manajemen knowledge base")
-    st.caption("Dokumen masuk → LLM menyusun kandidat → gerbang G1–G5 → konsensus → review manusia → KB versi baru. "
-               "Perubahan disimpan di ruang kerja; KB emas penelitian tidak pernah diubah.")
-    tabs = st.tabs(["Kotak masuk dan akuisisi", f"Review{' (1)' if st.session_state.get('review') else ''}",
-                    "Δ manual", "Editor kebijakan", "Riwayat versi"])
+    g.md(f"Tambah, ubah, cabut, dan {g.term('review')} pengetahuan sistem. Bisa dikerjakan manual, atau minta "
+         f"{g.term('asisten', 'Asisten AI')} (tombol di kanan bawah) membantu memeriksa dan mengerjakan. Tidak ada yang "
+         "berubah sebelum Anda setujui.")
+    s = store.load()
+    n_review = len({p["id"] for p in store.pending(s) if store.status(p["id"], s) == "review"}
+                   | {x["id"] for x in s["drafts"]})
+    tabs = st.tabs(["Dokumen baru", f"Review ({n_review})", "Tambah, ubah, cabut", "Kebijakan perusahaan", "Cek KB",
+                    "Riwayat versi"])
     with tabs[0]:
-        tab_inbox()
+        tab_documents()
     with tabs[1]:
         tab_review()
     with tabs[2]:
-        tab_manual()
+        tab_edit()
     with tabs[3]:
         tab_policy()
     with tabs[4]:
+        tab_health()
+    with tabs[5]:
         tab_history()

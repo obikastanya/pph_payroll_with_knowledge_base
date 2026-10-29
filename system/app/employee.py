@@ -9,16 +9,16 @@ import copy
 import json
 from pathlib import Path
 
-import demo
 import inputs
+import store
 
-DATA = Path(__file__).resolve().parent / "demo_data"
+DATA = Path(__file__).resolve().parent / "presets"
 
 
 def catalog():
     """{component name: data key}: the company's pay components (initial ones plus those added during the demo)."""
     out = {c["name"]: c["key"] for c in json.loads((DATA / "catalog.json").read_text(encoding="utf-8"))["components"]}
-    out.update({c["name"]: c["key"] for c in demo.load()["catalog"]})
+    out.update({c["name"]: c["key"] for c in store.load()["catalog"]})
     return out
 
 
@@ -67,7 +67,7 @@ def ensure_components(sc):
     cat = catalog()
     for c in sc.get("extra_components", []):
         if c["name"] not in cat:
-            demo.add_component(c["name"], c["key"])
+            store.add_component(c["name"], c["key"])
 
 
 def cell(rec, m, col):
@@ -122,7 +122,7 @@ def to_case(rec, policy_installed=True, employer_pays_tax=False):
 
 def scenario_case(sc):
     rec = from_scenario(sc)
-    return to_case(rec, policy_installed=bool(sc.get("policy")) and sc["policy"] in demo.installed_policies())
+    return to_case(rec, policy_installed=bool(sc.get("policy")) and sc["policy"] in store.installed_policies())
 
 
 def copy_record(rec):

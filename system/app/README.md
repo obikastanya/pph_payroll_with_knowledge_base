@@ -14,7 +14,7 @@ Buka http://localhost:8501. Tidak butuh kunci API, kecuali "Jalankan LLM sekaran
 | Beranda | alur sistem, ringkasan KB |
 | Kalkulator PPh 21 | slip gaji dengan diagram derivasi dan jejak sampai pasal; bandingkan versi dan tanggal pengetahuan; satu pegawai 2023–2026 (hari ini vs saat itu); *payroll* massal dengan CSV |
 | Penampil KB | graf fakta–aturan, aturan dengan status dan kartu detail, versi tabel dengan grafik tarif, *timeline* bitemporal, pemeriksa statis dan SHACL, konsol SPARQL, ekspor TriG |
-| Manajemen KB | kotak masuk (korpus, atau unggah PDF ber-lapisan teks / .txt), alur akuisisi langkah demi langkah (putar ulang jalan tersimpan atau langsung dengan LLM), dampak lintas lapis, *review* dan persetujuan, Δ manual, editor kebijakan perusahaan, riwayat versi dan *diff* |
+| Manajemen KB | kotak masuk (korpus, atau unggah PDF / .txt; PDF diekstrak dengan Docling: teks per halaman, OCR Tesseract `ind` untuk halaman pindaian, tabel ke `tabel/*.csv` yang ditawarkan ke LLM untuk `rows_ref`), alur akuisisi langkah demi langkah (putar ulang jalan tersimpan atau langsung dengan LLM), dampak lintas lapis, *review* dan persetujuan, Δ manual, editor kebijakan perusahaan, riwayat versi dan *diff* |
 | Hasil penelitian | putusan hipotesis, E2, E3, E4 |
 
 Pembaruan yang disetujui disimpan sebagai berkas Δ di `system/app/workspace/updates/` (tidak di-*commit*) dan diterapkan di

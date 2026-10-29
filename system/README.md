@@ -47,7 +47,8 @@ Built stage by stage, following PANDUAN. Each module takes over a mini-demo modu
 | `pph21kbs/engine.py` | `reasoner.py` | Whole tax year, December recalculation, irregular income, gross-up, explicit lex specialis, rounding registry | 5 |
 | `pph21kbs/migrate.py` | - | Legacy YAML KB to the graph, equivalence check against `engine/` | 5 |
 | `pph21kbs/llm.py` | `mock_llm.py` | Claude and OpenAI clients, structured output, Batch API, caching, call log with cost | 9 |
-| `pph21kbs/acquisition.py` | `acquisition.py` | PDF segmentation (pdfplumber), relevance, m = 5 candidates, G1-G5 with date grounding, consensus with abstain on ties | 9 |
+| `pph21kbs/pdf_extract.py` | - | Docling extraction of new PDFs: text per page, OCR of scanned pages (Tesseract `ind`), tables to `tabel/*.csv`; the locked corpus texts stay pdfplumber | - |
+| `pph21kbs/acquisition.py` | `acquisition.py` | PDF segmentation, relevance, m = 5 candidates, G1-G5 with date grounding, consensus with abstain on ties | 9 |
 | `pph21kbs/testspace.py` | `evaluation.evaluation_cases` | Constrained 2-way and 3-way combinations, inverse boundaries, operational sample | 8 |
 | `pph21kbs/evaluation.py` | `evaluation.py`, `experiments.py` | E0-E5, baselines, ablations, statistics | 10, 13-18 |
 | `app/` | `mini_demo/app/` | The same screens on the full system | - |

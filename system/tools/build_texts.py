@@ -3,8 +3,11 @@
     env\\Scripts\\python system\\tools\\build_texts.py            # build missing documents
     env\\Scripts\\python system\\tools\\build_texts.py --force    # rebuild all
 
-For every document in the registry: text per page (pdfplumber, HTML text, Markdown as is, or stored OCR for scanned
-PDFs), segments (opening, articles, closing, annexes), and SHA-256 of source file and text in MANIFEST.sha256.
+For every document in the registry: text per page, segments (opening, articles, closing, annexes), and SHA-256 of
+source file and text in MANIFEST.sha256, with the extractor used. A new PDF is extracted with Docling (text layer, OCR
+for scanned pages, table structure; tables to tabel/*.csv, see pph21kbs/pdf_extract.py). The texts locked before Docling
+was added were extracted with pdfplumber (or stored OCR for scanned PDFs); every gold quote and result was checked
+against them, so --force rebuilds each with the extractor recorded in its manifest (none recorded: pdfplumber).
 The registry dataset/13_teks/dokumen.csv is written from the event table, the policy indexes, and the background list
 below.
 """
@@ -17,6 +20,8 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+if str(REPO / "system") not in sys.path:
+    sys.path.insert(0, str(REPO / "system"))
 DATA = REPO / "dataset"
 OUT = DATA / "13_teks"
 
@@ -117,16 +122,27 @@ class _Text(HTMLParser):
             self.out.append(data)
 
 
-def extract(row):
+def extract(row, engine="docling"):
+    """(text, tables): tables are Docling tables of the PDFs (engine docling), else empty."""
     files = [f for f in row["files"].split(";") if f]
     if row["id"] in OCR:
         raw = (DATA / OCR[row["id"]]).read_text(encoding="utf-8")
         raw = re.sub(r"^=+\s*PAGE (\d+)\s*=+$", lambda m: f"=== PDF hlm. {m.group(1)} ===", raw, flags=re.M)
-        return re.sub(r"^#.*\n", "", raw, count=1)
-    parts, page_offset = [], 0
+        return re.sub(r"^#.*\n", "", raw, count=1), []
+    parts, tables, page_offset = [], [], 0
     for rel in files:
         path = DATA / rel
-        if path.suffix.lower() == ".pdf":
+        if path.suffix.lower() == ".pdf" and engine == "docling":
+            from pph21kbs import pdf_extract
+            ext = pdf_extract.extract(path)
+            for p, t in ext.pages:
+                parts.append(f"=== PDF hlm. {page_offset + p} ===\n{t}")
+            for t in ext.tables:
+                t.page += page_offset
+                t.name = f"T{t.page:03d}-{t.name.split('-')[1]}"
+            tables += ext.tables
+            page_offset += len(ext.pages)
+        elif path.suffix.lower() == ".pdf":
             import pdfplumber
             with pdfplumber.open(path) as pdf:
                 for i, p in enumerate(pdf.pages, start=1):
@@ -141,7 +157,7 @@ def extract(row):
         else:
             parts.append(f"=== PDF hlm. {page_offset + 1} ===\n{path.read_text(encoding='utf-8')}")
             page_offset += 1
-    return "\n".join(parts)
+    return "\n".join(parts), tables
 
 
 ARTICLE = re.compile(r"^\s*Pasal\s+([0-9]+[A-Z]?|[IVX]+)\s*$")
@@ -197,6 +213,12 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def recorded_engine(folder):
+    m = folder / "MANIFEST.sha256"
+    found = re.search(r"^extractor: (\w+)", m.read_text(encoding="utf-8"), re.M) if m.exists() else None
+    return found.group(1) if found else "pdfplumber"
+
+
 def main(force=False):
     OUT.mkdir(parents=True, exist_ok=True)
     rows = registry_rows()
@@ -209,15 +231,20 @@ def main(force=False):
         d = OUT / row["id"]
         if row["id"] == "INPUT-CONVENTION" or (d / "teks.txt").exists() and not force:
             continue
+        engine = recorded_engine(d) if (d / "teks.txt").exists() else "docling"
         d.mkdir(exist_ok=True)
-        text = extract(row)
+        text, tables = extract(row, engine)
+        if tables:
+            from pph21kbs import pdf_extract
+            pdf_extract.write(pdf_extract.Extraction([], tables), d)     # tabel/*.csv; teks.txt is written below
         (d / "teks.txt").write_text(text, encoding="utf-8")
         (d / "segmen.json").write_text(json.dumps(segment(text, row["id"].startswith("PKB-")), ensure_ascii=False, indent=1), encoding="utf-8")
         lines = [f"{sha(DATA / rel)}  sumber:{rel}" for rel in row["files"].split(";") if rel]
         lines.append(f"{sha(d / 'teks.txt')}  teks.txt")
+        lines.append(f"extractor: {engine}")
         (d / "MANIFEST.sha256").write_text("\n".join(lines) + "\n", encoding="utf-8")
         built += 1
-        print(f"{row['id']:24} {row['role']:16} {len(text):>8} chars")
+        print(f"{row['id']:24} {row['role']:16} {len(text):>8} chars  {len(tables)} tables  ({engine})")
     print(f"{built} documents built, {len(rows)} in registry")
 
 

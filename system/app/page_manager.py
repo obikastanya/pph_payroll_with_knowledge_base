@@ -173,28 +173,31 @@ def _impact(ev, delta):
         st.success("Tidak ada kebijakan perusahaan yang terdampak.")
 
 
-def _pdf_text(file):
-    """Text layer of a PDF, page by page, in the locked-text format of the corpus ("=== PDF hlm. N ===")."""
-    import pdfplumber
-    parts = []
-    with pdfplumber.open(file) as pdf:
-        for i, page in enumerate(pdf.pages, start=1):
-            parts.append(f"=== PDF hlm. {i} ===\n{page.extract_text() or ''}")
-    return "\n".join(parts)
+def _upload_event(file, title, issued, layer, force_ocr=False):
+    """The uploaded document as an event of the inbox. A PDF is extracted with Docling (text layer, OCR for scanned
+    pages, tables), in the locked-text format of the corpus; its tables go to tabel/*.csv, where the pipeline offers
+    them to the LLM for rows_ref."""
+    import shutil
 
-
-def _upload_event(file, title, issued, layer):
     import build_texts
-    if file.name.lower().endswith(".pdf"):
-        raw = _pdf_text(file)
-    else:
-        raw = file.read().decode("utf-8", errors="replace")
+    from pph21kbs import pdf_extract
     doc_id = "UPLOAD-" + re.sub(r"[^A-Za-z0-9]+", "-", title).strip("-").upper()[:40]
     folder = TEXT_DIR / doc_id
-    folder.mkdir(parents=True, exist_ok=True)
-    if "=== PDF hlm." not in raw:
-        raw = "=== PDF hlm. 1 ===\n" + raw
-    (folder / "teks.txt").write_text(raw, encoding="utf-8")
+    shutil.rmtree(folder, ignore_errors=True)                       # a new upload under the same title
+    folder.mkdir(parents=True)
+    if file.name.lower().endswith(".pdf"):
+        source = folder / "sumber.pdf"
+        source.write_bytes(file.getvalue())
+        with st.spinner(f"Docling mengekstrak PDF: tata letak, tabel, OCR {pdf_extract.ocr_engine()} "
+                        "(sekitar 5 detik per halaman) ..."):
+            ext = pdf_extract.extract(source, force_ocr=force_ocr)
+        pdf_extract.write(ext, folder)
+        raw = ext.text()
+    else:
+        raw = file.read().decode("utf-8", errors="replace")
+        if "=== PDF hlm." not in raw:
+            raw = "=== PDF hlm. 1 ===\n" + raw
+        (folder / "teks.txt").write_text(raw, encoding="utf-8")
     (folder / "segmen.json").write_text(json.dumps(build_texts.segment(raw, layer == "company"), ensure_ascii=False),
                                         encoding="utf-8")
     registry()[doc_id] = {"id": doc_id, "event": doc_id, "role": "upload", "issued": issued.isoformat(), "title": title,
@@ -210,12 +213,20 @@ def _upload_preview(ev):
     pages = text.pages(ev.document)
     chars = sum(len(t.strip()) for _, t in pages)
     segs = text.segments(ev.document)
-    st.caption(f"{len(pages)} halaman · {chars:,} karakter teks · {len(segs)} segmen (pasal/lampiran)".replace(",", "."))
-    if chars < 40 * max(1, len(pages)):              # under ~40 characters a page: no text layer
-        st.warning("Teks yang terambil sangat sedikit. PDF ini kemungkinan hasil pindai (gambar) tanpa lapisan teks; "
-                   "jalankan OCR dulu lalu unggah teksnya (.txt).", icon=":material/document_scanner:")
+    tables = sorted((TEXT_DIR / ev.document / "tabel").glob("*.csv"))
+    st.caption(f"{len(pages)} halaman · {chars:,} karakter teks · {len(segs)} segmen (pasal/lampiran) · "
+               f"{len(tables)} tabel".replace(",", "."))
+    if chars < 40 * max(1, len(pages)):              # under ~40 characters a page, even after OCR
+        st.warning("Teks yang terambil sangat sedikit, juga setelah OCR. Periksa kualitas pindaian, atau unggah ulang "
+                   "dengan 'Paksa OCR semua halaman'.", icon=":material/document_scanner:")
     with st.expander("Pratinjau teks"):
         st.text("\n".join(t for _, t in pages)[:4000])
+    if tables:
+        with st.expander(f"Tabel hasil ekstraksi ({len(tables)})"):
+            name = st.selectbox("Tabel", [p.stem for p in tables], key="up_table",
+                                help="Nama T<halaman>-<urutan>. Pipeline menawarkan tabel ini ke LLM untuk rows_ref.")
+            st.dataframe(pd.read_csv(TEXT_DIR / ev.document / "tabel" / f"{name}.csv", dtype=str),
+                         hide_index=True, width="stretch")
 
 
 def _live_run(ev):
@@ -247,14 +258,18 @@ def tab_inbox():
                           format_func=lambda e: f"{e.id} · {reg.get(e.document, {}).get('title', e.title)[:90]}")
     else:
         with st.form("upload"):
-            f = st.file_uploader("Dokumen peraturan atau kebijakan (PDF dengan lapisan teks, atau .txt)",
-                                 type=["pdf", "txt"])
+            f = st.file_uploader("Dokumen peraturan atau kebijakan (PDF, juga hasil pindai, atau .txt)",
+                                 type=["pdf", "txt"],
+                                 help="PDF diekstrak dengan Docling: teks per halaman, OCR untuk halaman pindaian, "
+                                      "dan struktur tabel.")
             c1, c2, c3 = st.columns([2, 1, 1])
             title = c1.text_input("Judul", "Peraturan baru")
             issued = c2.date_input("Tanggal terbit", state.TODAY)
             layer = c3.selectbox("Lapis", ("regulation", "company"))
+            force_ocr = st.checkbox("Paksa OCR semua halaman", False,
+                                    help="Untuk PDF yang lapisan teksnya rusak (teks terambil kacau).")
             if st.form_submit_button("Masukkan ke kotak masuk") and f:
-                st.session_state.upload_event = _upload_event(f, title, issued, layer)
+                st.session_state.upload_event = _upload_event(f, title, issued, layer, force_ocr)
         ev = st.session_state.get("upload_event")
         if ev is None:
             st.info("Unggah dokumen untuk diproses. Dokumen unggahan hanya bisa dijalankan langsung dengan LLM.")

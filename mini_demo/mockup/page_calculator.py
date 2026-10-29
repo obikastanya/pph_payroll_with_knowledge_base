@@ -1,434 +1,699 @@
-"""Calculator: try a calculation for one employee (this month and the end of the year), or run the payroll of a month
-for many employees.
+"""Calculator v4 (mini_demo/RANCANGAN_KALKULATOR.md): one employee, one grid as the only source of numbers.
 
-Scope of the engine (and of the research): permanent employees, one employer, one tax year. The calculation always
-covers every month of employment, so the end of the year is known; months not paid yet are treated as planned.
+Rows are the months up to the month asked for; columns are the company's pay components and the other monthly data the
+rules read. Everything the screen asks for comes from the knowledge base (inputs.py): the profile and company fields,
+the kinds a pay component can be, the HR data columns, their labels and types, which components a company policy
+computes, and the choices. Scenarios fill the form in company words; the employee can be saved and reopened, and is
+told when the knowledge base changed its results.
 """
-from datetime import date
+import json
+from datetime import date, datetime
 
 import pandas as pd
-import plotly.graph_objects as go
 import streamlit as st
 
 import data as d
+import demo
+import employee as emp
 import glossary as g
+import inputs
 import ui
 
-VAR_COLS = {"Gaji pokok": "base_salary", "Tunjangan tetap": "fixed_allowance", "Lembur": "overtime_pay",
-            "THR": "thr", "Bonus": "bonus", "Natura lain": "other_benefit", "Bingkisan": "gift_other",
-            "Zakat": "zakat"}
-VAR_HELP = {"Gaji pokok": "lembur", "Tunjangan tetap": "tunjangan tetap", "Lembur": "lembur", "THR": "THR",
-            "Bonus": "bonus", "Natura lain": "natura", "Bingkisan": "natura", "Zakat": "zakat"}
 
-BASE = dict(c_name="Rina (contoh)", c_year=2026, c_ptkp="K/1", c_sex="F", c_husband=True, c_method="gross",
-            c_start=1, c_end=12, c_npwp=True, c_klu="", c_jkk="low", c_equity=False, c_salary=10_000_000,
-            c_allow=1_500_000, c_vehicle=0, c_housing=0, c_raise=False, c_raise_m=4, c_raise_to=12_000_000,
-            c_seed={3: {"THR": 11_500_000}})
-SCENARIOS = {
-    "Pegawai biasa": dict(),
-    "THR + bonus": dict(c_name="Budi (contoh)", c_ptkp="TK/0", c_sex="M", c_salary=12_000_000, c_allow=0,
-                        c_seed={3: {"THR": 12_000_000}, 12: {"Bonus": 24_000_000}}),
-    "Masuk Juli": dict(c_name="Sari (contoh)", c_start=7, c_seed={}),
-    "Keluar Agustus": dict(c_name="Andi (contoh)", c_sex="M", c_end=8, c_seed={3: {"THR": 11_500_000}}),
-    "Gaji naik April": dict(c_raise=True),
-    "Gross-up": dict(c_method="gross_up"),
-    "Insentif DTP 2025": dict(c_name="Dewi (contoh)", c_year=2025, c_ptkp="TK/0", c_salary=6_500_000, c_allow=500_000,
-                              c_klu="13921", c_seed={3: {"THR": 7_000_000}}),
-    "Lembur tiap bulan": dict(c_seed={m: {"Lembur": 800_000 + 150_000 * (m % 4)} for m in range(1, 13)}),
-}
+# ---------------------------------------------------------------- record state
+def _norm(rec):
+    """The record as text, with empty cells left out (an empty cell and 0 mean the same)."""
+    r = dict(rec)
+    r["grid"] = {m: {c: v for c, v in row.items() if v not in (None, "", 0, False)} for m, row in rec["grid"].items()}
+    r["grid"] = {m: row for m, row in r["grid"].items() if row}
+    return json.dumps(r, sort_keys=True, default=str)
 
 
-def _apply(name):
-    st.session_state.update(BASE)
-    st.session_state.update(SCENARIOS[name])
-    st.session_state.pop("c_month", None)
-
-
-def _defaults():
-    for k, v in BASE.items():
-        st.session_state.setdefault(k, v)
-
-
-# ---------------------------------------------------------------- inputs
-def inputs():
+def _load(rec, origin):
     s = st.session_state
-    with st.container(border=True):
-        ui.step(1, "Pegawai")
-        st.text_input("Nama", key="c_name")
-        c1, c2 = st.columns(2)
-        c1.selectbox("Tahun pajak", (2023, 2024, 2025, 2026), key="c_year",
-                     help="Tahun 2023 masih memakai cara lama (tanpa TER). TER berlaku sejak Januari 2024.")
-        c2.selectbox("Status PTKP", d.STATUSES, key="c_ptkp", help=g.tip("status PTKP"))
-        c1, c2 = st.columns(2)
-        c1.selectbox("Jenis kelamin", ("M", "F"), key="c_sex", format_func=lambda x: "Laki-laki" if x == "M" else "Perempuan")
-        c2.selectbox("Cara pajak dibayar", list(d.METHODS), key="c_method", format_func=d.METHODS.get,
-                     help=g.tip("gross") + "\n\n" + g.tip("gross-up") + "\n\n" + g.tip("ditanggung"))
-        if s.c_sex == "F" and s.c_ptkp.startswith("K"):
-            st.checkbox("Ada keterangan suami tidak berpenghasilan", key="c_husband", help=g.tip("karyawati"))
-        c1, c2 = st.columns(2)
-        c1.selectbox("Mulai bekerja", range(1, 13), key="c_start", format_func=lambda m: d.MONTHS[m - 1],
-                     help="Bulan pertama digaji di tahun ini.")
-        c2.selectbox("Bekerja sampai", range(1, 13), key="c_end", format_func=lambda m: d.MONTHS[m - 1],
-                     help="Desember bila masih bekerja. Bulan keluar menjadi " + g.TERMS["masa terakhir"][0].lower() + ".")
-        with st.expander("Kondisi khusus (opsional)"):
-            st.toggle("Punya NPWP / NIK terdaftar", key="c_npwp", help=g.tip("NPWP"))
-            st.selectbox("Bidang usaha perusahaan (KLU)", list(d.KLU), key="c_klu", format_func=d.KLU.get, help=g.tip("KLU"))
-            st.selectbox("Risiko pekerjaan (JKK)", list(d.JKK), key="c_jkk", format_func=d.JKK.get, help=g.tip("risiko JKK"))
-            st.toggle("Pegawai juga pemegang saham", key="c_equity",
-                      help="Mobil dinas untuk pemegang saham selalu menjadi natura yang kena pajak.")
-
-    with st.container(border=True):
-        ui.step(2, "Penghasilan tetap per bulan")
-        c1, c2 = st.columns(2)
-        c1.number_input("Gaji pokok", 0, 10**10, step=100_000, key="c_salary", help="Gaji pokok sebulan sebelum potongan.")
-        c2.number_input("Tunjangan tetap", 0, 10**10, step=100_000, key="c_allow", help=g.tip("tunjangan tetap"))
-        c1, c2 = st.columns(2)
-        c1.number_input("Mobil dinas (nilai/bulan)", 0, 10**9, step=100_000, key="c_vehicle", help=g.tip("natura"))
-        c2.number_input("Rumah dinas (nilai/bulan)", 0, 10**9, step=100_000, key="c_housing", help=g.tip("natura"))
-        st.caption(f"Total tetap per bulan: **{d.money(s.c_salary + s.c_allow)}**"
-                   + (f" + natura {d.money(s.c_vehicle + s.c_housing)}" if s.c_vehicle + s.c_housing else ""))
-        st.toggle("Gaji pokok berubah di tengah tahun", key="c_raise")
-        if s.c_raise:
-            c1, c2 = st.columns(2)
-            c1.selectbox("Mulai bulan", range(1, 13), key="c_raise_m", format_func=lambda m: d.MONTHS[m - 1])
-            c2.number_input("Gaji pokok baru", 0, 10**10, step=100_000, key="c_raise_to")
-
-    with st.container(border=True):
-        ui.step(3, "Rincian per bulan")
-        st.caption("Sudah terisi dari langkah 2. Ubah sel untuk bulan yang berbeda: lembur, THR, bonus, cuti tanpa upah "
-                   "(gaji pokok lebih kecil), dan sebagainya. Mengubah langkah 2 mengisi ulang tabel ini.")
-        months = list(range(s.c_start, s.c_end + 1))
-        rows = []
-        for m in months:
-            sal = s.c_raise_to if s.c_raise and m >= s.c_raise_m else s.c_salary
-            row = {"Bulan": d.MONTHS[m - 1], "Gaji pokok": sal, "Tunjangan tetap": s.c_allow}
-            for col in list(VAR_COLS)[2:]:
-                row[col] = s.c_seed.get(m, {}).get(col, 0)
-            rows.append(row)
-        sig = hash((tuple(months), s.c_salary, s.c_allow, s.c_raise, s.c_raise_m, s.c_raise_to, str(s.c_seed)))
-        table = st.data_editor(
-            pd.DataFrame(rows), key=f"c_tab_{sig}", hide_index=True, width="stretch", disabled=["Bulan"],
-            column_config={c: st.column_config.NumberColumn(c, min_value=0, step=50_000, format="%d",
-                                                            help=g.TERMS[VAR_HELP[c]][1] if c != "Gaji pokok" else None)
-                           for c in VAR_COLS})
-    with st.expander("Pengaturan lanjutan"):
-        omega = st.date_input("Hitung dengan aturan yang diketahui pada tanggal", d.TODAY, key="c_omega",
-                              help=g.tip("tanggal pengetahuan"))
-    return months, table, omega
+    s.rec = emp.copy_record(rec)
+    s.rec_origin = origin                      # ("scenario", title) or ("saved", name)
+    s.rec_clean = _norm(s.rec)
+    s.rec_ver = s.get("rec_ver", 0) + 1
 
 
-def build_case(months, table, method=None):
+def _dirty():
     s = st.session_state
-    periods = []
-    for m, (_, row) in zip(months, table.iterrows()):
-        inc = {VAR_COLS[c]: int(row[c] or 0) for c in ("Gaji pokok", "Tunjangan tetap", "Lembur", "THR", "Bonus")
-               if int(row[c] or 0)}
-        ben = {"company_vehicle": s.c_vehicle, "housing_individual": s.c_housing,
-               "other_benefit": int(row["Natura lain"] or 0), "gift_other": int(row["Bingkisan"] or 0)}
-        periods.append({"month": m, "income": inc, "benefits": {k: int(v) for k, v in ben.items() if v},
-                        "zakat": int(row["Zakat"] or 0)})
-    employee = {"ptkp_status": s.c_ptkp, "sex": s.c_sex, "tax_id_valid": s.c_npwp, "has_equity_in_employer": s.c_equity}
-    if s.c_sex == "F":
-        employee["husband_no_income_certified"] = bool(s.c_husband)
-    return {"case_id": "kalkulator", "tax_year": s.c_year, "method": method or s.c_method, "employee": employee,
-            "employer": {"klu": s.c_klu or None, "jkk_risk_group": s.c_jkk, "policy": None},
-            "employment": {"start_month": s.c_start, "end_month": s.c_end}, "periods": periods}
+    return _norm(s.rec) != s.get("rec_clean")
+
+
+def _apply_scenario(title):
+    sc = emp.scenarios()[title]
+    emp.ensure_components(sc)
+    _load(emp.from_scenario(sc), ("scenario", title))
+
+
+def _on_scenario():
+    s = st.session_state
+    title = s.get("k_scn_pick")
+    if not title:
+        return
+    if _dirty():
+        s.k_scn_pending = title
+    else:
+        _apply_scenario(title)
+    s.k_scn_pick = None
+
+
+def _on_open():
+    s = st.session_state
+    name = s.get("k_open_pick")
+    saved = demo.load()["employees"].get(name)
+    if saved:
+        _load(saved["record"], ("saved", name))
+    s.k_open_pick = None
+
+
+def _save(name):
+    s = st.session_state
+    s.rec["name"] = name
+    r, _ = d.compute(emp.to_case(s.rec, policy_installed=s.rec.get("policy") in demo.installed_policies()), s.k_omega_v)
+    found = inputs.discover(s.rec["year"], s.rec.get("policy"), s.k_omega_v)
+    demo.save_employee(name, {"record": s.rec, "saved": datetime.now().strftime("%d/%m/%Y %H:%M"),
+                              "approved": len(demo.load()["approved"]),
+                              "last": {str(m): r.periods[m].get("pph21_due") for m in r.periods} if r else {},
+                              "keys": sorted(found)})
+    s.rec_origin = ("saved", name)
+    s.rec_clean = _norm(s.rec)
+
+
+# ---------------------------------------------------------------- top bar
+def top_bar():
+    s = st.session_state
+    rec = s.rec
+    saved = demo.load()["employees"]
+    c = st.columns([1.3, 1.3, 1, 1])
+    who = rec["name"] or "Pegawai baru"
+    origin = s.rec_origin
+    c[0].markdown(f"**{who}**{' ●' if _dirty() else ''}  \n<span class='muted'>"
+                  + ("dari skenario: " + origin[1] if origin[0] == "scenario" else "pegawai tersimpan") + "</span>",
+                  unsafe_allow_html=True, help="● = ada perubahan yang belum disimpan.")
+    c[1].selectbox("Isi dengan skenario umum", list(emp.scenarios()), index=None, key="k_scn_pick",
+                   placeholder="Pilih skenario…", on_change=_on_scenario,
+                   help="Mengisi form ini dengan contoh lengkap; setelah itu semua bisa diubah.")
+    c[2].selectbox("Buka pegawai tersimpan", list(saved), index=None, key="k_open_pick", placeholder="Pilih…",
+                   on_change=_on_open, disabled=not saved)
+    with c[3]:
+        st.write("")
+        with st.popover("Simpan", icon=":material/save:", width="stretch"):
+            name = st.text_input("Nama pegawai", rec["name"], key=f"k_save_name_{s.rec_ver}")
+            if st.button("Simpan", type="primary", key="k_save_btn") and name.strip():
+                _save(name.strip())
+                st.rerun()
+    if s.get("k_scn_pending"):
+        with st.container(border=True):
+            st.warning(f"Ada perubahan yang belum disimpan. Isi form dengan skenario **{s.k_scn_pending}**?",
+                       icon=":material/warning:")
+            b1, b2, _ = st.columns([1, 1, 3])
+            if b1.button("Ya, ganti", type="primary"):
+                _apply_scenario(s.k_scn_pending)
+                s.k_scn_pending = None
+                st.rerun()
+            if b2.button("Batal"):
+                s.k_scn_pending = None
+                st.rerun()
+    sc = emp.scenarios().get(origin[1]) if origin[0] == "scenario" else None
+    if sc:
+        st.caption(f"**{sc['title']}**: {sc['note']}")
+
+
+def period_bar():
+    s = st.session_state
+    rec = s.rec
+    v = s.rec_ver
+    c = st.columns(5)
+    ys = inputs.years()
+    rec["year"] = c[0].selectbox("Tahun pajak", ys, index=ys.index(rec["year"]) if rec["year"] in ys else len(ys) - 2,
+                                 key=f"k_year_{v}")
+    rec["start"] = c[1].selectbox("Mulai bekerja", range(1, 13), index=rec["start"] - 1, key=f"k_start_{v}",
+                                  format_func=lambda m: d.MONTHS[m - 1], help="Bulan pertama digaji tahun ini.")
+    ends = list(range(rec["start"], 13))
+    rec["end"] = c[2].selectbox("Bekerja sampai", ends, index=ends.index(rec["end"]) if rec["end"] in ends else len(ends) - 1,
+                                key=f"k_end_{v}", format_func=lambda m: "Desember (masih bekerja)" if m == 12
+                                else d.MONTHS[m - 1] + " (keluar)",
+                                help="Bulan keluar menjadi bulan penutup: pajak setahun dihitung ulang di bulan itu.")
+    months = list(range(rec["start"], rec["end"] + 1))
+    rec["month"] = c[3].selectbox("Hitung sampai bulan", months,
+                                  index=months.index(rec["month"]) if rec["month"] in months else len(months) - 1,
+                                  key=f"k_month_{v}",
+                                  format_func=lambda m: d.MONTHS[m - 1] + (" · penutup" if m == rec["end"] else ""),
+                                  help="Hasil ditampilkan dari bulan pertama sampai bulan ini. Hitung setahun hanya "
+                                       "muncul di bulan penutup (Desember atau bulan keluar).")
+    s.k_omega_v = c[4].date_input("Aturan per tanggal", demo.TODAY, key="k_omega",
+                                  help="Hitung memakai aturan yang sudah dikenal sistem pada tanggal ini. Berguna "
+                                       "untuk melihat hitungan lama sebelum ada aturan yang berlaku surut. "
+                                       f"Knowledge base demo dikenal sampai {d.tgl(demo.known_until())}.")
+
+
+# ---------------------------------------------------------------- profile and company (from the knowledge base)
+def _field(key, rec, year, v):
+    tp = inputs.kind(key)
+    lab = inputs.label(key)
+    df = inputs.definition(key) or {}
+    if df.get("show_if"):
+        for k2, val in df["show_if"].items():
+            if rec["fields"].get(k2) != val:
+                return
+    if df.get("origin", "keadaan awal") != "keadaan awal":
+        lab += f" · baru ({df['origin']})"
+    if not inputs.has_def(key):
+        lab += " ⚠"
+    cur = rec["fields"].get(key, inputs.default(key))
+    wkey = f"k_f_{key}_{v}"
+    hp = inputs.help_text(key)
+    if tp == "choice":
+        opts = inputs.options(key, year)
+        values = [o[0] for o in opts]
+        names = dict(opts)
+        val = st.selectbox(lab, values, index=values.index(cur) if cur in values else 0, key=wkey,
+                           format_func=lambda x: names.get(x, x), help=hp) if values else None
+    elif tp in ("bool", "flag"):
+        val = st.toggle(lab, bool(cur), key=wkey, help=hp)
+    elif tp == "text":
+        val = st.text_input(lab, cur or "", key=wkey, help=hp)
+    else:
+        val = st.number_input(lab, 0, 10**11, int(cur) if cur not in (None, "") else None, key=wkey, help=hp,
+                              placeholder="kosong", step=1 if tp == "int" else 100_000)
+    rec["fields"][key] = val
+
+
+def profile():
+    s = st.session_state
+    rec, v = s.rec, s.rec_ver
+    year, omega = rec["year"], s.k_omega_v
+    with st.expander("Pegawai dan perusahaan", expanded=True):
+        left, right = st.columns(2, gap="large")
+        with left:
+            st.markdown("**Pegawai**")
+            rec["name"] = st.text_input("Nama", rec["name"], key=f"k_name_{v}")
+            keys = inputs.profile_fields("pegawai", year, rec.get("policy"), omega)
+            core = [k for k in keys if (inputs.definition(k) or {}).get("core")]
+            more = [k for k in keys if k not in core]
+            for k in core:
+                _field(k, rec, year, v)
+            with st.expander(f"Data pegawai lain yang dibaca aturan tahun ini ({len(more)})"):
+                st.caption("Daftar ini dibentuk dari knowledge base: setiap data dibaca paling tidak oleh satu aturan "
+                           f"yang berlaku tahun {year}.")
+                for k in more:
+                    _field(k, rec, year, v)
+        with right:
+            st.markdown("**Perusahaan**")
+            pols = demo.installed_policies()
+            opts = [""] + list(pols)
+            cur = rec.get("policy") if rec.get("policy") in pols else ""
+            pick = st.selectbox("Kebijakan perusahaan", opts, index=opts.index(cur), key=f"k_pol_{v}",
+                                format_func=lambda p: "Tidak ada" if not p else f"{p} · {pols[p]}",
+                                help=g.tip("kebijakan perusahaan") + " Hanya kebijakan yang sudah disetujui di Manajemen KB.")
+            if rec.get("policy") and rec["policy"] not in pols:
+                st.info(f"Form ini memakai kebijakan **{rec['policy']}**, yang belum ada di knowledge base. Setujui dulu "
+                        "di Manajemen KB; kolom datanya akan muncul sendiri.", icon=":material/info:")
+            else:
+                rec["policy"] = pick or None
+            keys = inputs.profile_fields("perusahaan", year, rec.get("policy"), omega)
+            core = [k for k in keys if (inputs.definition(k) or {}).get("core")]
+            more = [k for k in keys if k not in core]
+            for k in core:
+                _field(k, rec, year, v)
+            klu = rec["fields"].get("employer.klu")
+            if klu:
+                lists = [n for n in ("dtp_klu", "dtp_klu_tourism") if klu in inputs.table_keys(n, year)]
+                st.caption(f"KLU {klu} " + (f"ada di daftar penerima DTP tahun {year} menurut knowledge base."
+                                            if lists else f"tidak ada di daftar DTP tahun {year} yang dikenal knowledge base."))
+            with st.expander(f"Data perusahaan lain yang dibaca aturan ({len(more)})"):
+                for k in more:
+                    _field(k, rec, year, v)
+
+
+# ---------------------------------------------------------------- the grid
+def _auto(key, r, shown):
+    """When the rules compute this data in the months shown (the winning rule is not the one that reads the admin's
+    input), its values and the rules that computed it; read from the engine's trace, so it follows the knowledge base."""
+    rule = inputs.input_rules().get(key)
+    if r is None or not rule:
+        return None
+    rid, fact = rule
+    vals, by = {}, {}
+    for m in shown:
+        t = (r.trace or {}).get((fact, m))
+        if t:
+            vals[m] = int(t["value"] or 0)
+            if t["rule"] != rid:
+                by[t["rule"]] = t["layer"]
+    return {"fact": fact, "vals": vals, "by": by} if by else None
+
+
+def _columns(rec, omega, r):
+    """[(col id, label, key, state)] state: edit | computed | unused | retired | nodef; and the computed values."""
+    year, policy = rec["year"], rec.get("policy")
+    cat = {**rec.get("component_keys", {}), **emp.catalog()}
+    found = inputs.discover(year, policy, omega)
+    shown = list(range(rec["start"], rec["month"] + 1))
+    cols, autos = [], {}
+    for name in rec["components"]:
+        key = cat.get(name)
+        state = "edit"
+        a = _auto(key, r, shown) if key else None
+        if a:
+            state, autos[name] = "computed", a
+        elif key and inputs.retired(key, date(year, rec["month"], 1)):
+            state = "retired"
+        elif key not in found or not any(m in found[key]["months"] for m in shown):
+            state = "unused"
+        cols.append((name, name, key, state))
+    mapped = {cat.get(n) for n in rec["components"]}
+    for key in inputs.component_kinds(year, policy, omega):      # computed by the rules, not entered: shown, locked
+        if key in mapped:
+            continue
+        a = _auto(key, r, shown)
+        if a and any(a["vals"].values()):
+            col = f"auto:{key}"
+            autos[col] = a
+            cols.append((col, d.fact_label(a["fact"]), key, "computed"))
+    for key in inputs.monthly_data(year, policy, omega):
+        cols.append((f"data:{key}", inputs.label(key), key, "edit" if inputs.has_def(key) else "nodef"))
+    return cols, found, autos
+
+
+def _range_note(found, key, shown):
+    ms = [m for m in shown if key in found and m in found[key]["months"]]
+    if not ms or len(ms) == len(shown):
+        return ""
+    return f" ({d.MON[ms[0] - 1]}–{d.MON[ms[-1] - 1]})"
+
+
+def grid(prev_result):
+    s = st.session_state
+    rec, v = s.rec, s.rec_ver
+    omega = s.k_omega_v
+    shown = list(range(rec["start"], rec["month"] + 1))
+    cols, found, autos = _columns(rec, omega, prev_result)
+    with st.container(border=True):
+        h1, h2, h3 = st.columns([3, 1, 1])
+        h1.markdown(f"**Rincian per bulan** · {d.MONTHS[shown[0] - 1]}–{d.MONTHS[shown[-1] - 1]} {rec['year']}")
+        h1.caption("Klik dua kali sel untuk mengubah angka, lalu Enter. Angka dicatat di bulan dibayarnya. Kolom berasal "
+                   "dari komponen gaji perusahaan dan data yang dibaca aturan tahun ini.")
+        with h2.popover("Komponen", icon=":material/add:", width="stretch"):
+            add_component(rec, shown)
+        with h3.popover("Isi cepat", icon=":material/auto_fix_high:", width="stretch"):
+            quick_fill(rec, cols, shown)
+        table, cfg = [], {"Bulan": st.column_config.TextColumn("Bulan", disabled=True)}
+        for m in shown:
+            row = {"Bulan": d.MONTHS[m - 1]}
+            for col, lab, key, state in cols:
+                tp = inputs.kind(key) if key else "money"
+                if state == "computed":
+                    row[col] = autos[col]["vals"].get(m, 0)
+                else:
+                    val = emp.cell(rec, m, col)
+                    row[col] = bool(val) if tp == "flag" else (val if tp == "choice" else (val or 0))
+            row["PPh sudah dipotong"] = rec["withheld"].get(str(m)) if m < rec["month"] else None
+            table.append(row)
+        for col, lab, key, state in cols:
+            tp = inputs.kind(key) if key else "money"
+            hp = inputs.help_text(key) if key else "Komponen ini belum dipetakan ke data knowledge base."
+            if state == "computed":
+                by = autos[col]["by"]
+                who = ("kebijakan perusahaan " + str(rec.get("policy"))) if "company" in by.values() else "aturan"
+                title = f"{lab} ⚙"
+                hp = (f"Dihitung otomatis oleh {who} ({', '.join(list(by)[:3])}), tidak bisa diketik. Untuk mengubahnya, "
+                      "ubah data yang dibaca aturan itu (mis. gaji, risiko pekerjaan, atau data HR).")
+            elif state == "unused":
+                title = f"{lab} (tidak dibaca aturan)"
+            elif state == "retired":
+                title = f"{lab} (tidak dipakai lagi)"
+            elif state == "nodef":
+                title = f"{lab} ⚠"
+            else:
+                title = f"{lab} ✎" + _range_note(found, key, shown)
+            dis = state == "computed"
+            if tp == "flag":
+                cfg[col] = st.column_config.CheckboxColumn(title, help=hp, disabled=dis)
+            elif tp == "choice":
+                cfg[col] = st.column_config.SelectboxColumn(title, help=hp, disabled=dis,
+                                                            options=[o[0] for o in inputs.options(key, rec["year"])])
+            else:
+                cfg[col] = st.column_config.NumberColumn(title, help=hp, disabled=dis, min_value=0, format="localized",
+                                                         step=1)
+        cfg["PPh sudah dipotong"] = st.column_config.NumberColumn(
+            "PPh sudah dipotong ✎", format="localized", min_value=0,
+            help="Isi hanya bila PPh yang benar-benar dipotong bulan itu berbeda dari hitungan sistem (mis. dulu "
+                 "dihitung sistem lama). Dipakai di bulan penutup.")
+        sig = "|".join(c[0] for c in cols)
+        auto_sig = hash(tuple(sorted((c, tuple(sorted(a["vals"].items()))) for c, a in autos.items())))
+        gkey = f"k_grid_{v}_{rec['year']}_{rec['start']}_{rec['month']}_{hash(sig)}_{auto_sig}"
+        # the editor keeps the user's edits relative to the data it was first given: give it the same data while its
+        # key is the same; a new key (other columns, or new values computed by the rules) starts from the record
+        if s.get("k_grid_base", (None,))[0] != gkey:
+            s.k_grid_base = (gkey, table)
+        frame = pd.DataFrame(s.k_grid_base[1])
+        locked = [c[0] for c in cols if c[3] == "computed"]
+        idle = [c[0] for c in cols if c[3] in ("unused", "retired")]
+        styled = (frame.style
+                  .set_properties(subset=["Bulan"], **{"background-color": "#f7f7f5", "font-weight": "600"})
+                  .set_properties(subset=locked, **{"background-color": "#ecebe7", "color": "#6b6a66"})
+                  .set_properties(subset=idle, **{"background-color": "#fff4d6", "color": "#8a6100"}))
+        edited = st.data_editor(styled, key=gkey, hide_index=True, width="stretch", column_config=cfg)
+        for m, (_, r) in zip(shown, edited.iterrows()):
+            rowrec = rec["grid"].setdefault(str(m), {})
+            for col, lab, key, state in cols:
+                if state == "computed":
+                    continue
+                val = r[col]
+                tp = inputs.kind(key) if key else "money"
+                if tp == "flag":
+                    rowrec[col] = 1 if val else 0
+                elif tp == "choice":
+                    rowrec[col] = val if isinstance(val, str) and val else None
+                else:
+                    rowrec[col] = int(val) if pd.notna(val) and val != "" else 0
+            w = r["PPh sudah dipotong"]
+            if m < rec["month"] and pd.notna(w) and w != "":
+                rec["withheld"][str(m)] = int(w)
+            else:
+                rec["withheld"].pop(str(m), None)
+        if any(c[3] == "computed" for c in cols):
+            st.caption("⚙ = dihitung otomatis oleh aturan dari data lain; tampil untuk dilihat, tidak bisa diketik.")
+    return cols, found, autos
+
+
+def add_component(rec, shown):
+    s = st.session_state
+    year = rec["year"]
+    cat = emp.catalog()
+    existing = [n for n in cat if n not in rec["components"]]
+    mode = st.radio("Komponen", ["Baru", "Dari daftar perusahaan"] if existing else ["Baru"], horizontal=True,
+                    key="k_add_mode")
+    if mode == "Baru":
+        name = st.text_input("Nama komponen", key="k_add_name", placeholder="mis. Tunjangan komunikasi")
+        kinds = inputs.component_kinds(year, rec.get("policy"), s.k_omega_v)
+        key = st.selectbox("Apa ini?", kinds, key="k_add_kind", format_func=inputs.label,
+                           help="Pilih yang paling sesuai dengan sifat komponen ini. Daftarnya diambil dari data yang "
+                                "dibaca aturan tahun ini; cara pajaknya diputuskan aturan, bukan oleh pilihan ini.")
+        if key:
+            st.caption(inputs.help_text(key))
+    else:
+        name = st.selectbox("Komponen", existing, key="k_add_existing")
+        key = cat.get(name)
+        st.caption(f"Dipetakan ke: {inputs.label(key)}")
+    c1, c2 = st.columns(2)
+    value = c1.number_input("Nilai", 0, 10**11, 0, 50_000, key="k_add_value")
+    start = c2.selectbox("Mulai bulan", shown, key="k_add_start", format_func=lambda m: d.MONTHS[m - 1])
+    repeat = st.checkbox("Dibayar setiap bulan sejak itu",
+                         bool((inputs.definition(key) or {}).get("repeat")) if key else True, key=f"k_add_repeat_{key}")
+    if st.button("Tambahkan", type="primary", key="k_add_btn", disabled=not (name and key)):
+        if mode == "Baru":
+            demo.add_component(name, key)
+        if name not in rec["components"]:
+            rec["components"].append(name)
+        for m in range(start, rec["end"] + 1):
+            if m == start or repeat:
+                rec["grid"].setdefault(str(m), {})[name] = int(value)
+        s.rec_ver += 1
+        st.rerun()
+    if rec["components"]:
+        st.divider()
+        keep = st.multiselect("Komponen yang ditampilkan", rec["components"], rec["components"],
+                              key=f"k_keep_{s.rec_ver}")
+        if st.button("Terapkan", key="k_keep_btn") and keep != rec["components"]:
+            rec["components"] = keep
+            s.rec_ver += 1
+            st.rerun()
+
+
+def quick_fill(rec, cols, shown):
+    s = st.session_state
+    editable = [c for c in cols if c[3] in ("edit", "nodef", "unused")]
+    if not editable:
+        st.caption("Tidak ada kolom yang bisa diisi.")
+        return
+    labels = {c[0]: c[1] for c in editable}
+    col = st.selectbox("Kolom", list(labels), format_func=labels.get, key="k_qf_col")
+    key = next(c[2] for c in editable if c[0] == col)
+    tp = inputs.kind(key) if key else "money"
+    start = st.selectbox("Mulai bulan", shown, key="k_qf_start", format_func=lambda m: d.MONTHS[m - 1])
+    modes = ["Isi sama sampai bulan terakhir", "Hanya bulan ini"] + (["Naik 1 tiap bulan"] if tp == "int" else [])
+    mode = st.radio("Cara", modes, key="k_qf_mode")
+    value = 1 if tp == "flag" else st.number_input("Nilai", 0, 10**11, 0, 1 if tp == "int" else 50_000, key="k_qf_value")
+    if st.button("Isi", type="primary", key="k_qf_btn"):
+        for i, m in enumerate(range(start, rec["end"] + 1)):
+            if mode == "Hanya bulan ini" and m != start:
+                break
+            rec["grid"].setdefault(str(m), {})[col] = int(value) + (i if mode == "Naik 1 tiap bulan" else 0)
+        s.rec_ver += 1
+        st.rerun()
 
 
 # ---------------------------------------------------------------- results
-def _month_card(r, case, m, final):
+def month_card(r, rec, cols, autos, m, final):
     p = r.periods[m]
     gross, due, dtp = p.get("gross_income"), p.get("pph21_due"), p.get("pph21_dtp") or 0
-    rate, cat = d.value(r, "ter_rate", m), d.value(r, "ter_category")
-    method = case["method"]
-    contrib = sum(d.value(r, f, m) or 0 for f in ("jht_employee", "jp_employee", "health_employee"))
-    kind = (ui.badge("Masa pajak terakhir", "orange") + g.term("masa terakhir", "apa ini?")) if final else \
-        (ui.badge("Masa biasa · TER", "blue") + g.term("TER", "apa ini?"))
-    neg = " neg" if due is not None and due < 0 else ""
-    head = "Lebih bayar dikembalikan" if due is not None and due < 0 else "PPh 21 bulan ini"
-    lines = [f"<tr><td class='op'></td><td>{g.term('bruto', 'Penghasilan bruto')}</td><td class='r'>{d.money(gross)}</td></tr>"]
+    rate, cat_ = d.value(r, "ter_rate", m), d.value(r, "ter_category")
+    rows, natura = [], 0
+    for col, lab, key, state in cols:
+        if col.startswith(("data:", "auto:")) or state in ("unused", "retired") or not key:
+            continue          # premiums computed by the rules are shown on their own line below
+        if state == "computed":
+            val, lab = autos[col]["vals"].get(m, 0), lab + " ⚙"
+        else:
+            val = emp.cell(rec, m, col) or 0
+        b = key.split(".")[0]
+        if val and b in ("income", "benefit") and not key.endswith(("deductions", "_employee")):
+            rows.append(f"<tr class='sub'><td></td><td>{lab}</td><td class='r'>{d.money(val)}</td></tr>")
+            natura += val if b == "benefit" else 0
+    taxable_natura = sum(d.value(r, f, m) or 0 for f in ("benefits_taxable_regular", "benefits_taxable_irregular"))
+    if natura and taxable_natura != natura:
+        rows.append(f"<tr class='sub'><td>−</td><td>{g.term('natura')} yang tidak kena pajak bulan ini</td>"
+                    f"<td class='r'>{d.money(natura - taxable_natura)}</td></tr>")
+    prem = sum(p.get(f) or 0 for f in ("jkk_premium", "jkm_premium", "health_premium_employer"))
+    if prem:
+        rows.append(f"<tr class='sub'><td>+</td><td>Premi {g.term('JKK')}, {g.term('JKM')}, {g.term('BPJS Kesehatan')} "
+                    f"dibayar perusahaan</td><td class='r'>{d.money(prem)}</td></tr>")
+    if p.get("tax_allowance"):
+        rows.append(f"<tr class='sub'><td>+</td><td>{g.term('gross-up', 'Tunjangan pajak')}</td>"
+                    f"<td class='r'>{d.money(p['tax_allowance'])}</td></tr>")
+    rows.append(f"<tr><td class='op'>=</td><td>{g.term('bruto', 'Penghasilan bruto')}</td><td class='r'>{d.money(gross)}</td></tr>")
+    old = rate is None and not final
     if final:
-        lines += [f"<tr><td class='op'></td><td>{g.term('PPh setahun')} (lihat kartu akhir tahun)</td>"
-                  f"<td class='r'>{d.money(d.value(r, 'annual_pph21'))}</td></tr>",
-                  f"<tr><td class='op'>−</td><td>{g.term('sudah dipotong', 'Sudah dipotong')} bulan-bulan sebelumnya</td>"
-                  f"<td class='r'>{d.money(d.value(r, 'withheld_before_final'))}</td></tr>"]
-    elif rate is not None:
-        lines.append(f"<tr><td class='op'>×</td><td>Tarif {g.term('TER')} {g.term('kategori TER', 'kategori ' + str(cat))}"
-                     f"</td><td class='r'>{d.pct(rate)}</td></tr>")
-    lines.append(f"<tr class='total'><td class='op'>=</td><td>{g.term('PPh 21')} terutang</td><td class='r'>{d.money(due)}</td></tr>")
-    if dtp:
-        lines.append(f"<tr class='sub'><td></td><td>· ditanggung pemerintah ({g.term('DTP')}), dibayarkan ke pegawai</td>"
-                     f"<td class='r'>{d.money(dtp)}</td></tr>")
-    if method == "gross_up" and p.get("tax_allowance"):
-        lines.append(f"<tr class='sub'><td></td><td>· termasuk {g.term('gross-up', 'tunjangan pajak')} di bruto</td>"
-                     f"<td class='r'>{d.money(p['tax_allowance'])}</td></tr>")
-    lines.append(f"<tr class='sub'><td></td><td>Iuran {g.term('JHT')}, {g.term('JP')}, {g.term('BPJS Kesehatan')} pegawai"
-                 f"</td><td class='r'>{d.money(contrib)}</td></tr>")
-    lines.append(f"<tr><td></td><td><b>{g.term('gaji bersih', 'Gaji bersih diterima')}</b></td>"
-                 f"<td class='r'><b>{d.money(p.get('take_home_pay'))}</b></td></tr>")
-    who = {"gross": "dipotong dari gaji", "gross_up": "dibayar lewat tunjangan pajak",
-           "employer_borne": "dibayar perusahaan"}[method]
-    if final:
+        rows.append(f"<tr><td class='op'></td><td>{g.term('PPh setahun')} (lihat hitung ulang setahun)</td>"
+                    f"<td class='r'>{d.money(d.value(r, 'annual_pph21'))}</td></tr>")
+        badge = ui.badge("Bulan penutup", "orange") + g.term("masa terakhir", "apa ini?")
         diff = d.value(r, "final_period_tax") or 0
-        expl = (f"Di masa terakhir pajak setahun dihitung ulang. {d.money(d.value(r, 'annual_pph21'))} − "
-                f"{d.money(d.value(r, 'withheld_before_final'))} = <b>{d.money(diff)}</b>: "
-                + ("kurang bayar, " + who + "." if diff >= 0 else "lebih bayar, dikembalikan ke pegawai bersama gaji."))
+        expl = (f"Bulan penutup: pajak setahun dihitung ulang dan dikurangi yang sudah dipotong = <b>{d.money(diff)}</b> "
+                + ("(kurang bayar, dipotong bulan ini)." if diff >= 0 else
+                   "(lebih bayar, dikembalikan ke pegawai paling lambat akhir bulan berikutnya)."))
+    elif old:
+        reg, irr = d.value(r, "pph_regular_month", m), d.value(r, "pph_irregular_month", m) or 0
+        rows.append(f"<tr><td class='op'></td><td>PPh penghasilan rutin: neto sebulan × 12, dikurangi {g.term('PTKP')}, "
+                    f"tarif {g.term('Pasal 17')}, ÷ 12</td><td class='r'>{d.money(reg)}</td></tr>")
+        if irr:
+            rows.append(f"<tr><td class='op'>+</td><td>PPh {g.term('THR')} / {g.term('bonus')}: selisih pajak setahun dengan "
+                        f"dan tanpa THR/bonus</td><td class='r'>{d.money(irr)}</td></tr>")
+        badge = ui.badge("Cara sebelum 2024: disetahunkan", "grey")
+        expl = f"{d.money(reg)}" + (f" + {d.money(irr)}" if irr else "") + f" = <b>{d.money(due)}</b>."
     else:
-        expl = f"{d.money(gross)} × {d.pct(rate)} = <b>{d.money(due)}</b>, {who}."
-        if dtp:
-            expl += " Karena insentif DTP, pegawai menerima kembali jumlah itu bersama gaji."
-    ui.html(f"<div class='card'><h4>{head} · {d.MONTHS[m - 1]} {case['tax_year']}</h4>{kind}"
-            f"<div class='big{neg}'>{d.money(abs(due) if due is not None and due < 0 else due)}</div>"
-            f"<table class='lines'>{''.join(lines)}</table><div class='explain'>{expl}</div></div>")
+        rows.append(f"<tr><td class='op'>×</td><td>Tarif {g.term('TER')} {g.term('kategori TER', 'kategori ' + str(cat_))}"
+                    f"</td><td class='r'>{d.pct(rate)}</td></tr>")
+        badge = ui.badge("Bulan biasa · TER", "blue") + g.term("TER", "apa ini?")
+        expl = f"{d.money(gross)} × {d.pct(rate)} = <b>{d.money(due)}</b>."
+    rows.append(f"<tr class='total'><td class='op'>=</td><td>{g.term('PPh 21')} {d.MONTHS[m - 1]}</td>"
+                f"<td class='r'>{d.money(due)}</td></tr>")
+    if dtp:
+        rows.append(f"<tr class='sub'><td></td><td>· {g.term('DTP', 'ditanggung pemerintah')}, dibayar tunai ke pegawai</td>"
+                    f"<td class='r'>{d.money(dtp)}</td></tr>")
+        expl += " Karena insentif DTP, jumlah itu dibayarkan tunai ke pegawai."
+    neg = due is not None and due < 0
+    ui.html(f"<div class='card'><h4>{'Lebih bayar' if neg else 'PPh 21'} · {d.MONTHS[m - 1]} {rec['year']}</h4>{badge}"
+            f"<div class='big{' neg' if neg else ''}'>{d.money(abs(due) if neg else due)}</div>"
+            f"<table class='lines'>{''.join(rows)}</table><div class='explain'>{expl}</div></div>")
 
 
-def _year_card(r, case):
+def year_card(r, rec):
     y = r.year
-    final_m = case["employment"]["end_month"]
+    end = max(rec["end"], rec["start"])
     pension = (y.get("annual_deductions") or 0) - (y.get("job_expense") or 0)
-    diff = d.value(r, "final_period_tax") or 0
     status = d.value(r, "ptkp_status_effective")
+    actual = sum(rec["withheld"].get(str(m), r.periods[m].get("pph21_due") or 0) for m in r.periods if m < end)
+    diff = (y.get("annual_pph21") or 0) - actual
     rows = [("", g.term("bruto", "Penghasilan bruto setahun"), y.get("annual_gross")),
             ("−", g.term("biaya jabatan", "Biaya jabatan"), y.get("job_expense")),
             ("−", g.term("iuran pensiun", "Iuran pensiun pegawai") + " dan zakat", pension),
             ("=", g.term("neto", "Penghasilan neto"), y.get("annual_net")),
             ("−", g.term("PTKP") + f" ({status})", y.get("ptkp_amount")),
             ("=", g.term("PKP", "Penghasilan kena pajak"), y.get("taxable_income")),
-            ("×", g.term("Pasal 17", "Tarif Pasal 17"), None)]
-    lines = "".join(f"<tr><td class='op'>{o}</td><td>{t}</td><td class='r'>{d.money(v) if v is not None else 'bertingkat'}"
-                    f"</td></tr>" for o, t, v in rows)
-    lines += (f"<tr class='total'><td class='op'>=</td><td>{g.term('PPh setahun')}</td>"
-              f"<td class='r'>{d.money(y.get('annual_pph21'))}</td></tr>"
-              f"<tr><td class='op'>−</td><td>{g.term('sudah dipotong', 'Sudah dipotong')} "
-              f"{d.MON[case['employment']['start_month'] - 1]}–{d.MON[max(final_m - 2, 0)]}</td>"
-              f"<td class='r'>{d.money(d.value(r, 'withheld_before_final'))}</td></tr>"
-              f"<tr class='total'><td class='op'>=</td><td>Masa terakhir ({d.MONTHS[final_m - 1]}): "
-              f"{g.term('kurang bayar') if diff >= 0 else g.term('lebih bayar')}</td><td class='r'>{d.money(diff)}</td></tr>")
-    note = ("Sama dengan yang sudah dipotong: tidak ada selisih." if diff == 0 else
-            f"Di {d.MONTHS[final_m - 1]} dipotong {d.money(diff)}." if diff > 0 else
-            f"Di {d.MONTHS[final_m - 1]} pegawai menerima kembali {d.money(-diff)}.")
-    if final_m < 12:
-        note += f" Pegawai keluar di {d.MONTHS[final_m - 1]}, jadi bulan itu menjadi masa terakhir."
-    ui.html(f"<div class='card'><h4>Akhir tahun {case['tax_year']}</h4>"
-            f"<span class='muted'>Hitung ulang setahun di {g.term('masa terakhir')}</span>"
-            f"<table class='lines'>{lines}</table><div class='explain'>{note}</div></div>")
+            ("=", g.term("PPh setahun") + " (" + g.term("Pasal 17", "tarif Pasal 17") + ")", y.get("annual_pph21")),
+            ("−", g.term("sudah dipotong", "Sudah dipotong") + f" {d.MON[rec['start'] - 1]}–{d.MON[max(end - 2, 0)]}", actual)]
+    html = "".join(f"<tr{' class=total' if i == 6 else ''}><td class='op'>{o}</td><td>{t}</td><td class='r'>{d.money(v)}</td></tr>"
+                   for i, (o, t, v) in enumerate(rows))
+    html += (f"<tr class='total'><td class='op'>=</td><td>{d.MONTHS[end - 1]}: "
+             f"{g.term('kurang bayar') if diff >= 0 else g.term('lebih bayar')}</td><td class='r'>{d.money(diff)}</td></tr>")
+    note = ""
+    if rec["withheld"]:
+        note = (f"Memakai PPh yang diisi di kolom 'PPh sudah dipotong' (hitungan sistem: "
+                f"{d.money(d.value(r, 'withheld_before_final'))}). <span class='mock'>Mockup: selisih ini dihitung "
+                "aplikasi; direncanakan dihitung engine.</span>")
+    if end < 12:
+        note += f" Pegawai keluar di {d.MONTHS[end - 1]}: bulan itu bulan penutup, tanpa disetahunkan."
+    ui.html(f"<div class='card'><h4>Hitung ulang setahun {rec['year']}</h4><table class='lines'>{html}</table>"
+            + (f"<div class='explain'>{note}</div>" if note else "") + "</div>")
 
 
-def _chart(r, case, chosen):
-    months = sorted(r.periods)
-    final = case["employment"]["end_month"]
-    vals = [float(r.periods[m].get("pph21_due") or 0) for m in months]
-    colours = ["#1b7a43" if v < 0 else "#eb6834" if m == final else "#2a78d6" for m, v in zip(months, vals)]
-    fig = go.Figure(go.Bar(x=[d.MON[m - 1] for m in months], y=vals, marker_color=colours,
-                           marker_line_width=[2.5 if m == chosen else 0 for m in months], marker_line_color="#24231f",
-                           hovertemplate="%{x}: Rp%{y:,.0f}<extra></extra>"))
-    fig.update_layout(height=230, margin=dict(l=0, r=0, t=10, b=0), yaxis_tickformat=",.0f", showlegend=False,
-                      plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)")
-    st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
-    st.caption("Biru: masa biasa (TER). Oranye: masa terakhir. Hijau: lebih bayar dikembalikan.")
-
-
-def _notes(r, case, months):
+def warnings(r, rec, cols, found):
+    """Shows the warnings; returns True when results must not be shown."""
+    shown = list(range(rec["start"], rec["month"] + 1))
+    blocking = [f"Komponen **{lab}** dipetakan ke data yang tidak dipakai lagi ({inputs.label(key)}). Pilih jenis baru "
+                "lewat '+ Komponen' supaya penghasilannya tidak hilang dari bruto."
+                for col, lab, key, state in cols if state == "retired" and any(emp.cell(rec, m, col) for m in shown)]
+    for b in blocking:
+        st.error(b, icon=":material/block:")
     out = []
-    s = st.session_state
-    eff = d.value(r, "ptkp_status_effective")
-    if eff and eff != s.c_ptkp:
-        out.append(f"PTKP yang dipakai **{eff}**, bukan {s.c_ptkp}: karyawati kawin memakai PTKP tidak kawin kecuali ada "
-                   "keterangan suami tidak berpenghasilan.")
-    spikes = [m for m in months if (r.periods[m].get("thr") or 0) + (r.periods[m].get("bonus") or 0)]
-    if spikes and case["tax_year"] >= 2024:
-        out.append("Bulan " + ", ".join(d.MONTHS[m - 1] for m in spikes) + " ada THR atau bonus: bruto bulan itu naik, "
-                   "jadi tarif TER-nya juga naik. Selisihnya diratakan lagi di masa terakhir.")
-    dtp = [m for m in months if r.periods[m].get("pph21_dtp")]
-    if dtp:
-        out.append(f"Insentif DTP berlaku di {len(dtp)} bulan; PPh-nya ditanggung pemerintah dan dibayarkan ke pegawai.")
-    elif s.c_klu:
-        out.append("Bidang usaha sudah diisi, tetapi pegawai ini tidak memenuhi syarat DTP (mis. tahun, sektor, atau batas "
-                   "penghasilan). Lihat 'Dasar hukum'.")
-    if case["tax_year"] < 2024:
-        out.append("Tahun sebelum 2024 memakai cara lama: PPh sebulan dihitung dengan menyetahunkan penghasilan.")
-    for w in r.warnings:
-        out.append(str(w))
+    for col, lab, key, state in cols:
+        if not key:
+            out.append(f"Komponen **{lab}** belum dipetakan ke data knowledge base; tidak dihitung.")
+            continue
+        if state == "unused" and any(emp.cell(rec, m, col) for m in shown):
+            out.append(f"**{lab}** diisi, tetapi tidak dibaca aturan yang berlaku di bulan-bulan ini; tidak dihitung.")
+        if col.startswith("data:") and key in found and found[key]["layer"] == "company"                 and inputs.kind(key) in ("int", "choice", "money"):
+            need = [] if (inputs.definition(key) or {}).get("optional") else [m for m in shown if m in found[key]["months"]]
+            if need and all(emp.cell(rec, m, col) in (None, "", 0) for m in need):
+                out.append(f"**{lab}** dibaca aturan ({', '.join(found[key]['rules'][:2])}) tetapi kosong; dihitung 0.")
+        if state == "nodef":
+            out.append(f"**{lab}**: definisi data ini belum ada di knowledge base; nama dan tipenya diambil dari aturan.")
+    if r is not None:
+        eff = d.value(r, "ptkp_status_effective")
+        if eff and eff != rec["fields"].get("employee.ptkp_status"):
+            out.append(f"Status PTKP yang dipakai **{eff}**: karyawati kawin memakai PTKP tidak kawin kecuali ada keterangan "
+                       "suami tidak berpenghasilan.")
+        cat = {**rec.get("component_keys", {}), **emp.catalog()}
+        names = {}
+        for n, k in cat.items():
+            names.setdefault(k.split(".", 1)[1], []).append(n)
+        for w in r.warnings:
+            if str(w).startswith("UnreadInput"):
+                k = str(w).split("(")[1].rstrip(")").split(".", 1)[1]
+                who = ", ".join(n for n in names.get(k, [k]) if n in rec["components"]) or k
+                out.append(f"**{who}** diisi, tetapi tidak dipakai dalam hitungan ini (syarat aturannya tidak terpenuhi).")
     for n in out:
         st.info(n, icon=":material/lightbulb:")
+    return bool(blocking)
 
 
-def _basis(r, m):
-    facts = [("gross_income", m), ("ter_rate", m), ("pph21_due", m), ("pph21_dtp", m), ("ptkp_amount", 0),
-             ("job_expense", 0), ("taxable_income", 0), ("annual_pph21", 0)]
+def changed_banner(r, rec):
+    s = st.session_state
+    if s.rec_origin[0] != "saved" or r is None:
+        return
+    saved = demo.load()["employees"].get(s.rec_origin[1])
+    if not saved:
+        return
+    approved = demo.load()["approved"][saved["approved"]:]
+    found = inputs.discover(rec["year"], rec.get("policy"), s.k_omega_v)
+    new_keys = [k for k in found if k not in saved["keys"]]
+    if new_keys:
+        st.warning("Data baru dibutuhkan sejak pegawai ini disimpan: " + ", ".join(
+            f"**{inputs.label(k)}** ({(inputs.definition(k) or {}).get('origin', 'aturan baru')})" for k in new_keys)
+            + ". Nilai bawaan dipakai sampai diisi.", icon=":material/new_releases:")
+    changed = [(int(m), old, r.periods[int(m)].get("pph21_due")) for m, old in saved["last"].items()
+               if int(m) in r.periods and int(m) <= rec["month"] and old != r.periods[int(m)].get("pph21_due")]
+    if changed and approved:
+        st.warning(f"Hasil berubah sejak disimpan ({saved['saved']}) karena pembaruan: "
+                   + ", ".join(a["title"] for a in approved) + ". "
+                   + "; ".join(f"{d.MON[m - 1]}: {d.money(o)} → {d.money(n)}" for m, o, n in changed[:6]),
+                   icon=":material/update:")
+
+
+def basis(r, m, final, autos):
+    facts = [("gross_income", m), ("ter_rate", m), ("pph21_due", m), ("pph21_dtp", m)]
+    facts += [(a["fact"], m) for a in autos.values()]
+    if final:
+        facts += [("ptkp_amount", 0), ("job_expense", 0), ("taxable_income", 0), ("annual_pph21", 0)]
     for f, mm in facts:
         t = (r.trace or {}).get((f, mm))
-        if not t:
+        if not t or t["value"] in (None, 0):
             continue
         src = t["source"][0] if t["source"] else None
-        where = f"{d.short_doc(src['document'])} · {src['provision']}" if src else "-"
         val = d.pct(t["value"]) if f == "ter_rate" else d.money(t["value"])
-        cls = "rule company" if t["layer"] == "company" else "rule"
-        quote = f"<div class='quote'>“{src['quote']}”</div>" if src else ""
-        ui.html(f"<div class='{cls}'><b>{d.fact_label(f)}</b> = {val} "
-                f"<span class='muted'>({'bulan ' + d.MONTHS[mm - 1] if mm else 'setahun'})</span><br>"
-                f"<span class='muted'>{g.term('sumber', 'Sumber')}: {where} · aturan <code>{t['rule']}</code></span>"
-                f"{quote}</div>")
+        reads = ", ".join(d.fact_label(k) for k, _ in t.get("reads", [])[:6])
+        layer = ui.badge("kebijakan perusahaan", "orange") if t["layer"] == "company" else ""
+        ui.html(f"<div class='rule{' company' if t['layer'] == 'company' else ''}'>{layer}<b>{d.fact_label(f)}</b> = {val}"
+                f" <span class='muted'>({'bulan ' + d.MONTHS[mm - 1] if mm else 'setahun'})</span><br>"
+                f"<span class='muted'>Membaca: {reads or '-'} · {g.term('sumber', 'Sumber')}: "
+                f"{d.short_doc(src['document']) + ' · ' + src['provision'] if src else '-'} · aturan <code>{t['rule']}</code>"
+                f"</span>" + (f"<div class='quote'>“{src['quote']}”</div>" if src else "") + "</div>")
 
 
-def _compare(months, table, omega):
-    rows = []
-    for method, label in d.METHODS.items():
-        r, err = d.compute(build_case(months, table, method), omega)
-        if err:
-            continue
-        thp = sum(r.periods[m].get("take_home_pay") or 0 for m in r.periods)
-        allowance = sum(r.periods[m].get("tax_allowance") or 0 for m in r.periods)
-        tax = r.year.get("annual_pph21") or 0
-        rows.append({"Cara": label, "PPh setahun": d.money(tax), "Gaji bersih setahun": d.money(thp),
-                     "Pajak yang dibayar perusahaan": d.money(allowance if method == "gross_up" else
-                                                              tax if method == "employer_borne" else 0)})
-    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
-    ui.html(f"<span class='muted'>{g.term('gross-up')} menaikkan bruto (tunjangan pajak ikut kena pajak), jadi PPh-nya "
-            f"lebih besar daripada {g.term('gross')}; {g.term('ditanggung')} tidak menambah bruto.</span>")
-
-
-def single():
-    left, right = st.columns([1, 1.3], gap="large")
+def results(rec, cols, found, autos):
+    s = st.session_state
+    case = emp.to_case(rec, policy_installed=rec.get("policy") in demo.installed_policies())
+    r, err = d.compute(case, s.k_omega_v)
+    changed_banner(r, rec)
+    blocked = warnings(r, rec, cols, found)
+    if err:
+        st.error(f"Perhitungan gagal: {err}")
+        return
+    if blocked:
+        return
+    m = rec["month"]
+    end = max(rec["end"], rec["start"])
+    shown = list(range(rec["start"], m + 1))
+    s.k_last = {"case": case, "month": m, "due": {x: r.periods[x].get("pph21_due") for x in shown},
+                "gross": {x: r.periods[x].get("gross_income") for x in shown}}
+    total = sum(rec["withheld"].get(str(x), r.periods[x].get("pph21_due") or 0) for x in shown)
+    dtp = sum(r.periods[x].get("pph21_dtp") or 0 for x in shown)
+    c = st.columns(3)
+    c[0].metric(f"PPh 21 {d.MONTHS[m - 1]}", d.money(r.periods[m].get("pph21_due")), help=g.tip("PPh 21"))
+    c[1].metric(f"Total {d.MON[shown[0] - 1]}–{d.MON[m - 1]}", d.money(total), help="Jumlah PPh 21 sampai bulan ini.")
+    c[2].metric(f"DTP {d.MON[shown[0] - 1]}–{d.MON[m - 1]}", d.money(dtp), help=g.tip("DTP"))
+    left, right = st.columns([1, 1], gap="large")
     with left:
-        months, table, omega = inputs()
-    case = build_case(months, table)
-    r, err = d.compute(case, omega)
+        month_card(r, rec, cols, autos, m, m == end)
+        if m == end:
+            year_card(r, rec)
+        else:
+            st.caption(f"Hitung ulang setahun muncul di bulan penutup ({d.MONTHS[end - 1]}).")
     with right:
-        if err:
-            st.error(f"Perhitungan gagal: {err}")
-            return
-        final = case["employment"]["end_month"]
-        default = d.TODAY.month if case["tax_year"] == d.TODAY.year and d.TODAY.month in months else months[0]
-        m = st.segmented_control("Pilih bulan", months, format_func=lambda x: d.MON[x - 1], key="c_month",
-                                 default=default) or default
-        _month_card(r, case, m, m == final)
-        _year_card(r, case)
-        _chart(r, case, m)
-        _notes(r, case, months)
-        t1, t2, t3, t4 = st.tabs(["Rincian per bulan", "Dasar hukum", "Bandingkan cara bayar pajak", "Data perhitungan"])
-        with t1:
-            rows = []
-            for mm in months:
-                p = r.periods[mm]
-                rows.append({"Bulan": d.MONTHS[mm - 1], "Bruto": d.money(p.get("gross_income")),
-                             "Tarif TER": d.pct(d.value(r, "ter_rate", mm)) if mm != final else "Pasal 17",
-                             "PPh 21": d.money(p.get("pph21_due")), "DTP": d.money(p.get("pph21_dtp") or 0),
-                             "Gaji bersih": d.money(p.get("take_home_pay"))})
-            st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
-            st.download_button("Unduh rincian (CSV)", pd.DataFrame(rows).to_csv(index=False).encode(),
-                               "rincian_pph21.csv", icon=":material/download:")
-        with t2:
-            st.caption(f"Aturan yang menghasilkan angka-angka di bulan {d.MONTHS[m - 1]} dan akhir tahun, dengan pasal dan "
-                       "kutipan peraturannya.")
-            _basis(r, m)
-        with t3:
-            _compare(months, table, omega)
-        with t4:
-            st.caption("Data yang dikirim ke engine (format kasus penelitian).")
+        rows = []
+        for x in shown:
+            p = r.periods[x]
+            rate = d.value(r, "ter_rate", x)
+            rows.append({"Bulan": d.MONTHS[x - 1], "Bruto": d.money(p.get("gross_income")),
+                         "Tarif": "setahun" if x == end else (d.pct(rate) if rate is not None else "disetahunkan"),
+                         "PPh 21": d.money(p.get("pph21_due")), "DTP": d.money(p.get("pph21_dtp") or 0),
+                         "Sudah dipotong (isian)": d.money(rec["withheld"][str(x)]) if str(x) in rec["withheld"] else ""})
+        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
+        st.download_button("Unduh rincian (CSV)", pd.DataFrame(rows).to_csv(index=False).encode(),
+                           f"pph21_{rec['name'] or 'pegawai'}_{rec['year']}.csv", icon=":material/download:")
+        with st.expander("Kenapa angkanya segini? (aturan dan pasal)"):
+            basis(r, m, m == end, autos)
+        with st.expander("Data yang dikirim ke engine"):
+            st.caption("Bulan sesudah bulan perhitungan diisi nilai berulang supaya bulan penutup tetap bulan yang benar "
+                       "(perubahan engine yang direncanakan).")
             st.json(case, expanded=False)
 
 
-# ---------------------------------------------------------------- payroll of a month
-ROSTER = pd.DataFrame([
-    {"Nama": "Rina", "PTKP": "K/1", "Cara": "gross", "Gaji pokok": 10_000_000, "Tunjangan tetap": 1_500_000,
-     "Masuk": 1, "Keluar": 12, "Lembur": 0, "THR": 0, "Bonus": 0},
-    {"Nama": "Budi", "PTKP": "TK/0", "Cara": "gross", "Gaji pokok": 12_000_000, "Tunjangan tetap": 0,
-     "Masuk": 1, "Keluar": 12, "Lembur": 750_000, "THR": 0, "Bonus": 0},
-    {"Nama": "Sari", "PTKP": "K/3", "Cara": "gross_up", "Gaji pokok": 25_000_000, "Tunjangan tetap": 3_000_000,
-     "Masuk": 1, "Keluar": 12, "Lembur": 0, "THR": 0, "Bonus": 0},
-    {"Nama": "Andi", "PTKP": "TK/1", "Cara": "gross", "Gaji pokok": 7_000_000, "Tunjangan tetap": 500_000,
-     "Masuk": 3, "Keluar": 10, "Lembur": 300_000, "THR": 0, "Bonus": 0},
-    {"Nama": "Dewi", "PTKP": "K/0", "Cara": "employer_borne", "Gaji pokok": 15_000_000, "Tunjangan tetap": 1_000_000,
-     "Masuk": 1, "Keluar": 12, "Lembur": 0, "THR": 0, "Bonus": 0},
-])
-
-
-def payroll():
-    st.caption("Untuk admin: satu tabel untuk semua pegawai, pilih masa pajak, isi komponen tidak tetap bulan itu, "
-               "lalu dapatkan PPh 21 setiap pegawai dan rekapnya.")
-    c1, c2, c3 = st.columns([1, 1, 2])
-    year = c1.selectbox("Tahun", (2024, 2025, 2026), index=2, key="p_year")
-    month = c2.selectbox("Masa pajak", range(1, 13), index=d.TODAY.month - 1, key="p_month",
-                         format_func=lambda m: d.MONTHS[m - 1], help=g.tip("masa pajak"))
-    c3.file_uploader("Impor data pegawai (Excel/CSV)", type=["csv", "xlsx"], key="p_up",
-                     help="Kolom sama dengan tabel di bawah.")
-    tab = st.data_editor(ROSTER, key="p_roster", num_rows="dynamic", hide_index=True, width="stretch",
-                         column_config={
-                             "PTKP": st.column_config.SelectboxColumn("PTKP", options=d.STATUSES, help=g.tip("status PTKP")),
-                             "Cara": st.column_config.SelectboxColumn("Cara", options=list(d.METHODS),
-                                                                      help="gross, gross_up, employer_borne"),
-                             "Masuk": st.column_config.NumberColumn("Masuk", min_value=1, max_value=12,
-                                                                    help="Bulan mulai bekerja tahun ini"),
-                             "Keluar": st.column_config.NumberColumn("Keluar", min_value=1, max_value=12,
-                                                                     help="12 bila masih bekerja"),
-                             "Lembur": st.column_config.NumberColumn(f"Lembur {d.MON[month - 1]}", format="%d"),
-                             "THR": st.column_config.NumberColumn(f"THR {d.MON[month - 1]}", format="%d"),
-                             "Bonus": st.column_config.NumberColumn(f"Bonus {d.MON[month - 1]}", format="%d")})
-    rows, total = [], {"bruto": 0, "pph": 0, "dtp": 0, "thp": 0}
-    for _, e in tab.iterrows():
-        if not e["Nama"] or pd.isna(e["Gaji pokok"]):
-            continue
-        start, end = int(e["Masuk"]), int(e["Keluar"])
-        if not start <= month <= end:
-            rows.append({"Nama": e["Nama"], "Masa": "tidak bekerja", "Bruto": "-", "PPh 21": "-", "DTP": "-",
-                         "Gaji bersih": "-"})
-            continue
-        periods = []
-        for m in range(start, end + 1):
-            inc = {"base_salary": int(e["Gaji pokok"]), "fixed_allowance": int(e["Tunjangan tetap"] or 0)}
-            if m == month:
-                for col, key in (("Lembur", "overtime_pay"), ("THR", "thr"), ("Bonus", "bonus")):
-                    if e[col]:
-                        inc[key] = int(e[col])
-            periods.append({"month": m, "income": {k: v for k, v in inc.items() if v}})
-        case = {"case_id": str(e["Nama"]), "tax_year": year, "method": e["Cara"],
-                "employee": {"ptkp_status": e["PTKP"], "tax_id_valid": True},
-                "employer": {"klu": None, "jkk_risk_group": "low"},
-                "employment": {"start_month": start, "end_month": end}, "periods": periods}
-        r, err = d.compute(case)
-        if err:
-            rows.append({"Nama": e["Nama"], "Masa": "gagal: " + err[:60]})
-            continue
-        p = r.periods[month]
-        total["bruto"] += p.get("gross_income") or 0
-        total["pph"] += p.get("pph21_due") or 0
-        total["dtp"] += p.get("pph21_dtp") or 0
-        total["thp"] += p.get("take_home_pay") or 0
-        rows.append({"Nama": e["Nama"], "Masa": "terakhir" if month == end else "biasa (TER)",
-                     "Bruto": d.money(p.get("gross_income")), "PPh 21": d.money(p.get("pph21_due")),
-                     "DTP": d.money(p.get("pph21_dtp") or 0), "Gaji bersih": d.money(p.get("take_home_pay"))})
-    c = st.columns(4)
-    c[0].metric("Bruto semua pegawai", d.money(total["bruto"]), help=g.tip("bruto"))
-    c[1].metric("PPh 21 masa ini", d.money(total["pph"]), help=g.tip("PPh 21"))
-    c[2].metric("Ditanggung pemerintah", d.money(total["dtp"]), help=g.tip("DTP"))
-    c[3].metric("Gaji bersih dibayar", d.money(total["thp"]), help=g.tip("gaji bersih"))
-    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
-    c1, c2, c3 = st.columns(3)
-    c1.download_button("Rekap masa (CSV)", pd.DataFrame(rows).to_csv(index=False).encode(),
-                       f"rekap_pph21_{year}_{month:02d}.csv", icon=":material/download:", width="stretch")
-    c2.button("Ekspor untuk e-Bupot (Coretax)", icon=":material/upload:", width="stretch", disabled=True)
-    c3.button(f"Tutup masa {d.MON[month - 1]} {year}", icon=":material/lock:", width="stretch", disabled=True)
-    ui.mock("Bulan lain diisi dengan gaji dan tunjangan yang sama (perkiraan) supaya akhir tahun diketahui. Di sistem "
-            "penuh: data pegawai tersimpan, masa yang ditutup terkunci, PPh yang benar-benar dipotong dipakai saat "
-            "menghitung masa terakhir, dan ada ekspor e-Bupot serta bukti potong A1.")
-
-
 def show():
-    _defaults()
+    s = st.session_state
+    s.page_ctx = "kalkulator"
+    if "rec" not in s:
+        _apply_scenario("Pegawai biasa")
     st.title("Kalkulator PPh 21")
-    g.md(f"Masukkan data pegawai, lalu lihat {g.term('PPh 21')} di setiap bulan dan hitungan "
-         f"{g.term('masa terakhir', 'akhir tahun')}. Arahkan kursor ke kata bergaris titik untuk penjelasannya.")
-    mode = st.segmented_control("Mode", ["Coba hitung satu pegawai", "Payroll bulanan"], default="Coba hitung satu pegawai",
-                                key="c_mode", label_visibility="collapsed")
-    if mode == "Payroll bulanan":
-        payroll()
-        return
-    st.pills("Coba skenario", list(SCENARIOS), key="c_scn", on_change=lambda: _apply(st.session_state.c_scn)
-             if st.session_state.c_scn else None)
-    with st.expander("Kasus yang belum bisa dihitung di sini"):
-        st.markdown("Kalkulator ini untuk **pegawai tetap** di **satu perusahaan** dalam **satu tahun pajak**. Belum "
-                    "tercakup: pegawai tidak tetap atau harian, pesangon dan uang pensiun (pajak final), pensiunan, "
-                    "pegawai asing (PPh 26), pindahan dari perusahaan lain di tahun yang sama, dan gaji dalam valuta "
-                    "asing. Hitung kasus ini secara manual.")
-    single()
+    g.md(f"Hitung {g.term('PPh 21')} satu pegawai sampai bulan tertentu. Isi atau pilih skenario, lalu ubah angka apa "
+         "saja di tabel. Data yang ditanyakan mengikuti aturan yang berlaku; arahkan kursor ke kata bergaris titik atau "
+         "ikon ⓘ untuk penjelasannya.")
+    top_bar()
+    period_bar()
+    profile()
+    rec = s.rec
+    before = _norm(rec)
+    pre, _ = d.compute(emp.to_case(rec, policy_installed=rec.get("policy") in demo.installed_policies()), s.k_omega_v)
+    cols, found, autos = grid(pre)
+    if _norm(rec) != before and any(c[3] == "computed" for c in cols):
+        st.rerun()        # an edit changed what the rules compute: show the locked columns up to date
+    with st.expander("Kasus yang tidak dihitung di sini"):
+        st.markdown("Hanya **pegawai tetap** di **satu perusahaan** dalam **satu tahun pajak**. Tidak dihitung: pegawai "
+                    "tidak tetap atau harian, pindahan dari perusahaan lain di tahun yang sama, kembali bekerja di tahun "
+                    "yang sama, pembayaran sesudah keluar, pesangon, pensiunan, pegawai asing (PPh 26), valuta asing.")
+    results(rec, cols, found, autos)

@@ -101,7 +101,10 @@ TERMS = {
     "pembaruan": ("Pembaruan", "Paket perubahan dari satu dokumen: aturan yang ditambah, diubah, atau dicabut."),
     "pencabutan": ("Pencabutan", "Aturan diberi tanggal akhir berlaku. Tidak dihapus, supaya hitungan lama tetap bisa "
                                  "diulang."),
-    "kotak masuk": ("Kotak masuk", "Dokumen baru (peraturan atau kebijakan) yang menunggu dibaca sistem."),
+    "dokumen baru": ("Dokumen baru", "Peraturan atau kebijakan perusahaan yang diunggah dan menunggu dibaca AI atau "
+                                     "direview."),
+    "keadaan awal": ("Keadaan awal demo", "Titik tetap tempat demo dimulai. Semua yang dilakukan selama demo bisa dihapus "
+                                          "dengan tombol 'Kembalikan ke keadaan awal demo'."),
     "usulan": ("Usulan", "Rancangan pembaruan yang disusun AI dari dokumen. Belum dipakai sampai disetujui manusia."),
     "pemeriksaan": ("Pemeriksaan otomatis", "Lima pemeriksaan sebelum usulan sampai ke Anda: format, kutipan ada di "
                                             "dokumen, tidak bertabrakan, tidak mengubah hitungan masa lalu, setiap aturan "
@@ -116,8 +119,8 @@ TERMS = {
     "kutipan": ("Kutipan", "Kalimat persis dari dokumen yang menjadi dasar aturan. Sistem memeriksa kalimat ini benar-"
                            "benar ada di dokumen."),
     "relevan": ("Relevan", "Dokumen berisi sesuatu yang mengubah perhitungan PPh 21. Dokumen lain diabaikan."),
-    "asisten": ("Asisten KB", "Chat AI yang membantu menjelaskan aturan dan menyiapkan draf perubahan. Semua perubahan tetap "
-                              "lewat review Anda."),
+    "asisten": ("Asisten AI", "Chat AI di jendela pop-up yang membantu memeriksa usulan, memperbaikinya sesuai catatan "
+                              "Anda, dan menyiapkan draf perubahan. Semua perubahan tetap lewat review Anda."),
 }
 
 

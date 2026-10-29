@@ -7,7 +7,9 @@ import plotly.graph_objects as go
 import streamlit as st
 
 import data as d
+import demo
 import glossary as g
+import inputs
 import ui
 
 FLOW = {  # step of the picture -> facts whose rules explain it
@@ -51,7 +53,7 @@ def in_force(rec, t):
 
 
 @st.cache_data
-def snapshot(t):
+def snapshot(signature, t):
     """Records in force at t: the latest version of every id. Returned as ids (cache friendly)."""
     best = {}
     for r in d.kb().records:
@@ -62,7 +64,7 @@ def snapshot(t):
 
 
 def records_at(t):
-    seqs = snapshot(t)
+    seqs = snapshot(demo.signature(), t)
     return [r for r in d.kb().records if r.seq in seqs]
 
 
@@ -265,6 +267,7 @@ def tab_search(recs):
 
 
 def show():
+    st.session_state.page_ctx = "kb"
     st.title("Penampil knowledge base")
     g.md(f"Apa yang diketahui sistem tentang PPh 21: {g.term('aturan')}, {g.term('parameter', 'angka')}, dan "
          f"{g.term('tabel')}, masing-masing dengan {g.term('berlaku', 'tanggal berlaku')} dan {g.term('sumber')} pasalnya.")
@@ -280,7 +283,7 @@ def show():
         m[2].metric("Tabel", sum(r.kind == "table" for r in visible), help=g.tip("tabel"))
         m[3].metric("Dokumen sumber", len(docs), help=g.tip("sumber"))
     tabs = st.tabs(["Peta topik", "Alur perhitungan", "Angka dari waktu ke waktu", "Riwayat perubahan",
-                    "Bandingkan dua tanggal", "Cari", "Kebijakan perusahaan"])
+                    "Bandingkan dua tanggal", "Cari", "Data yang dibutuhkan", "Kebijakan perusahaan"])
     with tabs[0]:
         tab_topics(recs, t)
     with tabs[1]:
@@ -294,28 +297,45 @@ def show():
     with tabs[5]:
         tab_search(recs)
     with tabs[6]:
+        tab_inputs(t)
+    with tabs[7]:
         tab_policies()
-    ui.mock("Tampilan untuk ahli (graf lengkap, SPARQL, ekspor TriG) tetap ada di aplikasi sistem, di menu 'Mode audit'.")
-
-
-@st.cache_resource
-def _policies():
-    import build_gold
-    return [(u.doc.id, u.to_json()) for u in build_gold.collect_side() if u.kind == "policy"]
+    ui.mock("Tampilan untuk ahli (graf lengkap, SPARQL, ekspor TriG) tetap ada di aplikasi sistem.")
 
 
 def tab_policies():
-    g.md(f"{g.term('kebijakan perusahaan', 'Kebijakan perusahaan')} yang tersimpan: aturan perusahaan tentang THR, bonus, "
-         "lembur, dan tunjangan. Dipakai bila dipilih di kalkulator.")
-    pols = _policies()
-    pick = st.selectbox("Kebijakan", [p[0] for p in pols], key="v_pol",
-                        format_func=lambda i: f"{i} · {d.doc_title(i)}")
-    j = dict(pols)[pick]
-    for el in j.get("add", []):
-        if el.get("kind") != "rule":
-            continue
-        src = (el.get("source") or [{}])[0]
-        ui.html(f"<div class='rule company'>{ui.badge('perusahaan', 'orange')}<b>{d.fact_label(el['produces'])}</b><br>"
-                f"<b>Rumus:</b> {d.readable(el['expression'])}<br><span class='muted'>Berlaku: {el.get('valid_from')}"
-                f"{' s.d. ' + el['valid_until'] if el.get('valid_until') else ''} · {src.get('provision', '')}</span>"
-                f"<div class='quote'>“{src.get('quote', '')}”</div></div>")
+    g.md(f"{g.term('kebijakan perusahaan', 'Kebijakan perusahaan')} yang terpasang di knowledge base. Dipakai kalkulator "
+         "bila dipilih. Di keadaan awal demo belum ada; setujui SP14 di Manajemen KB.")
+    pols = demo.installed_policies()
+    if not pols:
+        st.caption("Belum ada kebijakan perusahaan terpasang.")
+        return
+    pick = st.selectbox("Kebijakan", list(pols), key="v_pol", format_func=lambda i: f"{i} · {pols[i]}")
+    for r in d.kb().view(demo.TODAY).rules.values():
+        if r.layer == "company" and r.policy == pick:
+            src = r.source[0] if r.source else None
+            ui.html(f"<div class='rule company'>{ui.badge('perusahaan', 'orange')}<b>{d.fact_label(r.produces)}</b><br>"
+                    f"<b>Rumus:</b> {d.readable(r.expression)}<br><span class='muted'>Berlaku: {_period(r)}"
+                    f"{' · ' + src.provision if src else ''}</span>"
+                    + (f"<div class='quote'>“{src.quote}”</div>" if src else "") + "</div>")
+
+
+def tab_inputs(t):
+    g.md("Data yang ditanyakan kalkulator, langsung dari aturan yang berlaku pada tahun itu. Saat peraturan atau kebijakan "
+         "perusahaan baru membaca data baru, data itu muncul di sini dan menjadi kolom di kalkulator tanpa mengubah "
+         "program.")
+    pols = demo.installed_policies()
+    policy = st.selectbox("Dengan kebijakan perusahaan", [None] + list(pols), key="v_in_pol",
+                          format_func=lambda p: "Tidak ada" if p is None else f"{p} · {pols[p]}")
+    found = inputs.discover(t.year, policy)
+    group = {"income": "Penghasilan per bulan", "benefit": "Natura per bulan", "hr": "Data HR per bulan",
+             "zakat": "Penghasilan per bulan", "employee": "Data pegawai", "employer": "Data perusahaan",
+             "case": "Data pegawai"}
+    rows = [{"Data": inputs.label(k), "Kelompok": group[k.split(".")[0]],
+             "Dari": "kebijakan perusahaan" if e["layer"] == "company" else "peraturan",
+             "Bulan": "semua" if len(e["months"]) == 12 else f"{d.MON[e['months'][0] - 1]}–{d.MON[e['months'][-1] - 1]}",
+             "Dibaca oleh": ", ".join(e["rules"][:3]) + (" ..." if len(e["rules"]) > 3 else ""),
+             "Definisi": (inputs.definition(k) or {}).get("origin", "belum ada")} for k, e in found.items()]
+    st.dataframe(pd.DataFrame(rows).sort_values(["Kelompok", "Data"]), hide_index=True, width="stretch")
+    ui.mock("Definisi data di demo ini berupa berkas data KB (kb_ext/) yang ikut pembaruan; di sistem penuh menjadi unsur "
+            "knowledge base bersama aturan yang pertama kali membacanya.")

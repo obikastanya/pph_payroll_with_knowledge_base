@@ -1,0 +1,484 @@
+{
+ "_note": "Definisi data (input) di knowledge base keadaan awal demo. Di sistem penuh ini unsur KB yang ikut pembaruan; di demo disimpan sebagai berkas data, bukan kode. Kolom: key (bucket.key yang dibaca aturan), label, help, type (money|int|bool|choice|flag), group (pegawai|perusahaan|bulanan), order, core (selalu tampil), repeat (bulanan: berulang tiap bulan), default, options / options_from (table:<nama> atau usage), show_if, valid_from, valid_until, replaces, source.",
+ "defs": [
+  {
+   "key": "employee.ptkp_status",
+   "label": "Status PTKP per 1 Januari",
+   "help": "TK = tidak kawin, K = kawin; angka = jumlah tanggungan. Status pada 1 Januari dipakai setahun; menikah atau punya anak di tengah tahun baru berlaku tahun depan.",
+   "type": "choice",
+   "options_from": "table:ptkp",
+   "group": "pegawai",
+   "order": 1,
+   "core": true,
+   "default": "TK/0",
+   "source": "UU 36/2008 Pasal 7"
+  },
+  {
+   "key": "employee.sex",
+   "label": "Jenis kelamin",
+   "help": "Dipakai untuk aturan PTKP karyawati kawin.",
+   "type": "choice",
+   "options": [
+    [
+     "M",
+     "Laki-laki"
+    ],
+    [
+     "F",
+     "Perempuan"
+    ]
+   ],
+   "group": "pegawai",
+   "order": 2,
+   "core": true,
+   "default": "M",
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "employee.husband_no_income_certified",
+   "label": "Ada keterangan suami tidak berpenghasilan",
+   "help": "Karyawati kawin memakai PTKP tidak kawin, kecuali ada keterangan ini.",
+   "type": "bool",
+   "group": "pegawai",
+   "order": 3,
+   "core": true,
+   "default": false,
+   "show_if": {
+    "employee.sex": "F"
+   },
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "case.method",
+   "label": "Cara pajak dibayar",
+   "help": "Gross: dipotong dari gaji. Gross-up: perusahaan memberi tunjangan pajak sebesar PPh-nya. Ditanggung: perusahaan membayar pajaknya tanpa tunjangan.",
+   "type": "choice",
+   "options": [
+    [
+     "gross",
+     "Gross: dipotong dari gaji"
+    ],
+    [
+     "gross_up",
+     "Gross-up: diberi tunjangan pajak"
+    ],
+    [
+     "employer_borne",
+     "Ditanggung perusahaan"
+    ]
+   ],
+   "group": "pegawai",
+   "order": 4,
+   "core": true,
+   "default": "gross",
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "employee.tax_id_valid",
+   "label": "NIK / NPWP terdaftar",
+   "help": "Syarat insentif DTP.",
+   "type": "bool",
+   "group": "pegawai",
+   "order": 5,
+   "core": true,
+   "default": true,
+   "source": "PMK 10/2025"
+  },
+  {
+   "key": "employee.has_equity_in_employer",
+   "label": "Pegawai juga pemegang saham",
+   "help": "Mobil dinas untuk pemegang saham selalu menjadi natura yang kena pajak.",
+   "type": "bool",
+   "group": "pegawai",
+   "order": 20,
+   "default": false,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "employee.avg_monthly_gross_12m",
+   "label": "Rata-rata bruto sebulan, 12 bulan terakhir",
+   "help": "Mobil dinas kena pajak bila rata-rata ini di atas batas. Kosong: dipakai gaji pokok + tunjangan tetap bulan itu.",
+   "type": "money",
+   "group": "pegawai",
+   "order": 21,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "employee.contract_fixed_income",
+   "label": "Penghasilan tetap menurut kontrak",
+   "help": "Untuk pegawai baru: syarat batas penghasilan DTP memakai penghasilan tetap di kontrak kerja.",
+   "type": "money",
+   "group": "pegawai",
+   "order": 22,
+   "valid_from": "2025-01-01",
+   "source": "PMK 10/2025"
+  },
+  {
+   "key": "employee.other_dtp_incentive",
+   "label": "Sudah menerima insentif DTP lain",
+   "help": "Bila ya, tidak mendapat DTP ini.",
+   "type": "bool",
+   "group": "pegawai",
+   "order": 23,
+   "default": false,
+   "valid_from": "2025-01-01",
+   "source": "PMK 10/2025"
+  },
+  {
+   "key": "employee.subjective_start_month",
+   "label": "Mulai menjadi wajib pajak di Indonesia (bulan)",
+   "help": "Hanya untuk pegawai yang datang dari luar negeri tahun ini; pajaknya disetahunkan.",
+   "type": "int",
+   "group": "pegawai",
+   "order": 30,
+   "source": "PMK 168/2023 Pasal 15 ayat (3)"
+  },
+  {
+   "key": "employee.subjective_end_month",
+   "label": "Berhenti menjadi wajib pajak di Indonesia (bulan)",
+   "help": "Hanya untuk pegawai yang pindah ke luar negeri atau meninggal tahun ini.",
+   "type": "int",
+   "group": "pegawai",
+   "order": 31,
+   "source": "PMK 168/2023 Pasal 15 ayat (3)"
+  },
+  {
+   "key": "employee.known_last_month",
+   "label": "Bulan terakhir bekerja yang sudah pasti",
+   "help": "Untuk pegawai yang sudah pasti akan keluar.",
+   "type": "int",
+   "group": "pegawai",
+   "order": 32,
+   "source": "PMK 168/2023"
+  },
+  {
+   "key": "employer.klu",
+   "label": "Bidang usaha (KLU, 5 digit)",
+   "help": "Kode klasifikasi lapangan usaha perusahaan; menentukan hak insentif DTP.",
+   "type": "text",
+   "group": "perusahaan",
+   "order": 1,
+   "core": true,
+   "default": "",
+   "source": "PMK 10/2025"
+  },
+  {
+   "key": "employer.jkk_risk_group",
+   "label": "Risiko pekerjaan (JKK)",
+   "help": "Tingkat risiko yang menentukan tarif premi JKK.",
+   "type": "choice",
+   "options_from": "table:jkk_rates",
+   "labels": {
+    "very_low": "Sangat rendah",
+    "low": "Rendah",
+    "medium": "Sedang",
+    "high": "Tinggi",
+    "very_high": "Sangat tinggi"
+   },
+   "group": "perusahaan",
+   "order": 2,
+   "core": true,
+   "default": "low",
+   "source": "PP 44/2015"
+  },
+  {
+   "key": "employer.jkk_relief_eligible",
+   "label": "Berhak keringanan iuran JKK",
+   "help": "Industri padat karya tertentu.",
+   "type": "bool",
+   "group": "perusahaan",
+   "order": 10,
+   "default": false,
+   "valid_from": "2025-01-01",
+   "source": "PP 7/2025"
+  },
+  {
+   "key": "employer.premiums_as_billed",
+   "label": "Iuran BPJS mengikuti tagihan",
+   "help": "Bila ya, iuran dan premi diisi per bulan sesuai tagihan BPJS; bila tidak, dihitung dari upah.",
+   "type": "bool",
+   "group": "perusahaan",
+   "order": 11,
+   "default": false,
+   "source": "konvensi input"
+  },
+  {
+   "key": "employer.workplace_meal_value",
+   "label": "Nilai makan di tempat kerja",
+   "help": "Untuk batas kupon makan dinas luar.",
+   "type": "money",
+   "group": "perusahaan",
+   "order": 12,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "employer.bonded_zone",
+   "label": "Perusahaan di kawasan berikat",
+   "help": "",
+   "type": "bool",
+   "group": "perusahaan",
+   "order": 13,
+   "default": false,
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "employer.kite",
+   "label": "Perusahaan dengan fasilitas KITE",
+   "help": "",
+   "type": "bool",
+   "group": "perusahaan",
+   "order": 14,
+   "default": false,
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "employer.bpjs_relief_2020_eligible",
+   "label": "Berhak keringanan iuran BPJS 2020",
+   "help": "",
+   "type": "bool",
+   "group": "perusahaan",
+   "order": 15,
+   "default": false,
+   "source": "keringanan iuran BPJS masa pandemi"
+  },
+  {
+   "key": "income.base_salary",
+   "label": "Gaji pokok",
+   "help": "Gaji pokok yang dibayar bulan itu (sudah diprorata bila masuk, keluar, atau naik gaji di tengah bulan).",
+   "type": "money",
+   "group": "bulanan",
+   "order": 1,
+   "repeat": true,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "income.fixed_allowance",
+   "label": "Tunjangan tetap bulanan",
+   "help": "Tunjangan yang dibayar tetap setiap bulan, mis. tunjangan jabatan, keluarga, telepon, transport.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 2,
+   "repeat": true,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "income.overtime_pay",
+   "label": "Upah lembur",
+   "help": "Upah lembur yang dibayar bulan itu. Menurut peraturan termasuk penghasilan teratur walau besarnya berubah-ubah.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 3,
+   "source": "PER-16/PJ/2016 Pasal 1 angka 15"
+  },
+  {
+   "key": "income.other_regular",
+   "label": "Imbalan rutin lain (uang makan, transport tunai, dsb.)",
+   "help": "Imbalan lain yang dibayar rutin, mis. uang makan atau transport tunai harian.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 4,
+   "repeat": true,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "income.thr",
+   "label": "THR",
+   "help": "Tunjangan hari raya yang dibayar bulan itu.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 5,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "income.bonus",
+   "label": "Bonus",
+   "help": "Bonus yang dibayar bulan itu.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 6,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "income.other_irregular",
+   "label": "Insentif, kompensasi, atau rapel sekali-sekali",
+   "help": "Imbalan yang tidak dibayar rutin, mis. insentif penjualan kuartalan, kompensasi, rapel kenaikan gaji.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 7,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "income.deductions",
+   "label": "Potongan gaji lain",
+   "help": "Potongan selain pajak dan iuran (pinjaman, denda).",
+   "type": "money",
+   "group": "bulanan",
+   "order": 20,
+   "source": "konvensi input"
+  },
+  {
+   "key": "income.jht_employee",
+   "label": "Iuran JHT pegawai (tagihan BPJS)",
+   "help": "Diisi bila iuran mengikuti tagihan BPJS.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 30,
+   "repeat": true,
+   "source": "PP 46/2015"
+  },
+  {
+   "key": "income.jp_employee",
+   "label": "Iuran JP pegawai (tagihan BPJS)",
+   "help": "Diisi bila iuran mengikuti tagihan BPJS.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 31,
+   "repeat": true,
+   "source": "PP 45/2015"
+  },
+  {
+   "key": "income.health_employee",
+   "label": "Iuran BPJS Kesehatan pegawai (tagihan)",
+   "help": "Diisi bila iuran mengikuti tagihan BPJS.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 32,
+   "repeat": true,
+   "source": "Perpres 82/2018"
+  },
+  {
+   "key": "income.jkk_premium",
+   "label": "Premi JKK (tagihan BPJS)",
+   "help": "Diisi bila premi mengikuti tagihan BPJS.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 33,
+   "repeat": true,
+   "source": "PP 44/2015"
+  },
+  {
+   "key": "income.jkm_premium",
+   "label": "Premi JKM (tagihan BPJS)",
+   "help": "Diisi bila premi mengikuti tagihan BPJS.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 34,
+   "repeat": true,
+   "source": "PP 44/2015"
+  },
+  {
+   "key": "income.health_premium_employer",
+   "label": "Iuran BPJS Kesehatan perusahaan (tagihan)",
+   "help": "Diisi bila iuran mengikuti tagihan BPJS.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 35,
+   "repeat": true,
+   "source": "Perpres 82/2018"
+  },
+  {
+   "key": "benefit.company_vehicle",
+   "label": "Mobil dinas (nilai sebulan)",
+   "help": "Nilai pemakaian mobil dinas sebulan. Kena pajak hanya dalam keadaan tertentu; aturannya yang menentukan.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 40,
+   "repeat": true,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "benefit.housing_individual",
+   "label": "Rumah dinas untuk satu pegawai (nilai sebulan)",
+   "help": "Nilai rumah dinas sebulan.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 41,
+   "repeat": true,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "benefit.gift_other",
+   "label": "Bingkisan bukan hari raya",
+   "help": "Nilai bingkisan yang diterima bulan itu.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 42,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "benefit.meal_coupon_field_duty",
+   "label": "Kupon makan untuk dinas luar",
+   "help": "Nilai kupon makan untuk pegawai dinas luar.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 43,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "benefit.sports_facility",
+   "label": "Fasilitas olahraga",
+   "help": "Nilai fasilitas olahraga yang diterima bulan itu.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 44,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "benefit.other_benefit",
+   "label": "Barang atau fasilitas lain (natura)",
+   "help": "Natura lain yang diterima, mis. beasiswa dari perusahaan.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 45,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "zakat.zakat",
+   "label": "Zakat lewat perusahaan",
+   "help": "Zakat atau sumbangan keagamaan wajib yang dipotong lewat perusahaan bulan itu.",
+   "type": "money",
+   "group": "bulanan",
+   "order": 50,
+   "repeat": true,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "hr.thr_holiday",
+   "label": "THR dibayar bulan ini",
+   "help": "Centang pada bulan THR dibayarkan (bukan bulan hari rayanya). Dipakai untuk memeriksa THR minimum dan oleh kebijakan perusahaan yang menghitung THR.",
+   "type": "flag",
+   "group": "bulanan",
+   "order": 60,
+   "source": "Permenaker 6/2016"
+  },
+  {
+   "key": "hr.months_of_service",
+   "label": "Masa kerja (bulan)",
+   "help": "Masa kerja terus-menerus sampai bulan itu, dalam bulan. Menentukan THR minimum (1 bulan upah untuk masa kerja 12 bulan atau lebih, proporsional di bawahnya).",
+   "type": "int",
+   "group": "bulanan",
+   "order": 61,
+   "repeat": true,
+   "increment": 1,
+   "source": "Permenaker 6/2016 Pasal 3"
+  },
+  {
+   "key": "hr.days_terminated_before_holiday",
+   "label": "Hari sejak berhenti sebelum hari raya",
+   "help": "Diisi hanya bila pegawai berhenti dalam 30 hari sebelum hari raya; ia tetap berhak THR.",
+   "type": "int",
+   "group": "bulanan",
+   "order": 62,
+   "source": "Permenaker 6/2016 Pasal 7",
+   "optional": true
+  }
+ ]
+}

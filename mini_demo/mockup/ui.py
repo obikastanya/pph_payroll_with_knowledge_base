@@ -41,6 +41,8 @@ div[data-testid="stMetricValue"], div[data-testid="stDataFrame"] { font-variant-
 .diff-new { background: #e6f4ea; padding: 0 .25rem; border-radius: 4px; font-weight: 600; }
 .answer { font-size: 1.02rem; font-weight: 600; margin: .35rem 0 .3rem 0; line-height: 1.45; }
 .mock { color: #8a6100; font-size: .8rem; }
+.st-key-fab { position: fixed; right: 1.6rem; bottom: 1.4rem; z-index: 1000; width: auto !important; }
+.st-key-fab button { box-shadow: 0 6px 18px rgba(0,0,0,.18); border-radius: 999px; padding: .5rem 1.1rem; }
 </style>
 """
 

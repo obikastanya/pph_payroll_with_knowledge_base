@@ -1,8 +1,6 @@
-"""Data behind the mockup: the gold knowledge base and the engine of the research system (read only), labels in
-plain Indonesian, and the topic map of the knowledge base.
+"""Labels in plain Indonesian, formatting, the topic map of the knowledge base, and the engine call.
 
-The calculator and the viewer run on the real knowledge base, so the numbers are real. The management actions and the
-assistant are simulated (session state, prepared answers); nothing here changes the knowledge base on disk.
+The knowledge base is the demo's current one (demo.kb(): the initial state plus what was approved during the demo).
 """
 import re
 import sys
@@ -17,7 +15,7 @@ for p in (ROOT / "system", ROOT / "system" / "tools"):
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 
-import build_gold  # noqa: E402
+import demo  # noqa: E402
 from pph21kbs.engine import evaluate_case  # noqa: E402
 from pph21kbs.text import registry  # noqa: E402
 
@@ -61,23 +59,30 @@ TOPICS = [
 ]
 
 
-@st.cache_resource(show_spinner="Memuat knowledge base ...")
 def kb():
-    return build_gold.load_graph()
+    return demo.kb()
 
 
 @st.cache_resource
-def facts():
+def _facts(signature):
     return {r.id: r for r in kb().records if r.kind == "fact"}
 
 
+def facts():
+    return _facts(demo.signature())
+
+
 @st.cache_resource
-def params():
+def _params(signature):
     out = {}
     for r in kb().records:
         if r.kind == "parameter":
             out.setdefault(r.name, r)
     return out
+
+
+def params():
+    return _params(demo.signature())
 
 
 def doc_title(doc_id):
@@ -161,9 +166,9 @@ def pct(x):
     return "-" if x is None else f"{float(x) * 100:.2f}".rstrip("0").rstrip(",.").replace(".", ",") + "%"
 
 
-def compute(case, omega=None):
+def compute(case, omega=None, knowledge=None):
     try:
-        return evaluate_case(kb(), case, omega or TODAY, trace=True), None
+        return evaluate_case(knowledge or kb(), case, omega or TODAY, trace=True), None
     except Exception as e:  # noqa: BLE001 - shown on screen
         return None, f"{type(e).__name__}: {e}"
 

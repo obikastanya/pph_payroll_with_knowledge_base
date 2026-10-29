@@ -1,0 +1,762 @@
+{
+ "_note": "Skenario umum dalam nama komponen perusahaan (data demo, bukan kode).",
+ "scenarios": [
+  {
+   "title": "Pegawai biasa",
+   "note": "Gaji tetap, Mei 2025: pajak bulan biasa dengan tarif TER.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 5,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 1500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Desember: hitung setahun",
+   "note": "Desember 2025 dengan THR di Maret: pajak setahun dihitung ulang.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 12,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 1500000
+     }
+    },
+    "THR": {
+     "once": {
+      "3": 11500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "THR dan bonus",
+   "note": "THR Maret dan bonus April 2025: tarif TER bulan itu ikut naik.",
+   "name": "Budi",
+   "year": 2025,
+   "month": 4,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "TK/0",
+    "employee.sex": "M",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 12000000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 0
+     }
+    },
+    "THR": {
+     "once": {
+      "3": 12000000
+     }
+    },
+    "Bonus": {
+     "once": {
+      "4": 10000000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Masuk tengah tahun",
+   "note": "Mulai bekerja Juli 2025; Desember tetap bulan penutup, tanpa disetahunkan.",
+   "name": "Sari",
+   "year": 2025,
+   "month": 9,
+   "start": 7,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 1500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Keluar tengah tahun",
+   "note": "Keluar akhir Agustus 2025: Agustus menjadi bulan penutup; ada lebih bayar.",
+   "name": "Andi",
+   "year": 2025,
+   "month": 8,
+   "start": 1,
+   "end": 8,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "M",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 1500000
+     }
+    },
+    "THR": {
+     "once": {
+      "3": 11500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Gaji naik di tengah bulan",
+   "note": "Gaji pokok naik dari Rp10 jt ke Rp12 jt mulai 10 April 2025: April diketik sesudah prorata (Rp11,4 jt), Mei dan seterusnya Rp12 jt.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 6,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 10000000,
+      "4": 11400000,
+      "5": 12000000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 1500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Lembur berubah-ubah",
+   "note": "Lembur berbeda setiap bulan; menurut peraturan lembur termasuk penghasilan teratur.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 7,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 1500000
+     }
+    },
+    "Lembur": {
+     "once": {
+      "2": 1500000,
+      "3": 1000000,
+      "4": 500000,
+      "6": 750000,
+      "7": 2000000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Cuti tanpa upah",
+   "note": "Cuti tanpa upah 5 hari di Mei: gaji pokok Mei diketik sesudah dipotong.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 6,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 10000000,
+      "5": 7727273,
+      "6": 10000000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 1500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Gross-up",
+   "note": "Perusahaan memberi tunjangan pajak sebesar PPh-nya.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 5,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross_up",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 1500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Karyawati kawin",
+   "note": "K/2 tanpa keterangan suami tidak berpenghasilan: PTKP yang dipakai TK/0.",
+   "name": "Wulan",
+   "year": 2025,
+   "month": 5,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/2",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": false,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 1500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Mobil dinas pemegang saham",
+   "note": "Direktur yang juga pemegang saham memakai mobil dinas Rp3 jt sebulan: natura kena pajak. Matikan 'Pegawai juga pemegang saham' untuk melihat bedanya.",
+   "name": "Hendra",
+   "year": 2025,
+   "month": 5,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/0",
+    "employee.sex": "M",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low",
+    "employee.has_equity_in_employer": true
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus",
+    "Mobil dinas"
+   ],
+   "extra_components": [
+    {
+     "name": "Mobil dinas",
+     "key": "benefit.company_vehicle"
+    }
+   ],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 25000000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 3000000
+     }
+    },
+    "Mobil dinas": {
+     "from": {
+      "1": 3000000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Tahun 2023 (cara lama)",
+   "note": "Maret 2023 dengan THR: sebelum TER, pajak dihitung dengan menyetahunkan penghasilan.",
+   "name": "Rina",
+   "year": 2023,
+   "month": 3,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 1500000
+     }
+    },
+    "THR": {
+     "once": {
+      "3": 11500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "DTP padat karya 2026",
+   "note": "Pegawai pabrik pakaian jadi, Januari 2026. DTP 2026 baru dikenal KB setelah PMK 105/2025 disetujui di Manajemen KB.",
+   "name": "Dewi",
+   "year": 2026,
+   "month": 1,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "TK/0",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "14111",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 6500000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "THR menurut kebijakan perusahaan",
+   "note": "PT Rajut Indah Garmenindo: THR dihitung kebijakan (1,5 × upah × masa kerja/12) pada bulan THR dibayar. Kolom datanya muncul setelah kebijakan SP14 disetujui.",
+   "name": "Dewi",
+   "year": 2025,
+   "month": 3,
+   "start": 1,
+   "end": 12,
+   "policy": "SP14",
+   "fields": {
+    "employee.ptkp_status": "TK/0",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "14111",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 6500000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 500000
+     }
+    }
+   },
+   "data": {
+    "hr.thr_holiday": {
+     "once": {
+      "3": 1
+     }
+    },
+    "hr.months_of_service": {
+     "inc": {
+      "1": 7
+     }
+    }
+   },
+   "withheld": {},
+   "needs": "SP14"
+  },
+  {
+   "title": "PPh bulan lalu berbeda",
+   "note": "Desember 2025; PPh Februari dulu dipotong dengan sistem lama dan berbeda dari hitungan sekarang.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 12,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Lembur",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 1500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {
+    "2": 450000
+   },
+   "needs": null
+  },
+  {
+   "title": "Komponen dengan nama perusahaan",
+   "note": "Tunjangan komunikasi Rp500 rb mulai Juni dan Insentif OTA Rp2 jt di Mei: komponen perusahaan yang dipetakan ke data KB.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 7,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Gaji pokok",
+    "Tunjangan jabatan",
+    "Tunjangan komunikasi",
+    "Lembur",
+    "Insentif OTA",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [
+    {
+     "name": "Tunjangan komunikasi",
+     "key": "income.fixed_allowance"
+    },
+    {
+     "name": "Insentif OTA",
+     "key": "income.other_irregular"
+    }
+   ],
+   "values": {
+    "Gaji pokok": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Tunjangan jabatan": {
+     "from": {
+      "1": 1500000
+     }
+    },
+    "Tunjangan komunikasi": {
+     "from": {
+      "1": 0,
+      "6": 500000
+     }
+    },
+    "Insentif OTA": {
+     "once": {
+      "5": 2000000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  }
+ ]
+}

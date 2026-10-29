@@ -1,109 +1,106 @@
-# Mockup v2: tampilan untuk admin finance
+# Mockup v3: demo sistem PPh 21 berbasis knowledge base
 
-Rancangan tampilan sistem PPh 21 berbasis knowledge base untuk pengguna sehari-hari (admin finance), bukan peneliti.
-Halaman Beranda tidak diubah; tetap seperti di `system/app`.
+Implementasi tampilan dari penelitian, disusun menurut `mini_demo/user_design.txt`, untuk memperlihatkan cara kerja
+sistem, cara mengelola knowledge base (manual atau dibantu AI), dan cara kalkulator memakainya.
 
 ```
 env\Scripts\streamlit run mini_demo\mockup\main.py --server.port 8503
 ```
 
-Lalu buka http://localhost:8503. Tidak butuh kunci API.
+Lalu buka http://localhost:8503. Tidak butuh kunci API dan tidak memakai kredit.
 
-## Mana yang nyata, mana yang simulasi
+## Keadaan awal demo dan reset
 
-| Bagian | Data |
+- **Knowledge base:** knowledge base emas penelitian sampai pembaruan batas upah JP 2025 (dicatat 27 Februari 2025),
+  tanpa kebijakan perusahaan.
+- **Delapan dokumen menunggu** di Manajemen KB, masing-masing dengan hasil kerja AI asli dari penelitian
+  (`experiments/*/results`):
+  - PER-11/PJ/2025, PP 36/2025, PMK 72/2025, dan batas upah JP 2026: usulan AI benar;
+  - PMK 105/2025: usulan AI **salah**;
+  - kebijakan SP14: THR dari masa kerja;
+  - PKB WIKA: sistem ragu;
+  - PMK 81/2024: tidak relevan.
+- **Penyimpanan:** semua yang dilakukan selama demo disimpan di `mini_demo/mockup/workspace/` (tidak di-commit):
+  pembaruan yang disetujui, draf, suntingan, unggahan, dan chat.
+- **Reset:** tombol **Kembalikan ke keadaan awal demo** (Beranda dan sidebar) menghapus folder itu.
+
+## Yang nyata dan yang simulasi
+
+| Bagian | Status |
 |---|---|
-| Kalkulator, penampil KB | nyata: knowledge base emas (`dataset/12_emas`) dan engine penelitian (`system/pph21kbs`), hanya dibaca |
-| Kartu review dan contoh dampak | nyata: pembaruan emas PMK 105/2025 dan batas upah JP 2026, dihitung sebelum dan sesudah |
-| Cek KB | nyata: pemeriksa statis dan tanggal berakhir aturan |
-| Setujui, tolak, kembalikan versi, unggah dokumen | simulasi di sesi; knowledge base di disk tidak berubah |
-| Asisten | simulasi: pencocokan maksud sederhana atas KB nyata; angka dan sumber jawabannya nyata, kalimatnya disiapkan |
-
-## Prinsip rancangan
-
-1. **Setiap istilah bisa ditanyakan.** Kata bergaris titik dengan tanda "?" menampilkan penjelasan singkat saat
-   kursor diarahkan ke kata itu (`glossary.py`, 65 istilah). Kolom isian memakai tooltip "?" bawaan Streamlit dengan
-   teks yang sama, dan di sidebar ada "Kamus istilah" yang bisa dicari.
-2. **Kata sehari-hari.** Istilah penelitian (abstain, konsensus, kandidat, pengecoh, Δ) diganti dengan kata biasa:
-   sistem ragu, kesepakatan, versi usulan, dokumen tidak relevan, pembaruan. Istilah teknis hanya muncul di
-   "Detail untuk peneliti".
-3. **Angka disertai kalimat.** Setiap hasil punya penjelasan satu kalimat, misalnya "Rp12.056.600 × 3% = Rp361.698,
-   dipotong dari gaji".
-4. **Tidak ada yang berubah tanpa review.** AI, formulir, dan asisten hanya membuat usulan atau draf. Semuanya masuk
-   ke tab Review.
-5. **Cakupan jujur.** Kasus di luar cakupan penelitian (pegawai tidak tetap, pesangon, PPh 26, pindahan perusahaan
-   lain) disebutkan di layar, tidak dihitung diam-diam.
+| Hitungan kalkulator, contoh sebelum/sesudah, cek KB, dampak ke kebijakan perusahaan | nyata: engine dan KB penelitian |
+| Usulan AI dan log pemeriksaannya | nyata: hasil jalan penelitian (claude-opus-5-5) |
+| Setujui, tolak, sunting, kembalikan versi, draf dari formulir dan asisten | nyata: pembaruan Δ divalidasi dan diterapkan dengan kode penelitian, di ruang kerja demo |
+| "Minta AI perbaiki" dan "Minta AI mengerjakan ulang" | simulasi: hasilnya jawaban acuan penelitian (diberi label) |
+| Menjalankan AI pada dokumen unggahan PDF/TXT | belum dijalankan di demo (tombol nonaktif) |
+| Jawaban asisten | pencocokan maksud atas KB nyata; pemeriksaan kutipan, draf, dan angka nyata; tanpa API |
 
 ## Halaman
 
+**Beranda**
+- Ringkasan sistem, alur sistem, serta menu dan fitur utamanya.
+- Keadaan KB.
+- Langkah demo, dengan tanda selesai otomatis.
+- Tombol reset.
+
 **Kalkulator PPh 21**
-- Mode *Coba hitung satu pegawai*:
-  - skenario cepat: pegawai biasa, THR + bonus, masuk Juli, keluar Agustus, gaji naik April, gross-up, DTP 2025,
-    lembur tiap bulan;
-  - isian dalam tiga langkah: pegawai, penghasilan tetap, lalu tabel per bulan yang bisa diubah untuk lembur, THR,
-    bonus, natura, zakat, dan cuti tanpa upah.
-- Hasilnya:
-  - kartu "PPh 21 bulan ini" dan kartu "Akhir tahun": bruto, biaya jabatan, iuran, neto, PTKP, PKP, Pasal 17, sudah
-    dipotong, lalu kurang atau lebih bayar;
-  - grafik per bulan, catatan otomatis (lonjakan THR, PTKP karyawati, DTP), rincian per bulan dalam CSV, dan dasar
-    hukum per angka (pasal dan kutipan);
-  - pembanding cara bayar pajak (gross, gross-up, ditanggung): PPh, gaji bersih, dan pajak yang dibayar perusahaan.
-- Mode *Payroll bulanan*: satu tabel untuk banyak pegawai, pilih masa pajak, lalu PPh setiap pegawai dan rekap masa.
-  Tombol ekspor e-Bupot dan tutup masa adalah rancangan.
+- Profil pegawai bawaan yang bisa diubah, dan pilihan "hitung sampai bulan".
+- Tabel rincian dari bulan pertama sampai bulan itu; semua sel bisa diubah, termasuk kolom "PPh sudah dipotong".
+- Hasil sampai bulan itu. Hitung ulang setahun hanya muncul di masa terakhir (Desember atau bulan keluar).
+- 14 skenario umum.
+- **Kolom dibentuk dari KB:** data yang dibaca aturan yang berlaku tahun itu (`inputs.py`). Setelah SP14 disetujui,
+  kolom *Bulan hari raya*, *Masa kerja*, dan *Hari sejak berhenti sebelum hari raya* muncul sendiri.
 
 **Penampil knowledge base**
-- Peta topik: 9 topik ditambah kebijakan perusahaan, dengan kartu aturan yang dibaca sebagai kalimat (rumus dengan
-  nama Indonesia, tanggal berlaku, pasal, kutipan).
-- Alur perhitungan: gambar langkah dari bruto ke PPh masa dan PPh setahun; pilih satu langkah untuk melihat aturannya.
-- Angka dari waktu ke waktu: grafik tangga untuk setiap parameter, dan isi tabel per versi.
-- Riwayat perubahan: per dokumen.
-- Bandingkan dua tanggal: apa yang mulai berlaku, berhenti berlaku, dan angka yang berubah.
-- Cari dan daftar kebijakan perusahaan.
+- Peta topik, alur perhitungan, angka dari waktu ke waktu, riwayat, bandingkan dua tanggal, cari.
+- **Data yang dibutuhkan:** input yang dibaca aturan, beserta aturan mana yang membacanya.
+- Kebijakan perusahaan.
 
 **Manajemen knowledge base**
-- Kotak masuk: unggah PDF, TXT, atau JSON, dengan langkah proses yang terlihat (baca teks, cek relevansi, susun
-  usulan, pemeriksaan otomatis, cek kesepakatan, review). Status ditulis jelas, termasuk "Sistem ragu" dan "Tidak
-  relevan".
-- Review: kartu perubahan lama → baru dengan kutipan, lima pemeriksaan otomatis dalam kalimat biasa, kebijakan
-  perusahaan yang mungkin terdampak, dan contoh dampak pada pegawai. Tombolnya Setujui, Perbaiki (sunting lalu
-  periksa ulang), dan Tolak.
-- Tambah:
-  - *angka baru*, perubahan yang paling sering (nilai lama otomatis berakhir sehari sebelumnya);
-  - *aturan baru* dengan rumus dan syarat;
-  - *tabel baru* dari CSV atau lampiran PDF.
-- Ubah atau cabut: mencabut berarti memberi tanggal akhir. Sistem memperingatkan bila sesudah tanggal itu tidak ada
-  aturan pengganti.
-- Kebijakan perusahaan: dari contoh aturan (THR, bonus, uang makan, gross-up).
-- Cek KB:
-  - angka tahunan yang belum ada untuk tahun depan (mis. batas upah JP);
-  - aturan yang akan berakhir (mis. DTP 31 Des 2026);
-  - temuan pemeriksa statis.
-- Riwayat: setiap versi, dengan kembali ke versi lama tanpa menghapus riwayat.
-- Asisten KB di sidebar.
+- **Dokumen baru:** pekerjaan AI per langkah (relevansi, versi usulan, pemeriksaan, kesepakatan) dan catatan untuk
+  presenter.
+- **Review:**
+  - kartu perubahan, dengan aturan lama untuk nilai yang sama sebagai pembanding;
+  - pemeriksaan;
+  - semua skenario sebelum dan sesudah;
+  - kebijakan perusahaan yang terdampak;
+  - tombol Setujui, Sunting, Minta AI perbaiki, Tolak.
+- **Tambah, ubah, cabut:** minta AI dengan kalimat biasa, atau isi formulir.
+- **Kebijakan perusahaan:** dari contoh aturan.
+- **Cek KB** dan **Riwayat versi** (kembali ke versi sebelumnya).
 
-**Hasil penelitian**
-- Empat pertanyaan dalam bahasa biasa. Masing-masing berisi jawaban singkat (Ya / Sebagian / Belum kokoh), angka
-  dalam bentuk "x dari y", gambar kotak per dokumen atau kasus, dan "Artinya bagi pengguna". Angka teknis dilipat
-  di "Detail untuk peneliti".
-- Pembanding: kalkulator yang dikodekan tangan, AI yang langsung menghitung, AI yang menyusun aturan dari nol.
+**Asisten AI**
+- Tombol mengambang di semua halaman yang membuka jendela pop-up.
+- Chat tersimpan sesudah ditutup dan dimuat ulang, dan bisa dihapus.
+- Pilihan model, dengan bawaan gpt-5.4-mini.
+- Menjelaskan dan memeriksa usulan, memperbaiki sesuai catatan, membuat draf, dan menjelaskan hasil kalkulator.
+- Tidak pernah menyetujui apa pun.
 
-## Asisten KB (rancangan)
+**Hasil penelitian:** empat pertanyaan dalam bahasa biasa.
 
-- **Model:** `gpt-5.4-mini` (OpenAI). Tersedia di akun proyek, harga USD 0,75 / 4,50 per juta token masukan /
-  keluaran, konteks 400 ribu token
-  ([halaman model OpenAI](https://developers.openai.com/api/docs/models/gpt-5.4-mini)). Satu percakapan dengan
-  konteks KB yang relevan (±20 ribu token) kira-kira USD 0,02.
-- **Tool baca:** cari aturan, baca parameter dan riwayatnya, ringkas pembaruan atau isi kotak masuk, jelaskan hasil
-  review.
-- **Tool tulis, hanya draf:** tambah angka atau aturan, ubah, cabut, aturan kebijakan perusahaan. Draf masuk ke
-  Review; asisten tidak pernah menerapkan perubahan sendiri.
-- **Jawaban:** selalu menyebut sumber (dokumen, pasal, kutipan) dari KB, bukan dari ingatan model.
+## Skrip demo (± 10 menit)
 
-## Temuan yang harus dibawa ke sistem penuh
+1. **Kalkulator:** skenario *DTP padat karya 2026*. Hasilnya belum ada DTP, karena KB demo diketahui sampai
+   Februari 2025.
+2. **Manajemen KB → Review PMK 105/2025.** Bandingkan kartu *Penghasilan bruto tetap dan teratur* dan *Penghasilan
+   tetap bulan pertama* dengan aturan 2025 di bawahnya: AI menghilangkan rumah dan mobil dinas serta penghasilan
+   menurut kontrak. Lalu *Minta AI perbaiki*, periksa contoh sebelum/sesudah (2025 sama, 2026 berubah), dan setujui.
+3. **Kalkulator:** skenario yang sama. DTP muncul, lengkap dengan pasal PMK 105/2025.
+4. **Setujui SP14**, lalu buka skenario *THR menurut kebijakan perusahaan*. Kolom data HR muncul, dan THR dihitung
+   dari masa kerja.
+5. **Setujui PER-11/PJ/2025**, lalu di kalkulator bandingkan "hitung dengan pengetahuan per tanggal" sebelum dan
+   sesudah tanggal dicatatnya.
+6. **PKB WIKA:** tanyakan ke asisten kenapa sistem ragu, lalu minta AI mengerjakan ulang.
+7. **Asisten:** "Batas upah JP 2027 menjadi Rp11.600.000" → review → setujui.
+8. **Kembalikan ke keadaan awal demo.**
 
-- **Engine:** masa pajak terakhir saat ini diambil dari bulan terakhir yang diisi. Bila admin hanya mengisi
-  Januari–Maret untuk pegawai yang bekerja sampai Desember, Maret dihitung sebagai masa terakhir (hasilnya keliru:
-  lebih bayar). Mockup ini selalu mengirim semua bulan kerja, jadi masalah itu tidak muncul di sini. Sistem penuh
-  harus menentukan masa terakhir dari bulan keluar atau Desember, dan memakai PPh yang benar-benar sudah dipotong
-  pada bulan-bulan yang sudah ditutup.
-- **Payroll bulanan:** butuh data pegawai yang tersimpan, kunci masa, ekspor e-Bupot, dan bukti potong A1.
+## Yang berbeda dari sistem penelitian (rencana perubahan)
+
+- **Masa terakhir:** engine masih menganggap bulan terakhir yang diisi sebagai masa terakhir. Untuk menyiasatinya,
+  kalkulator mengisi bulan sesudah bulan perhitungan dengan gaji tetap. Perlu diperbaiki di engine.
+- **PPh yang sudah dipotong:** pemakaiannya di masa terakhir dihitung aplikasi. Di sistem penuh, engine menerimanya
+  sebagai data.
+- **Definisi data (label dan penjelasan input)** ada di `inputs.py`. Di sistem penuh disimpan di KB, dan pemeriksaan
+  otomatis memperingatkan input tanpa definisi; Cek KB sudah menampilkannya.
+- **Perbaikan dengan catatan manusia:** belum ada di alur penelitian. Rencananya memakai putaran perbaikan yang sudah
+  ada (`repair_user`), dan hasilnya dicatat terpisah dari E2.

@@ -37,6 +37,7 @@ def question(n, q, verdict, colour, answer, picture, meaning, detail):
 
 
 def show():
+    st.session_state.page_ctx = "hasil"
     st.title("Hasil penelitian")
     g.md("Penelitian ini menguji satu gagasan: kalkulator PPh 21 yang pengetahuannya disimpan sebagai "
          f"{g.term('knowledge base')} (aturan, angka, dan tabel dengan tanggal berlaku dan sumber pasal), lalu diperbarui "

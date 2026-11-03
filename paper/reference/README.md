@@ -134,6 +134,24 @@ menjadi rujukan baku *Ripple-Down Rules*.
 
 Peraturan perundang-undangan dikutip sebagai **sumber primer domain**, bukan karya ilmiah, sehingga tidak tunduk pada kriteria lima tahun dan peer review. Dua di antaranya terbit sebelum 2021 tetapi tetap diperlukan: PER-16/PJ/2016 adalah dasar pemotongan tahun pajak 2023, dan besaran PTKP dalam PMK 101/PMK.010/2016 masih berlaku. Entri ada di `paper/latex/regulasi.bib`. PDF-nya sudah tersimpan di `dataset/01_regulasi/` beserta *checksum*-nya, sehingga tidak disalin ulang ke folder ini.
 
+## Tambahan untuk `paper/draft/paper_lengkap.tex`
+
+Rujukan berikut ada di `paper/draft/rujukan_tambahan.bib`, bukan di `references.bib`, agar draf lama tidak berubah. Naskah 8 halaman (`paper.tex`) hanya mengutip sebagian. Semuanya disalin dari `naskah_draf_v8/rujukan_tambahan.bib`. DOI diperiksa ulang ke Crossref pada 3 November 2026, dan tidak ada pemberitahuan retraksi.
+
+| Kelompok | Kunci | Catatan |
+|---|---|---|
+| Karya terdekat, dibaca penuh | `veeramani2026neurosymbolic`, `lorenzo2025translating`, `prior2025risks` | Teks versi terbit |
+| Karya terdekat, dibaca dari versi arXiv | `yadamsuren2026formalization`, `jurayj2026tax` | Versi terbit tidak dapat diakses |
+| Pengecualian kriteria | `goganikhiabani2025maintaining`, `chen2021evaluating` | Disetujui 27 Oktober 2026, lihat `naskah_draf_v3/FILTER_RUJUKAN.md` |
+| Karya lain | `gu2024harms`, `seo2025koleg`, `wu2026recode` | Lolos kriteria |
+| Standar, sumber primer | `publicationsoffice2026eli`, `cox2017owltime`, `lebo2013provo`, `knublauch2017shacl`, `palmirani2021legalruleml` | Bukan karya ilmiah |
+
+`graus2026executable` dan `prior2026asking` tetap tidak dikutip, karena DOI ACM ICAIL 2026 belum terdaftar pada 3 November 2026. Keduanya lolos begitu DOI terbit.
+
+`paper/draft/paper_en.tex` memuat `rujukan_en.bib` sebagai ganti `regulasi.bib`. Berkas itu berisi sumber hukum dengan judul terjemahan, bukan terjemahan resmi.
+
+Judul artikel di `references.bib` kini hanya memakai huruf kapital pada kata pertama dan nama diri, sesuai templat konferensi IEEE. Perubahan itu hanya menyentuh huruf besar dan kecil.
+
 ## Catatan lisensi
 
 PDF di `pdf/` berasal dari penerbit (lisensi CC atau baca-gratis) dan versi penulis di arXiv/repositori. Tidak semua lisensinya mengizinkan redistribusi, misalnya akses "baca-gratis" atau naskah tanpa lisensi terbuka. Karena repositori ini publik, `pdf/` sebaiknya tidak di-*commit*. Simpan folder itu secara lokal dan andalkan DOI untuk rujukan.

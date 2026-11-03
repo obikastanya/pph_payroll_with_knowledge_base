@@ -539,3 +539,20 @@ Butir-butir ini sengaja tidak diselesaikan oleh AI dan memerlukan tindakan pengg
 | "buat atau perbarui readme tentang cara setup dan menjalankan project ini, update requirements.txt" | `requirements.txt` disusun ulang menjadi dependensi langsung yang dipin. `requirements-lock.txt` berisi versi persis seluruh paket, tanpa playwright yang hanya alat screenshot AI. `requirements-ekstraksi.txt` berisi alat ekstraksi PDF yang opsional. README ditulis ulang: prasyarat, instalasi (Windows/macOS/Linux), cek instalasi, berkas yang sengaja tidak ada di repo, cara menjalankan UI/CLI/API/tes/eksperimen, dan masalah umum |
 
 **Verifikasi:** sebuah venv baru dibuat dari nol dan hanya dipasang dari `requirements.txt`. Seluruh tes lulus di sana (383 lulus, 8 dilewati), jadi berkas itu memang cukup untuk menjalankan project.
+
+### 3 November 2026 — Naskah menurut panduan dan format konferensi IEEE
+
+| Butir | Keterangan |
+|---|---|
+| Asisten AI | Claude Code (ekstensi VS Code), model Claude Opus 5.5 (`claude-opus-5-5`) |
+| Permintaan pengguna | "ikuti panduan paper untuk membuat papernya", lalu "pakai format ieee ini ya" dengan templat konferensi IEEE |
+| Hasil | `paper/draft/paper.tex` dan `paper.pdf` dipindah ke templat konferensi dan dilengkapi menurut Tahap 21–24 dan Lampiran B. Berkas baru: `paper/draft/gambar_rq2.tex`, `gambar_replay.tex`, `gambar_ontologi.tex`, `rujukan_tambahan.bib`, `system/tools/paper_figures.py`, `feedback_and_revision/revision_03_11_26.md`. Berkas yang diubah: `paper/latex/references.bib` (huruf kapital 28 judul), `paper/reference/README.md`, Log keputusan `PANDUAN_PENELITIAN.md` |
+| Sumber yang dipakai | `docs/BAHAN_PAPER.md`, log `experiments/`, `dataset/14_ruang_uji/`, riwayat git, Crossref, dan teks lengkap enam karya terdekat yang dibaca agen terpisah |
+| Pemeriksaan AI | Angka gambar cocok dengan Tabel E2 pada 12 kondisi. Kutipan dan angka agen dicek ulang ke teks sumber; satu atribusi harga pada Jurayj dkk. dan angka 33% pada Yadamsuren dkk. tidak dipakai |
+| Tidak ada panggilan LLM berbayar proyek | Kunci API proyek tidak dipakai. Tidak ada `.env`, emas, *engine*, atau alur beku yang diubah |
+
+Temuan, ralat, dan pekerjaan yang masih milik manusia dicatat di [revision_03_11_26.md](feedback_and_revision/revision_03_11_26.md).
+
+Sesudah itu pengguna menulis "halaman pada paper kebanyakan". Versi 20 halaman disimpan sebagai `paper/draft/paper_lengkap.tex`, dan `paper.tex` dipadatkan menjadi 8 halaman. Target 8 halaman dipilih AI, mengikuti panjang draf v1–v8. Angkanya disalin dari versi lengkap, tanpa analisis baru.
+
+Lalu pengguna menulis "buatkan 2 versi english dan bahasa indonesia". Terjemahan Inggris `paper/draft/paper_en.tex` disusun AI, dengan `gambar_replay_en.tex` dari generator yang sama dan `rujukan_en.bib` berisi terjemahan AI atas judul peraturan. Skrip paritas membandingkan semua angka, sitasi, label, dan baris tabel kedua versi. Makna terjemahan belum ditinjau manusia.

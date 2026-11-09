@@ -1,0 +1,685 @@
+% ============================================================================
+% DRAF STRUKTUR naskah IEEE Access, revisi 1 (sesudah tinjauan independen)
+% Isi: judul bagian, keterangan gambar/tabel (bahasa Inggris, bahasa akhir naskah),
+%      dan deskripsi isi setiap bagian (bahasa Indonesia, untuk penulis).
+% Kompilasi: pdflatex draf_struktur && pdflatex draf_struktur   (MiKTeX)
+% ============================================================================
+\documentclass{ieeeaccess}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+% ---------------------------------------------------------------- penanda draf
+\definecolor{draftblue}{RGB}{20,70,120}
+\definecolor{stada}{RGB}{30,120,60}
+\definecolor{sttulis}{RGB}{190,110,0}
+\definecolor{stbaru}{RGB}{180,30,30}
+\newcommand{\ADA}{\textcolor{stada}{\textbf{[ADA]}}}
+\newcommand{\TULIS}{\textcolor{sttulis}{\textbf{[TULIS]}}}
+\newcommand{\BARU}{\textcolor{stbaru}{\textbf{[DATA BARU]}}}
+\definecolor{stpenulis}{RGB}{110,40,150}
+\newcommand{\PENULIS}{\textcolor{stpenulis}{\textbf{[PENULIS]}}}
+\newcommand{\hal}[1]{\textcolor{draftblue}{\textit{(\,#1 hlm.\,)}}}
+\newenvironment{isi}{\par\smallskip\footnotesize\color{draftblue}\noindent}{\par\smallskip\normalsize\color{black}}
+\newcommand{\kotak}[3]{\fbox{\parbox[c][#2][c]{#1}{\centering\footnotesize\color{draftblue}#3}}}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\begin{document}
+\history{Date of publication xxxx 00, 0000, date of current version xxxx 00, 0000.}
+\doi{10.1109/ACCESS.2026.DOI}
+
+\title{An Adaptive Knowledge-Based System for PPh 21 Calculation with LLM-Assisted Knowledge Acquisition from Regulations and Company Policies}
+
+\author{\uppercase{Obi Kastanya}\authorrefmark{1}
+AND \uppercase{Mahathir Muhammad}\authorrefmark{1}}
+
+\address[1]{Department of Informatics, Institut Teknologi Sepuluh Nopember, Surabaya 60111, Indonesia
+(e-mail: 6025252015@student.its.ac.id; 6025252008@student.its.ac.id)}
+\tfootnote{This work received no external funding.}
+
+\markboth
+{Kastanya and Muhammad: Adaptive Knowledge-Based System for PPh 21 Calculation}
+{Kastanya and Muhammad: Adaptive Knowledge-Based System for PPh 21 Calculation}
+
+\corresp{Corresponding author: Obi Kastanya (e-mail: 6025252015@student.its.ac.id).}
+
+\begin{abstract}
+\begin{isi}
+\textbf{[Abstrak, 150--250 kata, satu paragraf, tanpa singkatan, rumus, atau sitasi.]} \TULIS{} paling akhir.
+Alur kalimat:
+(1) pajak penghasilan karyawan harus mengikuti regulasi yang sering berubah, sedangkan aturannya tertanam di kode;
+(2) model bahasa besar dapat menerjemahkan regulasi menjadi aturan, tetapi belum diketahui apakah pembaruan berulang tetap aman;
+(3) penelitian ini membangun sistem berbasis pengetahuan dengan basis pengetahuan dua lapis yang mencatat dua sumbu waktu; model bahasa hanya menyusun draf pembaruan, yang disaring pemeriksaan otomatis dan peninjau manusia;
+(4) evaluasi memutar ulang 13 perubahan regulasi nyata 2023--2026 dan lima perjanjian kerja bersama, ditambah 20 dokumen pengecoh dan 16 perubahan yang tidak dilihat perancang;
+(5) tepat tiga angka kunci: pada 18 dokumen nyata (13 regulasi, 5 perjanjian kerja), pembaruan benar 8 dan salah tanpa terdeteksi 3; keberhasilan turun dengan ukuran pembaruan (5/5 untuk satu unsur, 0/4 untuk 11 unsur atau lebih); representasi menyatakan 16/16 perubahan tak terlihat, dengan syarat konvensi pembulatan diselaraskan. Angka rantai cukup kalimat kualitatif (kesalahan menumpuk bila pembaruan tidak ditinjau);
+(6) arti hasil: model bahasa layak sebagai penyusun draf untuk perubahan parameter; perubahan struktural dan kebijakan perusahaan tetap membutuhkan peninjau.
+Prosedur (commit, amandemen) tidak masuk abstrak.
+\end{isi}
+\end{abstract}
+
+\begin{keywords}
+Knowledge acquisition, knowledge-based systems, large language models, regulatory change, tax computation.
+\end{keywords}
+
+\titlepgskip=-21pt
+
+\maketitle
+
+% ============================================================================
+\section*{Catatan draf (dihapus sebelum dikirim)}
+% ============================================================================
+\begin{isi}
+\textbf{Tujuan berkas.} Kerangka naskah IEEE Access: setiap bagian berisi deskripsi isi, sumber bahan, dan status. Teks akhir ditulis sesudah struktur ini disetujui. Revisi 1 menindaklanjuti tinjauan independen 8 November 2026.
+
+\textbf{Judul} (ditetapkan penulis, 8 November 2026): \textit{An Adaptive Knowledge-Based System for PPh 21 Calculation with LLM-Assisted Knowledge Acquisition from Regulations and Company Policies}. Karena judul menyebut kebijakan perusahaan, hasil akuisisi dari kebijakan perusahaan (5 PKB nyata: semua abstain; 14 kebijakan buatan: 5 benar, 6 salah, 3 abstain) dan deteksi dampak lintas lapis harus tampil setara dengan hasil regulasi di Bagian VIII dan IX, termasuk keterbatasannya.
+
+\textbf{Keputusan untuk naskah final} (8 November 2026, sesudah semua analisis tanpa biaya selesai). Naskah final di \path{paper/final/} memuat hanya yang benar-benar dikerjakan penelitian:
+\begin{itemize}
+\item Tabel engine lawan LLM per tingkat kompleksitas \emph{dibuang}: analisisnya tidak dijalankan. B2 dilaporkan dengan angka yang ada (76/100 tepat, 97/100 dalam Rp1, satu putaran).
+\item Gambar waktu adaptasi memuat jumlah durasi panggilan model yang menyusun draf saja (E03 164 detik dan E04 586 detik, sekitar 12,5 menit; median 18 dokumen nyata sekitar 2 menit); waktu peninjauan manusia tidak diukur dan dinyatakan sebagai keterbatasan.
+\item Validasi oleh praktisi manusia dan uji pengguna tidak dilakukan; keduanya ditulis sebagai keterbatasan, bukan sebagai hasil.
+\item Tangkapan layar diambil dari aplikasi mode demo (kalkulator dan tab Review untuk PER-11/PJ/2025), tanpa panggilan API.
+\item Gambar data dibangkitkan \path{paper/final/make_figures.py} dari berkas hasil; tidak ada angka yang diketik tangan.
+\item Sitasi peraturan dibatasi pada entri yang terverifikasi (UU 7/2021, PMK 101/2016, PER-16/2016, PP 58/2023, PMK 168/2023, PMK 10/2025, PMK 72/2025, PMK 105/2025); peristiwa lain disebut namanya di tabel korpus.
+\end{itemize}
+
+\textbf{Bahasa.} Naskah akhir berbahasa Inggris. Judul bagian dan keterangan gambar di berkas ini sudah dalam bahasa Inggris; deskripsi berbahasa Indonesia.
+
+\textbf{Status.} \ADA{} bahan tersedia. \TULIS{} bahan ada, teks atau gambar perlu dibuat. \BARU{} perlu analisis atau data yang belum ada; disebut ``tanpa biaya'' bila cukup dihitung dari log yang ada. \PENULIS{} perlu tindakan penulis di luar penulisan (validasi pakar, DOI, lisensi, pendaftaran).
+
+\textbf{Sumber utama.} \path{paper/draft/paper_lengkap.tex}, \path{docs/BAHAN_PAPER.md}, \path{docs/hasil/}, \path{experiments/}, \path{dataset/}, kode \path{system/}.
+
+\textbf{Prinsip penulisan.}
+(a) Masalah dinyatakan langsung, tanpa \textit{research question}.
+(b) Dua contoh berjalan: \textbf{Pegawai A} (K/1, gaji Rp15 juta per bulan, THR bulan Maret; tidak berhak DTP) untuk Bagian II, IV, V, dan VI; \textbf{Pegawai B} (TK/0, gaji Rp8 juta, perusahaan industri padat karya penerima DTP) khusus untuk contoh dua sumbu waktu (Fig.~\ref{fig:bitemporal}).
+(c) Setiap bagian dibuka dengan 1--2 kalimat ``bagian ini menjawab apa'' dan ditutup dengan satu kalimat kesimpulan.
+(d) Singkatan di badan naskah dibatasi: PPh~21, TER, PTKP, DTP, PKB (\textit{collective labor agreement}), KB, LLM, RDF, SHACL.
+(e) Kode yang dipakai di kalimat hanya kode peristiwa (E01--E13) dan gerbang (G1--G5). Kontribusi diberi nomor (1)--(4), sifat yang diuji diberi nama deskriptif, dan kode eksperimen, pembanding, ablasi, jenis perubahan, serta jenis konflik hanya muncul di tabel. Pengecoh ditulis ``pengecoh P01'' bila perlu disebut.
+(f) Satu kode warna untuk semua gambar: oranye langkah AI, biru langkah kode pasti, hijau keputusan manusia.
+(g) Satuan dipakai konsisten: \emph{observasi} (satu nilai keluaran, misalnya PPh masa Maret, untuk satu kasus pada satu tanggal pengetahuan; dipakai di validasi acuan), \emph{tupel} (satu kasus pada satu tanggal pengetahuan, berisi semua observasinya; satuan penilaian E2 di \path{scores.csv}), dan \emph{kasus} (satu pegawai satu tahun pajak; satuan rantai E3).
+
+\textbf{Anggaran halaman} (dua kolom): I 1,25; II 1,25; III 1,5; IV 0,75; V 3,5; VI 1; VII 2,25; VIII 3; IX 1,5; X 0,25; ketersediaan data dan ucapan terima kasih 0,25; rujukan 1,5; biografi 0,5; Lampiran A--D 1,25. Total sekitar 19 halaman. Lampiran E--H diserahkan sebagai \textit{supplementary material}.
+
+\textbf{Daftar tindakan penulis sebelum kirim} (hasil audit kelengkapan Q1/Q2, 8 November 2026), urut menurut risiko ditolak:
+\begin{enumerate}
+\item \PENULIS{} Validasi acuan oleh praktisi pajak manusia (bersertifikat brevet A/B atau staf payroll senior): $\Delta$ emas 13 peristiwa dan sekitar 30 kasus; kesepakatan dilaporkan di VII-D dan VIII-A. Tanpa ini, klaim ketepatan pajak bertumpu pada acuan yang disusun model sekeluarga dengan model yang diuji.
+\item \PENULIS{} Keterbukaan yang dapat diverifikasi: \textit{push} semua tag (\texttt{prareg}, \texttt{prareg-amandemen-1}, \texttt{alur-beku}, \texttt{engine-v1}, \texttt{emas-v1}, \texttt{hasil-v2}, dan lainnya; di remote baru ada \texttt{b1-frozen}); tambahkan berkas LICENSE untuk kode dan data; arsipkan ke Zenodo untuk DOI; daftarkan \path{docs/PRAREGISTRASI.md} ke OSF sebagai arsip dan nyatakan bahwa pendaftaran dilakukan sesudah eksperimen.
+\item \PENULIS{} ORCID kedua penulis dan pernyataan kontribusi (CRediT). \path{docs/PRAREGISTRASI.md} \S7 menyebut ``peneliti tunggal''; selaraskan.
+\item \PENULIS{} Pengungkapan versi konferensi 8 halaman (\path{paper/draft/paper_en.tex}) di \textit{cover letter} bila pernah dikirim, dan cek kemiripan (\textit{similarity}).
+\item \PENULIS{} Pemeriksaan retraksi semua rujukan (Crossref/Retraction Watch); keputusan menyebut atau menyamarkan nama perusahaan pada PKB.
+\item \PENULIS{} Konfirmasi kuartil IEEE Access di SJR, anggaran APC, dan \textit{cover letter}.
+\item \PENULIS{} \textit{Proofreading} bahasa Inggris sesudah naskah ditulis.
+\end{enumerate}
+\textbf{Analisis tanpa biaya, selesai 8 November 2026}: ablasi gerbang (\path{docs/hasil/ablasi_gerbang.json}); presisi dan recall unsur (\path{docs/hasil/unsur_pr_e2.json}); pita materialitas kesalahan senyap dan acuan (\path{docs/hasil/materialitas_e2.json}, \path{materialitas_acuan.json}); penyebab dan taksonomi tiga kesalahan senyap; latensi AI per dokumen (dari \path{calls.jsonl}); slip Pegawai A, contoh Pegawai B, dan jejak engine (\path{docs/hasil/contoh_pegawai_ab.txt}); sebaran kasus uji (\path{docs/hasil/sebaran_ruang_uji.csv}). \textbf{Belum}: tangkapan layar, waktu gerbang di komputer, waktu peninjauan manusia, kategorisasi draf yang gagal gerbang.
+\end{isi}
+
+\begin{table*}[!t]
+\caption{Peta gambar dan tabel (draf). Badan naskah: 13 gambar, 8 tabel, 1 listing, 1 algoritma (23 tampilan); tiga tabel di Lampiran~D. Nomor akhir mengikuti urutan kemunculan.}
+\label{tab:peta}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}P{0.9cm} P{1.1cm} L P{3.2cm}@{}}
+\toprule
+\textbf{No.} & \textbf{Bagian} & \textbf{Isi dan fungsi bagi pembaca} & \textbf{Status} \\
+\midrule
+Fig.~1 & I & Garis waktu 13 perubahan regulasi, warna menurut kode jenis; panah untuk lima aturan berlaku surut & \TULIS{} \path{dataset/09_korpus_peristiwa/peristiwa.csv} \\
+Fig.~2 & IV-D & Protokol \textit{replay}: mode terisolasi dan berantai, dengan tiga jenis kesalahan & \TULIS{} \\
+Fig.~3 & V-A & Arsitektur ringkas: dua jalur yang bertemu di KB & \TULIS{} dari gambar alur \\
+Fig.~4 & V-B & Ontologi KB & \ADA{} perlu disederhanakan \\
+Fig.~5 & V-B & Dua sumbu waktu: PMK 10/2025, Pegawai B & \TULIS{} \\
+Fig.~6 & V-C & \textbf{Cara kerja engine}: pemilihan aturan, graf ketergantungan, jejak (menggantikan tabel aturan pemenang) & \ADA{} nilai dan jejak di \path{contoh_pegawai_ab.txt} \\
+Fig.~7 & V-D & Alur akuisisi terperinci & \TULIS{} \\
+Fig.~8 & V-F & Tangkapan layar aplikasi (kalkulator dengan jejak; tab Review) & \ADA{} \path{paper/final/figs/screen_*.png} \\
+Fig.~9 & VI & Studi kasus PP 58/2023 & \BARU{} dari \path{experiments/e2-regulasi/} \\
+Fig.~10 & VII-E & \textbf{Cakupan ruang uji} terhadap batas tarif (menggantikan tabel cakupan) & \ADA{} \path{docs/hasil/sebaran_ruang_uji.csv} \\
+Fig.~11 & VIII-C & Akuisisi satu dokumen, dua panel: keamanan lawan kegunaan; hasil menurut ukuran pembaruan & \ADA{} \\
+Fig.~12 & VIII-E & \textit{Regulation replay} dua rantai, dengan penyebut kasus & \ADA{} \path{experiments/e3-*/chain.csv} \\
+Fig.~13 & VIII-G & \textbf{Waktu adaptasi}: draf AI lawan dua kalkulator sumber terbuka & \ADA{} B1 dan waktu AI (peninjauan tidak diukur) \\
+\midrule
+Tab.~I & II-A & PPh 21 bulanan Pegawai A: 2023 (disetahunkan) lawan 2024 (TER) & \ADA{} \path{docs/hasil/contoh_pegawai_ab.txt} \\
+Tab.~II & II-B & Jenis perubahan T1--T10 dengan contoh nyata & \ADA{} \\
+Tab.~III & III-F & Posisi terhadap karya terdekat & \ADA{} \\
+Tab.~IV & V-D & Gerbang G1--G5 dan kegagalan nyata & \ADA{} log gerbang E2 \\
+Tab.~V & VII-A & Peta evaluasi: sifat, eksperimen, data, metrik, hipotesis & \TULIS{} \\
+Tab.~VI & VIII & Putusan hipotesis & \ADA{} \path{paper/draft/paper.tex} \\
+Tab.~VII & VIII-D & Ablasi per komponen & \ADA{} \path{docs/hasil/ablasi_gerbang.json}, \path{e2_ringkasan.json} \\
+Tab.~VIII & IX-B & Taksonomi kesalahan berhitung & \ADA{} tiga kesalahan senyap; \BARU{} draf yang gagal gerbang \\
+\midrule
+Lamp.~D & Lampiran & Tiga tabel: korpus uji per peristiwa; kecocokan dengan acuan dan pita materialitas; 16 perubahan tak terlihat & \ADA{} \\
+\midrule
+Listing~1 & V-B & Satu aturan TER dalam Turtle & \ADA{} \\
+Alg.~1 & V-C & \textit{Inference engine}, rumusan formal & \ADA{} versi lengkap \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+\addtocounter{table}{-1}
+
+% ============================================================================
+\section{Introduction}
+\label{sec:intro}
+% ============================================================================
+\hal{1,25}
+
+\noindent\textcolor{draftblue}{\textit{[Paragraf, tanpa subjudul: Payroll Tax under Frequent Regulatory Change]}}
+\begin{isi}
+\textbf{Menjawab:} mengapa masalah ini penting. \TULIS{}\\
+Cerita dari sudut kantor payroll. (1) Januari 2024: metode pemotongan berganti dari disetahunkan ke tarif efektif rata-rata (TER) lewat PP 58/2023 dan PMK 168/2023, yang terbit 27 dan 29 Desember 2023. (2) PMK 10/2025 tentang pajak ditanggung pemerintah (DTP) terbit 4 Februari 2025 tetapi berlaku sejak masa Januari, sehingga potongan Januari harus dibetulkan. (3) Dalam 2023--2026 ada 13 perubahan yang memengaruhi PPh 21 pegawai tetap, tujuh di antaranya pada 2025, dan lima berlaku surut. Kesalahan langsung terlihat di slip gaji dan bukti potong. Ditutup dengan Fig.~\ref{fig:timeline}.
+\end{isi}
+
+\begin{figure*}[!t]
+\centering
+\kotak{0.95\textwidth}{3.2cm}{\textbf{[Fig. 1]} Garis waktu 2023--2026: 13 peristiwa (E01--E13) pada tanggal terbit, warna menurut kode jenis perubahan T1--T10 yang sama dengan Tabel~\ref{tab:jenis}. Panah dari tanggal terbit ke awal masa berlaku untuk lima aturan berlaku surut (E06, E07, E09, E10, E13; kolom \texttt{berlaku\_surut}). Label bahasa Inggris tanpa singkatan yang belum dikenalkan.}
+\caption{Regulation changes affecting Indonesian payroll income tax for permanent employees, 2023--2026. Markers show issue dates; arrows point back to the start of validity for retroactive rules.}
+\label{fig:timeline}
+\end{figure*}
+
+\noindent\textcolor{draftblue}{\textit{[Paragraf, tanpa subjudul: Limits of Current Practice]}}
+\begin{isi}
+\textbf{Menjawab:} mengapa cara sekarang tidak cukup. \ADA{}\\
+(a) Aturan di kode atau \textit{spreadsheet}: dua kalkulator sumber terbuka memasukkan TER 26 dan 915 hari sesudah peraturan terbit dan mengubah 163 dan 504 baris kode. (b) \textit{Knowledge-based system}: memisahkan pengetahuan dari kode, tetapi memindahkan beban ke pemeliharaan KB. (c) LLM yang menghitung langsung: tepat pada 76 dari 100 kasus operasional, tetapi tanpa jejak pasal dan tanpa jaminan jawaban yang sama bila diulang. Klaim ``tidak deterministik'' hanya boleh ditulis bila didukung rujukan atau uji ulang kecil (sekitar 10 kasus, kira-kira USD 0,7); bila tidak, tulis ``tidak dijamin deterministik''. Angka (a) dan (c) diberi rujukan maju ke Bagian~VIII-G. Kalimat penutup: yang dibutuhkan adalah cara memperbarui aturan yang dieksekusi dengan cepat dan dapat diperiksa.
+\end{isi}
+
+\noindent\textcolor{draftblue}{\textit{[Paragraf, tanpa subjudul: Research Gap]}}
+\begin{isi}
+\textbf{Menjawab:} apa yang belum diketahui. \ADA{}\\
+Formalisasi berbantuan LLM umumnya membangun basis aturan satu kali untuk satu keadaan hukum; Gogani-Khiabani dkk.\ memperbarui kode pajak satu langkah tanpa menguji periode lama. Tiga hal belum diukur pada basis aturan yang dieksekusi: (1) apakah pembaruan berulang menjaga hasil periode lama; (2) apakah kesalahan merambat; (3) dampaknya terhadap kebijakan perusahaan.
+\end{isi}
+
+\noindent\textcolor{draftblue}{\textit{[Paragraf, tanpa subjudul: Approach and Contributions]}}
+\begin{isi}
+\textbf{Menjawab:} apa yang dilakukan dan apa yang baru. \TULIS{}\\
+\textbf{Tujuan penelitian} dinyatakan eksplisit dalam satu atau dua kalimat, dengan menyebut empat sifat yang diuji memakai kata yang sama seperti di Bagian~VII-A dan Kesimpulan (ekspresivitas representasi, keamanan satu pembaruan, stabilitas pembaruan berantai, deteksi dampak). Lalu satu paragraf pendekatan, merujuk Fig.~\ref{fig:arsitektur}. Kontribusi bernomor, setiap butir menyebut bagian dan buktinya:
+\begin{enumerate}
+\item Representasi: KB bitemporal dua lapis berupa \textit{knowledge graph} RDF dengan aturan yang dieksekusi, resolusi konflik antarlapis, dan jejak sampai pasal (Bagian~V). Bukti: 16 perubahan tak terlihat dapat dinyatakan tanpa mengubah engine, \emph{dengan syarat konvensi pembulatan contoh diselaraskan}.
+\item Alur akuisisi inkremental: draf LLM dengan kutipan wajib, lima pemeriksaan, kesepakatan perilaku, abstain, dan laporan dampak untuk peninjau (Bagian~V). Klaim mengikuti ablasi: penurunan salah tanpa terdeteksi berasal dari pengambilan beberapa draf dan kesepakatan (draf pertama yang lolos 8/18 menjadi 3/18); gerbang G2--G4 tidak mengubah putusan pada 18 dokumen nyata dan G5 menahan satu pembaruan benar. Gerbang ditulis sebagai pemeriksaan per draf dan sumber pelajaran desain, bukan sebagai sumber keamanan.
+\item Protokol evaluasi \textit{regulation replay}: mode terisolasi dan berantai, pemisahan kesalahan bawaan, baru, dan terpicu, dan perubahan tak terlihat untuk menekan bias pandangan belakang (Bagian~IV, VII).
+\item Temuan empiris tentang kapan draf LLM dapat dipercaya, menurut jenis dan ukuran perubahan, beserta artefak terbuka (Bagian~VIII). Kata ``artefak terbuka'' baru boleh ditulis sesudah tag di-\textit{push}, LICENSE ditambahkan, dan DOI Zenodo terbit. \PENULIS{}
+\end{enumerate}
+Satu kalimat urutan bagian menutup Pendahuluan. Pendahuluan ditulis mengalir tanpa subjudul.
+\end{isi}
+
+% ============================================================================
+\section{Background: Payroll Income Tax in Indonesia}
+\label{sec:latar}
+% ============================================================================
+\hal{1,25}
+\begin{isi}
+\textbf{Menjawab:} pengetahuan pajak minimum bagi pembaca di luar Indonesia.
+\end{isi}
+
+\subsection{Computing PPh~21 for a Permanent Employee}
+\begin{isi}
+\TULIS{} Bruto (gaji, tunjangan, THR dan bonus, premi jaminan sosial yang dibayar pemberi kerja, natura sejak Juli 2023). Sampai 2023: setiap masa disetahunkan lalu dikenai tarif progresif Pasal 17 (5\%--35\%). Sejak 2024: masa Januari--November memakai TER bulanan menurut kategori A/B/C dari status PTKP, dan masa terakhir menghitung ulang pajak setahun dengan Pasal 17 dikurangi yang sudah dipotong. Tabel~\ref{tab:slip} menunjukkan kedua metode untuk Pegawai A: lonjakan TER di bulan THR dan koreksinya di Desember. Tabel ini dirujuk lagi di studi kasus (Bagian~VI).
+\end{isi}
+
+\begin{table}[!t]
+\caption{Running example: monthly PPh~21 of Employee A (status K/1, monthly salary Rp15\,000\,000, religious holiday allowance in March) under the annualised method (2023) and the effective-rate method (2024).}
+\label{tab:slip}
+\centering
+\kotak{0.95\columnwidth}{3.0cm}{\textbf{[Table I]} Kolom: masa; bruto; PPh 2023 (disetahunkan); kategori dan tarif TER 2024; PPh 2024. Baris Januari, Februari, Maret (THR), April--November diringkas, Desember, jumlah setahun. \ADA{} Bruto Rp15.561.000 (Maret Rp30.561.000); 2023: Rp913.025, Maret Rp3.162.300, Desember Rp912.350, setahun Rp13.199.100; 2024: TER B 6\% Rp933.660, Maret 12\% Rp3.667.320, Desember Rp186.480, setahun Rp13.190.400. Sumber \path{docs/hasil/contoh_pegawai_ab.txt}.}
+\end{table}
+
+\subsection{How Regulations Change}
+\begin{isi}
+\ADA{} Jenis perubahan T1--T10 dengan contoh nyata (Tabel~\ref{tab:jenis}). Bedakan tanggal terbit (kapan aturan diketahui) dan tanggal berlaku (kapan aturan mengikat), dengan contoh aturan berlaku surut. Kalimat penutup: inilah alasan KB perlu dua sumbu waktu.
+\end{isi}
+
+\begin{table}[!t]
+\caption{Types of regulation change, with real examples.}
+\label{tab:jenis}
+\centering
+\kotak{0.95\columnwidth}{3.4cm}{\textbf{[Table II]} Kolom: kode, jenis, contoh nyata. T1 batas upah Jaminan Pensiun (E01); T2/T7 TER (E03); T3 natura (E02); T4 DTP (E06); T5 perluasan DTP ke pariwisata (E10); T6 perpanjangan keringanan iuran (E09); T9 pembulatan (E13); T10 kebijakan perusahaan (PKB). T8 (pencabutan tanpa pengganti) ditandai tanpa contoh nyata.}
+\end{table}
+
+\subsection{Company Policies and Their Legal Limits}
+\begin{isi}
+\ADA{} Perusahaan menentukan prorata, THR, dan siapa yang menanggung pajak, lewat peraturan perusahaan atau perjanjian kerja bersama (PKB), tetapi tidak boleh menyimpangi ketentuan wajib. Contoh konflik \emph{laten}, bukan pelanggaran yang terjadi: PKB PT Wijaya Karya 2025--2026 Pasal 22 ayat (3) menyatakan insentif pajak pemerintah tidak diberikan kepada pegawai, sedangkan PMK 10/2025 Pasal 5 ayat (1) mewajibkan DTP dibayarkan tunai; konflik ini tidak terpicu karena perusahaan itu bukan sektor penerima DTP. Nama perusahaan pada PKB disebut atau disamarkan sesuai keputusan penulis \PENULIS{}; bila disebut, tegaskan bahwa analisis bersifat hipotetis. Jenis konflik dirinci di Lampiran~B. \TULIS{} Bab ditutup dengan \textbf{lingkup dan asumsi} sebagai daftar singkat. Termasuk: pegawai tetap pemberi kerja swasta atau BUMN, satu pegawai per perhitungan, tahun pajak 2023--2026 (pengembangan 2012--2022). Tidak termasuk: pegawai tidak tetap, pesangon dan penghasilan final, tarif 20\% lebih tinggi tanpa NPWP, payroll massal, pelaporan bukti potong. Asumsi: pegawai memiliki NPWP atau NIK yang valid; data masukan sesuai catatan payroll.
+\end{isi}
+
+% ============================================================================
+\section{Related Work}
+\label{sec:terkait}
+% ============================================================================
+\hal{1,5}
+\begin{isi}
+\textbf{Menjawab:} posisi penelitian ini dan apa yang belum dijawab karya lain. \ADA{} (67 rujukan terverifikasi di versi lengkap; 62 terbit 2021 atau sesudahnya). Target sekitar 50 rujukan.\\
+\TULIS{} \textbf{Protokol penelusuran} dalam satu paragraf pembuka: basis data (Scopus, IEEE Xplore, ACM DL, arXiv, prosiding ICAIL/JURIX), kata kunci, rentang tahun, kriteria masuk dan keluar, dan tanggal penelusuran terakhir. \textbf{Setiap karya ditulis dengan kaitannya}: apa yang dilakukannya, apa yang dipakai ulang atau dibandingkan di penelitian ini, dan apa yang tidak dijawabnya; bukan daftar nama. Setiap subbagian ditutup dengan satu kalimat ``yang belum dijawab''.
+\end{isi}
+
+\subsection{Rules as Code and Legal Knowledge-Based Systems}
+\begin{isi}Catala, DataLex, OpenFisca; kalkulator pajak dan payroll di Indonesia. Pengetahuan ditulis manusia; pemeliharaan tidak diukur.\end{isi}
+
+\subsection{Temporal Legal Knowledge Representation}
+\begin{isi}ELI, OWL-Time, PROV-O, model versi norma, \textit{legal knowledge graph}. Waktu berlaku dan waktu diketahui jarang dipakai bersama pada aturan yang dieksekusi.\end{isi}
+
+\subsection{Incremental Knowledge Acquisition}
+\begin{isi}\textit{Ripple-Down Rules} dengan \textit{cornerstone case} (setara pemeriksaan regresi), verifikasi KB, \textit{mutation testing} perangkat lunak pajak. Pakar tetap menulis setiap perubahan.\end{isi}
+
+\subsection{Large Language Models for Legal and Tax Formalization}
+\begin{isi}Veeramani dkk., Yadamsuren dkk., Lorenzo dkk., Jurayj dkk., Gogani-Khiabani dkk.; LLM menghitung pajak langsung. Satu keadaan hukum, satu langkah.\end{isi}
+
+\subsection{Evaluating Repeated LLM Updates}
+\begin{isi}Penyuntingan pengetahuan model berurutan, konsolidasi undang-undang berantai, \textit{pass@k}, \textit{n@k}, dan prediksi selektif. Objeknya model atau teks, bukan aturan yang dieksekusi.\end{isi}
+
+\subsection{Positioning}
+\begin{isi}\ADA{}/\TULIS{} Tabel~\ref{tab:posisi} dan satu paragraf celah yang mengulang tiga hal di Pendahuluan dengan kata yang sama. Setiap baris tabel harus sudah dibahas di subbagian sebelumnya (termasuk Prior dkk.). Tambahkan dua kalimat pembeda operasional: terhadap Gogani-Khiabani dkk.\ (satu langkah pembaruan, tanpa uji periode lama dan tanpa rantai) dan terhadap \textit{Ripple-Down Rules} (pakar menulis setiap aturan; di sini LLM menyusun dan manusia meninjau). Pendahuluan merujuk tabel ini dari paragraf celah.\end{isi}
+
+\begin{table}[!t]
+\caption{Positioning against the closest work.}
+\label{tab:posisi}
+\centering
+\kotak{0.95\columnwidth}{3.4cm}{\textbf{[Table III]} Kolom: karya, representasi, penyusun aturan, pembaruan inkremental, perambatan kesalahan diukur, lapisan perusahaan, dieksekusi. Baris: Catala, Ripple-Down Rules, Veeramani, Yadamsuren, Lorenzo, Jurayj, Gogani-Khiabani, Prior, penelitian ini.}
+\end{table}
+
+% ============================================================================
+\section{Problem Formulation}
+\label{sec:formulasi}
+% ============================================================================
+\hal{0,75}
+\begin{isi}
+\textbf{Menjawab:} apa persisnya arti ``sistem dapat beradaptasi'' sehingga bisa diuji. \ADA{} Setiap definisi formal diikuti satu kalimat biasa dengan Pegawai A.
+\end{isi}
+
+\subsection{Knowledge Base and Computation Result}
+\begin{isi}
+Definisi KB dan fungsi hasil $\mathit{result}(\mathcal{K}, x, t, \omega)$: ``PPh Pegawai A untuk masa Maret 2024 menurut aturan yang diketahui pada 1 April 2024''. Dikenalkan juga \textbf{KB emas} $\mathcal{K}^\star$: KB acuan yang disusun peneliti dari teks regulasi dan divalidasi di Bagian~VII-D; pembaruan dinilai dengan membandingkan hasilnya terhadap $\mathcal{K}^\star$.
+\end{isi}
+
+\subsection{Updates and Adaptivity Conditions}
+\begin{isi}
+Pembaruan $\Delta$ dan syarat A1--A4. A3: gaji Desember 2023 Pegawai A tidak berubah karena aturan TER 2024 dimasukkan. A4: laporan konflik dengan kebijakan perusahaan sama dengan $\mathcal{K}^\star$.
+\end{isi}
+
+\subsection{Representational and Operational Adaptivity}
+\begin{isi}
+Representasi adaptif bila \emph{ada} $\Delta$ yang memenuhi syarat; sistem adaptif secara operasional bila $\Delta$ \emph{yang dipilih alur} memenuhinya.
+\end{isi}
+
+\subsection{Error Types in a Chain of Updates}
+\begin{isi}
+\TULIS{} Dua cara menerapkan pembaruan dikenalkan di sini secara singkat: \emph{terisolasi} (draf diterapkan pada KB emas sebelum peristiwa) dan \emph{berantai} (draf diterapkan pada KB hasil sistem sendiri); rinciannya di Bagian~VII-B. Lalu tiga jenis kesalahan: bawaan, baru, dan terpicu (benar bila terisolasi, salah bila berantai). Fig.~\ref{fig:galat} menggambarkan kedua mode dan ketiga jenis kesalahan pada beberapa peristiwa berurutan; gambar yang sama dirujuk lagi di Bagian~VII-B.
+\end{isi}
+
+\begin{figure*}[!t]
+\centering
+\kotak{0.95\textwidth}{4.2cm}{\textbf{[Fig. 2]} Protokol \textit{regulation replay} dan jenis kesalahan. Sumbu datar: peristiwa berurutan (misalnya E01, P10, E02, P11, P01, E03). Lajur atas \emph{terisolasi}: KB emas maju lewat $\Delta^\star$; setiap draf $\hat{\Delta}_n$ diterapkan pada $\mathcal{K}^\star_{n-1}$ menjadi $\mathcal{K}'$, dinilai, lalu dibuang. Lajur bawah \emph{berantai}: draf diterapkan pada KB sistem $\mathcal{K}^{\mathrm{sis}}_{n-1}$; pada peristiwa abstain panah putus-putus ``KB tetap''. Di bawah setiap peristiwa, deretan kotak kasus: abu-abu bawaan, merah baru, ungu terpicu (benar bila terisolasi, salah bila berantai), terang benar.}
+\caption{Regulation replay protocol. Each event is applied in isolation to the gold knowledge base and in a chain to the system's own knowledge base; incorrect cases are inherited, new, or triggered by the chain.}
+\label{fig:galat}
+\end{figure*}
+
+% ============================================================================
+\section{Proposed System}
+\label{sec:sistem}
+% ============================================================================
+\hal{3,5}
+\begin{isi}
+\textbf{Menjawab:} bagaimana sistem bekerja, dari dokumen sampai slip gaji.
+\end{isi}
+
+\subsection{Architecture Overview}
+\begin{isi}
+\TULIS{} Dua jalur yang bertemu di KB: pembaruan pengetahuan (saat ada dokumen baru) dan perhitungan (setiap menghitung gaji, tanpa AI). Teknologi: GraphDB dengan SHACL, engine Python, Claude Opus 5.5, aplikasi Streamlit. Fig.~\ref{fig:arsitektur} sengaja ringkas; rincian akuisisi ada di Fig.~\ref{fig:akuisisi}.
+\end{isi}
+
+\begin{figure*}[!t]
+\centering
+\kotak{0.95\textwidth}{5.0cm}{\textbf{[Fig. 3]} Lajur atas, empat kotak: dokumen baru $\rightarrow$ draf pembaruan oleh LLM $\rightarrow$ pemeriksaan otomatis dan kesepakatan $\rightarrow$ peninjau dengan laporan dampak. Tengah: KB bitemporal dua lapis (regulasi, perusahaan; satu versi satu \textit{named graph}). Lajur bawah: data pegawai $\rightarrow$ engine (pilih aturan berlaku dan diketahui, hitung eksak, masa terakhir) $\rightarrow$ PPh 21 dan jejak pasal. Warna: oranye AI, biru kode pasti, hijau manusia.}
+\caption{System architecture. The language model is used only to draft knowledge updates (top); every computation (bottom) is deterministic and traced to legal provisions.}
+\label{fig:arsitektur}
+\end{figure*}
+
+\subsection{Knowledge Representation}
+\begin{isi}
+\ADA{} (1) \textit{Knowledge graph} RDF/OWL dengan ELI, OWL-Time, PROV-O; validasi SHACL; satu versi satu \textit{named graph} (Fig.~\ref{fig:ontologi}). (2) Ekspresi perhitungan disimpan sebagai atribut aturan dan dijalankan engine; Listing~1 menunjukkan aturan TER. (3) Dua sumbu waktu dengan Pegawai B dan PMK 10/2025 (Fig.~\ref{fig:bitemporal}). (4) Alasan memakai RDF dinyatakan eksplisit: jejak sumber, kueri dampak, versi, dan validasi.
+\end{isi}
+
+\begin{figure*}[!t]
+\centering
+\kotak{0.95\textwidth}{4.6cm}{\textbf{[Fig. 4]} Ontologi: dokumen hukum, pasal, kutipan, unsur KB (aturan, parameter, tabel, batasan, fakta), kebijakan perusahaan, peristiwa perubahan, pembaruan, versi KB; relasi \texttt{produces}, \texttt{reads}, \texttt{overrides}, \texttt{cites}, \texttt{validFrom}, \texttt{recordedOn}. Kosakata ELI, OWL-Time, PROV-O diberi warna lain. Sumber: \path{paper/draft/gambar_ontologi.tex}, disederhanakan.}
+\caption{Ontology of the knowledge base. Reused vocabularies are shaded.}
+\label{fig:ontologi}
+\end{figure*}
+
+\begin{figure}[!t]
+\centering
+\kotak{0.95\columnwidth}{3.0cm}{\textbf{[Fig. 5]} Pegawai B. Sumbu Januari--Maret 2025: batang ``PMK 10/2025 berlaku untuk masa Januari--Desember 2025''; penanda terbit 4 Februari; ditanya 31 Januari (DTP Januari Rp0, yang dulu dipotong) lawan ditanya 10 Februari (DTP berlaku, yang seharusnya). Nilai: PPh Januari Rp125.448; DTP Rp0 lawan Rp125.448; gaji bersih Rp7.554.552 lawan Rp7.680.000; selisih Rp125.448 harus dibayarkan pemberi kerja. \ADA{} \path{contoh_pegawai_ab.txt}.}
+\caption{Two time axes for Employee B. The same question about January 2025 gets the value that was correct with the knowledge of 31 January and the value that should have applied once PMK 10/2025 was issued.}
+\label{fig:bitemporal}
+\end{figure}
+
+\subsection{Inference Engine}
+\begin{isi}
+\ADA{} Satu kasus adalah satu pegawai satu tahun pajak. Ambil aturan yang berlaku dan sudah diketahui; saring kondisi; pilih pemenang (\textit{lex superior}, \textit{lex specialis} lewat \texttt{overrides}, \textit{lex posterior}); hitung eksak; \textit{gross-up} sebagai titik tetap terkecil; jejak sampai pasal. Algoritma~1. \BARU{} tanpa biaya (nilai dari engine). Fig.~\ref{fig:engine} menunjukkan cara kerja engine untuk satu nilai PPh Pegawai A (masa Maret 2024); panel (a) memuat isi tabel aturan pemenang sebelumnya, sehingga peralihan ke TER terlihat sebagai data. Algoritma~1 tetap sebagai rumusan formalnya. Catatan untuk panel (a): aturan disetahunkan kalah dari TER sejak 2024 lewat \textit{lex posterior} begitu PP 58/2023 masuk, dan ditutup resmi oleh PMK 168/2023.
+\end{isi}
+
+\begin{figure*}[!t]
+\centering
+\kotak{0.95\textwidth}{5.2cm}{\textbf{[Fig. 6]} Cara kerja engine untuk satu nilai: PPh 21 Pegawai A masa Maret 2024 (bulan THR), tiga panel. (a) \emph{Memilih aturan}: corong empat saringan untuk fakta PPh masa (sudah diketahui pada $\omega$; berlaku pada masa $t$; kondisi ``bukan masa terakhir''; urutan menang wajib $>$ perusahaan $>$ default, lalu \texttt{overrides}, lalu yang terbaru). Aturan disetahunkan gugur di saringan kedua, aturan TER menang; aturan perusahaan yang kalah dari aturan wajib dengan nilai berbeda dicatat sebagai konflik. Isi tabel aturan pemenang (Maret 2023, Maret 2024, Desember 2024) menjadi catatan kecil di panel ini. (b) \emph{Graf ketergantungan}, dihitung dari bawah: gaji pokok, THR, premi JKK/JKM/kesehatan $\rightarrow$ bruto; status K/1 $\rightarrow$ kategori TER B; bruto dan kategori $\rightarrow$ tarif TER; tarif $\times$ bruto, dibulatkan $\rightarrow$ PPh Maret; nilai rupiah dari engine di setiap simpul. (c) \emph{Jejak}: nilai PPh $\rightarrow$ aturan $\rightarrow$ pasal (PP 58/2023 Penjelasan Pasal 2 ayat (1); tabel TER Lampiran PP 58/2023; bruto PER-16 Pasal 10).}
+\caption{How the inference engine computes one value: the withholding of Employee A for March 2024. (a) Rule selection, (b) on-demand evaluation of the fact dependency graph, (c) trace from the value to the legal provisions.}
+\label{fig:engine}
+\end{figure*}
+
+\subsection{LLM-Assisted Knowledge Acquisition}
+\begin{isi}
+\ADA{} Urutan mengikuti Fig.~\ref{fig:akuisisi}: (1) pra-pemrosesan dan pemilihan teks: teks korpus diekstrak dari PDF dan dikunci dengan SHA-256, halaman pindaian di-OCR, tabel lampiran diekstrak ke CSV dan dirujuk lewat \texttt{rows\_ref} (tidak disalin); penanganan teks rusak OCR (misalnya angka ``O,24o/o'') dijelaskan, termasuk normalisasi angka di G2; teks dipotong per pasal dan dipilih dengan batas token; (2) relevansi dengan kutipan; (3) konteks KB lewat SPARQL; (4) $m$ draf independen dalam JSON terstruktur (struktur prompt diringkas di teks, prompt lengkap di Lampiran~D); (5) konverter pasti; (6) G1--G5 (Tabel~\ref{tab:gerbang}) dengan satu putaran perbaikan; (7) kesepakatan perilaku: draf yang lolos dihitung pada $S^G$, yaitu paling banyak 300 kasus buatan yang dibangkitkan dari draf itu sendiri tanpa melihat KB emas atau kasus uji, lalu dikelompokkan menurut hasilnya; kelompok terbesar menang, seri berarti abstain. LLM tidak pernah menghitung pajak dan tidak menulis langsung ke KB. Algoritma akuisisi di Lampiran~C.
+\end{isi}
+
+\begin{figure*}[!t]
+\centering
+\kotak{0.95\textwidth}{4.6cm}{\textbf{[Fig. 6]} Kiri: masukan LLM (potongan pasal, deskripsi tabel lampiran, kosakata KB, rekaman KB terkait). Tengah: dua panggilan LLM (relevansi; $m$ draf), konverter. Kanan: G1 bentuk, G2 kutipan, G3 rumus, G4 regresi pada $S^G$, G5 tidak kosong; panah balik ``pesan gerbang $\rightarrow$ perbaikan 1$\times$''; pengelompokan draf; keluaran $\Delta$ terpilih atau abstain. Contoh kecil: draf E08 (satu parameter, tiga draf sepakat).}
+\caption{Knowledge acquisition for one document. The model drafts; deterministic gates, behavioural consensus, and a human reviewer decide.}
+\label{fig:akuisisi}
+\end{figure*}
+
+\begin{table}[!t]
+\caption{Verification gates, what each checks, and failures observed in the experiments.}
+\label{tab:gerbang}
+\centering
+\kotak{0.95\columnwidth}{3.2cm}{\textbf{[Table V]} Baris G1--G5. Kolom: yang diperiksa; contoh kegagalan nyata dari log; jumlah draf awal yang gagal \emph{menurut gerbang pertama yang gagal} (17 dari 49 draf awal pada 18 dokumen nyata: G2 8, G5 5, G1 2, G3 1, G4 1).}
+\end{table}
+
+\subsection{Cross-Layer Impact Analysis}
+\begin{isi}
+\ADA{} Kebijakan terdampak bila nilai, aturan pemenang, atau konflik berubah. Detektor statis menandai kebijakan yang membaca fakta yang disentuh $\Delta$ atau fakta hilirnya. Laporan tampil di halaman Review.
+\end{isi}
+
+\subsection{Application and Human Review Workflow}
+\begin{isi}
+\BARU{} Kalkulator satu pegawai dengan jejak pasal; penampil KB; halaman Review (hasil gerbang, contoh sebelum/sesudah, dampak ke kebijakan; setujui, sunting, minta AI memperbaiki, atau tolak). Asisten obrolan tidak pernah menyetujui. Fig.~\ref{fig:layar}.
+\end{isi}
+
+\begin{figure*}[!t]
+\centering
+\kotak{0.95\textwidth}{4.6cm}{\textbf{[Fig. 7]} Tiga panel: (a) kalkulator Pegawai A dengan kartu hasil dan jejak pasal; (b) halaman Review: hasil G1--G5 dan tabel sebelum/sesudah; (c) laporan dampak ke kebijakan perusahaan. Teks antarmuka diterjemahkan di keterangan.}
+\caption{The application: (a) calculator with provision trace, (b) review of a drafted update with before/after results, (c) impact report on company policies.}
+\label{fig:layar}
+\end{figure*}
+
+% ============================================================================
+\section{Case Study: Adapting to the Effective-Rate Method}
+\label{sec:kasus}
+% ============================================================================
+\hal{1}
+\begin{isi}
+\textbf{Menjawab:} seperti apa satu perubahan regulasi diterapkan dari awal sampai akhir. Bagian ini hanya memakai konsep dari Bagian~II--V. Paragraf pembukanya menegaskan bahwa bab ini \emph{ilustrasi cara kerja}, bukan bukti; penilaian benar atau salah terhadap KB emas baru dibahas di Bagian~VII dan VIII.\\
+\BARU{} Telusuri PP 58/2023 (E03) dari \path{experiments/e2-regulasi/results/E03.json}: kutipan relevansi; tiga draf dan hasil gerbangnya; kelompok kesepakatan; $\Delta$ terpilih (tiga unsur: tabel kategori TER, tabel TER bulanan yang dirujuk lewat \texttt{rows\_ref}, dan aturan TER $\times$ bruto; $\Delta$ emas berisi tujuh unsur, tetapi hasil hitungnya sama pada semua kasus uji); laporan dampak; versi KB baru. KB ``sesudah'' adalah KB sebelum peristiwa ditambah $\Delta$ terpilih E03; aturan TER menang sejak Januari 2024 lewat \textit{lex posterior} walaupun aturan lama belum ditutup. Hasilnya untuk Pegawai A sama dengan kolom 2024 di Tabel~\ref{tab:slip}, dengan jejak satu nilai sampai Penjelasan Pasal 2 ayat (1). Satu paragraf penutup: PMK 168/2023 (E04) berakhir abstain, sehingga penutupan aturan lama dan pengurangan zakat tidak masuk; akibatnya di rantai dibahas di Bagian~VIII-E. Sebutkan bahwa halaman Review menampilkan semua informasi ini kepada peninjau.
+\end{isi}
+
+\begin{figure*}[!t]
+\centering
+\kotak{0.95\textwidth}{4.4cm}{\textbf{[Fig. 8]} Kiri: kutipan PP 58/2023. Tengah: tiga draf, hasil G1--G5, dan kelompok kesepakatan. Kanan: $\Delta$ terpilih (unsur TER, ringkas) dan jejak satu nilai PPh Pegawai A masa Maret 2024 sampai pasal. Angka slip tidak diulang; rujuk Tabel~\ref{tab:slip}.}
+\caption{Case study: from the text of PP 58/2023 to an approved knowledge update and a traced withholding value for Employee A.}
+\label{fig:sebelumsesudah}
+\end{figure*}
+
+% ============================================================================
+\section{Evaluation Design}
+\label{sec:desain}
+% ============================================================================
+\hal{2,25}
+
+\subsection{Properties under Test}
+\begin{isi}
+\TULIS{} Pengganti RQ. Empat sifat dengan nama deskriptif: \emph{ekspresivitas representasi}, \emph{keamanan satu pembaruan}, \emph{stabilitas pembaruan berantai}, dan \emph{deteksi dampak ke kebijakan}; ditambah validitas instrumen sebagai prasyarat. Tabel~\ref{tab:petaeval} memetakan sifat ke eksperimen, data, metrik (sekaligus definisi singkatnya), hipotesis pra-registrasi, dan status terdaftar atau eksploratori.
+\end{isi}
+
+\begin{table*}[!t]
+\caption{Evaluation map: properties, experiments, data, metrics, and preregistered hypotheses.}
+\label{tab:petaeval}
+\centering
+\kotak{0.95\textwidth}{3.6cm}{\textbf{[Table VI]} Baris: validitas instrumen, ekspresivitas, keamanan satu pembaruan, stabilitas berantai, deteksi dampak, pembanding. Kolom: eksperimen (kode E0--E5), data, metrik dan definisi satu baris, hipotesis dan ambang (H1 batas bawah RA $\ge$ 0,70; H2a batas atas SER $\le$ 0,25; H2b; H3a batas bawah OAR $\ge$ 0,75; H3b; H4a batas bawah recall $\ge$ 0,70; H4b), status terdaftar atau eksploratori. Putusan tidak di sini, tetapi di Tabel~\ref{tab:putusan}.}
+\end{table*}
+
+\subsection{Regulation Replay Protocol}
+\begin{isi}
+\ADA{} Inti kontribusi (3). Peristiwa diputar kronologis: 13 peristiwa uji dan 20 pengecoh, total 33. Mode \emph{terisolasi}: draf peristiwa $n$ diterapkan pada $\mathcal{K}^\star_{n-1}$. Mode \emph{berantai}: draf diterapkan pada KB hasil sistem sendiri, dengan dua cara memperoleh draf: \emph{transplantasi} (draf hasil mode terisolasi dipindahkan) dan \emph{pembangkitan ulang} (draf disusun ulang dengan KB sistem sebagai konteks). Tanpa peninjau. Tanggal pengetahuan setiap pertanyaan. Sampel 150 kasus per tahun pajak, sehingga penyebut tumbuh 300, 450, lalu 600 kasus. Abstain berarti KB tidak diperbarui. Satu pengulangan ($R = 1$). Satuan rantai adalah \emph{kasus}, bukan observasi (nama kolom \texttt{final\_wrong\_tuples} di \path{chain_summary.json} menyesatkan). Jelaskan mengapa penyebut awal 300 kasus, bukan 150 (jumlah tahun pajak yang sudah dinilai pada peristiwa pertama).
+\end{isi}
+
+\subsection{Data and Temporal Split}
+\begin{isi}
+\ADA{} Pengembangan: 13 peristiwa 2012--2022, lima regulasi fiktif, satu PKB. Uji: 13 peristiwa nyata 2023--2026, 20 pengecoh, lima PKB nyata, 14 kebijakan buatan, empat kontrafaktual, 16 perubahan tak terlihat yang ditulis agen terpisah dan disegel. Daftar lengkap per peristiwa (lapis, jenis, ukuran $\Delta$ emas) dipindah ke Tabel~\ref{tab:korpus} di Lampiran~D; di sini cukup ringkasan jumlah per kelompok, karena tanggal dan jenis sudah tampil di Fig.~\ref{fig:timeline} dan Tabel~\ref{tab:jenis}. \TULIS{} Cara memperoleh dokumen (JDIH, situs DJP dan BPJS, PKB publik), kriteria pemilihan lima PKB, kriteria pengecoh, dan pernyataan bahwa sampai tanggal penulisan belum ada peristiwa prospektif yang terbit. Uraian bias pandangan belakang diberi paragraf sendiri dengan judul tebal, bukan kalimat sisipan.
+\end{isi}
+\subsection{Ground Truth and Instrument Validation}
+\begin{isi}
+\ADA{}/\BARU{} KB emas dan kasus uji divalidasi terhadap \textbf{empat} acuan: contoh resmi (GT1, dengan \textit{holdout}), kalkulator DJP (GT2), 50 kasus yang dihitung terpisah dari engine (GT3), dan contoh kebijakan dari klausul PKB (GT5). Implementasi pihak ketiga (GT4) dikumpulkan tetapi tidak dipakai; satu kalimat alasannya, atau beri nomor ulang GT1--GT4. Setiap selisih diadjudikasi sebagai kesalahan KB, kesalahan acuan, atau ambiguitas hukum (tafsir K1--K18). \textit{Mutation score} mengukur ketajaman kasus uji. Pengungkapan yang wajib: KB emas, bahan peninjauan, dan 16 perubahan tak terlihat disusun atau ditinjau agen LLM dari keluarga model yang sama dengan model yang diuji. Kesepakatan pembaca kedua atas emas dilaporkan dengan angkanya (\path{docs/hasil/kesepakatan_emas.json}: Krippendorff's $\alpha$ tanggal mulai 0,79, kesepakatan nilai 90\% satuan; angka lain di berkas itu). \PENULIS{} \textbf{Validasi oleh praktisi pajak manusia}: siapa (kualifikasi, tanpa nama bila diminta), apa yang diperiksa ($\Delta$ emas 13 peristiwa dan sekitar 30 kasus), cara memeriksa, tingkat kesepakatan, dan koreksi yang dihasilkan.
+\end{isi}
+
+\subsection{Test Space and Coverage}
+\begin{isi}
+\ADA{} 2.398 kasus pegawai-tahun: sampel operasional dari sel upah BPS, kombinasi berbatasan, dan batas lapisan tarif. Kelima tarif Pasal 17 teruji (PKP setahun per lapisan 5/15/25/30/35\%: 383, 321, 218, 360, dan 6 kasus; 1.110 kasus PKP nol); 107 dari 122 batas TER teruji, tarif TER 30--34\% tidak tercapai (bruto bulanan tertinggi Rp430,3 juta). \ADA{} \path{docs/hasil/sebaran_ruang_uji.csv}. Fig.~\ref{fig:cakupan} menggambarkan sebaran kasus terhadap batas tarif; jumlah kasus per kriteria (batas Pasal 17, batas TER, kombinasi berbatasan, sampel operasional, kasus per kebijakan) ditulis di teks. Menjawab catatan dosen 27 Oktober no.~3.
+\end{isi}
+
+\begin{figure}[!t]
+\centering
+\kotak{0.95\columnwidth}{3.4cm}{\textbf{[Fig. 10]} Sebaran kasus uji pada sumbu bruto bulanan (skala log), tiga baris kategori TER A/B/C; garis tipis di setiap batas tarif TER yang teruji; daerah di atas sekitar Rp450 juta diarsir ``tidak teruji'' (tarif TER 30--34\%). Panel kecil di bawah: lima lapisan tarif Pasal 17 pada sumbu PKP setahun dengan titik uji $b-1000$, $b$, $b+1000$.}
+\caption{Coverage of the test space: test cases against the effective-rate brackets (top) and the Article 17 brackets (bottom). The shaded range is not reached.}
+\label{fig:cakupan}
+\end{figure}
+
+\subsection{Metrics}
+\begin{isi}
+\TULIS{}/\BARU{} Dasar penilaian: pembaruan \emph{benar} bila semua observasi semua kasus uji sama sampai rupiah dengan $\mathcal{K}^\star$; satu observasi berbeda membuatnya salah. Alasan ketelitian sampai rupiah: nilai PPh dilaporkan di bukti potong dan harus cocok dengan sistem pelaporan DJP. Alasan pita materialitas: membedakan selisih pembulatan dari kesalahan yang berarti bagi pegawai. Satuan observasi dan kasus didefinisikan di sini. Metrik per tahap (definisi satu baris masuk Tabel~\ref{tab:petaeval}):
+\begin{itemize}
+\item \textbf{Dokumen ke KB:} tingkat penerapan benar, salah tanpa terdeteksi, abstain, risiko selektif; \emph{eksploratori:} luas kesalahan (observasi dan kasus terkena), presisi dan recall unsur terhadap $\Delta$ emas, jarak sunting ke emas.
+\item \textbf{KB ke kalkulator:} daftar verifikasi (invarian, SHACL, ekspresi, resolusi konflik 12/12, kelengkapan jejak, kesetaraan dengan engine lama), adaptivitas representasi; \emph{eksploratori:} waktu adaptasi dan ukuran perubahan dibanding kode.
+\item \textbf{Kalkulator ke acuan:} kecocokan persis per observasi dan per kasus; \emph{eksploratori:} pita materialitas (tepat, $\le$ Rp1, $\le$ Rp1.000, material) dan akurasi per tingkat kompleksitas.
+\item \textbf{Rantai:} stabilitas berantai, kesalahan terpicu, dan kesalahan akhir rantai.
+\item \textbf{Dampak:} recall, presisi, $F_2$.
+\end{itemize}
+\end{isi}
+
+\subsection{Baselines and Ablations}
+\begin{isi}
+\ADA{}/\BARU{} Pembanding: riwayat kalkulator sumber terbuka (B1); LLM menghitung langsung (B2); draf pertama yang lolos G1--G2 (B3); suara terbanyak tanpa gerbang (B4); detektor dampak sederhana (B5). Ablasi: tanpa konteks KB, setiap gerbang dicabut satu per satu, hanya G1, tanpa perbaikan, aturan pemilihan, formalisasi dari nol, tanpa SHACL. Pertanyaan yang dijawab setiap kondisi ditulis di teks dan menjadi kolom pertama Tabel~\ref{tab:ablasihasil}; tidak ada tabel desain terpisah. \TULIS{} Hubungkan pembanding dengan karya sebelumnya: draf pertama yang lolos validasi bentuk (B3) mewakili pola ``satu panggilan LLM ditambah validasi'' seperti pada Veeramani dkk.\ dan Yadamsuren dkk.; formalisasi dari nol mewakili pendekatan satu keadaan hukum; suara terbanyak tanpa gerbang (B4) mewakili pemilihan perilaku ala Gogani-Khiabani dkk.
+\end{isi}
+
+\subsection{Statistical Analysis and Preregistration}
+\begin{isi}
+\ADA{} Clopper--Pearson dan batas satu sisi 95\%; McNemar eksak dan CI Newcombe dengan Holm; non-inferioritas; \textit{bootstrap} klaster; analisis daya ($N = 18$; McNemar baru mencapai daya 80\% pada selisih sekitar 0,45). Satu kalimat alasan setiap ambang (0,70; 0,25; 0,75; 0,70): ambang ditetapkan pada atau di atas batas terbaik yang dapat dicapai ukuran sampel, misalnya dengan 18 dokumen tanpa kesalahan batas atas eksak SER 0,153. Pra-registrasi di git (tag \texttt{prareg}), amandemen sesudah hasil awal, dan daftar analisis eksploratori dalam satu paragraf; kronologi lengkap di Lampiran~F.
+\end{isi}
+
+\subsection{Implementation and Cost}
+\begin{isi}
+\ADA{} Claude Opus 5.5 dan \texttt{gpt-6.1-sol}; tanggal panggilan; biaya sekitar USD 81,6 dan USD 8,1; biaya per dokumen; semua panggilan dicatat sehingga analisis dapat diulang tanpa LLM.\\
+\TULIS{} \textbf{Rincian reproduksi LLM} (dari \path{docs/BAHAN_PAPER.md} IV dan \path{system/pph21kbs/pipeline/llm.py}): string model yang dilaporkan API; rentang tanggal panggilan; $m = 3$ untuk regulasi dan $m = 2$ untuk PKB pada analisis utama; \textit{effort} relevansi \texttt{medium} dan penyusunan \texttt{high}; batas token keluaran; keluaran terstruktur dengan skema JSON; \textit{prompt caching}; suhu tidak diatur (nilai bawaan API); urutan kandidat dan \textit{seed}; $|S^G| \le 300$; satu putaran perbaikan. \textbf{Anggaran penyetelan}: perubahan alur selama kalibrasi pada data pengembangan sebelum tag \texttt{alur-beku}.\\
+\BARU{} tanpa biaya: latensi per dokumen (kolom waktu di \path{calls.jsonl}), waktu engine per kasus, versi GraphDB dan pustaka utama, spesifikasi mesin.
+\end{isi}
+
+% ============================================================================
+\section{Results}
+\label{sec:hasil}
+% ============================================================================
+\hal{3}
+\begin{isi}
+\ADA{} Dibuka dengan Tabel~\ref{tab:putusan} (putusan semua hipotesis: H1 diterima bersyarat konvensi pembulatan; H2a dan H2b tidak diterima kecuali non-inferioritas terhadap B3; H3a diterima pada analisis terdaftar tetapi tidak kokoh; H3b tidak didukung; H4a diterima; H4b tidak diterima). Lalu subbagian mengikuti urutan sifat, masing-masing dibuka dengan kalimat jawaban.
+\end{isi}
+
+\begin{table*}[!t]
+\caption{Hypotheses and verdicts. Exploratory analyses are marked.}
+\label{tab:putusan}
+\centering
+\kotak{0.95\textwidth}{3.0cm}{\textbf{[Table IX]} Kolom: hipotesis, hasil dengan CI, putusan. Baris: invarian, H1, H2a, H2b (CAR), H2b (non-inferioritas), H3a, H3b, H4a, H4b. Sumber: Tabel putusan di \path{paper/draft/paper.tex}.}
+\end{table*}
+
+\subsection{Instrument Validity}
+\begin{isi}
+\ADA{} Teks memuat angka kunci saja: GT3 50/50 kasus (2.107/2.107 observasi), GT1 \textit{holdout} 6/10 kasus, kalkulator DJP 15/20 masa bulanan dan 90/90 masa terakhir, contoh kebijakan 67/79 observasi; tabel lengkap dengan pita materialitas di Tabel~\ref{tab:acuan} (Lampiran~D). \textit{Holdout} dilaporkan 6/10 kasus sebagai angka utama dan 8/10 sesudah koreksi; \textit{mutation score} 0,90 lalu 1,00; kesepakatan pembaca kedua (dengan angka $\alpha$); kesetaraan dengan engine lama (1.072 dari 1.248 observasi sama, sisanya dijelaskan); hasil validasi praktisi manusia bila ada. \textbf{Pita materialitas} (\path{docs/hasil/materialitas_acuan.json}): GT3 2.107 dari 2.107 observasi tepat; kalkulator DJP 105 tepat dan 5 berselisih Rp1; contoh resmi pengembangan 642 tepat, 1 $\le$ Rp1, 13 material, semuanya ralat contoh resmi; \textit{holdout} sesudah koreksi 224 tepat, 1 $\le$ Rp1, 2 material (pemetaan iuran pensiun); contoh kebijakan 65 tepat, 6 $\le$ Rp1, 5 material (klausul PKB tidak diformalkan atau di luar masa berlaku). Satu temuan untuk ditulis: contoh resmi PMK 10/2025 memakai plafon biaya jabatan per bulan (Rp4.550.000), sedangkan contoh PMK 168/2023 dan PMK 105/2025 untuk skenario yang sama memakai plafon agregat (Rp4.750.000); KB mengikuti yang agregat (tafsir K6). Protokol koreksi emas dipakai tiga kali: \textit{holdout} dan keluaran LLM menyingkap kesalahan emas, sebuah temuan tentang nilai protokol itu sendiri; koreksi kebijakan buatan dibuat sesudah keluaran LLM terlihat dan menguntungkan usulan.
+\end{isi}
+\subsection{Expressiveness of the Representation}
+\begin{isi}
+\ADA{} 16/16 perubahan tak terlihat dapat dinyatakan tanpa mengubah engine (batas bawah 0,829) dengan syarat konvensi pembulatan diselaraskan; tanpa itu 8/16. Batas representasi yang ditemukan (tiga terpenting dari delapan di \path{docs/BAHAN_PAPER.md} III): tanpa aritmetika tanggal, tanpa operasi perpanjangan, dan syarat yang tidak bisa memakai atribut kasus baru. Rincian 16 perubahan (jenis, lolos dengan dan tanpa penyelarasan pembulatan, selisih terbesar) di Tabel~\ref{tab:unseen} (Lampiran~D).
+\end{isi}
+
+\subsection{Single-Document Acquisition}
+\begin{isi}
+\ADA{}/\BARU{} Fig.~\ref{fig:kompleksitas}(a): pada 18 dokumen nyata, usulan benar 8, salah tanpa terdeteksi 3, abstain 7; posisi pembanding dan varian ditulis dengan angkanya di teks. Fig.~\ref{fig:kompleksitas}(b): menurut ukuran $\Delta$ emas, satu unsur 5/5 benar, 2--7 unsur 3/4, 11--15 unsur 0/4, PKB 0/5. Luas kesalahan dokumen yang salah: E11 2 dari 1.651 tupel, E07 42 dari 1.609, E02 52 dari 1.256 (tupel = kasus pada satu tanggal pengetahuan). \textbf{Presisi dan recall unsur} (\path{docs/hasil/unsur_pr_e2.json}; aturan pencocokan menurut sasaran, ditetapkan sebelum dihitung): pembaruan yang benar menurut hasil berkisar dari presisi dan recall 1,0 (E01, E05, E08, E12, E13) sampai 0,0 (E10), dan E03 benar dengan recall 0,43; pembaruan yang salah 0,13--0,50. Kemiripan struktur tidak memprediksi kebenaran, karena satu perubahan dapat dinyatakan dengan beberapa $\Delta$ yang setara; ini alasan penilaian lewat hasil hitung. \textbf{Materialitas kesalahan senyap} (\path{docs/hasil/materialitas_e2.json}): tidak ada yang sekadar selisih pembulatan; E02 mengenai 52 kasus dengan selisih PPh terbesar Rp61.573.500 (median relatif 19,7\%), E07 42 kasus (terbesar Rp279.300), E11 2 kasus (terbesar Rp39.650). \textbf{Variabilitas antarjalan}: jalan kedua (\path{experiments/e2-regulasi-ulang/}) menghasilkan 8 benar, 2 salah, 3 abstain pada 13 regulasi, dan E07 serta E11 salah lagi, sehingga kesalahan itu sistematis. Ringkas: \textit{pass@1} 0,667, \textit{pass@m} 0,692, \textit{1@m} 0,615; pengecoh dinilai relevan 7/20 tetapi hanya satu salah diterapkan; kebijakan buatan benar 5, salah 6, abstain 3; laju hafalan kontrafaktual 0/6; kutipan mendukung 23/28.
+\end{isi}
+\begin{figure*}[!t]
+\centering
+\kotak{0.95\textwidth}{3.6cm}{\textbf{[Fig. 9]} Dua panel, menggantikan tabel kondisi akuisisi. (a) Keamanan lawan kegunaan: sumbu datar laju penerapan benar, sumbu tegak laju salah tanpa terdeteksi; satu titik per kondisi (usulan, usulan jalan kedua, B3, B4, tanpa konteks KB, model kedua, $m = 5$, seleksi sempurna), dengan CI pada titik usulan; garis bantu risiko selektif. Titik jalan kedua dihitung pada 13 regulasi, bukan 18 dokumen: beri penanda berbeda dan sandingkan dengan titik usulan pada 13 regulasi (8 benar, 3 salah, 2 abstain), jangan dicampur tanpa keterangan. Nilai lengkap per kondisi di teks dan Lampiran~E. (b) Batang bertumpuk benar/salah/abstain per kelompok ukuran $\Delta$ emas (1; 2--7; 11--15; PKB 14--35 unsur), jumlah dokumen di atas batang.}
+\caption{Single-document acquisition on 18 real documents (13 regulations, 5 collective labor agreements): (a) safety versus usefulness by condition, (b) outcome by the size of the required update.}
+\label{fig:kompleksitas}
+\end{figure*}
+
+\subsection{Component Ablation}
+\begin{isi}
+\ADA{}/\BARU{} Tabel~\ref{tab:ablasihasil}. Yang sudah ada (\path{docs/hasil/e2_ringkasan.json}): tanpa konteks KB salah 5/18; tanpa G4 salah 3, benar 8, abstain 7; tanpa G5 3/9/6 (benar naik); tanpa perbaikan 3/7/8; draf pertama 8/8/2; seleksi sempurna 0/8/10. Suara terbanyak tanpa gerbang (B4) salah sama (3/18) dan benar satu lebih banyak (9/18 lawan 8/18). Ablasi gerbang dari kandidat tersimpan (\path{docs/hasil/ablasi_gerbang.json}, tanpa LLM; kondisi lengkap mereproduksi 3/8/7): tanpa G2 3/8/7; tanpa G3 3/8/7; hanya G1 3/9/6. Pada 18 dokumen nyata, G2--G5 tidak mencegah satu pun kesalahan senyap; ketiga kesalahan (E02, E07, E11) lolos di semua varian. Satu-satunya perubahan putusan adalah E04: ketiga kandidatnya benar menurut hasil, tetapi masing-masing memuat satu unsur tanpa efek (misalnya aturan yang mengulang aturan lama), sehingga G5 menggugurkan seluruh draf. Penurunan salah dari draf pertama (8/18) ke usulan (3/18) berasal dari pengambilan beberapa draf dan kesepakatan. Jumlah draf rusak yang lolos bila gerbang dicabut belum dihitung \BARU{}. Formalisasi dari nol dan SHACL (menolak 7 dari 319 draf) dilaporkan sebagai catatan tabel karena satuannya berbeda. Kesimpulan ditulis apa adanya.
+\end{isi}
+
+\begin{table}[!t]
+\caption{Ablation of pipeline components.}
+\label{tab:ablasihasil}
+\centering
+\kotak{0.95\columnwidth}{3.4cm}{\textbf{[Table XII]} Kolom: kondisi, pertanyaan yang dijawab, benar, salah, abstain, draf rusak yang lolos. Baris: lengkap; tanpa konteks KB; tanpa G2; tanpa G3; tanpa G4; tanpa G5; hanya G1; tanpa perbaikan; draf pertama; seleksi sempurna. Catatan tabel: formalisasi dari nol; SHACL.}
+\end{table}
+
+\subsection{Chained Replay, 2023--2026}
+\begin{isi}
+\ADA{} Fig.~\ref{fig:replay}. Rantai transplantasi: stabilitas 31/33, tetapi kesalahan baru hanya muncul di E02 (15 kasus) dan pengecoh P01 (264 kasus); 279 dari 300 kasus sudah salah sesudah P01, dan angka itu menjadi 579 dari 600 hanya karena kasus tahun berikutnya ditambahkan. Karena itu stabilitas yang tinggi mencerminkan \textit{masking}. Rantai pembangkitan ulang: 23/33, kesalahan akhir 93 dari 600; 53 dari 103 kesalahan baru muncul pada peristiwa abstain (E04 menambah 8 kasus salah). Pesan: abstain yang tidak ditindaklanjuti berubah menjadi kesalahan pada rantai.
+\end{isi}
+
+\begin{figure*}[!t]
+\centering
+\kotak{0.95\textwidth}{3.4cm}{\textbf{[Fig. 10]} Dua panel (transplantasi, pembangkitan ulang): batang kasus salah sesudah setiap peristiwa, urut kronologis; garis penyebut (300, 450, 600) saat tahun pajak baru masuk; huruf A untuk abstain; P01 diberi label. Sumber: \path{paper/draft/gambar_replay.tex}.}
+\caption{Regulation replay. Bars show incorrect employee-year cases after each event; the line shows the number of cases evaluated.}
+\label{fig:replay}
+\end{figure*}
+
+\subsection{Cross-Layer Impact Detection}
+\begin{isi}
+\ADA{} Recall 0,91 (CI 0,75--1,00), presisi 0,71, $F_2$ 0,862, tidak lebih baik daripada penandaan sederhana B5(i). Tiga pasangan terlewat dan sebabnya. Angka kesepakatan label ($\kappa = -0{,}018$) dijelaskan sebagai dua konsep berbeda (perubahan nilai lawan pelanggaran aturan) atau tidak dicantumkan.
+\end{isi}
+
+\subsection{Comparison with Code Maintenance and Direct LLM Calculation}
+\begin{isi}
+\ADA{}/opsional berbayar. \textbf{Waktu adaptasi dan ukuran perubahan} (Fig.~\ref{fig:adaptasi}): untuk PP 58/2023, KB siap dalam waktu proses AI ditambah waktu peninjauan, lawan 26 dan 915 hari pada dua kalkulator sumber terbuka; 8 unsur KB lawan 163 dan 504 baris kode. Waktu proses AI dari log panggilan: median sekitar 1 menit per dokumen, maksimum 4,3 menit (E04); PP 58/2023 72 detik dan USD 0,60. Waktu peninjauan manusia tidak diukur dan ditulis sebagai keterbatasan. Jawaban langsung catatan dosen 27 Oktober no.~5. B2: tepat 76/100 dan $\le$ Rp1 97/100 pada 100 kasus operasional 2025, biaya USD 0,068 per kasus setiap kali menghitung, lawan biaya sekali per dokumen pada alur usulan. Hanya ada satu putaran B2; klaim ketidakdeterministikan mengikuti catatan di Pendahuluan. Ringkasan satu paragraf; tabel per tingkat kompleksitas tidak dibuat karena analisisnya tidak dijalankan.
+\end{isi}
+
+\begin{figure}[!t]
+\centering
+\kotak{0.95\columnwidth}{3.0cm}{\textbf{[Fig. 13]} Batang mendatar, sumbu waktu skala log (jam sampai hari) sejak PP 58/2023 terbit: KB (proses AI ditambah peninjauan), kalkulator sumber terbuka 1 (26 hari), kalkulator sumber terbuka 2 (915 hari). Label di ujung batang: ukuran perubahan (8 unsur KB; 163 dan 504 baris kode).}
+\caption{Time to adapt to the effective-rate method after PP 58/2023 was issued: the knowledge base versus two open-source calculators, with the size of each change.}
+\label{fig:adaptasi}
+\end{figure}
+% ============================================================================
+\section{Discussion}
+\label{sec:diskusi}
+% ============================================================================
+\hal{1,5}
+
+\subsection{When Can LLM-Drafted Updates Be Trusted?}
+\begin{isi}
+\TULIS{} Andal untuk perubahan parameter dan pembaruan kecil, belum untuk perubahan struktural besar dan PKB. Kesepakatan menurunkan salah dibanding draf pertama, tetapi dibayar dengan abstain, bukan dengan lebih banyak pembaruan benar. Gerbang G2--G5 tidak menambah keamanan di atas kesepakatan pada korpus ini; kesalahan yang lolos adalah kesalahan cakupan dan nama atribut, yang tidak diperiksa gerbang mana pun. \textbf{Bandingkan dengan angka karya lain}: Veeramani dkk.\ akurasi 80\% pada 20 skenario; Jurayj dkk.\ 75 benar, 15 salah, 10 abstain dari 100 kasus; Gogani-Khiabani dkk.\ satu langkah pembaruan. Jelaskan perbedaan satuan (kasus lawan dokumen) sebelum membandingkan.
+\end{isi}
+
+\subsection{Why LLM Updates Fail}
+\begin{isi}
+\ADA{} (analisis eksploratori 8 November 2026, tanpa LLM). Tiga kesalahan senyap berbeda jenisnya.
+\textbf{E07 (PP 7/2025), nama atribut kasus}: dua draf sepakat dan lolos semua gerbang tetapi salah pada 42 dari 1.609 tupel. Syarat kelayakan memakai \texttt{employer('jkk\_relief\_padat\_karya\_2025')}, sedangkan kasus uji memakai \texttt{jkk\_relief\_eligible}; dengan nama atribut diganti, $\Delta$ yang sama benar pada semua tupel. Tafsir hukumnya benar; penyebabnya konteks KB tidak memuat daftar atribut kasus.
+\textbf{E02 (PMK 66/2023), pembaruan tidak lengkap}: $\Delta$ terpilih 3 unsur lawan 15 unsur emas; batas pengecualian natura (tempat tinggal, bingkisan, olahraga, kendaraan) dan \textit{gross-up} pajak yang ditanggung pemberi kerja tidak ada; jenis natura memakai nama masukan karangan.
+\textbf{E11 (PMK 105/2025), cakupan dasar penghasilan}: uji batas Rp10 juta memakai natura kena pajak sesudah batas pengecualian, bukan nilai natura tempat tinggal dan kendaraan; syarat pengembalian lebih bayar tidak mencakup sektor pariwisata.
+Ditambah pengecoh P01 yang diterapkan. Sumber: \path{experiments/e2-regulasi/results/} dibandingkan dengan \path{dataset/12_emas/delta/}. Kesalahan sistematis tidak tertangkap kesepakatan karena semua draf salah dengan cara sama; tidak ada gerbang yang memeriksa kelengkapan cakupan. Kutipan karangan dan nilai hafalan tidak teramati. Kesalahan dihitung per kategori di Tabel~\ref{tab:taksonomi}, bukan hanya diberi contoh.
+\end{isi}
+
+\begin{table}[!t]
+\caption{Error taxonomy of drafted updates.}
+\label{tab:taksonomi}
+\centering
+\kotak{0.95\columnwidth}{2.6cm}{\textbf{[Table XIV]} Baris kategori: cakupan salah; pengecualian terlewat; nama atribut kasus; relevansi (pengecoh diterapkan); ketidaklengkapan $\Delta$; kesalahan bentuk yang ditangkap gerbang. Kolom: jumlah draf, jumlah dokumen, contoh. Sumber: log gerbang dan perbandingan $\Delta$ terpilih dengan emas. \BARU{} tanpa biaya}
+\end{table}
+
+\subsection{Implications for Payroll Practice}
+\begin{isi}
+\TULIS{} Antrean peninjauan untuk dokumen yang di-abstain; laporan siapa yang terkena; pembetulan untuk aturan berlaku surut; sistem membantu peninjau, bukan menggantikannya. \textbf{Perkiraan beban peninjau} dari data yang ada: 7 dari 18 dokumen nyata masuk antrean karena abstain, ditambah semua draf yang diterapkan tetap ditinjau; waktu peninjauan per dokumen belum diukur. \textbf{Penafian}: keluaran sistem bukan nasihat pajak, dan pemotong pajak tetap bertanggung jawab atas pemotongan. \textbf{Batas operasional}: kapan draf AI tidak boleh diterapkan tanpa pemeriksaan penuh (perubahan struktural, pembaruan lebih dari beberapa unsur, PKB, dokumen yang mirip pengecoh), siapa yang menyetujui, dan tindakan bila sistem abstain.
+\end{isi}
+
+\subsection{Implications for Knowledge-Based Systems and Legal AI}
+\begin{isi}
+\TULIS{} Pemisahan graf dan ekspresi; protokol \textit{replay} yang dapat dipakai di pajak atau yurisdiksi lain, dan apa yang perlu diubah untuk itu. Ditutup dengan \textbf{rekomendasi desain bernomor}: (1) wajibkan kutipan untuk setiap angka dan tanggal; (2) ambil beberapa draf dan izinkan abstain; (3) setiap abstain masuk antrean peninjau; (4) periksa kelengkapan cakupan dan nama atribut kasus; (5) uji dengan \textit{replay} kronologis, bukan satu keadaan hukum; (6) pemeriksaan tidak-kosong membuang unsur tanpa efek, bukan menggugurkan draf (pelajaran E04); (7) sertakan daftar atribut kasus di konteks dan beri peringatan bila draf memakai atribut baru (pelajaran E07).
+\end{isi}
+
+\subsection{Threats to Validity}
+\begin{isi}
+\ADA{} Internal: emas, engine, dan tafsir disusun pihak yang sama; \textbf{bias model sekeluarga}, karena emas, bahan peninjauan, dan perubahan tak terlihat disusun atau ditinjau agen dari keluarga model yang diuji; amandemen sesudah hasil awal; kebocoran desain gerbang; koreksi emas kebijakan buatan. Konstruk: kecocokan acuan bukan kesesuaian hukum. Eksternal: satu yurisdiksi, satu jenis pajak, lima PKB. Kesimpulan: $N = 18$, $R = 1$, $m$ kecil. Kontaminasi: semua peristiwa uji terbit sebelum \textit{cutoff} model. Reliabilitas: konvensi pembulatan. \textbf{Peninjau manusia tidak dievaluasi}: rantai dijalankan tanpa peninjau dan tidak ada studi pengguna, sehingga klaim bahwa peninjau menangkap kesalahan belum diuji. Validitas label dampak: kesepakatan label hasil eksekusi dengan label konflik manual $\kappa = -0{,}018$, karena keduanya mengukur hal berbeda.
+\end{isi}
+
+\subsection{Limitations}
+\begin{isi}
+\ADA{} 15 batas TER tidak teruji; lapisan 35\% Pasal 17 hanya diuji lewat 6 kasus batas; T8 tanpa contoh nyata; analisis dampak hanya dengan masukan emas; tarif tanpa NPWP di luar lingkup; satu pegawai per perhitungan; generalisasi ke pajak atau yurisdiksi lain belum diuji; peninjauan manusia belum diukur.
+\end{isi}
+
+% ============================================================================
+\section{Conclusion}
+\label{sec:simpulan}
+% ============================================================================
+\hal{0,25}
+\begin{isi}
+\TULIS{} Empat kalimat: apa yang dibangun; apa yang terbukti; apa yang belum; penelitian lanjutan (validasi praktisi, batas TER sisa, pemeriksaan kelengkapan cakupan, antrean abstain, rantai $R > 1$).
+\end{isi}
+
+% ============================================================================
+\section*{Data and Code Availability}
+\begin{isi}
+\PENULIS{} Repositori publik, DOI Zenodo, tag yang dirujuk sudah di-\textit{push}, dan berkas LICENSE (lisensi kode dan lisensi data dinyatakan terpisah). Daftar yang tidak dapat dibagikan dan akibatnya: teks PKB dan \textit{prompt} yang memuatnya tidak disertakan (hak cipta pihak ketiga), sehingga bagian PKB tidak dapat diulang penuh. Lisensi pihak ketiga: GraphDB Free, data BPS, repositori kalkulator sumber terbuka pembanding. Status teks regulasi sebagai ciptaan yang tidak dilindungi hak cipta (UU 28/2014 Pasal 42). Pernyataan etika: tidak melibatkan subjek manusia (kecuali praktisi validator, bila ada); pegawai sintetis dibangkitkan dari sel upah BPS; tidak ada data pribadi.
+\end{isi}
+
+\appendices
+\section{Notation and Glossary}
+\begin{isi}\ADA{} Tabel notasi dan glosarium istilah pajak Indonesia.\end{isi}
+\section{Taxonomies}
+\begin{isi}\ADA{} Jenis perubahan T1--T10 dan jenis konflik C1--C10 lengkap.\end{isi}
+\section{Gate Specification and Acquisition Algorithm}
+\begin{isi}\ADA{} Spesifikasi G1--G5 dan algoritma akuisisi satu dokumen.\end{isi}
+\section{Test Corpus and Additional Results}
+\begin{isi}\ADA{} Tabel yang dipindah dari badan naskah agar Hasil tidak bertumpuk tabel; penomoran tabel melanjutkan naskah. Satu kalimat pengantar per tabel.\end{isi}
+
+\begin{table}[!t]
+\caption{Test corpus.}
+\label{tab:korpus}
+\centering
+\kotak{0.95\columnwidth}{3.2cm}{\textbf{[Table VII]} Baris E01--E13 (dokumen, jenis, ukuran $\Delta$ emas), lalu kelompok pengecoh, PKB, kebijakan buatan, kontrafaktual, perubahan tak terlihat (jumlah dan peran).}
+\end{table}
+
+\begin{table}[!t]
+\caption{Agreement of the knowledge base and engine with external references.}
+\label{tab:acuan}
+\centering
+\kotak{0.95\columnwidth}{2.6cm}{\textbf{[Table X]} Baris GT1 pengembangan, GT1 \textit{holdout}, GT2, GT3, GT5. Kolom: kasus cocok, observasi cocok, pita materialitas, penjelasan selisih.}
+\end{table}
+
+\begin{table}[!t]
+\caption{The 16 unseen changes and whether they could be expressed without changing the engine.}
+\label{tab:unseen}
+\centering
+\kotak{0.95\columnwidth}{3.0cm}{\textbf{[Table XII]} Baris U01--U16. Kolom: jenis perubahan, jumlah contoh, lolos dengan penyelarasan pembulatan, lolos tanpa penyelarasan, selisih terbesar (rupiah), catatan (misalnya $\Delta$ tidak lengkap pada U14). Sumber: \path{review/unseen_changes/hasil_E1/}.}
+\end{table}
+
+\begin{isi}\textbf{Supplementary material} (di luar naskah): E prompt lengkap dan nilai semua kondisi akuisisi; F hasil per peristiwa; G kronologi pra-registrasi dan amandemen; H detail statistik dan analisis daya.\end{isi}
+
+\section*{Acknowledgment}
+\begin{isi}
+\TULIS{} Orang ketiga. Pernyataan penggunaan AI sesuai kebijakan IEEE, lengkap dan jujur: alat dan model; bagian yang dibantu, yaitu kode sistem, draf emas, perubahan tak terlihat, bahan peninjauan, label, pemeriksaan angka, draf teks; peran agen independen sebagai peninjau; dan pernyataan bahwa penulis bertanggung jawab atas seluruh isi. Nama pembimbing dan praktisi yang memvalidasi, bila ada. \PENULIS{} Pernyataan kontribusi penulis (CRediT) dan ORCID.
+\end{isi}
+
+\section*{References}
+\begin{isi}
+\ADA{} Gaya IEEEtran; sekitar 50 rujukan; DOI diperiksa ke Crossref; peraturan Indonesia dengan judul terjemahan yang ditandai. \TULIS{} Sitasi perangkat lunak (GraphDB, rdflib, Docling, Streamlit) dan dataset (data BPS; dataset penelitian ini dengan DOI). \PENULIS{} Pemeriksaan retraksi.
+\end{isi}
+
+\section*{Author Biographies}
+\begin{isi}
+\TULIS{} Wajib di IEEE Access: foto dan biografi singkat setiap penulis (\verb|IEEEbiography|).
+\end{isi}
+
+\EOD
+\end{document}

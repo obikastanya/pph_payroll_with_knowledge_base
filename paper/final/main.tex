@@ -1,0 +1,134 @@
+% ============================================================================
+% An Adaptive Knowledge-Based System for PPh 21 Calculation with LLM-Assisted
+% Knowledge Acquisition from Regulations and Company Policies
+%
+% IEEE Access manuscript. Build in paper/final/:
+%   pdflatex main && bibtex main && pdflatex main && pdflatex main
+% Data figures: env\Scripts\python paper\final\make_figures.py (reads the result files).
+% Structure: paper/access/draf_struktur.tex.
+% ============================================================================
+% ieeeaccess.cls redefines the TeX primitive \year, which pgf reads while loading; the primitive is restored
+% while TikZ loads.
+\let\primitiveyear\year
+\documentclass{ieeeaccess}
+\let\accessyear\year
+\let\year\primitiveyear
+\usepackage{tikz}
+\let\year\accessyear
+% pgf overwrites \pdfpageresources; the template's spot color space (used by the blue figure and table labels)
+% is registered again through pgf's own resource list.
+\makeatletter
+\expandafter\pgfutil@addpdfresource@colorspaces\expandafter{\the\PANTONE}
+\makeatother
+\usetikzlibrary{arrows.meta,positioning,fit,calc,shapes.geometric}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{url}
+\providecommand{\nolinkurl}[1]{\url{#1}}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\newtheorem{definition}{Definition}
+\newfloat{listing}{tbp}{lol}
+\floatname{listing}{Listing}
+
+% Notation: x = test case, t = tax period, \omega = knowledge date, n = event index.
+\newcommand{\K}{\mathcal{K}}
+\newcommand{\result}{\mathit{result}}
+\newcommand{\gold}{\star}
+\newcommand{\SG}{S^{G}}
+\newcommand{\SE}{S^{E}}
+
+\definecolor{cai}{RGB}{226,135,30}
+\definecolor{cdet}{RGB}{40,100,170}
+\definecolor{chum}{RGB}{40,140,80}
+\definecolor{cgr}{RGB}{140,140,140}
+\definecolor{cred}{RGB}{200,50,50}
+\definecolor{cpur}{RGB}{130,60,160}
+\tikzset{
+  b/.style={draw, rounded corners=2pt, align=center, font=\scriptsize, minimum height=0.8cm, inner sep=2pt},
+  bai/.style={b, fill=cai!18, draw=cai},
+  bdet/.style={b, fill=cdet!12, draw=cdet},
+  bhum/.style={b, fill=chum!15, draw=chum},
+  bsrc/.style={b, fill=white, draw=cgr},
+  ar/.style={-{Stealth[length=1.6mm]}, semithick}
+}
+\input{figs/diagrams}
+
+\begin{document}
+\bstctlcite{IEEEexample:BSTcontrol}
+\history{Date of publication xxxx 00, 0000, date of current version xxxx 00, 0000.}
+\doi{10.1109/ACCESS.2026.DOI}
+
+\title{An Adaptive Knowledge-Based System for PPh 21 Calculation with LLM-Assisted Knowledge Acquisition from Regulations and Company Policies}
+
+\author{\uppercase{Obi Kastanya}\authorrefmark{1}
+AND \uppercase{Mahathir Muhammad}\authorrefmark{1}}
+
+\address[1]{Department of Informatics, Institut Teknologi Sepuluh Nopember, Surabaya 60111, Indonesia
+(e-mail: 6025252015@student.its.ac.id; 6025252008@student.its.ac.id)}
+\tfootnote{This work received no external funding.}
+
+\markboth
+{Kastanya and Muhammad: Adaptive Knowledge-Based System for PPh 21 Calculation}
+{Kastanya and Muhammad: Adaptive Knowledge-Based System for PPh 21 Calculation}
+
+\corresp{Corresponding author: Obi Kastanya (e-mail: 6025252015@student.its.ac.id).}
+
+\begin{abstract}
+Indonesian employers withhold Income Tax Article 21 monthly under rules that changed 13 times between 2023 and 2026, five of them retroactively, while most payroll calculators hard-code them. This paper presents an adaptive knowledge-based system in which regulations and company policies form a two-layer knowledge graph that records when each rule is valid and when it became known. A deterministic engine computes the tax with a trace to the legal provisions, and a large language model only drafts updates from new documents. Each draft must quote its source, pass five automatic checks, and compete with independent drafts in a behavioral vote, and it enters the knowledge base only after a reviewer approves it. The evaluation replayed the 13 real changes and 20 distractor documents against 2,398 employee-year test cases, scored five collective labor agreements on separate cases, and added 16 changes unseen by the designers. The representation expressed all 16 unseen changes without modifying the engine once the rounding convention of their examples was aligned. Drafted updates were correct for 8 of 18 real documents and silently wrong for 3, and each silent error changed withholding by more than Rp1,000 for at least two employees. All five single-element updates succeeded, whereas none of the nine documents that needed 11 or more elements did, including the five labor agreements. Language models can thus draft parameter updates for an executable tax knowledge base, while structural regulations and company policies still need a reviewer supported by the system's impact reports.
+\end{abstract}
+
+\begin{keywords}
+Knowledge acquisition, knowledge-based systems, large language models, regulatory change, tax computation.
+\end{keywords}
+
+\titlepgskip=-21pt
+
+\maketitle
+
+\input{sections/introduction}
+\input{sections/background}
+\input{sections/related}
+\input{sections/formulation}
+\input{sections/system}
+\input{sections/casestudy}
+\input{sections/design}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+\section*{Data and Code Availability}
+The code, gold knowledge base, corpus, test space, experiment logs including every model call, analysis scripts, and the scripts that generate the figures are available at \url{https://github.com/obikastanya/pph_payroll_with_knowledge_base}. The texts of the collective labor agreements and the prompts that contain them are excluded because the agreements belong to third parties, so the company-policy runs cannot be repeated from the archive alone. Indonesian regulations are not protected by copyright (Law 28/2014, Article 42). The study involved no human subjects and no personal data; test employees are synthetic and were generated from published wage cells of Statistics Indonesia.
+
+\appendices
+\input{sections/appendix}
+
+\section*{Acknowledgment}
+The authors used the AI assistant Claude Code with the Claude Opus 5.5 model (Anthropic) to write the system code and the evaluation scripts. The same assistant drafted the gold knowledge base, the unseen changes, the review material, and the impact labels, checked numbers, and drafted the text, tables, figures, and \LaTeX{} code of this article. Independent AI agents, not the authors, filled the roles of second reader and reviewer of the gold material. The authors take responsibility for the entire content.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references,references_extra,regulations_en}
+
+\begin{IEEEbiographynophoto}{Obi Kastanya}
+is a master's student in the Department of Informatics, Institut Teknologi Sepuluh Nopember, Surabaya, Indonesia, working on knowledge-based systems for payroll tax computation.
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Mahathir Muhammad}
+is a master's student in the Department of Informatics, Institut Teknologi Sepuluh Nopember, Surabaya, Indonesia.
+\end{IEEEbiographynophoto}
+
+\EOD
+\end{document}

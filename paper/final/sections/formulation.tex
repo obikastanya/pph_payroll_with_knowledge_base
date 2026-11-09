@@ -1,0 +1,47 @@
+% ============================================================================
+\section{Problem Formulation}
+\label{sec:formulation}
+% ============================================================================
+A claim that a system ``adapts'' to a regulation is testable only when the expected behavior is defined case by case. This section defines the knowledge base, the result it computes, the conditions an update must satisfy, and the errors that a chain of updates can produce.
+
+\subsection{Knowledge Base and Computation Result}
+\begin{definition}[Knowledge base]
+\label{def:kb}
+A knowledge base $\K$ holds rule records, versioned parameters, table versions, mandatory constraints, and source documents. A rule $r = \langle \mathit{id}, \ell, \sigma, [t_s, t_e], t_c, \varphi, f \mathrel{:=} e, \mathit{ov}, \mathit{src} \rangle$ has a layer $\ell \in \{\text{regulation}, \text{company}\}$ and a modality $\sigma \in \{\text{mandatory}, \text{default}, \text{optional}\}$. It also has a validity period $[t_s, t_e]$ and a recording date $t_c$ equal to the issue date of its document. A condition $\varphi$, a fact $f$ with its expression $e$, the rules $\mathit{ov}$ it overrides, and quotes $\mathit{src}$ from its source complete the record. Records are never edited in place; a change adds a new version.
+\end{definition}
+
+\begin{definition}[Computation result]
+\label{def:result}
+$\result(\K, x, t, \omega)$ is the value of an output fact for case $x$ in tax period $t$, computed with the regulations known on date $\omega$ and the company policy of the case. A case is one employee at one employer for one tax year.
+\end{definition}
+
+The withholding of Employee A for March 2024 as known on 1 April 2024 is one such result. The gold knowledge base $\K^\gold$ is the reference that the authors built from the regulation texts and validated against external calculations (Section~\ref{sec:groundtruth}). The evaluation judges every update by comparing its results with those of $\K^\gold$.
+
+\subsection{Updates and Adaptivity Conditions}
+An update $\Delta$ for an event with issue date $t_{\mathit{iss}}$ and effective date $t_{\mathit{eff}}$ adds, changes, or removes elements, and $\K' = \K \oplus \Delta$. Gold updates satisfy $\K^{\gold}_n = \K^{\gold}_{n-1} \oplus \Delta^{\gold}_n$, and the correct update for a distractor document is empty.
+
+\begin{definition}[Adaptivity conditions]
+\label{def:conditions}
+For a set of cases $S$: (A1) the engine code does not change; (A2) $\result(\K', x, t, \omega) = \result(\K^{\gold}, x, t, \omega)$ for every $x \in S$, $t \geq t_{\mathit{eff}}$, and $\omega \geq t_{\mathit{iss}}$; (A3$_t$) results for periods $t < t_{\mathit{eff}}$ do not change; (A3$_\omega$) results for knowledge dates $\omega < t_{\mathit{iss}}$ do not change; (A4) the conflict report of $\K'$ equals that of $\K^{\gold}$.
+\end{definition}
+
+Condition A3$_t$ means that adding the TER rules of 2024 must leave the December 2023 withholding of Employee A unchanged. Condition A3$_\omega$ means that an answer given before a regulation was issued must stay the answer the system would have given then. A1 and A3$_\omega$ hold by construction and are checked as invariants; A2, A3$_t$, and A4 are tested.
+
+\subsection{Representational and Operational Adaptivity}
+\begin{definition}[Adaptivity]
+\label{def:adapt}
+A representation is adaptive to an event if \emph{some} update $\Delta$ satisfies A1--A4. A system is operationally adaptive to an event if the update $\hat{\Delta}$ \emph{selected by its pipeline} satisfies A2, A3$_t$, and A4 on every case of the test space $\SE$, so that one wrong value makes $\hat{\Delta}$ wrong.
+\end{definition}
+
+The first definition concerns what the knowledge base can express; the second concerns what the LLM-assisted pipeline actually produces. Sections~\ref{sec:res-expressiveness} and~\ref{sec:res-single} test them separately.
+
+\subsection{Error Types in a Chain of Updates}
+\label{sec:errortypes}
+An update can be applied in two modes (Fig.~\ref{fig:protocol}). Isolated mode applies the draft for event $n$ to the gold knowledge base before that event, $\K^\gold_{n-1}$, and scores and discards the result. Chained mode applies the draft to the system's own knowledge base $\K^{\mathrm{sys}}_{n-1}$, which already carries every earlier draft and every earlier abstention. A case that is wrong after event $n$ in chained mode falls into one of three groups. An inherited error was already wrong before event $n$, and a new error appears at event $n$. A triggered error is a new error on a case that is correct after the same event in isolated mode, so it exists only because of the chain.
+
+\begin{figure*}[!t]
+\centering
+\figReplayProtocol
+\caption{Regulation replay in isolated and chained mode. In isolated mode the gold knowledge base advances by the gold update and each draft $\hat{\Delta}$ is scored on a copy $\K'$; in chained mode each draft is applied to the system's own knowledge base, and an abstention leaves it unchanged. The squares illustrate how wrong cases are classified as inherited, new, or triggered.}
+\label{fig:protocol}
+\end{figure*}

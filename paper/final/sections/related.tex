@@ -1,0 +1,51 @@
+% ============================================================================
+\section{Related Work}
+\label{sec:related}
+% ============================================================================
+Five lines of work meet in this study: rules-as-code systems, incremental knowledge acquisition, LLM-based formalization of law, the evaluation of repeated LLM updates, and temporal legal knowledge graphs. The search for the closest work covered publications up to November 2026 and relied mostly on titles and abstracts; papers of ICAIL 2026 were available only through arXiv.
+
+\subsection{Rules as Code and Payroll Tax Systems}
+Catala translates statutes into a programming language with general cases and exceptions based on default logic, and its evaluation found bugs in an official implementation~\cite{merigoux2021catala,huttner2022catala}. Mlang replaced the legacy compiler of the French income-tax engine~\cite{merigoux2021mlang}, and the same ecosystem formalizes date arithmetic~\cite{monat2024date} and generates test cases by concolic execution~\cite{goutagny2025cutecat}. DataLex~\cite{mowbray2023scaling,mowbray2023xai} and Logical English~\cite{kowalski2022logicalenglish} follow the same principle. Meessen shows that many normative decisions end up inside technical components~\cite{meessen2023arrows}, and Witt et al.\ separate technical validation from legal conformity~\cite{witt2024encoding}. Dumancic et al.\ state payroll tax and social-security legislation declaratively for policy optimization~\cite{dumancic2021payroll}, and Al-Hawari et al.\ build a rule-based payroll system~\cite{alhawari2026payroll}. Indonesian PPh 21 systems are mostly procedural~\cite{ramadhani2021grossup,yulistyawati2022payroll,kusuma2026pph21}, and TER produces overwithholding on irregular income~\cite{sherra2025ter}. People write the knowledge in all of these systems, and none of them evaluates updates written by a machine.
+
+\subsection{Incremental Knowledge Acquisition}
+Ripple-Down Rules add a rule whenever an expert finds a wrong case, and cornerstone cases keep the new rule from breaking cases that were already right~\cite{compton2021rdr}. The regression gate G4 of this study plays the role of the cornerstone cases. Work on legal logic formalizes changes of law and theory revision with temporalized revision operators~\cite{moguillansky2024temporalised}, and shows that revising defeasible theories is computationally hard~\cite{olivieri2025revising}. Other work shows how unexpected consequences can be traced back to the rules that cause them~\cite{fungwacharakorn2021debugging}. An expert still writes every change in this line of work.
+
+\subsection{LLMs for Legal and Tax Formalization}
+LLMs have turned legal text into structures for legal expert systems~\cite{janatian2023texttostructure}, drafted Decision Model and Notation rules for an accounting office~\cite{makowski2025dmn}, and derived metamorphic relations for testing tax software~\cite{srinivas2023fewshot,khiabani2026agentic}. Veeramani et al.\ store the Indian Income Tax Act as a knowledge graph executed by a symbolic rule engine, with an LLM extracting the graph, and reach 80\% accuracy on 20 scenarios~\cite{veeramani2026neurosymbolic}. Yadamsuren et al.\ formalize one section of the United States Internal Revenue Code in Prolog to detect a known inconsistency~\cite{yadamsuren2026formalization}. Lorenzo et al.\ benchmark the translation of French tax provisions into Catala by code similarity and syntactic validity, without executing the output~\cite{lorenzo2025translating}. Jurayj et al.\ combine an LLM with a Prolog solver on 100 tax cases, where o3 gives 75 correct answers, 15 wrong answers, and 10 abstentions without gold statutes~\cite{jurayj2026tax}. LLM performance on tax law improves across model generations without reaching expert level~\cite{blairstanek2023gpt3,nay2024taxattorneys}, and commercial legal research tools still hallucinate~\cite{magesh2025hallucination}.
+
+These systems formalize the law as it stands at one time. The nearest exception is the work of Gogani-Khiabani et al., who ask an LLM to update United States tax code from 2020 to 2021 and select candidates by behavioral majority vote~\cite{goganikhiabani2025maintaining}. Their accuracy with the previous year's code as context ranges from 21\% to 100\% for GPT-3.5 and from 48\% to 100\% for GPT-4.0. Their study covers one step, does not test earlier periods, and does not measure error propagation. The consensus of the present system uses the same selection idea and adds verification gates and abstention.
+
+\subsection{Repeated LLM Updates and Their Evaluation}
+Sequential knowledge editing degrades a language model after many edits~\cite{gupta2024editing,gu2024harms}. KoLEG keeps performance above 95\% after four cumulative edits from Korean legal amendments~\cite{seo2025koleg}, but it edits the model and not a rule base. The same holds for updating model knowledge of changed code APIs~\cite{wu2026recode}. Prior et al.\ consolidate four German statutes with an LLM, and exact match falls from 50.3\% for a single amendment to 20.51\% for amendment chains~\cite{prior2025risks}. The object there is XML text rather than executed rules, and only the final version of each chain is compared. Execution-based measures such as pass@k~\cite{chen2021evaluating} and n@k~\cite{li2022alphacode} come from code generation, and selective prediction scores a model that may abstain by its risk and coverage~\cite{xin2021abstention}. These measures have not been applied to an executable, time-versioned legal rule base, and the metrics of Section~\ref{sec:design} build on them.
+
+\subsection{Temporal Legal Knowledge Representation}
+De Martim models norms as works with versioned expressions so that answers are not anachronistic~\cite{demartim2025satgraph}, and Kharraz et al.\ define conflicts in a temporal normative logic~\cite{kharraz2024conflicts}. The European Legislation Identifier (ELI)~\cite{publicationsoffice2026elien}, OWL-Time~\cite{cox2017owltime}, PROV-O~\cite{lebo2013provo}, and LegalRuleML~\cite{palmirani2021legalruleml} provide vocabularies for documents, time, provenance, and norms. The Shapes Constraint Language (SHACL)~\cite{knublauch2017shacl} provides validation, and this study reuses all of them except LegalRuleML. Norm-conflict detection~\cite{robaldo2024compliance,khoja2026consistency}, rule-base anomaly checking~\cite{boujelben2025anomalies}, testing of tax software when no reference outputs exist~\cite{tizpaz2023metamorphic,li2025mrgeneration}, property-based testing~\cite{goldstein2024pbt,ravi2025pbtpython}, and mutation analysis~\cite{petrovic2022mutation,petrovic2021mutation} inform the ground truth and test design of Section~\ref{sec:design}. Work in this group versions norms but does not evaluate machine-written updates of executed rules.
+
+\subsection{Positioning}
+Table~\ref{tab:position} compares the closest work on the three aspects that this study measures. No work in the table applies machine-drafted updates to an executable rule base repeatedly, measures how errors spread across those updates, and checks their effect on a company-policy layer. Gogani-Khiabani et al.\ come closest on the first aspect, with a single update step.
+
+\begin{table*}[!t]
+\caption{Position relative to the closest work. ``--'' means that the aspect is not reported as a focus of the cited publication.}
+\label{tab:position}
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\textwidth}{@{}P{3.0cm} P{1.9cm} L P{2.0cm} P{1.6cm} P{1.5cm} P{1.2cm} P{2.3cm}@{}}
+\toprule
+Work & Domain & Representation & Knowledge author & Incremental update & Error spread measured & Company layer & Evaluation \\
+\midrule
+Catala~\cite{merigoux2021catala,huttner2022catala} & tax and benefits & domain-specific language, default logic & people & -- & -- & -- & bugs found in an official implementation \\
+DataLex~\cite{mowbray2023scaling,mowbray2023xai} & legislation & semi-natural rule language and inference engine & people & -- & -- & -- & -- \\
+Dumancic et al.~\cite{dumancic2021payroll} & payroll & formal model compiled to constraints & people & -- & -- & -- & use at a social-security agency \\
+Ripple-Down Rules~\cite{compton2021rdr} & general & rules with exceptions & expert & yes & -- & -- & cornerstone cases \\
+Veeramani et al.~\cite{veeramani2026neurosymbolic} & Indian income tax & knowledge graph and symbolic rules & LLM (graph), expert (rules) & proposed & -- & -- & 20 scenarios, 80\% \\
+Yadamsuren et al.~\cite{yadamsuren2026formalization} & one section of US tax code & Prolog & LLM guided by people & -- & -- & -- & one known inconsistency \\
+Lorenzo et al.~\cite{lorenzo2025translating} & French tax & Catala & LLM per provision & -- & -- & -- & 89 test samples, not executed \\
+Jurayj et al.~\cite{jurayj2026tax} & US tax & Prolog & LLM per case & -- & -- & -- & 100 cases with abstention \\
+Gogani-Khiabani et al.~\cite{goganikhiabani2025maintaining} & US tax & Python code & LLM & one step (2020 to 2021) & -- & -- & accuracy per scenario \\
+Prior et al.~\cite{prior2025risks} & German statutes & XML text, not executed & LLM & yes, text & final version of chains & -- & 908 comparisons \\
+PPh 21 systems~\cite{ramadhani2021grossup,yulistyawati2022payroll,kusuma2026pph21} & PPh 21 & procedural code or spreadsheets & people & -- & -- & -- & -- \\
+\midrule
+This study & PPh 21 & bitemporal two-layer knowledge graph with executable rules & LLM, gates, reviewer & yes & yes & yes & chronological regulation replay \\
+\bottomrule
+\end{tabularx}
+\end{table*}

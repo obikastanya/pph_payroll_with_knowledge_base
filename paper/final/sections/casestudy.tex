@@ -1,0 +1,18 @@
+% ============================================================================
+\section{Case Study: Adapting to the Effective-Rate Method}
+\label{sec:casestudy}
+% ============================================================================
+This section follows one regulation, PP 58/2023, from its text to a traced withholding value, using the stored run of the evaluation (Fig.~\ref{fig:case}). It illustrates how the pipeline works; whether its updates are correct is assessed against the gold knowledge base in Sections~\ref{sec:design} and~\ref{sec:results}.
+
+\begin{figure*}[!t]
+\centering
+\figCaseStudy
+\caption{Case study of PP 58/2023 (event E03): relevance quotes, gate results of the three drafts, consensus, the selected update, and the trace of the March 2024 withholding of Employee A.}
+\label{fig:case}
+\end{figure*}
+
+The relevance call quoted six provisions and judged the regulation relevant. Two of the quotes are Article 2(1), which lists the withholding rates, and Article 2(4)(a), which applies category A to monthly gross income. Three drafts followed. Draft 1 passed all five gates. Drafts 2 and 3 failed G2 because a quote attached to the TER rule did not occur verbatim in the regulation text, and both passed after one repair round. The three drafts then behaved identically on the generated cases and formed one group, so the pipeline selected draft 1. Its six model calls took 164 seconds in total and cost USD 0.60.
+
+The selected update has three elements. A table assigns a TER category to each PTKP status, and the second element is the monthly TER table referenced from the annex of the regulation. A rule multiplies monthly gross income by the rate in every period except the final one. The gold update for the same event has seven elements, yet both give the same results on every test case, because the draft states inline what the gold update spreads over separate facts. The update sets the March 2024 withholding of Employee A to Rp3,667,320 (Table~\ref{tab:slip}) and traces it to the elucidation of Article 2(1). The annualized-method rule still exists in the knowledge base after this update, but the drafted TER rule overrides it explicitly (lex specialis) from January 2024.
+
+The companion regulation PMK 168/2023 (event E04) ended in abstention. Its formal closing of the annualized-method rules and its new deduction for religious donations paid through the employer therefore did not enter the knowledge base. An abstention appears on the review page as a document with no proposal, which the reviewer must formalize by hand. Section~\ref{sec:res-chain} measures what happens when nobody does.

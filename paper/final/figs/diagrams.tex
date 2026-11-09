@@ -1,0 +1,154 @@
+% TikZ diagrams of the manuscript. Values come from docs/hasil/contoh_pegawai_ab.txt (engine output) and
+% experiments/e2-regulasi/results/E03.json (case study).
+
+% ------------------------------------------------------------------------------------------- replay protocol
+\newcommand{\figReplayProtocol}{%
+\resizebox{0.97\textwidth}{!}{%
+\begin{tikzpicture}[kb/.style={draw, circle, minimum size=0.78cm, font=\scriptsize, inner sep=0pt},
+  sq/.style={minimum size=0.22cm, draw=white, line width=0.4pt, inner sep=0pt}]
+\node[font=\scriptsize, anchor=east] at (-0.5,1.7) {isolated mode};
+\node[font=\scriptsize, anchor=east] at (-0.5,0) {chained mode};
+\foreach \lab [count=\i from 0] in {E01,P10,E02,P11,P01,E03}{
+  \node[font=\scriptsize] at (\i*2.4+1.2,2.6) {event \lab};
+  \node[kb, fill=chum!15] (g\i) at (\i*2.4,1.7) {$\mathcal{K}^\star$};
+  \node[kb, fill=cdet!12] (c\i) at (\i*2.4,0) {$\mathcal{K}^{\mathrm{sys}}$};}
+\node[kb, fill=chum!15] (g6) at (14.4,1.7) {$\mathcal{K}^\star$};
+\node[kb, fill=cdet!12] (c6) at (14.4,0) {$\mathcal{K}^{\mathrm{sys}}$};
+\foreach \i [evaluate=\i as \j using int(\i+1)] in {0,...,5}{
+  \draw[ar, chum] (g\i) -- node[above, font=\tiny, text=black]{gold $\Delta^\star$} (g\j);
+  \node[draw=cai, fill=cai!15, diamond, inner sep=0.8pt, font=\tiny] (k\i) at (\i*2.4+1.2,0.85) {$\mathcal{K}'$};
+  \draw[ar, cai] (g\i.south east) -- node[left, font=\tiny, text=black, pos=0.35]{$\hat\Delta$} (k\i);}
+\foreach \i [evaluate=\i as \j using int(\i+1)] in {0,1,2,3,5}{
+  \draw[ar, cai] (c\i) -- node[below, font=\tiny, text=black]{$\hat\Delta$} (c\j);}
+\draw[ar, cgr, densely dashed] (c4) -- node[below, font=\tiny, text=black]{abstain: KB kept} (c5);
+\node[font=\tiny, text=cgr, anchor=west] at (14.85,0.85) {$\mathcal{K}'$ is scored, then discarded};
+\foreach \i/\cols in {0/{cgr!20,cgr!20,cgr!20,cgr!20,cgr!20,cgr!20}, 1/{cgr!20,cgr!20,cgr!20,cgr!20,cgr!20,cgr!20},
+  2/{cred,cgr!20,cgr!20,cgr!20,cgr!20,cgr!20}, 3/{cgr,cgr!20,cgr!20,cgr!20,cgr!20,cgr!20},
+  4/{cgr,cred,cred,cred,cgr!20,cgr!20}, 5/{cgr,cgr,cgr,cgr,cpur,cgr!20}}{
+  \foreach \c [count=\k from 0] in \cols {\node[sq, fill=\c] at (\i*2.4+0.6+\k*0.25,-0.85) {};}}
+\node[font=\tiny, anchor=west] at (0,-1.35) {cases after each chained event (illustration):\quad
+  \textcolor{cgr}{$\blacksquare$} inherited \quad \textcolor{cred}{$\blacksquare$} new \quad
+  \textcolor{cpur}{$\blacksquare$} triggered (correct in isolation) \quad \textcolor{cgr!40}{$\blacksquare$} correct};
+\end{tikzpicture}}}
+
+% ------------------------------------------------------------------------------------------- architecture
+\newcommand{\figArchitecture}{%
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[node distance=5mm and 7mm]
+\node[bsrc, minimum width=2.7cm] (doc) {New regulation or\\company policy (PDF)};
+\node[bai, right=of doc, minimum width=2.7cm] (llm) {LLM drafts the update $\Delta$\\with quoted sources};
+\node[bdet, right=of llm, minimum width=2.7cm] (gate) {Gates G1--G5,\\consensus or abstain};
+\node[bhum, right=of gate, minimum width=2.7cm] (rev) {Reviewer with\\impact report};
+\draw[ar] (doc)--(llm); \draw[ar] (llm)--(gate); \draw[ar] (gate)--(rev);
+\node[draw=cdet, fill=cdet!6, thick, rounded corners, minimum width=9.4cm, minimum height=1.55cm,
+  below=12mm of $(llm)!0.5!(gate)$] (kb) {};
+\node[bdet, minimum width=4cm] at ($(kb.center)+(-2.3,-0.1)$) {Regulation layer};
+\node[bdet, minimum width=4cm] at ($(kb.center)+(2.3,-0.1)$) {Company-policy layer};
+\node[font=\scriptsize, anchor=south west] at (kb.north west) {Knowledge graph (RDF, SHACL): validity and
+  knowledge dates per element, one named graph per version};
+\draw[ar] (rev.south) |- node[pos=0.25, right, font=\scriptsize]{approve} (kb.east);
+\node[bsrc, below=27mm of doc, minimum width=2.7cm] (emp) {Employee data,\\one tax year};
+\node[bdet, right=of emp, minimum width=2.7cm] (sel) {Select rules valid in $t$\\and known on $\omega$};
+\node[bdet, right=of sel, minimum width=2.7cm] (calc) {Exact evaluation,\\final-period recalculation};
+\node[bsrc, right=of calc, minimum width=2.7cm] (out) {PPh 21 per period,\\trace to provisions};
+\draw[ar] (emp)--(sel); \draw[ar] (sel)--(calc); \draw[ar] (calc)--(out);
+\draw[ar] ($(kb.south)+(-2.3,0)$) -- node[left, font=\scriptsize]{read} (sel.north);
+\node[font=\scriptsize, anchor=west] at ($(doc.north west)+(0,0.35)$) {Knowledge update (when a document is issued)};
+\node[font=\scriptsize, anchor=west] at ($(emp.south west)+(0,-0.35)$) {Computation (every payroll run, no LLM)};
+\end{tikzpicture}}}
+
+% ------------------------------------------------------------------------------------------- bitemporal
+\newcommand{\figBitemporal}{%
+\begin{tikzpicture}[x=0.078cm]
+\fill[cdet!15, draw=cdet] (0,1.05) rectangle (100,1.4);
+\node[font=\scriptsize, anchor=west] at (1,1.225) {PMK 10/2025 valid for January--December 2025};
+\draw[-{Stealth}] (-2,0.6) -- (102,0.6);
+\foreach \x/\l in {0/1 Jan, 31/1 Feb, 59/1 Mar}{\draw (\x,0.53)--(\x,0.67) node[above, font=\scriptsize]{\l};}
+\draw[cai, very thick] (34,0.45) -- (34,1.7) node[above, font=\scriptsize, text=black]{issued 4 Feb 2025};
+\draw[densely dashed, cgr] (0,0.32) -- (31,0.32); \node[font=\scriptsize] at (15.5,0.18) {period January};
+\fill[white, draw=black, thick] (30,-0.25) circle (2.2pt);
+\node[font=\scriptsize, anchor=east, align=right] at (28,-0.35) {asked on 31 Jan:\\government-borne Rp0};
+\fill[chum] (40,-0.25) circle (2.2pt);
+\node[font=\scriptsize, anchor=west, align=left] at (42,-0.35) {asked on 10 Feb:\\government-borne Rp125,448};
+\end{tikzpicture}}
+
+% ------------------------------------------------------------------------------------------- engine
+\newcommand{\figEngine}{%
+\resizebox{0.98\textwidth}{!}{%
+\begin{tikzpicture}[f/.style={draw=cdet, fill=cdet!10, rounded corners=2pt, font=\scriptsize, align=center,
+  minimum height=0.6cm, inner sep=2pt}, inp/.style={f, fill=white, draw=cgr}]
+\node[font=\small] at (2.3,4.75) {(a) select the rule for \texttt{pph21\_running}};
+\foreach \y/\w/\t in {3.9/4.6/{1. recorded on or before $\omega$}, 3.1/4.0/{2. valid in period $t$ (March 2024)},
+  2.3/3.4/{3. condition: not the final period}, 1.5/2.8/{4. rank, overrides, recency}}{
+  \node[draw=cdet, fill=cdet!10, minimum width=\w cm, minimum height=0.62cm, font=\scriptsize] at (2.3,\y) {\t};}
+\node[f, fill=chum!20, draw=chum] at (2.3,0.55) {winner: \texttt{REG.TER.RUNNING}};
+\node[font=\scriptsize, text=cred, anchor=west, align=left] at (4.75,3.1) {$\times$ annualized-method rule\\(closed 31 Dec 2023)};
+\node[font=\scriptsize, text=cai, anchor=west, align=left] at (4.3,1.5) {a company rule that loses to a\\mandatory rule is logged as a conflict};
+\node[font=\small] at (11.1,4.75) {(b) evaluate the facts it reads, on demand};
+\node[inp] (bs) at (8.6,0.55) {base salary\\15,000,000};
+\node[inp] (thr) at (10.5,0.55) {religious holiday\\allowance 15,000,000};
+\node[inp] (prem) at (12.5,0.55) {employer premiums\\561,000};
+\node[inp] (st) at (14.3,0.55) {PTKP status\\K/1};
+\node[f] (gross) at (10.5,2.0) {gross income\\30,561,000};
+\node[f] (cat) at (14.3,2.0) {TER category\\B};
+\node[f] (rate) at (12.4,3.0) {TER rate\\12\%};
+\node[f, fill=chum!20, draw=chum] (pph) at (10.5,4.05) {PPh 21, March 2024\\Rp3,667,320};
+\draw[ar] (bs)--(gross); \draw[ar] (thr)--(gross); \draw[ar] (prem)--(gross); \draw[ar] (st)--(cat);
+\draw[ar] (gross)--(rate); \draw[ar] (cat)--(rate); \draw[ar] (rate)--(pph); \draw[ar] (gross)--(pph);
+\node[font=\small] at (18.6,4.75) {(c) trace to the provisions};
+\node[f, fill=chum!20, draw=chum] (t1) at (18.6,4.05) {Rp3,667,320};
+\node[f] (t2) at (18.6,3.15) {\texttt{REG.TER.RUNNING}};
+\node[inp] (t3) at (18.6,2.25) {PP 58/2023,\\Elucidation of Art.~2(1)};
+\node[f] (t4) at (18.6,1.3) {\texttt{REG.TER.RATE}};
+\node[inp] (t5) at (18.6,0.4) {PP 58/2023, Art.~2(5)};
+\draw[ar] (t1)--(t2); \draw[ar] (t2)--(t3); \draw[ar, densely dashed] (t2.east) to[bend left=45]
+  node[right, font=\tiny]{reads} (t4.east); \draw[ar] (t4)--(t5);
+\end{tikzpicture}}}
+
+% ------------------------------------------------------------------------------------------- acquisition flow
+\newcommand{\figAcquisitionFlow}{%
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[node distance=4mm and 6mm]
+\node[bsrc, minimum width=3cm] (seg) {Selected article segments\\(text locked by SHA-256)};
+\node[bsrc, below=of seg, minimum width=3cm] (tab) {Annex tables, by reference};
+\node[bsrc, below=of tab, minimum width=3cm] (voc) {KB vocabulary and functions};
+\node[bsrc, below=of voc, minimum width=3cm] (rec) {Related KB records (SPARQL)};
+\node[bai, right=12mm of tab, minimum width=2.5cm] (rel) {LLM call 1:\\relevance and quotes};
+\node[bai, below=of rel, minimum width=2.5cm] (dr) {LLM call 2:\\$m$ independent drafts};
+\node[bdet, right=of dr, minimum width=1.9cm] (conv) {Converter\\to records};
+\foreach \g/\n [count=\i] in {G1/form: schema and SHACL,G2/quotes: text and numbers,G3/expressions and references,
+  G4/regression on $S^G$,G5/non-vacuity}{
+  \node[bdet, minimum width=3.3cm, minimum height=0.52cm] (g\i) at ($(conv.east)+(3.0,1.65-\i*0.62)$) {\g\ \n};}
+\node[bdet, right=8mm of g3, minimum width=2.2cm] (cons) {Behavioral\\consensus on $S^G$};
+\node[bhum, above right=3mm and 6mm of cons, minimum width=2cm] (sel) {Selected $\Delta$\\to the reviewer};
+\node[b, below right=3mm and 6mm of cons, minimum width=2cm, fill=cgr!15] (abs) {Abstain};
+\draw[ar] (seg.east) -- (rel.west); \draw[ar] (tab.east)--(rel.west); \draw[ar] (voc.east)--(dr.west);
+\draw[ar] (rec.east)--(dr.west);
+\draw[ar] (rel)--(dr); \draw[ar] (dr)--(conv); \draw[ar] (conv.east)--(g1.west);
+\draw[ar] (g5.south) -- ++(0,-0.45) -| node[pos=0.25, below, font=\scriptsize]{gate messages: one repair round} (dr.south);
+\draw[ar] (g3.east)--(cons); \draw[ar] (cons)--(sel); \draw[ar] (cons)--node[right, font=\scriptsize]{tie or none} (abs);
+\end{tikzpicture}}}
+
+% ------------------------------------------------------------------------------------------- case study
+\newcommand{\figCaseStudy}{%
+\resizebox{0.97\textwidth}{!}{%
+\begin{tikzpicture}
+\node[bsrc, text width=4.6cm, align=left, minimum height=2.9cm] (q) at (0,0) {\textbf{PP 58/2023, relevance quotes}\\[2pt]
+  \itshape ``Tarif pemotongan Pajak Penghasilan Pasal 21 terdiri atas:'' (Art.~2(1))\\[1pt]
+  ``kategori A diterapkan atas penghasilan bruto bulanan'' (Art.~2(4)(a))};
+\node[font=\scriptsize] at (6.2,1.5) {three drafts, first gate pass / after repair};
+\foreach \d/\st [count=\i] in {1/{pass,pass,pass,pass,pass},2/{pass,fail,,,},3/{pass,fail,,,}}{
+  \node[font=\scriptsize, anchor=east] at (4.55,1.1-\i*0.62) {draft \d};
+  \foreach \g [count=\j] in {G1,G2,G3,G4,G5}{
+    \node[draw=chum, fill=chum!25, font=\tiny, minimum size=0.45cm] at (4.55+\j*0.5,1.1-\i*0.62) {\g};}}
+\node[draw=cred, fill=cred!25, font=\tiny, minimum size=0.45cm] at (5.55,-0.14) {G2};
+\node[draw=cred, fill=cred!25, font=\tiny, minimum size=0.45cm] at (5.55,-0.76) {G2};
+\node[font=\tiny, anchor=west, align=left] at (7.65,-0.45) {quote not verbatim;\\passed after repair};
+\node[bdet, font=\scriptsize] at (6.05,-1.45) {consensus: one group of 3};
+\node[bhum, text width=4.6cm, align=left, minimum height=1.5cm, font=\scriptsize] (d) at (12.3,0.75) {\textbf{selected $\Delta$ (3 elements)}\\
+  table of TER categories by PTKP status\\monthly TER table, by reference to the annex\\rule TER $\times$ gross, valid from 2024-01-01};
+\node[bdet, text width=4.6cm, align=left, minimum height=1.2cm, font=\scriptsize] (t) at (12.3,-1.2) {Employee A, March 2024:\\
+  Rp3,667,320 $\leftarrow$ \texttt{REG.TER.RUNNING} $\leftarrow$\\PP 58/2023, Elucidation of Art.~2(1)};
+\draw[ar] (q.east)--(4.0,0.4); \draw[ar] (8.0,0.4)--(d.west); \draw[ar] (d)--(t);
+\node[font=\scriptsize, text=cgr, anchor=east] at (14.65,-2.05) {six model calls, 164 s, USD 0.60};
+\end{tikzpicture}}}

@@ -1,0 +1,149 @@
+% ============================================================================
+% Appendices (in-paper). Supplementary material outside the article: full prompts and the values of every
+% acquisition condition; per-event results; the preregistration and its amendment; statistical details and power.
+% ============================================================================
+\section{Notation and Glossary}
+\label{app:glossary}
+\begin{table}[!h]
+\caption{Notation and Indonesian terms used in the article.}
+\label{tab:glossary}
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}lL@{}}
+\toprule
+Term & Meaning \\
+\midrule
+$\K$, $\K^\gold$, $\K^{\mathrm{sys}}$ & knowledge base; gold knowledge base; knowledge base produced by the system \\
+$\Delta$, $\hat{\Delta}$, $\Delta^\gold$ & update; update selected by the pipeline; gold update \\
+$x$, $t$, $\omega$ & case (one employee-year); tax period; knowledge date \\
+$\SE$, $\SG$ & test space; cases generated for the gates of one draft \\
+PPh 21 & Income Tax Article 21, withheld monthly by the employer \\
+PTKP & nontaxable income amount by family status (e.g., K/1: married, one dependent) \\
+PKP & annual taxable income, rounded down to thousands \\
+TER & average effective rate applied to monthly gross income from 2024 \\
+DTP & income tax borne by the government \\
+THR & religious holiday allowance \\
+PKB & collective labor agreement \\
+PP, PMK, PER & Government Regulation; Minister of Finance Regulation; Director General Regulation \\
+DJP & Directorate General of Taxes \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Conflict Taxonomy}
+\label{app:taxonomies}
+A company rule conflicts with the regulation layer when it loses to a mandatory rule with a different value or violates a mandatory constraint. Table~\ref{tab:conflicts} lists the ten conflict types; only C4 has a real instance in the corpus, the latent conflict of Section~\ref{sec:policies}, and the synthetic policies instantiate the others.
+
+\begin{table}[!h]
+\caption{Conflict types between company policies and mandatory provisions.}
+\label{tab:conflicts}
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}lL@{}}
+\toprule
+Code & Conflict \\
+\midrule
+C1 & income classified differently (regular or irregular, taxable or not) \\
+C2 & a component of gross income omitted, such as employer premiums \\
+C3 & a deduction that is not allowed or exceeds its ceiling \\
+C4 & a government facility not passed on to employees \\
+C5 & a rate or method that is no longer valid \\
+C6 & an outdated parameter \\
+C7 & social-security contributions split differently \\
+C8 & a contribution wage cap or ceiling ignored \\
+C9 & rounding that deviates from the regulation \\
+C10 & a minimum entitlement breached \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Gate Specification}
+\label{app:gates}
+G1 parses a draft against the JSON schema of updates, applies it strictly to a copy of the knowledge base, and validates the result against 14 SHACL node shapes and 12 SHACL-SPARQL constraints. G2 locates each quote in the locked document text after normalizing whitespace and recognized OCR errors in digits. It requires every new number of 100 or more, every new rate, and every date of an element to occur in a quote of that element. The recording date must equal the issue date of the document. G3 parses every expression, checks that every fact, parameter, and table it reads has a valid producer in the periods concerned, and rejects cycles. G4 generates up to 300 cases from the draft itself by varying the attributes, thresholds, and periods that the draft mentions. Results before the effective date and for knowledge dates before the issue date must not change. G5 removes each added or changed element in turn and requires at least one output value or conflict on the generated cases to change. The stated effective date must also change at least one case in that month.
+
+\section{Test Corpus and Additional Results}
+\label{app:tables}
+Table~\ref{tab:corpus} lists the test events, Table~\ref{tab:refs} the agreement of the gold knowledge base with the external references, and Table~\ref{tab:unseen} the unseen changes.
+
+\begin{table}[!h]
+\caption{Test corpus. $|\Delta^\gold|$ counts the added, changed, and removed elements of the gold update.}
+\label{tab:corpus}
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}lLlr@{}}
+\toprule
+ID & Document & Type & $|\Delta^\gold|$ \\
+\midrule
+E01 & pension wage-cap letter 2023 & T1 & 1 \\
+E02 & PMK 66/2023 (benefits in kind) & T3 & 15 \\
+E03 & PP 58/2023 (TER) & T2, T7 & 7 \\
+E04 & PMK 168/2023 (TER guidance) & T7, T3 & 14 \\
+E05 & pension wage-cap letter 2024 & T1 & 1 \\
+E06 & PMK 10/2025 (DTP, labor-intensive industry) & T4 & 15 \\
+E07 & PP 7/2025 (work-accident premium relief) & T1 & 2 \\
+E08 & pension wage-cap letter 2025 & T1 & 1 \\
+E09 & PP 36/2025 (extension of the relief) & T6 & 2 \\
+E10 & PMK 72/2025 (DTP, tourism)~\cite{pmk72_2025} & T5 & 5 \\
+E11 & PMK 105/2025 (DTP 2026)~\cite{pmk105_2025} & T4 & 11 \\
+E12 & pension wage-cap letter 2026 & T1 & 1 \\
+E13 & PER-11/PJ/2025 (rounding) & T9 & 1 \\
+\midrule
+P01--P21 & 20 distractors (numbering skips P07) & -- & 0 \\
+-- & 5 collective labor agreements & T10 & 14--35 \\
+-- & 14 synthetic company policies & T10 & 1--7 \\
+-- & 4 counterfactual documents & T1, T3, T4 & -- \\
+U01--U16 & 16 unseen changes & T1--T10 & 1--21 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!h]
+\caption{Agreement of the gold knowledge base with external references, per observation, with the materiality of the differences.}
+\label{tab:refs}
+\centering\footnotesize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabularx}{\columnwidth}{@{}Lrrrrr@{}}
+\toprule
+Reference & Obs. & Exact & $\leq$Rp1 & Material & Other \\
+\midrule
+GT1 development & 679 & 642 & 1 & 13 & 23 \\
+GT1 holdout, before correction & 235 & 214 & 1 & 12 & 8 \\
+GT1 holdout, after correction & 235 & 224 & 1 & 2 & 8 \\
+GT2 DJP calculator & 110 & 105 & 5 & 0 & 0 \\
+GT3 independent calculation & 2,107 & 2,107 & 0 & 0 & 0 \\
+GT5 labor-agreement examples & 79 & 65 & 6 & 5 & 3 \\
+\bottomrule
+\end{tabularx}
+\begin{minipage}{\columnwidth}\vspace{2pt}\scriptsize
+Material: more than Rp1,000. Other: category values (e.g., a TER category) or rates. Material GT1 differences are errors in official examples or, in the holdout, the mapping of pension contributions; material GT5 differences concern a clause that was not formalized or a month before the agreement took effect.
+\end{minipage}
+\end{table}
+
+\begin{table}[!h]
+\caption{The 16 unseen changes: type, examples reproduced, attempts, elements added and changed, and whether the change passes without aligning the rounding convention of its examples.}
+\label{tab:unseen}
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+ID & Type & Examples & Attempts & Add/change & Without convention \\
+\midrule
+U01 & T1 & 7/7 & 1 & 1/1 & fails \\
+U02 & T1 & 6/6 & 1 & 2/0 & passes \\
+U03 & T2 & 7/7 & 1 & 2/0 & fails \\
+U04 & T3 & 6/6 & 1 & 12/2 & passes \\
+U05 & T3 & 6/6 & 1 & 5/1 & passes \\
+U06 & T4 & 7/7 & 1 & 15/0 & fails \\
+U07 & T6 & 6/6 & 1 & 11/0 & fails \\
+U08 & T5 & 7/7 & 1 & 2/0 & passes \\
+U09 & T7 & 6/6 & 1 & 5/0 & passes \\
+U10 & T8 & 5/5 & 1 & 0/1 & passes \\
+U11 & T9 & 6/6 & 1 & 4/0 & fails \\
+U12 & T9 & 6/6 & 1 & 8/0 & fails \\
+U13 & T9 & 6/6 & 1 & 1/0 & passes \\
+U14 & T10 & 6/6 & 1 & 4/0 & fails \\
+U15 & T10 & 6/6 & 2 & 21/0 & fails \\
+U16 & T2 & 7/7 & 1 & 1/0 & passes \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,64 @@
+% ============================================================================
+\section{Background: Payroll Income Tax in Indonesia}
+\label{sec:background}
+% ============================================================================
+The rest of the paper relies on three parts of PPh 21: how the monthly tax is computed, how its rules change, and how far a company may set its own payroll rules.
+
+\subsection{Computing PPh 21 for a Permanent Employee}
+\label{sec:pph21}
+The monthly gross income of a permanent employee includes the salary, fixed allowances, and irregular payments such as the religious holiday allowance (THR) and bonuses. It also includes the work-accident, death, and health premiums that the employer pays and, since July 2023, benefits in kind. Until 2023 the employer annualized each month's regular income and deducted the occupational expense, the employee's pension contributions, and the nontaxable amount (PTKP) of the employee's family status. The result was taxed at the five progressive rates of Article 17, from 5\% to 35\%~\cite{uu7_2021,pmk101_2016,per16_2016}. Since January 2024 the months from January to November apply a monthly effective rate (TER) to gross income. The rate depends on the gross amount and on a category, A, B, or C, that follows from the PTKP status. The final period recomputes the tax of the whole year under Article 17 and withholds the difference from what was already withheld~\cite{pp58_2023,pmk168_2023}.
+
+The running example of this paper is Employee A, with status K/1 (married, one dependent, category B), a monthly salary of Rp15,000,000, and a THR of the same amount paid in March. Table~\ref{tab:slip} applies both methods to this employee. TER raises the March withholding to 12\% of a gross of Rp30,561,000, and the December recalculation then withholds only Rp186,480 because the earlier months already covered most of the annual tax. The annual totals differ by Rp8,700, but the monthly profiles do not. The regular withholding of 2023 is Rp725 lower from April onward because the pension wage cap rose in March (event E01 in Fig.~\ref{fig:timeline}), which raised the deductible pension contribution.
+
+\begin{table}[!t]
+\caption{Running example: monthly PPh 21 of Employee A (K/1, salary Rp15,000,000, THR in March) under the annualized method of 2023 and the TER method of 2024, as computed by the engine from the gold knowledge base.}
+\label{tab:slip}
+\centering\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Period & Gross (Rp) & 2023 (Rp) & TER 2024 & 2024 (Rp) \\
+\midrule
+January, February & 15,561,000 & 913,025 & B, 6\% & 933,660 \\
+March (THR) & 30,561,000 & 3,162,300 & B, 12\% & 3,667,320 \\
+April--November & 15,561,000 & 912,300 & B, 6\% & 933,660 \\
+December & 15,561,000 & 912,350 & Article 17 & 186,480 \\
+\midrule
+Year & 201,732,000 & 13,199,100 & & 13,190,400 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{How the Rules Change}
+\label{sec:changes}
+Ten types of change, fixed before any model output existed, structure the corpus and the reporting of results (Table~\ref{tab:types}). Two dates matter for every change. The issue date is when the rule becomes known, and the start of validity is when it binds. The two dates coincide for most parameter letters. A retroactive rule separates them and makes the correct value of a past period depend on the date on which the question is asked. An example is the rounding rule of Director General Regulation PER-11/PJ/2025, issued in May 2025 for periods from January 2025. A KB that records only validity cannot reproduce what an employer should have withheld with the knowledge available at the time, which is why the representation of Section~\ref{sec:system} records both dates.
+
+\begin{table}[!t]
+\caption{Types of regulatory change, with the events of the test corpus that belong to each type.}
+\label{tab:types}
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}lLl@{}}
+\toprule
+Code & Type of change & Test events \\
+\midrule
+T1 & a single parameter value (wage cap, rate, ceiling) & E01, E05, E07, E08, E12 \\
+T2 & a rate table is created or changed & E03 \\
+T3 & income classification & E02, E04 \\
+T4 & a new facility with eligibility criteria & E06, E11 \\
+T5 & the scope of a facility & E10 \\
+T6 & the validity period of a rule & E09 \\
+T7 & a change of calculation method & E03, E04 \\
+T8 & repeal without replacement & none \\
+T9 & a calculation procedure such as rounding & E13 \\
+T10 & a company policy & labor agreements \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Company Policies and Their Legal Limits}
+\label{sec:policies}
+Employers decide parts of the payroll themselves through company regulations or collective labor agreements (PKB): proration for partial months, the THR formula, and whether the employer bears the tax. These policies may not override mandatory provisions. Article 22(3) of the 2025--2026 agreement of PT Wijaya Karya states that government tax incentives are not passed on to employees. PMK 10/2025, in contrast, requires in Article 5(1) that the employer pay the government-borne tax to the employee in cash~\cite{pmk10_2025}. The conflict stays latent because the company is not in an eligible sector; a regulatory change that widened the sectors would activate it. Ten conflict types, from a misclassified income component to a missed minimum entitlement, are listed in Appendix~\ref{app:taxonomies}.
+
+\subsection{Scope and Assumptions}
+The study covers permanent employees of private and state-owned employers, one employee per computation, and tax years 2023--2026, with regulatory history from 2012 used for development. It excludes non-permanent workers, severance and other income taxed at final rates, the higher rate for employees without a tax identification number, batch payroll runs, and the filing of withholding slips. Every employee is assumed to hold a valid tax identification, and payroll inputs are taken as recorded.

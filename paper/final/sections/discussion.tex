@@ -1,0 +1,59 @@
+% ============================================================================
+\section{Discussion}
+\label{sec:discussion}
+% ============================================================================
+\subsection{When Can an LLM-Drafted Update Be Trusted?}
+The representation held: every unseen change and every real event could be expressed as data, and a structural change such as TER became 21 records instead of new code. The acquisition pipeline held only for small updates. Single-element parameter changes, such as the yearly pension wage cap, were drafted correctly every time, while no document that needed 11 or more elements was, and the five labor agreements ended in abstention. With an upper bound of 0.377 on the silent error rate and silent errors that moved withholding by up to Rp61.6 million, the pipeline cannot run without a reviewer. Drawing several drafts and requiring their agreement cut the silent errors from 7 or 8 to 3. The reduction came from more abstentions, not from more correct updates, and the agreement could not catch errors on which all drafts agreed.
+
+These figures are stricter than those of related systems because the unit differs. Veeramani et al.\ report 80\% accuracy over 20 scenarios~\cite{veeramani2026neurosymbolic} and Jurayj et al.\ 75 correct answers of 100 cases~\cite{jurayj2026tax}, both per computed case. Here an update counts as correct only when all test cases at both knowledge dates match the gold knowledge base, which is the standard a payroll department needs before it accepts a rule change.
+
+\subsection{Why LLM Updates Fail}
+Table~\ref{tab:taxonomy} counts the failures by kind. The gates caught failures of form: quotes that were not verbatim, numbers absent from their quotes, schema violations, dangling references, and an engine error. The silent errors were failures of content that no gate inspects. The update for E02 had three elements, and only two of them match elements of the 15-element gold update. It left out the exemption ceilings for housing, gifts, sports facilities, and vehicles, as well as the gross-up of tax borne by the employer. The update for E11 tested the Rp10 million eligibility ceiling against taxable benefits after exemptions instead of the value of housing and vehicle benefits. The update for E07 read the regulation correctly but conditioned the relief on a case attribute that the case data do not contain; with the attribute renamed, the same update is correct on every tuple. That error is an interface problem. The prompt lists the facts and functions of the knowledge base but not the attributes of the case data, so the model had to invent a name. E07 and E11 were wrong again in the second run, with drafts that agreed, which explains why consensus did not catch them. No fabricated quote and no memorized value of a counterfactual parameter was observed.
+
+\begin{table}[!t]
+\caption{Failures of the drafted updates on the 18 real documents and 20 distractors, by kind, and the component that caught them.}
+\label{tab:taxonomy}
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}LlL@{}}
+\toprule
+Kind of failure & Count & Caught by \\
+\midrule
+Incomplete update (missing exemptions) & 1 document (E02) & none (silent) \\
+Wrong scope of an income base & 1 document (E11) & none (silent) \\
+Case attribute absent from the data & 1 document (E07) & none (silent) \\
+Distractor applied as a change & 1 of 20 (P01) & none (silent) \\
+Quote or number not grounded in the text & 8 drafts & G2 \\
+Element or effective date without effect & 5 drafts & G5 \\
+Schema or SHACL violation & 2 drafts & G1 \\
+Reference to a table not yet valid & 1 draft & G3 \\
+Engine error on generated cases & 1 draft & G4 \\
+\bottomrule
+\end{tabularx}
+\begin{minipage}{\columnwidth}\vspace{2pt}\scriptsize
+Draft counts refer to the first failing gate of the 49 initial drafts. The five G5 failures include all three drafts of E04; without G5, their consensus was correct on the test cases.
+\end{minipage}
+\end{table}
+
+\subsection{Implications for Payroll Practice}
+Three practices follow from the results. Every abstention must enter a review queue, because the chain showed that an unprocessed document becomes errors in later periods: 53 of the 103 new errors on the regenerated chain arose at abstentions. A reviewer of a drafted update needs to see who is affected, not only that the gates passed, since the three silent errors passed every gate. The before-and-after scenarios and the impact report of Fig.~\ref{fig:screens} show this. Retroactive regulations call for both time axes, so that the system can list the corrections owed for periods that were correct when they were paid, as Fig.~\ref{fig:bitemporal} does for January 2025. Structural regulations, updates with more than a few elements, labor agreements, and documents that resemble distractors should not be applied without a full review. The system supports the reviewer and does not give tax advice; the employer remains responsible for every withholding.
+
+\subsection{Implications for Knowledge-Based Systems and Legal AI}
+Splitting the knowledge into a graph for structure and provenance and expressions for arithmetic let a change of method, a change of rounding, and a retroactive facility all enter as data. The engine meanwhile kept exact arithmetic and a trace to the provisions. The replay protocol does not depend on PPh 21. Any executable legal rule base with dated documents and a gold history can be replayed in isolation and in a chain. The split into inherited, new, and triggered errors then separates a stale knowledge base from a wrong update. Applying the protocol to another tax or jurisdiction requires a new gold history and test space, which carried most of the cost of this study. The results suggest seven design rules for LLM-assisted maintenance of such a rule base:
+\begin{enumerate}
+\item require a verbatim quote for every number and date in a drafted element;
+\item draw several independent drafts and allow abstention;
+\item route every abstention to a reviewer queue;
+\item check the scope and completeness of an update against the provisions it cites, which no gate in this study did;
+\item give the model the attributes of the case data and warn when a draft introduces a new one, the lesson of E07;
+\item report an element or effective date without effect to the reviewer instead of rejecting the whole draft, the lesson of E04;
+\item evaluate updates by chronological replay rather than on a single legal state.
+\end{enumerate}
+
+\subsection{Threats to Validity}
+Internal validity is limited because the same party wrote the gold knowledge base, the engine, and the interpretations. It is also limited because AI agents of the same model family as the tested model drafted and reviewed the gold material and the unseen changes, and no human tax practitioner validated them. The official examples, the DJP calculator, the holdout, and separate engine tests mitigate this risk without removing it.
+
+The analysis is not fully blind. The amendment was written after early results, and the gates were adjusted during development until the gold updates of the test events passed them. The gold synthetic policies were corrected after the model output was visible, which raised the result of the pipeline on those policies from 3 correct and 8 wrong to 5 correct and 6 wrong. Agreement with a reference is not the same as conformity with the law, which limits construct validity~\cite{witt2024encoding}. External validity is limited to one jurisdiction, one tax, five labor agreements, and two model families. Eighteen documents, one run per chain, and $m$ of 3 and 2 limit conclusion validity. Contamination cannot be tested with a cutoff split, because every test event was issued before the training cutoff of both models; the evidence against memorization comes only from the counterfactuals and the fictional development regulations. The headline result for expressiveness depends on aligning the rounding convention of the examples.
+
+\subsection{Limitations}
+Fifteen TER boundaries and the TER rates of 30\% to 34\% are untested, so the results do not cover monthly gross income above about Rp450 million. The 35\% Article 17 bracket occurs only in six boundary cases. Repeal without replacement (T8) has no real example. The impact detector was evaluated with the gold updates as input, so it measures the detector rather than the full pipeline. The review step itself was not studied: review time, the errors a reviewer catches, and the burden of the review queue are unmeasured, and a user study with payroll staff remains to be done. The system computes one employee at a time and does not produce withholding slips.

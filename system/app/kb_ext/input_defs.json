@@ -1,10 +1,10 @@
 {
- "_note": "Definisi data (input) di knowledge base keadaan awal demo. Di sistem penuh ini unsur KB yang ikut pembaruan; di demo disimpan sebagai berkas data, bukan kode. Kolom: key (bucket.key yang dibaca aturan), label, help, type (money|int|bool|choice|flag), group (pegawai|perusahaan|bulanan), order, core (selalu tampil), repeat (bulanan: berulang tiap bulan), default, options / options_from (table:<nama> atau usage), show_if, valid_from, valid_until, replaces, source.",
+ "_note": "Input definitions (data) in the knowledge base of the initial demo state. In the full system these are KB elements that travel with updates; in the demo they are kept as a data file, not code. Fields: key (bucket.key read by rules), label, help, type (money|int|bool|choice|flag), group (pegawai|perusahaan|bulanan), order, core (always shown), repeat (monthly: repeats every month), default, options / options_from (table:<name> or usage), show_if, valid_from, valid_until, replaces, source.",
  "defs": [
   {
    "key": "employee.ptkp_status",
-   "label": "Status PTKP per 1 Januari",
-   "help": "TK = tidak kawin, K = kawin; angka = jumlah tanggungan. Status pada 1 Januari dipakai setahun; menikah atau punya anak di tengah tahun baru berlaku tahun depan.",
+   "label": "Marital status for PTKP on 1 January",
+   "help": "TK = unmarried, K = married; the number is the number of dependents. The status on 1 January applies for the whole year; marriage or a new child during the year only counts from next year.",
    "type": "choice",
    "options_from": "table:ptkp",
    "group": "pegawai",
@@ -15,17 +15,17 @@
   },
   {
    "key": "employee.sex",
-   "label": "Jenis kelamin",
-   "help": "Dipakai untuk aturan PTKP karyawati kawin.",
+   "label": "Sex",
+   "help": "Used by the PTKP rule for married female employees.",
    "type": "choice",
    "options": [
     [
      "M",
-     "Laki-laki"
+     "Male"
     ],
     [
      "F",
-     "Perempuan"
+     "Female"
     ]
    ],
    "group": "pegawai",
@@ -36,8 +36,8 @@
   },
   {
    "key": "employee.husband_no_income_certified",
-   "label": "Ada keterangan suami tidak berpenghasilan",
-   "help": "Karyawati kawin memakai PTKP tidak kawin, kecuali ada keterangan ini.",
+   "label": "Statement that the husband has no income",
+   "help": "A married female employee uses the unmarried PTKP unless there is this statement.",
    "type": "bool",
    "group": "pegawai",
    "order": 3,
@@ -50,21 +50,21 @@
   },
   {
    "key": "case.method",
-   "label": "Cara pajak dibayar",
-   "help": "Gross: dipotong dari gaji. Gross-up: perusahaan memberi tunjangan pajak sebesar PPh-nya. Ditanggung: perusahaan membayar pajaknya tanpa tunjangan.",
+   "label": "How the tax is paid",
+   "help": "Gross: withheld from salary. Gross-up: the company gives a tax allowance equal to the PPh. Borne: the company pays the tax without an allowance.",
    "type": "choice",
    "options": [
     [
      "gross",
-     "Gross: dipotong dari gaji"
+     "Gross: withheld from salary"
     ],
     [
      "gross_up",
-     "Gross-up: diberi tunjangan pajak"
+     "Gross-up: given a tax allowance"
     ],
     [
      "employer_borne",
-     "Ditanggung perusahaan"
+     "Borne by the company"
     ]
    ],
    "group": "pegawai",
@@ -75,8 +75,8 @@
   },
   {
    "key": "employee.tax_id_valid",
-   "label": "NIK / NPWP terdaftar",
-   "help": "Syarat insentif DTP.",
+   "label": "NIK / NPWP registered",
+   "help": "Condition for the DTP incentive.",
    "type": "bool",
    "group": "pegawai",
    "order": 5,
@@ -86,8 +86,8 @@
   },
   {
    "key": "employee.has_equity_in_employer",
-   "label": "Pegawai juga pemegang saham",
-   "help": "Mobil dinas untuk pemegang saham selalu menjadi natura yang kena pajak.",
+   "label": "Employee is also a shareholder",
+   "help": "A company car for a shareholder is always a taxable in-kind benefit (natura).",
    "type": "bool",
    "group": "pegawai",
    "order": 20,
@@ -97,8 +97,8 @@
   },
   {
    "key": "employee.avg_monthly_gross_12m",
-   "label": "Rata-rata bruto sebulan, 12 bulan terakhir",
-   "help": "Mobil dinas kena pajak bila rata-rata ini di atas batas. Kosong: dipakai gaji pokok + tunjangan tetap bulan itu.",
+   "label": "Average monthly gross, last 12 months",
+   "help": "A company car is taxable when this average is above the limit. Empty: that month's base salary + fixed allowance is used.",
    "type": "money",
    "group": "pegawai",
    "order": 21,
@@ -107,8 +107,8 @@
   },
   {
    "key": "employee.contract_fixed_income",
-   "label": "Penghasilan tetap menurut kontrak",
-   "help": "Untuk pegawai baru: syarat batas penghasilan DTP memakai penghasilan tetap di kontrak kerja.",
+   "label": "Fixed income under the contract",
+   "help": "For new employees: the DTP income limit uses the fixed income in the employment contract.",
    "type": "money",
    "group": "pegawai",
    "order": 22,
@@ -117,8 +117,8 @@
   },
   {
    "key": "employee.other_dtp_incentive",
-   "label": "Sudah menerima insentif DTP lain",
-   "help": "Bila ya, tidak mendapat DTP ini.",
+   "label": "Already receives another DTP incentive",
+   "help": "If yes, this DTP does not apply.",
    "type": "bool",
    "group": "pegawai",
    "order": 23,
@@ -128,8 +128,8 @@
   },
   {
    "key": "employee.subjective_start_month",
-   "label": "Mulai menjadi wajib pajak di Indonesia (bulan)",
-   "help": "Hanya untuk pegawai yang datang dari luar negeri tahun ini; pajaknya disetahunkan.",
+   "label": "Became a taxpayer in Indonesia (month)",
+   "help": "Only for employees who came from abroad this year; their tax is annualized.",
    "type": "int",
    "group": "pegawai",
    "order": 30,
@@ -137,8 +137,8 @@
   },
   {
    "key": "employee.subjective_end_month",
-   "label": "Berhenti menjadi wajib pajak di Indonesia (bulan)",
-   "help": "Hanya untuk pegawai yang pindah ke luar negeri atau meninggal tahun ini.",
+   "label": "Stopped being a taxpayer in Indonesia (month)",
+   "help": "Only for employees who moved abroad or died this year.",
    "type": "int",
    "group": "pegawai",
    "order": 31,
@@ -146,8 +146,8 @@
   },
   {
    "key": "employee.known_last_month",
-   "label": "Bulan terakhir bekerja yang sudah pasti",
-   "help": "Untuk pegawai yang sudah pasti akan keluar.",
+   "label": "Last month of work, already certain",
+   "help": "For employees who are certain to leave.",
    "type": "int",
    "group": "pegawai",
    "order": 32,
@@ -155,8 +155,8 @@
   },
   {
    "key": "employer.klu",
-   "label": "Bidang usaha (KLU, 5 digit)",
-   "help": "Kode klasifikasi lapangan usaha perusahaan; menentukan hak insentif DTP.",
+   "label": "Line of business (KLU, 5 digits)",
+   "help": "Business sector classification code of the company; it decides eligibility for the DTP incentive.",
    "type": "text",
    "group": "perusahaan",
    "order": 1,
@@ -166,16 +166,16 @@
   },
   {
    "key": "employer.jkk_risk_group",
-   "label": "Risiko pekerjaan (JKK)",
-   "help": "Tingkat risiko yang menentukan tarif premi JKK.",
+   "label": "Job risk (JKK)",
+   "help": "Risk level that sets the JKK premium rate.",
    "type": "choice",
    "options_from": "table:jkk_rates",
    "labels": {
-    "very_low": "Sangat rendah",
-    "low": "Rendah",
-    "medium": "Sedang",
-    "high": "Tinggi",
-    "very_high": "Sangat tinggi"
+    "very_low": "Very low",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "very_high": "Very high"
    },
    "group": "perusahaan",
    "order": 2,
@@ -185,8 +185,8 @@
   },
   {
    "key": "employer.jkk_relief_eligible",
-   "label": "Berhak keringanan iuran JKK",
-   "help": "Industri padat karya tertentu.",
+   "label": "Eligible for JKK contribution relief",
+   "help": "Certain labor-intensive industries.",
    "type": "bool",
    "group": "perusahaan",
    "order": 10,
@@ -196,18 +196,18 @@
   },
   {
    "key": "employer.premiums_as_billed",
-   "label": "Iuran BPJS mengikuti tagihan",
-   "help": "Bila ya, iuran dan premi diisi per bulan sesuai tagihan BPJS; bila tidak, dihitung dari upah.",
+   "label": "BPJS contributions follow the bill",
+   "help": "If yes, contributions and premiums are entered monthly as billed by BPJS; if not, they are computed from wages.",
    "type": "bool",
    "group": "perusahaan",
    "order": 11,
    "default": false,
-   "source": "konvensi input"
+   "source": "input convention"
   },
   {
    "key": "employer.workplace_meal_value",
-   "label": "Nilai makan di tempat kerja",
-   "help": "Untuk batas kupon makan dinas luar.",
+   "label": "Value of meals at the workplace",
+   "help": "For the limit on meal coupons for field duty.",
    "type": "money",
    "group": "perusahaan",
    "order": 12,
@@ -216,7 +216,7 @@
   },
   {
    "key": "employer.bonded_zone",
-   "label": "Perusahaan di kawasan berikat",
+   "label": "Company in a bonded zone",
    "help": "",
    "type": "bool",
    "group": "perusahaan",
@@ -226,7 +226,7 @@
   },
   {
    "key": "employer.kite",
-   "label": "Perusahaan dengan fasilitas KITE",
+   "label": "Company with KITE facility",
    "help": "",
    "type": "bool",
    "group": "perusahaan",
@@ -236,18 +236,18 @@
   },
   {
    "key": "employer.bpjs_relief_2020_eligible",
-   "label": "Berhak keringanan iuran BPJS 2020",
+   "label": "Eligible for 2020 BPJS contribution relief",
    "help": "",
    "type": "bool",
    "group": "perusahaan",
    "order": 15,
    "default": false,
-   "source": "keringanan iuran BPJS masa pandemi"
+   "source": "pandemic-era BPJS contribution relief"
   },
   {
    "key": "income.base_salary",
-   "label": "Gaji pokok",
-   "help": "Gaji pokok yang dibayar bulan itu (sudah diprorata bila masuk, keluar, atau naik gaji di tengah bulan).",
+   "label": "Base salary",
+   "help": "Base salary paid that month (already prorated for joining, leaving, or a raise in mid-month).",
    "type": "money",
    "group": "bulanan",
    "order": 1,
@@ -256,8 +256,8 @@
   },
   {
    "key": "income.fixed_allowance",
-   "label": "Tunjangan tetap bulanan",
-   "help": "Tunjangan yang dibayar tetap setiap bulan, mis. tunjangan jabatan, keluarga, telepon, transport.",
+   "label": "Monthly fixed allowance",
+   "help": "Allowances paid at a fixed amount every month, e.g. position, family, phone, transport allowance.",
    "type": "money",
    "group": "bulanan",
    "order": 2,
@@ -266,8 +266,8 @@
   },
   {
    "key": "income.overtime_pay",
-   "label": "Upah lembur",
-   "help": "Upah lembur yang dibayar bulan itu. Menurut peraturan termasuk penghasilan teratur walau besarnya berubah-ubah.",
+   "label": "Overtime pay",
+   "help": "Overtime pay paid that month. Under the regulation it counts as regular income even though the amount varies.",
    "type": "money",
    "group": "bulanan",
    "order": 3,
@@ -275,8 +275,8 @@
   },
   {
    "key": "income.other_regular",
-   "label": "Imbalan rutin lain (uang makan, transport tunai, dsb.)",
-   "help": "Imbalan lain yang dibayar rutin, mis. uang makan atau transport tunai harian.",
+   "label": "Other regular pay (meal allowance, cash transport, etc.)",
+   "help": "Other pay received regularly, e.g. daily meal allowance or cash transport.",
    "type": "money",
    "group": "bulanan",
    "order": 4,
@@ -286,7 +286,7 @@
   {
    "key": "income.thr",
    "label": "THR",
-   "help": "Tunjangan hari raya yang dibayar bulan itu.",
+   "help": "Religious holiday allowance (THR) paid that month.",
    "type": "money",
    "group": "bulanan",
    "order": 5,
@@ -295,7 +295,7 @@
   {
    "key": "income.bonus",
    "label": "Bonus",
-   "help": "Bonus yang dibayar bulan itu.",
+   "help": "Bonus paid that month.",
    "type": "money",
    "group": "bulanan",
    "order": 6,
@@ -303,8 +303,8 @@
   },
   {
    "key": "income.other_irregular",
-   "label": "Insentif, kompensasi, atau rapel sekali-sekali",
-   "help": "Imbalan yang tidak dibayar rutin, mis. insentif penjualan kuartalan, kompensasi, rapel kenaikan gaji.",
+   "label": "Occasional incentive, compensation, or back pay",
+   "help": "Pay that is not received regularly, e.g. quarterly sales incentive, compensation, back pay for a raise.",
    "type": "money",
    "group": "bulanan",
    "order": 7,
@@ -312,17 +312,17 @@
   },
   {
    "key": "income.deductions",
-   "label": "Potongan gaji lain",
-   "help": "Potongan selain pajak dan iuran (pinjaman, denda).",
+   "label": "Other salary deductions",
+   "help": "Deductions other than tax and contributions (loans, fines).",
    "type": "money",
    "group": "bulanan",
    "order": 20,
-   "source": "konvensi input"
+   "source": "input convention"
   },
   {
    "key": "income.jht_employee",
-   "label": "Iuran JHT pegawai (tagihan BPJS)",
-   "help": "Diisi bila iuran mengikuti tagihan BPJS.",
+   "label": "Employee JHT contribution (BPJS bill)",
+   "help": "Fill in when contributions follow the BPJS bill.",
    "type": "money",
    "group": "bulanan",
    "order": 30,
@@ -331,8 +331,8 @@
   },
   {
    "key": "income.jp_employee",
-   "label": "Iuran JP pegawai (tagihan BPJS)",
-   "help": "Diisi bila iuran mengikuti tagihan BPJS.",
+   "label": "Employee JP contribution (BPJS bill)",
+   "help": "Fill in when contributions follow the BPJS bill.",
    "type": "money",
    "group": "bulanan",
    "order": 31,
@@ -341,8 +341,8 @@
   },
   {
    "key": "income.health_employee",
-   "label": "Iuran BPJS Kesehatan pegawai (tagihan)",
-   "help": "Diisi bila iuran mengikuti tagihan BPJS.",
+   "label": "Employee BPJS Kesehatan contribution (bill)",
+   "help": "Fill in when contributions follow the BPJS bill.",
    "type": "money",
    "group": "bulanan",
    "order": 32,
@@ -351,8 +351,8 @@
   },
   {
    "key": "income.jkk_premium",
-   "label": "Premi JKK (tagihan BPJS)",
-   "help": "Diisi bila premi mengikuti tagihan BPJS.",
+   "label": "JKK premium (BPJS bill)",
+   "help": "Fill in when the premium follows the BPJS bill.",
    "type": "money",
    "group": "bulanan",
    "order": 33,
@@ -361,8 +361,8 @@
   },
   {
    "key": "income.jkm_premium",
-   "label": "Premi JKM (tagihan BPJS)",
-   "help": "Diisi bila premi mengikuti tagihan BPJS.",
+   "label": "JKM premium (BPJS bill)",
+   "help": "Fill in when the premium follows the BPJS bill.",
    "type": "money",
    "group": "bulanan",
    "order": 34,
@@ -371,8 +371,8 @@
   },
   {
    "key": "income.health_premium_employer",
-   "label": "Iuran BPJS Kesehatan perusahaan (tagihan)",
-   "help": "Diisi bila iuran mengikuti tagihan BPJS.",
+   "label": "Company BPJS Kesehatan contribution (bill)",
+   "help": "Fill in when contributions follow the BPJS bill.",
    "type": "money",
    "group": "bulanan",
    "order": 35,
@@ -381,8 +381,8 @@
   },
   {
    "key": "benefit.company_vehicle",
-   "label": "Mobil dinas (nilai sebulan)",
-   "help": "Nilai pemakaian mobil dinas sebulan. Kena pajak hanya dalam keadaan tertentu; aturannya yang menentukan.",
+   "label": "Company car (monthly value)",
+   "help": "Monthly value of using a company car. Taxable only in certain situations; the rules decide.",
    "type": "money",
    "group": "bulanan",
    "order": 40,
@@ -392,8 +392,8 @@
   },
   {
    "key": "benefit.housing_individual",
-   "label": "Rumah dinas untuk satu pegawai (nilai sebulan)",
-   "help": "Nilai rumah dinas sebulan.",
+   "label": "Company housing for one employee (monthly value)",
+   "help": "Monthly value of the company housing.",
    "type": "money",
    "group": "bulanan",
    "order": 41,
@@ -403,8 +403,8 @@
   },
   {
    "key": "benefit.gift_other",
-   "label": "Bingkisan bukan hari raya",
-   "help": "Nilai bingkisan yang diterima bulan itu.",
+   "label": "Gift other than for a religious holiday",
+   "help": "Value of the gift received that month.",
    "type": "money",
    "group": "bulanan",
    "order": 42,
@@ -413,8 +413,8 @@
   },
   {
    "key": "benefit.meal_coupon_field_duty",
-   "label": "Kupon makan untuk dinas luar",
-   "help": "Nilai kupon makan untuk pegawai dinas luar.",
+   "label": "Meal coupon for field duty",
+   "help": "Value of meal coupons for employees on field duty.",
    "type": "money",
    "group": "bulanan",
    "order": 43,
@@ -423,8 +423,8 @@
   },
   {
    "key": "benefit.sports_facility",
-   "label": "Fasilitas olahraga",
-   "help": "Nilai fasilitas olahraga yang diterima bulan itu.",
+   "label": "Sports facility",
+   "help": "Value of the sports facility received that month.",
    "type": "money",
    "group": "bulanan",
    "order": 44,
@@ -433,8 +433,8 @@
   },
   {
    "key": "benefit.other_benefit",
-   "label": "Barang atau fasilitas lain (natura)",
-   "help": "Natura lain yang diterima, mis. beasiswa dari perusahaan.",
+   "label": "Other goods or facilities (in-kind, natura)",
+   "help": "Other in-kind benefits received, e.g. a scholarship from the company.",
    "type": "money",
    "group": "bulanan",
    "order": 45,
@@ -442,8 +442,8 @@
   },
   {
    "key": "zakat.zakat",
-   "label": "Zakat lewat perusahaan",
-   "help": "Zakat atau sumbangan keagamaan wajib yang dipotong lewat perusahaan bulan itu.",
+   "label": "Zakat through the company",
+   "help": "Zakat or compulsory religious donation withheld through the company that month.",
    "type": "money",
    "group": "bulanan",
    "order": 50,
@@ -452,8 +452,8 @@
   },
   {
    "key": "hr.thr_holiday",
-   "label": "THR dibayar bulan ini",
-   "help": "Centang pada bulan THR dibayarkan (bukan bulan hari rayanya). Dipakai untuk memeriksa THR minimum dan oleh kebijakan perusahaan yang menghitung THR.",
+   "label": "THR paid this month",
+   "help": "Tick in the month THR is paid (not the month of the holiday). Used to check the minimum THR and by company policies that compute THR.",
    "type": "flag",
    "group": "bulanan",
    "order": 60,
@@ -461,8 +461,8 @@
   },
   {
    "key": "hr.months_of_service",
-   "label": "Masa kerja (bulan)",
-   "help": "Masa kerja terus-menerus sampai bulan itu, dalam bulan. Menentukan THR minimum (1 bulan upah untuk masa kerja 12 bulan atau lebih, proporsional di bawahnya).",
+   "label": "Length of service (months)",
+   "help": "Continuous length of service up to that month, in months. Decides the minimum THR (1 month's wage for 12 months of service or more, proportional below that).",
    "type": "int",
    "group": "bulanan",
    "order": 61,
@@ -472,8 +472,8 @@
   },
   {
    "key": "hr.days_terminated_before_holiday",
-   "label": "Hari sejak berhenti sebelum hari raya",
-   "help": "Diisi hanya bila pegawai berhenti dalam 30 hari sebelum hari raya; ia tetap berhak THR.",
+   "label": "Days since leaving before the holiday",
+   "help": "Fill in only if the employee left within 30 days before the holiday; the employee is still entitled to THR.",
    "type": "int",
    "group": "bulanan",
    "order": 62,

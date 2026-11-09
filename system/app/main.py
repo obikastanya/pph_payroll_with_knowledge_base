@@ -28,29 +28,30 @@ import page_home  # noqa: E402
 import page_manager  # noqa: E402
 import page_results  # noqa: E402
 import page_viewer  # noqa: E402
+import reset_control  # noqa: E402
 import ui  # noqa: E402
 
 ui.setup()
 ai.register(store.load()["inbox"])          # uploaded documents back in the document registry after a restart
 pages = st.navigation({
-    "Sistem": [
-        st.Page(page_home.show, title="Beranda", icon=":material/home:", default=True),
-        st.Page(page_calculator.show, title="Kalkulator PPh 21", icon=":material/calculate:", url_path="kalkulator"),
-        st.Page(page_viewer.show, title="Penampil knowledge base", icon=":material/hub:", url_path="kb"),
-        st.Page(page_manager.show, title="Manajemen knowledge base", icon=":material/edit_document:", url_path="kelola"),
+    "System": [
+        st.Page(page_home.show, title="Home", icon=":material/home:", default=True),
+        st.Page(page_calculator.show, title="PPh 21 calculator", icon=":material/calculate:", url_path="kalkulator"),
+        st.Page(page_viewer.show, title="Knowledge base viewer", icon=":material/hub:", url_path="kb"),
+        st.Page(page_manager.show, title="Knowledge base management", icon=":material/edit_document:", url_path="kelola"),
     ],
-    "Penelitian": [
-        st.Page(page_results.show, title="Hasil penelitian", icon=":material/science:", url_path="hasil"),
+    "Research": [
+        st.Page(page_results.show, title="Research results", icon=":material/science:", url_path="hasil"),
     ],
 })
 st.session_state.g_date = None     # each page sets the date its explanations speak about
 with st.sidebar:
+    reset_control.show()
     s = store.load()
-    st.caption(f"Knowledge base diketahui sampai **{d.tgl(store.known_until())}** · {len(s['approved'])} pembaruan "
-               f"disetujui {'selama demo' if store.DEMO else 'di aplikasi'}")
-    if store.DEMO:
-        page_home.reset_button("side_reset")
-    with st.expander("Kamus istilah", icon=":material/menu_book:"):
+    n_up = len(s["approved"])
+    st.caption(f"Knowledge base known until **{d.tgl(store.known_until())}** · {n_up} update{'' if n_up == 1 else 's'} "
+               f"approved {'during the demo' if store.DEMO else 'in the app'}")
+    with st.expander("Glossary", icon=":material/menu_book:"):
         glossary.dictionary()
 pages.run()
 assistant.button()

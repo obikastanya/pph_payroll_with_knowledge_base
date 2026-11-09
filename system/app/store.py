@@ -37,24 +37,23 @@ BASE_UPDATE = "GOLD-E08" if DEMO else None   # None: the whole gold chain
 # demo: documents waiting in the initial state (id, kind, run file, what the research found)
 DEMO_PENDING = [
     {"id": "E13", "doc": "PER-11-PJ-2025", "kind": "regulasi", "run": "e2-regulasi/results/E13.json",
-     "research": "benar", "why": "Aturan pembulatan yang berlaku surut: hitungan lama berubah bila dihitung ulang."},
+     "research": "benar", "why": "Retroactive rounding rule: old calculations change when recalculated."},
     {"id": "E09", "doc": "PP-36-2025", "kind": "regulasi", "run": "e2-regulasi/results/E09.json",
-     "research": "benar", "why": "Keringanan iuran JKK untuk industri padat karya."},
+     "research": "benar", "why": "JKK contribution relief for labor-intensive industries."},
     {"id": "E10", "doc": "PMK-72-2025", "kind": "regulasi", "run": "e2-regulasi/results/E10.json",
-     "research": "benar", "why": "DTP sektor pariwisata; menyentuh kebijakan perusahaan hotel."},
+     "research": "benar", "why": "Government-borne tax (DTP) for the tourism sector; affects the hotel's company policy."},
     {"id": "E11", "doc": "PMK-105-2025", "kind": "regulasi", "run": "e2-regulasi/results/E11.json",
-     "research": "salah", "why": "Bandingkan kartu 'Penghasilan bruto tetap dan teratur' dan 'Penghasilan tetap bulan "
-                                 "pertama' dengan aturan 2025 yang tampil di bawahnya: AI menghilangkan rumah dan mobil "
-                                 "dinas dari uji batas Rp10 juta, dan menghilangkan penghasilan menurut kontrak untuk "
-                                 "pegawai baru. Minta AI perbaiki dengan catatan itu."},
+     "research": "salah", "why": "Compare the cards 'Fixed and regular gross income' and 'Fixed income in the first month' with the 2025 "
+                                 "rules shown below them: the AI dropped the company house and car from the Rp10 million cap test, "
+                                 "and dropped contract-based income for new employees. Use Ask AI to fix with that note."},
     {"id": "E12", "doc": "BPJSTK-JP-2026", "kind": "regulasi", "run": "e2-regulasi/results/E12.json",
-     "research": "benar", "why": "Perubahan angka tahunan, yang paling sering terjadi."},
+     "research": "benar", "why": "Yearly change of a number, the most common kind of update."},
     {"id": "SP14", "doc": "SP14", "kind": "kebijakan", "run": "e2-sintetis/results/SP14.json",
-     "research": "tidak bisa dinilai", "why": "THR dihitung dari masa kerja: kolom data HR baru muncul di kalkulator."},
+     "research": "tidak bisa dinilai", "why": "Religious holiday allowance (THR) is based on length of service: a new HR data column appears in the calculator."},
     {"id": "PKB-WIKA-2025", "doc": "PKB-WIKA-2025", "kind": "kebijakan", "run": "e2-pkb/results/PKB-WIKA-2025.json",
-     "research": "ragu", "why": "Versi usulan AI tidak sepakat; dikerjakan manual atau dengan bantuan AI."},
+     "research": "ragu", "why": "The AI's proposed versions do not agree; do it by hand or with AI help."},
     {"id": "P05", "doc": "PMK-81-2024", "kind": "regulasi", "run": "e2-pengecoh/results/P05.json",
-     "research": "tidak relevan", "why": "Dokumen administrasi Coretax: tidak mengubah perhitungan."},
+     "research": "tidak relevan", "why": "Coretax administration document: does not change any calculation."},
 ]
 
 
@@ -85,10 +84,11 @@ def save(s):
 
 
 def log(s, text):
-    s["log"].insert(0, {"when": datetime.now().strftime("%d/%m %H:%M"), "what": text})
+    s["log"].insert(0, {"when": datetime.now().strftime("%d %b %H:%M"), "what": text})
 
 
 def reset():
+    """Back to the initial state: the workspace is deleted, so the knowledge base is the base one again."""
     shutil.rmtree(WORKSPACE, ignore_errors=True)
     keep = {"_pages"}
     for k in list(st.session_state.keys()):
@@ -96,10 +96,11 @@ def reset():
             del st.session_state[k]
     _kb_cached.clear()
     _kb_prefix.clear()
+    st.session_state["_reset_notice"] = True      # shown once by reset_control after the page reloads
 
 
 # ---------------------------------------------------------------- knowledge base
-@st.cache_resource(show_spinner="Memuat knowledge base ...")
+@st.cache_resource(show_spinner="Loading knowledge base ...")
 def gold():
     return build_gold.load_graph()
 
@@ -115,7 +116,7 @@ def base_label():
     return tgl(max(u.recorded_on for u in base().updates if u.recorded_on))
 
 
-@st.cache_resource(show_spinner="Menerapkan pembaruan ...")
+@st.cache_resource(show_spinner="Applying updates ...")
 def _kb_cached(signature):
     k = base()
     for a in load()["approved"]:
@@ -224,10 +225,10 @@ def carried_inputs(pid, s=None):
 def approve(pid, title, delta, reviewer, note=""):
     s = load()
     s["approved"].append({"id": pid, "title": title, "delta": delta, "reviewer": reviewer, "note": note,
-                          "inputs": carried_inputs(pid, s), "when": datetime.now().strftime("%d/%m/%Y %H:%M")})
+                          "inputs": carried_inputs(pid, s), "when": datetime.now().strftime("%d %b %Y %H:%M")})
     s["decided"][pid] = "disetujui"
     s["drafts"] = [d for d in s["drafts"] if d["id"] != pid]
-    log(s, f"Disetujui: {title} (oleh {reviewer})")
+    log(s, f"Approved: {title} (by {reviewer})")
     save(s)
 
 
@@ -235,7 +236,7 @@ def reject(pid, title, reason):
     s = load()
     s["decided"][pid] = "ditolak"
     s["drafts"] = [d for d in s["drafts"] if d["id"] != pid]
-    log(s, f"Ditolak: {title}. Alasan: {reason}")
+    log(s, f"Rejected: {title}. Reason: {reason}")
     save(s)
 
 
@@ -244,7 +245,7 @@ def add_draft(pid, title, delta, origin, inputs=None):
     s["drafts"] = [d for d in s["drafts"] if d["id"] != pid]
     s["drafts"].append({"id": pid, "title": title, "delta": delta, "origin": origin, "inputs": inputs or []})
     s["decided"].pop(pid, None)
-    log(s, f"Draf masuk review: {title} ({origin})")
+    log(s, f"Draft sent to review: {title} ({origin})")
     save(s)
 
 
@@ -253,7 +254,7 @@ def set_fixed(pid, delta, note, by, llm=None):
     further repair round)."""
     s = load()
     s["fixed"][pid] = {"delta": delta, "note": note, "by": by, "llm": llm}
-    log(s, f"Usulan diperbaiki ({by}): {pid}")
+    log(s, f"Proposal fixed ({by}): {pid}")
     save(s)
 
 
@@ -264,7 +265,7 @@ def rollback(n):
     s["approved"] = s["approved"][:n]
     for a in removed:
         s["decided"].pop(a["id"], None)
-    log(s, f"Dikembalikan ke versi sebelum: {', '.join(a['title'] for a in removed)}")
+    log(s, f"Rolled back to the version before: {', '.join(a['title'] for a in removed)}")
     save(s)
 
 
@@ -272,14 +273,14 @@ def rollback(n):
 def add_component(name, key):
     s = load()
     s["catalog"] = [c for c in s["catalog"] if c["name"] != name] + [{"name": name, "key": key}]
-    log(s, f"Komponen gaji ditambahkan: {name}")
+    log(s, f"Pay component added: {name}")
     save(s)
 
 
 def save_employee(name, entry):
     s = load()
     s["employees"][name] = entry
-    log(s, f"Pegawai disimpan: {name}")
+    log(s, f"Employee saved: {name}")
     save(s)
 
 
@@ -306,7 +307,7 @@ def add_inbox(item):
     s["inbox"] = [x for x in s["inbox"] if x["id"] != item["id"]] + [item]
     s["decided"].pop(item["id"], None)
     s["fixed"].pop(item["id"], None)
-    log(s, f"Dokumen masuk: {item['title']}")
+    log(s, f"Document received: {item['title']}")
     save(s)
 
 
@@ -318,5 +319,5 @@ def set_run(pid, relpath, cost):
             x["cost_usd"] = round((x.get("cost_usd") or 0) + cost, 4)
     s["fixed"].pop(pid, None)
     s["decided"].pop(pid, None)
-    log(s, f"AI selesai membaca: {pid} (USD {cost:.3f})")
+    log(s, f"AI finished reading: {pid} (USD {cost:.3f})")
     save(s)

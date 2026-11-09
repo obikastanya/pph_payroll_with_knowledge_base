@@ -30,10 +30,10 @@ fmt = d.fmt
 
 def status(r, t):
     if r.valid_from and r.valid_from > t:
-        return "belum berlaku"
+        return "not yet in force"
     if r.valid_until and r.valid_until < t:
-        return "tidak berlaku lagi"
-    return "berlaku"
+        return "no longer in force"
+    return "in force"
 
 
 # ---------------------------------------------------------------- architecture
@@ -43,33 +43,33 @@ def architecture_dot(stats):
     return f"""digraph A {{ rankdir=TB; bgcolor=transparent; nodesep=.35; ranksep=.45; newrank=true;
 node [shape=box style="rounded,filled" fontname="Helvetica" fontsize=10 color="#b4b3ae" fillcolor="#ffffff"];
 edge [color="#8a8984" arrowsize=.7 fontname="Helvetica" fontsize=9 fontcolor="#6b6a66"];
-doc [label="Dokumen baru\\nperaturan · PKB · kebijakan\\nPDF · TXT · JSON" shape=note fillcolor="{DOC_FILL}"];
-subgraph cluster_acq {{ label="1  Akuisisi pengetahuan berbantuan LLM"; fontname="Helvetica-Bold"; fontsize=10;
+doc [label="New documents\\nregulations · PKB · policies\\nPDF · TXT · JSON" shape=note fillcolor="{DOC_FILL}"];
+subgraph cluster_acq {{ label="1  LLM-assisted knowledge acquisition"; fontname="Helvetica-Bold"; fontsize=10;
   color="{REG}"; fontcolor="{REG}"; style="rounded,dashed";
-  rel [label="Relevansi\\n+ pilih bagian dokumen" fillcolor="{REG_FILL}"];
-  cand [label="m versi usulan Δ\\n(LLM, keluaran terstruktur)" fillcolor="{REG_FILL}"];
-  gates [label="Gerbang G1–G5\\nSHACL · kutipan · statis\\nregresi · non-vakuitas"];
-  cons [label="Kesepakatan perilaku\\natau ragu (abstain)"]; }}
-rev [label="Review manusia\\nsetujui · sunting · tolak" fillcolor="{COMPANY_FILL}" color="{COMPANY}" penwidth=1.6];
-subgraph cluster_kb {{ label="2  Knowledge base: knowledge graph RDF, bitemporal, dua lapis"; fontname="Helvetica-Bold";
+  rel [label="Relevance\\n+ pick document parts" fillcolor="{REG_FILL}"];
+  cand [label="m proposed versions\\n(LLM, structured output)" fillcolor="{REG_FILL}"];
+  gates [label="Gates G1–G5\\nSHACL · quote · static\\nregression · non-vacuity"];
+  cons [label="Agreement on behavior\\nor system unsure"]; }}
+rev [label="Human review\\napprove · edit · reject" fillcolor="{COMPANY_FILL}" color="{COMPANY}" penwidth=1.6];
+subgraph cluster_kb {{ label="2  Knowledge base: RDF knowledge graph, bitemporal, two levels"; fontname="Helvetica-Bold";
   fontsize=10; color="{PARAM}"; fontcolor="#7a5b00"; style="rounded";
-  reg [label="Lapis negara\\n{s['reg_rules']} aturan" fillcolor="{REG_FILL}" color="{REG}"];
-  com [label="Lapis perusahaan\\n{s['com_rules']} aturan" fillcolor="{COMPANY_FILL}" color="{COMPANY}"];
-  par [label="{s['params']} angka · {s['tables']} tabel\\n{s['facts']} jenis nilai" shape=cylinder fillcolor="{PARAM_FILL}" color="{PARAM}"];
-  ver [label="{s['updates']} pembaruan = {s['updates']} named graph\\ntanggal berlaku + tanggal dicatat\\nsumber: pasal + kutipan" shape=folder fillcolor="#f7f7f5"];
-  onto [label="Ontologi (ELI · OWL-Time · PROV-O)\\n+ shapes SHACL" shape=component fillcolor="#f7f7f5"]; }}
-subgraph cluster_use {{ label="3  Pemakaian"; fontname="Helvetica-Bold"; fontsize=10; color="#8a8984"; style="rounded,dashed";
-  eng [label="Inference engine\\npilih aturan: kedudukan > khusus > baru\\ntitik tetap · jejak sampai pasal"];
-  calc [label="Kalkulator PPh 21" shape=component penwidth=2];
-  imp [label="Analisis dampak\\n(SPARQL lintas lapis)" shape=component];
-  viewer [label="Penampil KB" shape=component]; }}
+  reg [label="Government level\\n{s['reg_rules']} rules" fillcolor="{REG_FILL}" color="{REG}"];
+  com [label="Company level\\n{s['com_rules']} rules" fillcolor="{COMPANY_FILL}" color="{COMPANY}"];
+  par [label="{s['params']} numbers · {s['tables']} tables\\n{s['facts']} kinds of values" shape=cylinder fillcolor="{PARAM_FILL}" color="{PARAM}"];
+  ver [label="{s['updates']} updates = {s['updates']} named graphs\\neffective date + recorded date\\nsource: article + quote" shape=folder fillcolor="#f7f7f5"];
+  onto [label="Ontology (ELI · OWL-Time · PROV-O)\\n+ SHACL shapes" shape=component fillcolor="#f7f7f5"]; }}
+subgraph cluster_use {{ label="3  Use"; fontname="Helvetica-Bold"; fontsize=10; color="#8a8984"; style="rounded,dashed";
+  eng [label="Inference engine\\nrule choice: rank > specific > newer\\nfixed point · trace down to the article"];
+  calc [label="PPh 21 calculator" shape=component penwidth=2];
+  imp [label="Impact analysis\\n(SPARQL across levels)" shape=component];
+  viewer [label="KB viewer" shape=component]; }}
 {{ rank=same; doc; rel; cand; gates; cons; }}
 {{ rank=same; reg; com; par; ver; onto; }}
 {{ rank=same; eng; calc; imp; viewer; }}
 doc -> rel -> cand -> gates -> cons;
-gates -> cand [label="1× perbaikan" style=dashed constraint=false];
-cons -> rev; rev -> ver [label="Δ disetujui"];
-ver -> imp [label="Δ"]; imp -> rev [style=dashed label="laporan dampak" constraint=false];
+gates -> cand [label="1× fix" style=dashed constraint=false];
+cons -> rev; rev -> ver [label="approved update"];
+ver -> imp [label="update"]; imp -> rev [style=dashed label="impact report" constraint=false];
 reg -> eng; com -> eng; par -> eng; eng -> calc; onto -> viewer [style=dotted];
 reg -> com -> par -> ver -> onto [style=invis]; eng -> calc -> imp -> viewer [style=invis]; }}"""
 
@@ -79,7 +79,7 @@ def dependency_dot(view, focus, t, depth=2, upstream=True, downstream=False, lay
                    only_in_force=True, provenance=False, max_rules=40):
     rules = [r for r in view.rules.values() if r.layer in layers and not d.is_input_convention(r)]
     if only_in_force:
-        rules = [r for r in rules if status(r, t) == "berlaku"]
+        rules = [r for r in rules if status(r, t) == "in force"]
     by_fact, readers = {}, {}
     for r in rules:
         by_fact.setdefault(r.produces, []).append(r)
@@ -116,11 +116,11 @@ def dependency_dot(view, focus, t, depth=2, upstream=True, downstream=False, lay
     for r in chosen.values():
         line, fill = (REG, REG_FILL) if r.layer == "regulation" else (COMPANY, COMPANY_FILL)
         stt = status(r, t)
-        style = "rounded,filled" + ("" if stt == "berlaku" else ",dashed")
+        style = "rounded,filled" + ("" if stt == "in force" else ",dashed")
         lab = f"{r.id}\\n{r.modality} · {r.valid_from:%Y-%m}" + (f"..{r.valid_until:%Y-%m}" if r.valid_until else "")
-        if stt != "berlaku":
+        if stt != "in force":
             lab += f"\\n({stt})"
-        out.append(f'{q(r.id)} [shape=box style="{style}" color="{line}" fillcolor="{fill if stt == "berlaku" else "#f4f4f2"}" '
+        out.append(f'{q(r.id)} [shape=box style="{style}" color="{line}" fillcolor="{fill if stt == "in force" else "#f4f4f2"}" '
                    f'label={q(lab)}];')
         out.append(f'{q(r.id)} -> {q("f:" + r.produces)} [color="#3b3a37" label="produces"];')
         for e in (r.expression, r.condition):
@@ -245,11 +245,11 @@ def chain_dot(kb, base_count):
     for i, u in shown:
         demo_made = i >= base_count
         fill = COMPANY_FILL if demo_made else "#f7f7f5"
-        lab = f"v{i + 1}\\n{d.short_doc(u.document)}\\n{u.recorded_on or ''}\\n{per.get(u.update_id, 0)} rekaman"
+        lab = f"v{i + 1}\\n{d.short_doc(u.document)}\\n{u.recorded_on or ''}\\n{per.get(u.update_id, 0)} records"
         out.append(f'u{i} [label={q(lab)} fillcolor="{fill}" color="{COMPANY if demo_made else "#8a8984"}"];')
         if prev is not None:
             gap = i - prev > 1
-            out.append(f'u{prev} -> u{i}' + (f' [style=dashed label="… {i - prev - 1} pembaruan"]' if gap else "") + ";")
+            out.append(f'u{prev} -> u{i}' + (f' [style=dashed label="… {i - prev - 1} more"]' if gap else "") + ";")
         prev = i
     out.append("}")
     return "\n".join(out)
@@ -284,7 +284,7 @@ def derivation_dot(result, month, fact, depth=3, max_nodes=22, skip_zero=True):
             line, fill = REG, REG_FILL
         v = t["value"]
         val = fmt(f, v)
-        when = "" if m == month else (" (setahun)" if m == 0 else f" ({d.MON[m - 1]})")
+        when = "" if m == month else (" (full year)" if m == 0 else f" ({d.MON[m - 1]})")
         src = t["source"][0] if t.get("source") else {}
         lab = f"{d.fact_label(f)}{when}\\n{val}\\n{t['rule']}" + (f"\\n{d.short_doc(src['document'])} {src['provision']}"[:60]
                                                                 if src.get("document") not in (None, "CASE", "INPUT-CONVENTION") else "")

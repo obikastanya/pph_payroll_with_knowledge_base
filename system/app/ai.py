@@ -28,6 +28,9 @@ ASSISTANT_MODEL = "gpt-5.4-mini"
 llm.PRICES.setdefault(ASSISTANT_MODEL, {"input": 0.75, "output": 4.50, "cache_read": 0.75, "cache_write": 0.75})
 LIMITS = {"akuisisi": 4.0, "perbaikan": 1.5, "asisten": 1.0}          # USD, cumulative per kind of work
 PROVIDER = {"akuisisi": "anthropic", "perbaikan": "anthropic", "asisten": "openai"}
+# Display names of the logic values above (the values themselves are keys of the ledger and of the config).
+WORK_NAME = {"akuisisi": "reading documents", "perbaikan": "fixes", "asisten": "the assistant"}
+PROVIDER_NAME = {"anthropic": "Anthropic", "openai": "OpenAI"}
 
 
 # ---------------------------------------------------------------- budget
@@ -48,17 +51,17 @@ def ready(kind):
     provider = PROVIDER[kind]
     key = config.anthropic_key() if provider == "anthropic" else config.openai_key()
     if not key:
-        return False, f"kunci API {provider} tidak ada di .env"
+        return False, f"no {PROVIDER_NAME[provider]} API key in .env"
     if spent(kind) >= LIMITS[kind]:
-        return False, f"batas aplikasi untuk {kind} (USD {LIMITS[kind]}) sudah terpakai"
+        return False, f"the app limit for {WORK_NAME[kind]} (USD {LIMITS[kind]}) is used up"
     if provider_left(provider) <= 0.05:
-        return False, f"anggaran {provider} penelitian hampir habis"
+        return False, f"the research budget for {PROVIDER_NAME[provider]} is almost used up"
     return True, ""
 
 
 def budget_text(kind):
-    return (f"Terpakai USD {spent(kind):.3f} dari batas aplikasi USD {LIMITS[kind]:g} untuk {kind}; sisa anggaran "
-            f"{PROVIDER[kind]} USD {provider_left(PROVIDER[kind]):.2f}.").replace(".", ",").rstrip(",") + "."
+    return (f"Used USD {spent(kind):.3f} of the app limit of USD {LIMITS[kind]:g} for {WORK_NAME[kind]}; "
+            f"USD {provider_left(PROVIDER[kind]):.2f} left of the {PROVIDER_NAME[PROVIDER[kind]]} budget.")
 
 
 # ---------------------------------------------------------------- documents
@@ -81,7 +84,6 @@ def upload(file, title, issued, kind, force_ocr=False):
     """The uploaded file as a document of the inbox, in the locked-text format of the corpus. Returns the inbox item."""
     import shutil
 
-    import build_texts
     from pph21kbs import pdf_extract, text
     doc_id = "UPLOAD-" + re.sub(r"[^A-Za-z0-9]+", "-", title).strip("-").upper()[:40]
     folder = text.TEXT_DIR / doc_id
@@ -98,8 +100,14 @@ def upload(file, title, issued, kind, force_ocr=False):
         if "=== PDF hlm." not in raw:
             raw = "=== PDF hlm. 1 ===\n" + raw
         (folder / "teks.txt").write_text(raw, encoding="utf-8")
-    company = kind == "kebijakan"
-    (folder / "segmen.json").write_text(json.dumps(build_texts.segment(raw, company), ensure_ascii=False),
+    return _enter(folder, doc_id, raw, kind, title, issued)
+
+
+def _enter(folder, doc_id, raw, kind, title, issued):
+    """Segment the text in the folder and register the document: the common end of an upload and of a sample."""
+    import build_texts
+    from pph21kbs import text
+    (folder / "segmen.json").write_text(json.dumps(build_texts.segment(raw, kind == "kebijakan"), ensure_ascii=False),
                                         encoding="utf-8")
     item = {"id": doc_id, "doc": doc_id, "kind": kind, "title": title, "issued": issued.isoformat(), "run": None,
             "upload": True, "research": None, "why": ""}
@@ -108,6 +116,36 @@ def upload(file, title, issued, kind, force_ocr=False):
     text.registry().pop(doc_id, None)
     register([item])
     return item
+
+
+# Documents of the research corpus offered as examples in the upload form: small ones first, so a first try is cheap.
+SAMPLE_IDS = ("BPJSTK-JP-2026", "PP-36-2025", "SP14", "PMK-72-2025", "PMK-105-2025", "PER-11-PJ-2025")
+
+
+def samples():
+    """[(corpus id, registry row, characters)] of the examples whose locked text is on disk."""
+    from pph21kbs import text
+    out = []
+    for doc_id in SAMPLE_IDS:
+        row, path = text.registry().get(doc_id), text.TEXT_DIR / doc_id / "teks.txt"
+        if row and path.exists():
+            out.append((doc_id, row, len(path.read_text(encoding="utf-8"))))
+    return out
+
+
+def upload_sample(doc_id):
+    """An example of the corpus as a document of the inbox: its locked text (and tables) copied, as if uploaded."""
+    import shutil
+
+    from pph21kbs import text
+    row, src = text.registry()[doc_id], text.TEXT_DIR / doc_id
+    new_id = "UPLOAD-" + doc_id
+    folder = text.TEXT_DIR / new_id
+    shutil.rmtree(folder, ignore_errors=True)
+    shutil.copytree(src, folder, ignore=shutil.ignore_patterns("MANIFEST.sha256", "segmen.json"))
+    kind = "kebijakan" if row["role"].startswith("policy") else "regulasi"
+    return _enter(folder, new_id, (folder / "teks.txt").read_text(encoding="utf-8"), kind, row["title"],
+                  date.fromisoformat(row["issued"]))
 
 
 def event_of(item):
@@ -180,7 +218,7 @@ def repair(pid, delta, note, client=None):
     led = client.ledger if client is not None else ledger("perbaikan")
     client = client or llm.AnthropicClient(led)
     call_id = f"app-{int(time.time())}-{pid}-reviewer"
-    messages = [f"Reviewer's note (Indonesian, from the person who reviews this proposal): {note}"]
+    messages = [f"Reviewer's note (Indonesian or English, from the person who reviews this proposal): {note}"]
     rel = ((store.run(pid) or {}).get("relevance") or {}).get("output")
     _, out, entry = client.complete(system=prompts.SYSTEM_DRAFT, prefix=[doc_text, ctx],
                                     user=prompts.repair_user(ev, docs, _previous_llm(pid, delta), messages),
@@ -214,7 +252,9 @@ CHAT_SCHEMA = {
                                 "start": {"type": ["string", "null"]}, "rule": {"type": ["string", "null"]},
                                 "note": {"type": ["string", "null"]}, "amount": {"type": ["number", "null"]}}}}}
 SYSTEM_CHAT = """You are the assistant of a knowledge-based system for Indonesian PPh 21 (employee income tax). The user
-is a finance or payroll admin. Answer in plain Indonesian, short, everyday words, no research jargon.
+is a finance or payroll admin. The user may write in Indonesian or English; always answer in English, short, plain,
+everyday words, no research jargon. Keep Indonesian tax terms and names of regulations as they are (PPh 21, PTKP, TER,
+PMK, THR, BPJS ...) and explain them in English.
 
 You get CONTEXT: the page the user is on, the knowledge base facts relevant to the question (numbers with their source
 articles, recent updates), the proposal under review if any, and the last calculator result if any. Use only the
@@ -247,5 +287,5 @@ def chat(question, history, context, model=ASSISTANT_MODEL, client=None):
                                     call_id=f"app-{int(time.time())}-chat", max_tokens=1500)
     cost = entry.get("cost_usd") or 0.0
     if not out:
-        return f"Asisten tidak bisa menjawab sekarang ({(entry.get('error') or 'tanpa jawaban')[:120]}).", "none", {}, cost
+        return f"The assistant cannot answer right now ({(entry.get('error') or 'no answer')[:120]}).", "none", {}, cost
     return out.get("answer") or "", out.get("action") or "none", out.get("args") or {}, cost

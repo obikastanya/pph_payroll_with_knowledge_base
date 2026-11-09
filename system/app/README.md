@@ -17,7 +17,10 @@ Lalu buka http://localhost:8501. Demo dengan keadaan awal tetap dan tombol reset
 | KB awal | KB emas lengkap | KB emas sampai 27 Februari 2025 |
 | Dokumen menunggu | dokumen yang diunggah | delapan dokumen penelitian dengan hasil AI tersimpan, ditambah unggahan |
 | Ruang kerja | `system/app/workspace/` | `mini_demo/mockup/workspace/` |
-| Reset | tidak ada (kembali ke versi lama lewat Riwayat versi) | ada |
+| Reset ke keadaan awal | ada (ikon di pojok kiri atas sidebar) | ada (ikon yang sama, dan tombol di Beranda) |
+
+**Reset:** ikon panah putar di pojok kiri atas sidebar (sejajar tombol buka-tutup sidebar) menghapus ruang kerja, sehingga
+sistem kembali ke keadaan awal yang selalu sama. Ada konfirmasi dulu, dan sesudahnya muncul pesan status.
 
 Keduanya tidak di-*commit*. Pembaruan yang disetujui disimpan di `state.json` dan diterapkan di atas KB emas. KB emas
 penelitian tidak pernah diubah.

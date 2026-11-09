@@ -10,80 +10,81 @@ import ui
 FLOW = """digraph F { rankdir=LR; bgcolor=transparent; nodesep=.3; ranksep=.4;
 node [shape=box style="rounded,filled" fontname="Helvetica" fontsize=11 color="#b4b3ae" fillcolor="#ffffff"];
 edge [color="#8a8984" arrowsize=.7 fontname="Helvetica" fontsize=9 fontcolor="#6b6a66"];
-doc [label="Dokumen baru\\nperaturan / kebijakan\\nperusahaan" shape=note fillcolor="#f0efec"];
-ai [label="AI membaca dan\\nmenyusun beberapa\\nversi usulan" fillcolor="#e8f1fc" color="#2a78d6"];
-chk [label="Pemeriksaan otomatis\\n+ cek kesepakatan\\n(atau sistem ragu)"];
-rev [label="Review manusia\\nsetujui / perbaiki / tolak" fillcolor="#fdeee7" color="#eb6834"];
-kb [label="Knowledge base\\naturan + tanggal berlaku\\n+ sumber pasal" shape=cylinder fillcolor="#fff7e0" color="#b98900"];
-eng [label="Mesin hitung\\nhasil + alasan\\nsampai pasal"];
-calc [label="Kalkulator\\nPPh 21 pegawai" penwidth=2];
-imp [label="Dampak ke kebijakan\\nperusahaan" style="rounded,dashed"];
+doc [label="New documents\\nregulation / company\\npolicy" shape=note fillcolor="#f0efec"];
+ai [label="AI reads and\\nwrites several\\nproposed versions" fillcolor="#e8f1fc" color="#2a78d6"];
+chk [label="Automatic checks\\n+ agreement check\\n(or system unsure)"];
+rev [label="Human review\\napprove / fix / reject" fillcolor="#fdeee7" color="#eb6834"];
+kb [label="Knowledge base\\nrules + effective date\\n+ source article" shape=cylinder fillcolor="#fff7e0" color="#b98900"];
+eng [label="Calculation engine\\nresult + reasons\\ndown to the article"];
+calc [label="PPh 21 calculator\\nfor an employee" penwidth=2];
+imp [label="Impact on company\\npolicies" style="rounded,dashed"];
 doc -> ai -> chk -> rev -> kb -> eng -> calc; kb -> imp -> rev [style=dashed];
-asst [label="Asisten AI\\nmembantu review\\ndan mengerjakan" shape=oval fillcolor="#e8f1fc" color="#2a78d6"];
+asst [label="AI assistant\\nhelps with review\\nand drafting" shape=oval fillcolor="#e8f1fc" color="#2a78d6"];
 asst -> rev [style=dotted arrowhead=none]; }"""
 
 MENUS = [
-    ("Kalkulator PPh 21", ":material/calculate:", ["Profil pegawai bawaan yang bisa diubah", "Rincian bulan-bulan sebelumnya bisa diubah",
-                                                  "Hasil sampai bulan yang dipilih, hitung setahun di masa terakhir",
-                                                  "Skenario umum mengisi semua data sekaligus",
-                                                  "Kolom data dibentuk dari aturan yang berlaku"]),
-    ("Penampil knowledge base", ":material/hub:", ["Peta topik dan alur perhitungan", "Angka dari waktu ke waktu",
-                                                  "Riwayat dan perbandingan dua tanggal",
-                                                  "Data yang dibutuhkan aturan", "Pencarian"]),
-    ("Manajemen knowledge base", ":material/edit_document:", ["Dokumen baru dengan hasil kerja AI",
-                                                             "Review: setujui, sunting, minta AI perbaiki, tolak",
-                                                             "Contoh sebelum/sesudah dan dampak kebijakan",
-                                                             "Tambah, ubah, cabut: manual atau minta AI",
-                                                             "Cek KB dan riwayat versi"]),
-    ("Asisten AI", ":material/forum:", ["Jendela pop-up di semua halaman", "Chat tersimpan, bisa dihapus",
-                                        "Pilih model; bawaan yang murah", "Menyiapkan draf, tidak pernah menyetujui"]),
+    ("PPh 21 calculator", ":material/calculate:", ["Built-in employee profile you can edit", "Earlier months can be edited",
+                                                   "Results up to the chosen month, full-year recalculation in the final period",
+                                                   "Common scenarios fill in all data at once",
+                                                   "Data fields are built from the rules in force"]),
+    ("Knowledge base viewer", ":material/hub:", ["Topic map and calculation flow", "Numbers over time",
+                                                 "History and comparison of two dates",
+                                                 "Data the rules need", "Search"]),
+    ("Knowledge base management", ":material/edit_document:", ["New documents with the AI's work",
+                                                               "Review: approve, edit, ask AI to fix, reject",
+                                                               "Before/after examples and policy impact",
+                                                               "Add, change, revoke: by hand or ask AI",
+                                                               "KB check and version history"]),
+    ("AI assistant", ":material/forum:", ["Pop-up window on every page", "Chat is saved and can be deleted",
+                                          "Choose the model; cheap default", "Prepares drafts, never approves"]),
 ]
 
 STEPS = [
-    ("Hitung pegawai pabrik pakaian jadi, Januari 2026 (skenario 'DTP padat karya 2026'): belum ada DTP.",
+    ("Calculate a garment factory employee, January 2026 (scenario 'Labor-intensive DTP 2026'): no DTP yet.",
      lambda s: False),
-    ("Review PMK 105/2025: temukan kesalahan usulan AI, minta AI memperbaiki, lalu setujui.",
+    ("Review PMK 105/2025: spot the mistake in the AI's proposal, ask the AI to fix it, then approve.",
      lambda s: s["decided"].get("E11") == "disetujui"),
-    ("Hitung lagi skenario yang sama: DTP muncul, lengkap dengan pasalnya.", lambda s: False),
-    ("Setujui kebijakan SP14: kolom data HR muncul sendiri di kalkulator (skenario 'THR menurut kebijakan perusahaan').",
+    ("Calculate the same scenario again: DTP now appears, with its article.", lambda s: False),
+    ("Approve policy SP14: the HR data field appears by itself in the calculator (scenario 'THR under company policy').",
      lambda s: s["decided"].get("SP14") == "disetujui"),
-    ("Setujui PER-11/PJ/2025 (berlaku surut) dan bandingkan hitungan 'per tanggal pengetahuan' di kalkulator.",
+    ("Approve PER-11/PJ/2025 (retroactive) and compare the 'as of knowledge date' calculation in the calculator.",
      lambda s: s["decided"].get("E13") == "disetujui"),
-    ("PKB WIKA: sistem ragu. Minta AI mengerjakan ulang atau tulis manual.",
+    ("PKB WIKA: the system is unsure. Ask the AI to redo it or write it by hand.",
      lambda s: s["decided"].get("PKB-WIKA-2025") in ("disetujui", "ditolak")),
-    ("Minta asisten membuat draf (mis. batas upah JP 2027), review, setujui.",
+    ("Ask the assistant to make a draft (e.g. the JP wage cap for 2027), review it, approve it.",
      lambda s: any(a["id"].startswith("ANGKA") for a in s["approved"])),
-    ("Kembalikan ke keadaan awal demo.", lambda s: False),
+    ("Restore the initial demo state.", lambda s: False),
 ]
 
 
 def reset_button(key):
-    with st.popover("Kembalikan ke keadaan awal demo", icon=":material/restart_alt:", width="stretch"):
-        st.markdown("Semua yang dilakukan selama demo dihapus: pembaruan yang disetujui, draf, suntingan, unggahan, dan "
-                    "chat asisten. Knowledge base kembali ke keadaan awal.")
-        if st.button("Ya, kembalikan", type="primary", key=key, icon=":material/restart_alt:"):
+    with st.popover("Restore initial demo state", icon=":material/restart_alt:", width="stretch"):
+        st.markdown("Everything done during the demo is erased: approved updates, drafts, edits, uploads, and "
+                    "assistant chat. The knowledge base returns to its initial state.")
+        if st.button("Yes, restore", type="primary", key=key, icon=":material/restart_alt:"):
             store.reset()
             st.rerun()
 
 
 def show():
     st.session_state.page_ctx = "beranda"
-    st.title("Sistem PPh 21 berbasis knowledge base")
-    g.md(f"Sistem menghitung {g.term('PPh 21')} pegawai tetap dari {g.term('knowledge base')}: aturan, angka, dan tabel "
-         f"pajak yang masing-masing punya {g.term('berlaku', 'tanggal berlaku')} dan {g.term('sumber', 'sumber pasal')}. "
-         "Saat peraturan atau kebijakan perusahaan berubah, AI membaca dokumennya dan menyusun usulan pembaruan; "
-         "pemeriksaan otomatis menyaringnya dan manusia menyetujuinya. Programnya tidak perlu diubah.")
+    st.title("Knowledge-based PPh 21 system")
+    g.md(f"The system calculates {g.term('PPh 21')} for permanent employees from a {g.term('knowledge base')}: tax rules, "
+         f"numbers, and tables that each have an {g.term('berlaku', 'effective date')} and a "
+         f"{g.term('sumber', 'source article')}. "
+         "When a regulation or company policy changes, the AI reads the document and writes a proposed update; "
+         "automatic checks screen it and a person approves it. The program does not need to change.")
     s = store.load()
     c = st.columns(4)
-    c[0].metric("Knowledge base diketahui sampai", d.tgl(store.known_until()), help=g.tip("dicatat"))
-    c[1].metric("Aturan berlaku hari ini", sum(r.kind == "rule" and d.in_force(r, store.TODAY) and not d.is_input_convention(r)
+    c[0].metric("Knowledge base known until", d.tgl(store.known_until()), help=g.tip("dicatat"))
+    c[1].metric("Rules in force today", sum(r.kind == "rule" and d.in_force(r, store.TODAY) and not d.is_input_convention(r)
                                                for r in d.current()), help=g.tip("aturan"))
-    c[2].metric("Disetujui selama demo" if store.DEMO else "Disetujui di aplikasi", len(s["approved"]),
+    c[2].metric("Approved during the demo" if store.DEMO else "Approved in the app", len(s["approved"]),
                 help=g.tip("pembaruan"))
-    c[3].metric("Dokumen menunggu", sum(store.status(p["id"], s) in ("review", "ragu", "menunggu AI")
+    c[3].metric("Documents waiting", sum(store.status(p["id"], s) in ("review", "ragu", "menunggu AI")
                                         for p in store.pending(s)),
-                help="Dokumen baru yang belum disetujui atau ditolak.")
-    st.markdown("#### Alur sistem")
+                help="New documents that have not been approved or rejected yet.")
+    st.markdown("#### How the system works")
     st.graphviz_chart(FLOW, width="stretch")
     st.markdown("#### Menu")
     cols = st.columns(4)
@@ -96,16 +97,17 @@ def show():
     st.markdown("#### Demo")
     left, right = st.columns([2, 1], gap="large")
     with left:
-        g.md(f"Keadaan awal demo: knowledge base penelitian per **{store.base_label()}**, tanpa kebijakan perusahaan, dan "
-             "delapan dokumen menunggu di Manajemen KB: lima peraturan 2025–2026, satu kebijakan perusahaan, satu PKB, "
-             "dan satu dokumen tidak relevan. Hasil kerja AI-nya diambil dari penelitian, jadi demo tidak memakai "
-             "kredit API.")
+        g.md(f"Initial demo state: the research knowledge base as of **{store.base_label()}**, no company policy, and "
+             "eight documents waiting in Knowledge base management: five 2025–2026 regulations, one company policy, one PKB, "
+             "and one document that is not relevant. The AI's work is taken from the research, so the demo does not use "
+             "API credit.")
         for i, (text, done) in enumerate(STEPS, 1):
             mark = ":material/check_circle:" if done(s) else ":material/radio_button_unchecked:"
             st.markdown(f"{mark} **{i}.** {text}")
     with right:
         with st.container(border=True):
-            st.markdown("**Keadaan demo**")
-            st.caption(f"{len(s['approved'])} pembaruan disetujui, {len(s['drafts'])} draf, "
-                       f"{len(store.chat_load()) // 2} pertanyaan ke asisten.")
+            st.markdown("**Demo state**")
+            n_up, n_dr, n_q = len(s["approved"]), len(s["drafts"]), len(store.chat_load()) // 2
+            st.caption(f"{n_up} update{'' if n_up == 1 else 's'} approved, {n_dr} draft{'' if n_dr == 1 else 's'}, "
+                       f"{n_q} question{'' if n_q == 1 else 's'} to the assistant.")
             reset_button("home_reset")

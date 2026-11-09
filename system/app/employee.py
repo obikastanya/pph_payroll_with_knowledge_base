@@ -116,7 +116,7 @@ def to_case(rec, policy_installed=True, employer_pays_tax=False):
             er[k] = v
         elif key == "case.method":
             method = v
-    return {"case_id": rec["name"] or "pegawai", "tax_year": year, "method": method, "employee": emp, "employer": er,
+    return {"case_id": rec["name"] or "employee", "tax_year": year, "method": method, "employee": emp, "employer": er,
             "employment": {"start_month": start, "end_month": end}, "periods": periods}
 
 

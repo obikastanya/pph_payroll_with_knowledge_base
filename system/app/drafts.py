@@ -16,7 +16,7 @@ def _id(prefix):
 
 
 def _src(doc, provision, quote):
-    return [{"document": doc or "CATATAN-ADMIN", "provision": provision or "-", "quote": quote or "(belum diisi)"}]
+    return [{"document": doc or "ADMIN-NOTE", "provision": provision or "-", "quote": quote or "(not filled in)"}]
 
 
 def _num(v, value_type):
@@ -59,7 +59,7 @@ def record_json(r):
 def _delta(prefix, title, issued, add=(), change=()):
     did = _id(prefix)
     return {"delta_id": did, "event_id": None, "document": {"id": did, "title": title, "issued": issued.isoformat()},
-            "relevant": True, "add": list(add), "change": list(change), "remove": [], "note": "dibuat di aplikasi"}
+            "relevant": True, "add": list(add), "change": list(change), "remove": [], "note": "created in the app"}
 
 
 def current_param(name, at=None):
@@ -82,8 +82,8 @@ def new_value(name, value, start, doc, provision, quote):
         ch["valid_until"] = (start - timedelta(days=1)).isoformat()
         ch["source"] = src
         change.append(ch)
-    return _delta("ANGKA", f"{d.fact_label(name)} menjadi {d.money(value) if old.value_type == 'money' else value} "
-                           f"mulai {d.tgl(start)}", store.TODAY, [add], change)
+    return _delta("ANGKA", f"{d.fact_label(name)} becomes {d.money(value) if old.value_type == 'money' else value} "
+                           f"from {d.tgl(start)}", store.TODAY, [add], change)
 
 
 def new_rule(produces, expression, condition, start, end, company, policy, doc, provision, quote):
@@ -98,7 +98,7 @@ def new_rule(produces, expression, condition, start, end, company, policy, doc, 
         e["valid_until"] = end.isoformat()
     if company:
         e["policy"] = policy
-    return _delta("ATURAN", f"Aturan baru: {d.fact_label(produces)}", store.TODAY, [e])
+    return _delta("ATURAN", f"New rule: {d.fact_label(produces)}", store.TODAY, [e])
 
 
 def change_rule(rule, expression, start, doc, provision, quote):
@@ -110,14 +110,14 @@ def change_rule(rule, expression, start, doc, provision, quote):
     new.update({"id": f"{rule.id}.V{start:%Y%m}", "expression": expression, "valid_from": start.isoformat(),
                 "source": _src(doc, provision, quote)})
     new.pop("valid_until", None)
-    return _delta("UBAH", f"Ubah: {d.fact_label(rule.produces)} mulai {d.tgl(start)}", store.TODAY, [new], [old])
+    return _delta("UBAH", f"Change: {d.fact_label(rule.produces)} from {d.tgl(start)}", store.TODAY, [new], [old])
 
 
 def revoke(rule, end, doc, provision, quote=""):
     e = record_json(rule)
     e["valid_until"] = end.isoformat()
-    e["source"] = _src(doc, provision, quote or "dicabut")
-    return _delta("CABUT", f"Cabut: {d.fact_label(rule.produces)} sesudah {d.tgl(end)}", store.TODAY, [], [e])
+    e["source"] = _src(doc, provision, quote or "revoked")
+    return _delta("CABUT", f"Revoke: {d.fact_label(rule.produces)} after {d.tgl(end)}", store.TODAY, [], [e])
 
 
 def find_rule(text):
@@ -141,19 +141,19 @@ def _policy(pid, title, start, rules):
                   "valid_from": start.isoformat(), "recorded_on": store.TODAY.isoformat()})
         r.setdefault("source", _src(pid, "-", title))
     return {"delta_id": did, "event_id": None, "document": {"id": pid, "title": title, "issued": store.TODAY.isoformat()},
-            "relevant": True, "add": rules, "change": [], "remove": [], "note": "kebijakan dari contoh"}
+            "relevant": True, "add": rules, "change": [], "remove": [], "note": "policy from example"}
 
 
 def meal_policy(amount, pid="PRS-DEMO", start=None):
     start = start or date(store.TODAY.year + 1, 1, 1)
-    return _policy(pid, f"Kebijakan {pid}: uang makan Rp{amount:,} per hari hadir".replace(",", "."), start, [
+    return _policy(pid, f"Policy {pid}: meal allowance Rp{amount:,} per day present", start, [
         {"id": f"PRS.{pid}.MEAL", "produces": "other_regular_income",
          "expression": f"{amount} * hr('days_present') + income('other_regular')"}])
 
 
 def thr_policy(times, pid="PRS-DEMO", start=None):
     start = start or date(store.TODAY.year + 1, 1, 1)
-    return _policy(pid, f"Kebijakan {pid}: THR {times:g} × upah pada bulan hari raya", start, [
+    return _policy(pid, f"Policy {pid}: THR {times:g} × wage in the holiday month", start, [
         {"id": f"PRS.{pid}.THR", "produces": "thr",
          "expression": f"round(dec('{times}') * (base_salary + fixed_allowance), 1, 'down') if hr('thr_holiday') == 1 "
                        f"else income('thr')"}])
@@ -161,6 +161,6 @@ def thr_policy(times, pid="PRS-DEMO", start=None):
 
 def bonus_policy(percent, month, pid="PRS-DEMO", start=None):
     start = start or date(store.TODAY.year + 1, 1, 1)
-    return _policy(pid, f"Kebijakan {pid}: bonus {percent:g}% gaji pokok setiap bulan {d.MONTHS[month - 1]}", start, [
+    return _policy(pid, f"Policy {pid}: bonus of {percent:g}% of base salary every {d.MONTHS[month - 1]}", start, [
         {"id": f"PRS.{pid}.BONUS", "produces": "bonus",
          "expression": f"round(dec('{percent / 100}') * base_salary, 1, 'down') if month == {month} else income('bonus')"}])

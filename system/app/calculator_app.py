@@ -21,10 +21,10 @@ import build_gold  # noqa: E402
 from calculate import COLUMNS, build_case, knowledge_base  # noqa: E402
 from pph21kbs.engine import evaluate_case  # noqa: E402
 
-st.set_page_config(page_title="Kalkulator PPh 21 (KB penelitian)", layout="wide")
-st.title("Kalkulator PPh 21")
-st.caption("Knowledge base penelitian (emas, dataset/12_emas). Hasil mengikuti peraturan yang diketahui pada tanggal "
-           "pengetahuan yang dipilih.")
+st.set_page_config(page_title="PPh 21 calculator (research KB)", layout="wide")
+st.title("PPh 21 calculator")
+st.caption("Research knowledge base (gold, dataset/12_emas). Results follow the regulations known on the chosen "
+           "knowledge date.")
 
 
 @st.cache_resource
@@ -38,23 +38,23 @@ def policies():
 
 
 with st.sidebar:
-    year = st.number_input("Tahun pajak", 2013, 2027, 2025)
-    salary = st.number_input("Gaji pokok per bulan", 0, 10**10, 12_000_000, step=500_000)
-    allowance = st.number_input("Tunjangan tetap per bulan", 0, 10**10, 0, step=100_000)
+    year = st.number_input("Tax year", 2013, 2027, 2025)
+    salary = st.number_input("Base salary per month", 0, 10**10, 12_000_000, step=500_000)
+    allowance = st.number_input("Fixed allowance per month", 0, 10**10, 0, step=100_000)
     ptkp = st.selectbox("Status PTKP", ["TK/0", "TK/1", "TK/2", "TK/3", "K/0", "K/1", "K/2", "K/3"])
-    sex = st.selectbox("Jenis kelamin", ["M", "F"])
-    method = st.selectbox("Metode", ["gross", "gross_up", "employer_borne"])
-    klu = st.text_input("KLU pemberi kerja", "") or None
-    jkk = st.selectbox("Kelompok risiko JKK", ["very_low", "low", "medium", "high", "very_high"])
+    sex = st.selectbox("Sex", ["M", "F"])
+    method = st.selectbox("Method", ["gross", "gross_up", "employer_borne"])
+    klu = st.text_input("Employer KLU", "") or None
+    jkk = st.selectbox("JKK risk group", ["very_low", "low", "medium", "high", "very_high"])
     thr = st.number_input("THR", 0, 10**10, 0, step=500_000)
-    thr_month = st.number_input("Bulan THR", 1, 12, 4)
+    thr_month = st.number_input("THR month", 1, 12, 4)
     bonus = st.number_input("Bonus", 0, 10**10, 0, step=500_000)
-    bonus_month = st.number_input("Bulan bonus", 1, 12, 12)
-    vehicle = st.number_input("Natura kendaraan per bulan", 0, 10**9, 0, step=100_000)
-    start, end = st.slider("Bulan bekerja", 1, 12, (1, 12))
-    no_npwp = st.checkbox("Tanpa NPWP")
-    policy = st.selectbox("Kebijakan perusahaan", policies()) or None
-    omega = st.date_input("Tanggal pengetahuan", date.today())
+    bonus_month = st.number_input("Bonus month", 1, 12, 12)
+    vehicle = st.number_input("Vehicle in-kind benefit (natura) per month", 0, 10**9, 0, step=100_000)
+    start, end = st.slider("Months worked", 1, 12, (1, 12))
+    no_npwp = st.checkbox("No NPWP")
+    policy = st.selectbox("Company policy", policies()) or None
+    omega = st.date_input("Knowledge date", date.today())
 
 args = Namespace(year=int(year), salary=int(salary), allowance=int(allowance), ptkp=ptkp, sex=sex, method=method,
                  klu=klu, jkk_risk=jkk, thr=int(thr), thr_month=int(thr_month), bonus=int(bonus),
@@ -63,20 +63,20 @@ args = Namespace(year=int(year), salary=int(salary), allowance=int(allowance), p
 case = build_case(args)
 result = evaluate_case(kb_for(policy), case, omega, trace=True)
 
-rows = [{"bulan": m, **{c: result.periods[m].get(c) for c in COLUMNS}} for m in sorted(result.periods)]
-st.subheader("Per bulan")
+rows = [{"month": m, **{c: result.periods[m].get(c) for c in COLUMNS}} for m in sorted(result.periods)]
+st.subheader("Per month")
 st.dataframe(rows, width="stretch", hide_index=True)
-st.subheader("Setahun")
+st.subheader("Whole year")
 st.json({k: result.year[k] for k in ("annual_gross", "job_expense", "ptkp_amount", "taxable_income", "annual_pph21",
                                        "refund_to_employee") if k in result.year})
 for c in result.conflicts:
-    st.warning(f"Konflik: {c}")
+    st.warning(f"Conflict: {c}")
 for e in result.errors:
     st.error(e)
 
-st.subheader("Jejak")
-month = st.selectbox("Bulan (0 = setahun)", [0] + sorted(result.periods), index=1 if result.periods else 0)
-fact = st.text_input("Fakta", "pph21_due")
+st.subheader("Trace")
+month = st.selectbox("Month (0 = whole year)", [0] + sorted(result.periods), index=1 if result.periods else 0)
+fact = st.text_input("Fact", "pph21_due")
 
 
 def lines(m, f, depth=0, seen=None):
@@ -93,4 +93,4 @@ def lines(m, f, depth=0, seen=None):
     return out
 
 
-st.code("\n".join(lines(int(month), fact)) or "tidak ada jejak untuk fakta ini", language=None)
+st.code("\n".join(lines(int(month), fact)) or "no trace for this fact", language=None)

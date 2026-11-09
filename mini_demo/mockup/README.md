@@ -21,7 +21,9 @@ Lalu buka http://localhost:8503.
   - PKB WIKA: sistem ragu;
   - PMK 81/2024: tidak relevan.
 - **Penyimpanan:** semua yang dilakukan selama demo disimpan di `mini_demo/mockup/workspace/` (tidak di-commit).
-- **Reset:** tombol **Kembalikan ke keadaan awal demo** (Beranda dan sidebar) menghapus folder itu. Biaya API yang
+- **Reset:** ikon panah putar di pojok kiri atas sidebar (sejajar tombol buka-tutup sidebar) dan tombol di Beranda
+  menghapus folder itu. Keadaan awalnya selalu sama dan tidak perlu disimpan dulu. Sesudah reset muncul pesan
+  status. Biaya API yang
   sudah terpakai tidak kembali.
 
 ## Yang memakai kredit API di demo

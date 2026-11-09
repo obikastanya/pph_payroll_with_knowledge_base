@@ -90,7 +90,7 @@ def _save(name):
     s.rec["name"] = name
     r, _ = d.compute(case_of(s.rec, s.k_omega_v), s.k_omega_v)
     found = inputs.discover(s.rec["year"], s.rec.get("policy"), s.k_omega_v)
-    store.save_employee(name, {"record": s.rec, "saved": datetime.now().strftime("%d/%m/%Y %H:%M"),
+    store.save_employee(name, {"record": s.rec, "saved": datetime.now().strftime("%Y-%m-%d %H:%M"),
                               "approved": len(store.load()["approved"]),
                               "last": {str(m): r.periods[m].get("pph21_due") for m in r.periods} if r else {},
                               "keys": sorted(found)})
@@ -104,33 +104,33 @@ def top_bar():
     rec = s.rec
     saved = store.load()["employees"]
     c = st.columns([1.3, 1.3, 1, 1])
-    who = rec["name"] or "Pegawai baru"
+    who = rec["name"] or "New employee"
     origin = s.rec_origin
     c[0].markdown(f"**{who}**{' ●' if _dirty() else ''}  \n<span class='muted'>"
-                  + ("dari skenario: " + origin[1] if origin[0] == "scenario" else "pegawai tersimpan") + "</span>",
-                  unsafe_allow_html=True, help="● = ada perubahan yang belum disimpan.")
-    c[1].selectbox("Isi dengan skenario umum", list(emp.scenarios()), index=None, key="k_scn_pick",
-                   placeholder="Pilih skenario…", on_change=_on_scenario,
-                   help="Mengisi form ini dengan contoh lengkap; setelah itu semua bisa diubah.")
-    c[2].selectbox("Buka pegawai tersimpan", list(saved), index=None, key="k_open_pick", placeholder="Pilih…",
+                  + ("from scenario: " + origin[1] if origin[0] == "scenario" else "saved employee") + "</span>",
+                  unsafe_allow_html=True, help="● = there are unsaved changes.")
+    c[1].selectbox("Fill with a common scenario", list(emp.scenarios()), index=None, key="k_scn_pick",
+                   placeholder="Choose a scenario…", on_change=_on_scenario,
+                   help="Fills this form with a complete example; after that everything can be changed.")
+    c[2].selectbox("Open saved employee", list(saved), index=None, key="k_open_pick", placeholder="Choose…",
                    on_change=_on_open, disabled=not saved)
     with c[3]:
         st.write("")
-        with st.popover("Simpan", icon=":material/save:", width="stretch"):
-            name = st.text_input("Nama pegawai", rec["name"], key=f"k_save_name_{s.rec_ver}")
-            if st.button("Simpan", type="primary", key="k_save_btn") and name.strip():
+        with st.popover("Save", icon=":material/save:", width="stretch"):
+            name = st.text_input("Employee name", rec["name"], key=f"k_save_name_{s.rec_ver}")
+            if st.button("Save", type="primary", key="k_save_btn") and name.strip():
                 _save(name.strip())
                 st.rerun()
     if s.get("k_scn_pending"):
         with st.container(border=True):
-            st.warning(f"Ada perubahan yang belum disimpan. Isi form dengan skenario **{s.k_scn_pending}**?",
+            st.warning(f"There are unsaved changes. Fill the form with the scenario **{s.k_scn_pending}**?",
                        icon=":material/warning:")
             b1, b2, _ = st.columns([1, 1, 3])
-            if b1.button("Ya, ganti", type="primary"):
+            if b1.button("Yes, replace", type="primary"):
                 _apply_scenario(s.k_scn_pending)
                 s.k_scn_pending = None
                 st.rerun()
-            if b2.button("Batal"):
+            if b2.button("Cancel"):
                 s.k_scn_pending = None
                 st.rerun()
     sc = emp.scenarios().get(origin[1]) if origin[0] == "scenario" else None
@@ -144,26 +144,26 @@ def period_bar():
     v = s.rec_ver
     c = st.columns(5)
     ys = inputs.years()
-    rec["year"] = c[0].selectbox("Tahun pajak", ys, index=ys.index(rec["year"]) if rec["year"] in ys else len(ys) - 2,
+    rec["year"] = c[0].selectbox("Tax year", ys, index=ys.index(rec["year"]) if rec["year"] in ys else len(ys) - 2,
                                  key=f"k_year_{v}")
-    rec["start"] = c[1].selectbox("Mulai bekerja", range(1, 13), index=rec["start"] - 1, key=f"k_start_{v}",
-                                  format_func=lambda m: d.MONTHS[m - 1], help="Bulan pertama digaji tahun ini.")
+    rec["start"] = c[1].selectbox("Starts work", range(1, 13), index=rec["start"] - 1, key=f"k_start_{v}",
+                                  format_func=lambda m: d.MONTHS[m - 1], help="First month paid this year.")
     ends = list(range(rec["start"], 13))
-    rec["end"] = c[2].selectbox("Bekerja sampai", ends, index=ends.index(rec["end"]) if rec["end"] in ends else len(ends) - 1,
-                                key=f"k_end_{v}", format_func=lambda m: "Desember (masih bekerja)" if m == 12
-                                else d.MONTHS[m - 1] + " (keluar)",
-                                help="Bulan keluar menjadi bulan penutup: pajak setahun dihitung ulang di bulan itu.")
+    rec["end"] = c[2].selectbox("Works until", ends, index=ends.index(rec["end"]) if rec["end"] in ends else len(ends) - 1,
+                                key=f"k_end_{v}", format_func=lambda m: "December (still employed)" if m == 12
+                                else d.MONTHS[m - 1] + " (leaves)",
+                                help="The month of leaving becomes the closing month: the annual tax is recalculated in that month.")
     months = list(range(rec["start"], rec["end"] + 1))
-    rec["month"] = c[3].selectbox("Hitung sampai bulan", months,
+    rec["month"] = c[3].selectbox("Calculate up to month", months,
                                   index=months.index(rec["month"]) if rec["month"] in months else len(months) - 1,
                                   key=f"k_month_{v}",
-                                  format_func=lambda m: d.MONTHS[m - 1] + (" · penutup" if m == rec["end"] else ""),
-                                  help="Hasil ditampilkan dari bulan pertama sampai bulan ini. Hitung setahun hanya "
-                                       "muncul di bulan penutup (Desember atau bulan keluar).")
-    s.k_omega_v = c[4].date_input("Aturan per tanggal", store.TODAY, key="k_omega",
-                                  help="Hitung memakai aturan yang sudah dikenal sistem pada tanggal ini. Berguna "
-                                       "untuk melihat hitungan lama sebelum ada aturan yang berlaku surut. "
-                                       f"Knowledge base dikenal sampai {d.tgl(store.known_until())}.")
+                                  format_func=lambda m: d.MONTHS[m - 1] + (" · closing" if m == rec["end"] else ""),
+                                  help="Results are shown from the first month to this month. The annual recalculation only "
+                                       "appears in the closing month (December or the month of leaving).")
+    s.k_omega_v = c[4].date_input("Rules as of date", store.TODAY, key="k_omega",
+                                  help="Calculates with the rules the system already knew on this date. Useful for "
+                                       "seeing an old calculation from before a retroactive rule existed. "
+                                       f"The knowledge base is known up to {d.tgl(store.known_until())}.")
 
 
 # ---------------------------------------------------------------- profile and company (from the knowledge base)
@@ -176,7 +176,7 @@ def _field(key, rec, year, v):
             if rec["fields"].get(k2) != val:
                 return
     if df.get("origin", "keadaan awal") != "keadaan awal":
-        lab += f" · baru ({df['origin']})"
+        lab += f" · new ({df['origin']})"
     if not inputs.has_def(key):
         lab += " ⚠"
     cur = rec["fields"].get(key, inputs.default(key))
@@ -194,7 +194,7 @@ def _field(key, rec, year, v):
         val = st.text_input(lab, cur or "", key=wkey, help=hp)
     else:
         val = st.number_input(lab, 0, 10**11, int(cur) if cur not in (None, "") else None, key=wkey, help=hp,
-                              placeholder="kosong", step=1 if tp == "int" else 100_000)
+                              placeholder="empty", step=1 if tp == "int" else 100_000)
     rec["fields"][key] = val
 
 
@@ -202,32 +202,32 @@ def profile():
     s = st.session_state
     rec, v = s.rec, s.rec_ver
     year, omega = rec["year"], s.k_omega_v
-    with st.expander("Pegawai dan perusahaan", expanded=True):
+    with st.expander("Employee and company", expanded=True):
         left, right = st.columns(2, gap="large")
         with left:
-            st.markdown("**Pegawai**")
-            rec["name"] = st.text_input("Nama", rec["name"], key=f"k_name_{v}")
+            st.markdown("**Employee**")
+            rec["name"] = st.text_input("Name", rec["name"], key=f"k_name_{v}")
             keys = inputs.profile_fields("pegawai", year, rec.get("policy"), omega)
             core = [k for k in keys if (inputs.definition(k) or {}).get("core")]
             more = [k for k in keys if k not in core]
             for k in core:
                 _field(k, rec, year, v)
-            with st.expander(f"Data pegawai lain yang dibaca aturan tahun ini ({len(more)})"):
-                st.caption("Daftar ini dibentuk dari knowledge base: setiap data dibaca paling tidak oleh satu aturan "
-                           f"yang berlaku tahun {year}.")
+            with st.expander(f"Other employee data read by this year's rules ({len(more)})"):
+                st.caption("This list is built from the knowledge base: each data item is read by at least one rule "
+                           f"in force in {year}.")
                 for k in more:
                     _field(k, rec, year, v)
         with right:
-            st.markdown("**Perusahaan**")
+            st.markdown("**Company**")
             pols = store.installed_policies()
             opts = [""] + list(pols)
             cur = rec.get("policy") if rec.get("policy") in pols else ""
-            pick = st.selectbox("Kebijakan perusahaan", opts, index=opts.index(cur), key=f"k_pol_{v}",
-                                format_func=lambda p: "Tidak ada" if not p else f"{p} · {pols[p]}",
-                                help=g.tip("kebijakan perusahaan") + " Hanya kebijakan yang sudah disetujui di Manajemen KB.")
+            pick = st.selectbox("Company policy", opts, index=opts.index(cur), key=f"k_pol_{v}",
+                                format_func=lambda p: "None" if not p else f"{p} · {pols[p]}",
+                                help=g.tip("kebijakan perusahaan") + " Only policies already approved in Knowledge base management.")
             if rec.get("policy") and rec["policy"] not in pols:
-                st.info(f"Form ini memakai kebijakan **{rec['policy']}**, yang belum ada di knowledge base. Setujui dulu "
-                        "di Manajemen KB; kolom datanya akan muncul sendiri.", icon=":material/info:")
+                st.info(f"This form uses the policy **{rec['policy']}**, which is not in the knowledge base yet. Approve it "
+                        "first in Knowledge base management; its data columns will appear automatically.", icon=":material/info:")
             else:
                 rec["policy"] = pick or None
             keys = inputs.profile_fields("perusahaan", year, rec.get("policy"), omega)
@@ -240,15 +240,15 @@ def profile():
                 lists = _lookup_tables("employer('klu')", year, omega)
                 hit = [(n, rid) for n, rid in lists if klu in inputs.table_keys(n, year)]
                 if not lists:
-                    st.caption(f"Tidak ada aturan tahun {year} yang memakai KLU.")
+                    st.caption(f"No rule in {year} uses KLU.")
                 else:
                     def names(xs):
                         tabs = {n: d.table_at(n, date(year, 12, 31)) or d.table_at(n, date(year, 1, 1)) for n, _ in xs}
-                        return ", ".join(f"'{(tabs[n].label_id if tabs[n] and tabs[n].label_id else n)}' ({rid})"
+                        return ", ".join(f"'{(d.label_of(tabs[n]) or n) if tabs[n] else n}' ({rid})"
                                          for n, rid in xs)
-                    st.caption(f"KLU {klu} " + (f"ada di daftar {names(hit)} tahun {year}." if hit else
-                                                f"tidak ada di daftar yang dipakai aturan tahun {year}: {names(lists)}."))
-            with st.expander(f"Data perusahaan lain yang dibaca aturan ({len(more)})"):
+                    st.caption(f"KLU {klu} " + (f"is in the list {names(hit)} in {year}." if hit else
+                                                f"is not in the lists used by the rules in {year}: {names(lists)}."))
+            with st.expander(f"Other company data read by the rules ({len(more)})"):
                 for k in more:
                     _field(k, rec, year, v)
 
@@ -332,16 +332,16 @@ def grid(prev_result):
     cols, found, autos = _columns(rec, omega, prev_result)
     with st.container(border=True):
         h1, h2, h3 = st.columns([3, 1, 1])
-        h1.markdown(f"**Rincian per bulan** · {d.MONTHS[shown[0] - 1]}–{d.MONTHS[shown[-1] - 1]} {rec['year']}")
-        h1.caption("Klik dua kali sel untuk mengubah angka, lalu Enter. Angka dicatat di bulan dibayarnya. Kolom berasal "
-                   "dari komponen gaji perusahaan dan data yang dibaca aturan tahun ini.")
-        with h2.popover("Komponen", icon=":material/add:", width="stretch"):
+        h1.markdown(f"**Monthly breakdown** · {d.MONTHS[shown[0] - 1]}–{d.MONTHS[shown[-1] - 1]} {rec['year']}")
+        h1.caption("Double-click a cell to change the number, then press Enter. Numbers are recorded in the month they are "
+                   "paid. Columns come from the company's pay components and the data read by this year's rules.")
+        with h2.popover("Component", icon=":material/add:", width="stretch"):
             add_component(rec, shown)
-        with h3.popover("Isi cepat", icon=":material/auto_fix_high:", width="stretch"):
+        with h3.popover("Quick fill", icon=":material/auto_fix_high:", width="stretch"):
             quick_fill(rec, cols, shown)
-        table, cfg = [], {"Bulan": st.column_config.TextColumn("Bulan", disabled=True)}
+        table, cfg = [], {"Month": st.column_config.TextColumn("Month", disabled=True)}
         for m in shown:
-            row = {"Bulan": d.MONTHS[m - 1]}
+            row = {"Month": d.MONTHS[m - 1]}
             for col, lab, key, state in cols:
                 tp = inputs.kind(key) if key else "money"
                 if state == "computed":
@@ -349,21 +349,21 @@ def grid(prev_result):
                 else:
                     val = emp.cell(rec, m, col)
                     row[col] = bool(val) if tp == "flag" else (val if tp == "choice" else (val or 0))
-            row["PPh sudah dipotong"] = rec["withheld"].get(str(m)) if m < rec["month"] else None
+            row["PPh already withheld"] = rec["withheld"].get(str(m)) if m < rec["month"] else None
             table.append(row)
         for col, lab, key, state in cols:
             tp = inputs.kind(key) if key else "money"
-            hp = inputs.help_text(key) if key else "Komponen ini belum dipetakan ke data knowledge base."
+            hp = inputs.help_text(key) if key else "This component is not mapped to knowledge base data yet."
             if state == "computed":
                 by = autos[col]["by"]
-                who = ("kebijakan perusahaan " + str(rec.get("policy"))) if "company" in by.values() else "aturan"
+                who = ("company policy " + str(rec.get("policy"))) if "company" in by.values() else "the rules"
                 title = f"{lab} ⚙"
-                hp = (f"Dihitung otomatis oleh {who} ({', '.join(list(by)[:3])}), tidak bisa diketik. Untuk mengubahnya, "
-                      "ubah data yang dibaca aturan itu (mis. gaji, risiko pekerjaan, atau data HR).")
+                hp = (f"Computed automatically by {who} ({', '.join(list(by)[:3])}), cannot be typed. To change it, "
+                      "change the data that rule reads (e.g. salary, job risk, or HR data).")
             elif state == "unused":
-                title = f"{lab} (tidak dibaca aturan)"
+                title = f"{lab} (not read by rules)"
             elif state == "retired":
-                title = f"{lab} (tidak dipakai lagi)"
+                title = f"{lab} (no longer used)"
             elif state == "nodef":
                 title = f"{lab} ⚠"
             else:
@@ -377,10 +377,10 @@ def grid(prev_result):
             else:
                 cfg[col] = st.column_config.NumberColumn(title, help=hp, disabled=dis, min_value=0, format="localized",
                                                          step=1)
-        cfg["PPh sudah dipotong"] = st.column_config.NumberColumn(
-            "PPh sudah dipotong ✎", format="localized", min_value=0,
-            help="Isi hanya bila PPh yang benar-benar dipotong bulan itu berbeda dari hitungan sistem (mis. dulu "
-                 "dihitung sistem lama). Dipakai di bulan penutup.")
+        cfg["PPh already withheld"] = st.column_config.NumberColumn(
+            "PPh already withheld ✎", format="localized", min_value=0,
+            help="Fill in only if the PPh actually withheld that month differs from the system's calculation (e.g. it "
+                 "was calculated by an old system). Used in the closing month.")
         sig = "|".join(c[0] for c in cols)
         auto_sig = hash(tuple(sorted((c, tuple(sorted(a["vals"].items()))) for c, a in autos.items())))
         gkey = f"k_grid_{v}_{rec['year']}_{rec['start']}_{rec['month']}_{hash(sig)}_{auto_sig}"
@@ -392,7 +392,7 @@ def grid(prev_result):
         locked = [c[0] for c in cols if c[3] == "computed"]
         idle = [c[0] for c in cols if c[3] in ("unused", "retired")]
         styled = (frame.style
-                  .set_properties(subset=["Bulan"], **{"background-color": "#f7f7f5", "font-weight": "600"})
+                  .set_properties(subset=["Month"], **{"background-color": "#f7f7f5", "font-weight": "600"})
                   .set_properties(subset=locked, **{"background-color": "#ecebe7", "color": "#6b6a66"})
                   .set_properties(subset=idle, **{"background-color": "#fff4d6", "color": "#8a6100"}))
         edited = st.data_editor(styled, key=gkey, hide_index=True, width="stretch", column_config=cfg)
@@ -409,13 +409,13 @@ def grid(prev_result):
                     rowrec[col] = val if isinstance(val, str) and val else None
                 else:
                     rowrec[col] = int(val) if pd.notna(val) and val != "" else 0
-            w = r["PPh sudah dipotong"]
+            w = r["PPh already withheld"]
             if m < rec["month"] and pd.notna(w) and w != "":
                 rec["withheld"][str(m)] = int(w)
             else:
                 rec["withheld"].pop(str(m), None)
         if any(c[3] == "computed" for c in cols):
-            st.caption("⚙ = dihitung otomatis oleh aturan dari data lain; tampil untuk dilihat, tidak bisa diketik.")
+            st.caption("⚙ = computed automatically by the rules from other data; shown for reference, cannot be typed.")
     return cols, found, autos
 
 
@@ -424,27 +424,27 @@ def add_component(rec, shown):
     year = rec["year"]
     cat = emp.catalog()
     existing = [n for n in cat if n not in rec["components"]]
-    mode = st.radio("Komponen", ["Baru", "Dari daftar perusahaan"] if existing else ["Baru"], horizontal=True,
+    mode = st.radio("Component", ["New", "From company list"] if existing else ["New"], horizontal=True,
                     key="k_add_mode")
-    if mode == "Baru":
-        name = st.text_input("Nama komponen", key="k_add_name", placeholder="mis. Tunjangan komunikasi")
+    if mode == "New":
+        name = st.text_input("Component name", key="k_add_name", placeholder="e.g. Communication allowance")
         kinds = inputs.component_kinds(year, rec.get("policy"), s.k_omega_v)
-        key = st.selectbox("Apa ini?", kinds, key="k_add_kind", format_func=inputs.label,
-                           help="Pilih yang paling sesuai dengan sifat komponen ini. Daftarnya diambil dari data yang "
-                                "dibaca aturan tahun ini; cara pajaknya diputuskan aturan, bukan oleh pilihan ini.")
+        key = st.selectbox("What is this?", kinds, key="k_add_kind", format_func=inputs.label,
+                           help="Choose what best fits the nature of this component. The list comes from the data read "
+                                "by this year's rules; how it is taxed is decided by the rules, not by this choice.")
         if key:
             st.caption(inputs.help_text(key))
     else:
-        name = st.selectbox("Komponen", existing, key="k_add_existing")
+        name = st.selectbox("Component", existing, key="k_add_existing")
         key = cat.get(name)
-        st.caption(f"Dipetakan ke: {inputs.label(key)}")
+        st.caption(f"Mapped to: {inputs.label(key)}")
     c1, c2 = st.columns(2)
-    value = c1.number_input("Nilai", 0, 10**11, 0, 50_000, key="k_add_value")
-    start = c2.selectbox("Mulai bulan", shown, key="k_add_start", format_func=lambda m: d.MONTHS[m - 1])
-    repeat = st.checkbox("Dibayar setiap bulan sejak itu",
+    value = c1.number_input("Value", 0, 10**11, 0, 50_000, key="k_add_value")
+    start = c2.selectbox("Start month", shown, key="k_add_start", format_func=lambda m: d.MONTHS[m - 1])
+    repeat = st.checkbox("Paid every month from then on",
                          bool((inputs.definition(key) or {}).get("repeat")) if key else True, key=f"k_add_repeat_{key}")
-    if st.button("Tambahkan", type="primary", key="k_add_btn", disabled=not (name and key)):
-        if mode == "Baru":
+    if st.button("Add", type="primary", key="k_add_btn", disabled=not (name and key)):
+        if mode == "New":
             store.add_component(name, key)
         if name not in rec["components"]:
             rec["components"].append(name)
@@ -455,9 +455,9 @@ def add_component(rec, shown):
         st.rerun()
     if rec["components"]:
         st.divider()
-        keep = st.multiselect("Komponen yang ditampilkan", rec["components"], rec["components"],
+        keep = st.multiselect("Components shown", rec["components"], rec["components"],
                               key=f"k_keep_{s.rec_ver}")
-        if st.button("Terapkan", key="k_keep_btn") and keep != rec["components"]:
+        if st.button("Apply", key="k_keep_btn") and keep != rec["components"]:
             rec["components"] = keep
             s.rec_ver += 1
             st.rerun()
@@ -467,21 +467,21 @@ def quick_fill(rec, cols, shown):
     s = st.session_state
     editable = [c for c in cols if c[3] in ("edit", "nodef", "unused")]
     if not editable:
-        st.caption("Tidak ada kolom yang bisa diisi.")
+        st.caption("No columns can be filled.")
         return
     labels = {c[0]: c[1] for c in editable}
-    col = st.selectbox("Kolom", list(labels), format_func=labels.get, key="k_qf_col")
+    col = st.selectbox("Column", list(labels), format_func=labels.get, key="k_qf_col")
     key = next(c[2] for c in editable if c[0] == col)
     tp = inputs.kind(key) if key else "money"
-    start = st.selectbox("Mulai bulan", shown, key="k_qf_start", format_func=lambda m: d.MONTHS[m - 1])
-    modes = ["Isi sama sampai bulan terakhir", "Hanya bulan ini"] + (["Naik 1 tiap bulan"] if tp == "int" else [])
-    mode = st.radio("Cara", modes, key="k_qf_mode")
-    value = 1 if tp == "flag" else st.number_input("Nilai", 0, 10**11, 0, 1 if tp == "int" else 50_000, key="k_qf_value")
-    if st.button("Isi", type="primary", key="k_qf_btn"):
+    start = st.selectbox("Start month", shown, key="k_qf_start", format_func=lambda m: d.MONTHS[m - 1])
+    modes = ["Fill the same up to the last month", "This month only"] + (["Increase by 1 each month"] if tp == "int" else [])
+    mode = st.radio("Mode", modes, key="k_qf_mode")
+    value = 1 if tp == "flag" else st.number_input("Value", 0, 10**11, 0, 1 if tp == "int" else 50_000, key="k_qf_value")
+    if st.button("Fill", type="primary", key="k_qf_btn"):
         for i, m in enumerate(range(start, rec["end"] + 1)):
-            if mode == "Hanya bulan ini" and m != start:
+            if mode == "This month only" and m != start:
                 break
-            rec["grid"].setdefault(str(m), {})[col] = int(value) + (i if mode == "Naik 1 tiap bulan" else 0)
+            rec["grid"].setdefault(str(m), {})[col] = int(value) + (i if mode == "Increase by 1 each month" else 0)
         s.rec_ver += 1
         st.rerun()
 
@@ -542,8 +542,8 @@ def month_card(r, rec, cols, m, omega):
             rows.append(f"<tr><td class='op'>=</td><td>{_label(k[0])}</td><td class='r'>{d.fmt(k[0], v)}</td></tr>")
         else:
             rows.append(f"<tr><td class='op'></td><td>{_label(k[0])}" + ("" if k[1] == m else
-                        " <span class='muted'>(setahun)</span>") + f"</td><td class='r'>{d.fmt(k[0], v)}</td></tr>")
-    rows.append(f"<tr class='sub'><td></td><td colspan=2><span class='muted'>Rumus: {d.readable(rule.expression)}"
+                        " <span class='muted'>(annual)</span>") + f"</td><td class='r'>{d.fmt(k[0], v)}</td></tr>")
+    rows.append(f"<tr class='sub'><td></td><td colspan=2><span class='muted'>Formula: {d.readable(rule.expression)}"
                 f"</span></td></tr>" if rule is not None else "")
     rows.append(f"<tr class='total'><td class='op'>=</td><td>{g.term('PPh 21')} {d.MONTHS[m - 1]}</td>"
                 f"<td class='r'>{d.money(due)}</td></tr>")
@@ -554,12 +554,12 @@ def month_card(r, rec, cols, m, omega):
     final = not r.partial and r.final_month == m
     src = ex.source_of(r, work)
     where = f"{d.short_doc(src['document'])} {src['provision']}" if src else ""
-    badge = (ui.badge("Bulan penutup", "orange") + g.term("masa terakhir", "apa ini?") if final
-             else ui.badge(f"Bulan biasa · {d.short_doc(src['document'])}" if src else "Bulan biasa", "blue"))
-    expl = (f"Dihitung dengan aturan <code>{rule.id if rule else '-'}</code> ({where})."
-            + (" Pajak setahun dihitung ulang di kartu di bawah." if final else ""))
+    badge = (ui.badge("Closing month", "orange") + g.term("masa terakhir", "what is this?") if final
+             else ui.badge(f"Regular month · {d.short_doc(src['document'])}" if src else "Regular month", "blue"))
+    expl = (f"Computed with rule <code>{rule.id if rule else '-'}</code> ({where})."
+            + (" The annual tax is recalculated in the card below." if final else ""))
     neg = due is not None and due < 0
-    ui.html(f"<div class='card'><h4>{'Lebih bayar' if neg else 'PPh 21'} · {d.MONTHS[m - 1]} {rec['year']}</h4>{badge}"
+    ui.html(f"<div class='card'><h4>{'Over-withheld' if neg else 'PPh 21'} · {d.MONTHS[m - 1]} {rec['year']}</h4>{badge}"
             f"<div class='big{' neg' if neg else ''}'>{d.money(abs(due) if neg else due)}</div>"
             f"<table class='lines'>{''.join(rows)}</table><div class='explain'>{expl}</div></div>")
     return [work] + ex.children(r, work, omega)
@@ -582,14 +582,14 @@ def year_card(r, rec, omega):
     v = ex.value(r, top)
     note = ""
     if rec["withheld"]:
-        note = ("PPh yang sudah dipotong memakai isian 'PPh sudah dipotong' untuk bulan "
-                + ", ".join(d.MON[int(x) - 1] for x in sorted(rec["withheld"], key=int)) + "; bulan lain dari hitungan sistem.")
+        note = ("Withheld PPh takes the 'PPh already withheld' entries for "
+                + ", ".join(d.MON[int(x) - 1] for x in sorted(rec["withheld"], key=int)) + "; other months come from the system's calculation.")
     if end < 12:
-        note += f" Pegawai keluar di {d.MONTHS[end - 1]}: bulan itu bulan penutup."
+        note += f" The employee leaves in {d.MONTHS[end - 1]}: that month is the closing month."
     if isinstance(v, (int,)) or hasattr(v, "denominator"):
-        note = (f"{g.term('kurang bayar') if v >= 0 else g.term('lebih bayar')} {d.MONTHS[end - 1]}: "
+        note = (f"{g.term('kurang bayar', 'Under-withheld') if v >= 0 else g.term('lebih bayar', 'Over-withheld')} in {d.MONTHS[end - 1]}: "
                 f"<b>{d.money(abs(v))}</b>. " + note)
-    ui.html(f"<div class='card'><h4>Hitung ulang setahun {rec['year']}</h4><table class='lines'>{''.join(rows)}</table>"
+    ui.html(f"<div class='card'><h4>Annual recalculation {rec['year']}</h4><table class='lines'>{''.join(rows)}</table>"
             + (f"<div class='explain'>{note}</div>" if note else "") + "</div>")
     return [k for k, _ in steps]
 
@@ -597,29 +597,29 @@ def year_card(r, rec, omega):
 def warnings(r, rec, cols, found):
     """Shows the warnings; returns True when results must not be shown."""
     shown = list(range(rec["start"], rec["month"] + 1))
-    blocking = [f"Komponen **{lab}** dipetakan ke data yang tidak dipakai lagi ({inputs.label(key)}). Pilih jenis baru "
-                "lewat '+ Komponen' supaya penghasilannya tidak hilang dari bruto."
+    blocking = [f"Component **{lab}** is mapped to data that is no longer used ({inputs.label(key)}). Choose a new kind "
+                "through '+ Component' so its income is not lost from gross income."
                 for col, lab, key, state in cols if state == "retired" and any(emp.cell(rec, m, col) for m in shown)]
     for b in blocking:
         st.error(b, icon=":material/block:")
     out = []
     for col, lab, key, state in cols:
         if not key:
-            out.append(f"Komponen **{lab}** belum dipetakan ke data knowledge base; tidak dihitung.")
+            out.append(f"Component **{lab}** is not mapped to knowledge base data yet; it is not counted.")
             continue
         if state == "unused" and any(emp.cell(rec, m, col) for m in shown):
-            out.append(f"**{lab}** diisi, tetapi tidak dibaca aturan yang berlaku di bulan-bulan ini; tidak dihitung.")
+            out.append(f"**{lab}** is filled in, but no rule in force in these months reads it; it is not counted.")
         if col.startswith("data:") and key in found and found[key]["layer"] == "company"                 and inputs.kind(key) in ("int", "choice", "money"):
             need = [] if (inputs.definition(key) or {}).get("optional") else [m for m in shown if m in found[key]["months"]]
             if need and all(emp.cell(rec, m, col) in (None, "", 0) for m in need):
-                out.append(f"**{lab}** dibaca aturan ({', '.join(found[key]['rules'][:2])}) tetapi kosong; dihitung 0.")
+                out.append(f"**{lab}** is read by rules ({', '.join(found[key]['rules'][:2])}) but is empty; counted as 0.")
         if state == "nodef":
-            out.append(f"**{lab}**: definisi data ini belum ada di knowledge base; nama dan tipenya diambil dari aturan.")
+            out.append(f"**{lab}**: the definition of this data is not in the knowledge base yet; its name and type are taken from the rules.")
     if r is not None:
         eff = d.value(r, "ptkp_status_effective")
         if eff and eff != rec["fields"].get("employee.ptkp_status"):
-            out.append(f"Status PTKP yang dipakai **{eff}**: karyawati kawin memakai PTKP tidak kawin kecuali ada keterangan "
-                       "suami tidak berpenghasilan.")
+            out.append(f"The PTKP status used is **{eff}**: a married female employee uses the unmarried PTKP unless there is a "
+                       "statement that the husband has no income.")
         cat = {**rec.get("component_keys", {}), **emp.catalog()}
         names = {}
         for n, k in cat.items():
@@ -628,7 +628,7 @@ def warnings(r, rec, cols, found):
             if str(w).startswith("UnreadInput"):
                 k = str(w).split("(")[1].rstrip(")").split(".", 1)[1]
                 who = ", ".join(n for n in names.get(k, [k]) if n in rec["components"]) or k
-                out.append(f"**{who}** diisi, tetapi tidak dipakai dalam hitungan ini (syarat aturannya tidak terpenuhi).")
+                out.append(f"**{who}** is filled in, but not used in this calculation (the rule's conditions are not met).")
     for n in out:
         st.info(n, icon=":material/lightbulb:")
     return bool(blocking)
@@ -645,13 +645,13 @@ def changed_banner(r, rec):
     found = inputs.discover(rec["year"], rec.get("policy"), s.k_omega_v)
     new_keys = [k for k in found if k not in saved["keys"]]
     if new_keys:
-        st.warning("Data baru dibutuhkan sejak pegawai ini disimpan: " + ", ".join(
-            f"**{inputs.label(k)}** ({(inputs.definition(k) or {}).get('origin', 'aturan baru')})" for k in new_keys)
-            + ". Nilai bawaan dipakai sampai diisi.", icon=":material/new_releases:")
+        st.warning("New data has been needed since this employee was saved: " + ", ".join(
+            f"**{inputs.label(k)}** ({(inputs.definition(k) or {}).get('origin', 'new rule')})" for k in new_keys)
+            + ". Default values are used until it is filled in.", icon=":material/new_releases:")
     changed = [(int(m), old, r.periods[int(m)].get("pph21_due")) for m, old in saved["last"].items()
                if int(m) in r.periods and int(m) <= rec["month"] and old != r.periods[int(m)].get("pph21_due")]
     if changed and approved:
-        st.warning(f"Hasil berubah sejak disimpan ({saved['saved']}) karena pembaruan: "
+        st.warning(f"Results have changed since it was saved ({saved['saved']}) because of updates: "
                    + ", ".join(a["title"] for a in approved) + ". "
                    + "; ".join(f"{d.MON[m - 1]}: {d.money(o)} → {d.money(n)}" for m, o, n in changed[:6]),
                    icon=":material/update:")
@@ -668,11 +668,11 @@ def basis(r, nodes):
         f, mm = key
         src = t["source"][0] if t["source"] else None
         reads = ", ".join(d.fact_label(k[0]) for k in ex.children(r, key, st.session_state.k_omega_v)[:6])
-        layer = ui.badge("kebijakan perusahaan", "orange") if t["layer"] == "company" else ""
+        layer = ui.badge("company policy", "orange") if t["layer"] == "company" else ""
         ui.html(f"<div class='rule{' company' if t['layer'] == 'company' else ''}'>{layer}<b>{d.fact_label(f)}</b> = "
-                f"{d.fmt(f, t['value'])} <span class='muted'>({'bulan ' + d.MONTHS[mm - 1] if mm else 'setahun'})</span><br>"
-                f"<span class='muted'>Membaca: {reads or '-'} · {g.term('sumber', 'Sumber')}: "
-                f"{d.short_doc(src['document']) + ' · ' + src['provision'] if src else '-'} · aturan <code>{t['rule']}</code>"
+                f"{d.fmt(f, t['value'])} <span class='muted'>({'month of ' + d.MONTHS[mm - 1] if mm else 'annual'})</span><br>"
+                f"<span class='muted'>Reads: {reads or '-'} · {g.term('sumber', 'Source')}: "
+                f"{d.short_doc(src['document']) + ' · ' + src['provision'] if src else '-'} · rule <code>{t['rule']}</code>"
                 f"</span>" + (f"<div class='quote'>“{src['quote']}”</div>" if src else "") + "</div>")
 
 
@@ -683,7 +683,7 @@ def results(rec, cols, found, autos):
     changed_banner(r, rec)
     blocked = warnings(r, rec, cols, found)
     if err:
-        st.error(f"Perhitungan gagal: {err}")
+        st.error(f"Calculation failed: {err}")
         return
     if blocked:
         return
@@ -700,7 +700,7 @@ def results(rec, cols, found, autos):
              if any(ex._number(r.periods[x].get(f)) for x in shown)][:2]      # e.g. PPh borne by the government
     c = st.columns(2 + len(after))
     c[0].metric(f"PPh 21 {d.MONTHS[m - 1]}", d.money(r.periods[m].get(ex.ROOT)), help=g.tip("PPh 21"))
-    c[1].metric(f"Total {d.MON[shown[0] - 1]}–{d.MON[m - 1]}", d.money(total), help="Jumlah PPh 21 sampai bulan ini.")
+    c[1].metric(f"Total {d.MON[shown[0] - 1]}–{d.MON[m - 1]}", d.money(total), help="Total PPh 21 up to this month.")
     for col, f in zip(c[2:], after):
         col.metric(f"{d.fact_label(f)} {d.MON[shown[0] - 1]}–{d.MON[m - 1]}",
                    d.money(sum(r.periods[x].get(f) or 0 for x in shown)))
@@ -710,7 +710,7 @@ def results(rec, cols, found, autos):
         if final:
             nodes += year_card(r, rec, omega)
         else:
-            st.caption(f"Hitung ulang setahun muncul di bulan penutup ({d.MONTHS[max(rec['end'], rec['start']) - 1]}).")
+            st.caption(f"The annual recalculation appears in the closing month ({d.MONTHS[max(rec['end'], rec['start']) - 1]}).")
     with right:
         names = ex.outputs(r, shown, omega)        # the results the knowledge base marks as output
         names = [f for f in names if f == ex.ROOT] + [f for f in names if f != ex.ROOT]
@@ -718,19 +718,19 @@ def results(rec, cols, found, autos):
         for x in shown:
             p = r.periods[x]
             src = ex.source_of(r, work[x])
-            rows.append({"Bulan": d.MONTHS[x - 1], **{d.fact_label(f): d.fmt(f, p.get(f)) for f in names},
-                         "Dihitung dengan": (d.short_doc(src["document"]) + " " + src["provision"]) if src else "",
-                         "Sudah dipotong (isian)": d.money(rec["withheld"][str(x)]) if str(x) in rec["withheld"] else ""})
+            rows.append({"Month": d.MONTHS[x - 1], **{d.fact_label(f): d.fmt(f, p.get(f)) for f in names},
+                         "Computed with": (d.short_doc(src["document"]) + " " + src["provision"]) if src else "",
+                         "Already withheld (entered)": d.money(rec["withheld"][str(x)]) if str(x) in rec["withheld"] else ""})
         st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
-        st.caption("Kolom tabel: nilai yang ditandai knowledge base sebagai hasil, yang tidak nol di bulan-bulan ini.")
-        st.download_button("Unduh rincian (CSV)", pd.DataFrame(rows).to_csv(index=False).encode(),
-                           f"pph21_{rec['name'] or 'pegawai'}_{rec['year']}.csv", icon=":material/download:")
-        with st.expander("Kenapa angkanya segini? (aturan dan pasal)"):
+        st.caption("Table columns: values the knowledge base marks as results that are not zero in these months.")
+        st.download_button("Download breakdown (CSV)", pd.DataFrame(rows).to_csv(index=False).encode(),
+                           f"pph21_{rec['name'] or 'employee'}_{rec['year']}.csv", icon=":material/download:")
+        with st.expander("Why this number? (rules and articles)"):
             basis(r, nodes)
-        with st.expander("Data yang dikirim ke engine"):
-            st.caption("Hanya bulan sampai bulan perhitungan yang dikirim; engine mengenali bulan penutup dari bulan selesai "
-                       "bekerja dan baru memberi nilai setahun di bulan itu. PPh yang diisi di 'PPh sudah dipotong' dikirim "
-                       "sebagai nilai tercatat.")
+        with st.expander("Data sent to the engine"):
+            st.caption("Only the months up to the calculation month are sent; the engine recognizes the closing month from "
+                       "the month employment ends and only gives annual values in that month. PPh entered in "
+                       "'PPh already withheld' is sent as a recorded value.")
             st.json(case, expanded=False)
 
 
@@ -738,11 +738,11 @@ def show():
     s = st.session_state
     s.page_ctx = "kalkulator"
     if "rec" not in s:
-        _apply_scenario("Pegawai biasa")
-    st.title("Kalkulator PPh 21")
-    g.md(f"Hitung {g.term('PPh 21')} satu pegawai sampai bulan tertentu. Isi atau pilih skenario, lalu ubah angka apa "
-         "saja di tabel. Data yang ditanyakan mengikuti aturan yang berlaku; arahkan kursor ke kata bergaris titik atau "
-         "ikon ⓘ untuk penjelasannya.")
+        _apply_scenario("Regular employee")
+    st.title("PPh 21 calculator")
+    g.md(f"Calculate {g.term('PPh 21')} for one employee up to a given month. Fill in the form or choose a scenario, "
+         "then change any number in the table. The data asked for follows the rules in force; hover over dotted "
+         "words or ⓘ icons for explanations.")
     top_bar()
     period_bar()
     s.g_date = date(s.rec["year"], s.rec["month"], 1)     # glossary numbers of that tax month
@@ -753,8 +753,8 @@ def show():
     cols, found, autos = grid(pre)
     if _norm(rec) != before and any(c[3] == "computed" for c in cols):
         st.rerun()        # an edit changed what the rules compute: show the locked columns up to date
-    with st.expander("Kasus yang tidak dihitung di sini"):
-        st.markdown("Hanya **pegawai tetap** di **satu perusahaan** dalam **satu tahun pajak**. Tidak dihitung: pegawai "
-                    "tidak tetap atau harian, pindahan dari perusahaan lain di tahun yang sama, kembali bekerja di tahun "
-                    "yang sama, pembayaran sesudah keluar, pesangon, pensiunan, pegawai asing (PPh 26), valuta asing.")
+    with st.expander("Cases not calculated here"):
+        st.markdown("Only **permanent employees** at **one company** in **one tax year**. Not calculated: non-permanent or "
+                    "daily employees, transfers from another company in the same year, returning to work in the same "
+                    "year, payments after leaving, severance, retirees, foreign employees (PPh 26), foreign currency.")
     results(rec, cols, found, autos)

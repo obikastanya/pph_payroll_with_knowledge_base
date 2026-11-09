@@ -129,8 +129,8 @@ def label(key, at=None):
 def help_text(key, at=None):
     df = definition(key, at)
     if df:
-        return (df.get("help") or "") + (f"\n\nSumber: {df['source']}" if df.get("source") else "")
-    return "Definisi data ini belum ada di knowledge base: nama dan tipenya diambil dari aturan yang membacanya."
+        return (df.get("help") or "") + (f"\n\nSource: {df['source']}" if df.get("source") else "")
+    return "The definition of this data is not in the knowledge base yet: its name and type are taken from the rules that read it."
 
 
 def kind(key, at=None):

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3id.org/pph21kbs/schemas/delta_llm.schema.json",
+  "title": "Delta as produced by the LLM (compact form for structured outputs; converted to delta.schema.json)",
+  "description": "Kind-specific attributes are name/value pairs, because a flat form with every attribute as a nullable typed property compiles to a grammar the API rejects as too large. Field names: layer, modality, scope, produces, condition, expression, assertion, conflict_code, fixed_point_lower, fixed_point_upper, overrides (ids separated by commas), policy, name, value, value_type, table_kind, rows (JSON array), rows_ref (JSON object), fact_type, fact_scope, output (true/false), unit.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["relevant", "add", "change", "remove", "adopts", "note"],
+  "properties": {
+    "relevant": {"type": "boolean"},
+    "add": {"type": "array", "items": {"$ref": "#/$defs/element"}},
+    "change": {"type": "array", "items": {"$ref": "#/$defs/element"}},
+    "remove": {"type": "array", "items": {"$ref": "#/$defs/removal"}},
+    "adopts": {"type": "array", "items": {"type": "string"}},
+    "note": {"type": "string"}
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document", "provision", "page", "quote"],
+      "properties": {
+        "document": {"type": "string"},
+        "provision": {"type": "string"},
+        "page": {"type": ["integer", "null"]},
+        "quote": {"type": "string"}
+      }
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value"],
+      "properties": {"name": {"type": "string"}, "value": {"type": "string"}}
+    },
+    "removal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "recorded_on", "source"],
+      "properties": {
+        "id": {"type": "string"},
+        "recorded_on": {"type": "string"},
+        "source": {"type": "array", "items": {"$ref": "#/$defs/source"}}
+      }
+    },
+    "element": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "label", "label_id", "valid_from", "valid_until", "recorded_on", "fields", "source"],
+      "properties": {
+        "kind": {"type": "string"},
+        "id": {"type": "string"},
+        "label": {"type": "string"},
+        "label_id": {"type": "string"},
+        "valid_from": {"type": ["string", "null"]},
+        "valid_until": {"type": ["string", "null"]},
+        "recorded_on": {"type": "string"},
+        "fields": {"type": "array", "items": {"$ref": "#/$defs/field"}},
+        "source": {"type": "array", "items": {"$ref": "#/$defs/source"}}
+      }
+    }
+  }
+}

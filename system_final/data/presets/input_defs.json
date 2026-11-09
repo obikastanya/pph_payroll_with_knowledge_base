@@ -1,0 +1,484 @@
+{
+ "_note": "Input definitions of the starting knowledge base: how the calculator asks for each piece of data the rules read. Kept as a data file, not code; definitions of new data arrive with the approved update that first reads it. Fields: key (bucket.key read by the rules), label, help, type (money|int|bool|choice|flag|text), group (employee|employer|monthly), order, core (always shown), repeat (monthly data: repeats every month), increment, default, options / options_from (table:<name> or usage), labels (display texts of table keys), show_if, valid_from, valid_until, replaces, optional, source.",
+ "defs": [
+  {
+   "key": "employee.ptkp_status",
+   "label": "PTKP status on 1 January",
+   "help": "TK = not married, K = married; the number = number of dependants. The status on 1 January applies for the whole year; marrying or having a child during the year takes effect the next year.",
+   "type": "choice",
+   "options_from": "table:ptkp",
+   "group": "employee",
+   "order": 1,
+   "core": true,
+   "default": "TK/0",
+   "source": "UU 36/2008 Pasal 7"
+  },
+  {
+   "key": "employee.sex",
+   "label": "Sex",
+   "help": "Used by the PTKP rule for married female employees.",
+   "type": "choice",
+   "options": [
+    [
+     "M",
+     "Male"
+    ],
+    [
+     "F",
+     "Female"
+    ]
+   ],
+   "group": "employee",
+   "order": 2,
+   "core": true,
+   "default": "M",
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "employee.husband_no_income_certified",
+   "label": "Statement that the husband has no income",
+   "help": "A married female employee uses the PTKP of an unmarried person, unless she has this statement.",
+   "type": "bool",
+   "group": "employee",
+   "order": 3,
+   "core": true,
+   "default": false,
+   "show_if": {
+    "employee.sex": "F"
+   },
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "case.method",
+   "label": "How the tax is paid",
+   "help": "Gross: withheld from the salary. Gross-up: the employer pays a tax allowance equal to the PPh 21. Employer-borne: the employer pays the tax without an allowance.",
+   "type": "choice",
+   "options": [
+    [
+     "gross",
+     "Gross: withheld from the salary"
+    ],
+    [
+     "gross_up",
+     "Gross-up: tax allowance paid"
+    ],
+    [
+     "employer_borne",
+     "Borne by the employer"
+    ]
+   ],
+   "group": "employee",
+   "order": 4,
+   "core": true,
+   "default": "gross",
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "employee.tax_id_valid",
+   "label": "NIK / NPWP registered",
+   "help": "A condition of the DTP incentive.",
+   "type": "bool",
+   "group": "employee",
+   "order": 5,
+   "core": true,
+   "default": true,
+   "source": "PMK 10/2025"
+  },
+  {
+   "key": "employee.has_equity_in_employer",
+   "label": "Employee is also a shareholder",
+   "help": "A company car used by a shareholder is always a taxable benefit in kind.",
+   "type": "bool",
+   "group": "employee",
+   "order": 20,
+   "default": false,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "employee.avg_monthly_gross_12m",
+   "label": "Average monthly gross income, last 12 months",
+   "help": "A company car is taxable when this average is above the limit. Empty: the base salary + fixed allowance of that month is used.",
+   "type": "money",
+   "group": "employee",
+   "order": 21,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "employee.contract_fixed_income",
+   "label": "Fixed income under the contract",
+   "help": "For new employees: the DTP income limit uses the fixed income in the employment contract.",
+   "type": "money",
+   "group": "employee",
+   "order": 22,
+   "valid_from": "2025-01-01",
+   "source": "PMK 10/2025"
+  },
+  {
+   "key": "employee.other_dtp_incentive",
+   "label": "Already receives another DTP incentive",
+   "help": "If yes, this DTP does not apply.",
+   "type": "bool",
+   "group": "employee",
+   "order": 23,
+   "default": false,
+   "valid_from": "2025-01-01",
+   "source": "PMK 10/2025"
+  },
+  {
+   "key": "employee.subjective_start_month",
+   "label": "Became a taxpayer in Indonesia in (month)",
+   "help": "Only for employees who came from abroad this year; their tax is annualised.",
+   "type": "int",
+   "group": "employee",
+   "order": 30,
+   "source": "PMK 168/2023 Pasal 15 ayat (3)"
+  },
+  {
+   "key": "employee.subjective_end_month",
+   "label": "Stopped being a taxpayer in Indonesia in (month)",
+   "help": "Only for employees who moved abroad or died this year.",
+   "type": "int",
+   "group": "employee",
+   "order": 31,
+   "source": "PMK 168/2023 Pasal 15 ayat (3)"
+  },
+  {
+   "key": "employee.known_last_month",
+   "label": "Last working month, already certain",
+   "help": "For employees who are certain to leave.",
+   "type": "int",
+   "group": "employee",
+   "order": 32,
+   "source": "PMK 168/2023"
+  },
+  {
+   "key": "employer.klu",
+   "label": "Line of business (KLU, 5 digits)",
+   "help": "The business classification code (KLU) of the company; decides eligibility for the DTP incentive.",
+   "type": "text",
+   "group": "employer",
+   "order": 1,
+   "core": true,
+   "default": "",
+   "source": "PMK 10/2025"
+  },
+  {
+   "key": "employer.jkk_risk_group",
+   "label": "Work risk (JKK)",
+   "help": "The risk level that sets the JKK premium rate.",
+   "type": "choice",
+   "options_from": "table:jkk_rates",
+   "labels": {
+    "very_low": "Very low",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "very_high": "Very high"
+   },
+   "group": "employer",
+   "order": 2,
+   "core": true,
+   "default": "low",
+   "source": "PP 44/2015"
+  },
+  {
+   "key": "employer.jkk_relief_eligible",
+   "label": "Eligible for JKK contribution relief",
+   "help": "Certain labour-intensive industries.",
+   "type": "bool",
+   "group": "employer",
+   "order": 10,
+   "default": false,
+   "valid_from": "2025-01-01",
+   "source": "PP 7/2025"
+  },
+  {
+   "key": "employer.premiums_as_billed",
+   "label": "BPJS contributions as billed",
+   "help": "If yes, contributions and premiums are entered each month as billed by BPJS; if not, they are computed from the wage.",
+   "type": "bool",
+   "group": "employer",
+   "order": 11,
+   "default": false,
+   "source": "how the app reads payroll data"
+  },
+  {
+   "key": "employer.workplace_meal_value",
+   "label": "Value of meals at the workplace",
+   "help": "For the limit on meal coupons for field duty.",
+   "type": "money",
+   "group": "employer",
+   "order": 12,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "employer.bonded_zone",
+   "label": "Company in a bonded zone",
+   "help": "",
+   "type": "bool",
+   "group": "employer",
+   "order": 13,
+   "default": false,
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "employer.kite",
+   "label": "Company with the KITE facility",
+   "help": "",
+   "type": "bool",
+   "group": "employer",
+   "order": 14,
+   "default": false,
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "employer.bpjs_relief_2020_eligible",
+   "label": "Eligible for the 2020 BPJS contribution relief",
+   "help": "",
+   "type": "bool",
+   "group": "employer",
+   "order": 15,
+   "default": false,
+   "source": "BPJS contribution relief during the pandemic"
+  },
+  {
+   "key": "income.base_salary",
+   "label": "Base salary",
+   "help": "The base salary paid that month (already prorated when the employee joins, leaves, or gets a raise in the middle of the month).",
+   "type": "money",
+   "group": "monthly",
+   "order": 1,
+   "repeat": true,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "income.fixed_allowance",
+   "label": "Fixed monthly allowance",
+   "help": "An allowance paid at a fixed amount every month, e.g. a position, family, phone, or transport allowance.",
+   "type": "money",
+   "group": "monthly",
+   "order": 2,
+   "repeat": true,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "income.overtime_pay",
+   "label": "Overtime pay",
+   "help": "Overtime pay paid that month. Under the regulation it counts as regular income even though the amount varies.",
+   "type": "money",
+   "group": "monthly",
+   "order": 3,
+   "source": "PER-16/PJ/2016 Pasal 1 angka 15"
+  },
+  {
+   "key": "income.other_regular",
+   "label": "Other regular pay (meal money, cash transport, etc.)",
+   "help": "Other pay paid regularly, e.g. daily meal money or cash transport.",
+   "type": "money",
+   "group": "monthly",
+   "order": 4,
+   "repeat": true,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "income.thr",
+   "label": "THR",
+   "help": "The religious holiday allowance (THR) paid that month.",
+   "type": "money",
+   "group": "monthly",
+   "order": 5,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "income.bonus",
+   "label": "Bonus",
+   "help": "The bonus paid that month.",
+   "type": "money",
+   "group": "monthly",
+   "order": 6,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "income.other_irregular",
+   "label": "Occasional incentive, compensation, or back pay",
+   "help": "Pay that is not paid regularly, e.g. a quarterly sales incentive, compensation, or back pay after a salary raise.",
+   "type": "money",
+   "group": "monthly",
+   "order": 7,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "income.deductions",
+   "label": "Other salary deductions",
+   "help": "Deductions other than tax and contributions (loans, fines).",
+   "type": "money",
+   "group": "monthly",
+   "order": 20,
+   "source": "how the app reads payroll data"
+  },
+  {
+   "key": "income.jht_employee",
+   "label": "Employee JHT contribution (BPJS bill)",
+   "help": "Filled in when the contributions follow the BPJS bill.",
+   "type": "money",
+   "group": "monthly",
+   "order": 30,
+   "repeat": true,
+   "source": "PP 46/2015"
+  },
+  {
+   "key": "income.jp_employee",
+   "label": "Employee JP contribution (BPJS bill)",
+   "help": "Filled in when the contributions follow the BPJS bill.",
+   "type": "money",
+   "group": "monthly",
+   "order": 31,
+   "repeat": true,
+   "source": "PP 45/2015"
+  },
+  {
+   "key": "income.health_employee",
+   "label": "Employee BPJS Kesehatan contribution (bill)",
+   "help": "Filled in when the contributions follow the BPJS bill.",
+   "type": "money",
+   "group": "monthly",
+   "order": 32,
+   "repeat": true,
+   "source": "Perpres 82/2018"
+  },
+  {
+   "key": "income.jkk_premium",
+   "label": "JKK premium (BPJS bill)",
+   "help": "Filled in when the premiums follow the BPJS bill.",
+   "type": "money",
+   "group": "monthly",
+   "order": 33,
+   "repeat": true,
+   "source": "PP 44/2015"
+  },
+  {
+   "key": "income.jkm_premium",
+   "label": "JKM premium (BPJS bill)",
+   "help": "Filled in when the premiums follow the BPJS bill.",
+   "type": "money",
+   "group": "monthly",
+   "order": 34,
+   "repeat": true,
+   "source": "PP 44/2015"
+  },
+  {
+   "key": "income.health_premium_employer",
+   "label": "Employer BPJS Kesehatan contribution (bill)",
+   "help": "Filled in when the contributions follow the BPJS bill.",
+   "type": "money",
+   "group": "monthly",
+   "order": 35,
+   "repeat": true,
+   "source": "Perpres 82/2018"
+  },
+  {
+   "key": "benefit.company_vehicle",
+   "label": "Company car (monthly value)",
+   "help": "The value of using the company car for a month. Taxable only in certain cases; the rules decide.",
+   "type": "money",
+   "group": "monthly",
+   "order": 40,
+   "repeat": true,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "benefit.housing_individual",
+   "label": "Company housing for one employee (monthly value)",
+   "help": "The monthly value of the company housing.",
+   "type": "money",
+   "group": "monthly",
+   "order": 41,
+   "repeat": true,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "benefit.gift_other",
+   "label": "Gift parcel outside religious holidays",
+   "help": "The value of the parcel received that month.",
+   "type": "money",
+   "group": "monthly",
+   "order": 42,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "benefit.meal_coupon_field_duty",
+   "label": "Meal coupon for field duty",
+   "help": "The value of meal coupons for employees on field duty.",
+   "type": "money",
+   "group": "monthly",
+   "order": 43,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "benefit.sports_facility",
+   "label": "Sports facility",
+   "help": "The value of the sports facility received that month.",
+   "type": "money",
+   "group": "monthly",
+   "order": 44,
+   "valid_from": "2023-07-01",
+   "source": "PMK 66/2023"
+  },
+  {
+   "key": "benefit.other_benefit",
+   "label": "Other goods or facilities (benefits in kind)",
+   "help": "Other benefits in kind received, e.g. a scholarship from the company.",
+   "type": "money",
+   "group": "monthly",
+   "order": 45,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "zakat.zakat",
+   "label": "Zakat through the employer",
+   "help": "Zakat or a mandatory religious donation withheld through the employer that month.",
+   "type": "money",
+   "group": "monthly",
+   "order": 50,
+   "repeat": true,
+   "source": "PER-16/PJ/2016"
+  },
+  {
+   "key": "hr.thr_holiday",
+   "label": "THR paid this month",
+   "help": "Tick the month the THR is paid (not the month of the holiday). Used to check the minimum THR and by company policies that compute the THR.",
+   "type": "flag",
+   "group": "monthly",
+   "order": 60,
+   "source": "Permenaker 6/2016"
+  },
+  {
+   "key": "hr.months_of_service",
+   "label": "Length of service (months)",
+   "help": "Continuous service up to that month, in months. Sets the minimum THR (one month's wage for 12 months of service or more, proportional below that).",
+   "type": "int",
+   "group": "monthly",
+   "order": 61,
+   "repeat": true,
+   "increment": 1,
+   "source": "Permenaker 6/2016 Pasal 3"
+  },
+  {
+   "key": "hr.days_terminated_before_holiday",
+   "label": "Days since leaving before the holiday",
+   "help": "Filled in only when the employee left within 30 days before the religious holiday; they still have a right to THR.",
+   "type": "int",
+   "group": "monthly",
+   "order": 62,
+   "source": "Permenaker 6/2016 Pasal 7",
+   "optional": true
+  }
+ ]
+}

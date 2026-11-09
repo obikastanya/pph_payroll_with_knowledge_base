@@ -1,0 +1,762 @@
+{
+ "_note": "Common scenarios in the company's own component names (sample data, not code).",
+ "scenarios": [
+  {
+   "title": "Regular employee",
+   "note": "Fixed salary, May 2025: the tax of a regular month at the TER rate.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 5,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 1500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "December: annual recalculation",
+   "note": "December 2025 with THR in March: the tax of the year is recalculated.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 12,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 1500000
+     }
+    },
+    "THR": {
+     "once": {
+      "3": 11500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "THR and bonus",
+   "note": "THR in March and a bonus in April 2025: the TER rate of those months goes up.",
+   "name": "Budi",
+   "year": 2025,
+   "month": 4,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "TK/0",
+    "employee.sex": "M",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 12000000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 0
+     }
+    },
+    "THR": {
+     "once": {
+      "3": 12000000
+     }
+    },
+    "Bonus": {
+     "once": {
+      "4": 10000000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Joining mid-year",
+   "note": "Starts work in July 2025; December is still the final month, without annualising.",
+   "name": "Sari",
+   "year": 2025,
+   "month": 9,
+   "start": 7,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 1500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Leaving mid-year",
+   "note": "Leaves at the end of August 2025: August becomes the final month; tax was overpaid.",
+   "name": "Andi",
+   "year": 2025,
+   "month": 8,
+   "start": 1,
+   "end": 8,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "M",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 1500000
+     }
+    },
+    "THR": {
+     "once": {
+      "3": 11500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Salary raise mid-month",
+   "note": "The base salary rises from Rp10 million to Rp12 million from 10 April 2025: April is entered after prorating (Rp11.4 million), May onwards Rp12 million.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 6,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 10000000,
+      "4": 11400000,
+      "5": 12000000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 1500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Varying overtime",
+   "note": "Overtime differs every month; under the regulation overtime counts as regular income.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 7,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 1500000
+     }
+    },
+    "Overtime": {
+     "once": {
+      "2": 1500000,
+      "3": 1000000,
+      "4": 500000,
+      "6": 750000,
+      "7": 2000000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Unpaid leave",
+   "note": "Five days of unpaid leave in May: the May base salary is entered after the deduction.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 6,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 10000000,
+      "5": 7727273,
+      "6": 10000000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 1500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Gross-up",
+   "note": "The employer pays a tax allowance equal to the PPh 21.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 5,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross_up",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 1500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Married female employee",
+   "note": "K/2 without a statement that the husband has no income: the PTKP used is TK/0.",
+   "name": "Wulan",
+   "year": 2025,
+   "month": 5,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/2",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": false,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 1500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Company car of a shareholder",
+   "note": "A director who is also a shareholder uses a company car worth Rp3 million a month: a taxable benefit in kind. Turn off 'Employee is also a shareholder' to see the difference.",
+   "name": "Hendra",
+   "year": 2025,
+   "month": 5,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/0",
+    "employee.sex": "M",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low",
+    "employee.has_equity_in_employer": true
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus",
+    "Company car"
+   ],
+   "extra_components": [
+    {
+     "name": "Company car",
+     "key": "benefit.company_vehicle"
+    }
+   ],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 25000000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 3000000
+     }
+    },
+    "Company car": {
+     "from": {
+      "1": 3000000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Year 2023 (old method)",
+   "note": "March 2023 with THR: before TER, the tax was computed by annualising the income.",
+   "name": "Rina",
+   "year": 2023,
+   "month": 3,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 1500000
+     }
+    },
+    "THR": {
+     "once": {
+      "3": 11500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "Labour-intensive DTP 2026",
+   "note": "Garment factory worker, January 2026: the employer's business sector (KLU 14111) and an income under the limit make the PPh 21 of the month borne by the government (DTP, PMK 105/2025), so it is paid out with the salary.",
+   "name": "Dewi",
+   "year": 2026,
+   "month": 1,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "TK/0",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "14111",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 6500000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  },
+  {
+   "title": "THR under a company policy",
+   "note": "PT Rajut Indah Garmenindo: the policy computes the THR (1.5 × wage × months of service / 12) in the month the THR is paid. Its data columns appear after policy SP14 is approved: Knowledge base management → Company policies → Add a sample company policy to review.",
+   "name": "Dewi",
+   "year": 2025,
+   "month": 3,
+   "start": 1,
+   "end": 12,
+   "policy": "SP14",
+   "fields": {
+    "employee.ptkp_status": "TK/0",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "14111",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 6500000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 500000
+     }
+    }
+   },
+   "data": {
+    "hr.thr_holiday": {
+     "once": {
+      "3": 1
+     }
+    },
+    "hr.months_of_service": {
+     "inc": {
+      "1": 7
+     }
+    }
+   },
+   "withheld": {},
+   "needs": "SP14"
+  },
+  {
+   "title": "PPh 21 of an earlier month differs",
+   "note": "December 2025; the PPh 21 of February was withheld with an old system and differs from the current calculation.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 12,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Overtime",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 1500000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {
+    "2": 450000
+   },
+   "needs": null
+  },
+  {
+   "title": "Components with company names",
+   "note": "A communication allowance of Rp500 thousand from June and an OTA incentive of Rp2 million in May: company components mapped to knowledge-base data.",
+   "name": "Rina",
+   "year": 2025,
+   "month": 7,
+   "start": 1,
+   "end": 12,
+   "policy": null,
+   "fields": {
+    "employee.ptkp_status": "K/1",
+    "employee.sex": "F",
+    "employee.husband_no_income_certified": true,
+    "case.method": "gross",
+    "employee.tax_id_valid": true,
+    "employer.klu": "",
+    "employer.jkk_risk_group": "low"
+   },
+   "components": [
+    "Base salary",
+    "Position allowance",
+    "Communication allowance",
+    "Overtime",
+    "OTA incentive",
+    "THR",
+    "Bonus"
+   ],
+   "extra_components": [
+    {
+     "name": "Communication allowance",
+     "key": "income.fixed_allowance"
+    },
+    {
+     "name": "OTA incentive",
+     "key": "income.other_irregular"
+    }
+   ],
+   "values": {
+    "Base salary": {
+     "from": {
+      "1": 10000000
+     }
+    },
+    "Position allowance": {
+     "from": {
+      "1": 1500000
+     }
+    },
+    "Communication allowance": {
+     "from": {
+      "1": 0,
+      "6": 500000
+     }
+    },
+    "OTA incentive": {
+     "once": {
+      "5": 2000000
+     }
+    }
+   },
+   "data": {},
+   "withheld": {},
+   "needs": null
+  }
+ ]
+}

@@ -298,6 +298,30 @@ def add_inbox(item):
     save(s)
 
 
+def remove_document(pid):
+    """Take an uploaded document out of the list: its entry, review state, model run, and stored text. An approved
+    update stays in the knowledge base (it is undone in the version history), so an approved document is not removed;
+    the record of model calls is kept, so the spending limits still hold."""
+    s = load()
+    item = next((x for x in s["inbox"] if x["id"] == pid), None)
+    if item is None or s["decided"].get(pid) == "approved":
+        return False
+    s["inbox"] = [x for x in s["inbox"] if x["id"] != pid]
+    s["decided"].pop(pid, None)
+    s["fixed"].pop(pid, None)
+    s["drafts"] = [d for d in s["drafts"] if d["id"] != pid]
+    log(s, f"Document removed: {item['title']}")
+    save(s)
+    run_path = WORKSPACE / item["run"] if item.get("run") else None
+    if run_path and run_path.is_dir():
+        shutil.rmtree(run_path, ignore_errors=True)
+    elif run_path:
+        run_path.unlink(missing_ok=True)
+    shutil.rmtree(documents.folder(item["doc"]), ignore_errors=True)
+    documents.clear_caches()
+    return True
+
+
 def set_run(pid, relpath, cost):
     s = load()
     for x in s["inbox"]:

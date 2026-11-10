@@ -108,10 +108,13 @@ def _ai_detail(pid):
 
 
 def _upload_form(s):
+    """The upload form. Enter in a field does not send it, and the fields are kept when it is sent with a mistake; the
+    form starts empty again (new widget keys) only after a document was added."""
+    n = st.session_state.get("mg_up_n", 0)
     with st.container(border=True):
         st.markdown("**Upload a document**")
-        with st.form("mg_upload", clear_on_submit=True, border=False):
-            up = st.file_uploader("PDF, TXT, or JSON", type=["pdf", "txt", "json"], key="mg_up",
+        with st.form(f"mg_upload_{n}", clear_on_submit=False, enter_to_submit=False, border=False):
+            up = st.file_uploader("PDF, TXT, or JSON", type=["pdf", "txt", "json"], key=f"mg_up_{n}",
                                   help="The AI reads a PDF or TXT file and proposes an update. Scanned PDFs are read "
                                        "with OCR. A JSON file is a finished update: it goes straight to Review.")
             c1, c2, c3 = st.columns([2.2, 1, 1.3])
@@ -123,7 +126,10 @@ def _upload_form(s):
             ocr = st.checkbox("Read every page again with OCR", help="For a PDF whose text comes out garbled.")
             sent = st.form_submit_button("Add to the document list", type="primary", icon=":material/upload:")
         _sample_picker()
-        if not (sent and up):
+        if not sent:
+            return
+        if not up:
+            st.error("Choose a file first.")
             return
         if up.name.lower().endswith(".json"):
             try:
@@ -131,17 +137,20 @@ def _upload_form(s):
                 validate_delta_json(delta)
                 state.add_draft(delta["delta_id"], (delta.get("document") or {}).get("title", up.name), delta,
                                 "upload")
-                st.success("The JSON update is valid and is now in Review.")
             except Exception as e:  # noqa: BLE001 - shown to the user
                 st.error(f"The JSON file cannot be used: {str(e)[:250]}")
-            return
+                return
+            st.session_state.mg_up_n = n + 1
+            _sent_to_review(delta["delta_id"])
         if not title.strip():
             st.error("Enter the document title first.")
             return
         with st.spinner("Reading the document text (PDF: layout, tables, and OCR; about 5 seconds per page) ..."):
             item = workflow.upload(up, title.strip(), issued, kind, force_ocr=ocr)
         state.add_inbox(item)
-        st.success("The document is in the list. Check its text, then run the AI.")
+        st.session_state.mg_added = item["title"]      # shown above the list it is now in
+        st.session_state.mg_up_n = n + 1                # a fresh, empty form
+        st.rerun()
 
 
 SAMPLES = config.ROOT / "examples" / "documents" / "samples.json"
@@ -203,7 +212,8 @@ def _sample_picker():
                 item = workflow.upload(_SampleFile(f"{pick}.txt", text.encode("utf-8")), e["title"],
                                        date.fromisoformat(e["issued"]), e["kind"])
                 state.add_inbox(item)
-                st.success("The document is in the list below. Check its text, then run the AI.")
+                st.session_state.mg_added = item["title"]
+                st.rerun()
         for e in missing:
             st.caption(f"{e['title']} is not included: its text is copyrighted. It is offered here when the research "
                        "data set is next to this folder.")
@@ -218,9 +228,33 @@ def _waiting(p):
     if chars < 40 * max(1, len(pages)):
         st.warning("Very little text came out. Check the scan, or upload it again with OCR.",
                    icon=":material/document_scanner:")
-    with st.expander("See the text the AI will read"):
-        st.text("\n".join(t for _, t in pages)[:4000])
+    with st.expander("See the document text"):
+        _document_text(p, pages)
     _run_ai(p)
+
+
+def _document_text(p, pages):
+    """The text the AI will read (the same selection the pipeline makes: the knowledge base as known on the issue
+    date, within the token budget) and the full text of the document, each in a scrolling box."""
+    sent, full = st.tabs(["Sent to the AI", "Full text"])
+    with sent:
+        try:
+            sel = documents.select(p["doc"], state.kb().view(date.fromisoformat(p["issued"])))
+        except Exception as e:  # noqa: BLE001 - shown to the user
+            st.caption(f"The selection cannot be shown: {type(e).__name__}: {e}")
+        else:
+            st.caption(f"About {sel.tokens:,} tokens of the {documents.TOKEN_BUDGET:,} allowed. "
+                       + ("Every part of the document is sent. " if not sel.dropped else
+                          f"Not sent, over the budget: {', '.join(sel.dropped)}. The AI is told they exist. ")
+                       + ("Annex tables are sent as descriptions (columns, number of rows, first rows); the rules "
+                          "refer to the extracted tables, so their values are not copied by the AI." if sel.tables
+                          else ""))
+            with st.container(height=480):
+                st.code(documents.render(sel), language=None, wrap_lines=True)
+    with full:
+        st.caption(f"{len(pages)} pages, as extracted from the file.")
+        with st.container(height=480):
+            st.code("\n\n".join(f"--- page {n} ---\n{t}" for n, t in pages), language=None, wrap_lines=True)
 
 
 def _run_ai(p, again=False):
@@ -248,44 +282,73 @@ def _run_ai(p, again=False):
         st.rerun()
 
 
+ACTION_NEEDED = ("awaiting_ai", "uncertain", "budget_exhausted")     # document statuses that wait for the user
+
+
 def tab_documents():
+    """The ways to add a document (upload or a sample) first, then the documents added in the app (newest on top)
+    under a heading of their own."""
     s = state.load()
-    _upload_form(s)
     items = state.pending(s)
+    st.markdown("#### Add a document")
+    _upload_form(s)
+    st.divider()
+    st.markdown(f"#### Your documents ({len(items)})")
+    added = st.session_state.pop("mg_added", None)
+    if added:
+        st.success(f"**{added}** is added below, waiting for the AI. Check its text, then run the AI on its card.",
+                   icon=":material/check_circle:")
     if not items:
-        st.caption("No documents yet. Upload a regulation or a company policy above.")
+        st.caption("No documents yet. Upload a regulation or a company policy above, or use a sample document.")
         return
+    st.caption("Newest first. The AI reads a document only when you run it on the document's card; after that it goes "
+               "to Review.")
     for p in reversed(items):
-        stat = state.status(p["id"], s)
-        reg = p["kind"] == "regulation"
-        with st.container(border=True):
-            layer = (common.badge("government regulation", "blue") if reg
-                     else common.badge("company policy", "orange"))
+        _document_card(p, s)
+
+
+def _document_card(p, s):
+    stat = state.status(p["id"], s)
+    reg = p["kind"] == "regulation"
+    with st.container(border=True):
+        layer = (common.badge("government regulation", "blue") if reg
+                 else common.badge("company policy", "orange"))
+        head, act = st.columns([6, 1])
+        with head:
             common.html(f"{common.status_badge(stat)}{layer}<b>{_title(p['id'])}</b>")
-            if stat == "awaiting_ai":
-                _waiting(p)
-                continue
-            common.flow(_ai_steps(p["id"], stat))
-            if p.get("cost_usd"):
-                st.caption(f"AI cost of this document: USD {p['cost_usd']:.3f}")
-            if stat == "review":
-                c1, _, _ = st.columns(3)
-                if c1.button("Review", key=f"rv_{p['id']}", icon=":material/rate_review:", width="stretch"):
-                    st.session_state.mg_open = p["id"]
-                    st.toast("Open the Review tab.")
-            if stat in ("uncertain", "budget_exhausted"):
-                why = workflow.stop_reason(state.run(p["id"])) or ("budget" if stat == "budget_exhausted"
-                                                                   else "disagree")
-                common.md(STOP_TEXT[why].format(term=common.term("AI not sure", "the AI is not sure")))
-                st.caption("You can run the AI again, or write the update by hand in the Company policies tab or the "
-                           "Add, change, revoke tab.")
-                _run_ai(p, again=True)
-            if stat == "not_relevant":
-                common.md(f"The AI found this document not {common.term('relevant')} to PPh 21 for permanent "
-                          "employees. Nothing changes.")
-            if state.run(p["id"]):
-                with st.expander("See what the AI did"):
-                    _ai_detail(p["id"])
+        if stat != "approved":
+            with act.popover("Remove", icon=":material/delete:", width="stretch"):
+                st.markdown(f"Remove **{p['title']}** from the list?")
+                st.caption("Its text and the AI's work on it are deleted. The AI cost already spent stays counted. "
+                           "The knowledge base does not change.")
+                if st.button("Yes, remove", type="primary", key=f"mg_rm_{p['id']}"):
+                    state.remove_document(p["id"])
+                    st.toast(f"Removed: {p['title']}", icon=":material/delete:")
+                    st.rerun()
+        if stat == "awaiting_ai":
+            _waiting(p)
+            return
+        common.flow(_ai_steps(p["id"], stat))
+        if p.get("cost_usd"):
+            st.caption(f"AI cost of this document: USD {p['cost_usd']:.3f}")
+        if stat == "review":
+            c1, _, _ = st.columns(3)
+            if c1.button("Review", key=f"rv_{p['id']}", icon=":material/rate_review:", width="stretch"):
+                st.session_state.mg_open = p["id"]
+                st.toast("Open the Review tab.")
+        if stat in ("uncertain", "budget_exhausted"):
+            why = workflow.stop_reason(state.run(p["id"])) or ("budget" if stat == "budget_exhausted"
+                                                               else "disagree")
+            common.md(STOP_TEXT[why].format(term=common.term("AI not sure", "the AI is not sure")))
+            st.caption("You can run the AI again, or write the update by hand in the Company policies tab or the "
+                       "Add, change, revoke tab.")
+            _run_ai(p, again=True)
+        if stat == "not_relevant":
+            common.md(f"The AI found this document not {common.term('relevant')} to PPh 21 for permanent "
+                      "employees. Nothing changes.")
+        if state.run(p["id"]):
+            with st.expander("See what the AI did"):
+                _ai_detail(p["id"])
 
 
 # ====================================================================================================================
@@ -941,7 +1004,9 @@ def show():
     s = state.load()
     n_review = len({p["id"] for p in state.pending(s) if state.status(p["id"], s) == "review"}
                    | {x["id"] for x in s["drafts"]})
-    tabs = st.tabs(["New documents", f"Review ({n_review})", "Add, change, revoke", "Company policies",
+    n_new = sum(state.status(p["id"], s) in ACTION_NEEDED for p in state.pending(s))
+    tabs = st.tabs([f"New documents ({n_new})" if n_new else "New documents", f"Review ({n_review})",
+                    "Add, change, revoke", "Company policies",
                     "Knowledge base check", "Version history"])
     with tabs[0]:
         tab_documents()

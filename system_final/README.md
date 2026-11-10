@@ -342,8 +342,9 @@ system_final/
 │                         case study shown in the sidebar (case_company.json)
 ├── examples/
 │   ├── documents/        texts of the sample policies and of later regulations, with their list (samples.json)
-│   ├── documents_original/  the published PDFs of those regulations, named as their texts, to try the upload
-│   │                     with a real file (PDF reading needs Docling)
+│   ├── documents_original/  the published PDFs of those regulations, to try the upload with a real file (PDF
+│   │                     reading needs Docling); named <text name>__<gov|comp>__<issue date yyyymmdd>, which
+│   │                     gives the kind and the issue date to enter in the upload form
 │   └── cases/            a calculator case (employee A, 2024) for `cli.py calculate --case`
 └── tests/                engine, knowledge graph and checks, pipeline with a mock model, impact detector
 ```

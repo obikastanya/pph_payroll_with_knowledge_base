@@ -107,9 +107,23 @@ The application has four pages:
   checks, before-and-after results, and the company policies it affects; approve, edit, ask the model to repair it,
   or reject it. Sample company policies can be sent to review without the model.
 
+**The demo company and the starting date.** The app starts from the knowledge base as known on 31 August 2025 (the
+updates of `seed.trig` recorded on or before that date; set `PPH21_KB_KNOWN_UNTIL` to change it, or leave it empty for
+the full seed). The calculator's company is PT TKG Taekwang Indonesia, a footwear factory in Kabupaten Subang (KLU
+15201, eligible for the DTP incentive; JKK risk group assumed medium, group III of the annex of PP 44/2015), with four
+illustrative employees as scenarios. Under *New documents → No file at hand? Use a sample document* the upload box
+offers the regulations issued after that date (PP 36/2025, PMK 72/2025, PMK 105/2025, the BPJS letter on the JP wage
+cap 2026) and two that do not change the PPh 21 of permanent employees (PP 50/2025, PP 9/2026). The company's labour
+agreement (PKB 2024-2026) is offered there only when the research data set lies next to this folder, since its text
+is copyrighted; its reference formalisation from the research is a sample company policy. The sidebar shows the
+company as the *Case study* (read from `data/case_company.json`); hovering it shows a short profile and the regulations
+that concern the company, each marked *Locked* (in the starting knowledge base), *Added* (approved in the app), or *Not
+added yet*.
+
 The application keeps its work in `workspace/` (approved updates, uploaded documents, model calls and costs). To return
-to the starting knowledge base, use **Start over** at the bottom of *Knowledge base management → Version history*. It
-keeps the log of model calls, so the spending limits still hold; deleting `workspace/` by hand removes that log too.
+to the starting knowledge base, use the reset icon at the top of the sidebar, or **Start over** at the bottom of
+*Knowledge base management → Version history*. Both keep the log of model calls, so the spending limits still hold;
+deleting `workspace/` by hand removes that log too.
 
 A document read by the model ends in one of these states:
 
@@ -321,10 +335,11 @@ system_final/
 ├── data/
 │   ├── kb/seed.trig      the starting knowledge base: 37 updates (2009-2026), 282 records
 │   ├── kb/documents.csv  the documents its records cite
-│   ├── policies/         three synthetic company policies as ready-made updates
-│   └── presets/          input definitions, pay components, and calculator scenarios of the app
+│   ├── case_company.json the demo company (profile and the regulations that concern it) shown in the sidebar
+│   ├── policies/         company policies as ready-made updates: three synthetic ones and the Taekwang PKB
+│   └── presets/          input definitions, the company and its pay components, and calculator scenarios
 ├── examples/
-│   ├── documents/        the texts of the sample policies, to try the acquisition pipeline
+│   ├── documents/        texts of the sample policies and of later regulations, with their list (samples.json)
 │   └── cases/            a calculator case (employee A, 2024) for `cli.py calculate --case`
 └── tests/                engine, knowledge graph and checks, pipeline with a mock model, impact detector
 ```
@@ -341,7 +356,9 @@ system_final/
 - **Validation.** The reference knowledge base and the 16 unseen changes were checked by independent AI reviewers
   against the source texts and four external references, not yet by a human tax practitioner.
 - **Data.** The starting knowledge base cites public regulations; the quotes are from those texts. Real company labour
-  agreements of the research are not included (their texts are copyrighted); the three sample policies are synthetic.
+  agreements of the research are not included (their texts are copyrighted); three sample policies are synthetic, and
+  the Taekwang PKB policy is the research's formalisation of that agreement, with short quotes of its articles. The
+  wages of the calculator scenarios are illustrative.
   No personal data is included.
 - **Costs.** Reading one document with three drafts costs about USD 0.1-0.9 with Claude Opus 5.5 (October 2026
   prices). Every call and its cost is logged in `workspace/calls/`; set `PPH21_BUDGET_ANTHROPIC_USD` to cap the total.

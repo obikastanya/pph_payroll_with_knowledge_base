@@ -103,6 +103,63 @@ def reset_control():
                     st.rerun()
 
 
+CASE_CSS = """
+<style>
+.case { position: relative; margin: .1rem 0 .7rem 0; }
+.case .lab { font-size: .82rem; color: #6b6a66; margin-bottom: .2rem; }
+.case .box { border: 1px solid #e3e2de; border-radius: 8px; background: rgba(128,128,128,.08); color: #6b6a66;
+             padding: .42rem .65rem; font-size: .9rem; cursor: help; display: flex; justify-content: space-between;
+             align-items: center; gap: .4rem; outline: none; }
+.case .box:focus { border-color: #2a78d6; }
+.case .i { font-size: .75rem; border: 1px solid #b4b3ae; border-radius: 50%; width: 1.05rem; height: 1.05rem;
+           display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.case .panel { visibility: hidden; opacity: 0; transition: opacity .12s; position: fixed; z-index: 10000;
+               left: 19.5rem; top: 4.5rem; width: 27rem; max-height: calc(100vh - 6rem); overflow-y: auto;
+               background: #fff; color: #24231f; border: 1px solid #e3e2de; border-radius: 12px;
+               box-shadow: 0 10px 28px rgba(0,0,0,.18); padding: .9rem 1rem; font-size: .84rem; line-height: 1.45; }
+.case:hover .panel, .case:focus-within .panel { visibility: visible; opacity: 1; }
+.case .panel h5 { margin: 0 0 .25rem 0; font-size: .98rem; }
+.case .panel table { width: 100%; border-collapse: collapse; margin: .45rem 0; }
+.case .panel td { border: none; padding: .16rem .25rem; vertical-align: top; }
+.case .panel td.k { color: #6b6a66; white-space: nowrap; width: 1%; }
+.case .panel .reg td { border-top: 1px solid #f0efec; }
+.case .panel .muted { color: #6b6a66; font-size: .8rem; }
+</style>
+"""
+CASE_STATUS = {"locked": ("Locked", "blue", "in the starting knowledge base"),
+               "added": ("Added", "green", "approved in the app"),
+               "missing": ("Not added yet", "grey", "can be uploaded or approved in the app")}
+
+
+def case_study():
+    """The case-study field at the top of the sidebar: the demo company's name in a disabled-looking box. Hovering or
+    focusing it shows a short profile and the regulations that concern the company, each marked locked (in the
+    starting knowledge base), added (approved in the app), or not added yet. Read from data/case_company.json."""
+    c = state.case_company()
+    if not c:
+        return
+    esc = _html.escape
+    s = state.load()
+    facts = "".join(f"<tr><td class='k'>{esc(k)}</td><td>{esc(v)}</td></tr>" for k, v in c.get("facts", []))
+    rows = []
+    for item in c.get("regulations", []):
+        text, colour, _ = CASE_STATUS[state.case_status(item, s)]
+        effect = "applies to the company" if item.get("applies") else "does not apply to the company"
+        rows.append(f"<tr class='reg'><td class='k'>{badge(text, colour)}</td><td><b>{esc(item['name'])}</b>: "
+                    f"{esc(item['about'])} <span class='muted'>({effect})</span></td></tr>")
+    legend = " · ".join(f"{badge(t, col)} {why}" for t, col, why in CASE_STATUS.values())
+    panel = (f"<h5>{esc(c['name'])}</h5><div>{esc(c.get('summary', ''))}</div><table>{facts}</table>"
+             f"<b>Regulations and policy</b> <span class='muted'>(starting knowledge base known until "
+             f"{state.base_label()})</span><table>{''.join(rows)}</table>"
+             f"<div class='muted'>{legend}</div>"
+             + (f"<div class='muted' style='margin-top:.35rem'>{esc(c['earlier_rules'])}</div>"
+                if c.get("earlier_rules") else ""))
+    st.markdown(CASE_CSS, unsafe_allow_html=True)
+    html(f"<div class='case'><div class='lab'>{esc(c.get('label', 'Case study'))}</div>"
+         f"<div class='box' tabindex='0' aria-label='{esc(c['name'])}: hover or focus for a summary'>"
+         f"<span>{esc(c['name'])}</span><span class='i'>i</span></div><div class='panel'>{panel}</div></div>")
+
+
 def html(text):
     st.markdown(text, unsafe_allow_html=True)
 

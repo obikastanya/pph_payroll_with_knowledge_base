@@ -31,7 +31,10 @@ YEAR_VALUES = ("annual_gross", "job_expense", "ptkp_amount", "taxable_income", "
 
 # --------------------------------------------------------------------------------------------------------- knowledge
 def seed():
-    return graph.read_trig(config.SEED_KB, "K")
+    """The full starting knowledge base, or the part known on PPH21_KB_KNOWN_UNTIL when that setting is given."""
+    k = graph.read_trig(config.SEED_KB, "K")
+    cut = config.kb_known_until()
+    return k.known_on(cut) if cut else k
 
 
 def sample_policies():

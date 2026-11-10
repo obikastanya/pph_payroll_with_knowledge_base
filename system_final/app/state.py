@@ -77,6 +77,7 @@ def reset():
             p.unlink(missing_ok=True)
     for k in list(st.session_state.keys()):
         del st.session_state[k]
+    st.session_state["_reset_notice"] = True       # common.reset_control shows the message after the rerun
     _SIGNATURES.clear()
     documents.clear_caches()
 
@@ -93,14 +94,24 @@ def pending_by_id(s=None):
 # ====================================================================================================================
 # Knowledge base
 # ====================================================================================================================
+KNOWN_UNTIL = config.kb_known_until(config.APP_KB_KNOWN_UNTIL)    # cut of the starting knowledge base, or None
+
+
 @st.cache_resource(show_spinner="Loading the knowledge base ...")
 def base():
-    """The starting knowledge base: the regulation chain shipped in data/kb/seed.trig."""
-    return graph.read_trig(config.SEED_KB, "K")
+    """The starting knowledge base: the regulation chain shipped in data/kb/seed.trig, as known on KNOWN_UNTIL (only
+    the updates recorded on or before that date), or all of it when no date is set."""
+    k = graph.read_trig(config.SEED_KB, "K")
+    return k.known_on(KNOWN_UNTIL) if KNOWN_UNTIL else k
+
+
+def base_known_until():
+    """The date the starting knowledge base is known until: the cut date, else its last recorded update."""
+    return KNOWN_UNTIL or max(u.recorded_on for u in base().updates if u.recorded_on)
 
 
 def base_label():
-    return fmt_date(max(u.recorded_on for u in base().updates if u.recorded_on))
+    return fmt_date(base_known_until())
 
 
 @st.cache_resource(show_spinner="Applying approved updates ...", max_entries=2)
@@ -133,7 +144,8 @@ def kb():
 
 
 def known_until():
-    return max(u.recorded_on for u in kb().updates if u.recorded_on)
+    """The starting knowledge base's date, or the latest knowledge date of an update approved since, if later."""
+    return max([base_known_until()] + [u.recorded_on for u in kb().updates if u.recorded_on])
 
 
 def installed_policies():
@@ -144,6 +156,29 @@ def installed_policies():
             if el.get("kind") == "rule" and el.get("policy"):
                 out[el["policy"]] = a["title"]
     return out
+
+
+def case_company():
+    """The company the demo is about (data/case_company.json), or None when the file is missing."""
+    path = config.DATA / "case_company.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+
+def case_status(item, s=None):
+    """Where a regulation or policy of the case company stands: "locked" (in the starting knowledge base), "added"
+    (approved in the app), or "missing" (not added yet). An approved upload counts when its document id or title
+    starts with the regulation's id or name."""
+    if item.get("kind") == "policy":
+        return "added" if item["id"] in installed_policies() else "missing"
+    if item["id"] in {u.document for u in base().updates}:
+        return "locked"
+    for a in (s or load())["approved"]:
+        doc = (a.get("delta") or {}).get("document") or ""
+        doc = doc.get("id", "") if isinstance(doc, dict) else str(doc)
+        if doc in (item["id"], f"UPLOAD-{item['id']}") or doc.startswith(f"UPLOAD-{item['id']}-") \
+                or a["title"].startswith(item["name"]):
+            return "added"
+    return "missing"
 
 
 def sample_policies():

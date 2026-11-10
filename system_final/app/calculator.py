@@ -30,7 +30,7 @@ ROOT = "pph21_due"          # the value the calculator is for: the PPh 21 withhe
 CALL = re.compile(r"\b(income|benefit|hr|employee|employer|case)\('([a-z_0-9]+)'\)")
 MONTH_NUMBERS = range(1, 13)
 BASE_ORIGIN = "starting knowledge base"      # origin of the input definitions shipped with the starting knowledge base
-DEFAULT_SCENARIO = "Regular employee"
+DEFAULT_SCENARIO = "Employee A: operator, 1 year of service"
 WITHHELD = "PPh 21 already withheld"         # grid column for PPh 21 actually withheld
 
 
@@ -233,10 +233,18 @@ def input_rules():
 # ====================================================================================================================
 # Employee record and engine case
 # ====================================================================================================================
+def _company_file():
+    return json.loads((config.PRESETS / "catalog.json").read_text(encoding="utf-8"))
+
+
+def company():
+    """The sample company the calculator's employer data belongs to: {name, about}, or {}."""
+    return _company_file().get("company") or {}
+
+
 def catalog():
     """{component name: data key}: the company's pay components (the shipped ones plus those added in the app)."""
-    out = {c["name"]: c["key"]
-           for c in json.loads((config.PRESETS / "catalog.json").read_text(encoding="utf-8"))["components"]}
+    out = {c["name"]: c["key"] for c in _company_file()["components"]}
     out.update({c["name"]: c["key"] for c in state.load()["catalog"]})
     return out
 
@@ -665,6 +673,9 @@ def profile():
                     _field(k, rec, year, v)
         with right:
             st.markdown("**Company**")
+            firm = company()
+            if firm:
+                st.caption(f"**{firm['name']}** · {firm.get('about', '')}")
             pols = state.installed_policies()
             opts = [""] + list(pols)
             cur = rec.get("policy") if rec.get("policy") in pols else ""
@@ -1091,7 +1102,9 @@ def warnings(r, rec, cols, found):
             names.setdefault(k.split(".", 1)[1], []).append(n)
         for w in r.warnings:
             if str(w).startswith("UnreadInput"):
-                k = str(w).split("(")[1].rstrip(")").split(".", 1)[1]
+                bucket, k = str(w).split("(")[1].rstrip(")").split(".", 1)
+                if bucket == "hr" and f"hr.{k}" not in found:
+                    continue            # kept for a company policy; no rule in force reads it, and it is not shown
                 who = ", ".join(n for n in names.get(k, [k]) if n in rec["components"]) or k
                 out.append(f"**{who}** is filled in, but not used in this calculation (the conditions of its rule are "
                            "not met).")

@@ -302,6 +302,17 @@ class KnowledgeBase:
                 return KnowledgeBase(recs, self.updates[: i + 1], self.documents, self.name, self.adoptions)
         raise KeyError(update_id)
 
+    def known_on(self, omega):
+        """The knowledge base as it was known on date omega: only the updates recorded on or before it, with their
+        records and documents."""
+        keep = tuple(u for u in self.updates if u.recorded_on is None or u.recorded_on <= omega)
+        ids = {u.update_id for u in keep}
+        docs = {u.document for u in keep}
+        return KnowledgeBase([r for r in self.records if r.update_id in ids], keep,
+                             {k: d for k, d in self.documents.items() if k in docs or d.issued is None
+                              or d.issued <= omega},
+                             self.name, {k: v for k, v in self.adoptions.items() if k in docs})
+
     def view(self, omega):
         v = self._views.get(omega)
         if v is None:

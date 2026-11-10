@@ -3,6 +3,7 @@ AI to fix them with your notes, reject), add / change / revoke by hand or throug
 a check of the knowledge base, and the version history. Nothing changes the knowledge base before it is approved.
 """
 import json
+import re
 from datetime import date, timedelta
 
 import pandas as pd
@@ -121,6 +122,7 @@ def _upload_form(s):
                             help=common.tip("regulation") + "\n\n" + common.tip("company policy"))
             ocr = st.checkbox("Read every page again with OCR", help="For a PDF whose text comes out garbled.")
             sent = st.form_submit_button("Add to the document list", type="primary", icon=":material/upload:")
+        _sample_picker()
         if not (sent and up):
             return
         if up.name.lower().endswith(".json"):
@@ -140,6 +142,69 @@ def _upload_form(s):
             item = workflow.upload(up, title.strip(), issued, kind, force_ocr=ocr)
         state.add_inbox(item)
         st.success("The document is in the list. Check its text, then run the AI.")
+
+
+SAMPLES = config.ROOT / "examples" / "documents" / "samples.json"
+KIND_NAMES = {"regulation": "government regulation", "policy": "company policy"}
+
+
+class _SampleFile:
+    """A sample document in the shape of an uploaded file, so it goes through the same upload path."""
+
+    def __init__(self, name, data):
+        self.name, self._data = name, data
+
+    def getvalue(self):
+        return self._data
+
+
+def sample_documents():
+    """({id: entry}, [entries left out]) of the sample documents in examples/documents/samples.json. A document that is
+    not shipped with this folder (its text is copyrighted) is offered only when its file exists on this computer."""
+    entries = json.loads(SAMPLES.read_text(encoding="utf-8"))["documents"] if SAMPLES.exists() else []
+    found, missing = {}, []
+    for e in entries:
+        path = (config.ROOT / e["file"]).resolve()
+        if path.exists():
+            found[e["id"]] = {**e, "path": path}
+        else:
+            missing.append(e)
+    return found, missing
+
+
+def sample_text(doc_id):
+    """The text of a sample document or sample policy, with page marks in the form the app reads, or None."""
+    shipped = config.ROOT / "examples" / "documents" / f"{doc_id}.txt"
+    entry = sample_documents()[0].get(doc_id)
+    path = shipped if shipped.exists() else entry["path"] if entry else None
+    if path is None:
+        return None
+    return re.sub(r"^=== PDF hlm\. (\d+) ===$", r"=== page \1 ===", path.read_text(encoding="utf-8"), flags=re.M)
+
+
+def _sample_picker():
+    """Sample documents that can be added without a file: regulations issued after the starting knowledge base, and
+    the company's labour agreement when its text is on this computer."""
+    with st.expander("No file at hand? Use a sample document", icon=":material/folder_open:"):
+        found, missing = sample_documents()
+        if found:
+            pick = st.selectbox("Sample document", list(found), key="mg_sample_pick",
+                                format_func=lambda k: f"{found[k]['title']} · issued "
+                                                      f"{state.fmt_date(date.fromisoformat(found[k]['issued']))} · "
+                                                      f"{KIND_NAMES[found[k]['kind']]}")
+            e = found[pick]
+            st.caption(f"{KIND_NAMES[e['kind']].capitalize()}, issued "
+                       f"{state.fmt_date(date.fromisoformat(e['issued']))}. It is added to the document list like an "
+                       "uploaded file; the AI reads it only when you run it.")
+            if st.button("Use this sample", key="mg_sample_use", icon=":material/note_add:"):
+                text = sample_text(pick)
+                item = workflow.upload(_SampleFile(f"{pick}.txt", text.encode("utf-8")), e["title"],
+                                       date.fromisoformat(e["issued"]), e["kind"])
+                state.add_inbox(item)
+                st.success("The document is in the list below. Check its text, then run the AI.")
+        for e in missing:
+            st.caption(f"{e['title']} is not included: its text is copyrighted. It is offered here when the research "
+                       "data set is next to this folder.")
 
 
 def _waiting(p):
@@ -371,11 +436,17 @@ def full_checks_panel(pid, delta_json):
 
 
 def regression(kb, kb2, policies):
-    """Every scenario before and after: PPh 21 of the scenario's month and of the year."""
+    """Every scenario before and after: PPh 21 of the scenario's month and of the year. A company policy that the
+    proposal adds is applied to the scenarios without a policy of their own (the scenarios are the sample company's
+    employees)."""
     outputs = {n for n, f in kb2.view(state.TODAY).facts.items() if f.output}     # the results the KB declares
+    new_policies = sorted({r.policy for r in kb2.records if getattr(r, "policy", None)}
+                          - {r.policy for r in kb.records if getattr(r, "policy", None)})
     rows = []
     for sc in calculator.scenarios().values():
         case = calculator.scenario_case(sc)
+        if new_policies and not case["employer"].get("policy"):
+            case["employer"]["policy"] = new_policies[0]
         m = sc["month"]
         res = [state.compute(case, state.TODAY, k)[0] for k in (kb, kb2)]
         vals = [{(f, mm): v for mm, p in (r.periods.items() if r else ()) for f, v in p.items() if f in outputs}
@@ -506,7 +577,8 @@ def tab_review():
             st.rerun()
     if kb2 is not None:
         st.markdown("**Before and after** · every standard scenario is calculated with the current knowledge base and "
-                    "with this proposal. Results for the years before the start date must stay the same.")
+                    "with this proposal. Results for the years before the start date must stay the same. A new "
+                    "company policy is applied to the scenarios that have no policy of their own.")
         with st.spinner("Calculating the scenarios ..."):
             df = regression(kb, kb2, tuple(state.installed_policies()))
         st.dataframe(df.style.apply(lambda r: ["background-color: #fff4d6" if r["Result"] == "changed" else ""]
@@ -711,10 +783,10 @@ def _sample_policy(installed):
                + (" This policy is already installed." if pick in installed else ""))
     if c2.button("Send to Review", icon=":material/send:", key="mg_pol_sample_send", width="stretch",
                  disabled=pick in installed):
-        text = config.ROOT / "examples" / "documents" / f"{pick}.txt"
-        if text.exists():                       # the policy text, so the quote check can read it
+        text = sample_text(pick)
+        if text:                                # the policy text, so the quote check can read it
             documents.add_document(pick, title, date.fromisoformat(issued) if issued else state.TODAY,
-                                   text=text.read_text(encoding="utf-8"), company=True)
+                                   text=text, company=True)
         state.add_draft(pick, title, delta, "sample")
         st.session_state.mg_open = pick
         st.success("Sent to Review.")

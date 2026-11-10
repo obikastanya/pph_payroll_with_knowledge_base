@@ -52,6 +52,20 @@ def _usd(name):
     return float(value) if value else None
 
 
+# The app starts from the knowledge base as known on this date, so documents issued later can be added in a demo;
+# PPH21_KB_KNOWN_UNTIL overrides it, and an empty value means the full starting knowledge base
+APP_KB_KNOWN_UNTIL = "2025-08-31"
+
+
+def kb_known_until(default=None):
+    """The date the starting knowledge base is cut at (only updates recorded on or before it are kept), or None for
+    the full one. Read from PPH21_KB_KNOWN_UNTIL (environment, then .env); default applies when it is not set."""
+    name = "PPH21_KB_KNOWN_UNTIL"
+    file_values = _read_env_file()
+    value = os.environ[name] if name in os.environ else file_values.get(name, default)
+    return date.fromisoformat(value.strip()) if value and value.strip() else None
+
+
 # Working state written at run time (approved updates, uploaded documents, model calls); not committed
 WORKSPACE = Path(secret("PPH21_WORKSPACE") or ROOT / "workspace")
 DOCUMENTS = WORKSPACE / "documents"

@@ -159,8 +159,8 @@ def installed_policies():
 
 
 def case_company():
-    """The company the demo is about (data/case_company.json), or None when the file is missing."""
-    path = config.DATA / "case_company.json"
+    """The company the demo is about (data/presets/case_company.json), or None when the file is missing."""
+    path = config.PRESETS / "case_company.json"
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
 
 

@@ -107,16 +107,18 @@ The application has four pages:
   checks, before-and-after results, and the company policies it affects; approve, edit, ask the model to repair it,
   or reject it. Sample company policies can be sent to review without the model.
 
-**The demo company and the starting date.** The app starts from the knowledge base as known on 31 August 2025 (the
-updates of `seed.trig` recorded on or before that date; set `PPH21_KB_KNOWN_UNTIL` to change it, or leave it empty for
-the full seed). The calculator's company is PT TKG Taekwang Indonesia, a footwear factory in Kabupaten Subang (KLU
-15201, eligible for the DTP incentive; JKK risk group assumed medium, group III of the annex of PP 44/2015), with four
-illustrative employees as scenarios. Under *New documents → No file at hand? Use a sample document* the upload box
-offers the regulations issued after that date (PP 36/2025, PMK 72/2025, PMK 105/2025, the BPJS letter on the JP wage
-cap 2026) and two that do not change the PPh 21 of permanent employees (PP 50/2025, PP 9/2026). The company's labour
-agreement (PKB 2024-2026) is offered there only when the research data set lies next to this folder, since its text
-is copyrighted; its reference formalisation from the research is a sample company policy. The sidebar shows the
-company as the *Case study* (read from `data/case_company.json`); hovering it shows a short profile and the regulations
+**The demo company and the starting date.** The app starts from the knowledge base as known on 29 February 2024 (the
+updates of `seed.trig` recorded on or before that date, the last being the BPJS letter on the JP wage cap 2024; set
+`PPH21_KB_KNOWN_UNTIL` to change it, or leave it empty for the full seed). The calculator's company is PT TKG Taekwang
+Indonesia, a footwear factory in Kabupaten Subang (KLU 15201, eligible for the DTP incentive; JKK risk group assumed
+medium, group III of the annex of PP 44/2015), with five illustrative employees as scenarios. Under *New documents →
+No file at hand? Use a sample document* the upload box offers, oldest first, the regulations issued after that date
+(PMK 10/2025, PP 7/2025, the BPJS letter on the JP wage cap 2025, PER-11/PJ/2025, PP 36/2025, PMK 72/2025, PMK
+105/2025, the BPJS letter on the JP wage cap 2026) and two that do not change the PPh 21 of permanent employees (PP
+50/2025, PP 9/2026). The company's labour agreement (PKB 2024-2026, signed 15 March 2024) is offered there only when
+the research data set lies next to this folder, since its text is copyrighted; its reference formalisation from the
+research is a sample company policy. The sidebar shows the
+company as the *Case study* (read from `data/presets/case_company.json`); hovering it shows a short profile and the regulations
 that concern the company, each marked *Locked* (in the starting knowledge base), *Added* (approved in the app), or *Not
 added yet*.
 
@@ -335,11 +337,13 @@ system_final/
 ├── data/
 │   ├── kb/seed.trig      the starting knowledge base: 37 updates (2009-2026), 282 records
 │   ├── kb/documents.csv  the documents its records cite
-│   ├── case_company.json the demo company (profile and the regulations that concern it) shown in the sidebar
 │   ├── policies/         company policies as ready-made updates: three synthetic ones and the Taekwang PKB
-│   └── presets/          input definitions, the company and its pay components, and calculator scenarios
+│   └── presets/          input definitions, the company and its pay components, calculator scenarios, and the
+│                         case study shown in the sidebar (case_company.json)
 ├── examples/
 │   ├── documents/        texts of the sample policies and of later regulations, with their list (samples.json)
+│   ├── documents_original/  the published PDFs of those regulations, named as their texts, to try the upload
+│   │                     with a real file (PDF reading needs Docling)
 │   └── cases/            a calculator case (employee A, 2024) for `cli.py calculate --case`
 └── tests/                engine, knowledge graph and checks, pipeline with a mock model, impact detector
 ```

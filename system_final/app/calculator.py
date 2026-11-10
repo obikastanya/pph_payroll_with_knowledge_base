@@ -30,7 +30,7 @@ ROOT = "pph21_due"          # the value the calculator is for: the PPh 21 withhe
 CALL = re.compile(r"\b(income|benefit|hr|employee|employer|case)\('([a-z_0-9]+)'\)")
 MONTH_NUMBERS = range(1, 13)
 BASE_ORIGIN = "starting knowledge base"      # origin of the input definitions shipped with the starting knowledge base
-DEFAULT_SCENARIO = "Employee A: operator, 1 year of service"
+DEFAULT_SCENARIO = "Employee E: team leader, 5 years of service"
 WITHHELD = "PPh 21 already withheld"         # grid column for PPh 21 actually withheld
 
 
@@ -601,10 +601,10 @@ def period_bar():
     ends = list(range(rec["start"], 13))
     rec["end"] = c[2].selectbox("Works until", ends,
                                 index=ends.index(rec["end"]) if rec["end"] in ends else len(ends) - 1,
-                                key=f"k_end_{v}", format_func=lambda m: "December (still employed)" if m == 12
-                                else state.MONTHS[m - 1] + " (leaves)",
-                                help="The month of leaving becomes the final month: the tax of the year is "
-                                     "recalculated in that month.")
+                                key=f"k_end_{v}", format_func=lambda m: state.MONTHS[m - 1],
+                                help="The last month worked this year: December if the employee stays to the end "
+                                     "of the year, an earlier month if they leave. That month is the final month: "
+                                     "the tax of the year is recalculated in it.")
     months = list(range(rec["start"], rec["end"] + 1))
     rec["month"] = c[3].selectbox("Calculate up to", months,
                                   index=months.index(rec["month"]) if rec["month"] in months else len(months) - 1,

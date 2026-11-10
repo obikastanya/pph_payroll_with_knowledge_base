@@ -54,7 +54,7 @@ def _usd(name):
 
 # The app starts from the knowledge base as known on this date, so documents issued later can be added in a demo;
 # PPH21_KB_KNOWN_UNTIL overrides it, and an empty value means the full starting knowledge base
-APP_KB_KNOWN_UNTIL = "2025-08-31"
+APP_KB_KNOWN_UNTIL = "2024-02-29"
 
 
 def kb_known_until(default=None):

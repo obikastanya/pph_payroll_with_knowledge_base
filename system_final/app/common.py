@@ -134,7 +134,7 @@ CASE_STATUS = {"locked": ("Locked", "blue", "in the starting knowledge base"),
 def case_study():
     """The case-study field at the top of the sidebar: the demo company's name in a disabled-looking box. Hovering or
     focusing it shows a short profile and the regulations that concern the company, each marked locked (in the
-    starting knowledge base), added (approved in the app), or not added yet. Read from data/case_company.json."""
+    starting knowledge base), added (approved in the app), or not added yet. Read from data/presets/case_company.json."""
     c = state.case_company()
     if not c:
         return

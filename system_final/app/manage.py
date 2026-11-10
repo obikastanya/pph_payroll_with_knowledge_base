@@ -160,8 +160,10 @@ class _SampleFile:
 
 def sample_documents():
     """({id: entry}, [entries left out]) of the sample documents in examples/documents/samples.json. A document that is
-    not shipped with this folder (its text is copyrighted) is offered only when its file exists on this computer."""
+    not shipped with this folder (its text is copyrighted) is offered only when its file exists on this computer. Both
+    are in issue-date order, oldest first."""
     entries = json.loads(SAMPLES.read_text(encoding="utf-8"))["documents"] if SAMPLES.exists() else []
+    entries = sorted(entries, key=lambda e: e["issued"])
     found, missing = {}, []
     for e in entries:
         path = (config.ROOT / e["file"]).resolve()
@@ -184,7 +186,7 @@ def sample_text(doc_id):
 
 def _sample_picker():
     """Sample documents that can be added without a file: regulations issued after the starting knowledge base, and
-    the company's labour agreement when its text is on this computer."""
+    the company's labour agreement when its text is on this computer, listed by issue date (oldest first)."""
     with st.expander("No file at hand? Use a sample document", icon=":material/folder_open:"):
         found, missing = sample_documents()
         if found:
@@ -346,7 +348,9 @@ def card(el, kb):
     elif kind == "table":
         title, what = el.get("label") or el.get("name", ""), "Table " + ("changed" if old else "added")
         title = title[:1].upper() + title[1:]
-        body = (f"Taken from the table in the document's appendix ({el['rows_ref'].split('/')[-1]})"
+        ref = el.get("rows_ref")
+        ref = (ref.get("extracted_table") or "") if isinstance(ref, dict) else str(ref or "")
+        body = (f"Taken from the table in the document's appendix ({ref.split('/')[-1]})"
                 if el.get("rows_ref") else f"{len(el.get('rows') or [])} rows")
     elif kind == "fact":
         title, what, body = state.fact_label(el["id"]), "New term", el.get("label", "")
@@ -503,6 +507,14 @@ def impact_panel(delta, dj):
                          f"{', '.join(f'<code>{r}</code>' for r in rules)}</li>")
         common.html(f"<div class='rule company'><b>{installed.get(pol, pol)}</b> <span class='muted'>· {pol}</span>"
                     f"<ul style='margin:.3rem 0'>{''.join(lines)}</ul>Check whether this policy still fits.</div>")
+
+
+def _sent_to_review(pid):
+    """Open a draft just sent to Review. The Review tab is drawn before the tabs that send drafts, so the page is run
+    again; otherwise it would still say that nothing is waiting."""
+    st.session_state.mg_open = pid
+    st.session_state.mg_sent = True
+    st.rerun()
 
 
 def tab_review():
@@ -694,7 +706,7 @@ def tab_edit():
             v = int(value) if cur.value_type == "money" else value
             delta = workflow.new_value(name, v, start, doc, prov, quote)
             state.add_draft(delta["delta_id"], delta["document"]["title"], delta, "manual")
-            st.success("Sent to Review.")
+            _sent_to_review(delta["delta_id"])
     elif what == "New rule":
         facts = sorted(state.facts(), key=state.fact_label)
         c1, c2 = st.columns(2)
@@ -721,7 +733,7 @@ def tab_edit():
             if st.button("Send to Review", type="primary", icon=":material/send:", key="mg_rsend"):
                 delta = workflow.new_rule(produces, expr, cond, start, end, company, policy, doc, prov, quote)
                 state.add_draft(delta["delta_id"], delta["document"]["title"], delta, "manual")
-                st.success("Sent to Review.")
+                _sent_to_review(delta["delta_id"])
     else:
         view = state.kb().view(state.TODAY)
         rules = {r.id: r for r in view.rules.values()
@@ -750,7 +762,7 @@ def tab_edit():
             if st.button("Send to Review", type="primary", icon=":material/send:", key="mg_csend"):
                 delta = workflow.revoke(r, end, doc, prov, quote)
                 state.add_draft(delta["delta_id"], delta["document"]["title"], delta, "manual")
-                st.success("Sent to Review.")
+                _sent_to_review(delta["delta_id"])
         else:
             expr = st.text_input("New formula", state.expr_text(r.expression), key="mg_ue")
             start = st.date_input("Valid from", date(state.TODAY.year + 1, 1, 1), key="mg_us",
@@ -760,7 +772,7 @@ def tab_edit():
                                                                    icon=":material/send:", key="mg_usend"):
                 delta = workflow.change_rule(r, expr, start, doc, prov, quote)
                 state.add_draft(delta["delta_id"], delta["document"]["title"], delta, "manual")
-                st.success("Sent to Review.")
+                _sent_to_review(delta["delta_id"])
 
 
 # ====================================================================================================================
@@ -788,8 +800,7 @@ def _sample_policy(installed):
             documents.add_document(pick, title, date.fromisoformat(issued) if issued else state.TODAY,
                                    text=text, company=True)
         state.add_draft(pick, title, delta, "sample")
-        st.session_state.mg_open = pick
-        st.success("Sent to Review.")
+        _sent_to_review(pick)
 
 
 def tab_policy():
@@ -835,7 +846,7 @@ def tab_policy():
         card(el, state.kb())
     if st.button("Send to Review", type="primary", icon=":material/send:", key="mg_pol_send"):
         state.add_draft(delta["delta_id"], delta["document"]["title"], delta, "template", inputs=inputs)
-        st.success("Sent to Review.")
+        _sent_to_review(delta["delta_id"])
 
 
 # ====================================================================================================================
@@ -925,6 +936,8 @@ def show():
     common.md(f"Add, change, revoke, and {common.term('review')} what the system knows. Do it by hand, or ask the "
               f"{common.term('assistant', 'AI assistant')} (button at the bottom right) to help check and do the work. "
               "Nothing changes before you approve it.")
+    if st.session_state.pop("mg_sent", False):
+        st.toast("Sent to Review. Open the Review tab.", icon=":material/send:")
     s = state.load()
     n_review = len({p["id"] for p in state.pending(s) if state.status(p["id"], s) == "review"}
                    | {x["id"] for x in s["drafts"]})

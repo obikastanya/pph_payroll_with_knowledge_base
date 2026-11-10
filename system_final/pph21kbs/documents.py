@@ -300,6 +300,11 @@ def tokens(text):
     return int(len(text) / 3.5) + 1
 
 
+def cap(text):
+    """An opening or closing segment cut at ALWAYS_CAP tokens."""
+    return text if tokens(text) <= ALWAYS_CAP else text[: int(ALWAYS_CAP * 3.5)] + "\n[... truncated]"
+
+
 @dataclass
 class Selection:
     document: str
@@ -329,7 +334,7 @@ def extracted_tables(doc_id):
     return out
 
 
-def _table_text(t):
+def table_text(t):
     lines = [f"[Extracted table {t['id']}: {t['rows']} rows; columns {', '.join(t['columns'])}. "
              f"Refer to it with rows_ref; do not copy rows. First rows:]"]
     for r in t["sample"]:
@@ -349,13 +354,13 @@ def select(doc_id, view, budget=TOKEN_BUDGET):
     for i, s in enumerate(segs):
         text = s["text"]
         if s["kind"] == "annex" and tables:
-            text = "\n".join(_table_text(t) for t in tables)
+            text = "\n".join(table_text(t) for t in tables)
         nt = normalize(text)
         score = sum(len(re.findall(re.escape(t), nt)) for t in terms)
         scored.append((i, dict(s, text=text), score))
     for i, s, score in scored:
-        if s["kind"] in ("opening", "closing") and tokens(s["text"]) > ALWAYS_CAP:
-            s["text"] = s["text"][: int(ALWAYS_CAP * 3.5)] + "\n[... truncated]"
+        if s["kind"] in ("opening", "closing"):
+            s["text"] = cap(s["text"])
     keep = {i for i, s, _ in scored if s["kind"] in ("opening", "closing")}
     keep |= {i for i, s, _ in scored if s["kind"] == "annex" and tables}
     used = sum(tokens(scored[i][1]["text"]) for i in keep)
@@ -380,5 +385,7 @@ def render(selection):
         span = f" (PDF pages {s.get('page_start')}-{s.get('page_end')})" if s.get("page_start") else ""
         parts.append(f"--- {s['id']}{span} ---\n{s['text'].strip()}")
     if selection.dropped:
-        parts.append(f"[segments not shown: {', '.join(selection.dropped)}]")
+        shown = selection.dropped[:60]
+        more = len(selection.dropped) - len(shown)
+        parts.append(f"[segments not shown: {', '.join(shown)}" + (f", and {more} more" if more else "") + "]")
     return "\n\n".join(parts)

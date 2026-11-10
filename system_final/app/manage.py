@@ -13,7 +13,7 @@ import calculator
 import common
 import state
 import workflow
-from pph21kbs import config, consistency, documents, graph, pipeline
+from pph21kbs import config, consistency, digest, documents, graph, pipeline
 from pph21kbs.kb import apply_delta, validate_delta_json
 
 # The checks a proposal goes through, in the order they run
@@ -31,6 +31,11 @@ IMPACT_KINDS = {
     "d": "One of its rules takes the place of a regulation rule whose result this update changes, through a number, "
          "a table, or a rule it depends on.",
 }
+
+
+LEVEL_NAMES = {"core": "about PPh 21: sent word for word", "general": "general: sent as its summary",
+               "none": "not about PPh 21: left out"}
+FALLBACK = "the parts with the most PPh 21 terms are sent instead"
 
 
 def _title(pid):
@@ -91,6 +96,15 @@ def _ai_detail(pid):
     sel = r.get("selection") or {}
     st.caption("Parts of the document read: " + ", ".join(f"{k} ({v.get('tokens', 0):,} tokens)"
                                                           for k, v in sel.items()))
+    for dg in (v["digest"] for v in sel.values() if v.get("digest")):
+        c = dg["parts"]
+        note = (f"Mapped by {dg['model']}: {c['core']} parts about PPh 21, {c['general']} general, {c['none']} not "
+                "about PPh 21.")
+        if dg.get("failed_calls"):
+            note += f" {dg['failed_calls']} mapping call(s) failed; their parts were sent word for word."
+        if not dg.get("used"):
+            note += f" The map marks no part as about PPh 21, so {FALLBACK}."
+        st.caption(note)
     rows = []
     for c in r.get("drafts", []):
         log = c.get("gate_log") or {}
@@ -234,27 +248,62 @@ def _waiting(p):
 
 
 def _document_text(p, pages):
-    """The text the AI will read (the same selection the pipeline makes: the knowledge base as known on the issue
-    date, within the token budget) and the full text of the document, each in a scrolling box."""
-    sent, full = st.tabs(["Sent to the AI", "Full text"])
+    record = digest.load(p["doc"])
+    sent, mapped, full = st.tabs(["Sent to the AI", "AI map of the document", "Full text"])
     with sent:
-        try:
-            sel = documents.select(p["doc"], state.kb().view(date.fromisoformat(p["issued"])))
-        except Exception as e:  # noqa: BLE001 - shown to the user
-            st.caption(f"The selection cannot be shown: {type(e).__name__}: {e}")
-        else:
-            st.caption(f"About {sel.tokens:,} tokens of the {documents.TOKEN_BUDGET:,} allowed. "
-                       + ("Every part of the document is sent. " if not sel.dropped else
-                          f"Not sent, over the budget: {', '.join(sel.dropped)}. The AI is told they exist. ")
-                       + ("Annex tables are sent as descriptions (columns, number of rows, first rows); the rules "
-                          "refer to the extracted tables, so their values are not copied by the AI." if sel.tables
-                          else ""))
-            with st.container(height=480):
-                st.code(documents.render(sel), language=None, wrap_lines=True)
+        _sent_text(p, record)
+    with mapped:
+        _map_table(record)
     with full:
         st.caption(f"{len(pages)} pages, as extracted from the file.")
         with st.container(height=480):
             st.code("\n\n".join(f"--- page {n} ---\n{t}" for n, t in pages), language=None, wrap_lines=True)
+
+
+def _sent_text(p, record):
+    if record is None and workflow.digest_on():
+        st.caption(f"Chosen when the AI runs: first {config.DIGEST_MODEL} maps every part of the document. Parts "
+                   "about PPh 21 are sent word for word, general parts as one-line summaries, and the rest is left "
+                   "out.")
+        return
+    try:
+        view = state.kb().view(date.fromisoformat(p["issued"]))
+        cfg = pipeline.Config(use_stored_map=True)
+        text, info = pipeline.document_text([{"id": p["doc"], "title": p["title"]}], view, cfg)
+    except Exception as e:  # noqa: BLE001 - shown to the user
+        st.caption(f"The selection cannot be shown: {type(e).__name__}: {e}")
+        return
+    sel = info[p["doc"]]
+    used = (sel.get("digest") or {}).get("used")
+    notes = [f"About {sel['tokens']:,} tokens of the "
+             f"{cfg.digest_budget if used else cfg.budget_tokens:,} allowed."]
+    if used:
+        notes.append("Chosen from the AI map.")
+    elif record is not None:
+        notes.append(f"The AI map marks no part as about PPh 21, so {FALLBACK}.")
+    if sel["dropped"]:
+        notes.append(f"Not sent: {len(sel['dropped'])} parts; the AI is told they exist.")
+    if documents.tables_of(p["doc"]):
+        notes.append("Annex tables are sent as descriptions; the rules refer to the extracted tables.")
+    st.caption(" ".join(notes))
+    with st.container(height=480):
+        st.code(text, language=None, wrap_lines=True)
+
+
+def _map_table(record):
+    if record is None:
+        st.caption("Not mapped yet." + (" The map is made when the AI runs." if workflow.digest_on()
+                                        else f" Mapping is off or has no OpenAI key: {FALLBACK}."))
+        return
+    c = digest.counts(record)
+    st.caption(f"Made by {record['model']} in {record['calls']} call(s), USD {record['cost_usd']:.3f}: {c['core']} "
+               f"parts about PPh 21, {c['general']} general, {c['none']} not about PPh 21. The opening and closing "
+               "are always sent.")
+    rows = [{"Part": u["label"], "Characters": u["chars"],
+             "Level": "always sent" if u["kind"] in digest.ALWAYS else LEVEL_NAMES[digest.level(record, u["key"])],
+             "Summary": (record["entries"].get(u["key"]) or {}).get("summary", "")}
+            for u in record["units"]]
+    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch", height=480)
 
 
 def _run_ai(p, again=False):
@@ -263,9 +312,12 @@ def _run_ai(p, again=False):
     c1, c2 = st.columns([1, 2])
     m = c1.radio("Number of drafts", (3, 1), horizontal=True, key=f"mg_m_{p['id']}",
                  help=common.tip("draft") + " One draft costs less, but there is nothing to compare it with.")
-    c2.caption(f"Claude ({config.MAIN_MODEL}) reads the document: it decides whether it matters for PPh 21, writes the "
-               f"drafts, checks them, fixes a failed draft once, and compares the drafts. About USD 0.1–0.9 per "
-               f"document (3 drafts). {workflow.budget_text('acquisition')}")
+    mapping = (f"First {config.DIGEST_MODEL} maps the document (about USD 0.01–0.6, depending on length; "
+               f"{workflow.budget_text('digest')}). " if workflow.digest_on() and digest.load(p["doc"]) is None
+               else "")
+    c2.caption(f"{mapping}Claude ({config.MAIN_MODEL}) reads the document: it decides whether it matters for PPh 21, "
+               "writes the drafts, checks them, fixes a failed draft once, and compares the drafts. About USD "
+               f"0.1–0.5 per document (3 drafts). {workflow.budget_text('acquisition')}")
     if not ok:
         st.warning(f"The AI cannot run: {why}.", icon=":material/payments:")
         return
@@ -349,6 +401,8 @@ def _document_card(p, s):
         if state.run(p["id"]):
             with st.expander("See what the AI did"):
                 _ai_detail(p["id"])
+        if st.toggle("Show the document text", key=f"mg_text_{p['id']}"):
+            _document_text(p, workflow.text_stats(p)[0])
 
 
 # ====================================================================================================================

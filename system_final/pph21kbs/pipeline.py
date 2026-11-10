@@ -19,7 +19,8 @@ from functools import lru_cache
 
 from rdflib import Dataset, URIRef
 
-from . import config, documents, draft, gates, graph
+from . import config, digest, documents, draft, gates, graph
+from .digest import BUDGET_TOKENS as DIGEST_BUDGET
 from .documents import registry
 from .draft import BudgetExceeded, ConversionError, to_delta
 from .gates import observe
@@ -253,6 +254,8 @@ class Config:
     relevance_effort: str = "medium"
     draft_effort: str = "high"
     budget_tokens: int = documents.TOKEN_BUDGET
+    use_stored_map: bool = False       # read a document through its stored map (digest.py)
+    digest_budget: int = DIGEST_BUDGET
     max_tokens: int = 32000            # per draft or repair call
     policy_omega: date = field(default_factory=date.today)    # knowledge date a company policy is checked against
 
@@ -324,21 +327,46 @@ def _messages(log):
     return [f"{g}: {v[6:]}" for g, v in log.items() if isinstance(v, str) and v.startswith("fail")]
 
 
-def run_document(event, base, client, ledger, cfg=None, run_id="run", out_dir=None, policies=()):
+def document_text(docs, view, cfg, digester=None, call_prefix=""):
+    """(text for the drafting model, selection record). Without a usable map, the lexical selection is used."""
+    selections, info = [], {}
+    for d in docs:
+        record = None
+        if digester is not None:
+            try:
+                record = digest.build(d["id"], digester, title=d.get("title", ""), call_prefix=call_prefix)
+            except BudgetExceeded:
+                pass
+        elif cfg.use_stored_map:
+            record = digest.load(d["id"])
+        usable = record is not None and digest.usable(record)
+        if usable:
+            sel = digest.select(d["id"], record, cfg.digest_budget)
+        else:
+            sel = documents.select(d["id"], view, cfg.budget_tokens)
+        info[d["id"]] = {"tokens": sel.tokens, "dropped": sel.dropped}
+        if record:
+            info[d["id"]]["digest"] = {"model": record["model"], "parts": digest.counts(record), "used": usable,
+                                       "calls": record["calls"], "failed_calls": record["failed_calls"]}
+        selections.append(sel)
+    return "\n\n".join(documents.render(s) for s in selections), info
+
+
+def run_document(event, base, client, ledger, cfg=None, run_id="run", out_dir=None, policies=(), digester=None):
     """Acquire one document against the knowledge base `base`. Returns the result record (also written to
-    out_dir/<event id>.json) with status proposed, empty (not relevant), abstain, or budget."""
+    out_dir/<event id>.json) with status proposed, empty (not relevant), abstain, or budget. digester maps the
+    document first (digest.py)."""
     cfg = cfg or Config()
     docs = documents_of(event)
     issued = event.issued
     view = base.view(issued)
-    selections = [documents.select(d["id"], view, cfg.budget_tokens) for d in docs]
-    doc_text = "\n\n".join(documents.render(s) for s in selections)
-    ctx = draft.context_text(view, doc_text)
-    result = {"run": run_id, "event": event.id, "documents": [d["id"] for d in docs],
-              "selection": {s.document: {"tokens": s.tokens, "dropped": s.dropped} for s in selections},
+    result = {"run": run_id, "event": event.id, "documents": [d["id"] for d in docs], "selection": {},
               "drafts": [], "groups": [], "selected": None, "status": None, "delta": None, "cost_usd": 0.0}
     call_prefix = f"{run_id}-{event.id}-"
+    ledgers = [ledger] + ([digester.ledger] if digester is not None and digester.ledger is not ledger else [])
     try:
+        doc_text, result["selection"] = document_text(docs, view, cfg, digester, call_prefix)
+        ctx = draft.context_text(view, doc_text)
         _, rel, _ = client.complete(system=draft.SYSTEM_RELEVANCE, prefix=[doc_text],
                                     user=draft.relevance_user(event, docs), schema=draft.RELEVANCE_SCHEMA,
                                     schema_name="relevance", effort=cfg.relevance_effort, step="relevance",
@@ -353,7 +381,7 @@ def run_document(event, base, client, ledger, cfg=None, run_id="run", out_dir=No
                                    "note": rel.get("reason", "")}
             else:
                 result["status"] = "abstain"
-            return _finish(result, ledger, call_prefix, out_dir)
+            return _finish(result, ledgers, call_prefix, out_dir)
         rng = random.Random(cfg.seed + zlib.crc32(event.id.encode()) % 1000)
         order = list(range(1, cfg.m + 1))
         rng.shuffle(order)
@@ -403,7 +431,7 @@ def run_document(event, base, client, ledger, cfg=None, run_id="run", out_dir=No
     except BudgetExceeded as e:
         result["status"] = "budget"
         result["error"] = str(e)
-    return _finish(result, ledger, call_prefix, out_dir)
+    return _finish(result, ledgers, call_prefix, out_dir)
 
 
 def _evaluate(d, base, event, issued, rel, cfg, docs, run_id, policies):
@@ -425,9 +453,9 @@ def _evaluate(d, base, event, issued, rel, cfg, docs, run_id, policies):
         d.checked = (kb2, sgs.cases, sgs.omegas)
 
 
-def _finish(result, ledger, call_prefix, out_dir):
-    result["cost_usd"] = ledger.spent_prefix(call_prefix)
-    d = out_dir or ledger.dir / "results"
+def _finish(result, ledgers, call_prefix, out_dir):
+    result["cost_usd"] = round(sum(led.spent_prefix(call_prefix) for led in ledgers), 6)
+    d = out_dir or ledgers[0].dir / "results"
     d.mkdir(parents=True, exist_ok=True)
     (d / f"{result['event']}.json").write_text(json.dumps(result, ensure_ascii=False, indent=1, default=str),
                                                encoding="utf-8")

@@ -17,7 +17,7 @@ import jsonschema
 from rdflib import Graph
 
 from . import config, graph
-from .config import MAIN_MODEL, anthropic_key
+from .config import DIGEST_MODEL, MAIN_MODEL, anthropic_key, openai_key
 from .documents import normalize
 from .expr import CONTEXT_FACTS, FUNCTIONS
 from .kb import Constraint, FactDef, Parameter, Rule, TableVersion, fraction_text, record_to_json, validate_delta_json
@@ -374,9 +374,12 @@ def repair_user(event, documents, previous, messages):
 # ====================================================================================================================
 # Model client and cost ledger
 # ====================================================================================================================
-# USD per million tokens (October 2026)
+# USD per million tokens (October 2026); OpenAI cached input is counted at the full price, never less than spent
 PRICES = {
     "claude-opus-5-5": {"input": 4.0, "output": 20.0, "cache_read": 0.20, "cache_write": 5.0},
+    "claude-sonnet-5-5": {"input": 2.0, "output": 10.0, "cache_read": 0.20, "cache_write": 2.5},
+    "gpt-5.4-mini": {"input": 0.75, "output": 4.50, "cache_read": 0.75, "cache_write": 0.75},
+    "gpt-6.1-sol": {"input": 2.0, "output": 10.0, "cache_read": 0.20, "cache_write": 2.0},
 }
 
 
@@ -395,6 +398,7 @@ class Reply:
     model: str
     usage: dict                      # input, output, cache_read, cache_write
     seconds: float = 0.0
+    error: str = ""
 
 
 def cost(model, usage):
@@ -406,16 +410,27 @@ def cost(model, usage):
     return round(c, 6)
 
 
+def priced(model):
+    if model not in PRICES:
+        raise LLMError(f"no price for model {model} in draft.PRICES")
+    return model
+
+
+def _entries(path):
+    """Logged calls of one file; a line still being written by another thread is skipped."""
+    out = []
+    for line in path.read_text(encoding="utf-8").splitlines() if path.exists() else []:
+        try:
+            out.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+    return out
+
+
 def spent_total(root=None, provider=None):
     """Cost of every logged call under root (default: the workspace), or of one provider's calls."""
-    total = 0.0
-    for path in Path(root or config.CALLS).glob("*/calls.jsonl"):
-        for line in path.read_text(encoding="utf-8").splitlines():
-            if line.strip():
-                e = json.loads(line)
-                if provider is None or e.get("provider") == provider:
-                    total += e.get("cost_usd") or 0.0
-    return round(total, 6)
+    return round(sum(e.get("cost_usd") or 0.0 for path in Path(root or config.CALLS).glob("*/calls.jsonl")
+                     for e in _entries(path) if provider is None or e.get("provider") == provider), 6)
 
 
 class Ledger:
@@ -435,10 +450,7 @@ class Ledger:
         self.total_limit = config.BUDGET_USD if total_limit_usd is None else total_limit_usd
 
     def spent(self):
-        if not self.calls.exists():
-            return 0.0
-        return round(sum(json.loads(line).get("cost_usd") or 0.0
-                         for line in self.calls.read_text(encoding="utf-8").splitlines() if line.strip()), 6)
+        return round(sum(e.get("cost_usd") or 0.0 for e in _entries(self.calls)), 6)
 
     def check(self, provider):
         limit = self.total_limit.get(provider) if isinstance(self.total_limit, dict) else self.total_limit
@@ -462,15 +474,8 @@ class Ledger:
 
     def spent_prefix(self, call_prefix):
         """Cost of the calls whose call_id starts with call_prefix (one document)."""
-        if not self.calls.exists():
-            return 0.0
-        total = 0.0
-        for line in self.calls.read_text(encoding="utf-8").splitlines():
-            if line.strip():
-                e = json.loads(line)
-                if str(e.get("call_id") or "").startswith(call_prefix):
-                    total += e.get("cost_usd") or 0.0
-        return round(total, 6)
+        return round(sum(e.get("cost_usd") or 0.0 for e in _entries(self.calls)
+                         if str(e.get("call_id") or "").startswith(call_prefix)), 6)
 
 
 class Client:
@@ -496,6 +501,7 @@ class Client:
             reply = Reply("", "error", self.model, {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0})
             error = f"{type(e).__name__}: {e}"[:500]
         reply.seconds = round(time.time() - t0, 2)
+        error = error or reply.error or None
         parsed = None
         if reply.text:
             try:
@@ -531,7 +537,7 @@ class AnthropicClient(Client):
         key = anthropic_key()
         if not key:
             raise LLMError("no Anthropic key in the environment or .env")
-        self.model = model
+        self.model = priced(model)
         self.api = anthropic.Anthropic(api_key=key, max_retries=3)
 
     def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens, cache=True):
@@ -547,12 +553,53 @@ class AnthropicClient(Client):
                   "output_config": {"effort": effort, "format": {"type": "json_schema", "schema": schema}}}
         with self.api.messages.stream(**params) as stream:
             msg = stream.get_final_message()
-        text = next((b.text for b in msg.content if b.type == "text"), "")
         u = msg.usage
         usage = {"input": u.input_tokens or 0, "output": u.output_tokens or 0,
                  "cache_read": getattr(u, "cache_read_input_tokens", 0) or 0,
                  "cache_write": getattr(u, "cache_creation_input_tokens", 0) or 0}
+        if msg.stop_reason == "refusal":
+            category = getattr(getattr(msg, "stop_details", None), "category", None) or "no category"
+            return Reply("", "refusal", msg.model, usage, error=f"the model declined the request ({category})")
+        text = next((b.text for b in msg.content if b.type == "text"), "")
         return Reply(text, msg.stop_reason or "", msg.model, usage)
+
+
+class OpenAIClient(Client):
+    """An OpenAI model with structured output: maps documents (digest.py) and runs the app's assistant."""
+    provider = "openai"
+
+    def __init__(self, ledger, model=DIGEST_MODEL):
+        super().__init__(ledger)
+        import openai
+        key = openai_key()
+        if not key:
+            raise LLMError("no OpenAI key in the environment or .env")
+        self.model = priced(model)
+        self.api = openai.OpenAI(api_key=key, max_retries=3)
+
+    def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens, cache=True):
+        content = [{"type": "input_text", "text": t} for t in prefix] + [{"type": "input_text", "text": user}]
+        resp = self.api.responses.create(
+            model=self.model, instructions=system, input=[{"role": "user", "content": content}],
+            reasoning={"effort": effort}, max_output_tokens=max_tokens,
+            text={"format": {"type": "json_schema", "name": schema_name, "schema": strict_schema(schema),
+                             "strict": True}})
+        u = resp.usage
+        cached = getattr(getattr(u, "input_tokens_details", None), "cached_tokens", 0) or 0
+        usage = {"input": (u.input_tokens or 0) - cached, "output": u.output_tokens or 0, "cache_read": cached,
+                 "cache_write": 0}
+        return Reply(resp.output_text or "", resp.status or "", resp.model, usage)
+
+
+def strict_schema(schema):
+    """OpenAI strict mode rejects format keywords and $schema/$id/title at the root."""
+    def walk(x):
+        if isinstance(x, dict):
+            return {k: walk(v) for k, v in x.items() if k not in ("$schema", "$id", "title", "format")}
+        if isinstance(x, list):
+            return [walk(v) for v in x]
+        return x
+    return walk(schema)
 
 
 class MockClient(Client):

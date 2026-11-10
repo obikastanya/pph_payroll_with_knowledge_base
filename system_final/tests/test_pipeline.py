@@ -5,12 +5,13 @@ its reference update (data/policies/SP09.json) as the model output.
 """
 import copy
 import json
+import re
 from datetime import date
 
 import pytest
 from test_engine import SRC, delta, fact, rule, toy_kb
 
-from pph21kbs import config, documents, draft, gates, graph, pipeline
+from pph21kbs import config, digest, documents, draft, gates, graph, pipeline
 from pph21kbs.kb import apply_delta
 
 POLICY = "SP09"
@@ -105,6 +106,66 @@ def test_drafts_that_behave_differently_abstain(seed_kb, workspace):
                     m=2, repair_rounds=0)
     assert [d["passed"] for d in res["drafts"]] == [True, True], [d["gate_log"] for d in res["drafts"]]
     assert res["status"] == "abstain" and len(res["groups"]) == 2
+
+
+def policy_by_article():
+    """The sample policy with plain article headings, so that every article is a part of its own."""
+    text = (config.ROOT / "examples" / "documents" / f"{POLICY}.txt").read_text(encoding="utf-8")
+    text = re.sub(r"^#+ (Pasal \d+) .*$", r"\1", text, flags=re.M)
+    documents.add_document(POLICY, "Sample company regulation", "2023-08-01", text=text, company=True)
+    parts = [u for u in digest.units(POLICY) if u["kind"] not in digest.ALWAYS]
+    assert [u["label"] for u in parts] == ["Pasal 25", "Pasal 26", "Pasal 46"]
+    return parts
+
+
+def mapper(workspace, *outputs):
+    return draft.MockClient(draft.Ledger(f"test-digest-{len(outputs)}", root=workspace / "calls"), list(outputs))
+
+
+def test_digest_sends_core_parts_verbatim_summarises_general_and_drops_none(seed_kb, workspace):
+    parts = policy_by_article()
+    levels = {"Pasal 25": "core", "Pasal 26": "general", "Pasal 46": "none"}
+    mapped = {"entries": [{"unit": u["key"], "level": levels[u["label"]], "summary": f"SUMMARY OF {u['label']}"}
+                          for u in parts]}
+    ref = reference()
+    quote = ref["add"][0]["source"][0]["quote"]
+    ledger = draft.Ledger("test", root=workspace / "calls")
+    client = draft.MockClient(ledger, [relevance(quote)] + [draft.to_llm(ref)] * 2)
+    digester = mapper(workspace, mapped)
+    res = pipeline.run_document(event(), seed_kb, client, ledger, pipeline.Config(policy_omega=OMEGA, m=2),
+                                run_id="t", out_dir=workspace / "results", policies=(POLICY,), digester=digester)
+    assert res["status"] == "proposed", [d["gate_log"] for d in res["drafts"]]
+    sent = client.seen[0]["prefix"][0]
+    assert "iuran JKK sebesar 0,54%" in sent
+    assert "SUMMARY OF Pasal 26" in sent and "never quote them" in sent
+    assert "Iuran JHT sebesar 2%" not in sent
+    assert "SUMMARY OF Pasal 46" not in sent and "Hal-hal yang belum diatur" not in sent
+    assert res["selection"][POLICY]["digest"]["parts"] == {"core": 1, "general": 1, "none": 1}
+    assert [json.loads(x)["step"] for x in digester.ledger.calls.read_text(encoding="utf-8").splitlines()] == ["digest"]
+    again = mapper(workspace)
+    assert digest.build(POLICY, again)["entries"] == digest.load(POLICY)["entries"] and again.seen == []
+    text2, info = pipeline.document_text(pipeline.documents_of(event()), seed_kb.view(OMEGA),
+                                         pipeline.Config(use_stored_map=True))
+    assert text2 == sent and info[POLICY]["digest"]["parts"]["none"] == 1
+
+
+def test_digest_falls_back_when_the_map_cannot_be_trusted(seed_kb, workspace):
+    parts = policy_by_article()
+    docs, view = pipeline.documents_of(event()), seed_kb.view(OMEGA)
+    lexical, _ = pipeline.document_text(docs, view, pipeline.Config())
+    none_map = {"entries": [{"unit": u["key"], "level": "none", "summary": "-"} for u in parts]}
+    text, info = pipeline.document_text(docs, view, pipeline.Config(), mapper(workspace, none_map))
+    assert text == lexical and info[POLICY]["digest"]["used"] is False
+
+    digest._path(POLICY).unlink()
+    first = parts[0]
+    partial = {"entries": [{"unit": f"<<{first['key']}>> {first['label']}", "level": "none", "summary": "-"}]}
+    record = digest.build(POLICY, mapper(workspace, partial))
+    assert [digest.level(record, u["key"]) for u in parts] == ["none", "core", "core"]
+
+    digest._path(POLICY).unlink()
+    failed = digest.build(POLICY, mapper(workspace, draft.LLMError("down")))
+    assert failed["failed_calls"] == 1 and not digest.usable(failed) and digest.load(POLICY) is None
 
 
 def test_g6_rejects_an_input_the_payroll_data_does_not_have(seed_kb):

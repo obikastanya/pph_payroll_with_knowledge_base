@@ -71,8 +71,12 @@ WORKSPACE = Path(secret("PPH21_WORKSPACE") or ROOT / "workspace")
 DOCUMENTS = WORKSPACE / "documents"
 CALLS = WORKSPACE / "calls"
 
-# Language model used to draft updates
-MAIN_MODEL = "claude-opus-5-5"
+# Model that drafts updates (the research used claude-opus-5-5)
+MAIN_MODEL = secret("PPH21_MAIN_MODEL") or "claude-sonnet-5-5"
+
+# Low-cost model that maps documents in the app (digest.py); cli.py and the tests do not map
+DIGEST_MODEL = secret("PPH21_DIGEST_MODEL") or "gpt-5.4-mini"
+DIGEST = (secret("PPH21_DIGEST") or "on").strip().lower() not in ("off", "0", "false", "no")
 
 # Last tax year the checks generate cases for and examine (the year after the current one, at least 2027)
 LAST_TAX_YEAR = max(2027, date.today().year + 1)

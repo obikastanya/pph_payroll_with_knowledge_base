@@ -74,7 +74,8 @@ API keys are needed only to read new documents with the language model:
 cp .env.example .env               # Windows: copy .env.example .env
 ```
 
-Fill in `CLAUDE_API_KEY` (drafting updates) and, optionally, `OPENAI_API_KEY` (the assistant of the app). A variable
+Fill in `CLAUDE_API_KEY` (drafting updates) and, optionally, `OPENAI_API_KEY` (mapping documents before Claude reads
+them, and the assistant of the app). A variable
 set in the shell takes precedence over `.env`. The calculator, the knowledge-base viewer, the sample policies, and the
 tests work without any key.
 
@@ -192,7 +193,7 @@ In the final period the year is recalculated with the Article 17 rates, and the 
 
 | Step | What happens |
 |---|---|
-| 1. Text | The document is split into opening, articles, closing, and annexes; segments are chosen within a 14,000-token budget; extracted annex tables are shown as table descriptions |
+| 1. Text | The document is split into opening, articles, closing, and annexes; extracted annex tables are shown as table descriptions. In the app, a low-cost OpenAI model (`gpt-5.4-mini`, `pph21kbs/digest.py`) first maps every part: parts about PPh 21 are sent word for word, general parts as one-line summaries marked as not quotable, and unrelated parts are left out (budget 40,000 tokens). Without the map (no OpenAI key, `PPH21_DIGEST=off`, `cli.py`, the research) the segments with the most PPh 21 terms are chosen within a 14,000-token budget |
 | 2. Relevance | One model call decides whether the document changes the calculation, with verbatim quotes |
 | 3. Context | The model sees the vocabulary of the knowledge base, the 29 registered functions, up to 220 related records, and the case-data inputs that exist |
 | 4. Drafts | m independent drafts (default 3) of the update as structured JSON, each element with quotes from the document |
@@ -255,7 +256,10 @@ inputs are shown to the model and checked by gate G6, G5 reports dates and eleme
 draft prompt has modelling guidance and a checklist for company policies, and the drafts are compared by the facts
 their conflicts concern instead of rule names. On the development set (seven synthetic company policies) these
 changes reduced silent errors from 5 to 1. **Version 2 has not yet been evaluated on the test documents with the
-model API**, so the numbers above describe version 1. The calculation engine and the knowledge base behave as in the research: on
+model API**, so the numbers above describe version 1. The app goes further than the research configuration: Claude
+Sonnet 5.5 drafts the updates (the research used Claude Opus 5.5; `PPH21_MAIN_MODEL` selects the model), and documents
+are mapped by the low-cost model before Claude reads them (step 1). Neither change has been evaluated on the test
+documents. The calculation engine and the knowledge base behave as in the research: on
 all 2,398 test cases at three knowledge dates (7,194 evaluations), this folder gives exactly the same values,
 conflicts, and errors as the research system.
 
@@ -319,7 +323,8 @@ system_final/
 │   ├── engine.py         4. inference engine and trace
 │   ├── consistency.py    5. static checks (gate G3 and the knowledge-base checker)
 │   ├── documents.py      6. document registry, texts, quotes, PDF extraction, segmentation, text selection
-│   ├── draft.py          7. what the model sees and writes: context, prompts, model client and costs, conversion
+│   ├── digest.py         6b. map of a document by a low-cost model: what is sent word for word, summarised, left out
+│   ├── draft.py          7. what the model sees and writes: context, prompts, model clients and costs, conversion
 │   ├── gates.py          8. gates G1-G6 and the generated cases they run on
 │   ├── pipeline.py       9. acquisition pipeline, agreement of drafts, impact on company policies
 │   └── config.py         file locations, model, spending limits, keys
@@ -365,7 +370,9 @@ system_final/
   the Taekwang PKB policy is the research's formalisation of that agreement, with short quotes of its articles. The
   wages of the calculator scenarios are illustrative.
   No personal data is included.
-- **Costs.** Reading one document with three drafts costs about USD 0.1-0.9 with Claude Opus 5.5 (October 2026
-  prices). Every call and its cost is logged in `workspace/calls/`; set `PPH21_BUDGET_ANTHROPIC_USD` to cap the total.
+- **Costs.** Reading one document with three drafts costs about USD 0.1-0.5 with Claude Sonnet 5.5, plus about USD
+  0.01-0.6 for the map, depending on the length (October 2026 prices; with Claude Opus 5.5 the drafts cost about USD
+  0.1-0.9). Every call and its cost is logged in `workspace/calls/`; set `PPH21_BUDGET_ANTHROPIC_USD` and
+  `PPH21_BUDGET_OPENAI_USD` to cap the totals.
 - **Reproducing the paper.** The research code, data, and experiment logs are in the parent repository (`system/`,
   `dataset/`, `experiments/`); the paper's numbers come from that code at the tag `penelitian-selesai`.

@@ -37,14 +37,11 @@ from pph21kbs.kb import schema
 MAIN_MODEL = config.MAIN_MODEL
 ASSISTANT_MODEL = "gpt-5.4-mini"
 SECOND_MODEL = "gpt-6.1-sol"
-# USD per million tokens. Cached input is counted at the full input price, so the ledger never counts less than was
-# spent.
-draft.PRICES.setdefault(ASSISTANT_MODEL, {"input": 0.75, "output": 4.50, "cache_read": 0.75, "cache_write": 0.75})
-draft.PRICES.setdefault(SECOND_MODEL, {"input": 2.0, "output": 10.0, "cache_read": 0.20, "cache_write": 2.0})
-LIMITS = {"acquisition": 4.0, "repair": 1.5, "assistant": 1.0}          # USD, cumulative per kind of work
-PROVIDER = {"acquisition": "anthropic", "repair": "anthropic", "assistant": "openai"}
+LIMITS = {"acquisition": 4.0, "repair": 1.5, "assistant": 1.0, "digest": 2.0}   # USD, cumulative per kind of work
+PROVIDER = {"acquisition": "anthropic", "repair": "anthropic", "assistant": "openai", "digest": "openai"}
 PROVIDER_NAMES = {"anthropic": "Anthropic", "openai": "OpenAI"}
-KIND_LABELS = {"acquisition": "reading documents", "repair": "fixing proposals", "assistant": "the assistant"}
+KIND_LABELS = {"acquisition": "reading documents", "repair": "fixing proposals", "assistant": "the assistant",
+               "digest": "mapping documents"}
 
 
 def ledger(kind):
@@ -119,16 +116,23 @@ def text_stats(item):
 # ====================================================================================================================
 # Acquisition and repair (Claude)
 # ====================================================================================================================
-def read(item, m=3, client=None):
+def digest_on():
+    """Documents are mapped before Claude reads them: switched on, with an OpenAI key and budget left."""
+    return config.DIGEST and ready("digest")[0]
+
+
+def read(item, m=3, client=None, digester=None):
     """Run the acquisition pipeline on an inbox document against the knowledge base in use. Writes the run to the
-    workspace and records it in the inbox. client: a test client (draft.MockClient) instead of Claude."""
+    workspace and records it in the inbox. client, digester: test clients instead of Claude and OpenAI."""
     ev = event_of(item)
     led = client.ledger if client is not None else ledger("acquisition")
     client = client or draft.AnthropicClient(led)
+    if digester is None and client.provider != "mock" and digest_on():
+        digester = draft.OpenAIClient(ledger("digest"), model=config.DIGEST_MODEL)
     run_id = f"app-{int(time.time())}"
     policies = (item["doc"],) if ev.layer == "company" else ()
-    res = pipeline.run_document(ev, state.kb(), client, led, pipeline.Config(m=m), run_id=run_id,
-                                out_dir=state.RUNS, policies=policies)
+    res = pipeline.run_document(ev, state.kb(), client, led, pipeline.Config(m=m, use_stored_map=True), run_id=run_id,
+                                out_dir=state.RUNS, policies=policies, digester=digester)
     state.set_run(item["id"], f"runs/{ev.id}.json", res.get("cost_usd") or 0.0)
     return res
 
@@ -163,12 +167,11 @@ def repair(pid, delta, note, client=None):
     Returns (new delta or None, passed, check log, cost)."""
     item = state.pending_by_id()[pid]
     ev = event_of(item)
-    cfg = pipeline.Config(m=1)
+    cfg = pipeline.Config(m=1, use_stored_map=True)
     base = state.kb()
     docs = pipeline.documents_of(ev)
     view = base.view(ev.issued)
-    selections = [documents.select(x["id"], view, cfg.budget_tokens) for x in docs]
-    doc_text = "\n\n".join(documents.render(x) for x in selections)
+    doc_text, _ = pipeline.document_text(docs, view, cfg)
     ctx = draft.context_text(view, doc_text)
     led = client.ledger if client is not None else ledger("repair")
     client = client or draft.AnthropicClient(led)
@@ -380,43 +383,6 @@ def bonus_policy(percent, month, pid="PRS-COMPANY", start=None):
 # ====================================================================================================================
 # Assistant model (OpenAI)
 # ====================================================================================================================
-class OpenAIClient(draft.Client):
-    """An OpenAI model with structured output (JSON schema), logged by the same ledger as the library's client."""
-    provider = "openai"
-
-    def __init__(self, ledger, model=ASSISTANT_MODEL):
-        super().__init__(ledger)
-        import openai
-        key = config.openai_key()
-        if not key:
-            raise draft.LLMError("no OpenAI key in the environment or .env")
-        self.model = model
-        self.api = openai.OpenAI(api_key=key, max_retries=3)
-
-    def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens, cache=True):
-        content = [{"type": "input_text", "text": t} for t in prefix] + [{"type": "input_text", "text": user}]
-        resp = self.api.responses.create(
-            model=self.model, instructions=system, input=[{"role": "user", "content": content}],
-            reasoning={"effort": effort}, max_output_tokens=max_tokens,
-            text={"format": {"type": "json_schema", "name": schema_name, "schema": _strict(schema), "strict": True}})
-        u = resp.usage
-        cached = getattr(getattr(u, "input_tokens_details", None), "cached_tokens", 0) or 0
-        usage = {"input": (u.input_tokens or 0) - cached, "output": u.output_tokens or 0, "cache_read": cached,
-                 "cache_write": 0}
-        return draft.Reply(resp.output_text or "", resp.status or "", resp.model, usage)
-
-
-def _strict(schema):
-    """OpenAI strict mode rejects format keywords and $schema/$id/title at the root."""
-    def walk(x):
-        if isinstance(x, dict):
-            return {k: walk(v) for k, v in x.items() if k not in ("$schema", "$id", "title", "format")}
-        if isinstance(x, list):
-            return [walk(v) for v in x]
-        return x
-    return walk(schema)
-
-
 ACTIONS = ("none", "explain_proposal", "check_proposal", "fix_proposal", "why_unsure", "new_value", "revoke",
            "meal_policy", "calc_why", "lookup")
 CHAT_SCHEMA = {
@@ -456,7 +422,7 @@ When you pick an action, keep answer to one sentence: the app adds the details."
 def chat(question, history, context, model=ASSISTANT_MODEL, client=None):
     """(answer, action, args, cost). history: earlier messages [{role, content}], the last few are sent."""
     led = client.ledger if client is not None else ledger("assistant")
-    client = client or OpenAIClient(led, model=model)
+    client = client or draft.OpenAIClient(led, model=model)
     convo = "\n".join(f"{m['role']}: {m['content'][:600]}" for m in history[-6:])
     user = f"CONVERSATION SO FAR:\n{convo or '-'}\n\nQUESTION:\n{question}"
     _, out, entry = client.complete(system=SYSTEM_CHAT, prefix=[f"CONTEXT:\n{context}"], user=user,

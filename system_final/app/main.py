@@ -118,6 +118,7 @@ pages = st.navigation([
 ])
 st.session_state.g_date = None     # each page sets the date its explanations speak about
 with st.sidebar:
+    common.reset_control()
     s = state.load()
     st.caption(f"Knowledge base known until **{state.fmt_date(state.known_until())}** · {len(s['approved'])} "
                "updates approved in the app")

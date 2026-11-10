@@ -52,6 +52,14 @@ div[data-testid="stMetricValue"], div[data-testid="stDataFrame"] { font-variant-
 .diff-new { background: #e6f4ea; padding: 0 .25rem; border-radius: 4px; font-weight: 600; }
 .st-key-fab { position: fixed; right: 1.6rem; bottom: 1.4rem; z-index: 1000; width: auto !important; }
 .st-key-fab button { box-shadow: 0 6px 18px rgba(0,0,0,.18); border-radius: 999px; padding: .5rem 1.1rem; }
+.st-key-resetbar { position: absolute; top: .85rem; left: 1rem; z-index: 5; width: auto !important; }
+.st-key-resetbar [data-testid="stPopoverButton"] {
+    min-height: 2rem; width: 2rem; padding: 0; border-radius: 8px; color: #6b6a66; }
+.st-key-resetbar [data-testid="stPopoverButton"]:hover { background: rgba(128,128,128,.16); color: inherit; }
+.st-key-resetbar [data-testid="stPopoverButton"] > div { justify-content: center; }
+.st-key-resetbar [data-testid="stPopoverButton"] > div > div:last-child { display: none; }
+.st-key-resetbar_body { width: 17rem; }
+body:has(.st-key-resetbar button[aria-expanded="true"]) [data-testid="stTooltipContent"] { display: none; }
 </style>
 """
 
@@ -74,6 +82,25 @@ def setup():
     """Add the page style and the hover style of glossary terms (once per page run)."""
     st.markdown(CSS, unsafe_allow_html=True)
     st.markdown(TERM_CSS, unsafe_allow_html=True)
+
+
+def reset_control():
+    """The reset icon at the top of the sidebar, level with the sidebar toggle. It asks for a confirmation, and after
+    the page reloads a message says the starting state is back (state.reset sets the flag shown here)."""
+    if st.session_state.pop("_reset_notice", False):
+        st.toast(f"Back to the starting state: knowledge base known until {state.base_label()}, nothing approved, and "
+                 "no drafts, documents, saved employees, or chat.", icon=":material/check_circle:")
+    with st.container(key="resetbar"):
+        with st.popover("", icon=":material/restart_alt:", type="tertiary", help="Go back to the starting state"):
+            with st.container(key="resetbar_body"):
+                st.markdown("**Go back to the starting state**")
+                st.caption("Removes everything done in the app: approved updates, drafts, uploaded documents, saved "
+                           f"employees, and the assistant chat. The knowledge base goes back to the one known until "
+                           f"{state.base_label()}. The record of AI spending is kept.")
+                if st.button("Yes, go back", type="primary", key="reset_confirm", icon=":material/restart_alt:",
+                             width="stretch"):
+                    state.reset()
+                    st.rerun()
 
 
 def html(text):

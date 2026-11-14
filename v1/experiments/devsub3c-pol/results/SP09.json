@@ -1,0 +1,1555 @@
+{
+ "run": "devsub3c-pol",
+ "event": "SP09",
+ "condition": "proposed",
+ "documents": [
+  "SP09"
+ ],
+ "selection": {
+  "SP09": {
+   "tokens": 588,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C1)",
+     "overridden PRS.SP09.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "PRS.SP09.JKM: no effect on any S^G case (vacuous element)",
+     "PRS.SP09.HEALTH_EMPLOYER: no effect on any S^G case (vacuous element)",
+     "PRS.SP09.JHT_EMPLOYEE: no effect on any S^G case (vacuous element)",
+     "PRS.SP09.JP_EMPLOYEE: no effect on any S^G case (vacuous element)"
+    ],
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C1)",
+     "overridden PRS.SP09.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "PRS.SP09.JKM: no effect on any S^G case (vacuous element)",
+     "PRS.SP09.HEALTH_EMPLOYER: no effect on any S^G case (vacuous element)",
+     "PRS.SP09.JHT_EMPLOYEE: no effect on any S^G case (vacuous element)",
+     "PRS.SP09.JP_EMPLOYEE: no effect on any S^G case (vacuous element)"
+    ],
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.WITHHOLDING_METHOD",
+      "label": "SP09 withholding method: tax deducted from pay",
+      "label_id": "metode pemotongan SP09: PPh 21 dipotong dari penghasilan",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross'"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 26 ayat (1)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 dipotong dari penghasilan pekerja sesuai ketentuan perpajakan yang berlaku."
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JKK_RATE",
+      "label": "SP09 work accident premium rate",
+      "label_id": "tarif iuran JKK SP09",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "54 / 10000"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "page": 1,
+        "quote": "Perusahaan menanggung iuran JKK sebesar 0,54% (nol koma lima puluh empat persen)"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JKM",
+      "label": "SP09 death benefit premium paid by employer",
+      "label_id": "iuran JKM ditanggung perusahaan SP09",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkm_premium"
+       },
+       {
+        "name": "expression",
+        "value": "round(30 / 10000 * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "page": 1,
+        "quote": "iuran JKM sebesar 0,30% (nol koma tiga puluh persen)"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.HEALTH_EMPLOYER",
+      "label": "SP09 health premium paid by employer",
+      "label_id": "iuran jaminan kesehatan ditanggung perusahaan SP09",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_premium_employer"
+       },
+       {
+        "name": "expression",
+        "value": "round(4 / 100 * health_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "page": 1,
+        "quote": "iuran Jaminan Kesehatan sebesar 4% (empat persen) dari upah sebulan dengan batas upah sesuai ketentuan"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME",
+      "label": "SP09 employer premiums not counted as income",
+      "label_id": "iuran perusahaan bukan penghasilan pekerja SP09",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employer_premiums_taxable"
+       },
+       {
+        "name": "expression",
+        "value": "0"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C1"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (2)",
+        "page": 1,
+        "quote": "bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JHT_EMPLOYEE",
+      "label": "SP09 old-age savings contribution paid by employee",
+      "label_id": "iuran JHT bagian pekerja SP09",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jht_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(2 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 26 ayat (2)",
+        "page": 1,
+        "quote": "Iuran JHT sebesar 2% (dua persen) dan iuran JP sebesar 1% (satu persen) bagian pekerja"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JP_EMPLOYEE",
+      "label": "SP09 pension contribution paid by employee",
+      "label_id": "iuran JP bagian pekerja SP09",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jp_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(1 / 100 * jp_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 26 ayat (2)",
+        "page": 1,
+        "quote": "iuran JP sebesar 1% (satu persen) bagian pekerja, dengan batas upah JP sesuai ketentuan BPJS Ketenagakerjaan"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Employer JKK/JKM/health premiums and employee JHT/JP contributions are modelled as company rules on the existing premium facts, using the regulatory wage bases (bpjs_wage, health_wage, jp_wage) since the policy refers to the statutory wage caps; excluding employer premiums from gross income contradicts the mandatory REG.PREMIUMS.TAXABLE rule and is reported as a conflict."
+   },
+   "delta": {
+    "delta_id": "devsub3c-pol-SP09-cand1",
+    "event_id": "SP09",
+    "document": {
+     "id": "SP09",
+     "title": "PT Cahaya Farmasi Sejahtera: Peraturan Perusahaan",
+     "issued": "2023-08-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.WITHHOLDING_METHOD",
+      "recorded_on": "2023-08-01",
+      "label": "SP09 withholding method: tax deducted from pay",
+      "label_id": "metode pemotongan SP09: PPh 21 dipotong dari penghasilan",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "SP09",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 26 ayat (1)",
+        "quote": "Pajak Penghasilan Pasal 21 dipotong dari penghasilan pekerja sesuai ketentuan perpajakan yang berlaku.",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JKK_RATE",
+      "recorded_on": "2023-08-01",
+      "label": "SP09 work accident premium rate",
+      "label_id": "tarif iuran JKK SP09",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "54 / 10000",
+      "policy": "SP09",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "quote": "Perusahaan menanggung iuran JKK sebesar 0,54% (nol koma lima puluh empat persen)",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JKM",
+      "recorded_on": "2023-08-01",
+      "label": "SP09 death benefit premium paid by employer",
+      "label_id": "iuran JKM ditanggung perusahaan SP09",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkm_premium",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(30 / 10000 * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP09",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "quote": "iuran JKM sebesar 0,30% (nol koma tiga puluh persen)",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.HEALTH_EMPLOYER",
+      "recorded_on": "2023-08-01",
+      "label": "SP09 health premium paid by employer",
+      "label_id": "iuran jaminan kesehatan ditanggung perusahaan SP09",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_premium_employer",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(4 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP09",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "quote": "iuran Jaminan Kesehatan sebesar 4% (empat persen) dari upah sebulan dengan batas upah sesuai ketentuan",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME",
+      "recorded_on": "2023-08-01",
+      "label": "SP09 employer premiums not counted as income",
+      "label_id": "iuran perusahaan bukan penghasilan pekerja SP09",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "0",
+      "policy": "SP09",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (2)",
+        "quote": "bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JHT_EMPLOYEE",
+      "recorded_on": "2023-08-01",
+      "label": "SP09 old-age savings contribution paid by employee",
+      "label_id": "iuran JHT bagian pekerja SP09",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jht_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(2 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP09",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 26 ayat (2)",
+        "quote": "Iuran JHT sebesar 2% (dua persen) dan iuran JP sebesar 1% (satu persen) bagian pekerja",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JP_EMPLOYEE",
+      "recorded_on": "2023-08-01",
+      "label": "SP09 pension contribution paid by employee",
+      "label_id": "iuran JP bagian pekerja SP09",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(1 / 100 * jp_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP09",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 26 ayat (2)",
+        "quote": "iuran JP sebesar 1% (satu persen) bagian pekerja, dengan batas upah JP sesuai ketentuan BPJS Ketenagakerjaan",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Employer JKK/JKM/health premiums and employee JHT/JP contributions are modelled as company rules on the existing premium facts, using the regulatory wage bases (bpjs_wage, health_wage, jp_wage) since the policy refers to the statutory wage caps; excluding employer premiums from gross income contradicts the mandatory REG.PREMIUMS.TAXABLE rule and is reported as a conflict."
+   },
+   "initial_delta": null,
+   "review": null
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP09.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)",
+     "overridden PRS.SP09.PREMIUMS_NOT_TAXABLE, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C3)"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "PRS.SP09.JKM: no effect on any S^G case (vacuous element)",
+     "PRS.SP09.HEALTH_EMPLOYER: no effect on any S^G case (vacuous element)",
+     "PRS.SP09.JHT_EMPLOYEE: no effect on any S^G case (vacuous element)",
+     "PRS.SP09.JP_EMPLOYEE: no effect on any S^G case (vacuous element)"
+    ],
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP09.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)",
+     "overridden PRS.SP09.PREMIUMS_NOT_TAXABLE, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C3)"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "PRS.SP09.JKM: no effect on any S^G case (vacuous element)",
+     "PRS.SP09.HEALTH_EMPLOYER: no effect on any S^G case (vacuous element)",
+     "PRS.SP09.JHT_EMPLOYEE: no effect on any S^G case (vacuous element)",
+     "PRS.SP09.JP_EMPLOYEE: no effect on any S^G case (vacuous element)"
+    ],
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JKK_RATE",
+      "label": "company JKK premium rate",
+      "label_id": "tarif iuran JKK perusahaan",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "54 / 10000"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "page": 1,
+        "quote": "Perusahaan menanggung iuran JKK sebesar 0,54% (nol koma lima puluh empat persen)"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JKM",
+      "label": "company JKM premium",
+      "label_id": "iuran JKM perusahaan",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkm_premium"
+       },
+       {
+        "name": "expression",
+        "value": "round(30 / 10000 * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "page": 1,
+        "quote": "iuran JKM sebesar 0,30% (nol koma tiga puluh persen)"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.HEALTH_EMPLOYER",
+      "label": "company health premium paid by employer",
+      "label_id": "iuran jaminan kesehatan bagian perusahaan",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_premium_employer"
+       },
+       {
+        "name": "expression",
+        "value": "round(4 / 100 * health_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "page": 1,
+        "quote": "iuran Jaminan Kesehatan sebesar 4% (empat persen) dari upah sebulan dengan batas upah sesuai ketentuan"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.PREMIUMS_NOT_TAXABLE",
+      "label": "employer premiums excluded from gross income",
+      "label_id": "iuran bagian perusahaan bukan penghasilan pekerja",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employer_premiums_taxable"
+       },
+       {
+        "name": "expression",
+        "value": "0"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C3"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (2)",
+        "page": 1,
+        "quote": "bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.WITHHOLDING_METHOD",
+      "label": "tax withheld from employee pay",
+      "label_id": "PPh Pasal 21 dipotong dari penghasilan pekerja",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross'"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 26 ayat (1)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 dipotong dari penghasilan pekerja sesuai ketentuan perpajakan yang berlaku."
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JHT_EMPLOYEE",
+      "label": "company JHT contribution paid by employee",
+      "label_id": "iuran JHT bagian pekerja",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jht_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(2 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 26 ayat (2)",
+        "page": 1,
+        "quote": "Iuran JHT sebesar 2% (dua persen) dan iuran JP sebesar 1% (satu persen) bagian pekerja"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JP_EMPLOYEE",
+      "label": "company JP contribution paid by employee",
+      "label_id": "iuran JP bagian pekerja",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jp_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(1 / 100 * jp_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 26 ayat (2)",
+        "page": 1,
+        "quote": "iuran JP sebesar 1% (satu persen) bagian pekerja, dengan batas upah JP sesuai ketentuan BPJS Ketenagakerjaan, dikurangkan dalam penghitungan Pajak Penghasilan Pasal 21"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Each payroll item the policy states is modelled as a company rule over the existing wage bases (bpjs_wage, health_wage, jp_wage) for the policy period 1 Aug 2023 to 31 Jul 2025; the exclusion of employer premiums from gross income (Pasal 25 ayat 2) contradicts the mandatory REG.PREMIUMS.TAXABLE and is flagged as a conflict."
+   },
+   "delta": {
+    "delta_id": "devsub3c-pol-SP09-cand2",
+    "event_id": "SP09",
+    "document": {
+     "id": "SP09",
+     "title": "PT Cahaya Farmasi Sejahtera: Peraturan Perusahaan",
+     "issued": "2023-08-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JKK_RATE",
+      "recorded_on": "2023-08-01",
+      "label": "company JKK premium rate",
+      "label_id": "tarif iuran JKK perusahaan",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "54 / 10000",
+      "policy": "SP09",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "quote": "Perusahaan menanggung iuran JKK sebesar 0,54% (nol koma lima puluh empat persen)",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JKM",
+      "recorded_on": "2023-08-01",
+      "label": "company JKM premium",
+      "label_id": "iuran JKM perusahaan",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkm_premium",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(30 / 10000 * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP09",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "quote": "iuran JKM sebesar 0,30% (nol koma tiga puluh persen)",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.HEALTH_EMPLOYER",
+      "recorded_on": "2023-08-01",
+      "label": "company health premium paid by employer",
+      "label_id": "iuran jaminan kesehatan bagian perusahaan",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_premium_employer",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(4 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP09",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "quote": "iuran Jaminan Kesehatan sebesar 4% (empat persen) dari upah sebulan dengan batas upah sesuai ketentuan",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.PREMIUMS_NOT_TAXABLE",
+      "recorded_on": "2023-08-01",
+      "label": "employer premiums excluded from gross income",
+      "label_id": "iuran bagian perusahaan bukan penghasilan pekerja",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "0",
+      "policy": "SP09",
+      "conflict_code": "C3",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (2)",
+        "quote": "bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.WITHHOLDING_METHOD",
+      "recorded_on": "2023-08-01",
+      "label": "tax withheld from employee pay",
+      "label_id": "PPh Pasal 21 dipotong dari penghasilan pekerja",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "SP09",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 26 ayat (1)",
+        "quote": "Pajak Penghasilan Pasal 21 dipotong dari penghasilan pekerja sesuai ketentuan perpajakan yang berlaku.",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JHT_EMPLOYEE",
+      "recorded_on": "2023-08-01",
+      "label": "company JHT contribution paid by employee",
+      "label_id": "iuran JHT bagian pekerja",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jht_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(2 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP09",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 26 ayat (2)",
+        "quote": "Iuran JHT sebesar 2% (dua persen) dan iuran JP sebesar 1% (satu persen) bagian pekerja",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JP_EMPLOYEE",
+      "recorded_on": "2023-08-01",
+      "label": "company JP contribution paid by employee",
+      "label_id": "iuran JP bagian pekerja",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(1 / 100 * jp_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP09",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 26 ayat (2)",
+        "quote": "iuran JP sebesar 1% (satu persen) bagian pekerja, dengan batas upah JP sesuai ketentuan BPJS Ketenagakerjaan, dikurangkan dalam penghitungan Pajak Penghasilan Pasal 21",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Each payroll item the policy states is modelled as a company rule over the existing wage bases (bpjs_wage, health_wage, jp_wage) for the policy period 1 Aug 2023 to 31 Jul 2025; the exclusion of employer premiums from gross income (Pasal 25 ayat 2) contradicts the mandatory REG.PREMIUMS.TAXABLE and is flagged as a conflict."
+   },
+   "initial_delta": null,
+   "review": null
+  }
+ ],
+ "groups": [
+  [
+   2,
+   1
+  ]
+ ],
+ "selected": 2,
+ "status": "applied",
+ "delta": {
+  "delta_id": "devsub3c-pol-SP09-cand2",
+  "event_id": "SP09",
+  "document": {
+   "id": "SP09",
+   "title": "PT Cahaya Farmasi Sejahtera: Peraturan Perusahaan",
+   "issued": "2023-08-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP09.JKK_RATE",
+    "recorded_on": "2023-08-01",
+    "label": "company JKK premium rate",
+    "label_id": "tarif iuran JKK perusahaan",
+    "valid_from": "2023-08-01",
+    "valid_until": "2025-07-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "jkk_rate",
+    "expression": "54 / 10000",
+    "policy": "SP09",
+    "source": [
+     {
+      "document": "SP09",
+      "provision": "Pasal 25 ayat (1)",
+      "quote": "Perusahaan menanggung iuran JKK sebesar 0,54% (nol koma lima puluh empat persen)",
+      "page": 1
+     },
+     {
+      "document": "SP09",
+      "provision": "Pasal 46 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP09.JKM",
+    "recorded_on": "2023-08-01",
+    "label": "company JKM premium",
+    "label_id": "iuran JKM perusahaan",
+    "valid_from": "2023-08-01",
+    "valid_until": "2025-07-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "jkm_premium",
+    "condition": "employer('premiums_as_billed') != True",
+    "expression": "round(30 / 10000 * bpjs_wage, 1, param('bpjs_round_mode'))",
+    "policy": "SP09",
+    "source": [
+     {
+      "document": "SP09",
+      "provision": "Pasal 25 ayat (1)",
+      "quote": "iuran JKM sebesar 0,30% (nol koma tiga puluh persen)",
+      "page": 1
+     },
+     {
+      "document": "SP09",
+      "provision": "Pasal 46 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP09.HEALTH_EMPLOYER",
+    "recorded_on": "2023-08-01",
+    "label": "company health premium paid by employer",
+    "label_id": "iuran jaminan kesehatan bagian perusahaan",
+    "valid_from": "2023-08-01",
+    "valid_until": "2025-07-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "health_premium_employer",
+    "condition": "employer('premiums_as_billed') != True",
+    "expression": "round(4 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+    "policy": "SP09",
+    "source": [
+     {
+      "document": "SP09",
+      "provision": "Pasal 25 ayat (1)",
+      "quote": "iuran Jaminan Kesehatan sebesar 4% (empat persen) dari upah sebulan dengan batas upah sesuai ketentuan",
+      "page": 1
+     },
+     {
+      "document": "SP09",
+      "provision": "Pasal 46 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP09.PREMIUMS_NOT_TAXABLE",
+    "recorded_on": "2023-08-01",
+    "label": "employer premiums excluded from gross income",
+    "label_id": "iuran bagian perusahaan bukan penghasilan pekerja",
+    "valid_from": "2023-08-01",
+    "valid_until": "2025-07-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "employer_premiums_taxable",
+    "expression": "0",
+    "policy": "SP09",
+    "conflict_code": "C3",
+    "source": [
+     {
+      "document": "SP09",
+      "provision": "Pasal 25 ayat (2)",
+      "quote": "bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21",
+      "page": 1
+     },
+     {
+      "document": "SP09",
+      "provision": "Pasal 46 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP09.WITHHOLDING_METHOD",
+    "recorded_on": "2023-08-01",
+    "label": "tax withheld from employee pay",
+    "label_id": "PPh Pasal 21 dipotong dari penghasilan pekerja",
+    "valid_from": "2023-08-01",
+    "valid_until": "2025-07-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "expression": "'gross'",
+    "policy": "SP09",
+    "source": [
+     {
+      "document": "SP09",
+      "provision": "Pasal 26 ayat (1)",
+      "quote": "Pajak Penghasilan Pasal 21 dipotong dari penghasilan pekerja sesuai ketentuan perpajakan yang berlaku.",
+      "page": 1
+     },
+     {
+      "document": "SP09",
+      "provision": "Pasal 46 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP09.JHT_EMPLOYEE",
+    "recorded_on": "2023-08-01",
+    "label": "company JHT contribution paid by employee",
+    "label_id": "iuran JHT bagian pekerja",
+    "valid_from": "2023-08-01",
+    "valid_until": "2025-07-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "jht_employee",
+    "condition": "employer('premiums_as_billed') != True",
+    "expression": "round(2 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))",
+    "policy": "SP09",
+    "source": [
+     {
+      "document": "SP09",
+      "provision": "Pasal 26 ayat (2)",
+      "quote": "Iuran JHT sebesar 2% (dua persen) dan iuran JP sebesar 1% (satu persen) bagian pekerja",
+      "page": 1
+     },
+     {
+      "document": "SP09",
+      "provision": "Pasal 46 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP09.JP_EMPLOYEE",
+    "recorded_on": "2023-08-01",
+    "label": "company JP contribution paid by employee",
+    "label_id": "iuran JP bagian pekerja",
+    "valid_from": "2023-08-01",
+    "valid_until": "2025-07-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "jp_employee",
+    "condition": "employer('premiums_as_billed') != True",
+    "expression": "round(1 / 100 * jp_wage, 1, param('bpjs_round_mode'))",
+    "policy": "SP09",
+    "source": [
+     {
+      "document": "SP09",
+      "provision": "Pasal 26 ayat (2)",
+      "quote": "iuran JP sebesar 1% (satu persen) bagian pekerja, dengan batas upah JP sesuai ketentuan BPJS Ketenagakerjaan, dikurangkan dalam penghitungan Pajak Penghasilan Pasal 21",
+      "page": 1
+     },
+     {
+      "document": "SP09",
+      "provision": "Pasal 46 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+      "page": 1
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "Each payroll item the policy states is modelled as a company rule over the existing wage bases (bpjs_wage, health_wage, jp_wage) for the policy period 1 Aug 2023 to 31 Jul 2025; the exclusion of employer premiums from gross income (Pasal 25 ayat 2) contradicts the mandatory REG.PREMIUMS.TAXABLE and is flagged as a conflict."
+ },
+ "cost_usd": 0.0,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "The company regulation sets company-specific employer social security contribution rates (JKK 0.54%, JKM 0.30%, health insurance 4%) and classifies them as not part of the employee's gross income for PPh 21, and sets the employee JHT 2% and JP 1% contributions as deductions in the PPh 21 computation for its employees. These are rates and classification rules that change the gross income and deductions used in the PPh 21 calculation for permanent employees of this company. Note that excluding employer-paid JKK, JKM and health insurance from gross income departs from the prevailing tax regulation, so the classification should be checked against the regulation layer.",
+   "quotes": [
+    {
+     "provision": "Pasal 25 ayat (1): employer contribution rates JKK 0.54%, JKM 0.30%, health insurance 4%",
+     "quote": "Perusahaan menanggung iuran JKK sebesar 0,54% (nol koma lima puluh empat persen), iuran JKM sebesar 0,30% (nol koma tiga puluh persen), dan iuran Jaminan Kesehatan sebesar 4% (empat persen) dari upah sebulan dengan batas upah sesuai ketentuan."
+    },
+    {
+     "provision": "Pasal 25 ayat (2): employer contributions excluded from gross income for PPh 21",
+     "quote": "bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21"
+    },
+    {
+     "provision": "Pasal 26 ayat (2): employee JHT 2% and JP 1% deducted in PPh 21 computation",
+     "quote": "Iuran JHT sebesar 2% (dua persen) dan iuran JP sebesar 1% (satu persen) bagian pekerja, dengan batas upah JP sesuai ketentuan BPJS Ketenagakerjaan, dikurangkan dalam penghitungan Pajak Penghasilan Pasal 21."
+    }
+   ],
+   "effective_from": "2023-08-01",
+   "effective_from_quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023",
+   "effective_until": "2025-07-31",
+   "effective_until_quote": "sampai dengan tanggal 31 Juli 2025",
+   "subjects": []
+  },
+  "quotes_ok": true
+ }
+}

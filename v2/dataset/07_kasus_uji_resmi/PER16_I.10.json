@@ -1,0 +1,159 @@
+{
+  "id": "PER16-I.10",
+  "sumber": {
+    "regulasi": "PER-16/PJ/2016",
+    "bagian": "Lampiran, Bagian Kedua, I.10 (natura dari pemberi kerja PPh final/deemed profit), Maydina Aprilianto",
+    "halaman_pdf": [
+      47,
+      48
+    ],
+    "halaman_dokumen": "-28-, -29-",
+    "catatan": "PDF hasil pindai; angka dibaca dari citra halaman (bukan hanya teks OCR)."
+  },
+  "rezim": "PER16_2023",
+  "dalam_lingkup": true,
+  "catatan_lingkup": "Contoh PER-16 bertahun 2016 dan memakai lapisan tarif Pasal 17 UU 36/2008 (5% s.d. Rp50 juta; 15% >50-250 juta; 25% >250-500 juta; 30% >500 juta). Rezim 'PER16_2023' = metode (disetahunkan, PPh sebulan = PPh setahun / 12); untuk tahun pajak 2023 berlaku lapisan UU HPP (5% s.d. Rp60 juta). Lihat kunci 'relevansi_tarif_2023'.",
+  "skenario": [
+    "metode_PER16_bulanan",
+    "natura_kenikmatan"
+  ],
+  "uraian": "Maydina Aprilianto (menikah 1 anak, K/1) bekerja di perwakilan dagang asing (deemed profit); Agustus 2016 gaji 5 juta + beras 50 kg @15.000 + gula 10 kg @12.000 (natura menjadi objek karena pemberi kerja deemed profit).",
+  "input": {
+    "tahun_pajak": 2016,
+    "tarif_pasal17_dokumen": "UU 36/2008 (pra-HPP)",
+    "status_ptkp": "K/1",
+    "jenis_kelamin": "tidak_disebutkan",
+    "metode": "gross",
+    "pemberi_kerja": {
+      "jenis": "deemed_profit"
+    },
+    "masa": [
+      {
+        "bulan": 8,
+        "komponen": {
+          "gaji": 5000000,
+          "natura_beras": 750000,
+          "natura_gula": 120000
+        }
+      }
+    ],
+    "info_tambahan": {
+      "beras_kg": 50,
+      "harga_beras_per_kg": 15000,
+      "gula_kg": 10,
+      "harga_gula_per_kg": 12000
+    }
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 8,
+        "bruto": 5870000,
+        "biaya_jabatan": 293500,
+        "neto_sebulan": 5576500,
+        "neto_setahun": 66918000,
+        "ptkp": 63000000,
+        "pkp": 3918000,
+        "pph21_setahun": 195900,
+        "pph21": 16325
+      }
+    ]
+  },
+  "langkah_resmi": [
+    "Gaji 5.000.000; Beras 50 X 15.000 = 750.000; Gula 10 X 12.000 = 120.000; bruto 5.870.000",
+    "BJ 5% X 5.870.000 = 293.500; neto 5.576.500; 12 X = 66.918.000; PTKP 63.000.000; PKP 3.918.000; 5% = 195.900; : 12 = 16.325"
+  ],
+  "catatan_transkripsi": "Bruto sebulan tidak terbaca di OCR; citra hlm. -29- menunjukkan 5.870.000. Perlakuan natura 2016 (hanya objek bila pemberi kerja final/deemed profit) berbeda dengan rezim PMK 66/2023 - relevansi untuk 2023 terbatas.",
+  "cek_aritmetika": [
+    {
+      "item": "beras",
+      "dokumen": 750000,
+      "hitung_ulang": 750000,
+      "status": "cocok"
+    },
+    {
+      "item": "gula",
+      "dokumen": 120000,
+      "hitung_ulang": 120000,
+      "status": "cocok"
+    },
+    {
+      "item": "bruto",
+      "dokumen": 5870000,
+      "hitung_ulang": 5870000,
+      "status": "cocok"
+    },
+    {
+      "item": "Agt: biaya jabatan = min(5% x bruto. 500.000)",
+      "dokumen": 293500,
+      "hitung_ulang": 293500,
+      "status": "cocok"
+    },
+    {
+      "item": "Agt: jumlah pengurang",
+      "dokumen": 293500,
+      "hitung_ulang": 293500,
+      "status": "cocok"
+    },
+    {
+      "item": "Agt: neto sebulan = bruto - pengurang",
+      "dokumen": 5576500,
+      "hitung_ulang": 5576500,
+      "status": "cocok"
+    },
+    {
+      "item": "Agt: neto setahun = 12 x neto",
+      "dokumen": 66918000,
+      "hitung_ulang": 66918000,
+      "status": "cocok"
+    },
+    {
+      "item": "Agt: PKP (dibulatkan ribuan ke bawah)",
+      "dokumen": 3918000,
+      "hitung_ulang": 3918000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Agustus = 195.900 / 12",
+      "dokumen": 16325,
+      "hitung_ulang": 16325,
+      "status": "cocok",
+      "pembulatan_teramati": "tepat"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "PTKP setahun K/1",
+      "dokumen": 63000000,
+      "tabel": 63000000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU 36/2008 (pra-HPP)) atas PKP 3.918.000",
+      "dokumen": 195900,
+      "tabel": 195900,
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 9,
+    "aritmetika_tidak_cocok": 0,
+    "tabel_cocok": 2,
+    "tabel_tidak_cocok": 0
+  },
+  "relevansi_tarif_2023": {
+    "keterangan": "Hitung ulang PPh setahun atas PKP dokumen dengan dua lapisan tarif (bukan nilai expected). Jika 'hasil_sama_di_kedua_tarif' = true, angka contoh juga berlaku untuk lapisan tarif 2023 (dengan asumsi PTKP sama - PTKP PMK 101/2016 masih berlaku 2023).",
+    "rincian": [
+      {
+        "pkp": 3918000,
+        "pph_dokumen": 195900,
+        "pph_tarif_UU36_2008": 195900,
+        "pph_tarif_UU_HPP": 195900,
+        "hasil_sama_di_kedua_tarif": true
+      }
+    ]
+  },
+  "dugaan_erratum": null,
+  "verifikasi_pass2": "cocok"
+}

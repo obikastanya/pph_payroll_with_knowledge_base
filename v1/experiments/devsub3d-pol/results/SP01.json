@@ -1,0 +1,2842 @@
+{
+ "run": "devsub3d-pol",
+ "event": "SP01",
+ "condition": "proposed",
+ "documents": [
+  "SP01"
+ ],
+ "selection": {
+  "SP01": {
+   "tokens": 1024,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G6": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP01.HEALTH_WAGE, REG.JKN.WAGE health_wage: company rule always loses to mandatory REG.JKN.WAGE (conflict C?)",
+     "overridden PRS.SP01.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)",
+     "overridden PRS.SP01.JP_WAGE, REG.BPJS.JP_WAGE jp_wage: company rule always loses to mandatory REG.BPJS.JP_WAGE (conflict C?)",
+     "overridden PRS.SP01.PENSION_DEDUCTION, REG.PENSION.EMPLOYEE employee_pension_contributions: company rule always loses to mandatory REG.PENSION.EMPLOYEE (conflict C?)",
+     "redundant REG.PENSION.EMPLOYEE, PRS.SP01.PENSION_DEDUCTION employee_pension_contributions: same condition and expression"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "PRS.SP01.JKM: no effect on any S^G case (vacuous element)",
+     "PRS.SP01.JHT_EMPLOYEE: no effect on any S^G case (vacuous element)",
+     "PRS.SP01.JP_EMPLOYEE: no effect on any S^G case (vacuous element)",
+     "PRS.SP01.HEALTH_WAGE: no effect on any S^G case (vacuous element)",
+     "PRS.SP01.HEALTH_EMPLOYER: no effect on any S^G case (vacuous element)",
+     "PRS.SP01.HEALTH_EMPLOYEE: no effect on any S^G case (vacuous element)",
+     "PRS.SP01.PENSION_DEDUCTION: no effect on any S^G case (vacuous element)"
+    ],
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G6": "fail: reads case-data inputs that do not exist in the payroll data: hr('attendance_days'). Use an input listed under CASE DATA if one has the same meaning; an update that needs a new input is sent to the reviewer, who must add it to the payroll data first"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.WITHHOLDING_METHOD",
+      "label": "PPh 21 borne by the employee and withheld from pay",
+      "label_id": "PPh 21 menjadi beban pekerja dan dipotong dari penghasilan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross'"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 24 ayat (1)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan pekerja menjadi beban pekerja dan dipotong dari penghasilan setiap bulan sesuai dengan peraturan perundang-undangan perpajakan yang berlaku."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JKK_RATE",
+      "label": "work accident premium rate 0.54%",
+      "label_id": "tarif iuran JKK 0,54%",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "dec('0.0054')"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (2)",
+        "page": 1,
+        "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JKM",
+      "label": "death benefit premium 0.30% paid by the company",
+      "label_id": "iuran JKM 0,30% ditanggung perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkm_premium"
+       },
+       {
+        "name": "expression",
+        "value": "round(dec('0.003') * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (2)",
+        "page": 1,
+        "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JHT_EMPLOYEE",
+      "label": "old-age savings contribution 2% paid by the employee",
+      "label_id": "iuran JHT 2% ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jht_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(2 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (3)",
+        "page": 1,
+        "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan, dengan ketentuan 3,7% (tiga koma tujuh persen) ditanggung Perusahaan dan 2% (dua persen) ditanggung pekerja."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JP_WAGE",
+      "label": "pension contribution wage cap fixed at Rp9,559,600 for the policy period",
+      "label_id": "batas upah JP Rp9.559.600 selama masa berlaku peraturan perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jp_wage"
+       },
+       {
+        "name": "expression",
+        "value": "min(bpjs_wage, 9559600)"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (4)",
+        "page": 1,
+        "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00 (sembilan juta lima ratus lima puluh sembilan ribu enam ratus rupiah) per bulan."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (5)",
+        "page": 1,
+        "quote": "Batas upah sebagaimana dimaksud pada ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini dan hanya dapat diubah melalui perubahan Peraturan Perusahaan."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JP_EMPLOYEE",
+      "label": "pension contribution 1% paid by the employee",
+      "label_id": "iuran JP 1% ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jp_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(1 / 100 * jp_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (4)",
+        "page": 1,
+        "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00 (sembilan juta lima ratus lima puluh sembilan ribu enam ratus rupiah) per bulan."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_WAGE",
+      "label": "health insurance wage cap Rp12,000,000",
+      "label_id": "batas upah iuran jaminan kesehatan Rp12.000.000",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_wage"
+       },
+       {
+        "name": "expression",
+        "value": "min(bpjs_wage, 12000000)"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "page": 1,
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_EMPLOYER",
+      "label": "health premium 4% paid by the company",
+      "label_id": "iuran jaminan kesehatan 4% ditanggung perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_premium_employer"
+       },
+       {
+        "name": "expression",
+        "value": "round(4 / 100 * health_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "page": 1,
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_EMPLOYEE",
+      "label": "health contribution 1% paid by the employee",
+      "label_id": "iuran jaminan kesehatan 1% ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(1 / 100 * health_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "page": 1,
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.PENSION_DEDUCTION",
+      "label": "employee JHT and JP contributions deducted from gross income",
+      "label_id": "iuran JHT dan JP bagian pekerja pengurang penghasilan bruto",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employee_pension_contributions"
+       },
+       {
+        "name": "expression",
+        "value": "jht_employee + jp_employee"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 24 ayat (2)",
+        "page": 1,
+        "quote": "Iuran JHT dan iuran JP bagian pekerja sebagaimana dimaksud dalam Pasal 22 dikurangkan dari penghasilan bruto dalam penghitungan Pajak Penghasilan Pasal 21."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The JP wage cap of Rp9,559,600 is kept for the whole policy period (Pasal 22 ayat (5)), so later regulatory cap increases surface as conflicts. The per-day meal and transport allowances (Pasal 14 ayat (2)) need no new rule: the payroll has no attendance-day input, so the amounts paid are entered as other regular income (income('other_regular')), which the existing rules already include in gross income."
+   },
+   "delta": {
+    "delta_id": "devsub3d-pol-SP01-cand1",
+    "event_id": "SP01",
+    "document": {
+     "id": "SP01",
+     "title": "PT Lintas Gudang Nusantara: Peraturan Perusahaan",
+     "issued": "2023-04-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.WITHHOLDING_METHOD",
+      "recorded_on": "2023-04-01",
+      "label": "PPh 21 borne by the employee and withheld from pay",
+      "label_id": "PPh 21 menjadi beban pekerja dan dipotong dari penghasilan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 24 ayat (1)",
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan pekerja menjadi beban pekerja dan dipotong dari penghasilan setiap bulan sesuai dengan peraturan perundang-undangan perpajakan yang berlaku.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JKK_RATE",
+      "recorded_on": "2023-04-01",
+      "label": "work accident premium rate 0.54%",
+      "label_id": "tarif iuran JKK 0,54%",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "dec('0.0054')",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (2)",
+        "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JKM",
+      "recorded_on": "2023-04-01",
+      "label": "death benefit premium 0.30% paid by the company",
+      "label_id": "iuran JKM 0,30% ditanggung perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkm_premium",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(dec('0.003') * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (2)",
+        "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JHT_EMPLOYEE",
+      "recorded_on": "2023-04-01",
+      "label": "old-age savings contribution 2% paid by the employee",
+      "label_id": "iuran JHT 2% ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jht_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(2 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (3)",
+        "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan, dengan ketentuan 3,7% (tiga koma tujuh persen) ditanggung Perusahaan dan 2% (dua persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JP_WAGE",
+      "recorded_on": "2023-04-01",
+      "label": "pension contribution wage cap fixed at Rp9,559,600 for the policy period",
+      "label_id": "batas upah JP Rp9.559.600 selama masa berlaku peraturan perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_wage",
+      "expression": "min(bpjs_wage, 9559600)",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (4)",
+        "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00 (sembilan juta lima ratus lima puluh sembilan ribu enam ratus rupiah) per bulan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (5)",
+        "quote": "Batas upah sebagaimana dimaksud pada ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini dan hanya dapat diubah melalui perubahan Peraturan Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JP_EMPLOYEE",
+      "recorded_on": "2023-04-01",
+      "label": "pension contribution 1% paid by the employee",
+      "label_id": "iuran JP 1% ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(1 / 100 * jp_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (4)",
+        "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00 (sembilan juta lima ratus lima puluh sembilan ribu enam ratus rupiah) per bulan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_WAGE",
+      "recorded_on": "2023-04-01",
+      "label": "health insurance wage cap Rp12,000,000",
+      "label_id": "batas upah iuran jaminan kesehatan Rp12.000.000",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_wage",
+      "expression": "min(bpjs_wage, 12000000)",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_EMPLOYER",
+      "recorded_on": "2023-04-01",
+      "label": "health premium 4% paid by the company",
+      "label_id": "iuran jaminan kesehatan 4% ditanggung perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_premium_employer",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(4 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_EMPLOYEE",
+      "recorded_on": "2023-04-01",
+      "label": "health contribution 1% paid by the employee",
+      "label_id": "iuran jaminan kesehatan 1% ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(1 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.PENSION_DEDUCTION",
+      "recorded_on": "2023-04-01",
+      "label": "employee JHT and JP contributions deducted from gross income",
+      "label_id": "iuran JHT dan JP bagian pekerja pengurang penghasilan bruto",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employee_pension_contributions",
+      "expression": "jht_employee + jp_employee",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 24 ayat (2)",
+        "quote": "Iuran JHT dan iuran JP bagian pekerja sebagaimana dimaksud dalam Pasal 22 dikurangkan dari penghasilan bruto dalam penghitungan Pajak Penghasilan Pasal 21.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The JP wage cap of Rp9,559,600 is kept for the whole policy period (Pasal 22 ayat (5)), so later regulatory cap increases surface as conflicts. The per-day meal and transport allowances (Pasal 14 ayat (2)) need no new rule: the payroll has no attendance-day input, so the amounts paid are entered as other regular income (income('other_regular')), which the existing rules already include in gross income."
+   },
+   "initial_delta": {
+    "delta_id": "devsub3d-pol-SP01-cand1",
+    "event_id": "SP01",
+    "document": {
+     "id": "SP01",
+     "title": "PT Lintas Gudang Nusantara: Peraturan Perusahaan",
+     "issued": "2023-04-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.WITHHOLDING_METHOD",
+      "recorded_on": "2023-04-01",
+      "label": "PPh 21 borne by the employee and withheld from pay",
+      "label_id": "PPh 21 menjadi beban pekerja dan dipotong dari penghasilan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 24 ayat (1)",
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan pekerja menjadi beban pekerja dan dipotong dari penghasilan setiap bulan sesuai dengan peraturan perundang-undangan perpajakan yang berlaku.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JKK_RATE",
+      "recorded_on": "2023-04-01",
+      "label": "work accident premium rate 0.54%",
+      "label_id": "tarif iuran JKK 0,54%",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "dec('0.0054')",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (2)",
+        "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JKM",
+      "recorded_on": "2023-04-01",
+      "label": "death benefit premium 0.30% paid by the company",
+      "label_id": "iuran JKM 0,30% ditanggung perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkm_premium",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(dec('0.003') * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (2)",
+        "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JHT_EMPLOYEE",
+      "recorded_on": "2023-04-01",
+      "label": "old-age savings contribution 2% paid by the employee",
+      "label_id": "iuran JHT 2% ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jht_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(2 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (3)",
+        "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan, dengan ketentuan 3,7% (tiga koma tujuh persen) ditanggung Perusahaan dan 2% (dua persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JP_WAGE",
+      "recorded_on": "2023-04-01",
+      "label": "pension contribution wage cap fixed at Rp9,559,600 for the policy period",
+      "label_id": "batas upah JP Rp9.559.600 selama masa berlaku peraturan perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_wage",
+      "expression": "min(bpjs_wage, 9559600)",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (4)",
+        "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00 (sembilan juta lima ratus lima puluh sembilan ribu enam ratus rupiah) per bulan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (5)",
+        "quote": "Batas upah sebagaimana dimaksud pada ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini dan hanya dapat diubah melalui perubahan Peraturan Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JP_EMPLOYEE",
+      "recorded_on": "2023-04-01",
+      "label": "pension contribution 1% paid by the employee",
+      "label_id": "iuran JP 1% ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(1 / 100 * jp_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (4)",
+        "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00 (sembilan juta lima ratus lima puluh sembilan ribu enam ratus rupiah) per bulan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_WAGE",
+      "recorded_on": "2023-04-01",
+      "label": "health insurance wage cap Rp12,000,000",
+      "label_id": "batas upah iuran jaminan kesehatan Rp12.000.000",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_wage",
+      "expression": "min(bpjs_wage, 12000000)",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_EMPLOYER",
+      "recorded_on": "2023-04-01",
+      "label": "health premium 4% paid by the company",
+      "label_id": "iuran jaminan kesehatan 4% ditanggung perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_premium_employer",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(4 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_EMPLOYEE",
+      "recorded_on": "2023-04-01",
+      "label": "health contribution 1% paid by the employee",
+      "label_id": "iuran jaminan kesehatan 1% ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(1 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.PENSION_DEDUCTION",
+      "recorded_on": "2023-04-01",
+      "label": "employee JHT and JP contributions deducted from gross income",
+      "label_id": "iuran JHT dan JP bagian pekerja pengurang penghasilan bruto",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employee_pension_contributions",
+      "expression": "jht_employee + jp_employee",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 24 ayat (2)",
+        "quote": "Iuran JHT dan iuran JP bagian pekerja sebagaimana dimaksud dalam Pasal 22 dikurangkan dari penghasilan bruto dalam penghitungan Pajak Penghasilan Pasal 21.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "fact",
+      "id": "attendance_allowance",
+      "recorded_on": "2023-04-01",
+      "label": "meal and transport allowance per attendance day",
+      "label_id": "uang makan dan uang transport per hari kehadiran",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "fact_type": "money",
+      "fact_scope": "period",
+      "output": false,
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 14 ayat (2)",
+        "quote": "Selain upah, Perusahaan memberikan tunjangan tidak tetap berupa uang makan sebesar Rp35.000,00 (tiga puluh lima ribu rupiah) dan uang transport sebesar Rp25.000,00 (dua puluh lima ribu rupiah) untuk setiap hari kehadiran.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.ATTENDANCE_ALLOWANCE",
+      "recorded_on": "2023-04-01",
+      "label": "meal Rp35,000 and transport Rp25,000 per attendance day",
+      "label_id": "uang makan Rp35.000 dan uang transport Rp25.000 per hari kehadiran",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "attendance_allowance",
+      "expression": "(35000 + 25000) * hr('attendance_days')",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 14 ayat (2)",
+        "quote": "Selain upah, Perusahaan memberikan tunjangan tidak tetap berupa uang makan sebesar Rp35.000,00 (tiga puluh lima ribu rupiah) dan uang transport sebesar Rp25.000,00 (dua puluh lima ribu rupiah) untuk setiap hari kehadiran.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.OTHER_REGULAR",
+      "recorded_on": "2023-04-01",
+      "label": "other regular income including the attendance allowance",
+      "label_id": "penghasilan teratur lain termasuk uang makan dan uang transport",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "other_regular_income",
+      "expression": "income('other_regular') + attendance_allowance",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 14 ayat (2)",
+        "quote": "Selain upah, Perusahaan memberikan tunjangan tidak tetap berupa uang makan sebesar Rp35.000,00 (tiga puluh lima ribu rupiah) dan uang transport sebesar Rp25.000,00 (dua puluh lima ribu rupiah) untuk setiap hari kehadiran.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The JP wage cap of Rp9,559,600 is kept for the whole policy period (Pasal 22 ayat (5)), so later regulatory cap increases surface as conflicts; the per-day meal and transport allowances are paid monthly and are modelled as regular income from a new HR input attendance_days."
+   },
+   "review": null
+  },
+  {
+   "n": 2,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G6": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP01.HEALTH_WAGE, REG.JKN.WAGE health_wage: company rule always loses to mandatory REG.JKN.WAGE (conflict C?)",
+     "overridden PRS.SP01.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)",
+     "overridden PRS.SP01.JP_WAGE, REG.BPJS.JP_WAGE jp_wage: company rule always loses to mandatory REG.BPJS.JP_WAGE (conflict C?)"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "PRS.SP01.JKM: no effect on any S^G case (vacuous element)",
+     "PRS.SP01.JHT_EMPLOYEE: no effect on any S^G case (vacuous element)",
+     "PRS.SP01.JP_EMPLOYEE: no effect on any S^G case (vacuous element)",
+     "PRS.SP01.HEALTH_WAGE: no effect on any S^G case (vacuous element)",
+     "PRS.SP01.HEALTH_EMPLOYEE: no effect on any S^G case (vacuous element)",
+     "PRS.SP01.HEALTH_EMPLOYER: no effect on any S^G case (vacuous element)"
+    ],
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G6": "fail: reads case-data inputs that do not exist in the payroll data: hr('attendance_days'). Use an input listed under CASE DATA if one has the same meaning; an update that needs a new input is sent to the reviewer, who must add it to the payroll data first"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.WITHHOLDING_METHOD",
+      "label": "PPh 21 borne by the employee and withheld from pay",
+      "label_id": "PPh Pasal 21 menjadi beban pekerja dan dipotong dari penghasilan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross'"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 24 ayat (1)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan pekerja menjadi beban pekerja dan dipotong dari penghasilan setiap bulan sesuai dengan peraturan perundang-undangan perpajakan yang berlaku."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JKK_RATE",
+      "label": "company work accident premium rate",
+      "label_id": "tarif iuran JKK perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "dec('0.0054')"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (2)",
+        "page": 1,
+        "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JKM",
+      "label": "death benefit premium paid by the company",
+      "label_id": "iuran JKM ditanggung perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkm_premium"
+       },
+       {
+        "name": "expression",
+        "value": "round(dec('0.003') * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (2)",
+        "page": 1,
+        "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JHT_EMPLOYEE",
+      "label": "old-age savings contribution paid by the employee",
+      "label_id": "iuran JHT ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jht_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(dec('0.02') * bpjs_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (3)",
+        "page": 1,
+        "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan, dengan ketentuan 3,7% (tiga koma tujuh persen) ditanggung Perusahaan dan 2% (dua persen) ditanggung pekerja."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JP_WAGE",
+      "label": "pension wage base with the company wage cap",
+      "label_id": "batas upah jaminan pensiun perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jp_wage"
+       },
+       {
+        "name": "expression",
+        "value": "min(bpjs_wage, 9559600)"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (4)",
+        "page": 1,
+        "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00 (sembilan juta lima ratus lima puluh sembilan ribu enam ratus rupiah) per bulan."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (5)",
+        "page": 1,
+        "quote": "Batas upah sebagaimana dimaksud pada ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini dan hanya dapat diubah melalui perubahan Peraturan Perusahaan."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JP_EMPLOYEE",
+      "label": "pension contribution paid by the employee",
+      "label_id": "iuran JP ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jp_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(dec('0.01') * jp_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (4)",
+        "page": 1,
+        "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00 (sembilan juta lima ratus lima puluh sembilan ribu enam ratus rupiah) per bulan."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_WAGE",
+      "label": "health insurance wage base with the company wage cap",
+      "label_id": "dasar upah iuran jaminan kesehatan perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_wage"
+       },
+       {
+        "name": "expression",
+        "value": "min(bpjs_wage, 12000000)"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "page": 1,
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_EMPLOYEE",
+      "label": "health contribution paid by the employee",
+      "label_id": "iuran jaminan kesehatan ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_employee"
+       },
+       {
+        "name": "expression",
+        "value": "round(dec('0.01') * health_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "page": 1,
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_EMPLOYER",
+      "label": "health premium paid by the company",
+      "label_id": "iuran jaminan kesehatan ditanggung perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "recorded_on": "2023-04-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "health_premium_employer"
+       },
+       {
+        "name": "expression",
+        "value": "round(dec('0.04') * health_wage, 1, param('bpjs_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "employer('premiums_as_billed') != True"
+       },
+       {
+        "name": "policy",
+        "value": "SP01"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "page": 1,
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja."
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Company rules set the JKK rate (0.54%), JKM, employee JHT/JP and health shares, the employer health premium and both wage caps for 1 April 2023 to 31 March 2025, with tax withheld from pay (gross method). The per-day meal and transport allowances (Pasal 14 ayat (2)) need no new rule: there is no attendance-day input, so the monthly amount is taken as already reported in the existing input income('other_regular')."
+   },
+   "delta": {
+    "delta_id": "devsub3d-pol-SP01-cand2",
+    "event_id": "SP01",
+    "document": {
+     "id": "SP01",
+     "title": "PT Lintas Gudang Nusantara: Peraturan Perusahaan",
+     "issued": "2023-04-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.WITHHOLDING_METHOD",
+      "recorded_on": "2023-04-01",
+      "label": "PPh 21 borne by the employee and withheld from pay",
+      "label_id": "PPh Pasal 21 menjadi beban pekerja dan dipotong dari penghasilan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 24 ayat (1)",
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan pekerja menjadi beban pekerja dan dipotong dari penghasilan setiap bulan sesuai dengan peraturan perundang-undangan perpajakan yang berlaku.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JKK_RATE",
+      "recorded_on": "2023-04-01",
+      "label": "company work accident premium rate",
+      "label_id": "tarif iuran JKK perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "dec('0.0054')",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (2)",
+        "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JKM",
+      "recorded_on": "2023-04-01",
+      "label": "death benefit premium paid by the company",
+      "label_id": "iuran JKM ditanggung perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkm_premium",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(dec('0.003') * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (2)",
+        "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JHT_EMPLOYEE",
+      "recorded_on": "2023-04-01",
+      "label": "old-age savings contribution paid by the employee",
+      "label_id": "iuran JHT ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jht_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(dec('0.02') * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (3)",
+        "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan, dengan ketentuan 3,7% (tiga koma tujuh persen) ditanggung Perusahaan dan 2% (dua persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JP_WAGE",
+      "recorded_on": "2023-04-01",
+      "label": "pension wage base with the company wage cap",
+      "label_id": "batas upah jaminan pensiun perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_wage",
+      "expression": "min(bpjs_wage, 9559600)",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (4)",
+        "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00 (sembilan juta lima ratus lima puluh sembilan ribu enam ratus rupiah) per bulan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (5)",
+        "quote": "Batas upah sebagaimana dimaksud pada ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini dan hanya dapat diubah melalui perubahan Peraturan Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JP_EMPLOYEE",
+      "recorded_on": "2023-04-01",
+      "label": "pension contribution paid by the employee",
+      "label_id": "iuran JP ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(dec('0.01') * jp_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (4)",
+        "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00 (sembilan juta lima ratus lima puluh sembilan ribu enam ratus rupiah) per bulan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_WAGE",
+      "recorded_on": "2023-04-01",
+      "label": "health insurance wage base with the company wage cap",
+      "label_id": "dasar upah iuran jaminan kesehatan perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_wage",
+      "expression": "min(bpjs_wage, 12000000)",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_EMPLOYEE",
+      "recorded_on": "2023-04-01",
+      "label": "health contribution paid by the employee",
+      "label_id": "iuran jaminan kesehatan ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(dec('0.01') * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_EMPLOYER",
+      "recorded_on": "2023-04-01",
+      "label": "health premium paid by the company",
+      "label_id": "iuran jaminan kesehatan ditanggung perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_premium_employer",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(dec('0.04') * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Company rules set the JKK rate (0.54%), JKM, employee JHT/JP and health shares, the employer health premium and both wage caps for 1 April 2023 to 31 March 2025, with tax withheld from pay (gross method). The per-day meal and transport allowances (Pasal 14 ayat (2)) need no new rule: there is no attendance-day input, so the monthly amount is taken as already reported in the existing input income('other_regular')."
+   },
+   "initial_delta": {
+    "delta_id": "devsub3d-pol-SP01-cand2",
+    "event_id": "SP01",
+    "document": {
+     "id": "SP01",
+     "title": "PT Lintas Gudang Nusantara: Peraturan Perusahaan",
+     "issued": "2023-04-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "fact",
+      "id": "attendance_allowance",
+      "recorded_on": "2023-04-01",
+      "label": "meal and transport allowance per attendance day",
+      "label_id": "uang makan dan uang transport per hari kehadiran",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "fact_type": "money",
+      "fact_scope": "period",
+      "output": false,
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 14 ayat (2)",
+        "quote": "Perusahaan memberikan tunjangan tidak tetap berupa uang makan sebesar Rp35.000,00 (tiga puluh lima ribu rupiah) dan uang transport sebesar Rp25.000,00 (dua puluh lima ribu rupiah) untuk setiap hari kehadiran.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.ATTENDANCE_ALLOWANCE",
+      "recorded_on": "2023-04-01",
+      "label": "meal and transport allowance of the month",
+      "label_id": "uang makan dan uang transport sebulan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "attendance_allowance",
+      "expression": "35000 * hr('attendance_days') + 25000 * hr('attendance_days')",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 14 ayat (2)",
+        "quote": "Perusahaan memberikan tunjangan tidak tetap berupa uang makan sebesar Rp35.000,00 (tiga puluh lima ribu rupiah) dan uang transport sebesar Rp25.000,00 (dua puluh lima ribu rupiah) untuk setiap hari kehadiran.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.OTHER_REGULAR",
+      "recorded_on": "2023-04-01",
+      "label": "other regular income including meal and transport allowance",
+      "label_id": "penghasilan teratur lain termasuk uang makan dan uang transport",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "other_regular_income",
+      "expression": "income('other_regular') + attendance_allowance",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 14 ayat (2)",
+        "quote": "Perusahaan memberikan tunjangan tidak tetap berupa uang makan sebesar Rp35.000,00 (tiga puluh lima ribu rupiah) dan uang transport sebesar Rp25.000,00 (dua puluh lima ribu rupiah) untuk setiap hari kehadiran.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.WITHHOLDING_METHOD",
+      "recorded_on": "2023-04-01",
+      "label": "PPh 21 borne by the employee and withheld from pay",
+      "label_id": "PPh Pasal 21 menjadi beban pekerja dan dipotong dari penghasilan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 24 ayat (1)",
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan pekerja menjadi beban pekerja dan dipotong dari penghasilan setiap bulan sesuai dengan peraturan perundang-undangan perpajakan yang berlaku.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JKK_RATE",
+      "recorded_on": "2023-04-01",
+      "label": "company work accident premium rate",
+      "label_id": "tarif iuran JKK perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "dec('0.0054')",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (2)",
+        "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JKM",
+      "recorded_on": "2023-04-01",
+      "label": "death benefit premium paid by the company",
+      "label_id": "iuran JKM ditanggung perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkm_premium",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(dec('0.003') * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (2)",
+        "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JHT_EMPLOYEE",
+      "recorded_on": "2023-04-01",
+      "label": "old-age savings contribution paid by the employee",
+      "label_id": "iuran JHT ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jht_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(dec('0.02') * bpjs_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (3)",
+        "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan, dengan ketentuan 3,7% (tiga koma tujuh persen) ditanggung Perusahaan dan 2% (dua persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JP_WAGE",
+      "recorded_on": "2023-04-01",
+      "label": "pension wage base with the company wage cap",
+      "label_id": "batas upah jaminan pensiun perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_wage",
+      "expression": "min(bpjs_wage, 9559600)",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (4)",
+        "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00 (sembilan juta lima ratus lima puluh sembilan ribu enam ratus rupiah) per bulan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (5)",
+        "quote": "Batas upah sebagaimana dimaksud pada ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini dan hanya dapat diubah melalui perubahan Peraturan Perusahaan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.JP_EMPLOYEE",
+      "recorded_on": "2023-04-01",
+      "label": "pension contribution paid by the employee",
+      "label_id": "iuran JP ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jp_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(dec('0.01') * jp_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 22 ayat (4)",
+        "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00 (sembilan juta lima ratus lima puluh sembilan ribu enam ratus rupiah) per bulan.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_WAGE",
+      "recorded_on": "2023-04-01",
+      "label": "health insurance wage base with the company wage cap",
+      "label_id": "dasar upah iuran jaminan kesehatan perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_wage",
+      "expression": "min(bpjs_wage, 12000000)",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_EMPLOYEE",
+      "recorded_on": "2023-04-01",
+      "label": "health contribution paid by the employee",
+      "label_id": "iuran jaminan kesehatan ditanggung pekerja",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_employee",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(dec('0.01') * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP01.HEALTH_EMPLOYER",
+      "recorded_on": "2023-04-01",
+      "label": "health premium paid by the company",
+      "label_id": "iuran jaminan kesehatan ditanggung perusahaan",
+      "valid_from": "2023-04-01",
+      "valid_until": "2025-03-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "health_premium_employer",
+      "condition": "employer('premiums_as_billed') != True",
+      "expression": "round(dec('0.04') * health_wage, 1, param('bpjs_round_mode'))",
+      "policy": "SP01",
+      "source": [
+       {
+        "document": "SP01",
+        "provision": "Pasal 23 ayat (2)",
+        "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP01",
+        "provision": "Pasal 44 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Company rules set the JKK rate (0.54%), JKM, employee JHT/JP and health shares, the employer health premium and both wage caps for 1 April 2023 to 31 March 2025, with the JP cap fixed at Rp9,559,600 for the policy period; the per-day meal and transport allowances are added to other regular income through a new input hr('attendance_days'). Tax is withheld from pay (gross method)."
+   },
+   "review": null
+  }
+ ],
+ "groups": [
+  [
+   1,
+   2
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "devsub3d-pol-SP01-cand1",
+  "event_id": "SP01",
+  "document": {
+   "id": "SP01",
+   "title": "PT Lintas Gudang Nusantara: Peraturan Perusahaan",
+   "issued": "2023-04-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP01.WITHHOLDING_METHOD",
+    "recorded_on": "2023-04-01",
+    "label": "PPh 21 borne by the employee and withheld from pay",
+    "label_id": "PPh 21 menjadi beban pekerja dan dipotong dari penghasilan",
+    "valid_from": "2023-04-01",
+    "valid_until": "2025-03-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "expression": "'gross'",
+    "policy": "SP01",
+    "source": [
+     {
+      "document": "SP01",
+      "provision": "Pasal 24 ayat (1)",
+      "quote": "Pajak Penghasilan Pasal 21 atas penghasilan pekerja menjadi beban pekerja dan dipotong dari penghasilan setiap bulan sesuai dengan peraturan perundang-undangan perpajakan yang berlaku.",
+      "page": 1
+     },
+     {
+      "document": "SP01",
+      "provision": "Pasal 44 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP01.JKK_RATE",
+    "recorded_on": "2023-04-01",
+    "label": "work accident premium rate 0.54%",
+    "label_id": "tarif iuran JKK 0,54%",
+    "valid_from": "2023-04-01",
+    "valid_until": "2025-03-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "jkk_rate",
+    "expression": "dec('0.0054')",
+    "policy": "SP01",
+    "source": [
+     {
+      "document": "SP01",
+      "provision": "Pasal 22 ayat (2)",
+      "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan.",
+      "page": 1
+     },
+     {
+      "document": "SP01",
+      "provision": "Pasal 44 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP01.JKM",
+    "recorded_on": "2023-04-01",
+    "label": "death benefit premium 0.30% paid by the company",
+    "label_id": "iuran JKM 0,30% ditanggung perusahaan",
+    "valid_from": "2023-04-01",
+    "valid_until": "2025-03-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "jkm_premium",
+    "condition": "employer('premiums_as_billed') != True",
+    "expression": "round(dec('0.003') * bpjs_wage, 1, param('bpjs_round_mode'))",
+    "policy": "SP01",
+    "source": [
+     {
+      "document": "SP01",
+      "provision": "Pasal 22 ayat (2)",
+      "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan.",
+      "page": 1
+     },
+     {
+      "document": "SP01",
+      "provision": "Pasal 44 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP01.JHT_EMPLOYEE",
+    "recorded_on": "2023-04-01",
+    "label": "old-age savings contribution 2% paid by the employee",
+    "label_id": "iuran JHT 2% ditanggung pekerja",
+    "valid_from": "2023-04-01",
+    "valid_until": "2025-03-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "jht_employee",
+    "condition": "employer('premiums_as_billed') != True",
+    "expression": "round(2 / 100 * bpjs_wage, 1, param('bpjs_round_mode'))",
+    "policy": "SP01",
+    "source": [
+     {
+      "document": "SP01",
+      "provision": "Pasal 22 ayat (3)",
+      "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan, dengan ketentuan 3,7% (tiga koma tujuh persen) ditanggung Perusahaan dan 2% (dua persen) ditanggung pekerja.",
+      "page": 1
+     },
+     {
+      "document": "SP01",
+      "provision": "Pasal 44 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP01.JP_WAGE",
+    "recorded_on": "2023-04-01",
+    "label": "pension contribution wage cap fixed at Rp9,559,600 for the policy period",
+    "label_id": "batas upah JP Rp9.559.600 selama masa berlaku peraturan perusahaan",
+    "valid_from": "2023-04-01",
+    "valid_until": "2025-03-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "jp_wage",
+    "expression": "min(bpjs_wage, 9559600)",
+    "policy": "SP01",
+    "source": [
+     {
+      "document": "SP01",
+      "provision": "Pasal 22 ayat (4)",
+      "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00 (sembilan juta lima ratus lima puluh sembilan ribu enam ratus rupiah) per bulan.",
+      "page": 1
+     },
+     {
+      "document": "SP01",
+      "provision": "Pasal 22 ayat (5)",
+      "quote": "Batas upah sebagaimana dimaksud pada ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini dan hanya dapat diubah melalui perubahan Peraturan Perusahaan.",
+      "page": 1
+     },
+     {
+      "document": "SP01",
+      "provision": "Pasal 44 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP01.JP_EMPLOYEE",
+    "recorded_on": "2023-04-01",
+    "label": "pension contribution 1% paid by the employee",
+    "label_id": "iuran JP 1% ditanggung pekerja",
+    "valid_from": "2023-04-01",
+    "valid_until": "2025-03-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "jp_employee",
+    "condition": "employer('premiums_as_billed') != True",
+    "expression": "round(1 / 100 * jp_wage, 1, param('bpjs_round_mode'))",
+    "policy": "SP01",
+    "source": [
+     {
+      "document": "SP01",
+      "provision": "Pasal 22 ayat (4)",
+      "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00 (sembilan juta lima ratus lima puluh sembilan ribu enam ratus rupiah) per bulan.",
+      "page": 1
+     },
+     {
+      "document": "SP01",
+      "provision": "Pasal 44 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP01.HEALTH_WAGE",
+    "recorded_on": "2023-04-01",
+    "label": "health insurance wage cap Rp12,000,000",
+    "label_id": "batas upah iuran jaminan kesehatan Rp12.000.000",
+    "valid_from": "2023-04-01",
+    "valid_until": "2025-03-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "health_wage",
+    "expression": "min(bpjs_wage, 12000000)",
+    "policy": "SP01",
+    "source": [
+     {
+      "document": "SP01",
+      "provision": "Pasal 23 ayat (2)",
+      "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+      "page": 1
+     },
+     {
+      "document": "SP01",
+      "provision": "Pasal 44 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP01.HEALTH_EMPLOYER",
+    "recorded_on": "2023-04-01",
+    "label": "health premium 4% paid by the company",
+    "label_id": "iuran jaminan kesehatan 4% ditanggung perusahaan",
+    "valid_from": "2023-04-01",
+    "valid_until": "2025-03-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "health_premium_employer",
+    "condition": "employer('premiums_as_billed') != True",
+    "expression": "round(4 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+    "policy": "SP01",
+    "source": [
+     {
+      "document": "SP01",
+      "provision": "Pasal 23 ayat (2)",
+      "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+      "page": 1
+     },
+     {
+      "document": "SP01",
+      "provision": "Pasal 44 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP01.HEALTH_EMPLOYEE",
+    "recorded_on": "2023-04-01",
+    "label": "health contribution 1% paid by the employee",
+    "label_id": "iuran jaminan kesehatan 1% ditanggung pekerja",
+    "valid_from": "2023-04-01",
+    "valid_until": "2025-03-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "health_employee",
+    "condition": "employer('premiums_as_billed') != True",
+    "expression": "round(1 / 100 * health_wage, 1, param('bpjs_round_mode'))",
+    "policy": "SP01",
+    "source": [
+     {
+      "document": "SP01",
+      "provision": "Pasal 23 ayat (2)",
+      "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja.",
+      "page": 1
+     },
+     {
+      "document": "SP01",
+      "provision": "Pasal 44 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP01.PENSION_DEDUCTION",
+    "recorded_on": "2023-04-01",
+    "label": "employee JHT and JP contributions deducted from gross income",
+    "label_id": "iuran JHT dan JP bagian pekerja pengurang penghasilan bruto",
+    "valid_from": "2023-04-01",
+    "valid_until": "2025-03-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "employee_pension_contributions",
+    "expression": "jht_employee + jp_employee",
+    "policy": "SP01",
+    "source": [
+     {
+      "document": "SP01",
+      "provision": "Pasal 24 ayat (2)",
+      "quote": "Iuran JHT dan iuran JP bagian pekerja sebagaimana dimaksud dalam Pasal 22 dikurangkan dari penghasilan bruto dalam penghitungan Pajak Penghasilan Pasal 21.",
+      "page": 1
+     },
+     {
+      "document": "SP01",
+      "provision": "Pasal 44 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+      "page": 1
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "The JP wage cap of Rp9,559,600 is kept for the whole policy period (Pasal 22 ayat (5)), so later regulatory cap increases surface as conflicts. The per-day meal and transport allowances (Pasal 14 ayat (2)) need no new rule: the payroll has no attendance-day input, so the amounts paid are entered as other regular income (income('other_regular')), which the existing rules already include in gross income."
+ },
+ "cost_usd": 0.0,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "The company regulation sets payroll parameters that enter the PPh 21 computation for its permanent employees: JKK 0.54% and JKM 0.30% employer-paid premiums (added to gross income), JHT 5.7% (2% employee) and JP 3% (1% employee) with a JP wage cap of Rp9,559,600 fixed for the whole policy period (employee JHT/JP shares are deductions from gross income), BPJS Kesehatan 5% with a Rp12,000,000 wage cap (4% employer-paid, added to gross income), and non-fixed meal and transport allowances per attendance day that form part of gross income. Valid 1 April 2023 to 31 March 2025.",
+   "quotes": [
+    {
+     "provision": "Pasal 14 ayat (2): meal and transport allowances per attendance day",
+     "quote": "uang makan sebesar Rp35.000,00 (tiga puluh lima ribu rupiah) dan uang transport sebesar Rp25.000,00 (dua puluh lima ribu rupiah) untuk setiap hari kehadiran"
+    },
+    {
+     "provision": "Pasal 22 ayat (2): JKK 0.54% and JKM 0.30% paid by employer",
+     "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen) dan iuran JKM sebesar 0,30% (nol koma tiga puluh persen) dari upah sebulan ditanggung sepenuhnya oleh Perusahaan."
+    },
+    {
+     "provision": "Pasal 22 ayat (3): JHT 5.7%, employee share 2%",
+     "quote": "Iuran JHT sebesar 5,7% (lima koma tujuh persen) dari upah sebulan, dengan ketentuan 3,7% (tiga koma tujuh persen) ditanggung Perusahaan dan 2% (dua persen) ditanggung pekerja."
+    },
+    {
+     "provision": "Pasal 22 ayat (4): JP 3%, employee share 1%, wage cap Rp9,559,600",
+     "quote": "Iuran JP sebesar 3% (tiga persen) dari upah sebulan, dengan ketentuan 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00"
+    },
+    {
+     "provision": "Pasal 22 ayat (5): JP wage cap fixed for the policy period",
+     "quote": "Batas upah sebagaimana dimaksud pada ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini dan hanya dapat diubah melalui perubahan Peraturan Perusahaan."
+    },
+    {
+     "provision": "Pasal 23 ayat (2): BPJS Kesehatan 5%, cap Rp12,000,000, employer 4%, employee 1%",
+     "quote": "Iuran sebesar 5% (lima persen) dari upah sebulan dengan batas upah paling tinggi Rp12.000.000,00 (dua belas juta rupiah), dengan ketentuan 4% (empat persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja."
+    },
+    {
+     "provision": "Pasal 24 ayat (1): PPh 21 borne by the employee (not grossed up)",
+     "quote": "Pajak Penghasilan Pasal 21 atas penghasilan pekerja menjadi beban pekerja dan dipotong dari penghasilan setiap bulan"
+    },
+    {
+     "provision": "Pasal 24 ayat (2): employee JHT and JP deducted from gross income",
+     "quote": "Iuran JHT dan iuran JP bagian pekerja sebagaimana dimaksud dalam Pasal 22 dikurangkan dari penghasilan bruto dalam penghitungan Pajak Penghasilan Pasal 21."
+    }
+   ],
+   "effective_from": "2023-04-01",
+   "effective_from_quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+   "effective_until": "2025-03-31",
+   "effective_until_quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025.",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT Lintas Gudang Nusantara",
+     "quote": "PERATURAN PERUSAHAAN PT LINTAS GUDANG NUSANTARA PERIODE 2023-2025"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

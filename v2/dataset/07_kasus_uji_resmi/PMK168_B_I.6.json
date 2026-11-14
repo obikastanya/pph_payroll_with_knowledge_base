@@ -1,0 +1,99 @@
+{
+  "id": "PMK168-B-I.6",
+  "sumber": {
+    "regulasi": "PMK 168/2023",
+    "bagian": "Lampiran huruf B, Bagian Kedua, I.6 (natura dan/atau kenikmatan), Tuan I",
+    "halaman_pdf": [
+      45,
+      46
+    ]
+  },
+  "rezim": "TER_2024",
+  "dalam_lingkup": true,
+  "skenario": [
+    "TER_bulanan",
+    "natura_kenikmatan",
+    "kategori_B"
+  ],
+  "uraian": "Tuan I (K/1) Januari 2024: gaji 35 juta + beasiswa dari PT R 20 juta (kenikmatan, objek PPh); bruto 55 juta, TER B 19%.",
+  "input": {
+    "tahun_pajak": 2024,
+    "status_ptkp": "K/1",
+    "jenis_kelamin": "L",
+    "metode": "gross",
+    "masa": [
+      {
+        "bulan": 1,
+        "komponen": {
+          "gaji": 35000000,
+          "natura_beasiswa": 20000000
+        }
+      }
+    ],
+    "info_tambahan": {
+      "catatan": "Beasiswa tidak memenuhi syarat pengecualian (PMK beasiswa) sehingga merupakan kenikmatan objek PPh 21."
+    },
+    "jenis_kelamin_catatan": "disimpulkan dari sapaan 'Tuan' di dokumen"
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 1,
+        "bruto": 55000000,
+        "kategori_ter": "B",
+        "tarif_ter": 0.19,
+        "pph21": 10545000,
+        "catatan": "Nilai pph21 sesuai dokumen, yang menuliskan '19% x Rp55.500.000,00 = Rp10.545.000,00' (lihat erratum)."
+      }
+    ]
+  },
+  "langkah_resmi": [
+    "Gaji Rp 35.000.000,00 + Beasiswa Rp 20.000.000,00 = Penghasilan bruto sebulan Rp 55.000.000,00",
+    "berdasarkan tarif efektif bulanan kategori B ... 19% (sembilan belas persen)",
+    "19% x Rp55.500.000,00 = Rp10.545.000,00"
+  ],
+  "catatan_transkripsi": "DUGAAN ERRATUM (diverifikasi pada citra hlm. 46, bukan artefak OCR): bruto ditetapkan Rp55.000.000,00 tetapi baris perhitungan memakai Rp55.500.000,00 sehingga PPh = Rp10.545.000,00. Dengan bruto 55.000.000 x 19% hasilnya Rp10.450.000,00. Tarif 19% sama untuk kedua nilai (lapisan B 53,8-58,5 juta), jadi kesalahan ada pada dasar pengali. Nilai expected tidak diubah; KB yang benar akan menghasilkan 10.450.000 dan harus dicatat sebagai 'ralat contoh resmi'.",
+  "cek_aritmetika": [
+    {
+      "item": "bruto",
+      "dokumen": 55000000,
+      "hitung_ulang": 55000000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh bulan 1 = 0.19 x 55000000",
+      "dokumen": 10545000,
+      "hitung_ulang": 10450000,
+      "status": "TIDAK COCOK"
+    },
+    {
+      "item": "PPh dengan dasar yang tertulis di baris perhitungan (55.500.000 x 19%)",
+      "dokumen": 10545000,
+      "hitung_ulang": 10545000,
+      "status": "cocok"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "tarif TER B utk bruto 55.000.000 (bulan 1)",
+      "dokumen": 0.19,
+      "tabel": 0.19,
+      "status": "cocok"
+    },
+    {
+      "item": "kategori TER utk status K/1 (PP 58/2023 Ps. 2 ayat (4))",
+      "dokumen": "B",
+      "tabel": "B",
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 2,
+    "aritmetika_tidak_cocok": 1,
+    "tabel_cocok": 2,
+    "tabel_tidak_cocok": 0
+  },
+  "dugaan_erratum": "Baris perhitungan memakai Rp55.500.000 padahal bruto Rp55.000.000 -> PPh 10.545.000 (seharusnya 10.450.000).",
+  "verifikasi_pass2": "cocok"
+}

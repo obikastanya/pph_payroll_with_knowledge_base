@@ -1,0 +1,758 @@
+{
+ "run": "devsub3d-pol",
+ "event": "SP03",
+ "condition": "proposed",
+ "documents": [
+  "SP03"
+ ],
+ "selection": {
+  "SP03": {
+   "tokens": 695,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G6": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C?)",
+     "redundant REG.PREMIUMS.TAXABLE, PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE employer_premiums_taxable: same condition and expression"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE: no effect on any S^G case (vacuous element)"
+    ],
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G6": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C?)",
+     "redundant REG.PREMIUMS.TAXABLE, PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE employer_premiums_taxable: same condition and expression"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE: no effect on any S^G case (vacuous element)"
+    ],
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.WITHHOLDING_METHOD",
+      "label": "PPh 21 is borne by the employee and withheld from pay",
+      "label_id": "PPh Pasal 21 menjadi beban pekerja dan dipotong dari upah",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-03-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross'"
+       },
+       {
+        "name": "policy",
+        "value": "SP03"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 40 ayat (1)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 atas upah dan penghasilan lain pekerja menjadi beban pekerja dan dipotong oleh Perusahaan setiap bulan sesuai ketentuan perpajakan."
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE",
+      "label": "employer JKK, JKM and health premiums are gross income",
+      "label_id": "iuran JKK, JKM, dan Jaminan Kesehatan bagian Perusahaan sebagai penghasilan bruto",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-03-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employer_premiums_taxable"
+       },
+       {
+        "name": "expression",
+        "value": "jkk_premium + jkm_premium + health_premium_employer"
+       },
+       {
+        "name": "policy",
+        "value": "SP03"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 38 ayat (3)",
+        "page": 1,
+        "quote": "Iuran JKK, iuran JKM, dan iuran Jaminan Kesehatan bagian Perusahaan diperhitungkan sebagai penghasilan bruto pekerja dalam penghitungan Pajak Penghasilan Pasal 21."
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.EMPLOYEE_TAX_BURDEN",
+      "label": "government PPh 21 incentives are kept by the company, so the employee bears the full PPh 21 due",
+      "label_id": "insentif PPh Pasal 21 dari Pemerintah dikelola Perusahaan dan tidak dibayarkan kepada pekerja",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-03-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employee_tax_burden"
+       },
+       {
+        "name": "expression",
+        "value": "pph21_due if (not is_final_period or pph21_due >= 0) else (0 - refund_to_employee)"
+       },
+       {
+        "name": "policy",
+        "value": "SP03"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 40 ayat (3)",
+        "page": 1,
+        "quote": "Setiap insentif, keringanan, atau fasilitas perpajakan yang diberikan Pemerintah sehubungan dengan Pajak Penghasilan Pasal 21 pekerja diterima dan dikelola oleh Perusahaan untuk mendukung program kesejahteraan pekerja secara kolektif, dan tidak dibayarkan secara perorangan kepada pekerja."
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Pasal 40 ayat (3) is modelled as the employee bearing the full PPh 21 due without the DTP amount being passed on (this may contradict PMK-10-2025, which the KB does not encode as a mandatory rule for gross withholding); premium rates and wage caps follow the regulation (Pasal 38 ayat (2)), so no company premium rules are added."
+   },
+   "delta": {
+    "delta_id": "devsub3d-pol-SP03-cand1",
+    "event_id": "SP03",
+    "document": {
+     "id": "SP03",
+     "title": "PT Samudra Biru Hospitality: Perjanjian Kerja Bersama",
+     "issued": "2025-03-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.WITHHOLDING_METHOD",
+      "recorded_on": "2025-03-01",
+      "label": "PPh 21 is borne by the employee and withheld from pay",
+      "label_id": "PPh Pasal 21 menjadi beban pekerja dan dipotong dari upah",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "SP03",
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 40 ayat (1)",
+        "quote": "Pajak Penghasilan Pasal 21 atas upah dan penghasilan lain pekerja menjadi beban pekerja dan dipotong oleh Perusahaan setiap bulan sesuai ketentuan perpajakan.",
+        "page": 1
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE",
+      "recorded_on": "2025-03-01",
+      "label": "employer JKK, JKM and health premiums are gross income",
+      "label_id": "iuran JKK, JKM, dan Jaminan Kesehatan bagian Perusahaan sebagai penghasilan bruto",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "jkk_premium + jkm_premium + health_premium_employer",
+      "policy": "SP03",
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 38 ayat (3)",
+        "quote": "Iuran JKK, iuran JKM, dan iuran Jaminan Kesehatan bagian Perusahaan diperhitungkan sebagai penghasilan bruto pekerja dalam penghitungan Pajak Penghasilan Pasal 21.",
+        "page": 1
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.EMPLOYEE_TAX_BURDEN",
+      "recorded_on": "2025-03-01",
+      "label": "government PPh 21 incentives are kept by the company, so the employee bears the full PPh 21 due",
+      "label_id": "insentif PPh Pasal 21 dari Pemerintah dikelola Perusahaan dan tidak dibayarkan kepada pekerja",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employee_tax_burden",
+      "expression": "pph21_due if (not is_final_period or pph21_due >= 0) else (0 - refund_to_employee)",
+      "policy": "SP03",
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 40 ayat (3)",
+        "quote": "Setiap insentif, keringanan, atau fasilitas perpajakan yang diberikan Pemerintah sehubungan dengan Pajak Penghasilan Pasal 21 pekerja diterima dan dikelola oleh Perusahaan untuk mendukung program kesejahteraan pekerja secara kolektif, dan tidak dibayarkan secara perorangan kepada pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Pasal 40 ayat (3) is modelled as the employee bearing the full PPh 21 due without the DTP amount being passed on (this may contradict PMK-10-2025, which the KB does not encode as a mandatory rule for gross withholding); premium rates and wage caps follow the regulation (Pasal 38 ayat (2)), so no company premium rules are added."
+   },
+   "initial_delta": null,
+   "review": null
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G6": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C?)",
+     "redundant REG.PREMIUMS.TAXABLE, PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE employer_premiums_taxable: same condition and expression"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE: no effect on any S^G case (vacuous element)"
+    ],
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G6": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C?)",
+     "redundant REG.PREMIUMS.TAXABLE, PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE employer_premiums_taxable: same condition and expression"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE: no effect on any S^G case (vacuous element)"
+    ],
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.WITHHOLDING_METHOD",
+      "label": "PPh 21 is borne by the employee and withheld from pay",
+      "label_id": "PPh Pasal 21 menjadi beban pekerja dan dipotong dari upah",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-03-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "year"
+       },
+       {
+        "name": "produces",
+        "value": "withholding_method"
+       },
+       {
+        "name": "expression",
+        "value": "'gross'"
+       },
+       {
+        "name": "policy",
+        "value": "SP03"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 40 ayat (1)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 atas upah dan penghasilan lain pekerja menjadi beban pekerja dan dipotong oleh Perusahaan setiap bulan sesuai ketentuan perpajakan."
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE",
+      "label": "employer JKK, JKM and health premiums are gross income",
+      "label_id": "iuran JKK, JKM, dan Jaminan Kesehatan bagian perusahaan sebagai penghasilan bruto",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-03-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employer_premiums_taxable"
+       },
+       {
+        "name": "expression",
+        "value": "jkk_premium + jkm_premium + health_premium_employer"
+       },
+       {
+        "name": "policy",
+        "value": "SP03"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 38 ayat (3)",
+        "page": 1,
+        "quote": "Iuran JKK, iuran JKM, dan iuran Jaminan Kesehatan bagian Perusahaan diperhitungkan sebagai penghasilan bruto pekerja dalam penghitungan Pajak Penghasilan Pasal 21."
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.TAX_BURDEN_NO_INCENTIVE",
+      "label": "government PPh 21 incentives are kept by the company, not paid to the employee",
+      "label_id": "insentif PPh Pasal 21 dari Pemerintah dikelola perusahaan dan tidak dibayarkan kepada pekerja",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "recorded_on": "2025-03-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employee_tax_burden"
+       },
+       {
+        "name": "expression",
+        "value": "pph21_due if (not is_final_period or pph21_due >= 0) else (0 - refund_to_employee)"
+       },
+       {
+        "name": "policy",
+        "value": "SP03"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 40 ayat (3)",
+        "page": 1,
+        "quote": "Setiap insentif, keringanan, atau fasilitas perpajakan yang diberikan Pemerintah sehubungan dengan Pajak Penghasilan Pasal 21 pekerja diterima dan dikelola oleh Perusahaan untuk mendukung program kesejahteraan pekerja secara kolektif, dan tidak dibayarkan secara perorangan kepada pekerja."
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "page": 1,
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Pasal 40 ayat (3) is modelled as the employee bearing the full PPh 21 due without the government-borne (DTP) part being passed on in cash, which contradicts the regulation requiring DTP to be paid to the employee; premium rates and caps (Pasal 38 ayat (2)) follow the regulation, so no element is added for them."
+   },
+   "delta": {
+    "delta_id": "devsub3d-pol-SP03-cand2",
+    "event_id": "SP03",
+    "document": {
+     "id": "SP03",
+     "title": "PT Samudra Biru Hospitality: Perjanjian Kerja Bersama",
+     "issued": "2025-03-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.WITHHOLDING_METHOD",
+      "recorded_on": "2025-03-01",
+      "label": "PPh 21 is borne by the employee and withheld from pay",
+      "label_id": "PPh Pasal 21 menjadi beban pekerja dan dipotong dari upah",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "year",
+      "produces": "withholding_method",
+      "expression": "'gross'",
+      "policy": "SP03",
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 40 ayat (1)",
+        "quote": "Pajak Penghasilan Pasal 21 atas upah dan penghasilan lain pekerja menjadi beban pekerja dan dipotong oleh Perusahaan setiap bulan sesuai ketentuan perpajakan.",
+        "page": 1
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE",
+      "recorded_on": "2025-03-01",
+      "label": "employer JKK, JKM and health premiums are gross income",
+      "label_id": "iuran JKK, JKM, dan Jaminan Kesehatan bagian perusahaan sebagai penghasilan bruto",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "jkk_premium + jkm_premium + health_premium_employer",
+      "policy": "SP03",
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 38 ayat (3)",
+        "quote": "Iuran JKK, iuran JKM, dan iuran Jaminan Kesehatan bagian Perusahaan diperhitungkan sebagai penghasilan bruto pekerja dalam penghitungan Pajak Penghasilan Pasal 21.",
+        "page": 1
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP03.TAX_BURDEN_NO_INCENTIVE",
+      "recorded_on": "2025-03-01",
+      "label": "government PPh 21 incentives are kept by the company, not paid to the employee",
+      "label_id": "insentif PPh Pasal 21 dari Pemerintah dikelola perusahaan dan tidak dibayarkan kepada pekerja",
+      "valid_from": "2025-03-01",
+      "valid_until": "2026-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employee_tax_burden",
+      "expression": "pph21_due if (not is_final_period or pph21_due >= 0) else (0 - refund_to_employee)",
+      "policy": "SP03",
+      "source": [
+       {
+        "document": "SP03",
+        "provision": "Pasal 40 ayat (3)",
+        "quote": "Setiap insentif, keringanan, atau fasilitas perpajakan yang diberikan Pemerintah sehubungan dengan Pajak Penghasilan Pasal 21 pekerja diterima dan dikelola oleh Perusahaan untuk mendukung program kesejahteraan pekerja secara kolektif, dan tidak dibayarkan secara perorangan kepada pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP03",
+        "provision": "Pasal 60 ayat (1)",
+        "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Pasal 40 ayat (3) is modelled as the employee bearing the full PPh 21 due without the government-borne (DTP) part being passed on in cash, which contradicts the regulation requiring DTP to be paid to the employee; premium rates and caps (Pasal 38 ayat (2)) follow the regulation, so no element is added for them."
+   },
+   "initial_delta": null,
+   "review": null
+  }
+ ],
+ "groups": [
+  [
+   2,
+   1
+  ]
+ ],
+ "selected": 2,
+ "status": "applied",
+ "delta": {
+  "delta_id": "devsub3d-pol-SP03-cand2",
+  "event_id": "SP03",
+  "document": {
+   "id": "SP03",
+   "title": "PT Samudra Biru Hospitality: Perjanjian Kerja Bersama",
+   "issued": "2025-03-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP03.WITHHOLDING_METHOD",
+    "recorded_on": "2025-03-01",
+    "label": "PPh 21 is borne by the employee and withheld from pay",
+    "label_id": "PPh Pasal 21 menjadi beban pekerja dan dipotong dari upah",
+    "valid_from": "2025-03-01",
+    "valid_until": "2026-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "expression": "'gross'",
+    "policy": "SP03",
+    "source": [
+     {
+      "document": "SP03",
+      "provision": "Pasal 40 ayat (1)",
+      "quote": "Pajak Penghasilan Pasal 21 atas upah dan penghasilan lain pekerja menjadi beban pekerja dan dipotong oleh Perusahaan setiap bulan sesuai ketentuan perpajakan.",
+      "page": 1
+     },
+     {
+      "document": "SP03",
+      "provision": "Pasal 60 ayat (1)",
+      "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP03.EMPLOYER_PREMIUMS_TAXABLE",
+    "recorded_on": "2025-03-01",
+    "label": "employer JKK, JKM and health premiums are gross income",
+    "label_id": "iuran JKK, JKM, dan Jaminan Kesehatan bagian perusahaan sebagai penghasilan bruto",
+    "valid_from": "2025-03-01",
+    "valid_until": "2026-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "employer_premiums_taxable",
+    "expression": "jkk_premium + jkm_premium + health_premium_employer",
+    "policy": "SP03",
+    "source": [
+     {
+      "document": "SP03",
+      "provision": "Pasal 38 ayat (3)",
+      "quote": "Iuran JKK, iuran JKM, dan iuran Jaminan Kesehatan bagian Perusahaan diperhitungkan sebagai penghasilan bruto pekerja dalam penghitungan Pajak Penghasilan Pasal 21.",
+      "page": 1
+     },
+     {
+      "document": "SP03",
+      "provision": "Pasal 60 ayat (1)",
+      "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP03.TAX_BURDEN_NO_INCENTIVE",
+    "recorded_on": "2025-03-01",
+    "label": "government PPh 21 incentives are kept by the company, not paid to the employee",
+    "label_id": "insentif PPh Pasal 21 dari Pemerintah dikelola perusahaan dan tidak dibayarkan kepada pekerja",
+    "valid_from": "2025-03-01",
+    "valid_until": "2026-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "employee_tax_burden",
+    "expression": "pph21_due if (not is_final_period or pph21_due >= 0) else (0 - refund_to_employee)",
+    "policy": "SP03",
+    "source": [
+     {
+      "document": "SP03",
+      "provision": "Pasal 40 ayat (3)",
+      "quote": "Setiap insentif, keringanan, atau fasilitas perpajakan yang diberikan Pemerintah sehubungan dengan Pajak Penghasilan Pasal 21 pekerja diterima dan dikelola oleh Perusahaan untuk mendukung program kesejahteraan pekerja secara kolektif, dan tidak dibayarkan secara perorangan kepada pekerja.",
+      "page": 1
+     },
+     {
+      "document": "SP03",
+      "provision": "Pasal 60 ayat (1)",
+      "quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025 sampai dengan tanggal 31 Desember 2026.",
+      "page": 1
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "Pasal 40 ayat (3) is modelled as the employee bearing the full PPh 21 due without the government-borne (DTP) part being passed on in cash, which contradicts the regulation requiring DTP to be paid to the employee; premium rates and caps (Pasal 38 ayat (2)) follow the regulation, so no element is added for them."
+ },
+ "cost_usd": 0.0,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "Company collective labour agreement that sets payroll rules affecting PPh 21 for its permanent employees: PPh 21 is borne by the employee (withheld from pay, no company tax allowance/gross-up), company-paid JKK, JKM and health insurance contributions are counted as gross income, and any government PPh 21 incentive or facility (e.g. tax borne by government) is retained by the company for collective welfare rather than paid to individual employees, which changes how incentive amounts flow into employee net pay. Valid 1 March 2025 to 31 December 2026.",
+   "quotes": [
+    {
+     "provision": "Pasal 40 ayat (1): PPh 21 borne by the employee and withheld monthly",
+     "quote": "Pajak Penghasilan Pasal 21 atas upah dan penghasilan lain pekerja menjadi beban pekerja dan dipotong oleh Perusahaan setiap bulan sesuai ketentuan perpajakan."
+    },
+    {
+     "provision": "Pasal 40 ayat (3): government PPh 21 incentives retained by the company, not paid to individual employees",
+     "quote": "Setiap insentif, keringanan, atau fasilitas perpajakan yang diberikan Pemerintah sehubungan dengan Pajak Penghasilan Pasal 21 pekerja diterima dan dikelola oleh Perusahaan untuk mendukung program kesejahteraan pekerja secara kolektif, dan tidak dibayarkan secara perorangan kepada pekerja."
+    },
+    {
+     "provision": "Pasal 38 ayat (3): company JKK, JKM and health contributions included in gross income",
+     "quote": "Iuran JKK, iuran JKM, dan iuran Jaminan Kesehatan bagian Perusahaan diperhitungkan sebagai penghasilan bruto pekerja dalam penghitungan Pajak Penghasilan Pasal 21."
+    }
+   ],
+   "effective_from": "2025-03-01",
+   "effective_from_quote": "Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Maret 2025",
+   "effective_until": "2026-12-31",
+   "effective_until_quote": "sampai dengan tanggal 31 Desember 2026",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT Samudra Biru Hospitality",
+     "quote": "PERJANJIAN KERJA BERSAMA ANTARA PT SAMUDRA BIRU HOSPITALITY DAN PIMPINAN UNIT KERJA SERIKAT PEKERJA PARIWISATA"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

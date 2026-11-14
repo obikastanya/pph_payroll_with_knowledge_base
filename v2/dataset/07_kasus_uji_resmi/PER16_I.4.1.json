@@ -1,0 +1,161 @@
+{
+  "id": "PER16-I.4.1",
+  "sumber": {
+    "regulasi": "PER-16/PJ/2016",
+    "bagian": "Lampiran, Bagian Kedua, I.4.1 (bonus), Sudiro",
+    "halaman_pdf": [
+      34,
+      35
+    ],
+    "halaman_dokumen": "-15-, -16-",
+    "catatan": "PDF hasil pindai; angka dibaca dari citra halaman (bukan hanya teks OCR)."
+  },
+  "rezim": "PER16_2023",
+  "dalam_lingkup": true,
+  "catatan_lingkup": "Contoh PER-16 bertahun 2016 dan memakai lapisan tarif Pasal 17 UU 36/2008 (5% s.d. Rp50 juta; 15% >50-250 juta; 25% >250-500 juta; 30% >500 juta). Rezim 'PER16_2023' = metode (disetahunkan, PPh sebulan = PPh setahun / 12); untuk tahun pajak 2023 berlaku lapisan UU HPP (5% s.d. Rp60 juta). Lihat kunci 'relevansi_tarif_2023'.",
+  "skenario": [
+    "metode_PER16_bulanan",
+    "bonus",
+    "metode_selisih_tidak_teratur",
+    "iuran_pensiun"
+  ],
+  "uraian": "Sudiro (tidak kawin, TK/0) gaji 5 juta/bulan, bonus Maret 2016 8 juta, iuran pensiun 80 ribu; PPh atas bonus = PPh(gaji setahun + bonus) - PPh(gaji setahun).",
+  "input": {
+    "tahun_pajak": 2016,
+    "tarif_pasal17_dokumen": "UU 36/2008 (pra-HPP)",
+    "status_ptkp": "TK/0",
+    "jenis_kelamin": "tidak_disebutkan",
+    "metode": "gross",
+    "masa": [
+      {
+        "bulan": 3,
+        "komponen": {
+          "gaji": 5000000,
+          "bonus": 8000000,
+          "iuran_pensiun_pegawai": 80000
+        }
+      }
+    ]
+  },
+  "expected": {
+    "a_gaji_dan_bonus_setahun": {
+      "bruto_setahun": 68000000,
+      "biaya_jabatan": 3400000,
+      "iuran_pensiun": 960000,
+      "total_pengurang": 4360000,
+      "neto_setahun": 63640000,
+      "ptkp": 54000000,
+      "pkp": 9640000,
+      "pph21_setahun": 482000
+    },
+    "b_gaji_setahun": {
+      "bruto_setahun": 60000000,
+      "biaya_jabatan": 3000000,
+      "iuran_pensiun": 960000,
+      "total_pengurang": 3960000,
+      "neto_setahun": 56040000,
+      "ptkp": 54000000,
+      "pkp": 2040000,
+      "pph21_setahun": 102000
+    },
+    "pph21_atas_bonus": 380000
+  },
+  "langkah_resmi": [
+    "a. 12 X 5.000.000 = 60.000.000 + Bonus 8.000.000 = 68.000.000; Biaya Jabatan 3.400.000; Iuran Pensiun 12 X 80.000 = 960.000; neto 63.640.000; PKP 9.640.000; 5% = 482.000",
+    "b. 60.000.000; Biaya Jabatan 3.000.000; Iuran Pensiun 960.000; neto 56.040.000; PKP 2.040.000; 5% = 102.000",
+    "c. PPh Pasal 21 atas Bonus = 482.000 - 102.000 = 380.000"
+  ],
+  "catatan_transkripsi": "Dokumen tidak menyatakan total PPh yang dipotong pada Maret (PPh gaji bulanan + PPh bonus); hanya PPh atas bonus.",
+  "cek_aritmetika": [
+    {
+      "item": "a. biaya jabatan",
+      "dokumen": 3400000,
+      "hitung_ulang": 3400000,
+      "status": "cocok"
+    },
+    {
+      "item": "a. neto",
+      "dokumen": 63640000,
+      "hitung_ulang": 63640000,
+      "status": "cocok"
+    },
+    {
+      "item": "a. PKP",
+      "dokumen": 9640000,
+      "hitung_ulang": 9640000,
+      "status": "cocok"
+    },
+    {
+      "item": "b. biaya jabatan",
+      "dokumen": 3000000,
+      "hitung_ulang": 3000000,
+      "status": "cocok"
+    },
+    {
+      "item": "b. neto",
+      "dokumen": 56040000,
+      "hitung_ulang": 56040000,
+      "status": "cocok"
+    },
+    {
+      "item": "b. PKP",
+      "dokumen": 2040000,
+      "hitung_ulang": 2040000,
+      "status": "cocok"
+    },
+    {
+      "item": "c. PPh bonus",
+      "dokumen": 380000,
+      "hitung_ulang": 380000,
+      "status": "cocok"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "PTKP setahun TK/0",
+      "dokumen": 54000000,
+      "tabel": 54000000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU 36/2008 (pra-HPP)) atas PKP 9.640.000",
+      "dokumen": 482000,
+      "tabel": 482000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU 36/2008 (pra-HPP)) atas PKP 2.040.000",
+      "dokumen": 102000,
+      "tabel": 102000,
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 7,
+    "aritmetika_tidak_cocok": 0,
+    "tabel_cocok": 3,
+    "tabel_tidak_cocok": 0
+  },
+  "relevansi_tarif_2023": {
+    "keterangan": "Hitung ulang PPh setahun atas PKP dokumen dengan dua lapisan tarif (bukan nilai expected). Jika 'hasil_sama_di_kedua_tarif' = true, angka contoh juga berlaku untuk lapisan tarif 2023 (dengan asumsi PTKP sama - PTKP PMK 101/2016 masih berlaku 2023).",
+    "rincian": [
+      {
+        "pkp": 9640000,
+        "pph_dokumen": 482000,
+        "pph_tarif_UU36_2008": 482000,
+        "pph_tarif_UU_HPP": 482000,
+        "hasil_sama_di_kedua_tarif": true
+      },
+      {
+        "pkp": 2040000,
+        "pph_dokumen": 102000,
+        "pph_tarif_UU36_2008": 102000,
+        "pph_tarif_UU_HPP": 102000,
+        "hasil_sama_di_kedua_tarif": true
+      }
+    ]
+  },
+  "dugaan_erratum": null,
+  "verifikasi_pass2": "cocok"
+}

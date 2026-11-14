@@ -1,0 +1,53 @@
+{
+ "delta_id": "BG-003",
+ "event_id": null,
+ "document": {
+  "id": "PP-46-2015",
+  "title": "PP 46/2015 Jaminan Hari Tua",
+  "issued": "2015-06-30"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "parameter",
+   "id": "PAR.JHT_EMPLOYEE_RATE.2015",
+   "name": "jht_employee_rate",
+   "value": "0.02",
+   "value_type": "rate",
+   "valid_from": "2015-07-01",
+   "label_id": "iuran JHT pekerja",
+   "source": [
+    {
+     "document": "PP-46-2015",
+     "provision": "Pasal 16 ayat (1) huruf a",
+     "page": 11,
+     "quote": "a. 2% (dua persen) ditanggung oleh Pekerja; dan"
+    }
+   ],
+   "recorded_on": "2015-06-30"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.BPJS.JHT_EMPLOYEE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "jht_employee",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(param('jht_employee_rate') * bpjs_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2015-07-01",
+   "source": [
+    {
+     "document": "PP-46-2015",
+     "provision": "Pasal 16 ayat (1)",
+     "page": 11,
+     "quote": "sebesar 5,7% (lima koma tujuh persen) dari Upah,"
+    }
+   ],
+   "recorded_on": "2015-06-30"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": ""
+}

@@ -1,0 +1,139 @@
+{
+  "id": "PER16-I.6.1.1",
+  "sumber": {
+    "regulasi": "PER-16/PJ/2016",
+    "bagian": "Lampiran, Bagian Kedua, I.6.1.1 (mulai bekerja pertengahan tahun, subjektif sejak awal tahun), Suwondo",
+    "halaman_pdf": [
+      40,
+      41
+    ],
+    "halaman_dokumen": "-21-, -22-",
+    "catatan": "PDF hasil pindai; angka dibaca dari citra halaman (bukan hanya teks OCR)."
+  },
+  "rezim": "PER16_2023",
+  "dalam_lingkup": true,
+  "catatan_lingkup": "Contoh PER-16 bertahun 2016 dan memakai lapisan tarif Pasal 17 UU 36/2008 (5% s.d. Rp50 juta; 15% >50-250 juta; 25% >250-500 juta; 30% >500 juta). Rezim 'PER16_2023' = metode (disetahunkan, PPh sebulan = PPh setahun / 12); untuk tahun pajak 2023 berlaku lapisan UU HPP (5% s.d. Rp60 juta). Lihat kunci 'relevansi_tarif_2023'.",
+  "skenario": [
+    "metode_PER16_bulanan",
+    "masuk_tengah_tahun",
+    "plafon_biaya_jabatan",
+    "iuran_pensiun"
+  ],
+  "uraian": "Suwondo (menikah tanpa anak, K/0) pegawai tetap PT Xiang Malam sejak 1 September 2016, gaji 15,5 juta, iuran pensiun 150 ribu; neto 4 bulan tidak disetahunkan; PPh September = PPh/4.",
+  "input": {
+    "tahun_pajak": 2016,
+    "tarif_pasal17_dokumen": "UU 36/2008 (pra-HPP)",
+    "status_ptkp": "K/0",
+    "jenis_kelamin": "tidak_disebutkan",
+    "metode": "gross",
+    "tanggal_masuk": "2016-09-01",
+    "masa": [
+      {
+        "bulan": 9,
+        "komponen": {
+          "gaji": 15500000,
+          "iuran_pensiun_pegawai": 150000
+        }
+      }
+    ]
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 9,
+        "bruto": 15500000,
+        "biaya_jabatan_5persen": 775000,
+        "biaya_jabatan": 500000,
+        "iuran_pensiun": 150000,
+        "total_pengurang": 650000,
+        "neto_sebulan": 14850000,
+        "neto_setahun": 59400000,
+        "faktor": "4 x neto sebulan",
+        "ptkp": 58500000,
+        "pkp": 900000,
+        "pph21_setahun": 45000,
+        "pph21": 11250
+      }
+    ]
+  },
+  "langkah_resmi": [
+    "Biaya Jabatan 5% X 15.500.000 = 775.000; maksimal per bulan 500.000; Iuran Pensiun 150.000; jumlah 650.000; neto 14.850.000",
+    "Penghasilan neto setahun adalah 4 X 14.850.000 = 59.400.000; PTKP 58.500.000; PKP 900.000; 5% = 45.000",
+    "PPh Pasal 21 bulan September 45.000 : 4 = 11.250"
+  ],
+  "catatan_transkripsi": "Tidak ada inkonsistensi.",
+  "cek_aritmetika": [
+    {
+      "item": "Sep: biaya jabatan = min(5% x bruto. 500.000)",
+      "dokumen": 500000,
+      "hitung_ulang": 500000,
+      "status": "cocok"
+    },
+    {
+      "item": "Sep: jumlah pengurang",
+      "dokumen": 650000,
+      "hitung_ulang": 650000,
+      "status": "cocok"
+    },
+    {
+      "item": "Sep: neto sebulan = bruto - pengurang",
+      "dokumen": 14850000,
+      "hitung_ulang": 14850000,
+      "status": "cocok"
+    },
+    {
+      "item": "Sep: neto setahun = 4 x neto",
+      "dokumen": 59400000,
+      "hitung_ulang": 59400000,
+      "status": "cocok"
+    },
+    {
+      "item": "Sep: PKP (dibulatkan ribuan ke bawah)",
+      "dokumen": 900000,
+      "hitung_ulang": 900000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh September = 45.000 / 4",
+      "dokumen": 11250,
+      "hitung_ulang": 11250,
+      "status": "cocok",
+      "pembulatan_teramati": "tepat"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "PTKP setahun K/0",
+      "dokumen": 58500000,
+      "tabel": 58500000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU 36/2008 (pra-HPP)) atas PKP 900.000",
+      "dokumen": 45000,
+      "tabel": 45000,
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 6,
+    "aritmetika_tidak_cocok": 0,
+    "tabel_cocok": 2,
+    "tabel_tidak_cocok": 0
+  },
+  "relevansi_tarif_2023": {
+    "keterangan": "Hitung ulang PPh setahun atas PKP dokumen dengan dua lapisan tarif (bukan nilai expected). Jika 'hasil_sama_di_kedua_tarif' = true, angka contoh juga berlaku untuk lapisan tarif 2023 (dengan asumsi PTKP sama - PTKP PMK 101/2016 masih berlaku 2023).",
+    "rincian": [
+      {
+        "pkp": 900000,
+        "pph_dokumen": 45000,
+        "pph_tarif_UU36_2008": 45000,
+        "pph_tarif_UU_HPP": 45000,
+        "hasil_sama_di_kedua_tarif": true
+      }
+    ]
+  },
+  "dugaan_erratum": null,
+  "verifikasi_pass2": "cocok"
+}

@@ -1,0 +1,93 @@
+{
+  "id": "PMK168-B-I.4",
+  "sumber": {
+    "regulasi": "PMK 168/2023",
+    "bagian": "Lampiran huruf B, Bagian Kedua, I.4 (PPh 21 ditanggung pemberi kerja, full gross up), Tuan G",
+    "halaman_pdf": [
+      44
+    ]
+  },
+  "rezim": "TER_2024",
+  "dalam_lingkup": true,
+  "skenario": [
+    "TER_bulanan",
+    "gross_up"
+  ],
+  "uraian": "Tuan G (TK/0) gaji Agustus 2024 Rp51.827.997, PPh ditanggung PT T dan dihitung full gross up: bruto Rp65.605.059, TER A 21%, PPh Rp13.777.062.",
+  "input": {
+    "tahun_pajak": 2024,
+    "status_ptkp": "TK/0",
+    "jenis_kelamin": "L",
+    "metode": "gross_up",
+    "masa": [
+      {
+        "bulan": 8,
+        "komponen": {
+          "gaji": 51827997
+        }
+      }
+    ],
+    "jenis_kelamin_catatan": "disimpulkan dari sapaan 'Tuan' di dokumen"
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 8,
+        "bruto": 65605059,
+        "tunjangan_pajak_gross_up": 13777062,
+        "kategori_ter": "A",
+        "tarif_ter": 0.21,
+        "pph21": 13777062
+      }
+    ]
+  },
+  "langkah_resmi": [
+    "Dalam hal ... dihitung secara full gross up, penghasilan bruto Tuan G yang menjadi dasar pengenaan dan pemotongan PPh Pasal 21 sebesar Rp65.605.059,00",
+    "tarif efektif bulanan kategori A ... 21%",
+    "21% x Rp65.605.059,00 = Rp13.777.062,00"
+  ],
+  "catatan_transkripsi": "Dokumen tidak menuliskan rumus gross-up maupun aturan pembulatannya; nilai 'tunjangan_pajak_gross_up' = 65.605.059 - 51.827.997 = 13.777.062 diturunkan dari angka dokumen (tidak dinyatakan eksplisit sebagai tunjangan). Lihat cek_aritmetika untuk konsistensi.",
+  "cek_aritmetika": [
+    {
+      "item": "PPh bulan 8 = 0.21 x 65605059",
+      "dokumen": 13777062,
+      "hitung_ulang": 13777062.39,
+      "status": "cocok"
+    },
+    {
+      "item": "bruto - PPh = gaji yang diterima (identitas full gross-up)",
+      "dokumen": 51827997,
+      "hitung_ulang": 51827997,
+      "status": "cocok"
+    },
+    {
+      "item": "bruto gross-up = gaji / (1 - 21%) (dibulatkan ke bawah)",
+      "dokumen": 65605059,
+      "hitung_ulang": 65605059,
+      "status": "cocok"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "tarif TER A utk bruto 65.605.059 (bulan 8)",
+      "dokumen": 0.21,
+      "tabel": 0.21,
+      "status": "cocok"
+    },
+    {
+      "item": "kategori TER utk status TK/0 (PP 58/2023 Ps. 2 ayat (4))",
+      "dokumen": "A",
+      "tabel": "A",
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 3,
+    "aritmetika_tidak_cocok": 0,
+    "tabel_cocok": 2,
+    "tabel_tidak_cocok": 0
+  },
+  "dugaan_erratum": null,
+  "verifikasi_pass2": "cocok"
+}

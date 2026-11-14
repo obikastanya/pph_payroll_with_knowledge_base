@@ -1,0 +1,180 @@
+{
+ "delta_id": "BG-002",
+ "event_id": null,
+ "document": {
+  "id": "PP-44-2015",
+  "title": "PP 44/2015 JKK dan JKM",
+  "issued": "2015-06-30"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "rule",
+   "id": "REG.BPJS.WAGE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "bpjs_wage",
+   "expression": "base_salary + fixed_allowance",
+   "valid_from": "2015-07-01",
+   "source": [
+    {
+     "document": "PP-44-2015",
+     "provision": "Pasal 19 ayat (1)",
+     "page": 13,
+     "quote": "Upah yang dijadikan dasar pembayaran Iuran bagi"
+    },
+    {
+     "document": "PP-44-2015",
+     "provision": "Pasal 19 ayat (2)",
+     "page": 13,
+     "quote": "terdiri atas Upah pokok dan tunjangan tetap."
+    }
+   ],
+   "recorded_on": "2015-06-30"
+  },
+  {
+   "kind": "table",
+   "id": "TAB.JKK_RATES.2015",
+   "name": "jkk_rates",
+   "table_kind": "lookup",
+   "valid_from": "2015-07-01",
+   "label_id": "tarif iuran JKK menurut tingkat risiko",
+   "source": [
+    {
+     "document": "PP-44-2015",
+     "provision": "Pasal 16 ayat (1) huruf a",
+     "page": 12,
+     "quote": "tingkat risiko sangat rendah : 0,24%"
+    },
+    {
+     "document": "PP-44-2015",
+     "provision": "Pasal 16 ayat (1) huruf b",
+     "page": 12,
+     "quote": "tingkat risiko rendah : 0,54%"
+    },
+    {
+     "document": "PP-44-2015",
+     "provision": "Pasal 16 ayat (1) huruf c",
+     "page": 12,
+     "quote": "tingkat risiko sedang : 0,89%"
+    },
+    {
+     "document": "PP-44-2015",
+     "provision": "Pasal 16 ayat (1) huruf d",
+     "page": 12,
+     "quote": "tingkat risiko tinggi : 1,27%"
+    },
+    {
+     "document": "PP-44-2015",
+     "provision": "Pasal 16 ayat (1) huruf e",
+     "page": 12,
+     "quote": "tingkat risiko sangat tinggi : 1,74%"
+    }
+   ],
+   "rows": [
+    {
+     "key": "very_low",
+     "value": "0.0024"
+    },
+    {
+     "key": "low",
+     "value": "0.0054"
+    },
+    {
+     "key": "medium",
+     "value": "0.0089"
+    },
+    {
+     "key": "high",
+     "value": "0.0127"
+    },
+    {
+     "key": "very_high",
+     "value": "0.0174"
+    }
+   ],
+   "recorded_on": "2015-06-30"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.BPJS.JKK_RATE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "jkk_rate",
+   "expression": "lookup('jkk_rates', employer('jkk_risk_group'))",
+   "valid_from": "2015-07-01",
+   "source": [
+    {
+     "document": "PP-44-2015",
+     "provision": "Pasal 16 ayat (1)",
+     "page": 11,
+     "quote": "dalam 5 (lima) kelompok tingkat risiko lingkungan"
+    }
+   ],
+   "recorded_on": "2015-06-30"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.BPJS.JKK",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "jkk_premium",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(jkk_rate * bpjs_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2015-07-01",
+   "source": [
+    {
+     "document": "PP-44-2015",
+     "provision": "Pasal 16 ayat (1) huruf a",
+     "page": 12,
+     "quote": "tingkat risiko sangat rendah : 0,24%"
+    }
+   ],
+   "recorded_on": "2015-06-30"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.JKM_RATE.2015",
+   "name": "jkm_rate",
+   "value": "0.003",
+   "value_type": "rate",
+   "valid_from": "2015-07-01",
+   "label_id": "iuran JKM",
+   "source": [
+    {
+     "document": "PP-44-2015",
+     "provision": "Pasal 18 ayat (1)",
+     "page": 13,
+     "quote": "sebesar 0,30% (nol"
+    }
+   ],
+   "recorded_on": "2015-06-30"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.BPJS.JKM",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "jkm_premium",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(param('jkm_rate') * bpjs_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2015-07-01",
+   "source": [
+    {
+     "document": "PP-44-2015",
+     "provision": "Pasal 18 ayat (1)",
+     "page": 13,
+     "quote": "Iuran JKM bagi Peserta penerima Upah sebagaimana"
+    }
+   ],
+   "recorded_on": "2015-06-30"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": ""
+}

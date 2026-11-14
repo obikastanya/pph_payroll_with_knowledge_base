@@ -1,0 +1,154 @@
+{
+  "id": "PER16-I.1.5",
+  "sumber": {
+    "regulasi": "PER-16/PJ/2016",
+    "bagian": "Lampiran, Bagian Kedua, I.1.5, dr. Aulia Rais (pegawai tetap rumah sakit)",
+    "halaman_pdf": [
+      30,
+      31
+    ],
+    "halaman_dokumen": "-11-, -12-",
+    "catatan": "PDF hasil pindai; angka dibaca dari citra halaman (bukan hanya teks OCR)."
+  },
+  "rezim": "PER16_2023",
+  "dalam_lingkup": true,
+  "catatan_lingkup": "Contoh PER-16 bertahun 2016 dan memakai lapisan tarif Pasal 17 UU 36/2008 (5% s.d. Rp50 juta; 15% >50-250 juta; 25% >250-500 juta; 30% >500 juta). Rezim 'PER16_2023' = metode (disetahunkan, PPh sebulan = PPh setahun / 12); untuk tahun pajak 2023 berlaku lapisan UU HPP (5% s.d. Rp60 juta). Lihat kunci 'relevansi_tarif_2023'.",
+  "skenario": [
+    "metode_PER16_bulanan",
+    "plafon_biaya_jabatan",
+    "iuran_pensiun"
+  ],
+  "uraian": "dr. Aulia Rais (menikah, 3 anak, K/3) pegawai tetap RS Sehat Tentrem, Agustus 2016 gaji 20 juta (jasa medis 25 juta dari pasien dihitung terpisah sebagai bukan pegawai); iuran pensiun 200 ribu.",
+  "input": {
+    "tahun_pajak": 2016,
+    "tarif_pasal17_dokumen": "UU 36/2008 (pra-HPP)",
+    "status_ptkp": "K/3",
+    "jenis_kelamin": "tidak_disebutkan",
+    "metode": "gross",
+    "masa": [
+      {
+        "bulan": 8,
+        "komponen": {
+          "gaji": 20000000,
+          "iuran_pensiun_pegawai": 200000
+        }
+      }
+    ],
+    "info_tambahan": {
+      "jasa_medis_dari_pasien": 25000000,
+      "catatan": "Jasa medis dihitung sebagai penghasilan bukan pegawai (contoh V.1.a), tidak masuk bruto pegawai tetap."
+    }
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 8,
+        "bruto": 20000000,
+        "biaya_jabatan_5persen": 1000000,
+        "biaya_jabatan": 500000,
+        "iuran_pensiun": 200000,
+        "total_pengurang": 700000,
+        "neto_sebulan": 19300000,
+        "neto_setahun": 231600000,
+        "ptkp": 72000000,
+        "pkp": 159600000,
+        "pph21_lapisan": [
+          {
+            "tarif": 0.05,
+            "dasar": 50000000,
+            "pph": 2500000
+          },
+          {
+            "tarif": 0.15,
+            "dasar": 109600000,
+            "pph": 16440000
+          }
+        ],
+        "pph21_setahun": 18940000,
+        "pph21": 1578333
+      }
+    ]
+  },
+  "langkah_resmi": [
+    "Biaya Jabatan 5% X 20.000.000 = 1.000.000; Maksimum diperkenankan 500.000; Iuran Pensiun 200.000; jumlah 700.000",
+    "neto sebulan 19.300.000; 12 X = 231.600.000; PTKP 54.000.000 + 4.500.000 + 13.500.000 = 72.000.000; PKP 159.600.000",
+    "5% X 50.000.000 = 2.500.000; 15% X 109.600.000 = 16.440.000; jumlah 18.940.000",
+    "PPh Pasal 21 bulan Januari [sic] 18.940.000 : 12 = 1.578.333"
+  ],
+  "catatan_transkripsi": "Label 'bulan Januari' padahal Agustus. Lapisan teks menulis 'Maksium' (sic di dokumen).",
+  "cek_aritmetika": [
+    {
+      "item": "Agt: biaya jabatan = min(5% x bruto. 500.000)",
+      "dokumen": 500000,
+      "hitung_ulang": 500000,
+      "status": "cocok"
+    },
+    {
+      "item": "Agt: jumlah pengurang",
+      "dokumen": 700000,
+      "hitung_ulang": 700000,
+      "status": "cocok"
+    },
+    {
+      "item": "Agt: neto sebulan = bruto - pengurang",
+      "dokumen": 19300000,
+      "hitung_ulang": 19300000,
+      "status": "cocok"
+    },
+    {
+      "item": "Agt: neto setahun = 12 x neto",
+      "dokumen": 231600000,
+      "hitung_ulang": 231600000,
+      "status": "cocok"
+    },
+    {
+      "item": "Agt: PKP (dibulatkan ribuan ke bawah)",
+      "dokumen": 159600000,
+      "hitung_ulang": 159600000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Agustus = 18.940.000 / 12",
+      "dokumen": 1578333,
+      "hitung_ulang": 1578333.3333333333,
+      "status": "cocok",
+      "pembulatan_teramati": "ke bawah = normal"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "PTKP setahun K/3",
+      "dokumen": 72000000,
+      "tabel": 72000000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU 36/2008 (pra-HPP)) atas PKP 159.600.000",
+      "dokumen": 18940000,
+      "tabel": 18940000,
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 6,
+    "aritmetika_tidak_cocok": 0,
+    "tabel_cocok": 2,
+    "tabel_tidak_cocok": 0
+  },
+  "relevansi_tarif_2023": {
+    "keterangan": "Hitung ulang PPh setahun atas PKP dokumen dengan dua lapisan tarif (bukan nilai expected). Jika 'hasil_sama_di_kedua_tarif' = true, angka contoh juga berlaku untuk lapisan tarif 2023 (dengan asumsi PTKP sama - PTKP PMK 101/2016 masih berlaku 2023).",
+    "rincian": [
+      {
+        "pkp": 159600000,
+        "pph_dokumen": 18940000,
+        "pph_tarif_UU36_2008": 18940000,
+        "pph_tarif_UU_HPP": 17940000,
+        "hasil_sama_di_kedua_tarif": false
+      }
+    ]
+  },
+  "dugaan_erratum": null,
+  "catatan_minor": "label 'bulan Januari' utk Agustus",
+  "verifikasi_pass2": "cocok"
+}

@@ -1,0 +1,223 @@
+% Rancangan struktur ulang naskah StaticKD untuk IEEE Access
+% Kompilasi: pdflatex rancangan_struktur && pdflatex rancangan_struktur
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{booktabs,longtable,array,enumitem,xcolor,hyperref}
+\usepackage[indonesian]{babel}
+\setlist{itemsep=1pt,topsep=3pt}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black}
+\newcommand{\old}[1]{\texttt{L#1}}
+\newcommand{\ok}{\textcolor{green!45!black}{\textbf{tetap}}}
+\newcommand{\mv}{\textcolor{blue!60!black}{\textbf{pindah}}}
+\newcommand{\supl}{\textcolor{orange!70!black}{\textbf{suplemen}}}
+\newcommand{\del}{\textcolor{red!60!black}{\textbf{hapus}}}
+\title{Rancangan Struktur Ulang Naskah StaticKD\\\large Target: IEEE Access, maksimal 14 halaman}
+\author{Disusun untuk Obi Kastanya dan Ananta Dwi Prayoga Alwy}
+\date{1 November 2026}
+
+\begin{document}
+\maketitle
+
+\noindent\textbf{Isi dokumen.} Bagian~1 merangkum penelitian, termasuk apa saja yang sudah dieksplorasi dan fakta di repositori yang tidak tertulis atau tertulis keliru di naskah. Bagian~2 mereview struktur dan isi naskah. Bagian~3 adalah struktur baru beserta peta paragraf lama ke baru dan anggaran halaman. Bagian~4 berisi aturan restrukturisasi. Rencana perubahan isi berdasarkan review skeptis ada di dokumen terpisah, \texttt{rencana\_perubahan.tex}.
+
+\noindent\textbf{Acuan.} Nomor baris \old{N} mengacu ke \texttt{paper\_final/main.tex} pada commit \texttt{b4bf5e6} (naskah sebelum restrukturisasi, 760 baris). Semua fakta di Bagian~1 sudah dicek ke kode, hasil, dan arsip.
+
+%=====================================================================
+\section{Pemahaman penelitian}
+
+\subsection{Inti penelitian}
+\begin{itemize}
+  \item \textbf{Masalah.} Pengklasifikasi IPTC multibahasa terbuka (Kuzman \& Ljube\v{s}i\'c, XLM-R-large, 559,9 juta parameter) butuh 1.239~ms (ONNX int8) sampai 2.971~ms (PyTorch) per artikel per core CPU. Untuk satu juta artikel per hari, ini berarti 15,1 sampai 34,8 core.
+  \item \textbf{Metode.} \emph{Teacher} melabeli 285.999 artikel dari 69 bahasa (CC-News 2019--2021 ditambah EMMediaTopic train). \emph{Student} adalah rata-rata embedding statis potion (500.353 token $\times$ 256) yang diikuti satu layer linear, dilatih dengan KL ($\tau=1$) dan \emph{token dropout} 0,2. Kepala linear lalu dilipat menjadi tabel $|V|\times17$. Model final adalah rata-rata tabel dari tiga seed: 34~MB, cukup dengan \texttt{numpy} dan \texttt{tokenizers}.
+  \item \textbf{Evaluasi.} \emph{Unified test set} berisi 12.744 artikel dari 47 bahasa: 47,5\% rubrik JSON-LD CC-NEWS 2024--2026, 32,1\% anotasi manusia (MasakhaNEWS, MN-DS), dan 20,4\% kategori penerbit. Labelnya dipetakan ke IPTC lewat 916 aturan. Interval kepercayaan dihitung dengan \emph{site-cluster bootstrap}.
+  \item \textbf{Hasil utama.} Macro-F1 0,545 (91,1\% dari teacher 0,598) dengan 473 dok/s per core, sekitar 616 kali lebih cepat dari teacher ONNX int8. StaticKD lebih baik daripada fastText+KD dan TF-IDF+SVM+KD, setara dengan DistilmBERT, dan di bawah MiniLM-L6.
+  \item \textbf{Temuan ablasi.} Inisialisasi potion paling menentukan ($-0{,}120$ tanpa potion). Data multibahasa juga penting ($-0{,}051$). Hard label setara dengan soft label. Embedding beku lebih baik di test (+0,014) tetapi lebih buruk di dev ($-0{,}035$).
+\end{itemize}
+
+\subsection{Riwayat eksplorasi}
+\begin{enumerate}
+  \item \textbf{Proposal awal: KD + LoRA.} LoRA kemudian dibuang karena hanya menurunkan biaya \emph{training}, bukan biaya inferensi (\texttt{docs/RANCANGAN\_PENELITIAN.md}).
+  \item \textbf{26--27 September 2026: StaticKD v1, lalu v2.} v1 memakai $\tau=2$. v2 memakai $\tau=1$ dan \emph{ensemble} tiga seed, dipilih dari set dev, \emph{held-out}, dan set cek LLM berisi 320 artikel berlabel Claude. Resep dibekukan di commit \texttt{45320d2}, sebelum test set dibangun.
+  \item \textbf{Varian yang dieksplorasi tetapi tidak dilaporkan:} lebih dari 20, antara lain maksimum 512 token, \emph{learned token weights} (dev 0,742, lebih buruk), \emph{label smoothing}, embedding hasil distilasi teacher sebagai pengganti potion, pemangkasan kosakata, MiniLM ONNX int8 (runtuh ke 0,633), serta trik saat inferensi (pemotongan input, bobot posisi, kalibrasi bias).
+  \item \textbf{Test set sebelumnya.} Ada \emph{silver set} JSON-LD saja (5.456 artikel, maksimal 5 per situs) yang kemudian diganti \emph{unified test set}.
+  \item \textbf{72 run final} (10 resep penuh, 10 varian $\times$ 5 seed, 4 tambahan $\times$ 3 seed). Run ini adalah \emph{training ulang} dengan kode final, dijalankan setelah file test set ditulis. Resepnya sendiri sudah dibekukan sebelumnya.
+\end{enumerate}
+
+\subsection{Fakta di repositori yang berbeda dari naskah atau belum tertulis}
+\begin{longtable}{@{}p{0.27\textwidth}p{0.42\textwidth}p{0.23\textwidth}@{}}
+\toprule
+Hal & Yang ditunjukkan repositori & Status di naskah\\
+\midrule
+\endhead
+Review tabel pemetaan & \texttt{mapping\_review.xlsx} hanya punya satu set kolom reviewer, berisi Obi Kastanya pada 17 Oktober 2026. Semua 916 baris diberi ``ya''. Dari 814 nama, 48 diterima otomatis, sehingga yang ditinjau manusia 868 baris. Tidak ada reviewer kedua dan tidak ada ukuran kesepakatan. \textbf{Pengguna menyatakan test set diperiksa dua peneliti.} Pemeriksaan kedua ini belum tercatat di repositori. & Bertentangan di dalam naskah: \old{755} menulis ``the authors'', sedangkan \old{67}, \old{118}, \old{197}, \old{701} menulis ``first author''.\\
+Verifikasi label per artikel & Tidak ada. \texttt{audit\_sample.csv} (340 baris) memiliki kolom \texttt{human\_label} yang masih kosong, dan sampelnya diambil dari \emph{silver set} lama: 0 dari 340 artikel ada di \emph{unified test set}. & Benar (\old{701}: ``not re-annotated'').\\
+Grid baseline & \texttt{tune\_baselines.py} menyiapkan 41 konfigurasi, tetapi hanya 2 yang dijalankan, dan hasilnya tidak dipakai. & Pada dasarnya benar (``set once without a search''). Grid yang dihentikan tidak disebut.\\
+$\tau$ transformer & Hanya MiniLM yang diuji dengan $\tau\in\{1,2\}$, dan terpilih $\tau=1$. DistilmBERT memakai $\tau=1$ tanpa uji. & Kurang detail (\old{323}).\\
+Asal resep & Resep berasal dari eksplorasi lebih dari 20 varian (dev dan set cek LLM). 72 run adalah run ulang. & \old{709} (``selected from 72 runs'') tidak tepat.\\
+\emph{Learned token weights} & Sudah diuji di v1 dan hasilnya lebih buruk. & \old{709} menyebutnya ``not tested'', yang keliru.\\
+Uji signifikansi ablasi & Welch antara seed varian dan 10 seed resep final. Koreksi Holm per metrik mencakup 14 varian, termasuk 4 tambahan. Akurasi test tidak diuji. & Kurang detail.\\
+Uji berpasangan di dev & Sudah dihitung tetapi tidak dilaporkan. Di dev, StaticKD tidak berbeda signifikan dari TF-IDF+SVM ($p=1{,}000$) maupun fastText. & Tidak dilaporkan.\\
+Struktur klaster & L3Cube menjadi satu klaster (2.361 artikel, 10 bahasa). \texttt{bbc.com} punya 2.394 artikel. Dua klaster terbesar mencakup 37,3\% test set, dan jumlah klaster efektif hanya 13,8. & Tidak disebut. Penting untuk menafsirkan CI.\\
+Prediksi per seed & Ada 256 file prediksi, termasuk semua 72 run untuk dev, \emph{held-out}, dan test. Uji \emph{paired cluster bootstrap} untuk tiap varian ablasi bisa dihitung tanpa \emph{training} ulang. & --\\
+Benchmark & Dijalankan satu kali. Latensi teacher diukur pada 30 dokumen. \emph{Throughput cascade} dihitung dengan rumus, bukan diukur. & Sebagian disebut (\old{711}).\\
+Peran AI & Metode dan eksperimen v1/v2 dirancang dan dijalankan oleh Claude secara mandiri (\texttt{\_archive/root\_docs\_v1/prompt\_transcript.md}). & Pernyataan AI di \old{755} hanya menyebut kode, olah data, dan penyuntingan. \textbf{Perlu dilengkapi} (kebijakan IEEE).\\
+Hipotesis & Tidak ada hipotesis formal di naskah maupun di rancangan penelitian, padahal materi kuliah Metpen memintanya. & Tidak ada.\\
+\bottomrule
+\end{longtable}
+
+%=====================================================================
+\section{Review struktur dan isi}
+
+\subsection{Masalah struktur}
+\begin{enumerate}
+  \item \textbf{Urutan RQ tidak sama dengan urutan Hasil dan Pembahasan.} Urutan RQ adalah akurasi, komponen, biaya, bahasa. Hasil memakai urutan akurasi, validitas, komponen, biaya, bahasa, kalibrasi. Pembahasan memakai urutan lain lagi. Pembaca tidak bisa mengikuti satu benang.
+  \item \textbf{Validitas label (IV-B) terselip di antara RQ1 dan RQ2.} Isinya adalah pemeriksaan kualitas test set, bukan hasil model. Tempatnya bersama konstruksi test set.
+  \item \textbf{Analisis subkelompok ada di RQ1} (\old{409}, Tabel groups dan sources, Fig.~groups), padahal pertanyaannya ``di mana StaticKD lemah'' (RQ4).
+  \item \textbf{Metodologi berisi sepuluh subbab tanpa pengelompokan.} Metode StaticKD, data, test set, baseline, protokol, dan benchmark bercampur. Urutannya juga lompat-lompat: data distilasi, lalu test set, lalu kembali ke teacher yang melabeli data distilasi.
+  \item \textbf{Pendahuluan memuat ringkasan jawaban RQ} (\old{62}) yang diulang lagi di Pembahasan dan Kesimpulan.
+  \item \textbf{Pembahasan tidak bersubbab.} Sepuluh paragraf berurutan tanpa penanda topik, dan banyak angka Hasil diulang.
+  \item \textbf{Limitations berdiri sebagai bab sendiri} yang cukup panjang. Di IEEE Access, bagian ini lazim menjadi subbab Pembahasan.
+  \item \textbf{Float terlalu banyak:} 12 tabel dan 10 gambar dalam 18 halaman template IEEE Access. Beberapa gambar mengulang isi tabel: Fig.~groups sama dengan Tabel groups, Fig.~latency dengan Tabel eff, Fig.~temperature dengan Tabel ablation.
+\end{enumerate}
+
+\subsection{Isi yang perlu dipertahankan}
+\begin{itemize}
+  \item Uji berpasangan dengan \emph{site-cluster bootstrap}, Holm, ablasi lima seed, dan analisis per bahasa dan label. Ini kekuatan utama naskah.
+  \item Hasil negatif yang jujur: hard label sama dengan soft label, embedding beku lebih baik di test, dan $\tau$ tinggi merugikan.
+  \item Tabel posisi (\emph{related approaches}), peran set data, komposisi test set, Fig.~1 \emph{pipeline}, Fig.~\emph{trade-off}, serta Fig.~per bahasa dan per label.
+\end{itemize}
+
+\subsection{Isi yang tidak perlu ada di naskah utama (pindah ke suplemen)}
+Pemindahan ke berkas suplemen tidak menghilangkan isi. Teks utama tetap merujuknya.
+\begin{itemize}
+  \item Tabel hyperparameter dan Tabel lisensi. Keduanya detail reproduksi, dan teks utama sudah menyebut nilai pentingnya.
+  \item Fig.~heatmap test set, Fig.~groups, Fig.~temperature, Fig.~ensemble size, Fig.~latency/RAM/size, dan Fig.~calibration. Semua angkanya sudah ada di tabel atau teks.
+  \item Untuk mencapai anggaran halaman, empat item ini juga dipindah:
+  \begin{itemize}
+    \item Algorithm~1, yang isinya sama dengan persamaan (3);
+    \item Tabel per sumber dan Tabel faktor per bahasa, karena angka yang dibahas tetap ada di teks;
+    \item Fig.~per label.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Isi yang kurang (dibahas di \texttt{rencana\_perubahan.tex})}
+\begin{itemize}
+  \item Verifikasi label oleh manusia dengan ukuran kesepakatan (bisa dikerjakan 4--5 orang), dan pencatatan pemeriksaan oleh dua peneliti.
+  \item \emph{Paired cluster bootstrap} untuk ablasi, beserta pembedaan antara signifikansi statistik dan signifikansi praktis.
+  \item Alasan kuantitatif kenapa CPU dipilih, bukan GPU kecil. Teacher di GPU laptop sudah memproses 50,1 dok/s, sementara satu juta artikel per hari setara 11,6 dok/s.
+  \item Hipotesis eksplisit (tuntutan mata kuliah), pernyataan AI yang lengkap, dan baseline Model2Vec.
+\end{itemize}
+
+%=====================================================================
+\section{Struktur baru}
+
+\subsection{Prinsip}
+\begin{enumerate}
+  \item \textbf{Satu benang:} masalah, metode, data, setup, lalu hasil per RQ, pembahasan per tema, dan kesimpulan. Urutan RQ sama di Pendahuluan, Hasil, dan Pembahasan.
+  \item \textbf{RQ diurutkan ulang} agar pasangan akurasi dan biaya (klaim utama) muncul berdampingan. RQ1 akurasi tetap. RQ2 menjadi biaya CPU (dulu RQ3). RQ3 menjadi komponen resep (dulu RQ2). RQ4 kelemahan tetap. Isi setiap RQ tidak berubah.
+  \item \textbf{Metodologi dipecah menjadi tiga bab:} metode StaticKD (apa yang diusulkan), data dan test set (dengan apa diuji), dan setup eksperimen (bagaimana diuji).
+  \item \textbf{Semua tentang kualitas test set dikumpulkan di satu tempat}, termasuk validitas label.
+\end{enumerate}
+
+\subsection{Kerangka dan anggaran halaman (template IEEE Access)}
+\begin{longtable}{@{}p{0.40\textwidth}p{0.42\textwidth}r@{}}
+\toprule
+Bagian baru & Isi dan tujuan & Hlm\\
+\midrule
+\endhead
+Abstract, Index Terms & Tetap & --\\
+I. Introduction & Masalah, biaya, celah, ide StaticKD, celah evaluasi, RQ1--RQ4, kontribusi, peta naskah & 1,4\\
+II. Related Work & A. Klasifikasi topik berita dan IPTC; B. Distilasi ke \emph{student} kecil (digabung dengan \emph{capacity gap}); C. Embedding statis dan inferensi CPU; D. Label editorial, kontaminasi, ketergantungan sampel; Tabel I & 1,0\\
+III. The StaticKD Method & A. Study Overview (Fig.~1); B. Problem Formulation; C. Teacher and Distillation Labels; D. Student Model and Training; E. Folding, Table Ensemble, and Compact Variant & 1,8\\
+IV. Data and Test Set & A. Data Sets and Their Roles (Tabel data); B. Distillation Data; C. Unified Test Set Construction (Tabel komposisi); D. Validity of the Editorial Labels & 1,8\\
+V. Experimental Setup & A. Baselines; B. Evaluation Protocol and Statistical Tests; C. Efficiency Protocol; D. Ablation Design; E. Implementation Details. Urutannya mengikuti RQ1, RQ2, RQ3 & 1,2\\
+VI. Results & A. Accuracy (RQ1); B. CPU Cost (RQ2); C. Recipe Components (RQ3); D. Weaknesses by Language, Label, and Source (RQ4); E. Calibration and Cascade Mode & 4,0\\
+VII. Discussion & A. Why a Token Table Suffices; B. Where the Accuracy Comes From; C. Weak Languages and Model Selection; D. Practical Implications; E. Limitations & 1,6\\
+VIII. Conclusion & Tetap & 0,4\\
+Availability, Acknowledgment & Tetap, dengan rujukan ke Tabel S4 & 0,3\\
+References, biografi & -- & 1,6\\
+\midrule
+Total rencana & & 14,1\\
+Total tercapai (tanpa mengubah makna) & Lihat \texttt{restructure\_log.md} & 15,0\\
+\bottomrule
+\end{longtable}
+
+\noindent Selisih satu halaman dari rencana muncul karena float utama (Tabel main, sig, eff, ablation, groups, Fig.~1, Fig.~trade-off, Fig.~per bahasa) dan referensi saja sudah memakan sekitar 5,5 halaman. Halaman ke-14 hanya bisa dicapai dengan memangkas isi. Itu keputusan penulis, dan rencananya ada di \texttt{rencana\_perubahan.tex}.
+
+\subsection{Peta paragraf lama ke baru}
+Kode: \ok{} = teks sama di posisi yang sama, \mv{} = teks sama di posisi baru, \supl{} = pindah ke berkas suplemen, \del{} = dihapus karena isinya sudah ada di bagian lain.
+
+\begin{longtable}{@{}p{0.31\textwidth}p{0.12\textwidth}p{0.49\textwidth}@{}}
+\toprule
+Lama & Status & Posisi baru dan catatan\\
+\midrule
+\endhead
+\multicolumn{3}{@{}l}{\textit{Pendahuluan dan Related Work}}\\
+\old{50}--\old{58} (I, P1--P5) & \ok & I\\
+\old{60} RQ & \ok & I. Urutan kalimat RQ2/RQ3 ditukar sesuai prinsip~2\\
+\old{62} ringkasan jawaban RQ & \del & Isinya ada di abstrak, VII-B, dan VIII\\
+\old{64}--\old{72} kontribusi, peta & \ok & I. Peta naskah diperbarui sesuai bab baru\\
+\old{76}--\old{80} II-A, II-B & \ok & II-A, II-B\\
+\old{81}--\old{82} II-C Temperature & \mv & Menjadi paragraf kedua II-B, tanpa judul subbab sendiri\\
+\old{84}--\old{109} II-D, II-E, Tabel I & \ok & II-C, II-D\\
+\multicolumn{3}{@{}l}{\textit{Metodologi lama}}\\
+\old{113}--\old{118} Study Design P1--P3 & \mv & III-A Study Overview, beserta Fig.~1\\
+\old{120}, Tabel datasets & \mv & IV-A\\
+\old{144}--\old{172} Fig.~1 (TikZ) & \mv & III-A. TikZ dikompilasi menjadi \texttt{figures/fig\_pipeline.pdf}, karena TikZ bentrok dengan kelas \texttt{ieeeaccess}\\
+\old{174}--\old{175} Problem Formulation & \mv & III-B\\
+\old{177}--\old{189} Distillation data & \mv & IV-B\\
+\old{191}--\old{234} Test set, Tabel komposisi & \mv & IV-C\\
+\old{236}--\old{241} Fig.~heatmap & \supl & Fig.~S1 (nomor S mengikuti urutan rujukan pertama di naskah baru)\\
+\old{243}--\old{245} Teacher & \mv & III-C\\
+\old{247}--\old{262} Student & \mv & III-D\\
+\old{264}--\old{269}, \old{282} Folding, compact & \mv & III-E\\
+\old{271}--\old{280} Algorithm~1 & \supl & Algorithm~S1\\
+\old{284}--\old{319} Tabel hparams & \supl & Tabel S1\\
+\old{321}--\old{325} Baselines & \mv & V-A\\
+\old{327}--\old{331} Protokol evaluasi & \mv & V-B\\
+\old{333}--\old{337} Efisiensi & \mv & V-C\\
+\old{341} Experimental design & \mv & Dipecah: desain ablasi ke V-D; waktu run dan versi pustaka ke V-E\\
+\multicolumn{3}{@{}l}{\textit{Hasil lama}}\\
+\old{347}--\old{407} IV-A (Tabel main, sig) & \mv & VI-A (RQ1)\\
+\old{409} subkelompok & \mv & Dipecah: kalimat subkelompok ke VI-D; kalimat sensitivitas 5 per situs tetap di VI-A\\
+\old{411}--\old{445} Tabel groups, teks sumber & \mv & VI-D (RQ4)\\
+\old{447}--\old{465} Tabel sources & \supl & Tabel S2\\
+\old{467}--\old{472} Fig.~groups & \supl & Fig.~S5\\
+\old{474}--\old{482} IV-B Validity & \mv & IV-D\\
+\old{484}--\old{541} IV-C Ablasi & \mv & VI-C (RQ3)\\
+\old{543}--\old{555} Fig.~temperature, ensemble & \supl & Fig.~S3, Fig.~S4\\
+\old{557}--\old{592} IV-D Efisiensi, Fig.~tradeoff & \mv & VI-B (RQ2)\\
+\old{594}--\old{599} Fig.~latency & \supl & Fig.~S2\\
+\old{601}--\old{637} IV-E per bahasa dan label & \mv & VI-D (RQ4). Tabel factors (\old{603}--\old{623}) menjadi Tabel S3\\
+\old{639}--\old{644} Fig.~per label & \supl & Fig.~S6\\
+\old{646}--\old{668} IV-F kalibrasi, Tabel cascade & \mv & VI-E\\
+\old{670}--\old{675} Fig.~calibration & \supl & Fig.~S7\\
+\multicolumn{3}{@{}l}{\textit{Pembahasan, Limitations, Kesimpulan}}\\
+\old{679}, \old{681} & \mv & VII-A\\
+\old{683}--\old{687} & \mv & VII-B. ``For RQ2'' menjadi ``For RQ3''\\
+\old{689}--\old{693} & \mv & VII-C\\
+\old{695}, \old{697} & \mv & VII-D. Tiga kalimat yang hanya mengulang angka VI-B dan VI-E dihapus (D2, D3)\\
+\old{699}--\old{715} Limitations & \mv & VII-E (subbab, teks sama)\\
+\old{717}--\old{755} Kesimpulan, Availability, Ack & \ok & VIII dan sesudahnya. Rujukan Tabel lisensi menjadi Tabel S4\\
+\bottomrule
+\end{longtable}
+
+%=====================================================================
+\section{Aturan restrukturisasi}
+\begin{enumerate}
+  \item \textbf{Makna dan gaya tidak diubah.} Kalimat dipindah utuh. Teks baru hanya berupa judul subbab, nomor RQ, rujukan ke suplemen, dan peta naskah di akhir Pendahuluan.
+  \item \textbf{Penghapusan hanya untuk kalimat yang isinya sudah ada di tempat lain.} Setiap penghapusan dicatat di \texttt{restructure\_log.md} beserta tempat isinya masih ada.
+  \item \textbf{Perbaikan fakta di Bagian~1.3 tidak dikerjakan pada tahap ini}, karena mengubah isi. Semuanya masuk \texttt{rencana\_perubahan.tex}.
+  \item \textbf{Naskah memakai kelas \texttt{ieeeaccess}} dari \texttt{paper\_writing/template\_ieeeaccess}. Biografi penulis masih \emph{placeholder}.
+  \item \textbf{Pemeriksaan sesudah restrukturisasi:}
+  \begin{itemize}
+    \item setiap kalimat lama ada di naskah baru, ada di suplemen, atau tercatat sebagai dihapus;
+    \item tidak ada rujukan \texttt{??};
+    \item \texttt{scripts/check\_paper.py} untuk angka;
+    \item \texttt{scripts/check\_style.py} untuk teks baru.
+  \end{itemize}
+\end{enumerate}
+
+\end{document}

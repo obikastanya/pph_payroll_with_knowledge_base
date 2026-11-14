@@ -1,0 +1,181 @@
+{
+ "delta_id": "GOLD-SP01",
+ "event_id": null,
+ "document": {
+  "id": "SP01",
+  "title": "PT Lintas Gudang Nusantara: Peraturan Perusahaan",
+  "issued": "2023-04-01"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "attendance_allowance",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "meal and transport allowance per day present",
+   "label_id": "uang makan dan transport per hari hadir",
+   "source": [
+    {
+     "document": "SP01",
+     "provision": "Pasal 14 ayat (2)",
+     "page": 1,
+     "quote": "uang makan sebesar Rp35.000,00 (tiga puluh lima ribu rupiah) dan uang transport sebesar Rp25.000,00 (dua puluh lima ribu rupiah) untuk setiap hari kehadiran"
+    }
+   ],
+   "recorded_on": "2023-04-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP01.ATTENDANCE_ALLOWANCE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "attendance_allowance",
+   "expression": "(35000 + 25000) * hr('days_present')",
+   "valid_from": "2023-04-01",
+   "valid_until": "2025-03-31",
+   "policy": "SP01",
+   "source": [
+    {
+     "document": "SP01",
+     "provision": "Pasal 14 ayat (2)",
+     "page": 1,
+     "quote": "uang makan sebesar Rp35.000,00 (tiga puluh lima ribu rupiah) dan uang transport sebesar Rp25.000,00 (dua puluh lima ribu rupiah) untuk setiap hari kehadiran"
+    },
+    {
+     "document": "SP01",
+     "provision": "Pasal 44 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025"
+    }
+   ],
+   "recorded_on": "2023-04-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP01.OTHER_REGULAR",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "other_regular_income",
+   "expression": "income('other_regular') + attendance_allowance",
+   "valid_from": "2023-04-01",
+   "valid_until": "2025-03-31",
+   "label": "non-fixed allowances paid monthly are regular income",
+   "policy": "SP01",
+   "source": [
+    {
+     "document": "SP01",
+     "provision": "Pasal 14 ayat (2)",
+     "page": 1,
+     "quote": "uang makan sebesar Rp35.000,00 (tiga puluh lima ribu rupiah) dan uang transport sebesar Rp25.000,00 (dua puluh lima ribu rupiah) untuk setiap hari kehadiran"
+    },
+    {
+     "document": "SP01",
+     "provision": "Pasal 44 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025"
+    }
+   ],
+   "recorded_on": "2023-04-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP01.JKK_RATE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "jkk_rate",
+   "expression": "dec('0.0054')",
+   "valid_from": "2023-04-01",
+   "valid_until": "2025-03-31",
+   "label": "JKK rate written as a fixed number",
+   "policy": "SP01",
+   "conflict_code": "C6",
+   "source": [
+    {
+     "document": "SP01",
+     "provision": "Pasal 22 ayat (2)",
+     "page": 1,
+     "quote": "Iuran JKK sebesar 0,54% (nol koma lima puluh empat persen)"
+    },
+    {
+     "document": "SP01",
+     "provision": "Pasal 44 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025"
+    }
+   ],
+   "recorded_on": "2023-04-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP01.JP_EMPLOYEE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "jp_employee",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(dec('0.01') * min(bpjs_wage, 9559600), 1, param('bpjs_round_mode'))",
+   "valid_from": "2023-04-01",
+   "valid_until": "2025-03-31",
+   "label": "JP wage cap locked at Rp9,559,600 for the policy term",
+   "policy": "SP01",
+   "conflict_code": "C6",
+   "source": [
+    {
+     "document": "SP01",
+     "provision": "Pasal 22 ayat (4)",
+     "page": 1,
+     "quote": "1% (satu persen) ditanggung pekerja, dengan batas upah paling tinggi Rp9.559.600,00"
+    },
+    {
+     "document": "SP01",
+     "provision": "Pasal 22 ayat (5)",
+     "page": 1,
+     "quote": "berlaku selama masa berlaku Peraturan Perusahaan ini dan hanya dapat diubah melalui perubahan Peraturan Perusahaan"
+    },
+    {
+     "document": "SP01",
+     "provision": "Pasal 44 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025"
+    }
+   ],
+   "recorded_on": "2023-04-01"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.SP01.METHOD",
+   "layer": "company",
+   "modality": "default",
+   "scope": "year",
+   "produces": "withholding_method",
+   "expression": "'gross'",
+   "valid_from": "2023-04-01",
+   "valid_until": "2025-03-31",
+   "label": "withholding method stated by the policy: gross",
+   "policy": "SP01",
+   "source": [
+    {
+     "document": "SP01",
+     "provision": "Pasal 24 ayat (1)",
+     "page": 1,
+     "quote": "menjadi beban pekerja dan dipotong dari penghasilan setiap bulan"
+    },
+    {
+     "document": "SP01",
+     "provision": "Pasal 44 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 1 April 2023 sampai dengan tanggal 31 Maret 2025"
+    }
+   ],
+   "recorded_on": "2023-04-01"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": ""
+}

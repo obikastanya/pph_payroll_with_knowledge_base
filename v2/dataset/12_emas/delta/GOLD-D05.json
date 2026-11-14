@@ -1,0 +1,320 @@
+{
+ "delta_id": "GOLD-D05",
+ "event_id": "D05",
+ "document": {
+  "id": "PMK-23-PMK-03-2020",
+  "title": "PMK 23/PMK.03/2020: Insentif pajak untuk wajib pajak terdampak COVID-19 (DTP PPh 21 pertama)",
+  "issued": "2020-03-23"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "covid_dtp_fixed_income",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "fixed regular income for the COVID DTP criterion",
+   "label_id": "penghasilan bruto tetap dan teratur",
+   "source": [
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (1) huruf c",
+     "page": 6,
+     "quote": "Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000.000,00 (dua ratus juta rupiah)"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Lampiran huruf B angka III",
+     "page": 27,
+     "quote": "Tuan C yang dapat memperoleh insentif PPh Pasal 21 DTP hanya atas penghasilan gaji dan tunjangan bulanan."
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Lampiran huruf B angka IV",
+     "page": 29,
+     "quote": "Penghasilan bruto Tuan D yang disetahunkan Rp192.000.000,00"
+    }
+   ],
+   "recorded_on": "2020-03-23"
+  },
+  {
+   "kind": "fact",
+   "id": "covid_dtp_eligible",
+   "fact_type": "bool",
+   "fact_scope": "period",
+   "output": false,
+   "label": "employee eligible for COVID DTP",
+   "label_id": "pegawai penerima PPh 21 DTP",
+   "source": [
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (1) huruf a angka 1",
+     "page": 6,
+     "quote": "memiliki kode Klasifikasi Lapangan Usaha sebagaimana tercantum dalam Lampiran huruf A"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (1) huruf a angka 2",
+     "page": 6,
+     "quote": "telah ditetapkan sebagai Perusahaan KITE"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (1) huruf b",
+     "page": 6,
+     "quote": "b. memiliki NPWP; dan"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (1) huruf c",
+     "page": 6,
+     "quote": "Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000.000,00 (dua ratus juta rupiah)"
+    }
+   ],
+   "recorded_on": "2020-03-23"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.COVID_DTP_INCOME_CAP.2020",
+   "name": "covid_dtp_income_cap",
+   "value": 200000000,
+   "value_type": "money",
+   "valid_from": "2020-04-01",
+   "valid_until": "2020-09-30",
+   "label_id": "batas penghasilan bruto disetahunkan",
+   "source": [
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (1) huruf c",
+     "page": 6,
+     "quote": "Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000.000,00 (dua ratus juta rupiah)"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (6)",
+     "page": 7,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+    }
+   ],
+   "recorded_on": "2020-03-23"
+  },
+  {
+   "kind": "table",
+   "id": "TAB.COVID_DTP_KLU.2020",
+   "name": "covid_dtp_klu",
+   "table_kind": "set",
+   "valid_from": "2020-04-01",
+   "valid_until": "2020-09-30",
+   "label_id": "KLU penerima PPh 21 DTP",
+   "source": [
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (1) huruf a angka 1",
+     "page": 6,
+     "quote": "memiliki kode Klasifikasi Lapangan Usaha sebagaimana tercantum dalam Lampiran huruf A"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Lampiran huruf A",
+     "page": 16,
+     "quote": "A. KODE KLASIFIKASI LAPANGAN USAHA (KLU) WAJIB PAJAK YANG"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (6)",
+     "page": 7,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+    }
+   ],
+   "rows_ref": {
+    "extracted_table": "PMK-23-PMK-03-2020/LAMPIRAN-A",
+    "columns": {
+     "key": "klu"
+    }
+   },
+   "recorded_on": "2020-03-23"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.COVID_DTP.FIXED_INCOME",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "covid_dtp_fixed_income",
+   "expression": "base_salary + fixed_allowance + other_regular_income + tax_allowance",
+   "valid_from": "2020-04-01",
+   "valid_until": "2020-09-30",
+   "source": [
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (1) huruf c",
+     "page": 6,
+     "quote": "Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000.000,00 (dua ratus juta rupiah)"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Lampiran huruf B angka III",
+     "page": 27,
+     "quote": "Tuan C yang dapat memperoleh insentif PPh Pasal 21 DTP hanya atas penghasilan gaji dan tunjangan bulanan."
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Lampiran huruf B angka IV",
+     "page": 29,
+     "quote": "Penghasilan bruto Tuan D yang disetahunkan Rp192.000.000,00"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (6)",
+     "page": 7,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+    }
+   ],
+   "recorded_on": "2020-03-23"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.COVID_DTP.ELIGIBLE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "covid_dtp_eligible",
+   "expression": "(in_table('covid_dtp_klu', employer('klu')) or employer('kite') == True) and covid_dtp_fixed_income * 12 <= param('covid_dtp_income_cap') and employee('tax_id_valid') != False",
+   "valid_from": "2020-04-01",
+   "valid_until": "2020-09-30",
+   "source": [
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (1) huruf a angka 1",
+     "page": 6,
+     "quote": "memiliki kode Klasifikasi Lapangan Usaha sebagaimana tercantum dalam Lampiran huruf A"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (1) huruf a angka 2",
+     "page": 6,
+     "quote": "telah ditetapkan sebagai Perusahaan KITE"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (1) huruf b",
+     "page": 6,
+     "quote": "b. memiliki NPWP; dan"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (1) huruf c",
+     "page": 6,
+     "quote": "Penghasilan Bruto yang bersifat tetap dan teratur yang disetahunkan tidak lebih dari Rp200.000.000,00 (dua ratus juta rupiah)"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (6)",
+     "page": 7,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+    }
+   ],
+   "recorded_on": "2020-03-23"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.COVID_DTP.RUNNING",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph21_dtp",
+   "condition": "not is_final_period",
+   "expression": "pph_regular_month if covid_dtp_eligible else 0",
+   "valid_from": "2020-04-01",
+   "valid_until": "2020-09-30",
+   "label": "DTP covers the PPh 21 on regular income; tax on THR and bonus is withheld",
+   "source": [
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (2)",
+     "page": 6,
+     "quote": "sebagaimana dimaksud pada ayat (1), ditanggung Pemerintah."
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (6)",
+     "page": 7,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Lampiran huruf B angka III",
+     "page": 27,
+     "quote": "Tuan C yang dapat memperoleh insentif PPh Pasal 21 DTP hanya atas penghasilan gaji dan tunjangan bulanan."
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (4)",
+     "page": 7,
+     "quote": "dibayarkan secara tunai oleh pemberi kerja pada saat pembayaran penghasilan kepada Pegawai, termasuk dalam hal pemberi kerja memberikan tunjangan PPh Pasal 21"
+    }
+   ],
+   "recorded_on": "2020-03-23"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.COVID_DTP.THP_CASH",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "employee_tax_burden",
+   "condition": "covid_dtp_eligible and withholding_method == 'employer_borne'",
+   "expression": "0 - pph21_dtp",
+   "valid_from": "2020-04-01",
+   "valid_until": "2020-09-30",
+   "label": "Pasal 2 ayat (4): the DTP is paid in cash also when the employer bears the tax",
+   "source": [
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (4)",
+     "page": 7,
+     "quote": "dibayarkan secara tunai oleh pemberi kerja pada saat pembayaran penghasilan kepada Pegawai, termasuk dalam hal pemberi kerja memberikan tunjangan PPh Pasal 21"
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (6)",
+     "page": 7,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+    }
+   ],
+   "recorded_on": "2020-03-23"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.COVID_DTP.FINAL",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph21_dtp",
+   "condition": "is_final_period",
+   "expression": "max(0, final_period_tax) if covid_dtp_eligible else 0",
+   "valid_from": "2020-04-01",
+   "valid_until": "2020-09-30",
+   "label": "interpretation: DTP of the final period is its PPh 21 when positive",
+   "source": [
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (2)",
+     "page": 6,
+     "quote": "sebagaimana dimaksud pada ayat (1), ditanggung Pemerintah."
+    },
+    {
+     "document": "PMK-23-PMK-03-2020",
+     "provision": "Pasal 2 ayat (6)",
+     "page": 7,
+     "quote": "diberikan sejak Masa Pajak April 2020 sampai dengan Masa Pajak September 2020."
+    }
+   ],
+   "recorded_on": "2020-03-23"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": ""
+}

@@ -1,0 +1,101 @@
+{
+ "delta_id": "GOLD-D09",
+ "event_id": "D09",
+ "document": {
+  "id": "PP-49-2020",
+  "title": "PP 49/2020: Penyesuaian iuran BPJS Ketenagakerjaan selama bencana COVID-19",
+  "issued": "2020-09-01"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "rule",
+   "id": "REG.BPJS.JKK_RATE.RELIEF2020",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "jkk_rate",
+   "condition": "employer('bpjs_relief_2020_eligible') == True",
+   "expression": "lookup('jkk_rates', employer('jkk_risk_group')) * dec('0.01')",
+   "valid_from": "2020-08-01",
+   "valid_until": "2021-01-31",
+   "label": "Pasal 5-6: JKK contribution reduced to 1% of the PP 44/2015 contribution",
+   "source": [
+    {
+     "document": "PP-49-2020",
+     "provision": "Pasal 5",
+     "page": 6,
+     "quote": "Keringanan Iuran JKK diberikan sebesar 99% (sembilan puluh sembilan persen), sehingga Iuran JKK"
+    },
+    {
+     "document": "PP-49-2020",
+     "provision": "Pasal 6 huruf a",
+     "page": 6,
+     "quote": "tingkat risiko sangat rendah, yaitu sebesar lo/o (satu persen) dikali O,24oh"
+    },
+    {
+     "document": "PP-49-2020",
+     "provision": "Pasal 26",
+     "page": 18,
+     "quote": "berlaku dimulai sejak Iuran Program Jaminan Sosial Ketenagakerjaan bulan Agustus 2O2O"
+    },
+    {
+     "document": "PP-49-2020",
+     "provision": "Pasal 13 ayat (1)",
+     "page": 12,
+     "quote": "setelah melunasi Iuran JKK dan Iuran JKM sampai dengan bulan Juli 2O2O."
+    },
+    {
+     "document": "PP-49-2020",
+     "provision": "Pasal 26",
+     "page": 18,
+     "quote": "sampai dengan Iuran Program Jaminan Sosial Ketenagakerjaan bulan Januari 202t."
+    }
+   ],
+   "recorded_on": "2020-09-01"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.BPJS.JKM.RELIEF2020",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "jkm_premium",
+   "condition": "employer('premiums_as_billed') != True and employer('bpjs_relief_2020_eligible') == True",
+   "expression": "round(param('jkm_rate') * dec('0.01') * bpjs_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2020-08-01",
+   "valid_until": "2021-01-31",
+   "label": "Pasal 9-10: JKM contribution reduced to 1%",
+   "source": [
+    {
+     "document": "PP-49-2020",
+     "provision": "Pasal 10",
+     "page": 10,
+     "quote": "Penerima Upah yaitu sebesar 1% (satu persen) dikali 0,30% (nol koma tiga puluh persen)"
+    },
+    {
+     "document": "PP-49-2020",
+     "provision": "Pasal 26",
+     "page": 18,
+     "quote": "berlaku dimulai sejak Iuran Program Jaminan Sosial Ketenagakerjaan bulan Agustus 2O2O"
+    },
+    {
+     "document": "PP-49-2020",
+     "provision": "Pasal 13 ayat (1)",
+     "page": 12,
+     "quote": "setelah melunasi Iuran JKK dan Iuran JKM sampai dengan bulan Juli 2O2O."
+    },
+    {
+     "document": "PP-49-2020",
+     "provision": "Pasal 26",
+     "page": 18,
+     "quote": "sampai dengan Iuran Program Jaminan Sosial Ketenagakerjaan bulan Januari 202t."
+    }
+   ],
+   "recorded_on": "2020-09-01"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "Retroactive to contribution month August 2020 (issued 2020-09-01). JP deferral (Pasal 17) has no PPh 21 effect; the Delta has none for it."
+}

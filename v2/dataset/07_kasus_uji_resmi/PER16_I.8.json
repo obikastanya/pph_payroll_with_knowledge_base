@@ -1,0 +1,135 @@
+{
+  "id": "PER16-I.8",
+  "sumber": {
+    "regulasi": "PER-16/PJ/2016",
+    "bagian": "Lampiran, Bagian Kedua, I.8 (PPh ditanggung pemberi kerja), Adi Putro",
+    "halaman_pdf": [
+      46
+    ],
+    "halaman_dokumen": "-27-",
+    "catatan": "PDF hasil pindai; angka dibaca dari citra halaman (bukan hanya teks OCR)."
+  },
+  "rezim": "PER16_2023",
+  "dalam_lingkup": true,
+  "catatan_lingkup": "Contoh PER-16 bertahun 2016 dan memakai lapisan tarif Pasal 17 UU 36/2008 (5% s.d. Rp50 juta; 15% >50-250 juta; 25% >250-500 juta; 30% >500 juta). Rezim 'PER16_2023' = metode (disetahunkan, PPh sebulan = PPh setahun / 12); untuk tahun pajak 2023 berlaku lapisan UU HPP (5% s.d. Rp60 juta). Lihat kunci 'relevansi_tarif_2023'.",
+  "skenario": [
+    "metode_PER16_bulanan",
+    "pph_ditanggung_pemberi_kerja",
+    "iuran_pensiun"
+  ],
+  "uraian": "Adi Putro (K/3) gaji 6,5 juta, iuran pensiun 150 ribu, PPh ditanggung PT Lautan Otomata (kenikmatan, bukan penghasilan pegawai - tidak di-gross-up); Juli 2016.",
+  "input": {
+    "tahun_pajak": 2016,
+    "tarif_pasal17_dokumen": "UU 36/2008 (pra-HPP)",
+    "status_ptkp": "K/3",
+    "jenis_kelamin": "tidak_disebutkan",
+    "metode": "ditanggung_pemberi_kerja",
+    "masa": [
+      {
+        "bulan": 7,
+        "komponen": {
+          "gaji": 6500000,
+          "iuran_pensiun_pegawai": 150000
+        }
+      }
+    ]
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 7,
+        "bruto": 6500000,
+        "biaya_jabatan": 325000,
+        "iuran_pensiun": 150000,
+        "total_pengurang": 425000,
+        "neto_sebulan": 6025000,
+        "neto_setahun": 72300000,
+        "ptkp": 72000000,
+        "pkp": 300000,
+        "pph21_setahun": 15000,
+        "pph21": 1250,
+        "pph21_ditanggung_pemberi_kerja": true
+      }
+    ]
+  },
+  "langkah_resmi": [
+    "Biaya Jabatan 5% X 6.500.000 = 325.000; Iuran Pensiun 150.000; Rp 425.000,00 [sic]; neto sebulan 6.025.000",
+    "12 X 6.025.000 = 72.300.000; PTKP 72.000.000; PKP 300.000; 5% = 15.000; PPh bulan Juli 15.000 : 12 = 1.250",
+    "PPh sebesar Rp1.250,00 ini ditanggung dan dibayar oleh pemberi kerja ... bukan merupakan penghasilan yang dikenakan pajak kepada Adi Putro"
+  ],
+  "catatan_transkripsi": "DUGAAN SALAH JUMLAH (citra hlm. -27-): jumlah pengurang tercetak 425.000, padahal 325.000 + 150.000 = 475.000; neto 6.025.000 = 6.500.000 - 475.000 (konsisten dengan 475.000). Nilai metode 'ditanggung_pemberi_kerja' adalah perluasan enum (PER-16: PPh ditanggung = kenikmatan, tidak ditambahkan ke bruto, kecuali pemberi kerja PPh final/deemed profit).",
+  "cek_aritmetika": [
+    {
+      "item": "BJ",
+      "dokumen": 325000,
+      "hitung_ulang": 325000,
+      "status": "cocok"
+    },
+    {
+      "item": "jumlah pengurang tercetak",
+      "dokumen": 425000,
+      "hitung_ulang": 475000,
+      "status": "TIDAK COCOK"
+    },
+    {
+      "item": "neto = bruto - (325.000 + 150.000)",
+      "dokumen": 6025000,
+      "hitung_ulang": 6025000,
+      "status": "cocok"
+    },
+    {
+      "item": "neto setahun",
+      "dokumen": 72300000,
+      "hitung_ulang": 72300000,
+      "status": "cocok"
+    },
+    {
+      "item": "PKP",
+      "dokumen": 300000,
+      "hitung_ulang": 300000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Juli = 15.000 / 12",
+      "dokumen": 1250,
+      "hitung_ulang": 1250,
+      "status": "cocok",
+      "pembulatan_teramati": "tepat"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "PTKP setahun K/3",
+      "dokumen": 72000000,
+      "tabel": 72000000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh Pasal 17 (UU 36/2008 (pra-HPP)) atas PKP 300.000",
+      "dokumen": 15000,
+      "tabel": 15000,
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 5,
+    "aritmetika_tidak_cocok": 1,
+    "tabel_cocok": 2,
+    "tabel_tidak_cocok": 0
+  },
+  "relevansi_tarif_2023": {
+    "keterangan": "Hitung ulang PPh setahun atas PKP dokumen dengan dua lapisan tarif (bukan nilai expected). Jika 'hasil_sama_di_kedua_tarif' = true, angka contoh juga berlaku untuk lapisan tarif 2023 (dengan asumsi PTKP sama - PTKP PMK 101/2016 masih berlaku 2023).",
+    "rincian": [
+      {
+        "pkp": 300000,
+        "pph_dokumen": 15000,
+        "pph_tarif_UU36_2008": 15000,
+        "pph_tarif_UU_HPP": 15000,
+        "hasil_sama_di_kedua_tarif": true
+      }
+    ]
+  },
+  "dugaan_erratum": "Jumlah pengurang tercetak 425.000 (325.000 + 150.000 = 475.000); neto konsisten dengan 475.000.",
+  "verifikasi_pass2": "cocok"
+}

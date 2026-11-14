@@ -1,0 +1,129 @@
+{
+ "delta_id": "GOLD-FR04",
+ "event_id": "FR04",
+ "document": {
+  "id": "FR04",
+  "title": "PMK FIKTIF 904/PMK.03/2018: Perlakuan Pajak Penghasilan Pasal 21 atas Komisi Penjualan yang Diterima Pegawai Tetap",
+  "issued": "2018-09-19"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "variable_sales_commission",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "sales commission that depends on sales (part of other regular income in the case data)",
+   "label_id": "komisi penjualan tidak tetap",
+   "source": [
+    {
+     "document": "FR04",
+     "provision": "Pasal 1",
+     "page": 1,
+     "quote": "Komisi penjualan adalah imbalan yang diberikan pemberi kerja kepada Pegawai Tetap berdasarkan realisasi penjualan barang atau jasa dalam periode tertentu."
+    },
+    {
+     "document": "FR04",
+     "provision": "Pasal 2 ayat (1)",
+     "page": 1,
+     "quote": "Komisi penjualan yang besarnya bergantung pada realisasi penjualan dan tidak dibayarkan dalam jumlah tetap setiap bulan merupakan penghasilan yang bersifat tidak teratur."
+    }
+   ],
+   "recorded_on": "2018-09-19"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.COMMISSION.VARIABLE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "variable_sales_commission",
+   "expression": "min(hr('variable_sales_commission'), other_regular_income)",
+   "valid_from": "2019-01-01",
+   "label": "case contract: the payroll marks the variable part of commission paid as other regular income",
+   "source": [
+    {
+     "document": "FR04",
+     "provision": "Pasal 1",
+     "page": 1,
+     "quote": "Komisi penjualan adalah imbalan yang diberikan pemberi kerja kepada Pegawai Tetap berdasarkan realisasi penjualan barang atau jasa dalam periode tertentu."
+    },
+    {
+     "document": "FR04",
+     "provision": "Pasal 2 ayat (1)",
+     "page": 1,
+     "quote": "Komisi penjualan yang besarnya bergantung pada realisasi penjualan dan tidak dibayarkan dalam jumlah tetap setiap bulan merupakan penghasilan yang bersifat tidak teratur."
+    },
+    {
+     "document": "FR04",
+     "provision": "Pasal 4",
+     "page": 1,
+     "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2019."
+    }
+   ],
+   "recorded_on": "2018-09-19"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.GROSS.REGULAR.2019",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "regular_gross",
+   "expression": "base_salary + fixed_allowance + other_regular_income + overtime_pay + employer_premiums_taxable + benefits_taxable_regular + tax_allowance - variable_sales_commission",
+   "valid_from": "2019-01-01",
+   "label": "FR04 Pasal 2: variable sales commission leaves regular income",
+   "source": [
+    {
+     "document": "FR04",
+     "provision": "Pasal 2 ayat (1)",
+     "page": 1,
+     "quote": "Komisi penjualan yang besarnya bergantung pada realisasi penjualan dan tidak dibayarkan dalam jumlah tetap setiap bulan merupakan penghasilan yang bersifat tidak teratur."
+    },
+    {
+     "document": "FR04",
+     "provision": "Pasal 2 ayat (2)",
+     "page": 1,
+     "quote": "Komisi penjualan yang dibayarkan dalam jumlah tetap setiap bulan merupakan penghasilan yang bersifat teratur."
+    },
+    {
+     "document": "FR04",
+     "provision": "Pasal 4",
+     "page": 1,
+     "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2019."
+    }
+   ],
+   "recorded_on": "2018-09-19"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.GROSS.IRREGULAR.2019",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "irregular_gross",
+   "expression": "thr + bonus + other_irregular_income + benefits_taxable_irregular + variable_sales_commission",
+   "valid_from": "2019-01-01",
+   "label": "FR04 Pasal 2 ayat (1): variable sales commission is irregular income",
+   "source": [
+    {
+     "document": "FR04",
+     "provision": "Pasal 2 ayat (1)",
+     "page": 1,
+     "quote": "Komisi penjualan yang besarnya bergantung pada realisasi penjualan dan tidak dibayarkan dalam jumlah tetap setiap bulan merupakan penghasilan yang bersifat tidak teratur."
+    },
+    {
+     "document": "FR04",
+     "provision": "Pasal 4",
+     "page": 1,
+     "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Januari 2019."
+    }
+   ],
+   "recorded_on": "2018-09-19"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "FICTIVE. Variable sales commission is irregular income from 2019 (case marks it in hr)."
+}

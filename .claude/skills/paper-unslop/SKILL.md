@@ -1,6 +1,6 @@
 ---
 name: paper-unslop
-description: Membersihkan naskah paper ilmiah (LaTeX atau teks, bahasa Indonesia atau Inggris) dari pola tulisan AI tanpa mengubah makna, angka, dan sitasi. Gabungan skill unslop, 12 aturan kalimat paper, dan panduan teks AI yang harus dihindari, ditambah pemindai otomatis dan pemeriksa fakta. Pakai saat diminta merapikan, unslop, menghilangkan AI slop, membuat paper terbaca natural, atau memeriksa naskah terhadap aturan kalimat paper.
+description: Membersihkan naskah paper ilmiah (LaTeX atau teks, bahasa Indonesia atau Inggris) dari pola tulisan AI tanpa mengubah makna, angka, dan sitasi. Gabungan skill unslop, 12 aturan kalimat paper, dan panduan teks AI yang harus dihindari, ditambah pemindai otomatis dan pemeriksa fakta. Pakai saat diminta merapikan, unslop, menghilangkan AI slop, membuat paper terbaca natural, atau memeriksa naskah terhadap aturan kalimat paper. Juga memeriksa kaidah paragraf (kalimat utama, kesatuan, kepaduan, kelengkapan) untuk naskah Indonesia dan Inggris.
 ---
 
 # Paper unslop
@@ -168,6 +168,58 @@ Satu kemunculan pola belum tentu salah. Yang ditandai detektor adalah penumpukan
 - **W16. Definisi buku teks.** "Sistem pakar merupakan salah satu cabang dari kecerdasan buatan yang...", lalu "Menurut X [c], ... adalah...". Istilah baku bidang tidak didefinisikan ulang. Definisikan hanya konsep atau ukuran yang diperkenalkan atau dipersempit oleh paper ini.
 - **W13. Sebut mekanismenya, bukan kesannya.** "Sistem ini mudah dipelihara" menjadi "Perubahan PP 58/2023 dinyatakan dengan 7 rekaman tanpa mengubah kode". Kalimat yang dapat muncul tanpa perubahan di paper lain tidak mengatakan apa pun tentang paper ini.
 
+### A. Kaidah paragraf (bahasa Indonesia dan Inggris)
+
+Paragraf ekspositori dan argumentatif di paper mengikuti kaidah paragraf baku bahasa Indonesia: satu kalimat utama, kalimat penjelas yang mendukungnya, serta **kesatuan**, **kepaduan**, dan **kelengkapan**. Padanannya di penulisan akademik Inggris adalah *topic sentence*, *unity*, *coherence*, dan *adequate development*. Kelompok ini menambah aturan lain dan tidak menggantikannya. Alat kohesi tetap tunduk pada `K6`, `P10`, `P16`, `P24`, dan `B5`, sehingga kepaduan dibangun terutama dengan alat yang tidak melanggar aturan itu. Paragraf yang lolos semua aturan kalimat tetapi kalimatnya berdiri sendiri-sendiri tetap belum memenuhi kelompok ini.
+
+- **A1. Kalimat utama.** Setiap paragraf punya satu kalimat utama yang menyatakan pokok pikirannya: klaim, temuan, masalah, atau tujuan langkah prosedur. Satu fakta angka yang berdiri sendiri, penunjuk tabel ("Tabel 5 menunjukkan..."), dan penanda arah (`W3`) bukan kalimat utama. Letak bawaan di paper adalah awal paragraf (deduktif). Letak akhir (induktif) boleh bila paragraf membangun simpulan dari bukti. Angka boleh ada di kalimat utama bila angka itulah pokoknya ("StaticKD mempertahankan 91,1% skor *teacher*").
+  - Kurang: "StaticKD memerlukan 2,01 ms per artikel. Kecepatan ini sekitar 682 kali kecepatan *teacher*. MiniLM-L6 32 kali lebih lambat." (kalimat pertama hanya fakta; pokoknya tidak pernah dinyatakan)
+  - Lebih baik: "Kecepatan StaticKD pada satu *core* melampaui semua model berbasis *transformer*. StaticKD memerlukan 2,01 ms per artikel, sekitar 682 kali lebih cepat daripada *teacher*, dan distilasi *transformer* terkecil pun masih 32 kali lebih lambat."
+  - *Weak: "Table 6 shows the results. StaticKD needs 2.01 ms per article. MiniLM-L6 is 32 times slower."* *Better: "StaticKD is faster on one core than every transformer-based model. It needs 2.01 ms per article (Table 6), and even the smallest distilled transformer is 32 times slower."*
+- **A2. Kesatuan (*unity*).** Semua kalimat penjelas membahas pokok kalimat utama. Ujinya per kalimat: kalimat ini mendukung kalimat utama sebagai apa? Jawabannya harus salah satu dari alasan, bukti, contoh, rincian, pembanding, atau akibat. Kalimat yang tidak lolos dipindah ke paragraf yang pokoknya cocok, dijadikan paragraf sendiri bila cukup isinya, atau dihapus bila hanya mengulang (`W7`, `W12`). Jangan memindahkan fakta ke bagian yang perannya berbeda (`A6`).
+- **A3. Kepaduan (koherensi dan kohesi; *coherence*).** Hubungan antarkalimat harus terbaca tanpa pembaca menebak.
+  - Urutan logis: umum ke khusus, klaim ke bukti, sebab ke akibat, urutan langkah atau waktu, atau perbandingan yang sejajar.
+  - Alat kohesi yang diutamakan:
+    - pengulangan kata kunci, memakai istilah yang sama sesuai `B5`;
+    - kata penunjuk dengan rujukan jelas ("batas ini", "selisih tersebut", "model ini"), tetapi bukan "Hal ini" berulang (`P10`);
+    - hubungan sebab, tujuan, dan kontras di dalam kalimat ("karena", "sehingga", "untuk", "sedangkan", "tetapi");
+    - penggabungan dua kalimat pendek yang membahas hal sama menjadi satu kalimat beranak kalimat;
+    - hiponimi dan meronimi (umum-khusus, bagian-keseluruhan) bila istilahnya tetap jelas.
+  - Konjungsi antarkalimat di awal kalimat (*Oleh karena itu, Selain itu, Sebaliknya, Sementara itu, Dengan demikian*; *Therefore, In addition, In contrast*) tetap mengikuti `K6` dan `P16`: paling banyak satu per paragraf, dan hanya bila hubungan logisnya nyata (`P24`).
+  - Catatan EYD V: tanda koma dipakai di belakang kata atau ungkapan penghubung antarkalimat seperti *oleh karena itu*, *jadi*, dan *dengan demikian*. Bila penulis memutuskan memakai penghubung seperti itu di awal kalimat, tulis dengan koma sesuai EYD V. Bila tidak, pindahkan hubungannya ke dalam kalimat.
+  - Kalimat yang tidak punya satu pun alat kohesi dengan kalimat sebelumnya atau dengan kalimat utama terbaca sebagai fakta yang ditempel.
+- **A4. Kelengkapan (*adequate development*).** Kalimat penjelas menuntaskan janji kalimat utama. Klaim didukung alasan atau bukti (angka, sitasi, rujukan tabel), dan, bila perlu, contoh serta arti bukti itu bagi argumen (`W9`). Paragraf yang hanya berisi kalimat utama dan satu fakta biasanya belum lengkap (`W11`). Kalimat utama yang menjanjikan dua hal harus menjelaskan keduanya. Kelengkapan tidak berarti menambah fakta baru: yang ditambahkan hanya hubungan dan arti dari fakta yang sudah ada di naskah (Larangan bagian 0).
+- **A5. Kalimat penjelas bukan deret fakta.** Empat kalimat pendek berangka atau lebih yang berderet tanpa penghubung adalah daftar, bukan paragraf. Kelompokkan angka yang sejenis dalam satu kalimat beserta pembandingnya. Urutkan dari angka yang paling langsung mendukung pokok. Nyatakan hubungan antarangka (lebih besar, setara, berlawanan arah). Pola ini sering muncul ketika aturan kalimat pendek (`K3`) dipakai tanpa memperhatikan paragraf.
+- **A6. Hubungan antarparagraf dan peran bagian.** Paragraf pertama sebuah subbagian menghubungkan subbagian itu dengan subbagian sebelumnya bila hubungannya nyata. Kalimat utama paragraf berikutnya melanjutkan argumen paragraf sebelumnya. Isi paragraf sesuai peran bagiannya:
+  - Pendahuluan: masalah, celah, dan kontribusi.
+  - Penelitian Terkait: karya lain, dikelompokkan dan dibandingkan.
+  - Metode: cara kerja.
+  - Data: data dan susunannya.
+  - Pengaturan: protokol.
+  - Hasil: temuan dan buktinya, tanpa tafsiran panjang.
+  - Pembahasan: tafsiran, implikasi, dan keterbatasan.
+  - Kesimpulan: ringkasan tanpa klaim atau angka baru.
+
+  Fakta yang salah bagian dipindah ke bagian yang tepat.
+- **A7. Fakta tanpa tujuan.** Setiap kalimat fakta memperlihatkan perannya bagi pokok paragraf. Bila perannya akibat, alasan, pertentangan, atau tujuan, hubungan itu ditulis dan tidak diserahkan kepada pembaca. Menghapus kata hubung demi `K3`, `K6`, atau `P16` tanpa menggantinya menghasilkan deret fakta lepas.
+  - Hubungan ditulis di dalam kalimat ("karena", "sehingga", "tetapi", "sedangkan", "untuk", "meskipun"; *because, so, but, whereas*), dengan menggabungkan dua kalimat pendek menjadi satu kalimat beranak kalimat, atau dengan menyebut akibatnya. `K6` tetap berlaku.
+  - Kalimat gabungan boleh melebihi 25 kata (`K3`) bila hubungannya memerlukan, asal di bawah 35 kata.
+  - Kurang: "Model ini menempati memori 3 GB. Setiap lapisannya menjalankan perkalian matriks padat pada dua *core* CPU." (akibatnya tidak disebut)
+  - Lebih baik: "Model ini menempati memori 3 GB dan menjalankan perkalian matriks padat di setiap lapisan sehingga satu dokumen memerlukan 2 detik pada dua *core* CPU."
+- **A8. Penggabungan paksa dengan "dan".** "Dan" hanya menggabungkan hal yang setara dan searah. Fakta dari kategori berbeda (arsitektur model dan cakupan data latih, batas input dan spesifikasi mesin) dipisah ke kalimat atau paragraf yang pokoknya cocok. Efek yang berlawanan arah disambung "tetapi" atau "sedangkan", dan hubungan sebab-akibat disambung "sehingga" atau "karena". Kalimat utama berbentuk "X dan Y" yang menyatukan dua topik tak berkaitan dalam satu paragraf juga termasuk (`W7`).
+- **A9. Definisi tempelan.** Kalimat glosarium "X disebut Y dalam makalah ini", "(selanjutnya disebut Y)", *is called Y in this paper*, atau *hereafter Y* yang ditempel di tengah atau akhir paragraf.
+  - Istilah didefinisikan di tempat pertama kali dipakai (`W8`), di dalam kalimat yang memperkenalkan konsepnya ("Bobot linear diterapkan pada setiap baris *embedding* sebelum model dipakai (*folding*)").
+  - Istilah baku bidang tidak didefinisikan ulang (`W16`).
+  - Pemakaian istilah konsisten dengan definisinya di seluruh naskah, termasuk tabel.
+
+Pemindai menandai pola paragraf berikut sebagai peringatan:
+- `A1`: kalimat pertama hanya menunjuk tabel atau gambar.
+- `A3`: paragraf berisi empat kalimat atau lebih, dan separuh atau lebih kalimat penjelasnya tidak punya kata kunci bersama, kata penunjuk, atau penghubung dengan kalimat sebelumnya maupun kalimat utama.
+- `A5`: empat kalimat pendek berangka atau lebih berderet.
+- `A9`: frasa definisi tempelan ("disebut ... dalam makalah ini", "selanjutnya disebut", *is called ... in this paper*, *hereafter*).
+
+`A2`, `A4`, `A6`, `A7`, dan `A8` hanya dapat diperiksa dengan membaca.
+
 ### F. Format dan ciri khusus paper
 
 - **F1. Daftar butir di bagian prosa.** Pendahuluan, Penelitian Terkait, Hasil, dan Pembahasan ditulis sebagai prosa. Daftar hanya untuk kontribusi, langkah prosedur, atau butir yang memang terpisah.
@@ -182,6 +234,16 @@ Satu kemunculan pola belum tentu salah. Yang ditandai detektor adalah penumpukan
 - **F10. Keterbatasan klise.** "Penelitian selanjutnya dapat memakai data yang lebih besar", *several limitations should be acknowledged*, *beyond the scope of this study*, *while our results are encouraging*, *future work could explore*. Tulis keterbatasan spesifik beserta akibatnya.
 - **F11. Klaim kebaruan.** "Sejauh pengetahuan kami/penelusuran ini" paling banyak sekali, hanya untuk klaim yang sudah dicek ke pustaka.
 - **F13. Penilaian keberhasilan diri.** "telah berhasil mengembangkan", "terbukti mampu", "membuktikan bahwa metode ini efektif", "tujuan penelitian telah tercapai", *successfully demonstrated*, *proves that*. Hasil empiris tidak "membuktikan". Tulis apa yang diukur dan angkanya, dengan hedging satu tingkat bila buktinya terbatas.
+- **F14. Catatan dapur penelitian.** Paper menulis spesifikasi akhir, bukan riwayat pengerjaan. Yang termasuk:
+  - kronologi coba-coba ("dipilih selama pengembangan", "lalu ditambah data baru dengan batas berbeda") yang membuat langkah prosedur tampak saling bertentangan;
+  - pembukuan *run* ("seluruh 60 *run*", "empat tambahan dengan tiga *seed*") dan set uji coba yang tidak tercantum di tabel data;
+  - catatan rekonsiliasi angka di judul tabel (pindahkan ke catatan di bawah tabel);
+  - hasil inspeksi log yang diselipkan ke daftar aturan;
+  - istilah skrip ("GPU disembunyikan") dan rujukan ke kode sebagai pengganti definisi ("dihitung seperti pada kode evaluasi [c]");
+  - jumlah yang hanya dapat dihitung dari keluaran skrip ("ketujuh uji ini") tanpa rinciannya di teks;
+  - kode bahasa ISO berderet di prosa ("ja, zh, th, dan my"); tulis nama bahasanya dan simpan kode untuk tabel dan gambar.
+
+  Riwayat boleh disebut dalam satu kalimat bila memengaruhi tafsiran hasil.
 - **F12. Notasi.** `$p=0{,}004$` atau `$p<0{,}001$`, bukan "p 0,004". Detail teknis yang dibutuhkan replikasi (*seed*, versi model, ukuran tiap bagian data) tidak boleh hilang saat merapikan.
 
 ### E. Khusus naskah berbahasa Inggris
@@ -225,7 +287,7 @@ Contoh Inggris untuk aturan yang paling sering dilanggar:
    python <skill>/scripts/scan_style.py naskah.tex --rules K6,P6
    python <skill>/scripts/scan_style.py naskah.tex --synonyms "knowledge base|KB|basis pengetahuan;LLM|model bahasa"
    ```
-   Bahasa naskah dideteksi otomatis (paksa dengan `--lang id` atau `--lang en`). `--synonyms` mengisi `B5` dengan kelompok istilah naskah itu. Pemindai hanya saringan pertama. Setiap temuan dinilai manual, karena sebagian adalah peringatan (misalnya `K6` frasa keterangan, `K5` deret pasif, `B6` kuantor). Pola yang tidak dapat dideteksi mesin atau hanya terdeteksi sebagian (P3, P12, P21, W1, W4 sampai W10, W12, W13, W16, F7 sampai F10) diperiksa dengan membaca.
+   Bahasa naskah dideteksi otomatis (paksa dengan `--lang id` atau `--lang en`). `--synonyms` mengisi `B5` dengan kelompok istilah naskah itu. Pemindai hanya saringan pertama. Setiap temuan dinilai manual, karena sebagian adalah peringatan (misalnya `K6` frasa keterangan, `K5` deret pasif, `B6` kuantor). Pola yang tidak dapat dideteksi mesin atau hanya terdeteksi sebagian (P3, P12, P21, W1, W4 sampai W10, W12, W13, W16, F7 sampai F10, A2, A4, A6 sampai A8, sebagian F14) diperiksa dengan membaca.
 
    Ringkasan pemindai memisahkan **penanda AI** (kosakata, kerangka, dan pola yang khas teks model) dari aturan gaya lain, dan melaporkan penanda AI per 1.000 kata. Kalibrasi pada November 2026: enam paper Inggris tulisan manusia dari 2021 sampai 2022 berada di 5,7 sampai 12,2; teks AI halus buatan agen 33; teks AI terang-terangan 123 sampai 128; teks bersih buatan agen 0. Angka di atas sekitar 15 berarti naskah masih jelas terbaca sebagai teks AI. Angka ini hanya pembanding kasar, bukan detektor.
 4. **Ubah sesedikit mungkin.** Hanya kalimat yang ditandai pemindai, detektor penulis, atau yang memang salah yang diubah. Kalimat lain dibiarkan persis. Bila penulis punya sorotan detektor, kerjakan sorotan itu lebih dulu daripada tebakan sendiri.
@@ -245,6 +307,16 @@ Contoh Inggris untuk aturan yang paling sering dilanggar:
 8. **Pass gaya oleh pemeriksa independen** bila tersedia, misalnya agen lain yang hanya menerima naskah dan file ini. Penulis revisi cenderung tidak melihat pola buatannya sendiri. Temuan pemeriksa dicek dulu kebenarannya sebelum diterapkan, karena pemeriksa juga dapat keliru.
 9. **Periksa kerusakan edit.** Menghapus kalimat terakhir sebuah paragraf dapat ikut menghapus baris kosong sehingga dua paragraf LaTeX menyatu. Bandingkan jumlah baris kosong (`git diff naskah.tex | grep -cE '^[-+]\s*$'` harus 0 kecuali disengaja). Pertahankan akhir baris (CRLF atau LF). Kompilasi naskah dan pastikan tidak ada galat, sitasi, atau rujukan yang hilang.
 10. **Laporkan** sesuai bagian 5.
+
+**Pemeriksaan paragraf (kelompok A, wajib dibaca).** Aturan kalimat saja tidak menjamin paragraf yang baik. Untuk setiap paragraf prosa:
+1. Tulis pokoknya dalam satu kalimat, lalu bandingkan dengan kalimat utama naskah (`A1`).
+2. Beri setiap kalimat penjelas satu peran (alasan, bukti, contoh, rincian, pembanding, atau akibat). Kalimat tanpa peran dipindah atau dihapus (`A2`).
+3. Tandai alat kohesi di setiap perpindahan kalimat (`A3`).
+4. Pastikan janji kalimat utama dituntaskan (`A4`).
+5. Gabungkan deret fakta berangka (`A5`).
+6. Periksa sambungan dengan paragraf sebelumnya dan kesesuaian isi dengan peran bagian (`A6`).
+
+Penulisan ulang paragraf tetap tunduk pada Larangan bagian 0 dan diverifikasi dengan langkah 6 dan 7. Pemeriksa independen di langkah 8 juga memeriksa kelompok A.
 
 Bila diminta "review" atau "usulan", tampilkan usulan per kalimat dengan nomor baris dan tunggu persetujuan sebelum menerapkan. Bila diminta "perbaiki" atau "bersihkan", langsung terapkan lalu laporkan.
 
@@ -289,6 +361,17 @@ Urutan dari yang paling berdampak:
 
 **Paragraf dan format**
 - [ ] Paragraf tidak ditutup kalimat rangkuman generik, membahas satu topik, dan panjangnya wajar (`W11`).
+- [ ] Kaidah paragraf (`A1` sampai `A6`):
+  - setiap paragraf punya kalimat utama yang menyatakan pokoknya;
+  - setiap kalimat penjelas mendukung kalimat utama;
+  - hubungan antarkalimat terbaca lewat alat kohesi;
+  - pokoknya dijelaskan tuntas;
+  - tidak ada deret fakta berangka;
+  - isi tiap paragraf sesuai peran bagiannya;
+  - setiap kalimat fakta memperlihatkan perannya, dan hubungan sebab, kontras, atau tujuan tertulis (`A7`);
+  - "dan" hanya menggabungkan hal yang setara dan searah (`A8`);
+  - tidak ada kalimat definisi tempelan, dan istilah konsisten dengan definisinya termasuk di tabel (`A9`).
+- [ ] Tidak ada catatan dapur penelitian: kronologi pengembangan, pembukuan *run*, istilah skrip, kode bahasa berderet di prosa (`F14`).
 - [ ] Keterbatasan dan saran spesifik untuk penelitian ini.
 - [ ] Tidak ada artefak LLM, placeholder, sisa markdown, karakter Unicode yang belum dikonversi, atau label tebal di prosa.
 - [ ] Naskah terkompilasi tanpa galat, abstrak dalam batas kata, dan pernyataan penggunaan AI tetap ada.
@@ -300,3 +383,13 @@ Urutan dari yang paling berdampak:
 - Panduan teks AI yang harus dihindari (versi 18 Oktober dan 1 November 2026), termasuk pola ★ hasil uji detektor dan katalog kalimat yang tidak diperlukan: menjadi kelompok `B`, `P`, `W`, dan `F`. Rujukan kosakata: Kobak dkk., *Science Advances* 2025; Liang dkk., ICML 2024. Bias detektor terhadap penulis non-penutur asli: Liang dkk., *Patterns* 2023.
 - Tambahan dari pemeriksaan pola yang masih lolos (3 November 2026), yaitu uji pada draf paper proyek ini dan uji serang oleh agen independen dengan 36 paragraf teks AI buatan: pola khas bahasa Indonesia di `B2`, `B4`, `B6`, `P10`, `P16`, `P17`, `P24`, `P25`, `W11`; aturan baru `P26`, `P27`, `W14`, `W15`, `W16`, `F13`; dan perluasan `K4`, `K8`, `W6`. Evaluasi kedua pada hari yang sama menambah `B7` (kata tidak lazim), kepadatan adverbia *-ly* dan "secara/dengan X" di `P20`, penguat kepastian di `K9`, rantai "yang" di `K1`, pembuka paragraf berulang di `W1`, penekanan miring di `F3`, dan sebagian kosakata dari daftar kata berlebih Kobak dkk. Pendekatan daftar frekuensi kata (`wordfreq`) diuji untuk `B7` dan ditolak, karena kata arkais seperti "tatkala" lebih sering muncul daripada istilah teknis yang sah.
 - Penguatan versi Inggris (3 November 2026): kelompok `E1` sampai `E9`, contoh Inggris untuk aturan K dan P, deteksi pasif klausa utama, pasif berpelaku dan proporsi pasif di `K5`, mode `--baseline`, dan skor penanda AI. Sumber pola: halaman Wikipedia "Signs of AI writing" (kosakata per periode model 2023 sampai 2026, *rather than* terbalik, framing korektif, penghindaran kopula) dan Kobak dkk. (*delves* 28 kali, *underscores* 10,9 kali, dan *showcasing* 10,2 kali di atas tren pra-LLM). Kalibrasi memakai enam paper Inggris tulisan manusia 2021 sampai 2022 (sekitar 29.000 kata), 41 paragraf teks AI halus dan 8 paragraf bersih yang ditulis agen yang tidak membaca skill ini, serta 8 paragraf teks AI terang-terangan dari uji sebelumnya. Pola yang terlalu sering muncul di teks manusia dipersempit atau dikeluarkan (misalnya *outstanding*, *actually*, *offers* umum, dan pembuka partisip biasa).
+- Kelompok `A` (kaidah paragraf, 8 November 2026), ditambahkan atas permintaan penulis setelah naskah lolos aturan kalimat tetapi paragrafnya terbaca sebagai fakta yang ditempel. Sumbernya:
+  - Kaidah paragraf baku bahasa Indonesia, yaitu kalimat utama, kalimat penjelas, kesatuan, kepaduan, dan kelengkapan, menurut modul Bahasa Indonesia LMS SPADA Kemdikbud (Bab VII, Paragraf).
+  - Alat kepaduan (konjungsi, pronomina, substitusi, elipsis, sinonimi, hiponimi, meronimi, repetisi) dari ringkasan Penerbit Deepublish, "Kepaduan Paragraf".
+  - Aturan EYD V tentang koma sesudah ungkapan penghubung antarkalimat, dikutip dari ringkasan detik.com dan materi EYD Universitas Padjadjaran. Rujukan resminya adalah situs Badan Bahasa.
+  - Padanan Inggris (*topic sentence, unity, coherence, adequate development*) dari Purdue OWL, "On Paragraphs".
+- Kalibrasi pemindai kelompok A:
+  - Uji kata kunci bersama untuk `A2` ditolak. Pada paper rujukan tulisan manusia (teks PDF), uji ini menandai lebih banyak kalimat daripada pada draf proyek.
+  - `A3` dan `A5` dipertahankan hanya sebagai peringatan dengan ambang yang ketat.
+  - Kelompok A tetap terutama aturan baca.
+- `A7` sampai `A9` dan `F14` (8 November 2026): pola yang ditemukan pembaca independen pada naskah yang sudah lolos aturan kalimat.

@@ -1,0 +1,179 @@
+{
+ "delta_id": "GOLD-FR02",
+ "event_id": "FR02",
+ "document": {
+  "id": "FR02",
+  "title": "PER FIKTIF-902/PJ/2020: Perubahan atas PER-16/PJ/2016 mengenai Pembulatan dalam Penghitungan PPh Pasal 21",
+  "issued": "2020-11-23"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "rule",
+   "id": "REG.P16.TAXABLE_ANNUALIZED.2021",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "taxable_regular_annualized",
+   "condition": "not is_final_period",
+   "expression": "max(0, round(net_regular_month * annualization_factor - ptkp_amount, 100000, 'down'))",
+   "valid_from": "2021-01-01",
+   "label": "FR02: PKP rounded down to hundred thousands",
+   "source": [
+    {
+     "document": "FR02",
+     "provision": "Pasal I angka 1",
+     "page": 1,
+     "quote": "Penghasilan Kena Pajak setahun dibulatkan ke bawah hingga ratus ribu rupiah penuh."
+    },
+    {
+     "document": "FR02",
+     "provision": "Pasal II",
+     "page": 1,
+     "quote": "mulai berlaku untuk penghitungan Pajak Penghasilan Pasal 21 Masa Pajak Januari 2021."
+    }
+   ],
+   "recorded_on": "2020-11-23"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.TAXABLE_WITH_IRREGULAR.2021",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "taxable_with_irregular",
+   "condition": "not is_final_period and irregular_gross > 0",
+   "expression": "max(0, round((annualization_factor * regular_gross + irregular_gross) - min(round(param('job_expense_rate') * (annualization_factor * regular_gross + irregular_gross), 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 100000, 'down'))",
+   "valid_from": "2021-01-01",
+   "label": "FR02: PKP rounded down to hundred thousands",
+   "source": [
+    {
+     "document": "FR02",
+     "provision": "Pasal I angka 1",
+     "page": 1,
+     "quote": "Penghasilan Kena Pajak setahun dibulatkan ke bawah hingga ratus ribu rupiah penuh."
+    },
+    {
+     "document": "FR02",
+     "provision": "Pasal II",
+     "page": 1,
+     "quote": "mulai berlaku untuk penghitungan Pajak Penghasilan Pasal 21 Masa Pajak Januari 2021."
+    }
+   ],
+   "recorded_on": "2020-11-23"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.TAXABLE_WITHOUT_IRREGULAR.2021",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "taxable_without_irregular",
+   "condition": "not is_final_period and irregular_gross > 0",
+   "expression": "max(0, round(annualization_factor * regular_gross - min(round(param('job_expense_rate') * annualization_factor * regular_gross, 1, 'down'), param('job_expense_max_year')) - annualization_factor * employee_pension_contributions - ptkp_amount, 100000, 'down'))",
+   "valid_from": "2021-01-01",
+   "label": "FR02: PKP rounded down to hundred thousands",
+   "source": [
+    {
+     "document": "FR02",
+     "provision": "Pasal I angka 1",
+     "page": 1,
+     "quote": "Penghasilan Kena Pajak setahun dibulatkan ke bawah hingga ratus ribu rupiah penuh."
+    },
+    {
+     "document": "FR02",
+     "provision": "Pasal II",
+     "page": 1,
+     "quote": "mulai berlaku untuk penghitungan Pajak Penghasilan Pasal 21 Masa Pajak Januari 2021."
+    }
+   ],
+   "recorded_on": "2020-11-23"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.TAXABLE.2021",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "taxable_income",
+   "expression": "max(0, round(annual_net - ptkp_amount, 100000, 'down'))",
+   "valid_from": "2021-01-01",
+   "label": "FR02: PKP rounded down to hundred thousands",
+   "source": [
+    {
+     "document": "FR02",
+     "provision": "Pasal I angka 1",
+     "page": 1,
+     "quote": "Penghasilan Kena Pajak setahun dibulatkan ke bawah hingga ratus ribu rupiah penuh."
+    },
+    {
+     "document": "FR02",
+     "provision": "Pasal II",
+     "page": 1,
+     "quote": "mulai berlaku untuk penghitungan Pajak Penghasilan Pasal 21 Masa Pajak Januari 2021."
+    }
+   ],
+   "recorded_on": "2020-11-23"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.YEAR.TAXABLE.PART_YEAR.2021",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "year",
+   "produces": "taxable_income",
+   "condition": "subjective_months < 12",
+   "expression": "max(0, round(annual_net * 12 / subjective_months - ptkp_amount, 100000, 'down'))",
+   "valid_from": "2021-01-01",
+   "overrides": [
+    "REG.YEAR.TAXABLE.2021"
+   ],
+   "label": "FR02: PKP rounded down to hundred thousands",
+   "source": [
+    {
+     "document": "FR02",
+     "provision": "Pasal I angka 1",
+     "page": 1,
+     "quote": "Penghasilan Kena Pajak setahun dibulatkan ke bawah hingga ratus ribu rupiah penuh."
+    },
+    {
+     "document": "FR02",
+     "provision": "Pasal II",
+     "page": 1,
+     "quote": "mulai berlaku untuk penghitungan Pajak Penghasilan Pasal 21 Masa Pajak Januari 2021."
+    }
+   ],
+   "recorded_on": "2020-11-23"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.P16.RUNNING.2021",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "pph21_running",
+   "condition": "not is_final_period",
+   "expression": "round(pph_regular_month + pph_irregular_month, 100, 'down')",
+   "valid_from": "2021-01-01",
+   "label": "FR02: period PPh other than the final period, to hundreds",
+   "source": [
+    {
+     "document": "FR02",
+     "provision": "Pasal I angka 2",
+     "page": 1,
+     "quote": "Pajak Penghasilan Pasal 21 terutang untuk setiap Masa Pajak selain Masa Pajak terakhir dibulatkan ke bawah hingga ratusan rupiah penuh."
+    },
+    {
+     "document": "FR02",
+     "provision": "Pasal II",
+     "page": 1,
+     "quote": "mulai berlaku untuk penghitungan Pajak Penghasilan Pasal 21 Masa Pajak Januari 2021."
+    }
+   ],
+   "recorded_on": "2020-11-23"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "FICTIVE. Rounding of PKP (100.000) and period PPh (100) from Masa Januari 2021."
+}

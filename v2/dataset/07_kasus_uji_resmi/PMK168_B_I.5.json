@@ -1,0 +1,93 @@
+{
+  "id": "PMK168-B-I.5",
+  "sumber": {
+    "regulasi": "PMK 168/2023",
+    "bagian": "Lampiran huruf B, Bagian Kedua, I.5 (tunjangan pajak), Tuan H",
+    "halaman_pdf": [
+      45
+    ]
+  },
+  "rezim": "TER_2024",
+  "dalam_lingkup": true,
+  "skenario": [
+    "TER_bulanan",
+    "tunjangan_pajak",
+    "kategori_B",
+    "iuran_pensiun_tidak_mengurangi_bruto_masa"
+  ],
+  "uraian": "Tuan H (K/2) Juli 2024: gaji 6,5 juta + tunjangan pajak 300 ribu (jumlah tetap); iuran pensiun 100 ribu tidak mengurangi dasar TER; bruto 6,8 juta, TER B 0,5%.",
+  "input": {
+    "tahun_pajak": 2024,
+    "status_ptkp": "K/2",
+    "jenis_kelamin": "L",
+    "metode": "gross",
+    "masa": [
+      {
+        "bulan": 7,
+        "komponen": {
+          "gaji": 6500000,
+          "tunjangan_pajak": 300000,
+          "iuran_pensiun_pegawai": 100000
+        }
+      }
+    ],
+    "info_tambahan": {
+      "catatan": "Dokumen hanya menyebut tunjangan pajak Rp300.000; penafsiran transkriptor: diperlakukan sebagai jumlah tetap (bukan hasil iterasi gross-up) karena dokumen tidak menghitung gross-up."
+    },
+    "jenis_kelamin_catatan": "disimpulkan dari sapaan 'Tuan' di dokumen"
+  },
+  "expected": {
+    "per_masa": [
+      {
+        "bulan": 7,
+        "bruto": 6800000,
+        "kategori_ter": "B",
+        "tarif_ter": 0.005,
+        "pph21": 34000
+      }
+    ]
+  },
+  "langkah_resmi": [
+    "iuran pensiun tidak diperhitungkan sebagai pengurang penghasilan bruto karena dasar pengenaan ... yaitu penghasilan bruto",
+    "Gaji sebulan 6.500.000 + Tunjangan pajak 300.000 = Penghasilan bruto sebulan 6.800.000",
+    "kategori B ... 0,5%; 0,5% x Rp6.800.000,00 = Rp34.000,00"
+  ],
+  "catatan_transkripsi": "Tidak ada inkonsistensi. Catatan: tunjangan pajak (300.000) jauh lebih besar dari PPh (34.000) - dokumen tidak mensyaratkan kesamaan.",
+  "cek_aritmetika": [
+    {
+      "item": "bruto",
+      "dokumen": 6800000,
+      "hitung_ulang": 6800000,
+      "status": "cocok"
+    },
+    {
+      "item": "PPh bulan 7 = 0.005 x 6800000",
+      "dokumen": 34000,
+      "hitung_ulang": 34000,
+      "status": "cocok"
+    }
+  ],
+  "cek_tabel": "cocok",
+  "cek_tabel_rinci": [
+    {
+      "item": "tarif TER B utk bruto 6.800.000 (bulan 7)",
+      "dokumen": 0.005,
+      "tabel": 0.005,
+      "status": "cocok"
+    },
+    {
+      "item": "kategori TER utk status K/2 (PP 58/2023 Ps. 2 ayat (4))",
+      "dokumen": "B",
+      "tabel": "B",
+      "status": "cocok"
+    }
+  ],
+  "ringkasan_cek": {
+    "aritmetika_cocok": 2,
+    "aritmetika_tidak_cocok": 0,
+    "tabel_cocok": 2,
+    "tabel_tidak_cocok": 0
+  },
+  "dugaan_erratum": null,
+  "verifikasi_pass2": "cocok; catatan 'tunjangan pajak jumlah tetap' kini ditandai sebagai penafsiran transkriptor"
+}

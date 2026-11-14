@@ -156,6 +156,14 @@ VOCAB = {
             r"the calculation result"],
     "F6": [r"certainly", r"as an ai", r"insert citation", r"citation needed", r"knowledge cutoff", r"berikut adalah",
            r"semoga membantu", r"todo", r"tentu saja!", r"mari kita", r"bayangkan", r"let us", r"let's"],
+    # glossary note pasted into a paragraph: "X is called Y in this paper" (A9)
+    "A9": [r"disebut [^.]{1,60} dalam (makalah|naskah|paper|studi|penelitian) ini", r"(selanjutnya|kemudian) disebut",
+           r"(is|are) (called|referred to as|termed) [^.]{1,60} in this (paper|study|work)", r"hereafter",
+           r"henceforth (called|referred)"],
+    # lab-notebook leaks: development chronology, run bookkeeping, script wording (F14)
+    "F14": [r"selama pengembangan", r"during development", r"gpu disembunyikan", r"with the gpu hidden",
+            r"seluruh \d+ run", r"all \d+ runs", r"kode evaluasi (dari|milik)", r"evaluation code of",
+            r"[a-z]{2,3}, [a-z]{2,3}, [a-z]{2,3},? (dan|and) [a-z]{2,3}"],
 }
 TRANSITIONS = [
     "namun", "akan tetapi", "tetapi", "selain itu", "lebih lanjut", "lebih jauh", "dengan demikian", "oleh karena itu",
@@ -359,6 +367,89 @@ def starts_with_transition(sl):
     return None
 
 
+# --- paragraph rules (group A): main sentence, unity, cohesion, adequate development -------------------------------
+STOP_ID = set("""yang dan di ke dari pada untuk dengan dalam ini itu tersebut adalah ialah atau juga tidak bukan lebih
+oleh sebagai karena akan telah sudah dapat bisa harus setiap semua satu dua tiga empat lima para per antara hingga sampai
+sekitar hanya masih tetapi namun sedangkan sehingga bila jika agar serta bahwa ada tiap lain sama baru banyak paling kurang
+atas bawah maupun baik secara yaitu yakni pun lagi saja antar terhadap tanpa sejak selama setelah sebelum ketika saat
+bagian tabel gambar persamaan materi suplemen""".split())
+STOP_EN = set("""the a an and or of to in on for with by from at as is are was were be been being this that these those
+it its they their them than then there here which who whom whose what when where while also not no only more most less
+same each every all both either neither other such into onto over under between among after before during within without
+can could may might must shall should will would do does did has have had about across per via table figure section
+equation supplementary""".split())
+ANAPHOR_ID = {"ini", "itu", "tersebut", "keduanya", "ketiganya", "demikian", "begitu", "serupa", "sama", "berikut",
+              "hal", "nilai", "angka", "selisih", "perbedaan", "hasil"}
+ANAPHOR_EN = {"this", "these", "that", "those", "it", "its", "they", "their", "such", "both", "the same", "similarly",
+              "likewise", "here", "there"}
+POINTER_FIRST = r"^(tabel|gambar|table|fig\.?|figure)\s*\S*\s+(menunjukkan|memuat|melaporkan|menyajikan|merangkum|" \
+                r"shows?|lists?|reports?|summari[sz]es|presents?|gives?)\b"
+
+
+def stem(w, english):
+    w = w.lower()
+    if english:
+        for suf in ("ings", "ing", "ied", "ies", "ed", "es", "s", "ly"):
+            if w.endswith(suf) and len(w) - len(suf) >= 4:
+                return w[: -len(suf)]
+        return w
+    for suf in ("nya", "lah", "kan", "an", "i"):
+        if w.endswith(suf) and len(w) - len(suf) >= 4:
+            w = w[: -len(suf)]
+            break
+    for pre in ("meng", "meny", "mem", "men", "me", "peng", "peny", "pem", "pen", "per", "pe", "ber", "ter", "di",
+                "ke", "se"):
+        if w.startswith(pre) and len(w) - len(pre) >= 4:
+            return w[len(pre):]
+    return w
+
+
+def content_stems(s, english):
+    stop = STOP_EN if english else STOP_ID
+    return {stem(w, english) for w in re.findall(r"[A-Za-z][A-Za-z0-9-]{3,}", s) if w.lower() not in stop}
+
+
+def opens_with_reference(s, english):
+    """The sentence links back through a pronoun, demonstrative, -nya form or transition near its start."""
+    sl = s.lower()
+    if starts_with_transition(sl):
+        return True
+    head = re.findall(r"[\w'-]+", sl)[:5]
+    if english:
+        return any(w in ANAPHOR_EN for w in head[:3])
+    return any(w in ANAPHOR_ID or (w.endswith("nya") and len(w) > 5) for w in head)
+
+
+def paragraph_rules(sents, english):
+    """A1 pointer instead of a main sentence, A3 sentences without any cohesion link, A5 a run of short numeric fact
+    sentences. All are warnings to be judged by reading; A2, A4 and A6 are checked by reading only."""
+    hits, n = [], len(sents)
+    if n < 3:
+        return hits
+    stems = [content_stems(s, english) for s in sents]
+    if re.match(POINTER_FIRST, sents[0].lower()):
+        hits.append(("A1", f"kalimat pertama hanya menunjuk tabel/gambar, bukan menyatakan pokok paragraf: "
+                           f"{sents[0][:60]}"))
+    loose = []
+    for i in range(1, n):
+        linked = (stems[i] & stems[i - 1]) or (stems[i] & stems[0]) or opens_with_reference(sents[i], english)
+        if not linked:
+            loose.append(i)
+    # A2 (unity) is not scanned: on human-written reference papers a word-overlap test flagged more sentences than on
+    # the project draft, so it did not separate good from weak paragraphs. A2 is checked by reading.
+    if n >= 4 and len(loose) / (n - 1) >= 0.5:
+        hits.append(("A3", f"{len(loose)} dari {n - 1} kalimat penjelas tanpa penanda kepaduan dengan kalimat sebelumnya "
+                           f"atau kalimat utama, mis.: {sents[loose[0]][:60]}"))
+    run = best = 0
+    for s in sents:
+        numeric = bool(re.search(r"\d", s)) and len(words(s)) <= 18 and not opens_with_reference(s, english)
+        run = run + 1 if numeric else 0
+        best = max(best, run)
+    if best >= 4:
+        hits.append(("A5", f"{best} kalimat pendek berangka berderet tanpa penghubung (deret fakta, bukan kalimat penjelas)"))
+    return hits
+
+
 def scan_paragraph(par, english, synonyms):
     hits = []
     low = par.lower()
@@ -551,6 +642,7 @@ def scan_paragraph(par, english, synonyms):
             n = len(re.findall(r"\b" + w + r"\b", low))
             if n >= lim:
                 hits.append((rule, f"'{w}' {n} kali dalam satu paragraf"))
+    hits += paragraph_rules(sents, english)
     n_words, n_sents = len(words(par)), len(sents)
     if n_sents and (n_sents < 3 or n_words < 50):
         hits.append(("W11", f"paragraf pendek ({n_sents} kalimat, {n_words} kata)"))

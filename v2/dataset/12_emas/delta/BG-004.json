@@ -1,0 +1,90 @@
+{
+ "delta_id": "BG-004",
+ "event_id": null,
+ "document": {
+  "id": "PP-45-2015",
+  "title": "PP 45/2015 Jaminan Pensiun",
+  "issued": "2015-06-30"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "parameter",
+   "id": "PAR.JP_EMPLOYEE_RATE.2015",
+   "name": "jp_employee_rate",
+   "value": "0.01",
+   "value_type": "rate",
+   "valid_from": "2015-07-01",
+   "label_id": "iuran jaminan pensiun pekerja",
+   "source": [
+    {
+     "document": "PP-45-2015",
+     "provision": "Pasal 28 ayat (3) huruf b",
+     "page": 20,
+     "quote": "b. 1% (satu persen) dari upah ditanggung oleh"
+    }
+   ],
+   "recorded_on": "2015-06-30"
+  },
+  {
+   "kind": "parameter",
+   "id": "PAR.JP_WAGE_CAP.2015",
+   "name": "jp_wage_cap",
+   "value": 7000000,
+   "value_type": "money",
+   "valid_from": "2015-07-01",
+   "label_id": "batas upah tertinggi jaminan pensiun",
+   "source": [
+    {
+     "document": "PP-45-2015",
+     "provision": "Pasal 29 ayat (2)",
+     "page": 21,
+     "quote": "tahun 2015 ditetapkan sebesar Rp7.000.000,00"
+    }
+   ],
+   "recorded_on": "2015-06-30"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.BPJS.JP_WAGE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "jp_wage",
+   "expression": "min(bpjs_wage, param('jp_wage_cap'))",
+   "valid_from": "2015-07-01",
+   "source": [
+    {
+     "document": "PP-45-2015",
+     "provision": "Pasal 29 ayat (2)",
+     "page": 21,
+     "quote": "Batas paling tinggi Upah yang digunakan sebagai"
+    }
+   ],
+   "recorded_on": "2015-06-30"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.BPJS.JP_EMPLOYEE",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "jp_employee",
+   "condition": "employer('premiums_as_billed') != True",
+   "expression": "round(param('jp_employee_rate') * jp_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2015-07-01",
+   "source": [
+    {
+     "document": "PP-45-2015",
+     "provision": "Pasal 28 ayat (3)",
+     "page": 20,
+     "quote": "oleh Pemberi Kerja selain penyelenggara negara dan"
+    }
+   ],
+   "recorded_on": "2015-06-30"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": ""
+}

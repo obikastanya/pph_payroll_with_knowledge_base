@@ -1,0 +1,1288 @@
+{
+ "run": "devsub2-pol",
+ "event": "SP02",
+ "condition": "proposed",
+ "documents": [
+  "SP02"
+ ],
+ "selection": {
+  "SP02": {
+   "tokens": 998,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [],
+    "G4": "pass",
+    "G5_warnings": [
+     "stated effective date 2023-01-01 is not reflected: no S^G case changes in that month"
+    ],
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP02.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)",
+     "redundant REG.P16.RUNNING, PRS.SP02.RUNNING pph21_running: same condition and expression"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "stated effective date 2023-01-01 is not reflected: no S^G case changes in that month"
+    ],
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.TAXABLE_ANNUALIZED",
+      "label": "annualised taxable regular income: regular gross x 12 minus annual job expense, JHT/JP and PTKP, rounded down to thousands",
+      "label_id": "penghasilan kena pajak teratur disetahunkan (bruto x 12)",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "recorded_on": "2023-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "taxable_regular_annualized"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, round(12 * regular_gross - min(round(param('job_expense_rate') * 12 * regular_gross, 1, 'down'), param('job_expense_max_year')) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "policy",
+        "value": "SP02"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2) huruf a sampai c",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan teratur pada setiap Masa Pajak Januari sampai dengan November dihitung dengan cara: a. penghasilan bruto teratur sebulan dikalikan 12 (dua belas); b. dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun, iuran JHT dan JP bagian pekerja setahun, dan Penghasilan Tidak Kena Pajak; c. Penghasilan Kena Pajak dibulatkan ke bawah hingga ribuan rupiah penuh;"
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_REGULAR_MONTH",
+      "label": "monthly tax on regular income: Article 17 tax on annualised PKP divided by 12",
+      "label_id": "PPh sebulan atas penghasilan teratur (PPh setahun dibagi 12)",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "recorded_on": "2023-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_regular_month"
+       },
+       {
+        "name": "expression",
+        "value": "round(round(progressive('pasal17', taxable_regular_annualized), 1, 'down') / 12, 1, param('pph_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "policy",
+        "value": "SP02"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2) huruf d dan e",
+        "page": 1,
+        "quote": "d. dikenai tarif Pasal 17 ayat (1) huruf a Undang-Undang Pajak Penghasilan; dan e. hasilnya dibagi 12 (dua belas)."
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (5)",
+        "page": 1,
+        "quote": "Tata cara sebagaimana dimaksud pada ayat (2) sampai dengan ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini."
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_IRREGULAR",
+      "label": "tax on irregular income (bonus, THR): difference of annual tax with and without irregular income",
+      "label_id": "PPh atas penghasilan tidak teratur (selisih PPh setahun)",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "recorded_on": "2023-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_irregular_month"
+       },
+       {
+        "name": "expression",
+        "value": "(round(progressive('pasal17', max(0, round((12 * regular_gross + irregular_gross) - min(round(param('job_expense_rate') * (12 * regular_gross + irregular_gross), 1, 'down'), param('job_expense_max_year')) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))), 1, 'down') - round(progressive('pasal17', taxable_regular_annualized), 1, 'down')) if irregular_gross > 0 else 0"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "policy",
+        "value": "SP02"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (3)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan tidak teratur, termasuk bonus tahunan dan Tunjangan Hari Raya Keagamaan, sebesar selisih antara Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan ditambah penghasilan tidak teratur dengan Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan."
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2) huruf b",
+        "page": 1,
+        "quote": "b. dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun, iuran JHT dan JP bagian pekerja setahun, dan Penghasilan Tidak Kena Pajak;"
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Covered Pasal 31 ayat (2) huruf a-e, ayat (3) and ayat (5) with Pasal 52 ayat (1): the policy fixes the annualised method (regular gross x 12, 5% job expense capped at Rp6,000,000 a year, rounding to thousands, Article 17 tariff, divided by 12) for 2023-2024, modelled as company rules on taxable_regular_annualized, pph_regular_month and pph_irregular_month. Pasal 32 (JKK 0.89%, JKM 0.30%, health 4%, JHT 2%, JP 1%), Pasal 31 ayat (1) and the December settlement in ayat (4) restate the existing regulation (JKK through the employer's risk group) and are not restated."
+   },
+   "delta": {
+    "delta_id": "devsub2-pol-SP02-cand1",
+    "event_id": "SP02",
+    "document": {
+     "id": "SP02",
+     "title": "PT Presisi Komponen Otomotif: Peraturan Perusahaan (Lampiran Sistem Penggajian)",
+     "issued": "2023-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.TAXABLE_ANNUALIZED",
+      "recorded_on": "2023-01-01",
+      "label": "annualised taxable regular income: regular gross x 12 minus annual job expense, JHT/JP and PTKP, rounded down to thousands",
+      "label_id": "penghasilan kena pajak teratur disetahunkan (bruto x 12)",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "taxable_regular_annualized",
+      "condition": "not is_final_period",
+      "expression": "max(0, round(12 * regular_gross - min(round(param('job_expense_rate') * 12 * regular_gross, 1, 'down'), param('job_expense_max_year')) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+      "policy": "SP02",
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2) huruf a sampai c",
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan teratur pada setiap Masa Pajak Januari sampai dengan November dihitung dengan cara: a. penghasilan bruto teratur sebulan dikalikan 12 (dua belas); b. dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun, iuran JHT dan JP bagian pekerja setahun, dan Penghasilan Tidak Kena Pajak; c. Penghasilan Kena Pajak dibulatkan ke bawah hingga ribuan rupiah penuh;",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_REGULAR_MONTH",
+      "recorded_on": "2023-01-01",
+      "label": "monthly tax on regular income: Article 17 tax on annualised PKP divided by 12",
+      "label_id": "PPh sebulan atas penghasilan teratur (PPh setahun dibagi 12)",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph_regular_month",
+      "condition": "not is_final_period",
+      "expression": "round(round(progressive('pasal17', taxable_regular_annualized), 1, 'down') / 12, 1, param('pph_round_mode'))",
+      "policy": "SP02",
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2) huruf d dan e",
+        "quote": "d. dikenai tarif Pasal 17 ayat (1) huruf a Undang-Undang Pajak Penghasilan; dan e. hasilnya dibagi 12 (dua belas).",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (5)",
+        "quote": "Tata cara sebagaimana dimaksud pada ayat (2) sampai dengan ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini.",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_IRREGULAR",
+      "recorded_on": "2023-01-01",
+      "label": "tax on irregular income (bonus, THR): difference of annual tax with and without irregular income",
+      "label_id": "PPh atas penghasilan tidak teratur (selisih PPh setahun)",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph_irregular_month",
+      "condition": "not is_final_period",
+      "expression": "(round(progressive('pasal17', max(0, round((12 * regular_gross + irregular_gross) - min(round(param('job_expense_rate') * (12 * regular_gross + irregular_gross), 1, 'down'), param('job_expense_max_year')) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))), 1, 'down') - round(progressive('pasal17', taxable_regular_annualized), 1, 'down')) if irregular_gross > 0 else 0",
+      "policy": "SP02",
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (3)",
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan tidak teratur, termasuk bonus tahunan dan Tunjangan Hari Raya Keagamaan, sebesar selisih antara Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan ditambah penghasilan tidak teratur dengan Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan.",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2) huruf b",
+        "quote": "b. dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun, iuran JHT dan JP bagian pekerja setahun, dan Penghasilan Tidak Kena Pajak;",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Covered Pasal 31 ayat (2) huruf a-e, ayat (3) and ayat (5) with Pasal 52 ayat (1): the policy fixes the annualised method (regular gross x 12, 5% job expense capped at Rp6,000,000 a year, rounding to thousands, Article 17 tariff, divided by 12) for 2023-2024, modelled as company rules on taxable_regular_annualized, pph_regular_month and pph_irregular_month. Pasal 32 (JKK 0.89%, JKM 0.30%, health 4%, JHT 2%, JP 1%), Pasal 31 ayat (1) and the December settlement in ayat (4) restate the existing regulation (JKK through the employer's risk group) and are not restated."
+   },
+   "initial_delta": null,
+   "review": {
+    "prompt_tail": "s_final_period\"}, {\"name\": \"policy\", \"value\": \"SP02\"}], \"source\": [{\"document\": \"SP02\", \"provision\": \"Pasal 31 ayat (1)\", \"page\": 1, \"quote\": \"Pajak Penghasilan Pasal 21 dipotong setiap bulan dari penghasilan pekerja.\"}, {\"document\": \"SP02\", \"provision\": \"Pasal 31 ayat (5)\", \"page\": 1, \"quote\": \"Tata cara sebagaimana dimaksud pada ayat (2) sampai dengan ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini.\"}, {\"document\": \"SP02\", \"provision\": \"Pasal 52 ayat (1)\", \"page\": 1, \"quote\": \"Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.\"}]}], \"change\": [], \"remove\": [], \"adopts\": [], \"note\": \"The policy fixes the annualised method (regular gross x 12, annual job expense, divided by 12) for all of 2023-2024, so it is modelled as company rules on the specific tax facts plus the fixed JKK rate of 0.89%; JKM 0.30%, health 4%, JHT 2%, JP 1% and the December settlement equal the existing regulation and are not restated.\"}\n\nEXECUTION ON 250 GENERATED CASES (facts whose values change):\n- no observed fact changes in any generated case\n\nNEW CASE-DATA INPUTS READ BY YOUR DELTA: none\n\nGATE WARNINGS: stated effective date 2023-01-01 is not reflected: no S^G case changes in that month; overridden PRS.SP02.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?); redundant REG.P16.RUNNING, PRS.SP02.RUNNING pph21_running: same condition and expression\n\nReturn the complete final Delta.",
+    "changed": true,
+    "kept": true
+   }
+  },
+  {
+   "n": 2,
+   "order": 1,
+   "passed": false,
+   "passed_before_repair": false,
+   "repaired": true,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP02.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)",
+     "redundant REG.P16.PPH_ANNUAL, PRS.SP02.PPH_ANNUAL pph_regular_annual: same condition and expression"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "stated effective date 2023-01-01 is not reflected: no S^G case changes in that month"
+    ],
+    "G5": "fail: PRS.SP02.PPH_ANNUAL: no effect on any S^G case (vacuous element)"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "fail: dangling PRS.SP02.PPH_MONTH pph_regular_annual: fact has no valid producer in 2024-01..2024-12",
+    "G3_warnings": [
+     "overridden PRS.SP02.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)"
+    ]
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.JKK_RATE",
+      "label": "company JKK premium rate 0.89%",
+      "label_id": "tarif iuran JKK perusahaan 0,89%",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "recorded_on": "2023-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "89 / 10000"
+       },
+       {
+        "name": "policy",
+        "value": "SP02"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 32 ayat (1)",
+        "page": 1,
+        "quote": "Iuran JKK sebesar 0,89% (nol koma delapan puluh sembilan persen), iuran JKM sebesar 0,30% (nol koma tiga puluh persen), dan iuran Jaminan Kesehatan bagian Perusahaan sebesar 4% (empat persen) dari upah sebulan ditanggung Perusahaan dan diperhitungkan sebagai penghasilan bruto pekerja."
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.TAXABLE_ANNUALIZED",
+      "label": "annualised taxable regular income: gross x 12 less job expense (5%, max 6,000,000 a year), JHT/JP and PTKP, rounded down to thousands",
+      "label_id": "penghasilan kena pajak disetahunkan menurut peraturan perusahaan",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "recorded_on": "2023-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "taxable_regular_annualized"
+       },
+       {
+        "name": "expression",
+        "value": "max(0, round(12 * regular_gross - min(round(5 / 100 * 12 * regular_gross, 1, 'down'), 6000000) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "policy",
+        "value": "SP02"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan teratur pada setiap Masa Pajak Januari sampai dengan November dihitung dengan cara: a. penghasilan bruto teratur sebulan dikalikan 12 (dua belas); b. dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun, iuran JHT dan JP bagian pekerja setahun, dan Penghasilan Tidak Kena Pajak; c. Penghasilan Kena Pajak dibulatkan ke bawah hingga ribuan rupiah penuh"
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_ANNUAL",
+      "label": "annual tax on annualised regular income at the Article 17(1)(a) rates",
+      "label_id": "PPh setahun atas penghasilan teratur yang disetahunkan dengan tarif Pasal 17 ayat (1) huruf a",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "recorded_on": "2023-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_regular_annual"
+       },
+       {
+        "name": "expression",
+        "value": "round(progressive('pasal17', taxable_regular_annualized), 1, 'down')"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "policy",
+        "value": "SP02"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2) huruf d",
+        "page": 1,
+        "quote": "d. dikenai tarif Pasal 17 ayat (1) huruf a Undang-Undang Pajak Penghasilan"
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (5)",
+        "page": 1,
+        "quote": "Tata cara sebagaimana dimaksud pada ayat (2) sampai dengan ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini."
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_MONTH",
+      "label": "monthly tax on regular income: annual tax divided by 12",
+      "label_id": "PPh sebulan atas penghasilan teratur: PPh setahun dibagi 12",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "recorded_on": "2023-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_regular_month"
+       },
+       {
+        "name": "expression",
+        "value": "round(pph_regular_annual / 12, 1, param('pph_round_mode'))"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "policy",
+        "value": "SP02"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2) huruf d dan e",
+        "page": 1,
+        "quote": "d. dikenai tarif Pasal 17 ayat (1) huruf a Undang-Undang Pajak Penghasilan; dan e. hasilnya dibagi 12 (dua belas)."
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_IRREGULAR",
+      "label": "tax on irregular income (bonus, THR): annual tax on annualised regular plus irregular income minus annual tax on annualised regular income",
+      "label_id": "PPh atas penghasilan tidak teratur menurut peraturan perusahaan",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "recorded_on": "2023-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph_irregular_month"
+       },
+       {
+        "name": "expression",
+        "value": "round(progressive('pasal17', max(0, round(12 * regular_gross + irregular_gross - min(round(5 / 100 * (12 * regular_gross + irregular_gross), 1, 'down'), 6000000) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))), 1, 'down') - round(progressive('pasal17', max(0, round(12 * regular_gross - min(round(5 / 100 * 12 * regular_gross, 1, 'down'), 6000000) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))), 1, 'down')"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "policy",
+        "value": "SP02"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (3)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan tidak teratur, termasuk bonus tahunan dan Tunjangan Hari Raya Keagamaan, sebesar selisih antara Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan ditambah penghasilan tidak teratur dengan Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan."
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2) huruf b",
+        "page": 1,
+        "quote": "b. dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun, iuran JHT dan JP bagian pekerja setahun, dan Penghasilan Tidak Kena Pajak"
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_DUE_RUNNING",
+      "label": "PPh 21 withheld each month January-November: regular plus irregular part, for the whole policy period",
+      "label_id": "PPh Pasal 21 dipotong setiap bulan Januari sampai November",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "recorded_on": "2023-01-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "pph21_due"
+       },
+       {
+        "name": "expression",
+        "value": "pph_regular_month + pph_irregular_month"
+       },
+       {
+        "name": "condition",
+        "value": "not is_final_period"
+       },
+       {
+        "name": "policy",
+        "value": "SP02"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (1)",
+        "page": 1,
+        "quote": "Pajak Penghasilan Pasal 21 dipotong setiap bulan dari penghasilan pekerja."
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (5)",
+        "page": 1,
+        "quote": "Tata cara sebagaimana dimaksud pada ayat (2) sampai dengan ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini."
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "The policy fixes the annualised method (x12, job expense 5% capped at Rp6,000,000 a year, Article 17 rates on the annualised amount, difference method for bonus/THR) for January-November throughout 2023-2024, so it is modelled as company rules, including the annual tax on annualised regular income so that the chain has a producer in 2024; these are reported as conflicts wherever a mandatory regulation computes differently. JKM 0.30%, health 4%, JHT 2%, JP 1% and the December settlement match existing regulation rules and are not restated, while the stated JKK rate 0.89% is recorded as a company rule for jkk_rate."
+   },
+   "delta": {
+    "delta_id": "devsub2-pol-SP02-cand2",
+    "event_id": "SP02",
+    "document": {
+     "id": "SP02",
+     "title": "PT Presisi Komponen Otomotif: Peraturan Perusahaan (Lampiran Sistem Penggajian)",
+     "issued": "2023-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.JKK_RATE",
+      "recorded_on": "2023-01-01",
+      "label": "company JKK premium rate 0.89%",
+      "label_id": "tarif iuran JKK perusahaan 0,89%",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "89 / 10000",
+      "policy": "SP02",
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 32 ayat (1)",
+        "quote": "Iuran JKK sebesar 0,89% (nol koma delapan puluh sembilan persen), iuran JKM sebesar 0,30% (nol koma tiga puluh persen), dan iuran Jaminan Kesehatan bagian Perusahaan sebesar 4% (empat persen) dari upah sebulan ditanggung Perusahaan dan diperhitungkan sebagai penghasilan bruto pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.TAXABLE_ANNUALIZED",
+      "recorded_on": "2023-01-01",
+      "label": "annualised taxable regular income: gross x 12 less job expense (5%, max 6,000,000 a year), JHT/JP and PTKP, rounded down to thousands",
+      "label_id": "penghasilan kena pajak disetahunkan menurut peraturan perusahaan",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "taxable_regular_annualized",
+      "condition": "not is_final_period",
+      "expression": "max(0, round(12 * regular_gross - min(round(5 / 100 * 12 * regular_gross, 1, 'down'), 6000000) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+      "policy": "SP02",
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2)",
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan teratur pada setiap Masa Pajak Januari sampai dengan November dihitung dengan cara: a. penghasilan bruto teratur sebulan dikalikan 12 (dua belas); b. dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun, iuran JHT dan JP bagian pekerja setahun, dan Penghasilan Tidak Kena Pajak; c. Penghasilan Kena Pajak dibulatkan ke bawah hingga ribuan rupiah penuh",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_ANNUAL",
+      "recorded_on": "2023-01-01",
+      "label": "annual tax on annualised regular income at the Article 17(1)(a) rates",
+      "label_id": "PPh setahun atas penghasilan teratur yang disetahunkan dengan tarif Pasal 17 ayat (1) huruf a",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph_regular_annual",
+      "condition": "not is_final_period",
+      "expression": "round(progressive('pasal17', taxable_regular_annualized), 1, 'down')",
+      "policy": "SP02",
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2) huruf d",
+        "quote": "d. dikenai tarif Pasal 17 ayat (1) huruf a Undang-Undang Pajak Penghasilan",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (5)",
+        "quote": "Tata cara sebagaimana dimaksud pada ayat (2) sampai dengan ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini.",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_MONTH",
+      "recorded_on": "2023-01-01",
+      "label": "monthly tax on regular income: annual tax divided by 12",
+      "label_id": "PPh sebulan atas penghasilan teratur: PPh setahun dibagi 12",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph_regular_month",
+      "condition": "not is_final_period",
+      "expression": "round(pph_regular_annual / 12, 1, param('pph_round_mode'))",
+      "policy": "SP02",
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2) huruf d dan e",
+        "quote": "d. dikenai tarif Pasal 17 ayat (1) huruf a Undang-Undang Pajak Penghasilan; dan e. hasilnya dibagi 12 (dua belas).",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_IRREGULAR",
+      "recorded_on": "2023-01-01",
+      "label": "tax on irregular income (bonus, THR): annual tax on annualised regular plus irregular income minus annual tax on annualised regular income",
+      "label_id": "PPh atas penghasilan tidak teratur menurut peraturan perusahaan",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph_irregular_month",
+      "condition": "not is_final_period",
+      "expression": "round(progressive('pasal17', max(0, round(12 * regular_gross + irregular_gross - min(round(5 / 100 * (12 * regular_gross + irregular_gross), 1, 'down'), 6000000) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))), 1, 'down') - round(progressive('pasal17', max(0, round(12 * regular_gross - min(round(5 / 100 * 12 * regular_gross, 1, 'down'), 6000000) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))), 1, 'down')",
+      "policy": "SP02",
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (3)",
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan tidak teratur, termasuk bonus tahunan dan Tunjangan Hari Raya Keagamaan, sebesar selisih antara Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan ditambah penghasilan tidak teratur dengan Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan.",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2) huruf b",
+        "quote": "b. dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun, iuran JHT dan JP bagian pekerja setahun, dan Penghasilan Tidak Kena Pajak",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_DUE_RUNNING",
+      "recorded_on": "2023-01-01",
+      "label": "PPh 21 withheld each month January-November: regular plus irregular part, for the whole policy period",
+      "label_id": "PPh Pasal 21 dipotong setiap bulan Januari sampai November",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "not is_final_period",
+      "expression": "pph_regular_month + pph_irregular_month",
+      "policy": "SP02",
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (1)",
+        "quote": "Pajak Penghasilan Pasal 21 dipotong setiap bulan dari penghasilan pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (5)",
+        "quote": "Tata cara sebagaimana dimaksud pada ayat (2) sampai dengan ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini.",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The policy fixes the annualised method (x12, job expense 5% capped at Rp6,000,000 a year, Article 17 rates on the annualised amount, difference method for bonus/THR) for January-November throughout 2023-2024, so it is modelled as company rules, including the annual tax on annualised regular income so that the chain has a producer in 2024; these are reported as conflicts wherever a mandatory regulation computes differently. JKM 0.30%, health 4%, JHT 2%, JP 1% and the December settlement match existing regulation rules and are not restated, while the stated JKK rate 0.89% is recorded as a company rule for jkk_rate."
+   },
+   "initial_delta": {
+    "delta_id": "devsub2-pol-SP02-cand2",
+    "event_id": "SP02",
+    "document": {
+     "id": "SP02",
+     "title": "PT Presisi Komponen Otomotif: Peraturan Perusahaan (Lampiran Sistem Penggajian)",
+     "issued": "2023-01-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.JKK_RATE",
+      "recorded_on": "2023-01-01",
+      "label": "company JKK premium rate 0.89%",
+      "label_id": "tarif iuran JKK perusahaan 0,89%",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "89 / 10000",
+      "policy": "SP02",
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 32 ayat (1)",
+        "quote": "Iuran JKK sebesar 0,89% (nol koma delapan puluh sembilan persen), iuran JKM sebesar 0,30% (nol koma tiga puluh persen), dan iuran Jaminan Kesehatan bagian Perusahaan sebesar 4% (empat persen) dari upah sebulan ditanggung Perusahaan dan diperhitungkan sebagai penghasilan bruto pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.TAXABLE_ANNUALIZED",
+      "recorded_on": "2023-01-01",
+      "label": "annualised taxable regular income: gross x 12 less job expense (5%, max 6,000,000 a year), JHT/JP and PTKP, rounded down to thousands",
+      "label_id": "penghasilan kena pajak disetahunkan menurut peraturan perusahaan",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "taxable_regular_annualized",
+      "condition": "not is_final_period",
+      "expression": "max(0, round(12 * regular_gross - min(round(5 / 100 * 12 * regular_gross, 1, 'down'), 6000000) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+      "policy": "SP02",
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2)",
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan teratur pada setiap Masa Pajak Januari sampai dengan November dihitung dengan cara: a. penghasilan bruto teratur sebulan dikalikan 12 (dua belas); b. dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun, iuran JHT dan JP bagian pekerja setahun, dan Penghasilan Tidak Kena Pajak; c. Penghasilan Kena Pajak dibulatkan ke bawah hingga ribuan rupiah penuh",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_MONTH",
+      "recorded_on": "2023-01-01",
+      "label": "monthly tax on regular income: annual tax divided by 12",
+      "label_id": "PPh sebulan atas penghasilan teratur: PPh setahun dibagi 12",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph_regular_month",
+      "condition": "not is_final_period",
+      "expression": "round(pph_regular_annual / 12, 1, param('pph_round_mode'))",
+      "policy": "SP02",
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2) huruf d dan e",
+        "quote": "d. dikenai tarif Pasal 17 ayat (1) huruf a Undang-Undang Pajak Penghasilan; dan e. hasilnya dibagi 12 (dua belas).",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_IRREGULAR",
+      "recorded_on": "2023-01-01",
+      "label": "tax on irregular income (bonus, THR): annual tax on annualised regular plus irregular income minus annual tax on annualised regular income",
+      "label_id": "PPh atas penghasilan tidak teratur menurut peraturan perusahaan",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph_irregular_month",
+      "condition": "not is_final_period",
+      "expression": "round(progressive('pasal17', max(0, round(12 * regular_gross + irregular_gross - min(round(5 / 100 * (12 * regular_gross + irregular_gross), 1, 'down'), 6000000) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))), 1, 'down') - round(progressive('pasal17', max(0, round(12 * regular_gross - min(round(5 / 100 * 12 * regular_gross, 1, 'down'), 6000000) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))), 1, 'down')",
+      "policy": "SP02",
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (3)",
+        "quote": "Pajak Penghasilan Pasal 21 atas penghasilan tidak teratur, termasuk bonus tahunan dan Tunjangan Hari Raya Keagamaan, sebesar selisih antara Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan ditambah penghasilan tidak teratur dengan Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan.",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (2) huruf b",
+        "quote": "b. dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun, iuran JHT dan JP bagian pekerja setahun, dan Penghasilan Tidak Kena Pajak",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP02.PPH_DUE_RUNNING",
+      "recorded_on": "2023-01-01",
+      "label": "PPh 21 withheld each month January-November: regular plus irregular part, for the whole policy period",
+      "label_id": "PPh Pasal 21 dipotong setiap bulan Januari sampai November",
+      "valid_from": "2023-01-01",
+      "valid_until": "2024-12-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "pph21_due",
+      "condition": "not is_final_period",
+      "expression": "pph_regular_month + pph_irregular_month",
+      "policy": "SP02",
+      "source": [
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (1)",
+        "quote": "Pajak Penghasilan Pasal 21 dipotong setiap bulan dari penghasilan pekerja.",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 31 ayat (5)",
+        "quote": "Tata cara sebagaimana dimaksud pada ayat (2) sampai dengan ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini.",
+        "page": 1
+       },
+       {
+        "document": "SP02",
+        "provision": "Pasal 52 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "The policy fixes the annualised method (x12, job expense 5% capped at Rp6,000,000 a year, difference method for bonus/THR) for January-November throughout 2023-2024, so it is modelled as company rules that will be reported as conflicts wherever a mandatory regulation computes differently; JKM 0.30%, health 4%, JHT 2%, JP 1% and the December settlement match existing regulation rules and are not restated, while the stated JKK rate 0.89% is recorded as a company rule for jkk_rate."
+   },
+   "review": null
+  }
+ ],
+ "groups": [
+  [
+   1
+  ]
+ ],
+ "selected": 1,
+ "status": "applied",
+ "delta": {
+  "delta_id": "devsub2-pol-SP02-cand1",
+  "event_id": "SP02",
+  "document": {
+   "id": "SP02",
+   "title": "PT Presisi Komponen Otomotif: Peraturan Perusahaan (Lampiran Sistem Penggajian)",
+   "issued": "2023-01-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP02.TAXABLE_ANNUALIZED",
+    "recorded_on": "2023-01-01",
+    "label": "annualised taxable regular income: regular gross x 12 minus annual job expense, JHT/JP and PTKP, rounded down to thousands",
+    "label_id": "penghasilan kena pajak teratur disetahunkan (bruto x 12)",
+    "valid_from": "2023-01-01",
+    "valid_until": "2024-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "taxable_regular_annualized",
+    "condition": "not is_final_period",
+    "expression": "max(0, round(12 * regular_gross - min(round(param('job_expense_rate') * 12 * regular_gross, 1, 'down'), param('job_expense_max_year')) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))",
+    "policy": "SP02",
+    "source": [
+     {
+      "document": "SP02",
+      "provision": "Pasal 31 ayat (2) huruf a sampai c",
+      "quote": "Pajak Penghasilan Pasal 21 atas penghasilan teratur pada setiap Masa Pajak Januari sampai dengan November dihitung dengan cara: a. penghasilan bruto teratur sebulan dikalikan 12 (dua belas); b. dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun, iuran JHT dan JP bagian pekerja setahun, dan Penghasilan Tidak Kena Pajak; c. Penghasilan Kena Pajak dibulatkan ke bawah hingga ribuan rupiah penuh;",
+      "page": 1
+     },
+     {
+      "document": "SP02",
+      "provision": "Pasal 52 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP02.PPH_REGULAR_MONTH",
+    "recorded_on": "2023-01-01",
+    "label": "monthly tax on regular income: Article 17 tax on annualised PKP divided by 12",
+    "label_id": "PPh sebulan atas penghasilan teratur (PPh setahun dibagi 12)",
+    "valid_from": "2023-01-01",
+    "valid_until": "2024-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "pph_regular_month",
+    "condition": "not is_final_period",
+    "expression": "round(round(progressive('pasal17', taxable_regular_annualized), 1, 'down') / 12, 1, param('pph_round_mode'))",
+    "policy": "SP02",
+    "source": [
+     {
+      "document": "SP02",
+      "provision": "Pasal 31 ayat (2) huruf d dan e",
+      "quote": "d. dikenai tarif Pasal 17 ayat (1) huruf a Undang-Undang Pajak Penghasilan; dan e. hasilnya dibagi 12 (dua belas).",
+      "page": 1
+     },
+     {
+      "document": "SP02",
+      "provision": "Pasal 31 ayat (5)",
+      "quote": "Tata cara sebagaimana dimaksud pada ayat (2) sampai dengan ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini.",
+      "page": 1
+     },
+     {
+      "document": "SP02",
+      "provision": "Pasal 52 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP02.PPH_IRREGULAR",
+    "recorded_on": "2023-01-01",
+    "label": "tax on irregular income (bonus, THR): difference of annual tax with and without irregular income",
+    "label_id": "PPh atas penghasilan tidak teratur (selisih PPh setahun)",
+    "valid_from": "2023-01-01",
+    "valid_until": "2024-12-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "pph_irregular_month",
+    "condition": "not is_final_period",
+    "expression": "(round(progressive('pasal17', max(0, round((12 * regular_gross + irregular_gross) - min(round(param('job_expense_rate') * (12 * regular_gross + irregular_gross), 1, 'down'), param('job_expense_max_year')) - 12 * employee_pension_contributions - ptkp_amount, 1000, 'down'))), 1, 'down') - round(progressive('pasal17', taxable_regular_annualized), 1, 'down')) if irregular_gross > 0 else 0",
+    "policy": "SP02",
+    "source": [
+     {
+      "document": "SP02",
+      "provision": "Pasal 31 ayat (3)",
+      "quote": "Pajak Penghasilan Pasal 21 atas penghasilan tidak teratur, termasuk bonus tahunan dan Tunjangan Hari Raya Keagamaan, sebesar selisih antara Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan ditambah penghasilan tidak teratur dengan Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan.",
+      "page": 1
+     },
+     {
+      "document": "SP02",
+      "provision": "Pasal 31 ayat (2) huruf b",
+      "quote": "b. dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun, iuran JHT dan JP bagian pekerja setahun, dan Penghasilan Tidak Kena Pajak;",
+      "page": 1
+     },
+     {
+      "document": "SP02",
+      "provision": "Pasal 52 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+      "page": 1
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "Covered Pasal 31 ayat (2) huruf a-e, ayat (3) and ayat (5) with Pasal 52 ayat (1): the policy fixes the annualised method (regular gross x 12, 5% job expense capped at Rp6,000,000 a year, rounding to thousands, Article 17 tariff, divided by 12) for 2023-2024, modelled as company rules on taxable_regular_annualized, pph_regular_month and pph_irregular_month. Pasal 32 (JKK 0.89%, JKM 0.30%, health 4%, JHT 2%, JP 1%), Pasal 31 ayat (1) and the December settlement in ayat (4) restate the existing regulation (JKK through the employer's risk group) and are not restated."
+ },
+ "cost_usd": 0.0,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "The company payroll regulation sets how PPh 21 is computed for its employees during 2023-2024: employer-paid JKK (0.89%), JKM (0.30%) and company health contribution (4%) are added to gross income; employee JHT (2%) and JP (1%) are deducted; monthly PPh 21 for January-November is computed by annualizing regular gross income, deducting biaya jabatan (5%, max Rp6,000,000 a year), JHT/JP and PTKP, rounding PKP down to full thousands, applying Article 17(1)(a) rates and dividing by 12; irregular income (annual bonus paid in March, THR) is taxed as the difference in annual tax; December or the last month settles the annual tax. These are value, rate, rounding and calculation-step rules for permanent employees.",
+   "quotes": [
+    {
+     "provision": "Pasal 32 ayat (1): employer-paid JKK, JKM and health contributions and their rates, counted as gross income",
+     "quote": "Iuran JKK sebesar 0,89% (nol koma delapan puluh sembilan persen), iuran JKM sebesar 0,30% (nol koma tiga puluh persen), dan iuran Jaminan Kesehatan bagian Perusahaan sebesar 4% (empat persen) dari upah sebulan ditanggung Perusahaan dan diperhitungkan sebagai penghasilan bruto pekerja."
+    },
+    {
+     "provision": "Pasal 32 ayat (2): employee JHT 2% and JP 1% deducted from wages",
+     "quote": "Iuran JHT bagian pekerja sebesar 2% (dua persen) dan iuran JP bagian pekerja sebesar 1% (satu persen) dari upah sebulan dengan batas upah sesuai ketentuan BPJS Ketenagakerjaan yang berlaku dipotong dari upah pekerja."
+    },
+    {
+     "provision": "Pasal 31 ayat (2): annualization method for January-November, biaya jabatan, deductions, rounding, Article 17 rates, divide by 12",
+     "quote": "Pajak Penghasilan Pasal 21 atas penghasilan teratur pada setiap Masa Pajak Januari sampai dengan November dihitung dengan cara: a. penghasilan bruto teratur sebulan dikalikan 12 (dua belas); b. dikurangi biaya jabatan sebesar 5% (lima persen) paling banyak Rp6.000.000,00 (enam juta rupiah) setahun, iuran JHT dan JP bagian pekerja setahun, dan Penghasilan Tidak Kena Pajak; c. Penghasilan Kena Pajak dibulatkan ke bawah hingga ribuan rupiah penuh; d. dikenai tarif Pasal 17 ayat (1) huruf a Undang-Undang Pajak Penghasilan; dan e. hasilnya dibagi 12 (dua belas)."
+    },
+    {
+     "provision": "Pasal 31 ayat (3): irregular income (bonus, THR) taxed as difference in annual tax",
+     "quote": "Pajak Penghasilan Pasal 21 atas penghasilan tidak teratur, termasuk bonus tahunan dan Tunjangan Hari Raya Keagamaan, sebesar selisih antara Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan ditambah penghasilan tidak teratur dengan Pajak Penghasilan setahun atas penghasilan teratur yang disetahunkan."
+    },
+    {
+     "provision": "Pasal 31 ayat (4): December or last working month settles annual tax",
+     "quote": "Pada Masa Pajak Desember atau bulan terakhir pekerja bekerja, Pajak Penghasilan Pasal 21 dihitung sebesar Pajak Penghasilan setahun dikurangi Pajak Penghasilan Pasal 21 yang telah dipotong pada masa-masa sebelumnya."
+    },
+    {
+     "provision": "Pasal 30 ayat (2): annual bonus paid in March",
+     "quote": "Bonus tahunan dibayarkan pada bulan Maret berdasarkan penilaian kinerja tahun sebelumnya dan kinerja Perusahaan."
+    },
+    {
+     "provision": "Pasal 31 ayat (5): calculation method applies during the regulation's validity period",
+     "quote": "Tata cara sebagaimana dimaksud pada ayat (2) sampai dengan ayat (4) berlaku selama masa berlaku Peraturan Perusahaan ini."
+    }
+   ],
+   "effective_from": "2023-01-01",
+   "effective_from_quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+   "effective_until": "2024-12-31",
+   "effective_until_quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2023 sampai dengan tanggal 31 Desember 2024.",
+   "subjects": [
+    {
+     "kind": "employer_group",
+     "value": "PT Presisi Komponen Otomotif",
+     "quote": "LAMPIRAN II PERATURAN PERUSAHAAN PT PRESISI KOMPONEN OTOMOTIF TENTANG SISTEM PENGGAJIAN"
+    }
+   ]
+  },
+  "quotes_ok": true
+ }
+}

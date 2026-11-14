@@ -1,0 +1,593 @@
+{
+ "run": "devsub2-pol",
+ "event": "SP09",
+ "condition": "proposed",
+ "documents": [
+  "SP09"
+ ],
+ "selection": {
+  "SP09": {
+   "tokens": 588,
+   "dropped": []
+  }
+ },
+ "candidates": [
+  {
+   "n": 1,
+   "order": 1,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C1)",
+     "overridden PRS.SP09.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C2)"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "stated effective date 2023-08-01 is not reflected: no S^G case changes in that month"
+    ],
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C?)",
+     "overridden PRS.SP09.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "stated effective date 2023-08-01 is not reflected: no S^G case changes in that month"
+    ],
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME",
+      "label": "employer JKK, JKM and health premiums excluded from gross income",
+      "label_id": "iuran JKK, JKM dan jaminan kesehatan bagian perusahaan tidak dimasukkan dalam penghasilan bruto",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employer_premiums_taxable"
+       },
+       {
+        "name": "expression",
+        "value": "0"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C1"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (2)",
+        "page": 1,
+        "quote": "Iuran sebagaimana dimaksud pada ayat (1) merupakan kewajiban Perusahaan kepada badan penyelenggara, bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21."
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JKK_RATE",
+      "label": "company work accident premium rate 0.54%",
+      "label_id": "tarif iuran JKK perusahaan 0,54%",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "54 / 10000"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C2"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "page": 1,
+        "quote": "Perusahaan menanggung iuran JKK sebesar 0,54% (nol koma lima puluh empat persen)"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Covered Pasal 25 ayat (1)-(2), Pasal 26 ayat (1)-(2) and Pasal 46 ayat (1). Pasal 25 ayat (2) excludes employer JKK, JKM and health premiums from PPh 21 gross income, modelled as a company rule setting employer_premiums_taxable to 0 that loses to the mandatory REG.PREMIUMS.TAXABLE and is reported as a conflict; the fixed JKK rate of 0,54% is kept as a company rule that conflicts with the regulation whenever the employer's risk group has a different rate, while JKM 0,30%, health 4%, JHT 2%, JP 1% (capped) and withholding from pay restate existing rules and need no element."
+   },
+   "delta": {
+    "delta_id": "devsub2-pol-SP09-cand1",
+    "event_id": "SP09",
+    "document": {
+     "id": "SP09",
+     "title": "PT Cahaya Farmasi Sejahtera: Peraturan Perusahaan",
+     "issued": "2023-08-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME",
+      "recorded_on": "2023-08-01",
+      "label": "employer JKK, JKM and health premiums excluded from gross income",
+      "label_id": "iuran JKK, JKM dan jaminan kesehatan bagian perusahaan tidak dimasukkan dalam penghasilan bruto",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "0",
+      "policy": "SP09",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (2)",
+        "quote": "Iuran sebagaimana dimaksud pada ayat (1) merupakan kewajiban Perusahaan kepada badan penyelenggara, bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21.",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JKK_RATE",
+      "recorded_on": "2023-08-01",
+      "label": "company work accident premium rate 0.54%",
+      "label_id": "tarif iuran JKK perusahaan 0,54%",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "54 / 10000",
+      "policy": "SP09",
+      "conflict_code": "C2",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "quote": "Perusahaan menanggung iuran JKK sebesar 0,54% (nol koma lima puluh empat persen)",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Covered Pasal 25 ayat (1)-(2), Pasal 26 ayat (1)-(2) and Pasal 46 ayat (1). Pasal 25 ayat (2) excludes employer JKK, JKM and health premiums from PPh 21 gross income, modelled as a company rule setting employer_premiums_taxable to 0 that loses to the mandatory REG.PREMIUMS.TAXABLE and is reported as a conflict; the fixed JKK rate of 0,54% is kept as a company rule that conflicts with the regulation whenever the employer's risk group has a different rate, while JKM 0,30%, health 4%, JHT 2%, JP 1% (capped) and withholding from pay restate existing rules and need no element."
+   },
+   "initial_delta": null,
+   "review": {
+    "prompt_tail": "kk_rate\"}, {\"name\": \"expression\", \"value\": \"54 / 10000\"}, {\"name\": \"policy\", \"value\": \"SP09\"}], \"source\": [{\"document\": \"SP09\", \"provision\": \"Pasal 25 ayat (1)\", \"page\": 1, \"quote\": \"Perusahaan menanggung iuran JKK sebesar 0,54% (nol koma lima puluh empat persen)\"}, {\"document\": \"SP09\", \"provision\": \"Pasal 46 ayat (1)\", \"page\": 1, \"quote\": \"Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.\"}]}], \"change\": [], \"remove\": [], \"adopts\": [], \"note\": \"Pasal 25 ayat (2) excludes employer-paid JKK, JKM and health premiums from PPh 21 gross income, modelled as a company rule setting employer_premiums_taxable to 0; it loses to the mandatory REG.PREMIUMS.TAXABLE and should be reported as a conflict. The JKM 0.30%, health 4%, JHT 2% and JP 1% (capped) provisions and the withholding from employee pay restate existing regulation rules and need no element.\"}\n\nEXECUTION ON 250 GENERATED CASES (facts whose values change):\n- no observed fact changes in any generated case\n\nNEW CASE-DATA INPUTS READ BY YOUR DELTA: none\n\nGATE WARNINGS: stated effective date 2023-08-01 is not reflected: no S^G case changes in that month; overridden PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C?); overridden PRS.SP09.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C?)\n\nReturn the complete final Delta.",
+    "changed": true,
+    "kept": true
+   }
+  },
+  {
+   "n": 2,
+   "order": 0,
+   "passed": true,
+   "passed_before_repair": true,
+   "repaired": false,
+   "gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C3)",
+     "overridden PRS.SP09.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C1)"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "stated effective date 2023-08-01 is not reflected: no S^G case changes in that month"
+    ],
+    "G5": "pass"
+   },
+   "first_gate_log": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G3_warnings": [
+     "overridden PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C3)",
+     "overridden PRS.SP09.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C1)"
+    ],
+    "G4": "pass",
+    "G5_warnings": [
+     "stated effective date 2023-08-01 is not reflected: no S^G case changes in that month"
+    ],
+    "G5": "pass"
+   },
+   "sg_size": 250,
+   "error": "",
+   "llm": {
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JKK_RATE",
+      "label": "company JKK premium rate (0.54%)",
+      "label_id": "tarif iuran JKK perusahaan (0,54%)",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "jkk_rate"
+       },
+       {
+        "name": "expression",
+        "value": "54 / 10000"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C1"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "page": 1,
+        "quote": "Perusahaan menanggung iuran JKK sebesar 0,54% (nol koma lima puluh empat persen)"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME",
+      "label": "employer JKK, JKM and health premiums excluded from gross income",
+      "label_id": "iuran JKK, JKM, dan Jaminan Kesehatan bagian perusahaan tidak dimasukkan dalam penghasilan bruto",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "recorded_on": "2023-08-01",
+      "fields": [
+       {
+        "name": "layer",
+        "value": "company"
+       },
+       {
+        "name": "modality",
+        "value": "default"
+       },
+       {
+        "name": "scope",
+        "value": "period"
+       },
+       {
+        "name": "produces",
+        "value": "employer_premiums_taxable"
+       },
+       {
+        "name": "expression",
+        "value": "0"
+       },
+       {
+        "name": "policy",
+        "value": "SP09"
+       },
+       {
+        "name": "conflict_code",
+        "value": "C3"
+       }
+      ],
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (2)",
+        "page": 1,
+        "quote": "bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21"
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "page": 1,
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025."
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "adopts": [],
+    "note": "Covered Pasal 25 ayat (1)-(2), Pasal 26 ayat (1)-(2) and Pasal 46 ayat (1): JKM 0,30%, health 4%, JHT 2%, JP 1% and their wage caps equal the existing regulation, and Pasal 26 ayat (1) only restates withholding under the tax rules, so only the company JKK rate (0,54%) and the exclusion of employer premiums from gross income are added for 1 Aug 2023-31 Jul 2025. Both are intentionally overruled by the mandatory regulation rules and are meant to be reported as conflicts (C1 where the employer's risk group rate differs, C3 whenever employer premiums are non-zero), so no computed value changes."
+   },
+   "delta": {
+    "delta_id": "devsub2-pol-SP09-cand2",
+    "event_id": "SP09",
+    "document": {
+     "id": "SP09",
+     "title": "PT Cahaya Farmasi Sejahtera: Peraturan Perusahaan",
+     "issued": "2023-08-01"
+    },
+    "relevant": true,
+    "add": [
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.JKK_RATE",
+      "recorded_on": "2023-08-01",
+      "label": "company JKK premium rate (0.54%)",
+      "label_id": "tarif iuran JKK perusahaan (0,54%)",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "jkk_rate",
+      "expression": "54 / 10000",
+      "policy": "SP09",
+      "conflict_code": "C1",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (1)",
+        "quote": "Perusahaan menanggung iuran JKK sebesar 0,54% (nol koma lima puluh empat persen)",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     },
+     {
+      "kind": "rule",
+      "id": "PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME",
+      "recorded_on": "2023-08-01",
+      "label": "employer JKK, JKM and health premiums excluded from gross income",
+      "label_id": "iuran JKK, JKM, dan Jaminan Kesehatan bagian perusahaan tidak dimasukkan dalam penghasilan bruto",
+      "valid_from": "2023-08-01",
+      "valid_until": "2025-07-31",
+      "layer": "company",
+      "modality": "default",
+      "scope": "period",
+      "produces": "employer_premiums_taxable",
+      "expression": "0",
+      "policy": "SP09",
+      "conflict_code": "C3",
+      "source": [
+       {
+        "document": "SP09",
+        "provision": "Pasal 25 ayat (2)",
+        "quote": "bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21",
+        "page": 1
+       },
+       {
+        "document": "SP09",
+        "provision": "Pasal 46 ayat (1)",
+        "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+        "page": 1
+       }
+      ]
+     }
+    ],
+    "change": [],
+    "remove": [],
+    "note": "Covered Pasal 25 ayat (1)-(2), Pasal 26 ayat (1)-(2) and Pasal 46 ayat (1): JKM 0,30%, health 4%, JHT 2%, JP 1% and their wage caps equal the existing regulation, and Pasal 26 ayat (1) only restates withholding under the tax rules, so only the company JKK rate (0,54%) and the exclusion of employer premiums from gross income are added for 1 Aug 2023-31 Jul 2025. Both are intentionally overruled by the mandatory regulation rules and are meant to be reported as conflicts (C1 where the employer's risk group rate differs, C3 whenever employer premiums are non-zero), so no computed value changes."
+   },
+   "initial_delta": null,
+   "review": {
+    "prompt_tail": "ue\": \"0\"}, {\"name\": \"policy\", \"value\": \"SP09\"}, {\"name\": \"conflict_code\", \"value\": \"C3\"}], \"source\": [{\"document\": \"SP09\", \"provision\": \"Pasal 25 ayat (2)\", \"page\": 1, \"quote\": \"bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21\"}, {\"document\": \"SP09\", \"provision\": \"Pasal 46 ayat (1)\", \"page\": 1, \"quote\": \"Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.\"}]}], \"change\": [], \"remove\": [], \"adopts\": [], \"note\": \"JKM 0,30%, health 4%, JHT 2% and JP 1% equal the existing regulation parameters, so only the company JKK rate (0,54%) and the exclusion of employer premiums from gross income are added; both lose to the mandatory regulation rules and are expected to surface as conflicts where the values differ (the exclusion always differs when premiums are non-zero).\"}\n\nEXECUTION ON 250 GENERATED CASES (facts whose values change):\n- no observed fact changes in any generated case\n\nNEW CASE-DATA INPUTS READ BY YOUR DELTA: none\n\nGATE WARNINGS: stated effective date 2023-08-01 is not reflected: no S^G case changes in that month; overridden PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME, REG.PREMIUMS.TAXABLE employer_premiums_taxable: company rule always loses to mandatory REG.PREMIUMS.TAXABLE (conflict C3); overridden PRS.SP09.JKK_RATE, REG.BPJS.JKK_RATE jkk_rate: company rule always loses to mandatory REG.BPJS.JKK_RATE (conflict C1)\n\nReturn the complete final Delta.",
+    "changed": true,
+    "kept": true
+   }
+  }
+ ],
+ "groups": [
+  [
+   2,
+   1
+  ]
+ ],
+ "selected": 2,
+ "status": "applied",
+ "delta": {
+  "delta_id": "devsub2-pol-SP09-cand2",
+  "event_id": "SP09",
+  "document": {
+   "id": "SP09",
+   "title": "PT Cahaya Farmasi Sejahtera: Peraturan Perusahaan",
+   "issued": "2023-08-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP09.JKK_RATE",
+    "recorded_on": "2023-08-01",
+    "label": "company JKK premium rate (0.54%)",
+    "label_id": "tarif iuran JKK perusahaan (0,54%)",
+    "valid_from": "2023-08-01",
+    "valid_until": "2025-07-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "jkk_rate",
+    "expression": "54 / 10000",
+    "policy": "SP09",
+    "conflict_code": "C1",
+    "source": [
+     {
+      "document": "SP09",
+      "provision": "Pasal 25 ayat (1)",
+      "quote": "Perusahaan menanggung iuran JKK sebesar 0,54% (nol koma lima puluh empat persen)",
+      "page": 1
+     },
+     {
+      "document": "SP09",
+      "provision": "Pasal 46 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+      "page": 1
+     }
+    ]
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP09.EMPLOYER_PREMIUMS_NOT_INCOME",
+    "recorded_on": "2023-08-01",
+    "label": "employer JKK, JKM and health premiums excluded from gross income",
+    "label_id": "iuran JKK, JKM, dan Jaminan Kesehatan bagian perusahaan tidak dimasukkan dalam penghasilan bruto",
+    "valid_from": "2023-08-01",
+    "valid_until": "2025-07-31",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "employer_premiums_taxable",
+    "expression": "0",
+    "policy": "SP09",
+    "conflict_code": "C3",
+    "source": [
+     {
+      "document": "SP09",
+      "provision": "Pasal 25 ayat (2)",
+      "quote": "bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21",
+      "page": 1
+     },
+     {
+      "document": "SP09",
+      "provision": "Pasal 46 ayat (1)",
+      "quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023 sampai dengan tanggal 31 Juli 2025.",
+      "page": 1
+     }
+    ]
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "Covered Pasal 25 ayat (1)-(2), Pasal 26 ayat (1)-(2) and Pasal 46 ayat (1): JKM 0,30%, health 4%, JHT 2%, JP 1% and their wage caps equal the existing regulation, and Pasal 26 ayat (1) only restates withholding under the tax rules, so only the company JKK rate (0,54%) and the exclusion of employer premiums from gross income are added for 1 Aug 2023-31 Jul 2025. Both are intentionally overruled by the mandatory regulation rules and are meant to be reported as conflicts (C1 where the employer's risk group rate differs, C3 whenever employer premiums are non-zero), so no computed value changes."
+ },
+ "cost_usd": 0.0,
+ "relevance": {
+  "output": {
+   "relevant": true,
+   "layer": "company",
+   "reason": "The company regulation sets company-specific employer social security contribution rates (JKK 0.54%, JKM 0.30%, health insurance 4%) and classifies them as not part of the employee's gross income for PPh 21, and sets the employee JHT 2% and JP 1% contributions as deductions in the PPh 21 computation for its employees. These are rates and classification rules that change the gross income and deductions used in the PPh 21 calculation for permanent employees of this company. Note that excluding employer-paid JKK, JKM and health insurance from gross income departs from the prevailing tax regulation, so the classification should be checked against the regulation layer.",
+   "quotes": [
+    {
+     "provision": "Pasal 25 ayat (1): employer contribution rates JKK 0.54%, JKM 0.30%, health insurance 4%",
+     "quote": "Perusahaan menanggung iuran JKK sebesar 0,54% (nol koma lima puluh empat persen), iuran JKM sebesar 0,30% (nol koma tiga puluh persen), dan iuran Jaminan Kesehatan sebesar 4% (empat persen) dari upah sebulan dengan batas upah sesuai ketentuan."
+    },
+    {
+     "provision": "Pasal 25 ayat (2): employer contributions excluded from gross income for PPh 21",
+     "quote": "bukan merupakan penghasilan pekerja, dan tidak dimasukkan dalam penghasilan bruto pekerja untuk penghitungan Pajak Penghasilan Pasal 21"
+    },
+    {
+     "provision": "Pasal 26 ayat (2): employee JHT 2% and JP 1% deducted in PPh 21 computation",
+     "quote": "Iuran JHT sebesar 2% (dua persen) dan iuran JP sebesar 1% (satu persen) bagian pekerja, dengan batas upah JP sesuai ketentuan BPJS Ketenagakerjaan, dikurangkan dalam penghitungan Pajak Penghasilan Pasal 21."
+    }
+   ],
+   "effective_from": "2023-08-01",
+   "effective_from_quote": "Peraturan Perusahaan ini berlaku sejak tanggal 1 Agustus 2023",
+   "effective_until": "2025-07-31",
+   "effective_until_quote": "sampai dengan tanggal 31 Juli 2025",
+   "subjects": []
+  },
+  "quotes_ok": true
+ }
+}

@@ -1,0 +1,252 @@
+% Rencana perubahan isi naskah StaticKD berdasarkan review skeptis (target IEEE Access)
+% Kompilasi: pdflatex rencana_perubahan && pdflatex rencana_perubahan
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{booktabs,longtable,array,enumitem,xcolor,hyperref}
+\usepackage[indonesian]{babel}
+\setlist{itemsep=1pt,topsep=3pt}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black}
+\newcommand{\pz}{\textcolor{red!65!black}{\textbf{P0}}}
+\newcommand{\po}{\textcolor{orange!75!black}{\textbf{P1}}}
+\newcommand{\pt}{\textcolor{blue!60!black}{\textbf{P2}}}
+\title{Rencana Perubahan Naskah StaticKD\\\large Berdasarkan review skeptis untuk IEEE Access}
+\author{Disusun untuk Obi Kastanya dan Ananta Dwi Prayoga Alwy}
+\date{1 November 2026}
+
+\begin{document}
+\maketitle
+
+\noindent\textbf{Kedudukan dokumen.} Restrukturisasi (\texttt{rancangan\_struktur.tex}, \texttt{restructure\_log.md}) hanya memindahkan isi. Dokumen ini merencanakan perubahan \emph{isi}: koreksi fakta, analisis statistik tambahan, verifikasi label, baseline, dan pemangkasan menuju 14 halaman. Belum ada satu pun yang diterapkan ke naskah. Setiap butir menyebut buktinya di repositori, cara mengerjakannya, dan dampaknya ke halaman.
+
+\noindent\textbf{Prioritas.} \pz{} = wajib sebelum submit (integritas atau fakta yang salah). \po{} = sangat mungkin diminta reviewer; tanpa ini risikonya \emph{major revision} atau ditolak. \pt{} = memperkuat naskah.
+
+\section*{Ringkasan}
+\begin{longtable}{@{}p{0.07\textwidth}p{0.08\textwidth}p{0.47\textwidth}p{0.13\textwidth}p{0.14\textwidth}@{}}
+\toprule
+ID & Prioritas & Perubahan & Butuh & Halaman\\
+\midrule
+\endhead
+F1 & \pz & Catat pemeriksaan pemetaan oleh dua peneliti dan ukuran kesepakatannya & 2 orang & +0,05\\
+F2 & \pz & Lengkapi pernyataan penggunaan AI & keputusan penulis & +0,05\\
+F3 & \pz & Koreksi asal resep (``72 runs'') dan ``learned token weights not tested'' & teks & 0\\
+F4 & \pz & Lengkapi detail $\tau$ DistilmBERT dan keluarga koreksi Holm & teks & 0\\
+F5 & \pz & Abstrak $\le$250 kata, URL rilis, biografi, cek lisensi & teks & +0,3\\
+S1 & \po & \emph{Paired cluster bootstrap} untuk tiap varian ablasi & skrip, tanpa GPU & +0,05\\
+S2 & \po & Uji ekuivalensi (TOST) untuk klaim ``tidak berbeda'' & skrip & 0\\
+S3 & \po & Laporkan jumlah klaster efektif dan uji \emph{leave-one-source-out} & skrip & +0,1\\
+S4 & \po & Koreksi Holm untuk uji per bahasa dan pernyataan konfounding & skrip, teks & +0,05\\
+V1 & \po & Verifikasi label test set oleh manusia (4--5 orang) & 25 jam-orang & +0,25\\
+M1 & \po & Alasan kuantitatif CPU vs GPU & teks, data harga & +0,15\\
+M2 & \po & Baseline classifier Model2Vec & 1--2 jam & +0,05\\
+M3 & \pt & Transformer dengan 512 token, grid baseline lengkap & GPU & 0\\
+M4 & \pt & Benchmark diulang 3 kali, \emph{throughput cascade} diukur & mesin idle & 0\\
+H1 & \pt & Hipotesis eksplisit (tuntutan mata kuliah) & teks & +0,15\\
+W1 & \pt & Bingkai kontribusi dan klaim transfer & teks & 0\\
+\midrule
+\multicolumn{4}{@{}l}{Tambahan bila semua dikerjakan} & $\approx$+1,3\\
+\multicolumn{4}{@{}l}{Pemangkasan yang diperlukan untuk 14 halaman (Bagian~6)} & $\approx-$2,3\\
+\bottomrule
+\end{longtable}
+
+%=====================================================================
+\section{\pz{} Integritas dan fakta}
+
+\subsection*{F1. Pemeriksaan pemetaan oleh dua peneliti}
+\begin{itemize}
+  \item \textbf{Bukti.} \texttt{paper\_writing/mapping\_review.xlsx} hanya punya satu set kolom keputusan, berisi ``ditinjau penulis (Obi Kastanya), 2026-10-17: pass''. \texttt{mapping\_review\_record.json} mencatat satu reviewer. Dari 916 aturan, 48 diterima otomatis, sehingga 868 ditinjau manusia. Peninjauan dilakukan sesudah test set dibangun (27 September) dan sesudah semua hasil keluar.
+  \item \textbf{Pernyataan pengguna.} Test set diperiksa dua peneliti. Pemeriksaan kedua ini belum tercatat di repositori, sehingga reviewer tidak bisa memverifikasinya.
+  \item \textbf{Yang perlu dilakukan:}
+  \begin{enumerate}
+    \item Peneliti kedua mengisi kolom keputusan sendiri (\texttt{setuju\_r2}, \texttt{label\_r2}) tanpa melihat keputusan peneliti pertama. Minimal 868 baris; bila waktu terbatas, sampel acak berstrata per label dengan $\ge$300 baris.
+    \item Hitung Cohen's $\kappa$ dan persentase kesepakatan, lalu selesaikan perbedaan lewat diskusi. Bila ada aturan yang berubah, bangun ulang test set dan hitung ulang semua angka lewat notebook.
+    \item Samakan teks di lima tempat yang sekarang saling bertentangan. Di versi baru, ini ada di kontribusi~2, III-A, IV-C, VII-E, dan Acknowledgment.
+  \end{enumerate}
+  \item \textbf{Usulan kalimat} (setelah data ada): \emph{``Two authors reviewed the 868 non-trivial rules independently (Cohen's $\kappa$ = X); disagreements were resolved by discussion and changed Y rules.''}
+\end{itemize}
+
+\subsection*{F2. Pernyataan penggunaan AI}
+\begin{itemize}
+  \item \textbf{Bukti.} \texttt{\_archive/root\_docs\_v1/prompt\_transcript.md} dan \texttt{LAPORAN\_RISET.md} mencatat bahwa ide StaticKD, eksperimen v1/v2, dan laporan awal dikerjakan Claude secara mandiri atas instruksi penulis. Acknowledgment sekarang hanya menyebut kode, olah data, draf tabel pemetaan, dan penyuntingan.
+  \item \textbf{Kebijakan IEEE.} Konten hasil AI wajib diungkapkan, termasuk sistemnya, bagian yang memakainya, dan sejauh mana (\texttt{paper\_rules.md} §9). Pengungkapan yang kurang lengkap lebih berisiko daripada pengungkapan yang jujur.
+  \item \textbf{Keputusan penulis.} Rumuskan peran AI secara akurat, misalnya: AI dipakai dalam eksplorasi desain metode dan menjalankan eksperimen awal di bawah arahan penulis; penulis memverifikasi semua hasil dan memegang tanggung jawab penuh. Kata-kata finalnya harus dari penulis, karena hanya penulis yang tahu pembagian kerjanya.
+\end{itemize}
+
+\subsection*{F3. Asal resep dan varian yang sudah diuji}
+\begin{itemize}
+  \item \textbf{Asal resep.} VII-E menulis ``The StaticKD recipe was selected from 72 runs on the development set''. Faktanya, resep ditetapkan dari eksplorasi lebih dari 20 varian pada set dev dan set cek LLM (commit \texttt{45320d2}, 27 September). 72 run di \texttt{models/students/} adalah \emph{training ulang} dengan kode final.
+    \begin{itemize}
+      \item Usulan: \emph{``The StaticKD recipe was fixed during an exploration of more than 20 variants on the development set, before the test set was built; the 72 reported runs retrain the final recipe and its ablations with the released code.''}
+    \end{itemize}
+  \item \textbf{Learned token weights.} VII-E menulis ``neither have the learned token weights''. Faktanya, varian ini sudah diuji di eksplorasi dan lebih buruk: dev 0,742 (\texttt{LAPORAN\_RISET.md} §4.7). Tulis bahwa varian ini diuji dengan kode eksplorasi dan lebih rendah di dev, sehingga tidak masuk resep.
+\end{itemize}
+
+\subsection*{F4. Detail yang kurang tepat}
+\begin{itemize}
+  \item \textbf{$\tau$ DistilmBERT.} Hanya MiniLM yang diuji dengan $\tau\in\{1,2\}$ (dev 0,7847 vs 0,7727); DistilmBERT memakai $\tau=1$ tanpa uji (\texttt{scripts/train\_transformers.py:69--76}). Teks V-A sekarang menyiratkan keduanya dipilih di dev.
+  \item \textbf{Keluarga koreksi Holm ablasi} mencakup 14 varian, termasuk 4 tambahan yang tidak ada di tabel. Akurasi test tidak diuji (\texttt{src/notebook\_build/part4.py:326}). Tulis keduanya di V-B.
+  \item \textbf{Grid baseline} disiapkan dengan 41 konfigurasi, tetapi hanya 2 yang dijalankan dan hasilnya tidak dipakai. Kalimat ``set once without a search'' tetap benar. Lebih baik menyelesaikan grid itu (M3) daripada menjelaskannya.
+\end{itemize}
+
+\subsection*{F5. Kelengkapan submit}
+\begin{itemize}
+  \item \textbf{Abstrak.} Sekarang 256 kata; batas IEEE Access 250.
+  \item \textbf{Placeholder.} \texttt{\textbackslash todo} untuk URL GitHub/Zenodo dan Hugging Face, serta biografi dan foto penulis.
+  \item \textbf{Lisensi.} Manifest test set direncanakan berlisensi CC BY-SA 4.0, padahal MasakhaNEWS berlisensi CC BY-NC 4.0, dan lisensi Bangla news tidak dinyatakan. Pilihannya: manifest untuk bagian MasakhaNEWS mengikuti NC, atau manifest hanya memuat ID dan label buatan sendiri, dengan penjelasan.
+\end{itemize}
+
+%=====================================================================
+\section{\po{} Statistik: menjawab poin dosen}
+
+\textbf{Inti jawabannya:} ablasi tetap dipertahankan, tetapi setiap klaim ablasi harus didukung uji signifikansi yang sama kuatnya dengan uji model utama.
+
+\subsection*{S1. Paired cluster bootstrap untuk ablasi}
+\begin{itemize}
+  \item \textbf{Masalah.} Ablasi sekarang diuji dengan Welch antar-seed ($n=5$ vs $10$). Uji ini hanya mengukur variasi acak \emph{training}. Karena SD antar-seed sangat kecil (0,001--0,006), selisih +0,014 langsung ``$p<0{,}001$'', padahal CI site-cluster di test lebarnya sekitar $\pm$0,05. Model utama diuji dengan cara lain (paired cluster bootstrap), jadi tidak konsisten.
+  \item \textbf{Yang dikerjakan.} Untuk setiap varian, rata-ratakan logit seed-seednya (sama seperti ensemble). Bandingkan dengan rata-rata seed resep final pada artikel yang sama, memakai paired site-cluster bootstrap 2.000 kali (\texttt{evaluation.py:199}) dan koreksi Holm atas 10 varian.
+    \begin{itemize}
+      \item Semua prediksi sudah ada di \texttt{results/final/predictions/} (72 run $\times$ dev, \emph{held-out}, test), jadi tidak perlu \emph{training} ulang.
+    \end{itemize}
+  \item \textbf{Pelaporan.} Tambahkan kolom ``$\Delta$ test [95\% CI]'' di Tabel ablasi. Welch tetap dilaporkan sebagai ukuran stabilitas \emph{training}. Tulis di V-B bahwa Welch mengukur stabilitas antar-seed, sedangkan cluster bootstrap mengukur generalisasi ke artikel dan situs lain.
+  \item \textbf{Kemungkinan hasil.} Efek besar (init acak $-$0,120; data 4 bahasa $-$0,051) hampir pasti tetap signifikan. Efek kecil (frozen +0,014; $\tau=4$ $-$0,014) mungkin tidak signifikan lagi. Kalau itu terjadi, klaim terkait di abstrak, VII-B, dan VIII harus dilunakkan.
+\end{itemize}
+
+\subsection*{S2. Klaim ``tidak berbeda'' butuh uji ekuivalensi}
+\begin{itemize}
+  \item \textbf{Masalah.} Naskah menyimpulkan ``hard labels work as well as soft labels'' dan ``none of the additions differs'' dari $p$ yang tidak signifikan. Secara statistik, tidak signifikan tidak sama dengan setara.
+  \item \textbf{Yang dikerjakan.} Uji ekuivalensi TOST dengan margin yang ditetapkan dan dibenarkan di naskah, misalnya $\pm$0,01 macro-F1 (kurang dari separuh selisih StaticKD dengan MiniLM). Pakai distribusi bootstrap dari S1: setara bila seluruh CI 90\% berada di dalam margin.
+\end{itemize}
+
+\subsection*{S3. Ketergantungan klaster}
+\begin{itemize}
+  \item \textbf{Bukti.} L3Cube adalah satu klaster (2.361 artikel, 10 bahasa), dan \texttt{bbc.com} 2.394 artikel. Dua klaster terbesar mencakup 37,3\% test set; jumlah klaster efektif hanya 13,8.
+  \item \textbf{Yang dikerjakan.} Laporkan angka ini di V-B. Tambahkan uji \emph{leave-one-source-out}: hitung ulang peringkat model enam kali, masing-masing tanpa satu sumber. Cukup satu kalimat dan satu baris di Tabel S2.
+\end{itemize}
+
+\subsection*{S4. Analisis per bahasa}
+\begin{itemize}
+  \item Terapkan koreksi Holm untuk tujuh uji di Tabel S3.
+  \item Nyatakan konfounding secara eksplisit. Bahasa Afrika sekaligus berasal dari MasakhaNEWS, berlabel non-IPTC, tanpa data distilasi, di luar pre-training XLM-R, dan dari satu penerbit. Jadi korelasi satu variabel tidak bisa memisahkan faktor-faktor ini.
+  \item Opsional (\pt): regresi logistik level artikel (benar/salah) dengan faktor kelompok data, \emph{pre-training coverage}, dan asal label, serta efek acak bahasa dan situs.
+\end{itemize}
+
+\subsection*{Jawaban untuk dosen (ringkas)}
+Ablasi adalah desain eksperimen (apa yang dibandingkan), sedangkan uji signifikansi adalah alat inferensi (apakah selisihnya nyata). RQ3 dan tiga klaim utama naskah hanya bisa dijawab dengan ablasi. Dosen benar bahwa ablasi tanpa uji yang tepat lemah, dan itulah yang diperbaiki S1 dan S2: setiap selisih ablasi dilaporkan dengan CI cluster bootstrap, dan klaim ``setara'' diuji dengan TOST.
+
+%=====================================================================
+\section{\po{} Validitas label: verifikasi oleh manusia (V1)}
+
+\begin{itemize}
+  \item \textbf{Masalah.}
+  \begin{itemize}
+    \item 67,9\% label uji berasal dari rubrik atau kategori penerbit, dan tidak ada satu artikel pun yang diperiksa manusia.
+    \item Validitas sekarang diukur lewat kesepakatan dengan teacher, padahal teacher juga model yang dievaluasi. Ini setengah sirkular.
+    \item \texttt{audit\_sample.csv} tidak bisa dipakai: sampelnya dari \emph{silver set} lama, dan 0 dari 340 artikelnya ada di \emph{unified test set}.
+  \end{itemize}
+  \item \textbf{Desain dengan 4--5 orang:}
+  \begin{enumerate}
+    \item \textbf{Sampel.} 510 artikel (17 label $\times$ 30), berstrata per label dan asal label. Prioritaskan rubrik JSON-LD dan kategori penerbit; sumber berlabel manusia cukup sedikit sebagai pembanding. Bahasa yang dipilih adalah yang dibaca anotator (misalnya en, id, dan bahasa lain yang dikuasai tim). Untuk bahasa lain, berikan terjemahan mesin ke bahasa Inggris dan catat hal ini.
+    \item \textbf{Prosedur.} Setiap artikel dinilai oleh 3 orang secara independen, tanpa melihat label hasil pemetaan, nama rubrik, maupun prediksi model. Anotator memilih satu dari 17 label IPTC, ditambah label kedua opsional untuk artikel multi-topik.
+    \item \textbf{Pedoman.} Definisi 17 topik dari IPTC, diuji dulu pada 30 artikel pilot. Pedoman diperbaiki sebelum anotasi utama.
+    \item \textbf{Metrik.} Krippendorff's $\alpha$ antar-anotator; persentase label pemetaan yang sama dengan label mayoritas (atau termasuk label kedua); macro-F1 semua model pada subset terverifikasi. Hasil yang diharapkan: peringkat model tidak berubah.
+    \item \textbf{Biaya.} 510 $\times$ 3 = 1.530 penilaian, sekitar 1 menit per artikel, atau $\approx$25 jam-orang ($\approx$5--6 jam per orang untuk 5 orang).
+  \end{enumerate}
+  \item \textbf{Alat yang perlu dibuat.} Skrip pengambil sampel dari \texttt{data/processed/testset\_jsonld/unified\_test.jsonl} yang mengekspor lembar anotasi (xlsx) per anotator, dengan urutan acak dan tanpa kolom label. Juga skrip penghitung $\alpha$ dan metrik.
+  \item \textbf{Di naskah.} Satu paragraf dan satu baris tabel di IV-D (Validity), menggantikan sebagian argumen berbasis teacher. Limitations ``not re-annotated by humans'' diperbarui.
+\end{itemize}
+
+%=====================================================================
+\section{\po{} Motivasi dan baseline}
+
+\subsection*{M1. Kenapa CPU, bukan GPU kecil}
+\begin{itemize}
+  \item \textbf{Masalah.} Satu juta artikel per hari setara 11,6 artikel/detik. Teacher di GPU laptop RTX 4050 sudah memproses 50,1 artikel/detik (III-C). Reviewer hampir pasti bertanya kenapa tidak memakai satu GPU kecil.
+  \item \textbf{Yang dikerjakan.} Satu paragraf di Pendahuluan dan satu baris di VII-D:
+  \begin{itemize}
+    \item Biaya per satu juta artikel: core-jam CPU vs GPU-jam, dengan harga instance cloud \emph{on-demand} yang dikutip beserta tanggalnya.
+    \item Alasan nyata dari praktik penulis, misalnya server pipeline yang tidak punya GPU, CPU yang dipakai bersama, atau ketersediaan GPU. Alasan ini hanya penulis yang tahu.
+  \end{itemize}
+\end{itemize}
+
+\subsection*{M2. Baseline Model2Vec}
+\begin{itemize}
+  \item \textbf{Masalah.} Classifier Model2Vec bisa dijalankan dengan satu pemanggilan library pada data dan label teacher yang sama. Alasan ``not run'' di VII-E akan dianggap lemah.
+  \item \textbf{Yang dikerjakan.} Latih classifier Model2Vec dengan hard label teacher dan default library. Tambahkan satu baris ke Tabel main, sig, dan eff, lalu persingkat paragraf terkait di VII-E.
+\end{itemize}
+
+\subsection*{M3, M4. Kesetaraan perbandingan dan benchmark (\pt)}
+\begin{itemize}
+  \item \textbf{Grid baseline.} Jalankan grid 41 konfigurasi yang sudah ada (\texttt{scripts/tune\_baselines.py}) di dev untuk fastText dan SVM.
+  \item \textbf{Transformer 512 token.} Minimal untuk MiniLM; VRAM 6~GB cukup dengan batch kecil.
+  \item \textbf{Benchmark.} Ulangi 3 kali dan laporkan median. Kalau ada akses, jalankan sekali di VM cloud. Ukur \emph{throughput cascade} secara nyata, bukan dengan rumus.
+\end{itemize}
+
+\subsection*{Keputusan desain: fine-tuned atau frozen}
+Embedding beku lebih baik di test (+0,014), terutama di bahasa tanpa data. Ada dua pilihan yang jujur:
+\begin{enumerate}
+  \item Pertahankan resep dan tampilkan StaticKD-frozen sebagai varian yang disarankan untuk bahasa tak terlihat, dengan satu baris di Tabel main.
+  \item Tetap seperti sekarang, dengan penjelasan di VII-B.
+\end{enumerate}
+Jangan mengganti resep berdasarkan hasil test, karena itu memilih model dengan test set.
+
+%=====================================================================
+\section{\pt{} Penulisan}
+
+\subsection*{H1. Hipotesis}
+Materi Metpen meminta hipotesis yang diturunkan dari teori, lengkap dengan variabel bebas, terikat, dan kontrol. Naskah IEEE jarang memakai hipotesis formal, jadi ada dua pilihan: hipotesis ditulis di dokumen kuliah saja, atau masuk naskah sebagai satu paragraf ``expected outcomes'' setelah RQ. Karena dirumuskan setelah eksperimen, hipotesis tidak boleh diklaim sebagai pra-registrasi.
+\begin{longtable}{@{}p{0.06\textwidth}p{0.55\textwidth}p{0.31\textwidth}@{}}
+\toprule
+& Hipotesis & Uji\\
+\midrule
+H1 & StaticKD lebih akurat daripada fastText+KD dan TF-IDF+SVM+KD yang dilatih dengan label teacher yang sama, dan kurang akurat daripada teacher & paired cluster bootstrap, Holm\\
+H2 & \emph{Throughput} satu core StaticKD minimal dua orde besaran di atas teacher ONNX int8 & rasio, median 3 ulangan\\
+H3a & Tanpa inisialisasi lintas bahasa atau tanpa data multibahasa, macro-F1 test turun & S1\\
+H3b & Pada \emph{capacity gap} ekstrem, soft label setara dengan hard label (Bagian II-B) & TOST (S2)\\
+H4 & Selisih akurasi dengan teacher mengecil seiring jumlah data distilasi dan \emph{token coverage} bahasa & Spearman, Holm (S4)\\
+\bottomrule
+\end{longtable}
+\noindent Variabel bebas: jenis model, komponen resep, dan kelompok bahasa. Variabel terikat: macro-F1, akurasi, latensi, dan \emph{throughput}. Variabel kontrol: test set, data distilasi, teacher, perangkat, dan protokol benchmark yang sama.
+
+\subsection*{W1. Bingkai kontribusi dan klaim}
+\begin{itemize}
+  \item Nyatakan kontribusi sebagai studi empiris, resource, dan resep deployment. Metode sendiri (rata-rata embedding dan kepala linear yang dilipat) secara konsep dekat dengan DAN dan fastText, dan reviewer akan menilai kebaruan dari sudut itu.
+  \item \textbf{Klaim transfer di VII-B} (``Transfer to languages without data therefore relies on embeddings that training hardly changes'') didukung empat bahasa saja, dan yang diukur adalah ``muncul $<$10 kali'', bukan ``tidak pernah diperbarui''. Batasi klaimnya ke bukti itu (\texttt{paper\_quality\_check\_filled.md}, N-05 butir 13).
+  \item \textbf{Literatur.} Porsi jurnal 22,7\%, di bawah aturan mata kuliah ($\ge$30\%). Tambahkan rujukan jurnal yang memang relevan, dan cek dengan \texttt{scripts/verify\_references.py}.
+\end{itemize}
+
+%=====================================================================
+\section{Anggaran halaman menuju 14}
+Naskah hasil restrukturisasi 15,0 halaman, dengan biografi masih \emph{placeholder}. Biografi asli menambah sekitar 0,3 halaman, dan tambahan isi dari butir di atas sekitar 1,0 halaman. Jadi perlu pemangkasan sekitar 2,3 halaman. Kandidatnya, diurutkan dari yang paling sedikit mengubah isi:
+
+\begin{longtable}{@{}p{0.62\textwidth}p{0.12\textwidth}p{0.18\textwidth}@{}}
+\toprule
+Pemangkasan & Hemat & Dampak ke isi\\
+\midrule
+\endhead
+Satukan pembahasan baseline yang tidak dijalankan di V-A dengan VII-E (sekarang dibahas dua kali), dan persingkat setelah M2 & 0,25 & kecil\\
+Hapus pengulangan angka di Pembahasan; rujuk ke Hasil saja & 0,25 & kecil\\
+Ringkas Related Work II-B (\emph{capacity gap}) dan II-C menjadi satu paragraf masing-masing & 0,30 & kecil\\
+Ringkas kontribusi di Pendahuluan (detail angka sudah ada di abstrak) & 0,15 & kecil\\
+Ringkas Limitations ke ancaman validitas yang spesifik (label, teacher, tuning, benchmark, bahasa) & 0,30 & sedang\\
+Tabel cascade ke suplemen; angka $\theta=0{,}8$ tetap di teks & 0,20 & sedang\\
+Fig.~per bahasa ke suplemen & 0,35 & sedang\\
+Tabel ablation-groups digabung ke Tabel ablasi sebagai tiga kolom tambahan & 0,20 & kecil\\
+Hapus baris fastText GPT-4o dari Tabel groups (angkanya ada di Tabel main) & 0,05 & kecil\\
+Ringkas paragraf validitas di IV-D setelah V1 tersedia (argumen berbasis teacher dipersingkat) & 0,25 & kecil\\
+\midrule
+Total kandidat & 2,30 &\\
+\bottomrule
+\end{longtable}
+
+%=====================================================================
+\section{Urutan kerja yang disarankan}
+\begin{enumerate}
+  \item \textbf{Sekarang, tanpa eksperimen:} F3, F4, F5 (teks), S1, S2, S3, dan S4 (skrip dari prediksi yang sudah ada).
+  \item \textbf{Paralel dengan tim 4--5 orang:} F1 (peneliti kedua) dan V1 (verifikasi label). Mulai dengan pilot 30 artikel minggu ini.
+  \item \textbf{Keputusan penulis:} F2 (pernyataan AI), M1 (alasan CPU), pilihan frozen vs fine-tuned, dan hipotesis di naskah atau di dokumen kuliah.
+  \item \textbf{Eksperimen ringan:} M2 (Model2Vec), lalu M3 dan M4 bila waktu cukup.
+  \item \textbf{Pangkas ke 14 halaman} (Bagian~6), jalankan \texttt{check\_paper.py} dan \texttt{check\_style.py}, lalu ikuti panduan gaya untuk setiap kalimat baru.
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,132 @@
+{
+ "delta_id": "BG-010",
+ "event_id": null,
+ "document": {
+  "id": "PERMENAKER-6-2016",
+  "title": "Permenaker 6/2016 THR",
+  "issued": "2016-03-08"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "thr_minimum",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "minimum religious holiday allowance",
+   "label_id": "THR keagamaan minimum",
+   "source": [
+    {
+     "document": "PERMENAKER-6-2016",
+     "provision": "Pasal 2 ayat (1)",
+     "page": 3,
+     "quote": "Pekerja/Buruh yang telah mempunyai masa kerja 1 (satu) bulan secara terus menerus atau lebih."
+    },
+    {
+     "document": "PERMENAKER-6-2016",
+     "provision": "Pasal 3 ayat (1) huruf a",
+     "page": 4,
+     "quote": "12 (dua belas) bulan secara terus menerus atau lebih, diberikan sebesar 1 (satu) bulan upah;"
+    },
+    {
+     "document": "PERMENAKER-6-2016",
+     "provision": "Pasal 3 ayat (1) huruf b",
+     "page": 4,
+     "quote": "dari 12 (dua belas) bulan, diberikan secara proporsional sesuai masa kerja dengan"
+    },
+    {
+     "document": "PERMENAKER-6-2016",
+     "provision": "Pasal 3 ayat (1) huruf b",
+     "page": 4,
+     "quote": "masa kerja x 1 (satu)bulan upah."
+    }
+   ],
+   "recorded_on": "2016-03-08"
+  },
+  {
+   "kind": "rule",
+   "id": "REG.THR.MINIMUM",
+   "layer": "regulation",
+   "modality": "mandatory",
+   "scope": "period",
+   "produces": "thr_minimum",
+   "expression": "(round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0) if hr('thr_holiday') == 1 else 0",
+   "valid_from": "2016-04-01",
+   "label": "THR minimum; employees whose employment ended within 30 days before the holiday keep the right",
+   "source": [
+    {
+     "document": "PERMENAKER-6-2016",
+     "provision": "Pasal 2 ayat (1)",
+     "page": 3,
+     "quote": "Pekerja/Buruh yang telah mempunyai masa kerja 1 (satu) bulan secara terus menerus atau lebih."
+    },
+    {
+     "document": "PERMENAKER-6-2016",
+     "provision": "Pasal 3 ayat (1) huruf a",
+     "page": 4,
+     "quote": "12 (dua belas) bulan secara terus menerus atau lebih, diberikan sebesar 1 (satu) bulan upah;"
+    },
+    {
+     "document": "PERMENAKER-6-2016",
+     "provision": "Pasal 3 ayat (1) huruf b",
+     "page": 4,
+     "quote": "dari 12 (dua belas) bulan, diberikan secara proporsional sesuai masa kerja dengan"
+    },
+    {
+     "document": "PERMENAKER-6-2016",
+     "provision": "Pasal 3 ayat (1) huruf b",
+     "page": 4,
+     "quote": "masa kerja x 1 (satu)bulan upah."
+    },
+    {
+     "document": "PERMENAKER-6-2016",
+     "provision": "Pasal 3 ayat (2) huruf b",
+     "page": 4,
+     "quote": "b. upah pokoktermasuk tunjangan tetap."
+    },
+    {
+     "document": "PERMENAKER-6-2016",
+     "provision": "Pasal 7 ayat (1)",
+     "page": 6,
+     "quote": "pemutusan hubungan kerja terhitung sejak 30 (tiga puluh) hari sebelum Hari Raya Keagamaan, berhak"
+    }
+   ],
+   "recorded_on": "2016-03-08"
+  },
+  {
+   "kind": "constraint",
+   "id": "CON.THR.MINIMUM",
+   "scope": "period",
+   "condition": "hr('thr_holiday') == 1",
+   "assertion": "thr >= thr_minimum",
+   "conflict_code": "C10",
+   "valid_from": "2016-04-01",
+   "label": "THR paid is not below the minimum",
+   "source": [
+    {
+     "document": "PERMENAKER-6-2016",
+     "provision": "Pasal 2 ayat (1)",
+     "page": 3,
+     "quote": "Pekerja/Buruh yang telah mempunyai masa kerja 1 (satu) bulan secara terus menerus atau lebih."
+    },
+    {
+     "document": "PERMENAKER-6-2016",
+     "provision": "Pasal 3 ayat (1) huruf a",
+     "page": 4,
+     "quote": "12 (dua belas) bulan secara terus menerus atau lebih, diberikan sebesar 1 (satu) bulan upah;"
+    },
+    {
+     "document": "PERMENAKER-6-2016",
+     "provision": "Pasal 7 ayat (1)",
+     "page": 6,
+     "quote": "pemutusan hubungan kerja terhitung sejak 30 (tiga puluh) hari sebelum Hari Raya Keagamaan, berhak"
+    }
+   ],
+   "recorded_on": "2016-03-08"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "Supporting labour regulation for company policies (C10). No PPh 21 rule changes."
+}

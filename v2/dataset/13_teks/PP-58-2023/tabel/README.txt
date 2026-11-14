@@ -1,0 +1,1 @@
+Tabel terekstraksi PP 58/2023 Lampiran huruf A, B, C (tarif efektif bulanan). Disalin dari dataset/01_regulasi/tables/ter_bulanan.csv (double entry; 125 baris; dicek visual hlm. 11, 12, 15, 16, 19, 21, 25 dan terhadap sumber sekunder). batas_bawah eksklusif, batas_atas inklusif, kosong = tanpa batas.

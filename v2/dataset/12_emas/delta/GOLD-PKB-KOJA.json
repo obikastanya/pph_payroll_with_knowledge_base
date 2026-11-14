@@ -1,0 +1,525 @@
+{
+ "delta_id": "GOLD-PKB-KOJA",
+ "event_id": null,
+ "document": {
+  "id": "PKB-KOJA-2012",
+  "title": "PKB Terminal Petikemas Koja 2012-2014",
+  "issued": "2012-12-28"
+ },
+ "relevant": true,
+ "add": [
+  {
+   "kind": "fact",
+   "id": "koja_basic_wage",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "basic wage = base salary + housing allowance",
+   "label_id": "upah pokok",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 38 ayat (1)",
+     "page": 1,
+     "quote": "Upah pokok yang diterima oleh Pekerja terdiri dari : a.Gaji Pokok. b.Tunjangan Perumahan."
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "fact",
+   "id": "koja_pay_factor",
+   "fact_type": "exact",
+   "fact_scope": "period",
+   "output": false,
+   "label": "share of wage paid as detention aid",
+   "label_id": "persentase bantuan ditahan",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 58 ayat (1)",
+     "page": 1,
+     "quote": "a.1 (satu) tanggungan : 25% dari upah pokok b.2 (satu) tanggungan : 35% dari upah pokok c.3 (satu) tanggungan : 45% dari upah pokok d.4 (satu) tanggungan : 50% dari upah pokok"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "fact",
+   "id": "koja_annual_payments",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "leave allowance, 13th wage and long-leave compensation",
+   "label_id": "tunjangan cuti, upah ke-13, cuti besar",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 50 ayat (2-4)",
+     "page": 1,
+     "quote": "tunjangan cuti diberikan pekerja1,7 (satu koma tujuh) kali upah pokok"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 52 ayat (1-2)",
+     "page": 1,
+     "quote": "upah bulan ke-13 adalah sebesar 1,7 (satu koma tujuh) kali upah, yang diberikan kepada pekerja oleh perusahaan engan persyaratan masa kerja 1 tahun lebih"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 53",
+     "page": 1,
+     "quote": "maka diberikan kompensasi sebesar 1,7 (satu koma tujuh) kali upah pokok"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "fact",
+   "id": "koja_termination_pay",
+   "fact_type": "money",
+   "fact_scope": "period",
+   "output": false,
+   "label": "service award and death benefit on termination (final tax; not gross income)",
+   "label_id": "penghargaan masa kerja dan santunan kematian",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 122 ayat (2 huruf f, j)",
+     "page": 1,
+     "quote": "penghargaan masa kerja, dengan formula : masa kerja (dalam bulan) x 50 x upah pokok / 360"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 122 ayat (2 huruf f, j)",
+     "page": 1,
+     "quote": "santunan kematian dari perusahaan sebesar 10x (sepuluh) kali upah pokok"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 122 ayat (2 huruf f, j)",
+     "page": 1,
+     "quote": "santunan kematian dari perusahaan sebesar 15x (limabelas) kali upah pokok"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.KOJA.WAGE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "koja_basic_wage",
+   "expression": "income('base_salary') + income('fixed_allowance')",
+   "valid_from": "2012-12-01",
+   "valid_until": "2014-12-31",
+   "label": "KOJA-38-1: basic wage = base salary + housing allowance",
+   "policy": "PKB-KOJA-2012",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 38 ayat (1)",
+     "page": 1,
+     "quote": "Upah pokok yang diterima oleh Pekerja terdiri dari : a.Gaji Pokok. b.Tunjangan Perumahan."
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 134 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 28 desember 2012 sampai dengan 28 desember 2014"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.KOJA.METHOD",
+   "layer": "company",
+   "modality": "default",
+   "scope": "year",
+   "produces": "withholding_method",
+   "expression": "'gross_up'",
+   "valid_from": "2012-12-01",
+   "valid_until": "2014-12-31",
+   "label": "KOJA-61, 38-2q, 39-2: tax allowance equal to the tax due (gross-up); base salary is stated net",
+   "policy": "PKB-KOJA-2012",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 61",
+     "page": 1,
+     "quote": "Perusahaan memberikan Tunjangan pajak atas penghasilan dari perusahaan yang diterima karyawan dengan besaran sama dengan pajak penghasilan yang wajib dibayarkan kepada Negara"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 38 ayat (2 huruf q)",
+     "page": 1,
+     "quote": "p.bonus produksi q.tunjangan pajak"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 39 ayat (2)",
+     "page": 1,
+     "quote": "Gaji pokok yang diterima oleh pekerja adalah Upah bersih"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 134 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 28 desember 2012 sampai dengan 28 desember 2014"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.KOJA.PAY_FACTOR",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "koja_pay_factor",
+   "expression": "(dec('0.50') if hr('detained_month') > 0 and hr('dependents') >= 4 else (dec('0.45') if hr('detained_month') > 0 and hr('dependents') >= 3 else (dec('0.35') if hr('detained_month') > 0 and hr('dependents') >= 2 else (dec('0.25') if hr('detained_month') > 0 and hr('dependents') >= 1 else (0 if hr('detained_month') > 0 else 1)))))",
+   "valid_from": "2012-12-01",
+   "valid_until": "2014-12-31",
+   "label": "KOJA-58-1: detention aid 25-50% of basic wage (56 illness: 100% for 12 months, no change)",
+   "policy": "PKB-KOJA-2012",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 58 ayat (1)",
+     "page": 1,
+     "quote": "a.1 (satu) tanggungan : 25% dari upah pokok b.2 (satu) tanggungan : 35% dari upah pokok c.3 (satu) tanggungan : 45% dari upah pokok d.4 (satu) tanggungan : 50% dari upah pokok"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 134 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 28 desember 2012 sampai dengan 28 desember 2014"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.KOJA.BASE_SALARY",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "base_salary",
+   "expression": "round(income('base_salary') * koja_pay_factor, 1, 'half_up')",
+   "valid_from": "2012-12-01",
+   "valid_until": "2014-12-31",
+   "label": "base salary paid this period",
+   "policy": "PKB-KOJA-2012",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 58 ayat (1)",
+     "page": 1,
+     "quote": "a.1 (satu) tanggungan : 25% dari upah pokok b.2 (satu) tanggungan : 35% dari upah pokok c.3 (satu) tanggungan : 45% dari upah pokok d.4 (satu) tanggungan : 50% dari upah pokok"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 134 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 28 desember 2012 sampai dengan 28 desember 2014"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.KOJA.THR",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "thr",
+   "condition": "hr('thr_holiday') > 0",
+   "expression": "round(dec('1.7') * koja_basic_wage, 1, 'half_up')",
+   "valid_from": "2012-12-01",
+   "valid_until": "2014-12-31",
+   "label": "KOJA-51-2: THR 1.7 x basic wage",
+   "policy": "PKB-KOJA-2012",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 51 ayat (2)",
+     "page": 1,
+     "quote": "tunjangan hari raya keagamaan (thr) diberikan sebesar 1,7 (satu koma tujuh) kali upah pokok"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 134 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 28 desember 2012 sampai dengan 28 desember 2014"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.KOJA.ANNUAL_PAYMENTS",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "koja_annual_payments",
+   "expression": "(round(dec('1.7') * koja_basic_wage, 1, 'half_up') if hr('leave_pay_paid') > 0 else 0) + (round(dec('1.7') * koja_basic_wage, 1, 'half_up') if hr('bonus_paid') > 0 and hr('months_of_service') > 12 else 0) + (round(dec('1.7') * koja_basic_wage, 1, 'half_up') if hr('long_leave_paid') > 0 else 0)",
+   "valid_from": "2012-12-01",
+   "valid_until": "2014-12-31",
+   "label": "KOJA-50-2 leave allowance, 52-1 13th wage after more than 1 year, 53 long-leave compensation: each 1.7 x basic wage",
+   "policy": "PKB-KOJA-2012",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 50 ayat (2-4)",
+     "page": 1,
+     "quote": "tunjangan cuti diberikan pekerja1,7 (satu koma tujuh) kali upah pokok"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 52 ayat (1-2)",
+     "page": 1,
+     "quote": "upah bulan ke-13 adalah sebesar 1,7 (satu koma tujuh) kali upah, yang diberikan kepada pekerja oleh perusahaan engan persyaratan masa kerja 1 tahun lebih"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 53",
+     "page": 1,
+     "quote": "maka diberikan kompensasi sebesar 1,7 (satu koma tujuh) kali upah pokok"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 134 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 28 desember 2012 sampai dengan 28 desember 2014"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.KOJA.BONUS",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "bonus",
+   "expression": "round(income('bonus') * hr('months_of_service') / 12, 1, 'half_up') if hr('months_of_service') >= 3 and hr('months_of_service') < 12 else (income('bonus') if hr('months_of_service') >= 12 else 0)",
+   "valid_from": "2012-12-01",
+   "valid_until": "2014-12-31",
+   "label": "KOJA-55-2: share of the bonus pool (input) proportional months/12 for 3 to 11 months of service; 55-5 tax borne by the company (gross-up method)",
+   "policy": "PKB-KOJA-2012",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 55 ayat (2)",
+     "page": 1,
+     "quote": "bagi pekerja dengan masa kerja 3 (tiga) bulan dan kurang dari 1 (satu) tahun besarnya bonus dihitung secara proporsional"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 55 ayat (5)",
+     "page": 1,
+     "quote": "pajak atas bonus ditanggung oleh perusahaan"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 134 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 28 desember 2012 sampai dengan 28 desember 2014"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.KOJA.OTHER_IRREGULAR",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "other_irregular_income",
+   "expression": "income('other_irregular') + koja_annual_payments",
+   "valid_from": "2012-12-01",
+   "valid_until": "2014-12-31",
+   "label": "irregular income added by the agreement",
+   "policy": "PKB-KOJA-2012",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 50 ayat (2-4)",
+     "page": 1,
+     "quote": "tunjangan cuti diberikan pekerja1,7 (satu koma tujuh) kali upah pokok"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 52 ayat (1-2)",
+     "page": 1,
+     "quote": "upah bulan ke-13 adalah sebesar 1,7 (satu koma tujuh) kali upah, yang diberikan kepada pekerja oleh perusahaan engan persyaratan masa kerja 1 tahun lebih"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 134 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 28 desember 2012 sampai dengan 28 desember 2014"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.KOJA.JKK_PREMIUM",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "jkk_premium",
+   "expression": "round(dec('0.0127') * koja_basic_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2012-12-01",
+   "valid_until": "2014-12-31",
+   "label": "KOJA-63-2: Jamsostek JKK 1.27% of basic wage paid by the employer (income)",
+   "policy": "PKB-KOJA-2012",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 63 ayat (2)",
+     "page": 1,
+     "quote": "jaminan kecelakaan kerja (jkk) : 1,27% dari upah pokok b.jaminan hari tua (jht) : 5,70% dari upah pokok c.jaminan kematian (jkm) : 0,30% dari upah pokok"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 134 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 28 desember 2012 sampai dengan 28 desember 2014"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.KOJA.JKM_PREMIUM",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "jkm_premium",
+   "expression": "round(dec('0.0030') * koja_basic_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2012-12-01",
+   "valid_until": "2014-12-31",
+   "label": "KOJA-63-2: Jamsostek JKM 0.30% of basic wage paid by the employer (income)",
+   "policy": "PKB-KOJA-2012",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 63 ayat (2)",
+     "page": 1,
+     "quote": "jaminan kecelakaan kerja (jkk) : 1,27% dari upah pokok b.jaminan hari tua (jht) : 5,70% dari upah pokok c.jaminan kematian (jkm) : 0,30% dari upah pokok"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 134 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 28 desember 2012 sampai dengan 28 desember 2014"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.KOJA.DPLK_EMPLOYEE",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "jp_employee",
+   "expression": "round(dec('0.0125') * koja_basic_wage, 1, param('bpjs_round_mode'))",
+   "valid_from": "2012-12-01",
+   "valid_until": "2014-12-31",
+   "label": "KOJA-64-1: employee DPLK contribution 1.25% (a pension contribution, deductible); the employer's 9% is not income",
+   "policy": "PKB-KOJA-2012",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 64 ayat (1)",
+     "page": 1,
+     "quote": "a.iuran pensiun : 9% dari upah pokok b.iuran pekerja: 1,25% dari upah pokok"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 134 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 28 desember 2012 sampai dengan 28 desember 2014"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.KOJA.TERMINATION_PAY",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "koja_termination_pay",
+   "condition": "hr('separation_paid') > 0",
+   "expression": "round(hr('months_of_service') * 50 * koja_basic_wage / 360, 1, 'half_up') + (10 * koja_basic_wage if hr('separation_reason') == 'death' else (15 * koja_basic_wage if hr('separation_reason') == 'death_work_accident' else 0))",
+   "valid_from": "2012-12-01",
+   "valid_until": "2014-12-31",
+   "label": "KOJA-122-2f: service award months x 50 x basic wage / 360; death benefit 10x (illness) or 15x (work accident)",
+   "policy": "PKB-KOJA-2012",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 122 ayat (2 huruf f, j)",
+     "page": 1,
+     "quote": "penghargaan masa kerja, dengan formula : masa kerja (dalam bulan) x 50 x upah pokok / 360"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 122 ayat (2 huruf f, j)",
+     "page": 1,
+     "quote": "santunan kematian dari perusahaan sebesar 10x (sepuluh) kali upah pokok"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 122 ayat (2 huruf f, j)",
+     "page": 1,
+     "quote": "santunan kematian dari perusahaan sebesar 15x (limabelas) kali upah pokok"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 134 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 28 desember 2012 sampai dengan 28 desember 2014"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  },
+  {
+   "kind": "rule",
+   "id": "PRS.KOJA.NO_TERMINATION_PAY",
+   "layer": "company",
+   "modality": "default",
+   "scope": "period",
+   "produces": "koja_termination_pay",
+   "condition": "hr('separation_paid') <= 0",
+   "expression": "0",
+   "valid_from": "2012-12-01",
+   "valid_until": "2014-12-31",
+   "policy": "PKB-KOJA-2012",
+   "source": [
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 122 ayat (2 huruf f, j)",
+     "page": 1,
+     "quote": "penghargaan masa kerja, dengan formula : masa kerja (dalam bulan) x 50 x upah pokok / 360"
+    },
+    {
+     "document": "PKB-KOJA-2012",
+     "provision": "Pasal 134 ayat (1)",
+     "page": 1,
+     "quote": "berlaku sejak tanggal 28 desember 2012 sampai dengan 28 desember 2014"
+    }
+   ],
+   "recorded_on": "2012-12-28"
+  }
+ ],
+ "change": [],
+ "remove": [],
+ "note": "PKB KSO TPK Koja 2012-2014 (development). Not formalised: 43-3 (incentive formula in a management decree), 46-2 (meals in kind; not income of the employee before 2023), 47-7 (overtime base = basic wage, multipliers from the regulation; overtime stays a case input), 54-2 (rate in a decree), 55-4 (pool formula; the individual share is an input), 56 and 59-1 (full wage), 63-2 JHT split (not stated), 68-3 (premium not stated)."
+}

@@ -266,6 +266,9 @@ KNOWLEDGE BASE
   validity), recorded_on (knowledge date), and source quotes. Records are immutable; an update adds records.
 - Delta = add (new ids), change (new version of an existing id: repeat the id and give the complete new record),
   remove (tombstone an id). To end an old provision, put it in change with valid_until set (do not remove it).
+  A change replaces the earlier version of that id for every date it covered: to extend a provision into a later
+  period, keep its valid_from and set the new valid_until; to give it a different content from a later date only,
+  add a new id with that valid_from, so that the existing id keeps the earlier period.
 - rule: produces one fact with an expression, optional condition, scope "period" (tax month) or "year" (tax year),
   layer "regulation" (from laws/regulations) or "company" (from a company policy), modality "mandatory" (binding
   regulation), "default" (applies unless something else is set), or "optional" (a choice a company may adopt).
@@ -296,8 +299,9 @@ first_month, final_month, months_employed.
 
 CONVENTIONS
 - ids: regulation rules REG.<AREA>.<NAME>, company rules PRS.<POLICY>.<NAME>, parameters PAR.<NAME>.<YEAR>, tables
-  TAB.<NAME>.<YEAR>, constraints CON.<NAME>; fact names lower_case. Reuse existing facts, parameter names and table
-  names whenever they mean the same thing.
+  TAB.<NAME>.<YEAR>, constraints CON.<NAME>. A fact's id is its name in lower_case without a prefix (for example
+  dtp_income, never FACT.DTP_INCOME), and rules produce and read it by that same name. Reuse existing facts,
+  parameter names and table names whenever they mean the same thing.
 - valid_from = first day of the first tax period or contribution month the provision covers, even if that is before
   the issue date (retroactive provisions keep their legal start). valid_until = last day of the last month covered,
   or null if open-ended.
@@ -347,7 +351,19 @@ MODELLING GUIDANCE
   expense, rounding, the final period and refunds for leavers (pph21_due, refund_to_employee).
 - When the document defines its own intermediate amounts, declare new facts for them instead of overriding existing
   facts that mean something else.
+- A rule that takes over a fact from an existing rule applies to every case and month of its validity. Where the
+  provision does not apply (another month, an employee it does not cover, data it needs is not set), return what the
+  existing rule returns instead of 0: for a payroll input such as THR or a bonus, the amount in the payroll data
+  (income('thr')).
 - Read case data only with the attribute names listed under CASE DATA, unless the document introduces a new input.
+  Before introducing one, express it with the listed inputs where the document's definition allows (for example a
+  wage defined as base salary plus fixed allowances is income('base_salary') + income('fixed_allowance')).
+- The KB computes the payroll of permanent employees of a private employer. A provision that applies only to other
+  subjects (civil servants, state officials, soldiers or police, income paid from the state budget APBN/APBD,
+  non-permanent employees, pensioners) needs no element and no input.
+- Administrative steps outside the payroll computation are assumed fulfilled: submitting a notification, report or
+  application to the tax office, registration, filing deadlines, forms, payment codes. Do not add inputs or
+  conditions for them; model the conditions that depend on the employee's or employer's payroll data.
 - Before writing, go through the document provision by provision and make sure every provision that changes the
   computation (values, rates, thresholds, exemptions or ceilings, eligibility conditions, periods, calculation steps,
   who bears or receives the tax) has an element."""

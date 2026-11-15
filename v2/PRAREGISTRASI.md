@@ -55,12 +55,12 @@ H2 gugur bila salah satu tidak terpenuhi. Set nyata (13 regulasi dan 5 PKB) haru
 | Bagian | Isi |
 |---|---|
 | Regulasi uji | 13 peristiwa 2023–2026 (`v2/dataset/09_korpus_peristiwa/peristiwa.csv`, bagian uji) |
-| Pengecoh | 20 regulasi; versi pangkas untuk ukuran utama (`13_teks_pengecoh_ringkas`), versi utuh untuk keputusan relevansi |
+| Pengecoh | 20 regulasi; versi pangkas (`13_teks_pengecoh_ringkas`: pembuka, satu pasal utuh dengan istilah PPh 21 terpadat, penutup) di semua run |
 | Perusahaan | 5 nyata (5 PKB, ditambah PKB Century Textile 2021–2023) dan 10 fiktif (SP02, SP03, SP04, SP05, SP06, SP07, SP08, SP11, SP12, SP13, masing-masing dengan satu memo K01–K10) |
 | Set prospektif | 80 unit (`v2/dataset/15_set_prospektif/units`) |
 | Set pengembangan | 13 peristiwa 2012–2022, 5 regulasi fiktif, PKB Koja, SP01, SP09, SP10, SP14 |
 | Acuan | `v2/dataset/12_emas` (rantai dan pembaruan sisi) |
-| Kasus | Ruang uji v1 (`v2/dataset/14_ruang_uji`), panel per perusahaan (`v2/harness/instances.py`, *seed* 20261115), pegawai pemicu set prospektif |
+| Kasus | Ruang uji v1 (`v2/dataset/14_ruang_uji`), panel per perusahaan (`v2/harness/instances.py`, *seed* 20261115; setiap pegawai membawa masa kerja per bulan, bulan THR ditandai, dan kolom HR kebijakan perusahaannya), pegawai pemicu set prospektif |
 
 SHA-256 setiap teks dan kunci jawaban dicatat di manifes saat penyegelan (`v2/dataset/MANIFEST_SEGEL.sha256`).
 
@@ -95,5 +95,4 @@ SHA-256 setiap teks dan kunci jawaban dicatat di manifes saat penyegelan (`v2/da
   - skenario unggah terlambat (5 peristiwa berlaku surut × 3 jeda);
   - Sonnet dibanding `gpt-6.1-sol`;
   - teks penuh dibanding peta;
-  - keputusan relevansi pada pengecoh utuh dibanding dipangkas.
 - **Analisis kegagalan:** taksonomi per jenis kesalahan, kegagalan baca, kegagalan pada jebakan, dan materialitas dalam rupiah dan jumlah pegawai.

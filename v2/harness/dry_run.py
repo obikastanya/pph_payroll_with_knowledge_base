@@ -18,21 +18,20 @@ def all_units():
 
 
 def prospective_units():
-    fields = {i.id: units.fields_of(i) for i in instances.fictional()}
-    out = []
-    for spec in prospective.specs():
-        u = prospective.unit_of(spec, units.general_cases())
-        if spec["layer"] == "company":
-            u.extra["fields"] = fields[spec["instance"]]
-        out.append(u)
-    return out
+    from .measure import prospective_units as measured
+    return measured()
 
 
-def main(only=(), pros=False):
-    out = WORK / "dev" / ("dry-perfect-prospective" if pros else "dry-perfect")
+def main(only=(), pros=False, dev=False):
+    out = WORK / "dev" / ("dry-perfect-prospective" if pros else "dry-perfect-dev" if dev else "dry-perfect")
     shutil.rmtree(out, ignore_errors=True)
     cfg = pipeline.Config(m=3, fallback="full")
-    todo = [u for u in (prospective_units() if pros else all_units()) if not only or u.event.id in only]
+    if dev:
+        from .measure import dev_units
+        pool = dev_units()
+    else:
+        pool = prospective_units() if pros else all_units()
+    todo = [u for u in pool if not only or u.event.id in only]
     counts = collections.Counter()
     for u in todo:
         led = draft.Ledger(f"dry-{u.event.id}", root=out / "calls")
@@ -45,4 +44,4 @@ def main(only=(), pros=False):
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    main([a for a in args if a != "--prospective"], pros="--prospective" in args)
+    main([a for a in args if not a.startswith("--")], pros="--prospective" in args, dev="--dev" in args)

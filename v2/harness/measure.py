@@ -49,27 +49,36 @@ def client(model, stage, batch=True):
 # ------------------------------------------------------------------------------------------------- stages
 def all_documents():
     ids = {d for u in units.regulation_units() for d in u.event.documents}
-    ids |= {d + "-UTUH" for u in units.regulation_units() if u.event.part == "distractor" for d in u.event.documents}
     for inst in list(instances.REAL) + instances.fictional():
         ids |= {d.id for d in inst.documents}
     ids |= {s["id"] for s in prospective.specs()}
     return sorted(ids)
 
 
-def maps(batch=True):
+def maps(batch=False, docs=None):
+    """gpt-5.4-mini has no Batch access on this project (403 on the -batch model), so maps run direct, 8 at a time."""
+    todo = [d for d in (docs or all_documents()) if digest.load(d, MAPPER) is None]
+    if not todo:
+        return 0
     c = client(MAPPER, "maps", batch)
-    todo = [d for d in all_documents() if digest.load(d, MAPPER) is None]
     titles = documents.registry()
 
     def work(doc):
         with c.worker():
             digest.build(doc, c, title=titles.get(doc, {}).get("title", ""), call_prefix=f"map-{doc}-")
-    _threads(work, todo)
+    _threads(work, todo, limit=None if batch else 8)
     return len(todo)
 
 
-def _threads(fn, items):
-    ts = [threading.Thread(target=fn, args=(x,)) for x in items]
+def _threads(fn, items, limit=None):
+    """Run fn over items in threads; limit caps how many run at once (direct calls), None = all (a batch collects
+    the requests of every thread into one submission)."""
+    gate = threading.Semaphore(limit or max(1, len(items)))
+
+    def run(x):
+        with gate:
+            fn(x)
+    ts = [threading.Thread(target=run, args=(x,)) for x in items]
     for t in ts:
         t.start()
     for t in ts:
@@ -100,9 +109,53 @@ def run_units(stage, todo, model=DRAFTER, cfg=None, batch=True):
     return len(todo)
 
 
+def prospective_units():
+    """The 80 prospective units; company units carry their company's payroll fields (the dictionary G6 reads)."""
+    fields = {i.id: units.fields_of(i) for i in instances.fictional()}
+    out = []
+    for spec in prospective.specs():
+        u = prospective.unit_of(spec, units.general_cases())
+        if spec["layer"] == "company":
+            u.extra["fields"] = fields[spec["instance"]]
+        out.append(u)
+    return out
+
+
+DEV_CASES = WORK / "dev_cases.jsonl.gz"
+
+
+def dev_cases():
+    """The test-space criteria for the development years, placed against the gold chain (built once, cached)."""
+    import gzip
+    from . import gold, testspace as ts
+    if not DEV_CASES.exists():
+        cases, _ = ts.build(gold.chain(), years=ts.DEV_YEARS)
+        with gzip.open(DEV_CASES, "wt", encoding="utf-8") as f:
+            for c in cases:
+                f.write(json.dumps(c) + "\n")
+    with gzip.open(DEV_CASES, "rt", encoding="utf-8") as f:
+        return [json.loads(line) for line in f if line.strip()]
+
+
+def dev_units():
+    """Development set (the only data allowed for tuning): the 2012-2022 regulations and SP01/09/10/14."""
+    from . import corpus, gold, testspace as ts
+    from .isolated import Unit
+    cases = dev_cases()
+    regs = [Unit(e, gold.base_before(e), gold.expected_delta(e),
+                 [c for c in cases if c["tax_year"] in ts.event_years(e, ts.DEV_YEARS)])
+            for e in corpus.regulation_events() if e.part == "dev"]
+    return regs + units.company_units(instances.fictional(instances.FICTIONAL_DEV))
+
+
+def dev_stage(tag="1"):
+    todo = dev_units()
+    maps(docs=sorted({d for u in todo for d in u.event.documents}))
+    return run_units(f"dev-{tag}", todo)
+
+
 def isolated_stage():
-    general = units.general_cases()
-    pros = [prospective.unit_of(s, general) for s in prospective.specs()]
+    pros = prospective_units()
     real = units.regulation_units() + units.company_units(list(instances.REAL))
     n = run_units("isolated-prospective", pros)
     n += run_units("isolated-real-1", real)
@@ -124,10 +177,10 @@ def chains_stage(batch=True):
 
 
 def sonnet_stage():
-    general = units.general_cases()
+    by_id = {u.event.id: u for u in prospective_units()}
     specs = sorted(prospective.specs(), key=lambda s: (s["size"], s["id"]))
     step = max(1, len(specs) // SEED_UNITS)
-    picked = [prospective.unit_of(s, general) for s in specs[::step][:SEED_UNITS]]
+    picked = [by_id[s["id"]] for s in specs[::step][:SEED_UNITS]]
     real = units.regulation_units() + units.company_units(list(instances.REAL))
     return run_units("sonnet-real", real, model=ROBUST) + run_units("sonnet-prospective", picked, model=ROBUST)
 
@@ -165,16 +218,19 @@ def spent():
     return total
 
 
-STAGES = {"probe": probe, "maps": maps, "isolated": isolated_stage, "chains": chains_stage, "sonnet": sonnet_stage,
+STAGES = {"probe": probe, "maps": maps, "dev": dev_stage, "isolated": isolated_stage, "chains": chains_stage, "sonnet": sonnet_stage,
           "ablation": ablation_stage}
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("stage", choices=sorted(STAGES))
     ap.add_argument("--direct", action="store_true", help="chains without batch (faster, full price)")
+    ap.add_argument("--tag", default="1", help="dev: run tag (a rerun after a fix gets a new tag)")
     a = ap.parse_args()
     if a.stage == "chains":
         print(chains_stage(batch=not a.direct))
+    elif a.stage == "dev":
+        print(dev_stage(a.tag))
     else:
         print(STAGES[a.stage]())
     print("spent so far, all measured ledgers: USD", round(spent(), 4))

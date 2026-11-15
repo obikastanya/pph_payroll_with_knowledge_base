@@ -7,9 +7,10 @@ baselines computed from the same drafts.
     top perfect selection: correct when any passing draft is correct
 """
 import json
+import threading
 from dataclasses import dataclass, field, replace
 
-from pph21kbs import config, gates, pipeline  # noqa: E402
+from pph21kbs import config, draft, gates, pipeline  # noqa: E402
 
 from . import domains, gold, score
 
@@ -87,14 +88,37 @@ def score_result(unit, result, cfg):
             else None}
 
 
-def set_dictionary(fields):
-    """The company's payroll data dictionary in the workspace, or none (the standard dictionary only)."""
-    path = config.PAYROLL_INPUTS
+_DICTIONARY = threading.local()
+
+
+def standard_dictionary():
+    """The standard payroll data dictionary shipped with the starting knowledge base, {accessor: {key: meaning}}."""
+    out = {a: {} for a in draft.ACCESSORS}
+    for a, entries in json.loads((config.DATA / "kb" / "payroll_inputs.json").read_text(encoding="utf-8")).items():
+        if a in out:
+            out[a].update(entries)
+    return out
+
+
+def _payroll_dictionary():
+    """draft.payroll_dictionary for the harness: the standard dictionary plus the dictionary of the company whose
+    unit runs in this thread. In the application one installation serves one company and keeps its dictionary in a
+    file (config.PAYROLL_INPUTS); the harness runs units of several companies side by side in threads, so each
+    thread keeps its own."""
+    out = standard_dictionary()
+    fields = getattr(_DICTIONARY, "fields", None)
     if fields:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        domains.write_dictionary(path, fields)
-    else:
-        path.unlink(missing_ok=True)
+        for a, entries in domains.dictionary(fields).items():
+            out.setdefault(a, {}).update(entries)
+    return out
+
+
+draft.payroll_dictionary = _payroll_dictionary
+
+
+def set_dictionary(fields):
+    """The company's payroll data dictionary for the units run in this thread, or none (standard only)."""
+    _DICTIONARY.fields = fields or None
 
 
 def run(units, client, ledger, cfg, run_id, out_dir, digester=None):

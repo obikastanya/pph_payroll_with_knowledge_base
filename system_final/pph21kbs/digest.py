@@ -186,7 +186,7 @@ def usable(record):
 
 def select(doc_id, record):
     """The text for the drafting model as a documents.Selection: short opening and closing, every core part word for
-    word (an annex with extracted tables as their description), general parts as summaries. Nothing core is cut;
+    word (an annex window that repeats an extracted table as the table's description), general parts as summaries. Nothing core is cut;
     the caller reports a selection above BUDGET_TOKENS as over budget."""
     tables = documents.extracted_tables(doc_id)
     chosen, kept, summaries, dropped = [], set(), [], []
@@ -196,7 +196,7 @@ def select(doc_id, record):
         if lv is None:
             kept.add(len(chosen))
             chosen.append(dict(seg, text=u["text"]))
-        elif lv == "core" and u["kind"] == "annex" and tables:
+        elif lv == "core" and u["kind"] == "annex" and tables and documents.table_like(u["text"], doc_id):
             if not any(s["kind"] == "annex" and i in kept for i, s in enumerate(chosen)):
                 kept.add(len(chosen))
                 chosen.append(dict(seg, text="\n".join(documents.table_text(t) for t in tables)))

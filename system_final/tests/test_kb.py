@@ -61,7 +61,9 @@ def test_seed_conforms(seed_kb):
     ("REG.TER.RUNNING", {"scope": "year"}, "G1: rule scope must equal the scope of the fact it produces"),
     ("REG.TER.RUNNING", {"id": "TER.RUNNING"},
      "G1: regulation rule ids start with REG., company rule ids with PRS."),
-    ("REG.TER.RUNNING", {"produces": "no_such_fact"}, "G1: produces must name a fact of the vocabulary"),
+    ("REG.TER.RUNNING", {"produces": "no_such_fact"},
+     "G1: produces must name a fact of the vocabulary: an existing fact or a fact this update declares, written "
+     "exactly as its lower-case id"),
     ("REG.TER.RUNNING", {"source": (Source("PP-58-2023", "Pasal 2", ""),)}, "G1: quote text must not be empty"),
     ("REG.TER.RUNNING", {"source": (Source("PP-99-2099", "Pasal 1", "teks apa saja"),)},
      "G1: provision must be part of a known document"),

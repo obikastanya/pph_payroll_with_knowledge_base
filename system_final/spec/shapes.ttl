@@ -75,7 +75,7 @@ pph:TableIdShape a sh:NodeShape ; sh:targetClass pph:TableVersion ;
 pph:ConstraintIdShape a sh:NodeShape ; sh:targetClass pph:Constraint ;
     sh:property [ sh:path pph:elementId ; sh:pattern "^CON\\." ; sh:message "G1: constraint ids start with CON." ] .
 pph:FactIdShape a sh:NodeShape ; sh:targetClass pph:FactDefinition ;
-    sh:property [ sh:path pph:elementId ; sh:pattern "^[a-z][a-z0-9_]*$" ; sh:message "G1: fact names are lower case" ] .
+    sh:property [ sh:path pph:elementId ; sh:pattern "^[a-z][a-z0-9_]*$" ; sh:message "G1: a fact's id is its name in lower case, without a prefix (for example dtp_income, not FACT.DTP_INCOME); rules that produce or read the fact use the same name" ] .
 
 # ------------------------------------------------------------------ rules
 pph:RuleShape a sh:NodeShape ;
@@ -84,7 +84,7 @@ pph:RuleShape a sh:NodeShape ;
     sh:property [ sh:path pph:modality ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( pph:Mandatory pph:Default pph:Optional ) ] ;
     sh:property [ sh:path pph:scope ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( pph:Period pph:Year ) ] ;
     sh:property [ sh:path pph:produces ; sh:minCount 1 ; sh:maxCount 1 ; sh:class pph:Fact ;
-                  sh:message "G1: produces must name a fact of the vocabulary" ] ;
+                  sh:message "G1: produces must name a fact of the vocabulary: an existing fact or a fact this update declares, written exactly as its lower-case id" ] ;
     sh:property [ sh:path pph:expression ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
     sh:property [ sh:path pph:condition ; sh:maxCount 1 ] ;
     sh:property [ sh:path pph:fixedPointLower ; sh:maxCount 1 ] ;

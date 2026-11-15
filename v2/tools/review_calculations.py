@@ -66,10 +66,13 @@ def text_of(v):
 class Table:
     """One sheet: a header row, then one row per employee; the last two columns are filled by the expert."""
 
-    def __init__(self, wb, title, columns, intro):
-        """columns: [(header, width, format, kind)] with kind in {"data", "result"}."""
+    def __init__(self, wb, title, columns, intro, verdict=True):
+        """columns: [(header, width, format, kind)] with kind in {"data", "result", "fill"}. verdict adds the
+        pass/failed column."""
         self.ws = wb.create_sheet(title)
-        self.columns = columns + [("Status verifikasi (pass/failed)", 14, None, "fill"), ("Catatan", 40, None, "fill")]
+        self.verdict = verdict
+        status = [("Status verifikasi (pass/failed)", 14, None, "fill")] if verdict else []
+        self.columns = columns + status + [("Catatan", 40, None, "fill")]
         self.ws.cell(1, 1, intro).font = Font(name=FONT, size=10, italic=True)
         self.ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=len(self.columns))
         self.ws.row_dimensions[1].height = 30
@@ -87,7 +90,7 @@ class Table:
         self.ws.add_data_validation(self.status)
 
     def add(self, values, note=None):
-        for i, ((_, _, fmt, kind), v) in enumerate(zip(self.columns, list(values) + [None, None]), 1):
+        for i, ((_, _, fmt, kind), v) in enumerate(zip(self.columns, list(values) + [None] * len(self.columns)), 1):
             c = self.ws.cell(self.row, i, v)
             c.font = Font(name=FONT, size=10)
             c.alignment = Alignment(wrap_text=True, vertical="top")
@@ -98,7 +101,8 @@ class Table:
                 c.fill = FILL_IN
         if note:
             self.ws.cell(self.row, 1).comment = Comment(note[:30000], "penelitian", width=420, height=260)
-        self.status.add(f"{get_column_letter(len(self.columns) - 1)}{self.row}")
+        if self.verdict:
+            self.status.add(f"{get_column_letter(len(self.columns) - 1)}{self.row}")
         self.row += 1
 
     def finish(self):
@@ -329,6 +333,8 @@ def instructions(ws, counts):
         ("Tujuan", "Memeriksa apakah PPh 21 yang dipakai penelitian sebagai jawaban benar memang benar."),
         ("Isi", "Setiap sheet memuat satu kriteria perhitungan. Setiap baris adalah satu pegawai pada satu masa pajak: "
                 "data pegawai, gaji dan komponen lainnya, lalu hasil hitung (kolom hijau)."),
+        ("Hitung sendiri", "Kerjakan sheet Hitung sendiri lebih dulu: hitung PPh 21 sepuluh pegawai tanpa jawaban "
+                           "penelitian. Baris ini tidak muncul di sheet lain."),
         ("Cara memeriksa", "Periksa kolom hijau pada setiap baris. Isi kolom kuning: Status verifikasi = pass bila "
                            "benar, failed bila salah; tulis nilai yang benar dan alasannya di Catatan."),
         ("Skenario dan asumsi", "Arahkan kursor ke kode kasus (sel bertanda segitiga merah) untuk melihat skenario, "
@@ -351,13 +357,66 @@ def instructions(ws, counts):
             b.fill = FILL_IN
 
 
+# ---------------------------------------------------------------------------------------------------- blind rows
+BLIND_SEED = 20261115
+BLIND_PLAN = [("PER16_2023", "old", 2), ("PER16_2023", "gross_up", 1), ("TER_2024", "ter", 2),
+              ("TER_2024", "gross_up", 1), ("TER_DTP_2025", "ter", 2), ("TER_DTP_2026", "ter", 2)]
+BLIND_KEY = v2.harness.WORK / "review" / "hitung_sendiri_kunci.json"
+
+
+def blind_cases(cases):
+    """Ten one-month cases drawn at random per regime and criterion. They are left out of the other sheets, so the
+    expert computes them without seeing the research answer (guards against anchoring on the given result)."""
+    import random
+    rng = random.Random(BLIND_SEED)
+    single = [d for d in cases if d["stratum"] == "bulanan" and len(d["expected"]["per_masa"]) == 1]
+    picked = []
+    for regime, kind, n in BLIND_PLAN:
+        pool = [d for d in single if d["rezim"] == regime and kind_of(d["expected"]["per_masa"][0]) == kind]
+        picked += rng.sample(pool, n)
+    return sorted(picked, key=lambda d: d["id"])
+
+
+def leaks(d):
+    """Whether the scenario note states one of the answers (then the note is not shown)."""
+    m = d["expected"]["per_masa"][0]
+    text = note_of(d).replace(".", "")
+    return any(str(v) in text for v in (m["bruto"], m["pph21"], m["pph21_dipotong"]) if v and v > 1000)
+
+
+def blind_sheet(wb, cases):
+    t = Table(wb, "Hitung sendiri", CASE_HEADS + INCOME_HEADS + [
+        ("Iuran JHT + JP pegawai (Rp)", 12, RP, "data"), ("Metode", 12, None, "data"),
+        ("Penghasilan bruto (Rp) — diisi pakar", 15, RP, "fill"),
+        ("PPh 21 terutang (Rp) — diisi pakar", 15, RP, "fill"), ("PPh 21 DTP (Rp) — diisi pakar", 15, RP, "fill"),
+        ("PPh 21 dipotong dari pegawai (Rp) — diisi pakar", 15, RP, "fill")],
+        "Hitung sendiri PPh 21 sepuluh pegawai ini dari regulasi yang berlaku pada masanya, tanpa jawaban "
+        "penelitian. Isi kolom kuning. Hasil penelitian untuk baris ini tidak ditampilkan di sheet lain. Arahkan "
+        "kursor ke kode kasus untuk melihat skenario dan asumsinya.", verdict=False)
+    key = []
+    for d in cases:
+        i, m = next(months_of(d))
+        t.add([d["id"], period(d, m["bulan"]), employee(d), sector(d)] + income_columns(i) +
+              [component("iuran_jht_pegawai", i) + component("iuran_jp_pegawai", i),
+               d["input"]["metode"].replace("_", "-"), None, None, None, None],
+              None if leaks(d) else note_of(d))
+        key.append({"kode": d["id"], "bruto": m["bruto"], "pph21": m["pph21"], "pph21_dtp": m["pph21_dtp"],
+                    "pph21_dipotong": m["pph21_dipotong"]})
+    t.finish()
+    BLIND_KEY.parent.mkdir(parents=True, exist_ok=True)
+    BLIND_KEY.write_text(json.dumps(key, indent=1), encoding="utf-8")
+    return t.row - 3
+
+
 def build():
     wb = Workbook()
     wb.active.title = "Petunjuk"
     cases = gt3_cases()
-    counts = [("PPh bulanan TER", ter_sheet(wb, cases)), ("PPh bulanan 2023", old_sheet(wb, cases)),
-              ("Gross-up", gross_up_sheet(wb, cases)), ("Masa Pajak Terakhir", year_end_sheet(wb, cases)),
-              ("Kebijakan PKB", policy_sheet(wb, gt5_examples()))]
+    blind = blind_cases(cases)
+    visible = [d for d in cases if d not in blind]
+    counts = [("Hitung sendiri", blind_sheet(wb, blind)), ("PPh bulanan TER", ter_sheet(wb, visible)),
+              ("PPh bulanan 2023", old_sheet(wb, visible)), ("Gross-up", gross_up_sheet(wb, visible)),
+              ("Masa Pajak Terakhir", year_end_sheet(wb, visible)), ("Kebijakan PKB", policy_sheet(wb, gt5_examples()))]
     instructions(wb["Petunjuk"], counts)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     wb.save(OUT)

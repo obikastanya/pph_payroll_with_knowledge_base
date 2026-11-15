@@ -115,7 +115,7 @@ def tables_of(doc_id):
 
 
 def clear_caches():
-    for cached in (registry, pages, normalized, segments):
+    for cached in (registry, pages, normalized, segments, table_numbers):
         cached.cache_clear()
 
 
@@ -416,18 +416,65 @@ def table_text(t):
     return "\n".join(lines)
 
 
+NUMBER = re.compile(r"\d[\d.,Oo]*[\dOo]|\d")
+
+
+def _number_keys(text):
+    """Numbers of four or more significant digits (row numbers of a list are left out), as digit strings:
+    Rp5.400.000,00, 5400000 and the OCR reading 5.4OO.OOO give the same key (a letter O between digits read as zero,
+    rupiah cents dropped)."""
+    out = []
+    for m in NUMBER.findall(text):
+        m = re.sub(r",\d{1,2}$", "", re.sub(r"[Oo]", "0", m))
+        d = re.sub(r"\D", "", m).lstrip("0")
+        if len(d) >= 4:
+            out.append(d)
+    return out
+
+
+@lru_cache(maxsize=None)
+def table_numbers(doc_id):
+    vals = set()
+    for p in tables_of(doc_id):
+        with open(p, encoding="utf-8", newline="") as f:
+            for row in csv.reader(f):
+                for cell in row:
+                    vals.update(_number_keys(cell))
+    return frozenset(vals)
+
+
+def table_like(text, doc_id):
+    """An annex window that repeats an extracted table: at least half of its numbers are cells of the document's
+    extracted tables. Other annex text (worked examples, explanations) is not in a table and is sent word for word."""
+    vals = table_numbers(doc_id)
+    nums = _number_keys(text)
+    if not vals or len(nums) < 5:
+        return False
+    return sum(n in vals for n in nums) >= 0.5 * len(nums)
+
+
 def full(doc_id):
-    """Every segment word for word; an annex with extracted tables as their description."""
+    """Every segment word for word; the annex windows that repeat an extracted table are replaced by the table's
+    description (given once, at the first annex)."""
     segs = segments(doc_id)
     if not segs:
         raise ValueError(f"document {doc_id} has no segments ({folder(doc_id) / 'segments.json'})")
     tables = extracted_tables(doc_id)
-    chosen = [dict(s, text="\n".join(table_text(t) for t in tables)) if s["kind"] == "annex" and tables else dict(s)
-              for s in segs]
-    if tables:
-        first = next(i for i, s in enumerate(chosen) if s["kind"] == "annex") if any(
-            s["kind"] == "annex" for s in chosen) else None
-        chosen = [s for i, s in enumerate(chosen) if s["kind"] != "annex" or i == first]
+    if not tables:
+        chosen = [dict(s) for s in segs]
+        return Selection(doc_id, chosen, tables, [], sum(tokens(s["text"]) for s in chosen))
+    from .digest import _windows
+    chosen, described = [], False
+    for s in segs:
+        if s["kind"] != "annex":
+            chosen.append(dict(s))
+            continue
+        if not described:
+            chosen.append(dict(s, text="\n".join(table_text(t) for t in tables)))
+            described = True
+        kept = [w for w in _windows(s["text"]) if not table_like(w, doc_id)]
+        if kept:
+            chosen.append(dict(s, text="\n".join(kept)))
     return Selection(doc_id, chosen, tables, [], sum(tokens(s["text"]) for s in chosen))
 
 

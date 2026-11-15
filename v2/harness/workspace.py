@@ -14,7 +14,6 @@ from pph21kbs import documents  # noqa: E402
 TEXTS = DATA / "13_teks"
 SHORT = DATA / "13_teks_pengecoh_ringkas"
 GOLD = DATA / "12_emas"
-FULL_SUFFIX = "-UTUH"         # the full text of a distractor; the plain id holds its short version (the main measure)
 COMPANY_ROLES = {"policy", "policy_dev", "policy_synthetic"}
 
 
@@ -26,8 +25,7 @@ def import_one(row):
     src = TEXTS / row["id"]
     company = row["role"] in COMPANY_ROLES or row["id"].startswith(("PKB-", "SP"))
     full = (src / "teks.txt").read_text(encoding="utf-8").replace("=== PDF hlm. ", "=== page ")
-    if row["role"] == "distractor":
-        documents.add_document(row["id"] + FULL_SUFFIX, row["title"], row["issued"], text=full)
+    if row["role"] == "distractor":            # distractors are read in their short version (13_teks_pengecoh_ringkas)
         full = (SHORT / row["id"] / "teks.txt").read_text(encoding="utf-8").replace("=== PDF hlm. ", "=== page ")
     raw = full
     d = documents.add_document(row["id"], row["title"], row["issued"], text=raw, company=company)

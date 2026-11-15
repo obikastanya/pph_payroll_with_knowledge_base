@@ -7,6 +7,7 @@ development. Replays are logged with cost 0 and replayed=True, so cost and call 
 import hashlib
 import json
 import threading
+from contextlib import contextmanager
 from datetime import datetime, timezone
 
 from . import WORK
@@ -37,6 +38,19 @@ class Recorded(draft.Client):
                     row = json.loads(line)
                     self.answers[row["key"]] = row
         self.hits = self.misses = 0
+        self.cpu = threading.Lock()        # rdflib is not thread-safe: one worker computes at a time
+        self._held = threading.local()
+
+    @contextmanager
+    def worker(self):
+        """A thread's share of the work: it holds the CPU lock except while it waits for the API."""
+        self.cpu.acquire()
+        self._held.on = True
+        try:
+            yield
+        finally:
+            self._held.on = False
+            self.cpu.release()
 
     def complete(self, *, system, prefix, user, schema, schema_name, effort, step, document="", event="",
                  draft_no=None, call_id=None, max_tokens=32000):
@@ -44,9 +58,17 @@ class Recorded(draft.Client):
         row = self.answers.get(k)
         if row is None:
             self.misses += 1
-            reply, parsed, entry = self.inner.complete(
-                system=system, prefix=prefix, user=user, schema=schema, schema_name=schema_name, effort=effort,
-                step=step, document=document, event=event, draft_no=draft_no, call_id=call_id, max_tokens=max_tokens)
+            held = getattr(self._held, "on", False)
+            if held:
+                self.cpu.release()
+            try:
+                reply, parsed, entry = self.inner.complete(
+                    system=system, prefix=prefix, user=user, schema=schema, schema_name=schema_name, effort=effort,
+                    step=step, document=document, event=event, draft_no=draft_no, call_id=call_id,
+                    max_tokens=max_tokens)
+            finally:
+                if held:
+                    self.cpu.acquire()
             if not entry.get("error"):
                 self._store({"key": k, "call_id": call_id, "output_raw": entry["output_raw"],
                              "stop_reason": entry["stop_reason"], "model_reported": entry["model_reported"],

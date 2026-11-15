@@ -176,12 +176,15 @@ def panel(inst, years=YEARS, seed=20261115, fields=None):
     (accessor, key) -> values) varied: an employee field per employee, a company field fixed for the company, a
     monthly field per month."""
     rng = random.Random(f"{seed}-{inst.id}")
+    tenure = random.Random(f"{seed}-{inst.id}-tenure")     # separate stream: the other draws stay as they were
     base = cell_wage(inst.province, inst.klu)
     people, next_id, cases = [], 0, []
     for year in [y for y in years if y >= inst.installed.year]:
         if not people:
             people = [{"n": i, "grade": _grade(rng), "ptkp": rng.choice(ts.PTKP), "start": 1}
                       for i in range(PANEL_SIZE)]
+            for p in people:
+                p["hired"] = year * 12 - tenure.choice(TENURE_MONTHS)
             next_id = PANEL_SIZE
         else:
             people = [p for p in people if not p.get("left")]
@@ -189,6 +192,8 @@ def panel(inst, years=YEARS, seed=20261115, fields=None):
                 p["start"] = 1
             joiners = [{"n": next_id + i, "grade": _grade(rng), "ptkp": rng.choice(ts.PTKP),
                         "start": rng.randint(2, 12)} for i in range(round(PANEL_SIZE * TURNOVER))]
+            for p in joiners:
+                p["hired"] = year * 12 + p["start"] - 1
             next_id += len(joiners)
             people += joiners
         for p in people:
@@ -208,6 +213,7 @@ def panel(inst, years=YEARS, seed=20261115, fields=None):
                 continue
             c["employer"] = {"klu": klu, "jkk_risk_group": inst.jkk_risk,
                              "jkk_relief_eligible": relief_eligible(klu, workers), "policy": inst.policy_on(year)}
+            _tenure(c, year, p["hired"])
             _fill(c, fields or {}, p["n"], inst.id)
             c["criterion"], c["cell"] = "panel", {"instance": inst.id, "grade": p["grade"]}
             cases.append(c)
@@ -215,6 +221,17 @@ def panel(inst, years=YEARS, seed=20261115, fields=None):
 
 
 BUCKET = {"hr": "hr", "income": "income", "benefit": "benefits"}
+TENURE_MONTHS = (0, 6, 11, 18, 30, 60, 120, 240)    # completed months of service at the start of the first year
+
+
+def _tenure(case, year, hired):
+    """HR data every payroll keeps: completed months of service in each month, and the month the THR is paid for a
+    religious holiday (the month that carries the THR), so that policy rules on THR and service are exercised."""
+    for q in case["periods"]:
+        h = q.setdefault("hr", {})
+        h["months_of_service"] = max(0, year * 12 + q["month"] - 1 - hired)
+        if q["income"].get("thr"):
+            h["thr_holiday"] = 1
 
 
 def _fill(case, fields, n, company):

@@ -2,7 +2,8 @@
 gold rules: compared constants, table keys, booleans, thresholds), and the company's payroll data dictionary.
 
 The dictionary also lists common HR fields that the policy does not read, so that it describes a company's HR data
-and does not point at the rules."""
+and does not point at the rules. A common field never duplicates a policy field under another name (days present is
+days_present in both), so a dictionary holds one name per item of HR data."""
 import ast
 import json
 
@@ -11,7 +12,7 @@ from pph21kbs import draft  # noqa: E402
 COMMON = {
     "employee": {"job_grade": "job grade in the company's grading", "division": "division or department",
                  "work_location": "work location", "employment_status": "permanent, contract, or probation"},
-    "hr": {"days_present_month": "days present this month", "annual_leave_taken": "annual leave days taken this month",
+    "hr": {"days_present": "days present this month", "annual_leave_taken": "annual leave days taken this month",
            "sick_days": "sick days this month", "overtime_hours_total": "total overtime hours this month"},
 }
 COUNTS = (0, 1, 3)
@@ -25,7 +26,8 @@ MONEY_WORDS = ("claim", "paid", "grant", "aid", "amount", "value", "allowance", 
 def company_inputs(update):
     """(accessor, key) -> expression texts, for the inputs of `update` that are not in the case schema or the
     standard payroll dictionary."""
-    standard = draft.payroll_dictionary()
+    from .isolated import standard_dictionary
+    standard = standard_dictionary()
     schema = draft.schema_fields()
     out = {}
     for op in ("add", "change"):
@@ -166,6 +168,8 @@ def dictionary(fields):
             meaning += " (codes: " + ", ".join(v for v in values if v != "lainnya") + ")"
         elif values == [True, False]:
             meaning += " (yes or no)"
+        if k in COMMON.get(a, {}):         # a policy field that is also a common HR field: one name, one meaning
+            continue
         out.setdefault(a, {})[k] = meaning
     return out
 

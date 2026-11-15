@@ -126,9 +126,82 @@ ARTICLE = re.compile(r"^\s*Pasal\s+([0-9]+[A-Z]?|[IVX]+)\s*$")
 # Collective agreements title their articles ("Pasal 1 : Pihak-Pihak", "PASAL 7 - Upah"). Regulations do not; there
 # "PASAL 25" names a tax article inside tables, and references in sentences carry "ayat".
 ARTICLE_TITLED = re.compile(r"^\s*(?:Pasal|PASAL)\s+([0-9]+[A-Z]?|[IVX]+)\s*"
-                            r"(?:$|[:.\-–]\s*(?!.*\bayat\b)[A-Z][^.;]{0,90}$)")
+                            r"(?:$|[:.\-–]\s*(?!.*\bayat\b)[A-Z][^.;]{0,90}$|(?!.*\bayat\b)[A-Z][^a-z.;]{2,90}$)")
 CLOSING = re.compile(r"^\s*Ditetapkan di\b", re.I)
 ANNEX = re.compile(r"^\s*LAMPIRAN\b")
+
+
+# ====================================================================================================================
+# Cleaning at ingestion
+# ====================================================================================================================
+PAGE_NUMBER = re.compile(r"^\s*[-–—]?\s*\d{1,4}\s*[-–—]?\s*$")
+LEGAL_LINE = re.compile(r"^\s*(pasal|bab|bagian|paragraf|ayat|huruf|lampiran|penjelasan)\b", re.I)
+CONTENT_LINE = re.compile(r"[.;:,]\s*$|^\s*(\(?[0-9a-z]{1,3}[.)]|[-•*])\s")   # a sentence or a list item
+EDGE = 2                      # running headers and footers sit among the first or last lines of a page
+WEB_START = re.compile(r"^\s*(perjanjian kerja bersama|peraturan perusahaan)\b.{6,}", re.I)
+WEB_END = re.compile(r"^\s*Tanggal dimulainya perjanjian\s*:")
+
+
+def _repeat_key(line):
+    return re.sub(r"\d+", "#", normalize(line))
+
+
+def _furniture(line):
+    """May be a running header or footer: not a heading of the document's structure, a sentence, or a list item."""
+    return not LEGAL_LINE.match(line) and not CONTENT_LINE.search(line)
+
+
+def _strip_web_page(text):
+    """A collective agreement saved from a web page keeps only the agreement: the site menu before its title and the
+    site's own summary after the signing record are dropped."""
+    lines = text.splitlines()
+    start = next((i for i, l in enumerate(lines) if WEB_START.match(l)), None)
+    end = next((i for i, l in enumerate(lines) if WEB_END.match(l)), None)
+    if start is None:
+        return text
+    if end is not None and end > start:
+        end -= 1 if end - 1 > start and lines[end - 1].strip().startswith("IDN ") else 0
+    else:
+        end = len(lines)
+    head = [l for l in lines[:start] if PAGE_MARK.match(l)][:1]
+    return "\n".join(head + lines[start:end])
+
+
+def clean(raw):
+    """Text without page furniture: page numbers and running headers or footers at the top or bottom of a page
+    (lines repeated on many pages, digits ignored), and, for a web page, the site menu and summary. Page markers and
+    every other line are kept as they are."""
+    if "WageIndicator" in raw:
+        raw = _strip_web_page(raw)
+    parts = PAGE_MARK.split(raw)
+    if len(parts) < 3:
+        return raw
+    blocks = [(int(parts[i]), parts[i + 1].splitlines()) for i in range(1, len(parts), 2)]
+    edges = []
+    for _, lines in blocks:
+        filled = [i for i, l in enumerate(lines) if l.strip()]
+        edges.append(set(filled[:EDGE] + filled[-EDGE:]))
+    counts = {}
+    for (_, lines), edge in zip(blocks, edges):
+        for key in {_repeat_key(lines[i]) for i in edge if _furniture(lines[i])}:
+            counts[key] = counts.get(key, 0) + 1
+    running = {k for k, n in counts.items() if k and n >= max(3, len(blocks) * 0.3)}
+    out, seen = ([parts[0]] if parts[0].strip() else []), set()
+    for (page, lines), edge in zip(blocks, edges):
+        filled = [i for i, l in enumerate(lines) if l.strip()]
+        ends = {filled[0], filled[-1]} if filled else set()
+        kept = []
+        for i, line in enumerate(lines):
+            if i in ends and PAGE_NUMBER.match(line):
+                continue
+            key = _repeat_key(line)
+            if i in edge and _furniture(line) and key in running:
+                if key in seen:                     # the first occurrence stays (a title, a table's column names)
+                    continue
+                seen.add(key)
+            kept.append(line)
+        out.append(f"=== page {page} ===\n" + "\n".join(kept).strip("\n"))
+    return "\n".join(out)
 
 
 def segment(text, titled=False):
@@ -274,6 +347,7 @@ def add_document(doc_id, title, issued, *, pdf=None, text=None, company=False, f
                 t.frame.to_csv(d / "tables" / f"{t.name}.csv", index=False, encoding="utf-8")
     else:
         raw = text if PAGE_MARK.search(text or "") else f"=== page 1 ===\n{text or ''}"
+    raw = clean(raw)
     (d / "text.txt").write_text(raw, encoding="utf-8")
     (d / "segments.json").write_text(json.dumps(segment(raw, titled=company), ensure_ascii=False, indent=1),
                                      encoding="utf-8")
@@ -340,6 +414,21 @@ def table_text(t):
     for r in t["sample"]:
         lines.append("  " + "; ".join(f"{k}={v}" for k, v in r.items()))
     return "\n".join(lines)
+
+
+def full(doc_id):
+    """Every segment word for word; an annex with extracted tables as their description."""
+    segs = segments(doc_id)
+    if not segs:
+        raise ValueError(f"document {doc_id} has no segments ({folder(doc_id) / 'segments.json'})")
+    tables = extracted_tables(doc_id)
+    chosen = [dict(s, text="\n".join(table_text(t) for t in tables)) if s["kind"] == "annex" and tables else dict(s)
+              for s in segs]
+    if tables:
+        first = next(i for i, s in enumerate(chosen) if s["kind"] == "annex") if any(
+            s["kind"] == "annex" for s in chosen) else None
+        chosen = [s for i, s in enumerate(chosen) if s["kind"] != "annex" or i == first]
+    return Selection(doc_id, chosen, tables, [], sum(tokens(s["text"]) for s in chosen))
 
 
 def select(doc_id, view, budget=TOKEN_BUDGET):

@@ -1,7 +1,8 @@
 """Map of a document by a low-cost model before the drafting model reads it.
 
-Each part gets a level: core parts are sent word for word, general parts as a summary, none parts are left out. The
-opening and closing are always sent. A part the map does not mention counts as core.
+Each part gets a level: core parts are sent word for word, general parts as a summary, none parts are left out. A
+short opening and closing are always sent; a long one is mapped like any other part. A part the map does not mention
+counts as core. Core parts are never cut: a selection over the budget is sent whole and reported as over budget.
 """
 import concurrent.futures as cf
 import hashlib
@@ -57,12 +58,18 @@ def units(doc_id):
     """Parts of a stored document in order; long articles and annexes are split into windows."""
     out = []
     for s in documents.segments(doc_id):
-        pieces = [s["text"]] if s["kind"] in ALWAYS else _windows(s["text"])
+        always = s["kind"] in ALWAYS and documents.tokens(s["text"]) <= documents.ALWAYS_CAP
+        pieces = [s["text"]] if always else _windows(s["text"])
         for i, piece in enumerate(pieces, 1):
             label = s["id"] if len(pieces) == 1 else f"{s['id']} (part {i} of {len(pieces)})"
-            out.append({"key": f"U{len(out) + 1}", "label": label, "kind": s["kind"], "text": piece,
-                        "page_start": s.get("page_start"), "page_end": s.get("page_end")})
+            out.append({"key": f"U{len(out) + 1}", "label": label, "kind": s["kind"], "always": always,
+                        "text": piece, "page_start": s.get("page_start"), "page_end": s.get("page_end")})
     return out
+
+
+def always(u):
+    """Sent without a map: a short opening or closing."""
+    return u.get("always", u["kind"] in ALWAYS)
 
 
 def _windows(text):
@@ -78,7 +85,8 @@ def _windows(text):
 
 
 def _outline(parts):
-    return [{"key": u["key"], "label": u["label"], "kind": u["kind"], "chars": len(u["text"])} for u in parts]
+    return [{"key": u["key"], "label": u["label"], "kind": u["kind"], "always": u["always"], "chars": len(u["text"])}
+            for u in parts]
 
 
 def _text_hash(doc_id):
@@ -112,25 +120,32 @@ def _batches(parts):
     return out + [cur] if cur else out
 
 
+def _request(doc_id, title, batch, call_id):
+    user = f"DOCUMENT: {title or doc_id}\n\n" + "\n\n".join(
+        f"<<{u['key']}>> {u['label']}\n{u['text'].strip()}" for u in batch)
+    return dict(system=SYSTEM, prefix=[], user=user, schema=SCHEMA, schema_name="digest", effort="low",
+                step="digest", document=doc_id, call_id=call_id, max_tokens=32000)
+
+
 def build(doc_id, client, title="", call_prefix=""):
     """Map a document, or return its stored map. The map is stored only when every call answered."""
     stored = load(doc_id, client.model)
     if stored:
         return stored
     all_units = units(doc_id)
-    parts = [u for u in all_units if u["kind"] not in ALWAYS]
+    parts = [u for u in all_units if not always(u)]
 
     def one(i, batch):
-        user = f"DOCUMENT: {title or doc_id}\n\n" + "\n\n".join(
-            f"<<{u['key']}>> {u['label']}\n{u['text'].strip()}" for u in batch)
-        _, out, entry = client.complete(system=SYSTEM, prefix=[], user=user, schema=SCHEMA, schema_name="digest",
-                                        effort="low", step="digest", document=doc_id,
-                                        call_id=f"{call_prefix}digest{i + 1}", max_tokens=32000)
+        _, out, entry = client.complete(**_request(doc_id, title, batch, f"{call_prefix}digest{i + 1}"))
         return out, entry.get("cost_usd") or 0.0
 
     batches = _batches(parts)
     results = []
-    if batches:
+    if batches and getattr(client, "batched", False):     # a batch client takes all requests of the document at once
+        outs = client.complete_many([_request(doc_id, title, b, f"{call_prefix}digest{i + 1}")
+                                     for i, b in enumerate(batches)])
+        results = [(out, entry.get("cost_usd") or 0.0) for _, out, entry in outs]
+    elif batches:
         with cf.ThreadPoolExecutor(max_workers=min(WORKERS, len(batches))) as ex:
             results = list(ex.map(lambda a: one(*a), enumerate(batches)))
     keys = {u["key"] for u in parts}
@@ -158,7 +173,7 @@ def level(record, key):
 def counts(record):
     out = dict.fromkeys(LEVELS, 0)
     for u in record["units"]:
-        if u["kind"] not in ALWAYS:
+        if not always(u):
             out[level(record, u["key"])] += 1
     return out
 
@@ -169,22 +184,18 @@ def usable(record):
     return bool(record["units"]) and not record["failed_calls"] and (c["core"] > 0 or c["general"] + c["none"] == 0)
 
 
-def _density(text):
-    t = documents.normalize(text)
-    return sum(len(re.findall(re.escape(term), t)) for term in documents.FIXED_TERMS) / documents.tokens(text) ** 0.5
-
-
-def select(doc_id, record, budget=BUDGET_TOKENS):
-    """The text for the drafting model as a documents.Selection. Over budget, the core parts with the fewest PPh 21
-    terms per length are left out first; the opening, closing, and annex tables are kept."""
+def select(doc_id, record):
+    """The text for the drafting model as a documents.Selection: short opening and closing, every core part word for
+    word (an annex with extracted tables as their description), general parts as summaries. Nothing core is cut;
+    the caller reports a selection above BUDGET_TOKENS as over budget."""
     tables = documents.extracted_tables(doc_id)
     chosen, kept, summaries, dropped = [], set(), [], []
     for u in units(doc_id):
         seg = {"id": u["label"], "kind": u["kind"], "page_start": u["page_start"], "page_end": u["page_end"]}
-        lv = None if u["kind"] in ALWAYS else level(record, u["key"])
+        lv = None if always(u) else level(record, u["key"])
         if lv is None:
             kept.add(len(chosen))
-            chosen.append(dict(seg, text=documents.cap(u["text"])))
+            chosen.append(dict(seg, text=u["text"]))
         elif lv == "core" and u["kind"] == "annex" and tables:
             if not any(s["kind"] == "annex" and i in kept for i, s in enumerate(chosen)):
                 kept.add(len(chosen))
@@ -197,14 +208,6 @@ def select(doc_id, record, budget=BUDGET_TOKENS):
             dropped.append(u["label"])
     block = SUMMARY_NOTE + "\n" + "\n".join(summaries) if summaries else ""
     used = sum(documents.tokens(s["text"]) for s in chosen) + (documents.tokens(block) if block else 0)
-    removed = set()
-    for i in sorted((i for i in range(len(chosen)) if i not in kept), key=lambda i: _density(chosen[i]["text"])):
-        if used <= budget:
-            break
-        removed.add(i)
-        used -= documents.tokens(chosen[i]["text"])
-        dropped.append(chosen[i]["id"])
-    chosen = [s for i, s in enumerate(chosen) if i not in removed]
     if block:
         chosen.append({"id": "summaries", "kind": "summary", "text": block})
     return documents.Selection(doc_id, chosen, tables, dropped, used)

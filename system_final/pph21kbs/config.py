@@ -70,6 +70,8 @@ def kb_known_until(default=None):
 WORKSPACE = Path(secret("PPH21_WORKSPACE") or ROOT / "workspace")
 DOCUMENTS = WORKSPACE / "documents"
 CALLS = WORKSPACE / "calls"
+# The company's payroll data dictionary (its HR fields and their meaning), declared when it installs
+PAYROLL_INPUTS = Path(secret("PPH21_PAYROLL_INPUTS") or WORKSPACE / "payroll_inputs.json")
 
 # Model that drafts updates (the research used claude-opus-5-5)
 MAIN_MODEL = secret("PPH21_MAIN_MODEL") or "claude-sonnet-5-5"

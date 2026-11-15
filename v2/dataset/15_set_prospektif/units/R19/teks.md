@@ -1,0 +1,81 @@
+SALINAN
+
+PERATURAN MENTERI KEUANGAN REPUBLIK INDONESIA
+NOMOR 785 TAHUN 2027
+TENTANG
+PAJAK PENGHASILAN PASAL 21 DITANGGUNG PEMERINTAH ATAS PENGHASILAN PEGAWAI BARU PADA INDUSTRI KONSTRUKSI DAN PERGUDANGAN TAHUN ANGGARAN 2027
+
+DENGAN RAHMAT TUHAN YANG MAHA ESA
+
+MENTERI KEUANGAN REPUBLIK INDONESIA,
+
+Menimbang : a. bahwa untuk mendorong penyerapan tenaga kerja baru pada industri konstruksi dan pergudangan yang menopang pelaksanaan proyek strategis nasional, perlu diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah bagi pegawai yang baru mulai bekerja;
+b. bahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a, perlu menetapkan Peraturan Menteri Keuangan tentang Pajak Penghasilan Pasal 21 Ditanggung Pemerintah atas Penghasilan Pegawai Baru pada Industri Konstruksi dan Pergudangan Tahun Anggaran 2027;
+
+Mengingat : 1. Undang-Undang Nomor 7 Tahun 1983 tentang Pajak Penghasilan sebagaimana telah beberapa kali diubah terakhir dengan Undang-Undang Nomor 7 Tahun 2021 tentang Harmonisasi Peraturan Perpajakan;
+2. Undang-Undang tentang Anggaran Pendapatan dan Belanja Negara Tahun Anggaran 2027;
+3. Peraturan Menteri Keuangan Nomor 168 Tahun 2023 tentang Pelaksanaan Pemotongan Pajak Penghasilan Pasal 21 dan Pajak Penghasilan Pasal 26 sehubungan dengan Pekerjaan, Jasa, dan Kegiatan Orang Pribadi;
+
+MEMUTUSKAN:
+
+Menetapkan : PERATURAN MENTERI KEUANGAN TENTANG PAJAK PENGHASILAN PASAL 21 DITANGGUNG PEMERINTAH ATAS PENGHASILAN PEGAWAI BARU PADA INDUSTRI KONSTRUKSI DAN PERGUDANGAN TAHUN ANGGARAN 2027.
+
+Pasal 1
+(1) Pegawai Baru adalah pegawai tetap yang mulai bekerja pada Pemberi Kerja pada atau setelah tanggal 1 Februari 2027.
+(2) Pegawai Baru yang memenuhi kriteria sebagaimana dimaksud dalam Pasal 3 disebut Pegawai Tertentu.
+
+Pasal 2
+(1) Pegawai Tertentu diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah untuk paling lama 3 (tiga) Masa Pajak berturut-turut, dihitung sejak Masa Pajak bulan pertama bekerja.
+(2) Pajak Penghasilan Pasal 21 ditanggung pemerintah sebagaimana dimaksud pada ayat (1) diberikan sebesar 100% (seratus persen) dari Pajak Penghasilan Pasal 21 yang terutang atas penghasilan Pegawai Tertentu pada Masa Pajak yang bersangkutan.
+(3) Pajak Penghasilan Pasal 21 untuk Masa Pajak keempat dan seterusnya dipotong dari penghasilan Pegawai sesuai dengan ketentuan peraturan perundang-undangan.
+
+Pasal 3
+(1) Pegawai Tertentu sebagaimana dimaksud dalam Pasal 1 ayat (2) adalah Pegawai Baru yang:
+a. bekerja pada Pemberi Kerja yang memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini;
+b. memiliki Nomor Pokok Wajib Pajak atau Nomor Induk Kependudukan yang terintegrasi dengan sistem administrasi perpajakan;
+c. menerima atau memperoleh penghasilan bruto yang bersifat tetap dan teratur tidak lebih dari Rp7.500.000,00 (tujuh juta lima ratus ribu rupiah) sebulan pada Masa Pajak bulan pertama bekerja; dan
+d. tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya.
+(2) Penghasilan bruto yang bersifat tetap dan teratur sebagaimana dimaksud pada ayat (1) huruf c meliputi gaji, tunjangan yang sifatnya tetap dan teratur, dan imbalan sejenis yang bersifat tetap dan teratur.
+(3) Upah lembur, tunjangan hari raya, bonus, dan penghasilan tidak teratur lainnya tidak diperhitungkan dalam penghasilan bruto yang bersifat tetap dan teratur sebagaimana dimaksud pada ayat (2).
+
+Pasal 4
+(1) Insentif sebagaimana dimaksud dalam Pasal 2 diberikan untuk Masa Pajak Februari 2027 sampai dengan Masa Pajak Desember 2027.
+(2) Bagi Pegawai Tertentu yang mulai bekerja pada bulan November 2027 atau bulan Desember 2027, insentif hanya diberikan sampai dengan Masa Pajak Desember 2027.
+
+Pasal 5
+(1) Pajak Penghasilan Pasal 21 ditanggung pemerintah atas Masa Pajak selain Masa Pajak Terakhir dihitung dari Pajak Penghasilan Pasal 21 yang terutang pada Masa Pajak yang bersangkutan.
+(2) Pajak Penghasilan Pasal 21 ditanggung pemerintah atas Masa Pajak Terakhir dihitung dari Pajak Penghasilan Pasal 21 yang kurang dipotong pada Masa Pajak Terakhir.
+(3) Kelebihan pemotongan Pajak Penghasilan Pasal 21 yang terjadi pada Masa Pajak Terakhir hanya dikembalikan kepada Pegawai Tertentu sebesar bagian yang tidak ditanggung pemerintah.
+
+Pasal 6
+Dalam hal Pajak Penghasilan Pasal 21 untuk Masa Pajak Februari 2027 sampai dengan sebelum tanggal diundangkan telah dipotong tanpa memperhitungkan insentif, Pemberi Kerja memperhitungkan bagian yang ditanggung pemerintah pada Masa Pajak berikutnya.
+
+Pasal 7
+Peraturan Menteri ini mulai berlaku pada tanggal diundangkan.
+
+Agar setiap orang mengetahuinya, memerintahkan pengundangan Peraturan Menteri ini dengan penempatannya dalam Berita Negara Republik Indonesia.
+
+Ditetapkan di Jakarta
+pada tanggal 25 Februari 2027
+MENTERI KEUANGAN REPUBLIK INDONESIA,
+ttd.
+
+Diundangkan di Jakarta
+pada tanggal 26 Februari 2027
+
+LAMPIRAN
+KODE KLASIFIKASI LAPANGAN USAHA INDUSTRI KONSTRUKSI DAN PERGUDANGAN
+
+| No | KLU | Uraian |
+| 1 | 41011 | Konstruksi gedung tempat tinggal |
+| 2 | 41012 | Konstruksi gedung perkantoran |
+| 3 | 41013 | Konstruksi gedung industri dan pergudangan |
+| 4 | 42101 | Konstruksi jalan raya |
+| 5 | 42102 | Konstruksi jalan rel dan jembatan |
+| 6 | 42201 | Konstruksi jaringan irigasi dan drainase |
+| 7 | 42202 | Konstruksi jaringan listrik dan telekomunikasi |
+| 8 | 43211 | Instalasi listrik gedung |
+| 9 | 43221 | Instalasi saluran air dan sanitasi |
+| 10 | 52101 | Pergudangan dan penyimpanan umum |
+| 11 | 52102 | Pergudangan berpendingin |
+| 12 | 52109 | Aktivitas penunjang pergudangan lainnya |

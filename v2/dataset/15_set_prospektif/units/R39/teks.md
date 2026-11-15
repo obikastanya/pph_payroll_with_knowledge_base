@@ -1,0 +1,54 @@
+SALINAN
+
+PERATURAN PEMERINTAH REPUBLIK INDONESIA
+NOMOR 794 TAHUN 2027
+TENTANG
+PERUBAHAN ATAS PERATURAN PEMERINTAH NOMOR 45 TAHUN 2015 TENTANG PENYELENGGARAAN PROGRAM JAMINAN PENSIUN
+
+DENGAN RAHMAT TUHAN YANG MAHA ESA
+
+PRESIDEN REPUBLIK INDONESIA,
+
+Menimbang : a. bahwa untuk menjaga kecukupan dana dan kesinambungan manfaat Program Jaminan Pensiun, perlu dilakukan penyesuaian besaran iuran yang ditanggung oleh Pekerja secara bertahap;
+b. bahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a, perlu menetapkan Peraturan Pemerintah tentang Perubahan atas Peraturan Pemerintah Nomor 45 Tahun 2015 tentang Penyelenggaraan Program Jaminan Pensiun;
+
+Mengingat : 1. Pasal 5 ayat (2) Undang-Undang Dasar Negara Republik Indonesia Tahun 1945;
+2. Undang-Undang Nomor 40 Tahun 2004 tentang Sistem Jaminan Sosial Nasional;
+3. Undang-Undang Nomor 24 Tahun 2011 tentang Badan Penyelenggara Jaminan Sosial;
+4. Peraturan Pemerintah Nomor 45 Tahun 2015 tentang Penyelenggaraan Program Jaminan Pensiun;
+
+MEMUTUSKAN:
+
+Menetapkan : PERATURAN PEMERINTAH TENTANG PERUBAHAN ATAS PERATURAN PEMERINTAH NOMOR 45 TAHUN 2015 TENTANG PENYELENGGARAAN PROGRAM JAMINAN PENSIUN.
+
+Pasal I
+Beberapa ketentuan dalam Peraturan Pemerintah Nomor 45 Tahun 2015 tentang Penyelenggaraan Program Jaminan Pensiun diubah sebagai berikut:
+
+1. Ketentuan Pasal 16 diubah sehingga berbunyi sebagai berikut:
+
+Pasal 16
+(1) Iuran Jaminan Pensiun sebesar 3% (tiga persen) dari Upah setiap bulan tidak berubah.
+(2) Besarnya iuran Jaminan Pensiun yang ditanggung oleh Pekerja ditetapkan secara bertahap sebagai berikut:
+a. sebesar 1,2% (satu koma dua persen) dari Upah setiap bulan untuk iuran bulan Mei 2027 sampai dengan iuran bulan September 2027; dan
+b. sebesar 1,4% (satu koma empat persen) dari Upah setiap bulan untuk iuran bulan Oktober 2027 dan seterusnya.
+(3) Selisih antara iuran sebagaimana dimaksud pada ayat (1) dan iuran yang ditanggung oleh Pekerja sebagaimana dimaksud pada ayat (2) ditanggung oleh Pemberi Kerja, yaitu sebesar 1,8% (satu koma delapan persen) untuk iuran bulan Mei 2027 sampai dengan iuran bulan September 2027 dan sebesar 1,6% (satu koma enam persen) mulai iuran bulan Oktober 2027.
+
+2. Batas paling tinggi Upah sebagai dasar perhitungan iuran Jaminan Pensiun sebagaimana dimaksud dalam Pasal 29 ayat (2) dan penyesuaiannya setiap tahun tidak berubah.
+
+Pasal II
+Iuran Jaminan Pensiun untuk bulan Januari 2027 sampai dengan bulan April 2027 tetap dihitung berdasarkan besaran iuran yang berlaku sebelum Peraturan Pemerintah ini berlaku.
+
+Pasal III
+Peraturan Pemerintah ini mulai berlaku pada tanggal diundangkan.
+
+Agar setiap orang mengetahuinya, memerintahkan pengundangan Peraturan Pemerintah ini dengan penempatannya dalam Lembaran Negara Republik Indonesia.
+
+Ditetapkan di Jakarta
+pada tanggal 5 April 2027
+PRESIDEN REPUBLIK INDONESIA,
+ttd.
+
+Diundangkan di Jakarta
+pada tanggal 7 April 2027
+MENTERI SEKRETARIS NEGARA REPUBLIK INDONESIA,
+ttd.

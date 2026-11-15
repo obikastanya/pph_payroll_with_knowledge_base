@@ -1,0 +1,174 @@
+{
+ "id": "K09",
+ "layer": "company",
+ "instance": "SP12",
+ "policy": "SP12",
+ "change_type": "T10",
+ "size": 3,
+ "traps": [
+  "ketentuan peralihan (Masa Pajak sampai Desember 2024 tetap dengan tunjangan)",
+  "syarat implisit (masa kerja 12 bulan untuk kompensasi)",
+  "nilai dalam huruf dan angka",
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah"
+ ],
+ "title": "Memo Direksi PT Nusa Teknologi Pembayaran: penghentian tunjangan Pajak Penghasilan Pasal 21",
+ "header": "PT NUSA TEKNOLOGI PEMBAYARAN",
+ "issued": "2024-11-01",
+ "effective_from": "2025-01-01",
+ "effective_until": "2025-12-31",
+ "retroactive": false,
+ "summary": "Mulai 1 Januari 2025 tunjangan PPh 21 (gross-up) dihentikan sehingga pajak dipotong dari pekerja, dengan kompensasi tunjangan tetap Rp750.000 sebulan bagi masa kerja 12 bulan atau lebih; Masa Pajak sampai Desember 2024 tidak berubah.",
+ "gold": {
+  "delta_id": "GOLD-K09",
+  "event_id": "K09",
+  "document": {
+   "id": "K09",
+   "title": "Memo Direksi PT Nusa Teknologi Pembayaran: penghentian tunjangan Pajak Penghasilan Pasal 21",
+   "issued": "2024-11-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP12.METHOD.2025",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "expression": "'gross'",
+    "valid_from": "2025-01-01",
+    "valid_until": "2025-12-31",
+    "policy": "SP12",
+    "label": "from January 2025 the tax is withheld from the employee, no tax allowance",
+    "source": [
+     {
+      "document": "K09",
+      "provision": "Pasal 1 ayat (2)",
+      "page": null,
+      "quote": "Pajak Penghasilan Pasal 21 dipotong dari penghasilan pekerja setiap bulan dan menjadi beban pekerja"
+     },
+     {
+      "document": "K09",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2025"
+     }
+    ],
+    "recorded_on": "2024-11-01"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP12.COMPENSATION",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "fixed_allowance",
+    "condition": "hr('months_of_service') >= 12",
+    "expression": "income('fixed_allowance') + 750000",
+    "valid_from": "2025-01-01",
+    "valid_until": "2025-12-31",
+    "policy": "SP12",
+    "label": "fixed allowance of 750,000 a month as compensation, from 12 months of service",
+    "source": [
+     {
+      "document": "K09",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "mulai tanggal 1 Januari 2025 pekerja yang telah mempunyai masa kerja 12"
+     },
+     {
+      "document": "K09",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "(dua belas) bulan atau lebih diberikan tambahan tunjangan tetap sebesar Rp750.000,00 (tujuh ratus lima puluh ribu rupiah) setiap bulan"
+     },
+     {
+      "document": "K09",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Januari 2025 sampai dengan tanggal 31 Desember 2025"
+     }
+    ],
+    "recorded_on": "2024-11-01"
+   }
+  ],
+  "change": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP12.METHOD",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "expression": "'gross_up'",
+    "valid_from": "2024-02-01",
+    "valid_until": "2024-12-31",
+    "policy": "SP12",
+    "label": "withholding method stated by the policy: gross_up",
+    "source": [
+     {
+      "document": "K09",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "tidak berlaku lagi mulai tanggal 1 Januari 2025"
+     },
+     {
+      "document": "K09",
+      "provision": "Pasal 1 ayat (3)",
+      "page": null,
+      "quote": "Tunjangan Pajak Penghasilan Pasal 21 untuk Masa Pajak sampai dengan Desember 2024 tetap dibayarkan menurut Pasal 20 Peraturan Perusahaan."
+     }
+    ],
+    "recorded_on": "2024-11-01"
+   }
+  ],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2025,
+   "salary": 18000000,
+   "ptkp": "TK/0",
+   "klu": "63122",
+   "jkk_risk": "very_low",
+   "hr": {
+    "months_of_service": 11
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2025,
+   "salary": 18000000,
+   "ptkp": "TK/0",
+   "klu": "63122",
+   "jkk_risk": "very_low",
+   "hr": {
+    "months_of_service": 12
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2025,
+   "salary": 25000000,
+   "ptkp": "K/2",
+   "klu": "63122",
+   "jkk_risk": "very_low",
+   "hr": {
+    "months_of_service": 13
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2024,
+   "salary": 18000000,
+   "ptkp": "TK/0",
+   "klu": "63122",
+   "jkk_risk": "very_low",
+   "hr": {
+    "months_of_service": 20
+   }
+  }
+ ]
+}

@@ -1,0 +1,152 @@
+{
+ "id": "K04",
+ "layer": "company",
+ "instance": "SP05",
+ "policy": "SP05",
+ "change_type": "T10",
+ "size": 1,
+ "traps": [
+  "syarat implisit (pekerja yang berhenti sebelum hari raya tidak berhak)",
+  "nilai dalam huruf dan angka",
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah"
+ ],
+ "title": "Memo Direksi PT Benang Sutra Lestari: besaran Tunjangan Hari Raya Keagamaan",
+ "header": "PT BENANG SUTRA LESTARI",
+ "issued": "2025-06-02",
+ "effective_from": "2025-07-01",
+ "effective_until": "2026-06-30",
+ "retroactive": false,
+ "summary": "Mulai 1 Juli 2025 THR menjadi 1,25 kali upah satu bulan (gaji pokok dan tunjangan tetap) untuk masa kerja 12 bulan atau lebih, proporsional di bawahnya, dan tidak dibayar kepada pekerja yang berhenti sebelum hari raya.",
+ "gold": {
+  "delta_id": "GOLD-K04",
+  "event_id": "K04",
+  "document": {
+   "id": "K04",
+   "title": "Memo Direksi PT Benang Sutra Lestari: besaran Tunjangan Hari Raya Keagamaan",
+   "issued": "2025-06-02"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP05.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "expression": "(round((income('base_salary') + income('fixed_allowance')) * dec('1.25') * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') == 0 else 0) if hr('thr_holiday') == 1 else income('thr')",
+    "valid_from": "2025-07-01",
+    "valid_until": "2026-06-30",
+    "policy": "SP05",
+    "label": "THR of 1.25 months of wage (base salary and fixed allowance), pro rata under 12 months, none after termination",
+    "source": [
+     {
+      "document": "K04",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "sebesar 1,25 (satu koma dua puluh lima) kali upah satu bulan"
+     },
+     {
+      "document": "K04",
+      "provision": "Pasal 1 ayat (2)",
+      "page": null,
+      "quote": "yaitu masa kerja dalam bulan dibagi 12 (dua belas) dikalikan 1,25 (satu koma dua puluh lima) kali upah satu bulan"
+     },
+     {
+      "document": "K04",
+      "provision": "Pasal 2",
+      "page": null,
+      "quote": "Pekerja yang hubungan kerjanya berakhir sebelum hari raya keagamaan, karena sebab apa pun, tidak berhak atas THR tahun yang bersangkutan."
+     },
+     {
+      "document": "K04",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Juli 2025 sampai dengan tanggal 30 Juni 2026"
+     }
+    ],
+    "recorded_on": "2025-06-02"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2026,
+   "salary": 7200000,
+   "ptkp": "TK/1",
+   "klu": "13112",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 14,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2026,
+   "salary": 6800000,
+   "ptkp": "K/0",
+   "klu": "13112",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 6,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2026,
+   "salary": 8100000,
+   "ptkp": "K/2",
+   "klu": "13112",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 12,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2026,
+   "salary": 6500000,
+   "ptkp": "TK/0",
+   "klu": "13112",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 11,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2026,
+   "salary": 7000000,
+   "ptkp": "K/1",
+   "klu": "13112",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 20,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 10
+   }
+  }
+ ]
+}

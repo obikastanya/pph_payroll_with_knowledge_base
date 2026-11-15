@@ -1,0 +1,46 @@
+SALINAN
+
+PERATURAN MENTERI KEUANGAN REPUBLIK INDONESIA
+NOMOR 706 TAHUN 2027
+TENTANG
+PERLAKUAN PAJAK PENGHASILAN ATAS TUNJANGAN HARI RAYA KEAGAMAAN
+
+DENGAN RAHMAT TUHAN YANG MAHA ESA
+
+MENTERI KEUANGAN REPUBLIK INDONESIA,
+
+Menimbang : a. bahwa untuk meringankan beban pegawai pada saat hari raya keagamaan, perlu dilakukan penyesuaian perlakuan Pajak Penghasilan atas tunjangan hari raya keagamaan;
+b. bahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a, perlu menetapkan Peraturan Menteri Keuangan tentang Perlakuan Pajak Penghasilan atas Tunjangan Hari Raya Keagamaan;
+
+Mengingat : 1. Undang-Undang Nomor 7 Tahun 1983 tentang Pajak Penghasilan sebagaimana telah beberapa kali diubah terakhir dengan Undang-Undang Nomor 7 Tahun 2021 tentang Harmonisasi Peraturan Perpajakan;
+2. Peraturan Menteri Ketenagakerjaan Nomor 6 Tahun 2016 tentang Tunjangan Hari Raya Keagamaan bagi Pekerja/Buruh di Perusahaan;
+
+MEMUTUSKAN:
+
+Menetapkan : PERATURAN MENTERI KEUANGAN TENTANG PERLAKUAN PAJAK PENGHASILAN ATAS TUNJANGAN HARI RAYA KEAGAMAAN.
+
+Pasal 1
+Dalam Peraturan Menteri ini yang dimaksud dengan tunjangan hari raya keagamaan adalah pendapatan nonupah yang wajib dibayarkan oleh pengusaha kepada pekerja menjelang hari raya keagamaan sesuai dengan peraturan perundang-undangan di bidang ketenagakerjaan.
+
+Pasal 2
+(1) Tunjangan hari raya keagamaan yang diterima pegawai sampai dengan sebesar tunjangan hari raya keagamaan paling rendah yang wajib dibayarkan menurut peraturan perundang-undangan di bidang ketenagakerjaan bukan merupakan objek Pajak Penghasilan Pasal 21.
+(2) Tunjangan hari raya keagamaan yang diterima pegawai melebihi jumlah sebagaimana dimaksud pada ayat (1) tetap merupakan penghasilan yang dikenai Pajak Penghasilan Pasal 21.
+
+Pasal 3
+Bonus, gratifikasi, jasa produksi, dan penghasilan tidak teratur lainnya yang dibayarkan bersamaan dengan tunjangan hari raya keagamaan tetap merupakan penghasilan yang dikenai Pajak Penghasilan Pasal 21.
+
+Pasal 4
+Pasal 2 berlaku untuk tunjangan hari raya keagamaan yang dibayarkan mulai tanggal 1 Maret 2027.
+
+Pasal 5
+Peraturan Menteri ini mulai berlaku pada tanggal diundangkan.
+
+Agar setiap orang mengetahuinya, memerintahkan pengundangan Peraturan Menteri ini dengan penempatannya dalam Berita Negara Republik Indonesia.
+
+Ditetapkan di Jakarta
+pada tanggal 15 Februari 2027
+MENTERI KEUANGAN REPUBLIK INDONESIA,
+ttd.
+
+Diundangkan di Jakarta
+pada tanggal 17 Februari 2027

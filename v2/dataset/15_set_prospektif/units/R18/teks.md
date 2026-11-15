@@ -1,0 +1,48 @@
+SALINAN
+
+PERATURAN DIREKTUR JENDERAL PAJAK
+NOMOR PER-742/PJ/2027
+TENTANG
+PERLAKUAN PAJAK PENGHASILAN PASAL 21 ATAS UANG LEMBUR PEGAWAI TETAP BERPENGHASILAN RENDAH
+
+DENGAN RAHMAT TUHAN YANG MAHA ESA
+
+DIREKTUR JENDERAL PAJAK,
+
+Menimbang : a. bahwa uang lembur yang diterima pegawai tetap berpenghasilan rendah merupakan imbalan atas kerja tambahan yang sangat bergantung pada kebutuhan produksi dan tidak dapat direncanakan oleh pegawai;
+b. bahwa untuk meringankan beban pajak pegawai sebagaimana dimaksud dalam huruf a, perlu mengatur perlakuan Pajak Penghasilan Pasal 21 atas uang lembur;
+c. bahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a dan huruf b, perlu menetapkan Peraturan Direktur Jenderal Pajak tentang Perlakuan Pajak Penghasilan Pasal 21 atas Uang Lembur Pegawai Tetap Berpenghasilan Rendah;
+
+Mengingat : 1. Undang-Undang Nomor 7 Tahun 1983 tentang Pajak Penghasilan sebagaimana telah beberapa kali diubah terakhir dengan Undang-Undang Nomor 7 Tahun 2021 tentang Harmonisasi Peraturan Perpajakan;
+2. Peraturan Menteri Keuangan Nomor 168 Tahun 2023 tentang Pelaksanaan Pemotongan Pajak Penghasilan Pasal 21 dan/atau Pajak Penghasilan Pasal 26 sehubungan dengan Pekerjaan, Jasa, dan Kegiatan Orang Pribadi;
+
+MEMUTUSKAN:
+
+Menetapkan : PERATURAN DIREKTUR JENDERAL PAJAK TENTANG PERLAKUAN PAJAK PENGHASILAN PASAL 21 ATAS UANG LEMBUR PEGAWAI TETAP BERPENGHASILAN RENDAH.
+
+Pasal 1
+Dalam Peraturan Direktur Jenderal Pajak ini yang dimaksud dengan penghasilan tetap adalah gaji pokok dan tunjangan yang sifatnya tetap yang diterima secara teratur setiap bulan oleh pegawai tetap.
+
+Pasal 2
+(1) Uang lembur yang diterima pegawai tetap yang penghasilan tetapnya sebulan tidak lebih dari Rp7.000.000,00 (tujuh juta rupiah) dikecualikan dari penghasilan bruto paling banyak sebesar Rp1.500.000,00 (satu juta lima ratus ribu rupiah) sebulan.
+(2) Bagian uang lembur yang melebihi batas sebagaimana dimaksud pada ayat (1) tetap diperhitungkan sebagai penghasilan bruto.
+
+Pasal 3
+Uang lembur yang diterima pegawai tetap yang penghasilan tetapnya sebulan melebihi Rp7.000.000,00 (tujuh juta rupiah) seluruhnya diperhitungkan sebagai penghasilan bruto.
+
+Pasal 4
+Pemberi kerja wajib menyimpan daftar jam lembur dan bukti pembayaran uang lembur untuk keperluan pemeriksaan.
+
+Pasal 5
+Ketentuan sebagaimana dimaksud dalam Pasal 2 berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak Juli 2027.
+
+Pasal 6
+Peraturan Direktur Jenderal Pajak ini mulai berlaku pada tanggal diundangkan.
+
+Ditetapkan di Jakarta
+pada tanggal 7 Juni 2027
+DIREKTUR JENDERAL PAJAK,
+ttd.
+
+Diundangkan di Jakarta
+pada tanggal 9 Juni 2027

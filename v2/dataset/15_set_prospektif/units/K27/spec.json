@@ -1,0 +1,463 @@
+{
+ "id": "K27",
+ "layer": "company",
+ "instance": "SP08",
+ "policy": "K27",
+ "change_type": "T10",
+ "size": 12,
+ "traps": [
+  "angka penting yang hanya ada di lampiran (Tunjangan Keluarga menurut status PTKP)",
+  "rujukan silang (Pasal 2 ke Lampiran A dan Pasal 1 ayat (2); Pasal 5 ayat (4) ke ayat (1) dan (2))",
+  "pengecualian (upah lembur tidak dibayar pada bulan menerima Tunjangan Siaga; iuran JP tetap ditanggung pekerja)",
+  "ambang masa kerja 12 bulan untuk angsuran perangkat",
+  "nilai dalam huruf dan angka yang harus dibaca bersama"
+ ],
+ "title": "PT Kreasi Digital Nusantara: Lampiran IV Peraturan Perusahaan tentang Tunjangan Keluarga, Iuran Jaminan Sosial, dan Tunjangan Siaga",
+ "header": "LAMPIRAN IV PERATURAN PERUSAHAAN PT KREASI DIGITAL NUSANTARA",
+ "issued": "2027-02-24",
+ "effective_from": "2027-03-01",
+ "effective_until": "2028-12-31",
+ "retroactive": false,
+ "summary": "Lampiran berlaku 1 Maret 2027: Tunjangan Keluarga menurut status PTKP (Lampiran A) sebagai Tunjangan Tetap, Tunjangan Siaga Rp100.000 per hari siaga malam tanpa upah lembur pada bulan yang sama, angsuran perangkat kerja Rp250.000 untuk masa kerja 12 bulan atau kurang, dan perusahaan menanggung 100% iuran JKN dan 50% iuran JHT bagian pekerja yang dibayarkan sebagai Tunjangan Iuran.",
+ "gold": {
+  "delta_id": "GOLD-K27",
+  "event_id": "K27",
+  "document": {
+   "id": "K27",
+   "title": "PT Kreasi Digital Nusantara: Lampiran IV Peraturan Perusahaan tentang Tunjangan Keluarga, Iuran Jaminan Sosial, dan Tunjangan Siaga",
+   "issued": "2027-02-24"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "parameter",
+    "id": "PAR.K27.ONCALL_RATE",
+    "name": "k27_oncall_rate",
+    "value": 100000,
+    "value_type": "money",
+    "label": "on-call allowance per night on-call day",
+    "valid_from": "2027-03-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K27",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "Tunjangan Siaga sebesar Rp100.000,00 (seratus ribu rupiah) untuk setiap hari siaga malam"
+     },
+     {
+      "document": "K27",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Maret 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-02-24"
+   },
+   {
+    "kind": "table",
+    "id": "TAB.K27.FAMILY_ALLOWANCE",
+    "name": "k27_family_allowance",
+    "table_kind": "lookup",
+    "rows": [
+     {
+      "key": "TK/0",
+      "value": "0"
+     },
+     {
+      "key": "TK/1",
+      "value": "150000"
+     },
+     {
+      "key": "TK/2",
+      "value": "300000"
+     },
+     {
+      "key": "TK/3",
+      "value": "450000"
+     },
+     {
+      "key": "K/0",
+      "value": "300000"
+     },
+     {
+      "key": "K/1",
+      "value": "450000"
+     },
+     {
+      "key": "K/2",
+      "value": "600000"
+     },
+     {
+      "key": "K/3",
+      "value": "750000"
+     }
+    ],
+    "label": "family allowance per month by PTKP status",
+    "valid_from": "2027-03-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K27",
+      "provision": "Lampiran A angka 2",
+      "page": null,
+      "quote": "Status TK/1: Rp150.000,00 (seratus lima puluh ribu rupiah)"
+     },
+     {
+      "document": "K27",
+      "provision": "Lampiran A angka 5",
+      "page": null,
+      "quote": "Status K/0: Rp300.000,00 (tiga ratus ribu rupiah)"
+     },
+     {
+      "document": "K27",
+      "provision": "Lampiran A angka 8",
+      "page": null,
+      "quote": "Status K/3: Rp750.000,00 (tujuh ratus lima puluh ribu rupiah)"
+     },
+     {
+      "document": "K27",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "menurut status Penghasilan Tidak Kena Pajak Pekerja sebagaimana tercantum dalam Lampiran A"
+     },
+     {
+      "document": "K27",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Maret 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-02-24"
+   },
+   {
+    "kind": "fact",
+    "id": "k27_family_allowance_amount",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "family allowance from the annex",
+    "source": [
+     {
+      "document": "K27",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "Tunjangan Keluarga setiap bulan menurut status Penghasilan Tidak Kena Pajak"
+     }
+    ],
+    "recorded_on": "2027-02-24"
+   },
+   {
+    "kind": "fact",
+    "id": "k27_oncall_allowance",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "night on-call allowance",
+    "source": [
+     {
+      "document": "K27",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "untuk setiap hari siaga malam"
+     }
+    ],
+    "recorded_on": "2027-02-24"
+   },
+   {
+    "kind": "fact",
+    "id": "k27_contribution_allowance",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "employee contributions borne by the company and paid out as an allowance",
+    "source": [
+     {
+      "document": "K27",
+      "provision": "Pasal 5 ayat (4)",
+      "page": null,
+      "quote": "sebesar bagian iuran yang ditanggung, dan merupakan penghasilan Pekerja"
+     }
+    ],
+    "recorded_on": "2027-02-24"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K27.FAMILY",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k27_family_allowance_amount",
+    "expression": "lookup('k27_family_allowance', employee('ptkp_status'))",
+    "label": "family allowance by PTKP status from the annex",
+    "policy": "K27",
+    "valid_from": "2027-03-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K27",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "Tunjangan Keluarga setiap bulan menurut status Penghasilan Tidak Kena Pajak Pekerja sebagaimana tercantum dalam Lampiran A"
+     },
+     {
+      "document": "K27",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Maret 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-02-24"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K27.FIXED_ALLOWANCE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "fixed_allowance",
+    "expression": "income('fixed_allowance') + k27_family_allowance_amount",
+    "label": "family allowance is a fixed allowance",
+    "policy": "K27",
+    "valid_from": "2027-03-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K27",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "merupakan Tunjangan Tetap sebagaimana dimaksud dalam Pasal 1 ayat (2)"
+     },
+     {
+      "document": "K27",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Maret 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-02-24"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K27.ONCALL",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k27_oncall_allowance",
+    "expression": "hr('night_shift_days') * param('k27_oncall_rate')",
+    "label": "on-call allowance per night on-call day",
+    "policy": "K27",
+    "valid_from": "2027-03-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K27",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "Tunjangan Siaga sebesar Rp100.000,00 (seratus ribu rupiah) untuk setiap hari siaga malam"
+     },
+     {
+      "document": "K27",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Maret 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-02-24"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K27.NO_OVERTIME",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "overtime_pay",
+    "condition": "hr('night_shift_days') > 0",
+    "expression": "0",
+    "label": "no overtime pay in a month with on-call allowance",
+    "policy": "K27",
+    "valid_from": "2027-03-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K27",
+      "provision": "Pasal 3 ayat (3)",
+      "page": null,
+      "quote": "menerima Tunjangan Siaga pada suatu bulan tidak menerima upah lembur pada bulan yang sama"
+     },
+     {
+      "document": "K27",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Maret 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-02-24"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K27.CONTRIBUTION_ALLOWANCE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k27_contribution_allowance",
+    "expression": "health_employee + round(dec('0.5') * jht_employee, 1, 'down')",
+    "label": "company bears 100% of the employee JKN and 50% of the employee JHT, paid out as an allowance; JP stays with the employee",
+    "policy": "K27",
+    "valid_from": "2027-03-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K27",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "iuran Jaminan Kesehatan sebesar 100% (seratus persen) dari bagian yang menjadi kewajiban Pekerja"
+     },
+     {
+      "document": "K27",
+      "provision": "Pasal 5 ayat (2)",
+      "page": null,
+      "quote": "iuran Jaminan Hari Tua sebesar 50% (lima puluh persen) dari bagian yang menjadi kewajiban Pekerja"
+     },
+     {
+      "document": "K27",
+      "provision": "Pasal 5 ayat (3)",
+      "page": null,
+      "quote": "Iuran Jaminan Pensiun bagian Pekerja tetap ditanggung oleh Pekerja"
+     },
+     {
+      "document": "K27",
+      "provision": "Pasal 5 ayat (4)",
+      "page": null,
+      "quote": "dibayarkan kepada Pekerja setiap bulan sebagai Tunjangan Iuran bersama Upah bulan yang bersangkutan"
+     },
+     {
+      "document": "K27",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Maret 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-02-24"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K27.OTHER_REGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + k27_oncall_allowance + k27_contribution_allowance",
+    "label": "on-call allowance and contribution allowance are regular income paid with the monthly wage",
+    "policy": "K27",
+    "valid_from": "2027-03-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K27",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan bersama Upah bulan yang bersangkutan dan bukan merupakan Tunjangan Tetap"
+     },
+     {
+      "document": "K27",
+      "provision": "Pasal 5 ayat (4)",
+      "page": null,
+      "quote": "dan merupakan penghasilan Pekerja"
+     },
+     {
+      "document": "K27",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Maret 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-02-24"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K27.DEVICE_INSTALMENT",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "company_deductions",
+    "condition": "hr('months_of_service') <= 12",
+    "expression": "income('deductions') + 250000",
+    "label": "device instalment of 250,000 a month deducted up to 12 months of service",
+    "policy": "K27",
+    "valid_from": "2027-03-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K27",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "masa kerjanya 12 (dua belas) bulan atau kurang membayar angsuran perangkat kerja sebesar Rp250.000,00 (dua ratus lima puluh ribu rupiah) setiap bulan, yang dipotong dari Upah"
+     },
+     {
+      "document": "K27",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Maret 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-02-24"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 15000000,
+   "ptkp": "K/2",
+   "klu": "62019",
+   "hr": {
+    "night_shift_days": 4,
+    "months_of_service": 40
+   },
+   "income": {
+    "overtime_pay": 1200000
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "TK/0",
+   "klu": "62019",
+   "hr": {
+    "months_of_service": 12
+   },
+   "income": {
+    "overtime_pay": 800000
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 18000000,
+   "ptkp": "K/0",
+   "klu": "62019",
+   "hr": {
+    "months_of_service": 13
+   },
+   "income": {
+    "overtime_pay": 800000
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/1",
+   "klu": "62019",
+   "hr": {
+    "months_of_service": 6
+   }
+  }
+ ]
+}

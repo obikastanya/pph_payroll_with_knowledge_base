@@ -1,0 +1,240 @@
+{
+ "id": "K25",
+ "layer": "company",
+ "instance": "SP06",
+ "policy": "K25",
+ "change_type": "T10",
+ "size": 4,
+ "traps": [
+  "ambang masa kerja 12 dan 24 bulan untuk Bonus Tahunan",
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah (Tunjangan Pajak dari PKB/MNS/XII/2024 tetap berlaku)",
+  "syarat implisit (komisi sebagai penghasilan tidak teratur karena bergantung pada realisasi penjualan)",
+  "rujukan silang (Upah Pokok dan Tunjangan Tetap pada Pasal 1 ayat (2))",
+  "nilai dalam huruf dan angka yang harus dibaca bersama"
+ ],
+ "title": "PT Mitra Niaga Sandang: Lampiran III Perjanjian Kerja Bersama tentang Skema Komisi, Bonus, dan Tunjangan Pajak",
+ "header": "LAMPIRAN III PERJANJIAN KERJA BERSAMA PT MITRA NIAGA SANDANG",
+ "issued": "2026-12-19",
+ "effective_from": "2027-01-01",
+ "effective_until": "2028-12-31",
+ "retroactive": false,
+ "summary": "Lampiran skema penghasilan variabel 2027-2028: Komisi Penjualan penuh tanpa batas atas sebagai penghasilan tidak teratur, Bonus Tahunan Desember 1 atau 2 bulan Upah Pokok menurut masa kerja (24 bulan), THR 1 bulan Upah, dan Tunjangan Pajak (gross-up) dari PKB lama tetap berlaku.",
+ "gold": {
+  "delta_id": "GOLD-K25",
+  "event_id": "K25",
+  "document": {
+   "id": "K25",
+   "title": "PT Mitra Niaga Sandang: Lampiran III Perjanjian Kerja Bersama tentang Skema Komisi, Bonus, dan Tunjangan Pajak",
+   "issued": "2026-12-19"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.K25.COMMISSION",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_irregular_income",
+    "expression": "income('other_irregular') + hr('variable_sales_commission')",
+    "label": "the whole sales commission is paid, without a cap, as irregular income",
+    "policy": "K25",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K25",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan bersama Upah bulan yang bersangkutan sebesar yang diperoleh, tanpa batas atas"
+     },
+     {
+      "document": "K25",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "bukan merupakan penghasilan yang dibayarkan secara tetap dan teratur setiap bulan"
+     },
+     {
+      "document": "K25",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-19"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K25.BONUS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "condition": "month == 12",
+    "expression": "income('bonus') + (2 * base_salary if hr('months_of_service') >= 24 else (base_salary if hr('months_of_service') >= 12 else 0))",
+    "label": "annual bonus in December: 1 month of base salary from 12 months of service, 2 months from 24 months",
+    "policy": "K25",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K25",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "membayarkan Bonus Tahunan bersama Upah bulan Desember kepada Pekerja yang pada bulan Desember telah mempunyai masa kerja 12 (dua belas) bulan atau lebih"
+     },
+     {
+      "document": "K25",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "menerima Bonus Tahunan sebesar 1 (satu) bulan Upah Pokok"
+     },
+     {
+      "document": "K25",
+      "provision": "Pasal 3 ayat (3)",
+      "page": null,
+      "quote": "masa kerja 24 (dua puluh empat) bulan atau lebih menerima Bonus Tahunan sebesar 2 (dua) bulan Upah Pokok"
+     },
+     {
+      "document": "K25",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-19"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K25.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "condition": "hr('thr_holiday') > 0",
+    "expression": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0",
+    "label": "THR of one month wage, proportional below 12 months",
+    "policy": "K25",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K25",
+      "provision": "Pasal 4 ayat (2)",
+      "page": null,
+      "quote": "masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1 (satu) bulan Upah"
+     },
+     {
+      "document": "K25",
+      "provision": "Pasal 4 ayat (2)",
+      "page": null,
+      "quote": "masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan Upah"
+     },
+     {
+      "document": "K25",
+      "provision": "Pasal 4 ayat (3)",
+      "page": null,
+      "quote": "berakhir lebih dari 30 (tiga puluh) hari sebelum hari raya keagamaan tidak berhak atas THR"
+     },
+     {
+      "document": "K25",
+      "provision": "Pasal 1 ayat (2)",
+      "page": null,
+      "quote": "Upah adalah Upah Pokok ditambah Tunjangan Tetap"
+     },
+     {
+      "document": "K25",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-19"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K25.METHOD",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "expression": "'gross_up'",
+    "label": "tax allowance equal to the PPh 21 due, counted in gross income: gross-up continued",
+    "policy": "K25",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K25",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "Ketentuan tentang Tunjangan Pajak dalam Perjanjian Kerja Bersama PT Mitra Niaga Sandang Nomor PKB/MNS/XII/2024 tetap berlaku bagi seluruh Pekerja"
+     },
+     {
+      "document": "K25",
+      "provision": "Pasal 5 ayat (2)",
+      "page": null,
+      "quote": "sebesar Pajak Penghasilan Pasal 21 yang terutang atas penghasilan Pekerja bulan itu"
+     },
+     {
+      "document": "K25",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-19"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 6000000,
+   "ptkp": "K/1",
+   "klu": "46411",
+   "hr": {
+    "variable_sales_commission": 4000000,
+    "months_of_service": 30
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "TK/0",
+   "klu": "46411",
+   "hr": {
+    "variable_sales_commission": 1500000,
+    "months_of_service": 18
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 7000000,
+   "ptkp": "K/0",
+   "klu": "46411",
+   "hr": {
+    "months_of_service": 8
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 6200000,
+   "ptkp": "TK/0",
+   "klu": "46411",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 15
+   }
+  }
+ ]
+}

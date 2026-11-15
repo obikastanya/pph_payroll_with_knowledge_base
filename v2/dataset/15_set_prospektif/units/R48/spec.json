@@ -1,0 +1,119 @@
+{
+ "id": "R48",
+ "layer": "regulation",
+ "change_type": "T8",
+ "size": 1,
+ "traps": [
+  "berlaku surut (iuran Maret 2027, terbit akhir Maret)",
+  "pengecualian: iuran Januari dan Februari 2027 tetap dipotong",
+  "pasal yang menyatakan ulang iuran JP pemberi kerja, JHT, dan JKN yang tidak berubah",
+  "ketentuan peralihan: iuran Maret yang sudah dipotong dikembalikan",
+  "pencabutan hanya bagian pekerja, tidak ada ketentuan pengganti"
+ ],
+ "title": "PP 790/2027: Pencabutan ketentuan iuran Jaminan Pensiun bagian Pekerja",
+ "header": "PRESIDEN REPUBLIK INDONESIA",
+ "issued": "2027-03-24",
+ "effective_from": "2027-03-01",
+ "effective_until": null,
+ "retroactive": true,
+ "summary": "Kewajiban pekerja membayar iuran JP 1% dicabut tanpa pengganti mulai iuran Maret 2027 (surut); Januari dan Februari 2027 tetap dipotong; iuran JP pemberi kerja, JHT, dan JKN tidak berubah.",
+ "gold": {
+  "delta_id": "GOLD-R48",
+  "event_id": "R48",
+  "document": {
+   "id": "R48",
+   "title": "PP 790/2027: Pencabutan ketentuan iuran Jaminan Pensiun bagian Pekerja",
+   "issued": "2027-03-24"
+  },
+  "relevant": true,
+  "add": [],
+  "change": [
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.JP_EMPLOYEE",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "jp_employee",
+    "expression": "round(param('jp_employee_rate') * jp_wage, 1, param('bpjs_round_mode'))",
+    "valid_from": "2015-07-01",
+    "condition": "employer('premiums_as_billed') != True",
+    "valid_until": "2027-02-28",
+    "label": "repealed without replacement from the March 2027 contribution: the worker pays no pension contribution (JP) any more",
+    "source": [
+     {
+      "document": "R48",
+      "provision": "Pasal 1",
+      "page": null,
+      "quote": "dicabut dan dinyatakan tidak berlaku."
+     },
+     {
+      "document": "R48",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "berlaku untuk Iuran Jaminan Pensiun bulan Maret 2027 dan bulan-bulan berikutnya."
+     },
+     {
+      "document": "R48",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "Iuran Jaminan Pensiun bulan Januari 2027 dan bulan Februari 2027 tetap dipotong dari upah Pekerja"
+     }
+    ],
+    "recorded_on": "2027-03-24"
+   }
+  ],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "K/1",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 20000000,
+   "ptkp": "K/2",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "start_month": 5,
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 10000000,
+   "ptkp": "TK/0",
+   "start_month": 1,
+   "end_month": 2,
+   "income": {
+    "fixed_allowance": 0
+   }
+  }
+ ]
+}

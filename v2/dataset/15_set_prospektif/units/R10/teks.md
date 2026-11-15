@@ -1,0 +1,94 @@
+SALINAN
+
+PERATURAN PRESIDEN REPUBLIK INDONESIA
+NOMOR 721 TAHUN 2027
+TENTANG
+KERINGANAN IURAN JAMINAN KECELAKAAN KERJA DAN JAMINAN KEMATIAN BAGI PEMBERI KERJA PADA SEKTOR PADAT KARYA TERTENTU TAHUN 2027
+
+DENGAN RAHMAT TUHAN YANG MAHA ESA
+
+PRESIDEN REPUBLIK INDONESIA,
+
+Menimbang : a. bahwa dalam rangka menjaga keberlangsungan usaha dan mencegah pemutusan hubungan kerja pada sektor padat karya tertentu, perlu diberikan keringanan iuran program Jaminan Kecelakaan Kerja dan Jaminan Kematian;
+b. bahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a, perlu menetapkan Peraturan Presiden tentang Keringanan Iuran Jaminan Kecelakaan Kerja dan Jaminan Kematian bagi Pemberi Kerja pada Sektor Padat Karya Tertentu Tahun 2027;
+
+Mengingat : 1. Pasal 4 ayat (1) Undang-Undang Dasar Negara Republik Indonesia Tahun 1945;
+2. Undang-Undang Nomor 40 Tahun 2004 tentang Sistem Jaminan Sosial Nasional;
+3. Peraturan Pemerintah Nomor 44 Tahun 2015 tentang Penyelenggaraan Program Jaminan Kecelakaan Kerja dan Jaminan Kematian;
+
+MEMUTUSKAN:
+
+Menetapkan : PERATURAN PRESIDEN TENTANG KERINGANAN IURAN JAMINAN KECELAKAAN KERJA DAN JAMINAN KEMATIAN BAGI PEMBERI KERJA PADA SEKTOR PADAT KARYA TERTENTU TAHUN 2027.
+
+Pasal 1
+Dalam Peraturan Presiden ini yang dimaksud dengan:
+1. Pemberi Kerja Kelompok I adalah Pemberi Kerja yang memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran I bagian A.
+2. Pemberi Kerja Kelompok II adalah Pemberi Kerja yang memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran I bagian B.
+
+Pasal 2
+(1) Pemberi Kerja Kelompok I diberikan keringanan Iuran Jaminan Kecelakaan Kerja sebesar 50% (lima puluh persen) dari Iuran Jaminan Kecelakaan Kerja menurut tingkat risiko lingkungan kerja.
+(2) Pemberi Kerja Kelompok II diberikan keringanan Iuran Jaminan Kecelakaan Kerja sebesar 25% (dua puluh lima persen) dari Iuran Jaminan Kecelakaan Kerja menurut tingkat risiko lingkungan kerja.
+(3) Besarnya Iuran Jaminan Kecelakaan Kerja setelah keringanan sebagaimana dimaksud pada ayat (1) dan ayat (2) menurut tingkat risiko lingkungan kerja adalah sebagaimana tercantum dalam Lampiran II.
+
+Pasal 3
+(1) Iuran Jaminan Kematian bagi Pemberi Kerja Kelompok I diberikan keringanan sehingga menjadi sebesar 0,15% (nol koma satu lima persen) dari upah sebulan.
+(2) Iuran Jaminan Kematian bagi Pemberi Kerja Kelompok II diberikan keringanan sehingga menjadi sebesar 0,25% (nol koma dua lima persen) dari upah sebulan.
+
+Pasal 4
+Keringanan sebagaimana dimaksud dalam Pasal 2 dan Pasal 3 diberikan hanya atas Pekerja yang menerima upah sebulan tidak lebih dari Rp9.000.000,00 (sembilan juta rupiah).
+
+Pasal 5
+Iuran Jaminan Kecelakaan Kerja dan Jaminan Kematian atas Pekerja yang menerima upah sebulan lebih dari batas sebagaimana dimaksud dalam Pasal 4 tetap dibayar sesuai dengan ketentuan yang berlaku sebelumnya.
+
+Pasal 6
+Keringanan iuran sebagaimana dimaksud dalam Pasal 2 dan Pasal 3 berlaku untuk iuran bulan Juli 2027 sampai dengan iuran bulan Desember 2027.
+
+Pasal 7
+Besarnya iuran Jaminan Hari Tua, Jaminan Pensiun, dan Jaminan Kesehatan tidak berubah dari ketentuan yang berlaku sebelumnya.
+
+Pasal 8
+Peraturan Presiden ini mulai berlaku pada tanggal diundangkan.
+
+Agar setiap orang mengetahuinya, memerintahkan pengundangan Peraturan Presiden ini dengan penempatannya dalam Lembaran Negara Republik Indonesia.
+
+Ditetapkan di Jakarta
+pada tanggal 10 Juni 2027
+PRESIDEN REPUBLIK INDONESIA,
+ttd.
+
+Diundangkan di Jakarta
+pada tanggal 11 Juni 2027
+
+LAMPIRAN I
+KODE KLASIFIKASI LAPANGAN USAHA PEMBERI KERJA PENERIMA KERINGANAN
+
+A. Pemberi Kerja Kelompok I
+
+| No | KLU | Uraian |
+| 1 | 13111 | Industri persiapan serat tekstil |
+| 2 | 13112 | Industri pemintalan benang |
+| 3 | 14111 | Industri pakaian jadi dari tekstil |
+| 4 | 14112 | Industri pakaian jadi dari kulit |
+| 5 | 15201 | Industri alas kaki untuk keperluan sehari-hari |
+| 6 | 15202 | Industri alas kaki olahraga |
+
+B. Pemberi Kerja Kelompok II
+
+| No | KLU | Uraian |
+| 1 | 10711 | Industri roti dan kue |
+| 2 | 10712 | Industri kue kering dan biskuit |
+| 3 | 10731 | Industri kembang gula |
+| 4 | 16101 | Industri penggergajian kayu |
+| 5 | 16211 | Industri kayu lapis |
+| 6 | 31001 | Industri furnitur dari kayu |
+| 7 | 31002 | Industri furnitur dari rotan dan bambu |
+
+LAMPIRAN II
+IURAN JAMINAN KECELAKAAN KERJA SETELAH KERINGANAN
+
+| Tingkat risiko lingkungan kerja | Kelompok I (persen dari upah sebulan) | Kelompok II (persen dari upah sebulan) |
+| Sangat rendah | 0,12% | 0,18% |
+| Rendah | 0,27% | 0,405% |
+| Sedang | 0,445% | 0,6675% |
+| Tinggi | 0,635% | 0,9525% |
+| Sangat tinggi | 0,87% | 1,305% |

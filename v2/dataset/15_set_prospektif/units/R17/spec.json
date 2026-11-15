@@ -1,0 +1,42 @@
+{
+ "id": "R17",
+ "layer": "regulation",
+ "change_type": "T3",
+ "size": 1,
+ "traps": ["ketentuan peralihan: iuran Januari-Maret 2027 tidak menjadi pengurang", "pengecualian: iuran Jaminan Kesehatan yang dibayar pemberi kerja tidak termasuk pengurang (tetap penghasilan)", "pasal yang menyatakan ulang bahwa iuran JHT dan JP pegawai tetap pengurang", "pengurang hanya terlihat pada Masa Pajak Terakhir (TER bulanan tidak berubah)", "syarat implisit: hanya iuran yang dibayar pegawai tetap"],
+ "title": "PMK 788/2027: Iuran Jaminan Kesehatan yang dibayar pegawai menjadi pengurang penghasilan bruto",
+ "header": "MENTERI KEUANGAN REPUBLIK INDONESIA",
+ "issued": "2027-03-19",
+ "effective_from": "2027-04-01",
+ "effective_until": null,
+ "retroactive": false,
+ "summary": "Iuran Jaminan Kesehatan yang dibayar pegawai menjadi pengurang penghasilan bruto bersama iuran JHT dan JP mulai Masa April 2027; iuran Jaminan Kesehatan pemberi kerja tetap penghasilan.",
+ "gold": {
+  "delta_id": "GOLD-R17",
+  "event_id": "R17",
+  "document": {"id": "R17", "title": "PMK 788/2027: Iuran Jaminan Kesehatan yang dibayar pegawai menjadi pengurang penghasilan bruto", "issued": "2027-03-19"},
+  "relevant": true,
+  "add": [
+   {"kind": "rule", "id": "REG.PENSION.EMPLOYEE.2027", "layer": "regulation", "modality": "mandatory", "scope": "period",
+    "produces": "employee_pension_contributions", "expression": "jht_employee + jp_employee + health_employee",
+    "valid_from": "2027-04-01", "overrides": ["REG.PENSION.EMPLOYEE"],
+    "label": "employee JKN contributions are deducted from gross income together with employee JHT and JP",
+    "source": [{"document": "R17", "provision": "Pasal 2 ayat (1)", "page": null,
+                "quote": "Iuran Jaminan Kesehatan yang dibayar oleh Pegawai merupakan pengurang penghasilan bruto Pegawai"},
+               {"document": "R17", "provision": "Pasal 2 ayat (2)", "page": null,
+                "quote": "tidak termasuk iuran Jaminan Kesehatan yang dibayar oleh Pemberi Kerja."},
+               {"document": "R17", "provision": "Pasal 4 ayat (1)", "page": null,
+                "quote": "berlaku untuk iuran Jaminan Kesehatan yang dibayar mulai Masa Pajak April 2027."}],
+    "recorded_on": "2027-03-19"}
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {"id": "T1", "year": 2027, "salary": 10000000, "ptkp": "TK/0"},
+  {"id": "T2", "year": 2027, "salary": 20000000, "ptkp": "K/1"},
+  {"id": "T3", "year": 2027, "salary": 6000000, "ptkp": "TK/0"},
+  {"id": "T4", "year": 2027, "salary": 10000000, "ptkp": "TK/0", "start_month": 1, "end_month": 3}
+ ]
+}

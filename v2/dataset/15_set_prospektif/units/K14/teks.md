@@ -1,0 +1,94 @@
+PT BENANG SUTRA LESTARI
+
+Jalan Raya Majalaya Nomor 77, Kabupaten Bandung
+
+PERJANJIAN KERJA BERSAMA PT BENANG SUTRA LESTARI DENGAN PIMPINAN UNIT KERJA SERIKAT PEKERJA TEKSTIL SANDANG DAN KULIT PERIODE 2027-2028
+
+Nomor: PKB-BSL/XII/2026
+
+Didaftarkan pada Dinas Tenaga Kerja Kabupaten Bandung Nomor 560/4127/PKB/2026
+
+Ditetapkan: 17 Desember 2026
+
+Masa berlaku: 1 Januari 2027 s.d. 31 Desember 2028
+
+BAB I — KETENTUAN UMUM
+
+Pasal 1
+Pengertian dan Pencabutan
+
+(1) Upah sebulan adalah gaji pokok ditambah tunjangan tetap yang diterima pekerja setiap bulan.
+
+(2) Perjanjian Kerja Bersama ini mencabut dan menggantikan Perjanjian Kerja Bersama Nomor PKB-BSL/VI/2024 dan Memo Direksi Nomor 021/MD-DIR/BSL/VI/2025 mulai tanggal 1 Januari 2027.
+
+BAB II — UPAH DAN TUNJANGAN
+
+Pasal 2
+Tunjangan Kerja Malam
+
+Pekerja bagian pemintalan yang bertugas pada shift malam menerima tunjangan kerja malam sebesar Rp50.000,00 (lima puluh ribu rupiah) untuk setiap hari kerja shift malam, yang dibayarkan setiap bulan bersama upah sebagai penghasilan teratur.
+
+Pasal 3
+Uang Lembur
+
+Uang lembur yang dibayarkan kepada seorang pekerja dalam satu bulan paling banyak sebesar 50% (lima puluh persen) dari upah sebulan.
+
+Pasal 4
+Tunjangan Hari Raya Keagamaan
+
+(1) Pekerja dengan masa kerja 12 (dua belas) bulan secara terus-menerus atau lebih menerima Tunjangan Hari Raya Keagamaan (THR) sebesar 1,25 (satu koma dua puluh lima) kali upah satu bulan, sebagaimana telah ditetapkan dalam Memo Direksi Nomor 021/MD-DIR/BSL/VI/2025 dan dinyatakan kembali dalam Perjanjian Kerja Bersama ini.
+
+(2) Pekerja dengan masa kerja 1 (satu) bulan secara terus-menerus tetapi kurang dari 12 (dua belas) bulan menerima THR sebesar masa kerja dalam bulan dibagi 12 (dua belas) dikali 1,25 (satu koma dua puluh lima) kali upah satu bulan.
+
+(3) Pekerja yang hubungan kerjanya berakhir sebelum hari raya keagamaan tidak berhak atas THR tahun yang bersangkutan.
+
+Pasal 5
+Bonus Akhir Tahun
+
+(1) Bonus akhir tahun dibayarkan pada bulan Desember sebesar nilai yang ditetapkan Direksi berdasarkan kinerja Perusahaan.
+
+(2) Bonus akhir tahun hanya dibayarkan kepada pekerja dengan masa kerja 6 (enam) bulan atau lebih pada bulan pembayaran.
+
+Pasal 6
+Iuran Serikat Pekerja
+
+Setiap pekerja membayar iuran Serikat Pekerja Tekstil Sandang dan Kulit sebesar 0,5% (nol koma lima persen) dari gaji pokok setiap bulan, yang dipotong dari upah pada saat pembayaran upah.
+
+BAB III — JAMINAN SOSIAL DAN PAJAK
+
+Pasal 7
+Iuran BPJS Ketenagakerjaan
+
+(1) Iuran JHT sebesar 3,7% (tiga koma tujuh persen) ditanggung Perusahaan dan 2% (dua persen) ditanggung pekerja.
+
+(2) Iuran JP sebesar 2% (dua persen) ditanggung Perusahaan dan 1% (satu persen) ditanggung pekerja dengan batas upah sesuai ketentuan BPJS Ketenagakerjaan.
+
+(3) Iuran JKK dan iuran JKM dihitung sesuai kelompok tingkat risiko menurut ketentuan peraturan perundang-undangan yang berlaku dan ditanggung sepenuhnya oleh Perusahaan.
+
+Pasal 8
+Pajak Penghasilan Pasal 21
+
+Pajak Penghasilan Pasal 21 atas penghasilan pekerja dipotong dari upah pekerja setiap bulan sesuai ketentuan perpajakan yang berlaku.
+
+BAB IV — KETENTUAN PENUTUP
+
+Pasal 9
+Masa Berlaku
+
+(1) Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028.
+
+(2) Hal-hal yang belum diatur dalam Perjanjian Kerja Bersama ini diatur lebih lanjut oleh Perusahaan dengan berpedoman pada peraturan perundang-undangan yang berlaku.
+
+Ditetapkan di Kabupaten Bandung pada tanggal 17 Desember 2026
+
+PT BENANG SUTRA LESTARI
+
+Wijaya Kusumah
+
+Direktur
+
+PUK SP TSK
+
+Ujang Supriatna
+
+Ketua

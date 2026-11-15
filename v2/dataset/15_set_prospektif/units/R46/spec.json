@@ -1,0 +1,500 @@
+{
+ "id": "R46",
+ "layer": "regulation",
+ "change_type": "T7",
+ "size": 17,
+ "traps": [
+  "ambang pada batas (lebih dari Rp15.000.000 akumulatif, sampai dengan Rp15.000.000 tetap TER)",
+  "pasal yang menyatakan ulang ketentuan yang tidak berubah (Masa Pajak Terakhir tetap)",
+  "rujukan silang (PP 58/2023, tarif Pasal 17 UU PPh, batas biaya jabatan yang berlaku)",
+  "pengurang atas pemotongan sebelumnya dan nilai negatif menjadi nihil"
+ ],
+ "title": "PER-731/PJ/2027: Metode akumulatif untuk pegawai tetap berpenghasilan bruto bulanan di atas Rp15.000.000",
+ "header": "DIREKTORAT JENDERAL PAJAK",
+ "issued": "2027-08-18",
+ "effective_from": "2027-10-01",
+ "effective_until": null,
+ "retroactive": false,
+ "summary": "Mulai Masa Pajak Oktober 2027 pegawai tetap dengan penghasilan bruto bulan berjalan lebih dari Rp15.000.000 dipotong dengan metode akumulatif (PPh akumulatif sampai bulan berjalan dikurangi PPh yang sudah dipotong) dan bukan lagi tarif efektif bulanan; sampai dengan Rp15.000.000 tetap TER.",
+ "gold": {
+  "add": [
+   {
+    "kind": "fact",
+    "id": "cum_months",
+    "fact_type": "int",
+    "fact_scope": "period",
+    "output": false,
+    "label": "months accumulated from the first month of work to this period",
+    "label_id": "jumlah bulan akumulasi",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "Jumlah bulan akumulasi adalah jumlah bulan sejak bulan pertama bekerja dalam Tahun Pajak sampai dengan Masa Pajak berjalan."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "fact",
+    "id": "cum_gross",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "cumulative gross income",
+    "label_id": "penghasilan bruto akumulatif",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "Penghasilan bruto akumulatif adalah jumlah seluruh penghasilan bruto Pegawai sejak bulan pertama bekerja dalam Tahun Pajak sampai dengan Masa Pajak berjalan."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "fact",
+    "id": "cum_pension",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "cumulative employee pension contributions",
+    "label_id": "iuran pensiun akumulatif",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 3 ayat (3)",
+      "page": null,
+      "quote": "Iuran pensiun akumulatif adalah jumlah iuran jaminan hari tua dan iuran jaminan pensiun yang dibayar oleh Pegawai"
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "fact",
+    "id": "cum_job_expense",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "cumulative job expense",
+    "label_id": "biaya jabatan akumulatif",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "Biaya jabatan akumulatif adalah 5% (lima persen) dari penghasilan bruto akumulatif, paling banyak sebesar batas tertinggi biaya jabatan sebulan yang berlaku dikalikan jumlah bulan akumulasi."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "fact",
+    "id": "cum_taxable",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "cumulative annualized taxable income",
+    "label_id": "penghasilan kena pajak akumulatif disetahunkan",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "dikalikan 12 (dua belas) dan dibagi jumlah bulan akumulasi, kemudian dikurangi Penghasilan Tidak Kena Pajak, dibulatkan ke bawah dalam ribuan rupiah penuh."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "fact",
+    "id": "cum_tax_due",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "cumulative PPh 21",
+    "label_id": "PPh Pasal 21 akumulatif",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 6",
+      "page": null,
+      "quote": "dikalikan jumlah bulan akumulasi dan dibagi 12 (dua belas)."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.CUM.MONTHS",
+    "produces": "cum_months",
+    "expression": "month - first_month + 1",
+    "valid_from": "2027-10-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "Jumlah bulan akumulasi adalah jumlah bulan sejak bulan pertama bekerja dalam Tahun Pajak sampai dengan Masa Pajak berjalan."
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 9",
+      "page": null,
+      "quote": "Peraturan Direktur Jenderal Pajak ini mulai berlaku pada tanggal 1 Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.CUM.GROSS",
+    "produces": "cum_gross",
+    "expression": "sum_to_date('gross_income')",
+    "valid_from": "2027-10-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "Penghasilan bruto akumulatif adalah jumlah seluruh penghasilan bruto Pegawai sejak bulan pertama bekerja dalam Tahun Pajak sampai dengan Masa Pajak berjalan."
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 9",
+      "page": null,
+      "quote": "Peraturan Direktur Jenderal Pajak ini mulai berlaku pada tanggal 1 Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.CUM.PENSION",
+    "produces": "cum_pension",
+    "expression": "sum_to_date('employee_pension_contributions')",
+    "valid_from": "2027-10-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 3 ayat (3)",
+      "page": null,
+      "quote": "Iuran pensiun akumulatif adalah jumlah iuran jaminan hari tua dan iuran jaminan pensiun yang dibayar oleh Pegawai"
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 9",
+      "page": null,
+      "quote": "Peraturan Direktur Jenderal Pajak ini mulai berlaku pada tanggal 1 Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.CUM.JOB_EXPENSE",
+    "produces": "cum_job_expense",
+    "expression": "min(round(param('job_expense_rate') * cum_gross, 1, 'down'), param('job_expense_max_month') * cum_months)",
+    "valid_from": "2027-10-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "Biaya jabatan akumulatif adalah 5% (lima persen) dari penghasilan bruto akumulatif, paling banyak sebesar batas tertinggi biaya jabatan sebulan yang berlaku dikalikan jumlah bulan akumulasi."
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 9",
+      "page": null,
+      "quote": "Peraturan Direktur Jenderal Pajak ini mulai berlaku pada tanggal 1 Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.CUM.TAXABLE",
+    "produces": "cum_taxable",
+    "expression": "max(0, round((cum_gross - cum_job_expense - cum_pension) * 12 / cum_months - ptkp_amount, 1000, 'down'))",
+    "valid_from": "2027-10-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "dikalikan 12 (dua belas) dan dibagi jumlah bulan akumulasi, kemudian dikurangi Penghasilan Tidak Kena Pajak, dibulatkan ke bawah dalam ribuan rupiah penuh."
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 9",
+      "page": null,
+      "quote": "Peraturan Direktur Jenderal Pajak ini mulai berlaku pada tanggal 1 Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.CUM.TAX",
+    "produces": "cum_tax_due",
+    "expression": "round(progressive('pasal17', cum_taxable) * cum_months / 12, 1, param('pph_round_mode'))",
+    "valid_from": "2027-10-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 6",
+      "page": null,
+      "quote": "dikalikan jumlah bulan akumulasi dan dibagi 12 (dua belas)."
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 9",
+      "page": null,
+      "quote": "Peraturan Direktur Jenderal Pajak ini mulai berlaku pada tanggal 1 Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.CUM.RUNNING",
+    "produces": "pph21_running",
+    "condition": "not is_final_period and gross_income > 15000000",
+    "expression": "max(0, cum_tax_due - sum_before('pph21_due'))",
+    "valid_from": "2027-10-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "dilakukan dengan metode akumulatif dalam hal penghasilan bruto Pegawai pada Masa Pajak berjalan lebih dari Rp15.000.000,00 (lima belas juta rupiah)."
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "adalah Pajak Penghasilan Pasal 21 akumulatif dikurangi Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak sebelumnya dalam Tahun Pajak yang sama."
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 7 ayat (2)",
+      "page": null,
+      "quote": "bernilai negatif, Pajak Penghasilan Pasal 21 yang dipotong pada Masa Pajak berjalan adalah nihil."
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 8",
+      "page": null,
+      "quote": "Pemotongan Pajak Penghasilan Pasal 21 pada Masa Pajak Terakhir tetap dilakukan sesuai dengan ketentuan yang berlaku."
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 9",
+      "page": null,
+      "quote": "Peraturan Direktur Jenderal Pajak ini mulai berlaku pada tanggal 1 Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.TER.RATE.2027Q4",
+    "produces": "ter_rate",
+    "condition": "not is_final_period and gross_income <= 15000000",
+    "expression": "bracket('ter_monthly', ter_category, gross_income)",
+    "valid_from": "2027-10-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "Dalam hal penghasilan bruto Pegawai pada Masa Pajak berjalan sampai dengan Rp15.000.000,00 (lima belas juta rupiah), pemotongan dilakukan dengan tarif efektif bulanan"
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 8",
+      "page": null,
+      "quote": "Pemotongan Pajak Penghasilan Pasal 21 pada Masa Pajak Terakhir tetap dilakukan sesuai dengan ketentuan yang berlaku."
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 9",
+      "page": null,
+      "quote": "Peraturan Direktur Jenderal Pajak ini mulai berlaku pada tanggal 1 Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.TER.RUNNING.2027Q4",
+    "produces": "pph21_running",
+    "condition": "not is_final_period and gross_income <= 15000000",
+    "expression": "round(ter_rate * gross_income, 1, param('pph_round_mode'))",
+    "valid_from": "2027-10-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "Dalam hal penghasilan bruto Pegawai pada Masa Pajak berjalan sampai dengan Rp15.000.000,00 (lima belas juta rupiah), pemotongan dilakukan dengan tarif efektif bulanan"
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 8",
+      "page": null,
+      "quote": "Pemotongan Pajak Penghasilan Pasal 21 pada Masa Pajak Terakhir tetap dilakukan sesuai dengan ketentuan yang berlaku."
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 9",
+      "page": null,
+      "quote": "Peraturan Direktur Jenderal Pajak ini mulai berlaku pada tanggal 1 Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   }
+  ],
+  "change": [
+   {
+    "kind": "rule",
+    "id": "REG.TER.RATE",
+    "produces": "ter_rate",
+    "condition": "not is_final_period",
+    "expression": "bracket('ter_monthly', ter_category, gross_income)",
+    "valid_from": "2024-01-01",
+    "valid_until": "2027-09-30",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "dilakukan dengan metode akumulatif dalam hal penghasilan bruto Pegawai pada Masa Pajak berjalan lebih dari Rp15.000.000,00 (lima belas juta rupiah)."
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 9",
+      "page": null,
+      "quote": "Peraturan Direktur Jenderal Pajak ini mulai berlaku pada tanggal 1 Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.TER.RUNNING",
+    "produces": "pph21_running",
+    "condition": "not is_final_period",
+    "expression": "round(ter_rate * gross_income, 1, param('pph_round_mode'))",
+    "valid_from": "2024-01-01",
+    "valid_until": "2027-09-30",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "source": [
+     {
+      "document": "R46",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "dilakukan dengan metode akumulatif dalam hal penghasilan bruto Pegawai pada Masa Pajak berjalan lebih dari Rp15.000.000,00 (lima belas juta rupiah)."
+     },
+     {
+      "document": "R46",
+      "provision": "Pasal 9",
+      "page": null,
+      "quote": "Peraturan Direktur Jenderal Pajak ini mulai berlaku pada tanggal 1 Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-08-18"
+   }
+  ],
+  "remove": [],
+  "note": "",
+  "delta_id": "GOLD-R46",
+  "event_id": "R46",
+  "document": {
+   "id": "R46",
+   "title": "PER-731/PJ/2027: Metode akumulatif untuk pegawai tetap berpenghasilan bruto bulanan di atas Rp15.000.000",
+   "issued": "2027-08-18"
+  },
+  "relevant": true
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 13000000,
+   "ptkp": "TK/0"
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 13129103,
+   "ptkp": "TK/0"
+  },
+  {
+   "id": "T6",
+   "year": 2027,
+   "salary": 13129104,
+   "ptkp": "TK/0"
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 14000000,
+   "ptkp": "K/1"
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 20000000,
+   "ptkp": "TK/0",
+   "income": {
+    "bonus": 20000000
+   },
+   "income_months": [
+    10
+   ]
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 18000000,
+   "ptkp": "K/2",
+   "start_month": 5
+  }
+ ]
+}

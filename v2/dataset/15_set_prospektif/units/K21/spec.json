@@ -1,0 +1,219 @@
+{
+ "id": "K21",
+ "layer": "company",
+ "instance": "SP02",
+ "policy": "K21",
+ "change_type": "T10",
+ "size": 5,
+ "traps": [
+  "ambang 10 hari shift malam (di bawah, di, dan di atas ambang)",
+  "ketentuan peralihan (Januari dan Februari 2027 tetap menurut lampiran lama)",
+  "rujukan silang (definisi Upah ke Pasal 30 Peraturan Perusahaan)",
+  "pengecualian (pekerja bagian kantor tidak termasuk)",
+  "nilai dalam huruf dan angka yang harus dibaca bersama"
+ ],
+ "title": "PT Presisi Komponen Otomotif: Lampiran IV Peraturan Perusahaan tentang Sistem Kerja Gilir dan Upah Lembur",
+ "header": "LAMPIRAN IV PERATURAN PERUSAHAAN PT PRESISI KOMPONEN OTOMOTIF",
+ "issued": "2027-02-09",
+ "effective_from": "2027-03-01",
+ "effective_until": "2028-02-29",
+ "retroactive": false,
+ "summary": "Lampiran sistem kerja gilir dan lembur berlaku 1 Maret 2027 sampai 29 Februari 2028: Tunjangan Shift Malam Rp40.000 per hari atau 5% Upah Pokok bila 10 hari atau lebih, Tunjangan Produktivitas Rp300.000 untuk Upah Pokok sampai Rp7.000.000, upah lembur paling banyak Rp3.500.000 dibulatkan ke atas ribuan.",
+ "gold": {
+  "delta_id": "GOLD-K21",
+  "event_id": "K21",
+  "document": {
+   "id": "K21",
+   "title": "PT Presisi Komponen Otomotif: Lampiran IV Peraturan Perusahaan tentang Sistem Kerja Gilir dan Upah Lembur",
+   "issued": "2027-02-09"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "fact",
+    "id": "k21_night_shift_allowance",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "night shift allowance, per day below 10 days and 5% of base salary from 10 days",
+    "source": [
+     {
+      "document": "K21",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "5% (lima persen) dari Upah Pokok untuk bulan yang bersangkutan"
+     }
+    ],
+    "recorded_on": "2027-02-09"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K21.NIGHT",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k21_night_shift_allowance",
+    "expression": "round(dec('0.05') * base_salary, 1, 'down') if hr('night_shift_days') >= 10 else hr('night_shift_days') * 40000",
+    "label": "40,000 per night shift day below 10 days; a flat 5% of base salary from 10 days, instead of the per-day amount",
+    "policy": "K21",
+    "valid_from": "2027-03-01",
+    "valid_until": "2028-02-29",
+    "source": [
+     {
+      "document": "K21",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "kurang dari 10 (sepuluh) hari dalam satu bulan menerima Tunjangan Shift Malam sebesar Rp40.000,00 (empat puluh ribu rupiah) untuk setiap hari kerja pada shift malam"
+     },
+     {
+      "document": "K21",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "10 (sepuluh) hari atau lebih dalam satu bulan menerima Tunjangan Shift Malam tetap sebesar 5% (lima persen) dari Upah Pokok"
+     },
+     {
+      "document": "K21",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Maret 2027 sampai dengan tanggal 29 Februari 2028"
+     }
+    ],
+    "recorded_on": "2027-02-09"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K21.OTHER_REGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + k21_night_shift_allowance",
+    "label": "night shift allowance is regular income paid with the monthly wage",
+    "policy": "K21",
+    "valid_from": "2027-03-01",
+    "valid_until": "2028-02-29",
+    "source": [
+     {
+      "document": "K21",
+      "provision": "Pasal 3 ayat (3)",
+      "page": null,
+      "quote": "dibayarkan bersama Upah bulan yang bersangkutan dan bukan merupakan Tunjangan Tetap"
+     },
+     {
+      "document": "K21",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Maret 2027 sampai dengan tanggal 29 Februari 2028"
+     }
+    ],
+    "recorded_on": "2027-02-09"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K21.PRODUCTIVITY",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "fixed_allowance",
+    "expression": "income('fixed_allowance') + (300000 if base_salary <= 7000000 else 0)",
+    "label": "productivity allowance of 300,000 for base salary up to 7,000,000, a fixed allowance",
+    "policy": "K21",
+    "valid_from": "2027-03-01",
+    "valid_until": "2028-02-29",
+    "source": [
+     {
+      "document": "K21",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "Upah Pokok sampai dengan Rp7.000.000,00 (tujuh juta rupiah) sebulan menerima Tunjangan Produktivitas sebesar Rp300.000,00 (tiga ratus ribu rupiah) sebulan sebagai Tunjangan Tetap"
+     },
+     {
+      "document": "K21",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Maret 2027 sampai dengan tanggal 29 Februari 2028"
+     }
+    ],
+    "recorded_on": "2027-02-09"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K21.OVERTIME",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "overtime_pay",
+    "expression": "round(min(income('overtime_pay'), 3500000), 1000, 'up')",
+    "label": "overtime pay capped at 3,500,000 and rounded up to the thousand",
+    "policy": "K21",
+    "valid_from": "2027-03-01",
+    "valid_until": "2028-02-29",
+    "source": [
+     {
+      "document": "K21",
+      "provision": "Pasal 5 ayat (2)",
+      "page": null,
+      "quote": "paling banyak Rp3.500.000,00 (tiga juta lima ratus ribu rupiah)"
+     },
+     {
+      "document": "K21",
+      "provision": "Pasal 5 ayat (3)",
+      "page": null,
+      "quote": "dibulatkan ke atas hingga ribuan rupiah penuh"
+     },
+     {
+      "document": "K21",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Maret 2027 sampai dengan tanggal 29 Februari 2028"
+     }
+    ],
+    "recorded_on": "2027-02-09"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "TK/0",
+   "klu": "29300",
+   "hr": {
+    "night_shift_days": 9
+   },
+   "income": {
+    "overtime_pay": 2345678
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 7000000,
+   "ptkp": "K/1",
+   "klu": "29300",
+   "hr": {
+    "night_shift_days": 10
+   },
+   "income": {
+    "overtime_pay": 4000000
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 7500000,
+   "ptkp": "K/0",
+   "klu": "29300",
+   "hr": {
+    "night_shift_days": 11
+   },
+   "income": {
+    "overtime_pay": 1200500
+   }
+  }
+ ]
+}

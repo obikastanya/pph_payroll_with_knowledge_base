@@ -1,0 +1,50 @@
+SALINAN
+
+PERATURAN DIREKTUR JENDERAL PAJAK
+NOMOR PER-770/PJ/2027
+TENTANG
+PERUBAHAN ATAS PERATURAN DIREKTUR JENDERAL PAJAK NOMOR PER-16/PJ/2016 TENTANG PEDOMAN TEKNIS TATA CARA PEMOTONGAN, PENYETORAN, DAN PELAPORAN PAJAK PENGHASILAN PASAL 21 SEHUBUNGAN DENGAN PEKERJAAN, JASA, DAN KEGIATAN ORANG PRIBADI
+
+DENGAN RAHMAT TUHAN YANG MAHA ESA
+
+DIREKTUR JENDERAL PAJAK,
+
+Menimbang : a. bahwa dalam rangka penyeragaman urutan dan dasar penghitungan pada sistem administrasi pemotongan Pajak Penghasilan Pasal 21, perlu dilakukan penyesuaian tata cara penghitungan biaya jabatan dan pembulatan iuran jaminan sosial;
+b. bahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a, perlu menetapkan Peraturan Direktur Jenderal Pajak tentang Perubahan atas Peraturan Direktur Jenderal Pajak Nomor PER-16/PJ/2016 tentang Pedoman Teknis Tata Cara Pemotongan, Penyetoran, dan Pelaporan Pajak Penghasilan Pasal 21 sehubungan dengan Pekerjaan, Jasa, dan Kegiatan Orang Pribadi;
+
+Mengingat : 1. Undang-Undang Nomor 7 Tahun 1983 tentang Pajak Penghasilan sebagaimana telah beberapa kali diubah terakhir dengan Undang-Undang Nomor 7 Tahun 2021 tentang Harmonisasi Peraturan Perpajakan;
+2. Peraturan Menteri Keuangan Nomor 168 Tahun 2023 tentang Pelaksanaan Pemotongan Pajak Penghasilan Pasal 21 dan Pajak Penghasilan Pasal 26 sehubungan dengan Pekerjaan, Jasa, dan Kegiatan Orang Pribadi;
+
+MEMUTUSKAN:
+
+Menetapkan : PERATURAN DIREKTUR JENDERAL PAJAK TENTANG PERUBAHAN ATAS PERATURAN DIREKTUR JENDERAL PAJAK NOMOR PER-16/PJ/2016 TENTANG PEDOMAN TEKNIS TATA CARA PEMOTONGAN, PENYETORAN, DAN PELAPORAN PAJAK PENGHASILAN PASAL 21 SEHUBUNGAN DENGAN PEKERJAAN, JASA, DAN KEGIATAN ORANG PRIBADI.
+
+Pasal I
+Beberapa ketentuan dalam Peraturan Direktur Jenderal Pajak Nomor PER-16/PJ/2016 diubah sebagai berikut.
+
+Pasal 1
+(1) Biaya jabatan dihitung sebesar 5% (lima persen) dari penghasilan bruto setahun setelah dikurangi iuran pensiun, iuran Jaminan Hari Tua, dan iuran Jaminan Pensiun yang dibayar oleh pegawai.
+(2) Batas paling banyak biaya jabatan sebagaimana ditetapkan dalam peraturan perundang-undangan tidak berubah.
+(3) Pengurangan sebagaimana dimaksud pada ayat (1) hanya dilakukan untuk menentukan dasar penghitungan biaya jabatan dan tidak menggantikan pengurangan iuran tersebut dari penghasilan bruto.
+
+Pasal 2
+Ketentuan sebagaimana dimaksud dalam Pasal 1 berlaku untuk penghitungan Pajak Penghasilan Pasal 21 Tahun Pajak 2027 mulai Masa Pajak Januari 2027, dan kelebihan atau kekurangan pemotongan diperhitungkan pada Masa Pajak Terakhir.
+
+Pasal 3
+(1) Iuran Jaminan Kecelakaan Kerja, Jaminan Kematian, Jaminan Hari Tua, Jaminan Pensiun, dan Jaminan Kesehatan, baik yang dibayar oleh Pemberi Kerja maupun oleh pegawai, dibulatkan ke bawah ke dalam rupiah penuh, dan angka di belakang koma dihapus berapa pun nilainya.
+(2) Pembulatan ke bawah sebagaimana dimaksud pada ayat (1) berlaku untuk iuran bulan Juli 2027 dan bulan-bulan berikutnya.
+(3) Iuran yang dibayar sesuai dengan jumlah tagihan penyelenggara tidak dihitung ulang.
+
+Pasal 4
+Ketentuan mengenai pembulatan Pajak Penghasilan Pasal 21 tidak berubah dari ketentuan yang berlaku sebelumnya.
+
+Pasal II
+Peraturan Direktur Jenderal Pajak ini mulai berlaku pada tanggal diundangkan.
+
+Ditetapkan di Jakarta
+pada tanggal 25 Juni 2027
+DIREKTUR JENDERAL PAJAK,
+ttd.
+
+Diundangkan di Jakarta
+pada tanggal 28 Juni 2027

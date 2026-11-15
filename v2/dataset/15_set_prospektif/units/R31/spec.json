@@ -1,0 +1,269 @@
+{
+ "id": "R31",
+ "layer": "regulation",
+ "change_type": "T4",
+ "size": 5,
+ "traps": [
+  "syarat implisit: pegawai tetap dengan NPWP atau NIK terintegrasi",
+  "rata-rata 12 bulan terakhir; pegawai kurang dari 12 bulan memakai penghasilan tetap dan teratur bulan pertama (ayat tersendiri)",
+  "pengurang dihitung per bulan bekerja, bukan jumlah tetap setahun",
+  "pengurang hanya masuk penghitungan Masa Pajak Terakhir, pemotongan masa sebelumnya tidak berubah",
+  "pasal yang menyatakan ulang biaya jabatan, iuran pensiun, dan zakat yang tidak berubah",
+  "berlaku surut ke Masa Pajak Januari 2027",
+  "nilai dalam huruf dan angka"
+ ],
+ "title": "PMK 786/2027: Pengurang tambahan penghasilan neto bagi pegawai tetap berpenghasilan rendah TP 2027",
+ "header": "MENTERI KEUANGAN REPUBLIK INDONESIA",
+ "issued": "2027-02-12",
+ "effective_from": "2027-01-01",
+ "effective_until": "2027-12-31",
+ "retroactive": true,
+ "summary": "Fasilitas baru: pegawai tetap yang berpenghasilan bruto rata-rata sampai Rp6.500.000 sebulan mendapat pengurang tambahan Rp400.000 untuk setiap bulan bekerja dalam penghitungan penghasilan neto setahun (Masa Pajak Terakhir), Tahun Pajak 2027 (surut).",
+ "gold": {
+  "delta_id": "GOLD-R31",
+  "event_id": "R31",
+  "document": {
+   "id": "R31",
+   "title": "PMK 786/2027: Pengurang tambahan penghasilan neto bagi pegawai tetap berpenghasilan rendah TP 2027",
+   "issued": "2027-02-12"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "fact",
+    "id": "lowinc_relief",
+    "fact_type": "money",
+    "fact_scope": "year",
+    "output": false,
+    "label": "additional deduction from annual net income for a low-income employee",
+    "label_id": "pengurang tambahan penghasilan neto pegawai berpenghasilan rendah",
+    "source": [
+     {
+      "document": "R31",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "sebesar Rp400.000,00 (empat ratus ribu rupiah) untuk setiap bulan bekerja dalam Tahun Pajak 2027."
+     },
+     {
+      "document": "R31",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "diperhitungkan pada Masa Pajak Terakhir bersama dengan biaya jabatan dan iuran pensiun."
+     }
+    ],
+    "recorded_on": "2027-02-12"
+   },
+   {
+    "kind": "parameter",
+    "id": "PAR.LOWINC_AVG_CAP.2027",
+    "name": "lowinc_avg_cap",
+    "value": 6500000,
+    "value_type": "money",
+    "valid_from": "2027-01-01",
+    "valid_until": "2027-12-31",
+    "label_id": "batas penghasilan bruto rata-rata sebulan penerima pengurang tambahan",
+    "source": [
+     {
+      "document": "R31",
+      "provision": "Pasal 3 ayat (1) huruf b",
+      "page": null,
+      "quote": "tidak lebih dari Rp6.500.000,00 (enam juta lima ratus ribu rupiah)."
+     },
+     {
+      "document": "R31",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "berlaku surut untuk penghitungan Pajak Penghasilan Pasal 21 Tahun Pajak 2027 mulai Masa Pajak Januari 2027."
+     }
+    ],
+    "recorded_on": "2027-02-12"
+   },
+   {
+    "kind": "parameter",
+    "id": "PAR.LOWINC_RELIEF_MONTH.2027",
+    "name": "lowinc_relief_month",
+    "value": 400000,
+    "value_type": "money",
+    "valid_from": "2027-01-01",
+    "valid_until": "2027-12-31",
+    "label_id": "pengurang tambahan untuk setiap bulan bekerja",
+    "source": [
+     {
+      "document": "R31",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "sebesar Rp400.000,00 (empat ratus ribu rupiah) untuk setiap bulan bekerja dalam Tahun Pajak 2027."
+     },
+     {
+      "document": "R31",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "berlaku surut untuk penghitungan Pajak Penghasilan Pasal 21 Tahun Pajak 2027 mulai Masa Pajak Januari 2027."
+     }
+    ],
+    "recorded_on": "2027-02-12"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.LOWINC.RELIEF",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "lowinc_relief",
+    "expression": "param('lowinc_relief_month') * months_employed if ((employee('avg_monthly_gross_12m') if employee('avg_monthly_gross_12m') != None else value_in('base_salary', first_month) + value_in('fixed_allowance', first_month) + value_in('other_regular_income', first_month)) <= param('lowinc_avg_cap') and employee('tax_id_valid') != False) else 0",
+    "valid_from": "2027-01-01",
+    "valid_until": "2027-12-31",
+    "label": "months of work in the year times the monthly amount; the 12-month average, or the fixed regular income of the first month for an employee with less than 12 months",
+    "source": [
+     {
+      "document": "R31",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "sebesar Rp400.000,00 (empat ratus ribu rupiah) untuk setiap bulan bekerja dalam Tahun Pajak 2027."
+     },
+     {
+      "document": "R31",
+      "provision": "Pasal 3 ayat (1) huruf a",
+      "page": null,
+      "quote": "memiliki Nomor Pokok Wajib Pajak atau Nomor Induk Kependudukan yang terintegrasi dengan sistem administrasi perpajakan; dan"
+     },
+     {
+      "document": "R31",
+      "provision": "Pasal 3 ayat (1) huruf b",
+      "page": null,
+      "quote": "tidak lebih dari Rp6.500.000,00 (enam juta lima ratus ribu rupiah)."
+     },
+     {
+      "document": "R31",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "adalah penghasilan bruto yang bersifat tetap dan teratur pada Masa Pajak bulan pertama bekerja."
+     },
+     {
+      "document": "R31",
+      "provision": "Pasal 3 ayat (3)",
+      "page": null,
+      "quote": "meliputi gaji, tunjangan yang sifatnya tetap dan teratur, dan imbalan sejenis yang bersifat tetap dan teratur."
+     }
+    ],
+    "recorded_on": "2027-02-12"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.YEAR.DEDUCTIONS.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "annual_deductions",
+    "expression": "job_expense + annual_pension_contributions + annual_zakat_deduction + lowinc_relief",
+    "valid_from": "2027-01-01",
+    "valid_until": "2027-12-31",
+    "overrides": [
+     "REG.YEAR.DEDUCTIONS"
+    ],
+    "label": "the additional deduction comes on top of job expense, pension contributions, and zakat; it enters the annual calculation of the last period only",
+    "source": [
+     {
+      "document": "R31",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "diperhitungkan pada Masa Pajak Terakhir bersama dengan biaya jabatan dan iuran pensiun."
+     },
+     {
+      "document": "R31",
+      "provision": "Pasal 4 ayat (1)",
+      "page": null,
+      "quote": "diberikan di samping biaya jabatan, iuran pensiun, dan zakat yang telah dapat dikurangkan"
+     },
+     {
+      "document": "R31",
+      "provision": "Pasal 2 ayat (3)",
+      "page": null,
+      "quote": "tidak mengubah pemotongan Pajak Penghasilan Pasal 21 pada Masa Pajak sebelum Masa Pajak Terakhir."
+     },
+     {
+      "document": "R31",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "berlaku surut untuk penghitungan Pajak Penghasilan Pasal 21 Tahun Pajak 2027 mulai Masa Pajak Januari 2027."
+     }
+    ],
+    "recorded_on": "2027-02-12"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 6000000,
+   "ptkp": "TK/0",
+   "income": {
+    "fixed_allowance": 0
+   },
+   "employee": {
+    "avg_monthly_gross_12m": 6000000
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "K/1",
+   "income": {
+    "fixed_allowance": 0
+   },
+   "employee": {
+    "avg_monthly_gross_12m": 6500000
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 6800000,
+   "ptkp": "TK/0",
+   "income": {
+    "fixed_allowance": 0
+   },
+   "employee": {
+    "avg_monthly_gross_12m": 6800000
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 6000000,
+   "ptkp": "TK/0",
+   "start_month": 7,
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 7000000,
+   "ptkp": "TK/0",
+   "start_month": 7,
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T6",
+   "year": 2027,
+   "salary": 6000000,
+   "ptkp": "TK/0",
+   "income": {
+    "fixed_allowance": 0
+   },
+   "employee": {
+    "avg_monthly_gross_12m": 6000000,
+    "tax_id_valid": false
+   }
+  }
+ ]
+}

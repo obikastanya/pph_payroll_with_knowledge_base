@@ -1,0 +1,117 @@
+PERJANJIAN KERJA BERSAMA
+
+ANTARA
+
+PT KENCANA PELAYARAN NUSANTARA
+
+DENGAN
+
+SERIKAT PEKERJA PELAUT KENCANA
+
+PERIODE 2027–2028
+
+Nomor: PKB/KPN/2027
+
+Didaftarkan pada Dinas Tenaga Kerja, Transmigrasi dan Energi Provinsi DKI Jakarta Nomor 0791/PKB/XII/2026 (fiktif)
+
+Ditetapkan di Jakarta pada tanggal 4 Desember 2026
+
+BAB I KETENTUAN UMUM
+
+Pasal 1
+
+Dalam Perjanjian Kerja Bersama ini yang dimaksud dengan:
+
+a. Perusahaan adalah PT Kencana Pelayaran Nusantara, perusahaan angkutan laut dalam negeri untuk barang.
+
+b. Serikat Pekerja adalah Serikat Pekerja Pelaut Kencana.
+
+c. Pekerja adalah awak kapal dan pekerja darat yang berstatus pekerja tetap Perusahaan.
+
+d. Upah Pokok adalah imbalan dasar yang dibayarkan setiap bulan, tidak termasuk tunjangan.
+
+e. Tunjangan Tetap adalah tunjangan yang dibayarkan setiap bulan dengan jumlah yang tetap, yaitu Tunjangan Pelayaran.
+
+f. Upah adalah Upah Pokok ditambah Tunjangan Tetap.
+
+BAB II PENGUPAHAN
+
+Pasal 2
+
+(1) Upah dibayarkan setiap bulan paling lambat tanggal 25, dan untuk awak kapal yang sedang berlayar dibayarkan melalui rekening bank yang ditunjuk Pekerja.
+
+(2) Selama bertugas di atas kapal, Perusahaan menyediakan mes dan makan bagi awak kapal tanpa pemotongan Upah.
+
+Pasal 3
+
+Setiap Pekerja menerima Tunjangan Pelayaran sebesar 8% (delapan persen) dari Upah Pokok setiap bulan sebagai Tunjangan Tetap sebagaimana dimaksud dalam Pasal 1 huruf e.
+
+Pasal 4
+
+(1) Awak kapal yang menjalankan tugas jaga pada malam hari menerima Tunjangan Jaga Malam sebesar Rp85.000,00 (delapan puluh lima ribu rupiah) untuk setiap hari tugas jaga malam.
+
+(2) Tunjangan Jaga Malam dibayarkan bersama Upah bulan yang bersangkutan dan bukan merupakan Tunjangan Tetap.
+
+Pasal 5
+
+(1) Pekerja menerima upah lembur tetap setiap bulan, tanpa memandang jumlah jam lembur yang sebenarnya dikerjakan, yang besarnya paling sedikit 30% (tiga puluh persen) dari Upah Pokok.
+
+(2) Apabila upah lembur menurut perhitungan jam lembur yang sebenarnya melebihi jumlah sebagaimana dimaksud pada ayat (1), Perusahaan membayar jumlah yang lebih besar tersebut.
+
+Pasal 6
+
+(1) Pekerja menerima Tunjangan Hari Raya Keagamaan (THR) satu kali dalam setahun menjelang hari raya keagamaan Pekerja yang bersangkutan.
+
+(2) Pekerja dengan masa kerja 1 (satu) bulan secara terus-menerus atau lebih menerima THR. Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1 (satu) bulan Upah.
+
+(3) Pekerja dengan masa kerja 1 (satu) bulan secara terus-menerus tetapi kurang dari 12 (dua belas) bulan menerima THR secara proporsional, yaitu masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan Upah.
+
+(4) Pekerja dengan masa kerja 24 (dua puluh empat) bulan atau lebih menerima THR sebesar 1,5 (satu setengah) bulan Upah.
+
+(5) Pekerja yang hubungan kerjanya berakhir lebih dari 30 (tiga puluh) hari sebelum hari raya keagamaan tidak berhak atas THR tahun yang bersangkutan.
+
+Pasal 7
+
+(1) Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima Tunjangan Cuti Tahunan sebesar 1 (satu) bulan Upah Pokok yang dibayarkan bersama Upah bulan Juli.
+
+(2) Tunjangan Cuti Tahunan dibayarkan satu kali dalam setahun dan tidak dapat diuangkan dalam bentuk lain.
+
+Pasal 8
+
+Perusahaan mengikutsertakan seluruh Pekerja dalam asuransi jiwa kelompok dengan premi Rp50.000,00 (lima puluh ribu rupiah) sebulan yang dipotong dari Upah Pekerja.
+
+BAB III JAMINAN SOSIAL DAN PAJAK
+
+Pasal 9
+
+Iuran jaminan sosial ketenagakerjaan dan jaminan kesehatan dihitung dan dibayarkan sesuai tarif dan batas upah yang ditetapkan peraturan perundang-undangan.
+
+Pasal 10
+
+(1) Pajak Penghasilan Pasal 21 atas seluruh penghasilan Pekerja ditanggung oleh Perusahaan.
+
+(2) Pajak Penghasilan Pasal 21 yang ditanggung Perusahaan tidak dibayarkan kepada Pekerja dalam bentuk uang tunai.
+
+BAB IV KETENTUAN PENUTUP
+
+Pasal 11
+
+(1) Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028.
+
+(2) Dengan berlakunya Perjanjian Kerja Bersama ini, Perjanjian Kerja Bersama PT Kencana Pelayaran Nusantara periode 2023–2025 dinyatakan tidak berlaku lagi.
+
+(3) Hal-hal yang belum diatur dalam Perjanjian Kerja Bersama ini diatur lebih lanjut oleh Perusahaan setelah berunding dengan Serikat Pekerja.
+
+Ditetapkan di Jakarta pada tanggal 4 Desember 2026
+
+PT KENCANA PELAYARAN NUSANTARA
+
+Bambang Sutrisno
+
+Direktur Operasi dan Sumber Daya Manusia
+
+SERIKAT PEKERJA PELAUT KENCANA
+
+Maria Ulfa
+
+Ketua Umum

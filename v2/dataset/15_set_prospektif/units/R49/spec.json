@@ -1,0 +1,185 @@
+{
+ "id": "R49",
+ "layer": "regulation",
+ "change_type": "T9",
+ "size": 3,
+ "traps": [
+  "dua ketentuan dengan tanggal berlaku berbeda (biaya jabatan sejak Masa Januari 2027, pembulatan iuran sejak iuran Juli 2027)",
+  "berlaku surut (biaya jabatan, Masa Pajak Januari 2027, terbit akhir Juni)",
+  "iuran tetap menjadi pengurang tersendiri (ayat (3)): dasar biaya jabatan saja yang berubah, bukan pengurangan dua kali",
+  "pasal yang menyatakan ulang batas biaya jabatan dan pembulatan PPh yang tidak berubah",
+  "pengecualian: iuran sesuai tagihan penyelenggara tidak dihitung ulang",
+  "ketentuan peralihan: kelebihan atau kekurangan pemotongan diperhitungkan pada Masa Pajak Terakhir"
+ ],
+ "title": "PER-770/PJ/2027: Dasar biaya jabatan setelah iuran pensiun dan pembulatan iuran jaminan sosial ke bawah",
+ "header": "DIREKTORAT JENDERAL PAJAK",
+ "issued": "2027-06-28",
+ "effective_from": "2027-01-01",
+ "effective_until": null,
+ "retroactive": true,
+ "summary": "Biaya jabatan 5% dihitung dari penghasilan bruto setahun setelah dikurangi iuran pensiun, JHT, dan JP mulai Masa Januari 2027 (surut); iuran jaminan sosial dibulatkan ke bawah ke rupiah penuh (bukan ke terdekat) mulai iuran Juli 2027; batas biaya jabatan dan pembulatan PPh tidak berubah.",
+ "gold": {
+  "delta_id": "GOLD-R49",
+  "event_id": "R49",
+  "document": {
+   "id": "R49",
+   "title": "PER-770/PJ/2027: Dasar biaya jabatan setelah iuran pensiun dan pembulatan iuran jaminan sosial ke bawah",
+   "issued": "2027-06-28"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "REG.YEAR.JOB_EXPENSE.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "job_expense",
+    "expression": "min(round(param('job_expense_rate') * (annual_gross - annual_pension_contributions), 1, 'down'), param('job_expense_max_month') * months_employed, param('job_expense_max_year'))",
+    "valid_from": "2027-01-01",
+    "label": "job expense is the rate on annual gross after the employee's pension contributions (JHT, JP), within the unchanged caps; the contributions remain deductions of their own",
+    "source": [
+     {
+      "document": "R49",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "Biaya jabatan dihitung sebesar 5% (lima persen)"
+     },
+     {
+      "document": "R49",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "dari penghasilan bruto setahun setelah dikurangi iuran pensiun, iuran Jaminan Hari Tua, dan iuran Jaminan Pensiun yang dibayar oleh pegawai."
+     },
+     {
+      "document": "R49",
+      "provision": "Pasal 1 ayat (3)",
+      "page": null,
+      "quote": "tidak menggantikan pengurangan iuran tersebut dari penghasilan bruto."
+     },
+     {
+      "document": "R49",
+      "provision": "Pasal 2",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 Tahun Pajak 2027 mulai Masa Pajak Januari 2027"
+     }
+    ],
+    "recorded_on": "2027-06-28"
+   },
+   {
+    "kind": "parameter",
+    "id": "PAR.BPJS_ROUND_MODE.2027",
+    "name": "bpjs_round_mode",
+    "value": "down",
+    "value_type": "category",
+    "valid_from": "2027-07-01",
+    "label_id": "pembulatan premi dan iuran",
+    "source": [
+     {
+      "document": "R49",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "dibulatkan ke bawah ke dalam rupiah penuh, dan angka di belakang koma dihapus berapa pun nilainya."
+     },
+     {
+      "document": "R49",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "berlaku untuk iuran bulan Juli 2027 dan bulan-bulan berikutnya."
+     }
+    ],
+    "recorded_on": "2027-06-28"
+   }
+  ],
+  "change": [
+   {
+    "kind": "rule",
+    "id": "REG.YEAR.JOB_EXPENSE",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "job_expense",
+    "expression": "min(round(param('job_expense_rate') * annual_gross, 1, 'down'), param('job_expense_max_month') * months_employed, param('job_expense_max_year'))",
+    "valid_from": "2009-01-01",
+    "label": "tafsir K6: aggregate cap of n x 500,000",
+    "valid_until": "2026-12-31",
+    "source": [
+     {
+      "document": "R49",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "dari penghasilan bruto setahun setelah dikurangi iuran pensiun, iuran Jaminan Hari Tua, dan iuran Jaminan Pensiun yang dibayar oleh pegawai."
+     },
+     {
+      "document": "R49",
+      "provision": "Pasal 2",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 Tahun Pajak 2027 mulai Masa Pajak Januari 2027"
+     }
+    ],
+    "recorded_on": "2027-06-28"
+   }
+  ],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 8333350,
+   "ptkp": "TK/0",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 10000000,
+   "ptkp": "K/1",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 14000000,
+   "ptkp": "K/2",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "start_month": 10,
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 5000000,
+   "ptkp": "TK/0",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T6",
+   "year": 2027,
+   "salary": 8333350,
+   "ptkp": "K/0",
+   "start_month": 1,
+   "end_month": 6,
+   "income": {
+    "fixed_allowance": 0
+   }
+  }
+ ]
+}

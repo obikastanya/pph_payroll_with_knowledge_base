@@ -1,0 +1,158 @@
+{
+ "id": "R13",
+ "layer": "regulation",
+ "change_type": "T9",
+ "size": 2,
+ "traps": [
+  "rujukan silang: kategori dan lapisan tarif tetap ditentukan dari penghasilan sebelum dibulatkan (Pasal 2 ayat (2))",
+  "pasal yang menyatakan ulang pembulatan PKP setahun ke bawah ribuan yang tidak berubah",
+  "pembulatan ke atas untuk setiap pecahan (bukan ke terdekat)",
+  "berlaku mulai Masa Pajak Oktober 2027",
+  "nilai dalam huruf dan angka"
+ ],
+ "title": "PER-703/PJ/2027: Pembulatan PPh 21 ke atas dan dasar pengenaan TER dibulatkan ke ribuan",
+ "header": "DIREKTORAT JENDERAL PAJAK",
+ "issued": "2027-08-12",
+ "effective_from": "2027-10-01",
+ "effective_until": null,
+ "retroactive": false,
+ "summary": "Mulai Masa Pajak Oktober 2027 PPh 21 dibulatkan ke atas ke rupiah penuh dan tarif efektif bulanan dikalikan dengan penghasilan bruto yang dibulatkan ke bawah ke ribuan (kategori dan lapisan tetap dari penghasilan sebenarnya).",
+ "gold": {
+  "delta_id": "GOLD-R13",
+  "event_id": "R13",
+  "document": {
+   "id": "R13",
+   "title": "PER-703/PJ/2027: Pembulatan PPh 21 ke atas dan dasar pengenaan TER dibulatkan ke ribuan",
+   "issued": "2027-08-12"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "parameter",
+    "id": "PAR.PPH_ROUND_MODE.2027",
+    "name": "pph_round_mode",
+    "value": "up",
+    "value_type": "category",
+    "valid_from": "2027-10-01",
+    "label_id": "pembulatan PPh Pasal 21 masa",
+    "source": [
+     {
+      "document": "R13",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "yang terutang dalam suatu Masa Pajak dibulatkan ke atas ke dalam rupiah penuh."
+     },
+     {
+      "document": "R13",
+      "provision": "Pasal 1 ayat (2)",
+      "page": null,
+      "quote": "berlaku untuk setiap pecahan rupiah tanpa memandang besarnya pecahan."
+     },
+     {
+      "document": "R13",
+      "provision": "Pasal 1 ayat (3)",
+      "page": null,
+      "quote": "juga berlaku untuk Pajak Penghasilan Pasal 21 yang terutang untuk satu tahun pajak atau bagian tahun pajak."
+     },
+     {
+      "document": "R13",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku untuk pemotongan Pajak Penghasilan Pasal 21 mulai Masa Pajak Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-08-12"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.TER.RUNNING.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "pph21_running",
+    "condition": "not is_final_period",
+    "expression": "round(ter_rate * round(gross_income, 1000, 'down'), 1, param('pph_round_mode'))",
+    "valid_from": "2027-10-01",
+    "overrides": [
+     "REG.TER.RUNNING"
+    ],
+    "label": "the effective rate (category and bracket) is chosen on the actual gross income; the tax is the rate times the gross income rounded down to the thousand",
+    "source": [
+     {
+      "document": "R13",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "adalah penghasilan bruto bulanan yang dibulatkan ke bawah ke dalam kelipatan Rp1.000,00 (seribu rupiah) terdekat."
+     },
+     {
+      "document": "R13",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "tetap didasarkan pada penghasilan bruto bulanan sebelum dibulatkan."
+     },
+     {
+      "document": "R13",
+      "provision": "Pasal 2 ayat (3)",
+      "page": null,
+      "quote": "dengan mengalikan tarif efektif bulanan sebagaimana dimaksud pada ayat (2) dengan dasar pengenaan sebagaimana dimaksud pada ayat (1)."
+     },
+     {
+      "document": "R13",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku untuk pemotongan Pajak Penghasilan Pasal 21 mulai Masa Pajak Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-08-12"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 7777777,
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 12345678,
+   "ptkp": "K/1",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 20000000,
+   "ptkp": "K/2",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 9000999,
+   "income": {
+    "fixed_allowance": 0
+   },
+   "ptkp": "TK/1"
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 6000000,
+   "income": {
+    "fixed_allowance": 0
+   }
+  }
+ ]
+}

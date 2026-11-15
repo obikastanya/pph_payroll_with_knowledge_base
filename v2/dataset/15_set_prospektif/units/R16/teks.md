@@ -1,0 +1,53 @@
+SALINAN
+
+PERATURAN PEMERINTAH REPUBLIK INDONESIA
+NOMOR 796 TAHUN 2027
+TENTANG
+TAMBAHAN LAPISAN TARIF TERTINGGI PAJAK PENGHASILAN WAJIB PAJAK ORANG PRIBADI DALAM NEGERI
+
+DENGAN RAHMAT TUHAN YANG MAHA ESA
+
+PRESIDEN REPUBLIK INDONESIA,
+
+Menimbang : a. bahwa untuk meningkatkan kegotongroyongan dalam penerimaan negara, perlu ditetapkan tarif Pajak Penghasilan yang lebih tinggi atas bagian Penghasilan Kena Pajak Wajib Pajak orang pribadi dalam negeri yang sangat besar;
+b. bahwa berdasarkan ketentuan Pasal 17 Undang-Undang Nomor 7 Tahun 1983 tentang Pajak Penghasilan sebagaimana telah beberapa kali diubah terakhir dengan Undang-Undang Nomor 7 Tahun 2021 tentang Harmonisasi Peraturan Perpajakan, Pemerintah setelah mendapat persetujuan Dewan Perwakilan Rakyat Republik Indonesia dapat mengubah lapisan Penghasilan Kena Pajak dan tarif Pajak Penghasilan;
+c. bahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a dan huruf b, perlu menetapkan Peraturan Pemerintah tentang Tambahan Lapisan Tarif Tertinggi Pajak Penghasilan Wajib Pajak Orang Pribadi Dalam Negeri;
+
+Mengingat : 1. Pasal 5 ayat (2) Undang-Undang Dasar Negara Republik Indonesia Tahun 1945;
+2. Undang-Undang Nomor 7 Tahun 1983 tentang Pajak Penghasilan sebagaimana telah beberapa kali diubah terakhir dengan Undang-Undang Nomor 7 Tahun 2021 tentang Harmonisasi Peraturan Perpajakan;
+
+MEMUTUSKAN:
+
+Menetapkan : PERATURAN PEMERINTAH TENTANG TAMBAHAN LAPISAN TARIF TERTINGGI PAJAK PENGHASILAN WAJIB PAJAK ORANG PRIBADI DALAM NEGERI.
+
+Pasal 1
+Tarif Pajak Penghasilan yang diterapkan atas Penghasilan Kena Pajak Wajib Pajak orang pribadi dalam negeri adalah sebagai berikut:
+a. sampai dengan Rp60.000.000,00 (enam puluh juta rupiah) dikenai tarif sebesar 5% (lima persen);
+b. di atas Rp60.000.000,00 (enam puluh juta rupiah) sampai dengan Rp250.000.000,00 (dua ratus lima puluh juta rupiah) dikenai tarif sebesar 15% (lima belas persen);
+c. di atas Rp250.000.000,00 (dua ratus lima puluh juta rupiah) sampai dengan Rp500.000.000,00 (lima ratus juta rupiah) dikenai tarif sebesar 25% (dua puluh lima persen);
+d. di atas Rp500.000.000,00 (lima ratus juta rupiah) sampai dengan Rp5.000.000.000,00 (lima miliar rupiah) dikenai tarif sebesar 30% (tiga puluh persen);
+e. di atas Rp5.000.000.000,00 (lima miliar rupiah) sampai dengan Rp10.000.000.000,00 (sepuluh miliar rupiah) dikenai tarif sebesar 35% (tiga puluh lima persen); dan
+f. di atas Rp10.000.000.000,00 (sepuluh miliar rupiah) dikenai tarif sebesar 37% (tiga puluh tujuh persen).
+
+Pasal 2
+Besarnya tarif dan batas lapisan penghasilan sebagaimana dimaksud dalam Pasal 1 huruf a sampai dengan huruf d tidak berubah dari ketentuan yang berlaku sebelumnya. Tarif 35% (tiga puluh lima persen) sebagaimana dimaksud dalam Pasal 1 huruf e hanya dikenakan atas bagian Penghasilan Kena Pajak sampai dengan Rp10.000.000.000,00 (sepuluh miliar rupiah).
+
+Pasal 3
+(1) Tarif sebagaimana dimaksud dalam Pasal 1 diterapkan untuk penghitungan Pajak Penghasilan terutang mulai Tahun Pajak 2027.
+(2) Pemotongan Pajak Penghasilan Pasal 21 pada Masa Pajak selain Masa Pajak Terakhir yang menggunakan tarif efektif bulanan tidak berubah.
+(3) Kelebihan atau kekurangan pemotongan akibat tambahan lapisan tarif diperhitungkan pada penghitungan Pajak Penghasilan Pasal 21 Masa Pajak Terakhir.
+
+Pasal 4
+Peraturan Pemerintah ini mulai berlaku pada tanggal diundangkan.
+
+Agar setiap orang mengetahuinya, memerintahkan pengundangan Peraturan Pemerintah ini dengan penempatannya dalam Lembaran Negara Republik Indonesia.
+
+Ditetapkan di Jakarta
+pada tanggal 6 April 2027
+PRESIDEN REPUBLIK INDONESIA,
+ttd.
+
+Diundangkan di Jakarta
+pada tanggal 8 April 2027
+MENTERI SEKRETARIS NEGARA REPUBLIK INDONESIA,
+ttd.

@@ -1,0 +1,144 @@
+{
+ "id": "R08",
+ "layer": "regulation",
+ "change_type": "T3",
+ "size": 1,
+ "traps": [
+  "rujukan silang ke peraturan ketenagakerjaan untuk besaran THR paling rendah",
+  "pengecualian: bonus dan penghasilan tidak teratur lain yang dibayar bersamaan tetap objek",
+  "berlaku untuk THR yang dibayarkan mulai 1 Maret 2027 (bukan sejak diundangkan)",
+  "kelebihan THR di atas batas minimum tetap objek"
+ ],
+ "title": "PMK 706/2027: THR keagamaan sampai batas minimum ketenagakerjaan bukan objek PPh 21",
+ "header": "MENTERI KEUANGAN REPUBLIK INDONESIA",
+ "issued": "2027-02-17",
+ "effective_from": "2027-03-01",
+ "effective_until": null,
+ "retroactive": false,
+ "summary": "THR keagamaan sampai sebesar batas paling rendah menurut peraturan ketenagakerjaan bukan objek PPh 21 untuk THR yang dibayar mulai 1 Maret 2027; kelebihan dan bonus tetap objek.",
+ "gold": {
+  "delta_id": "GOLD-R08",
+  "event_id": "R08",
+  "document": {
+   "id": "R08",
+   "title": "PMK 706/2027: THR keagamaan sampai batas minimum ketenagakerjaan bukan objek PPh 21",
+   "issued": "2027-02-17"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "REG.GROSS.IRREGULAR.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "irregular_gross",
+    "expression": "max(0, thr - thr_minimum) + bonus + other_irregular_income + benefits_taxable_irregular",
+    "valid_from": "2027-03-01",
+    "overrides": [
+     "REG.GROSS.IRREGULAR"
+    ],
+    "label": "THR up to the statutory minimum (thr_minimum) is not income; the excess, bonus and other irregular income stay",
+    "source": [
+     {
+      "document": "R08",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "sampai dengan sebesar tunjangan hari raya keagamaan paling rendah yang wajib dibayarkan menurut peraturan perundang-undangan di bidang ketenagakerjaan bukan merupakan objek Pajak Penghasilan Pasal 21."
+     },
+     {
+      "document": "R08",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "melebihi jumlah sebagaimana dimaksud pada ayat (1) tetap merupakan penghasilan yang dikenai Pajak Penghasilan Pasal 21."
+     },
+     {
+      "document": "R08",
+      "provision": "Pasal 3",
+      "page": null,
+      "quote": "Bonus, gratifikasi, jasa produksi, dan penghasilan tidak teratur lainnya yang dibayarkan bersamaan dengan tunjangan hari raya keagamaan tetap merupakan penghasilan yang dikenai Pajak Penghasilan Pasal 21."
+     },
+     {
+      "document": "R08",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "Pasal 2 berlaku untuk tunjangan hari raya keagamaan yang dibayarkan mulai tanggal 1 Maret 2027."
+     }
+    ],
+    "recorded_on": "2027-02-17"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 10000000,
+   "income": {
+    "thr": 10000000
+   },
+   "income_months": [
+    3
+   ],
+   "hr": {
+    "months_of_service": 12,
+    "days_terminated_before_holiday": 0,
+    "thr_holiday": 1
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 10000000,
+   "income": {
+    "thr": 15000000,
+    "bonus": 5000000
+   },
+   "income_months": [
+    3
+   ],
+   "hr": {
+    "months_of_service": 12,
+    "days_terminated_before_holiday": 0,
+    "thr_holiday": 1
+   },
+   "ptkp": "K/1"
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 8000000,
+   "income": {
+    "thr": 6000000
+   },
+   "income_months": [
+    3
+   ],
+   "hr": {
+    "months_of_service": 6,
+    "days_terminated_before_holiday": 0,
+    "thr_holiday": 1
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 12000000,
+   "income": {
+    "thr": 12000000
+   },
+   "income_months": [
+    2
+   ],
+   "hr": {
+    "months_of_service": 12,
+    "days_terminated_before_holiday": 0,
+    "thr_holiday": 1
+   },
+   "ptkp": "TK/1"
+  }
+ ]
+}

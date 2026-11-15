@@ -1,0 +1,164 @@
+{
+ "id": "R41",
+ "layer": "regulation",
+ "change_type": "T3",
+ "size": 3,
+ "traps": [
+  "berlaku surut (Tahun Pajak 2027, terbit Mei)",
+  "batas Rp500.000 sebulan dikalikan jumlah bulan bekerja untuk pegawai yang bekerja kurang dari 12 bulan (Pasal 2 ayat (2))",
+  "pasal yang menyatakan ulang bahwa besarnya iuran JHT dan JP pegawai serta perlakuan iuran pemberi kerja tidak berubah",
+  "bagian yang melebihi batas tidak dapat dikurangkan",
+  "nilai dalam huruf dan angka"
+ ],
+ "title": "PMK 789/2027: Batas pengurang iuran JHT dan JP yang dibayar pegawai (Rp6.000.000 setahun)",
+ "header": "MENTERI KEUANGAN REPUBLIK INDONESIA",
+ "issued": "2027-05-20",
+ "effective_from": "2027-01-01",
+ "effective_until": null,
+ "retroactive": true,
+ "summary": "Iuran JHT dan JP yang dibayar pegawai tetap pengurang penghasilan bruto tetapi dibatasi paling banyak Rp500.000 sebulan (dikali bulan bekerja) dan Rp6.000.000 setahun, mulai Tahun Pajak 2027 (surut); sebelumnya tanpa batas.",
+ "gold": {
+  "delta_id": "GOLD-R41",
+  "event_id": "R41",
+  "document": {
+   "id": "R41",
+   "title": "PMK 789/2027: Batas pengurang iuran JHT dan JP yang dibayar pegawai (Rp6.000.000 setahun)",
+   "issued": "2027-05-20"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "parameter",
+    "id": "PAR.PENSION_DEDUCTION_MAX_MONTH.2027",
+    "name": "pension_deduction_max_month",
+    "value": 500000,
+    "value_type": "money",
+    "valid_from": "2027-01-01",
+    "label_id": "batas pengurang iuran pensiun pegawai sebulan",
+    "source": [
+     {
+      "document": "R41",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "atau Rp500.000,00 (lima ratus ribu rupiah) sebulan."
+     },
+     {
+      "document": "R41",
+      "provision": "Pasal 4 ayat (1)",
+      "page": null,
+      "quote": "diterapkan untuk penghitungan Pajak Penghasilan Pasal 21 mulai Tahun Pajak 2027."
+     }
+    ],
+    "recorded_on": "2027-05-20"
+   },
+   {
+    "kind": "parameter",
+    "id": "PAR.PENSION_DEDUCTION_MAX_YEAR.2027",
+    "name": "pension_deduction_max_year",
+    "value": 6000000,
+    "value_type": "money",
+    "valid_from": "2027-01-01",
+    "label_id": "batas pengurang iuran pensiun pegawai setahun",
+    "source": [
+     {
+      "document": "R41",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "paling banyak sebesar Rp6.000.000,00 (enam juta rupiah) setahun"
+     },
+     {
+      "document": "R41",
+      "provision": "Pasal 4 ayat (1)",
+      "page": null,
+      "quote": "diterapkan untuk penghitungan Pajak Penghasilan Pasal 21 mulai Tahun Pajak 2027."
+     }
+    ],
+    "recorded_on": "2027-05-20"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.YEAR.PENSION.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "annual_pension_contributions",
+    "expression": "min(sum_periods('employee_pension_contributions'), param('pension_deduction_max_month') * months_employed, param('pension_deduction_max_year'))",
+    "valid_from": "2027-01-01",
+    "overrides": [
+     "REG.YEAR.PENSION"
+    ],
+    "label": "the deductible employee pension contributions are capped at the monthly cap times the months employed and at the yearly cap",
+    "source": [
+     {
+      "document": "R41",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "Iuran pensiun pegawai dapat dikurangkan dari penghasilan bruto paling banyak sebesar Rp6.000.000,00"
+     },
+     {
+      "document": "R41",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "paling banyak sebesar Rp500.000,00 (lima ratus ribu rupiah) dikalikan jumlah bulan bekerja."
+     },
+     {
+      "document": "R41",
+      "provision": "Pasal 2 ayat (3)",
+      "page": null,
+      "quote": "tidak dapat dikurangkan dari penghasilan bruto."
+     },
+     {
+      "document": "R41",
+      "provision": "Pasal 4 ayat (1)",
+      "page": null,
+      "quote": "diterapkan untuk penghitungan Pajak Penghasilan Pasal 21 mulai Tahun Pajak 2027."
+     }
+    ],
+    "recorded_on": "2027-05-20"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0"
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 17000000,
+   "ptkp": "TK/0",
+   "income": {
+    "fixed_allowance": 2456850
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 17000000,
+   "ptkp": "TK/0",
+   "income": {
+    "fixed_allowance": 2556850
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 30000000,
+   "ptkp": "K/1"
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 20000000,
+   "ptkp": "TK/0",
+   "start_month": 7,
+   "end_month": 12
+  }
+ ]
+}

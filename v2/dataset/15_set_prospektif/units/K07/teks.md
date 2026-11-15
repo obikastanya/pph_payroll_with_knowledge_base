@@ -1,0 +1,48 @@
+PT KREASI DIGITAL NUSANTARA
+
+Gedung Kreasi Lantai 8, Jalan Taman Aries, Jakarta Barat
+
+MEMO DIREKSI
+
+Nomor: 004/MD-CEO/KDN/I/2025
+
+Tanggal: 15 Januari 2025
+
+Kepada: Seluruh Pekerja PT Kreasi Digital Nusantara
+
+Dari: Chief Executive Officer
+
+Perihal: Perubahan Lampiran III Peraturan Perusahaan Nomor PP/KDN/2024/03: tunjangan kerja jarak jauh
+
+Menimbang bahwa Perusahaan menerapkan pola kerja hibrida yang membuat pekerja menanggung biaya internet dan listrik di rumah, sehingga Perusahaan memandang perlu memberikan tunjangan tetap untuk biaya tersebut.
+
+Mengingat Pasal 39 ayat (2) Lampiran III Peraturan Perusahaan Nomor PP/KDN/2024/03, yang menyatakan bahwa hal-hal yang belum diatur dalam Peraturan Perusahaan diatur lebih lanjut oleh Perusahaan.
+
+Chief Executive Officer menetapkan hal-hal berikut.
+
+Pasal 1
+Tunjangan Kerja Jarak Jauh
+
+(1) Mulai tanggal 1 Februari 2025, Perusahaan memberikan tunjangan kerja jarak jauh kepada pekerja yang telah mempunyai masa kerja 6 (enam) bulan atau lebih, sebesar Rp600.000,00 (enam ratus ribu rupiah) setiap bulan.
+
+(2) Tunjangan kerja jarak jauh dibayarkan setiap bulan bersama upah, merupakan tunjangan tetap, dan dibayarkan tanpa memperhatikan jumlah hari pekerja bekerja dari rumah.
+
+(3) Pekerja dengan masa kerja kurang dari 6 (enam) bulan belum menerima tunjangan kerja jarak jauh dan mulai menerimanya pada bulan setelah masa kerja 6 (enam) bulan terpenuhi.
+
+Pasal 2
+Ketentuan yang Tidak Berubah
+
+Ketentuan Pasal 18 tentang penghitungan Pajak Penghasilan Pasal 21 dan Pasal 19 tentang iuran jaminan sosial dalam Lampiran III Peraturan Perusahaan tetap berlaku dan tidak diubah oleh Memo Direksi ini.
+
+Pasal 3
+Masa Berlaku
+
+Memo Direksi ini berlaku mulai tanggal 1 Februari 2025 sampai dengan tanggal 31 Desember 2025, yaitu berakhirnya masa berlaku Peraturan Perusahaan.
+
+Jakarta, 15 Januari 2025
+
+PT KREASI DIGITAL NUSANTARA
+
+Aditya Ramadhan
+
+Chief Executive Officer

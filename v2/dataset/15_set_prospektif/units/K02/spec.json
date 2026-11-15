@@ -1,0 +1,127 @@
+{
+ "id": "K02",
+ "layer": "company",
+ "instance": "SP03",
+ "policy": "SP03",
+ "change_type": "T10",
+ "size": 1,
+ "traps": [
+  "angka penting yang hanya ada di lampiran",
+  "nilai dalam huruf dan angka",
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah"
+ ],
+ "title": "Memo Direksi PT Samudra Biru Hospitality: insentif penjualan",
+ "header": "PT SAMUDRA BIRU HOSPITALITY",
+ "issued": "2026-01-15",
+ "effective_from": "2026-02-01",
+ "effective_until": "2026-12-31",
+ "retroactive": false,
+ "summary": "Mulai 1 Februari 2026 komisi penjualan dibayar penuh sampai Rp5.000.000 sebulan dan 50% untuk bagian di atasnya sebagai penghasilan teratur (angka skema ada di lampiran).",
+ "gold": {
+  "delta_id": "GOLD-K02",
+  "event_id": "K02",
+  "document": {
+   "id": "K02",
+   "title": "Memo Direksi PT Samudra Biru Hospitality: insentif penjualan",
+   "issued": "2026-01-15"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP03.SALES_INCENTIVE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + min(hr('variable_sales_commission'), 5000000) + round(dec('0.5') * max(hr('variable_sales_commission') - 5000000, 0), 1, 'down')",
+    "valid_from": "2026-02-01",
+    "valid_until": "2026-12-31",
+    "policy": "SP03",
+    "label": "sales commission paid in full up to 5,000,000 and at 50% above it, as regular income",
+    "source": [
+     {
+      "document": "K02",
+      "provision": "Lampiran angka 1",
+      "page": null,
+      "quote": "Bagian komisi sampai dengan Rp5.000.000,00 (lima juta rupiah) dalam satu bulan dibayarkan sebesar 100% (seratus persen)."
+     },
+     {
+      "document": "K02",
+      "provision": "Lampiran angka 2",
+      "page": null,
+      "quote": "Bagian komisi yang melebihi Rp5.000.000,00 (lima juta rupiah) dalam satu bulan dibayarkan sebesar 50% (lima puluh persen)."
+     },
+     {
+      "document": "K02",
+      "provision": "Pasal 3",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Februari 2026 sampai dengan tanggal 31 Desember 2026"
+     }
+    ],
+    "recorded_on": "2026-01-15"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2026,
+   "salary": 6200000,
+   "ptkp": "K/1",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "hr": {
+    "variable_sales_commission": 4500000
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2026,
+   "salary": 6200000,
+   "ptkp": "K/1",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "hr": {
+    "variable_sales_commission": 5000000
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2026,
+   "salary": 6200000,
+   "ptkp": "K/1",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "hr": {
+    "variable_sales_commission": 8000000
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2026,
+   "salary": 5400000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "hr": {}
+  },
+  {
+   "id": "T5",
+   "year": 2026,
+   "salary": 12000000,
+   "ptkp": "K/1",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "hr": {
+    "variable_sales_commission": 6500000
+   },
+   "employee": {
+    "other_dtp_incentive": true
+   }
+  }
+ ]
+}

@@ -1,0 +1,98 @@
+{
+ "id": "R07",
+ "layer": "regulation",
+ "change_type": "T3",
+ "size": 1,
+ "traps": [
+  "berlaku surut (Masa Pajak Januari 2027, terbit April)",
+  "pasal yang menyatakan ulang perlakuan iuran JKN pemberi kerja yang tetap penghasilan",
+  "pengecualian: iuran yang menjadi beban pegawai tidak termasuk",
+  "kelebihan potong diperhitungkan di masa berikutnya"
+ ],
+ "title": "PMK 704/2027: Iuran JKK dan JKM yang dibayar pemberi kerja bukan penghasilan pegawai",
+ "header": "MENTERI KEUANGAN REPUBLIK INDONESIA",
+ "issued": "2027-04-22",
+ "effective_from": "2027-01-01",
+ "effective_until": null,
+ "retroactive": true,
+ "summary": "Iuran JKK dan JKM yang dibayar pemberi kerja tidak lagi menjadi penghasilan bruto pegawai mulai Masa Pajak Januari 2027 (surut); iuran JKN pemberi kerja tetap penghasilan.",
+ "gold": {
+  "delta_id": "GOLD-R07",
+  "event_id": "R07",
+  "document": {
+   "id": "R07",
+   "title": "PMK 704/2027: Iuran JKK dan JKM yang dibayar pemberi kerja bukan penghasilan pegawai",
+   "issued": "2027-04-22"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "REG.PREMIUMS.TAXABLE.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "employer_premiums_taxable",
+    "expression": "health_premium_employer",
+    "valid_from": "2027-01-01",
+    "overrides": [
+     "REG.PREMIUMS.TAXABLE"
+    ],
+    "label": "only the employer's health premium stays income; employer JKK and JKM premiums are no longer income",
+    "source": [
+     {
+      "document": "R07",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "(1) Iuran Jaminan Kecelakaan Kerja dan iuran Jaminan Kematian yang dibayar oleh Pemberi Kerja bukan merupakan penghasilan bagi pegawai yang bersangkutan."
+     },
+     {
+      "document": "R07",
+      "provision": "Pasal 3",
+      "page": null,
+      "quote": "Iuran Jaminan Kesehatan yang dibayar oleh Pemberi Kerja tetap diperlakukan sebagai penghasilan bagi pegawai"
+     },
+     {
+      "document": "R07",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak Januari 2027."
+     }
+    ],
+    "recorded_on": "2027-04-22"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 6000000,
+   "jkk_risk": "low"
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 12000000,
+   "jkk_risk": "medium",
+   "ptkp": "K/1"
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 25000000,
+   "jkk_risk": "high",
+   "ptkp": "K/2"
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 9000000,
+   "jkk_risk": "very_high",
+   "ptkp": "TK/1"
+  }
+ ]
+}

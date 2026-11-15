@@ -1,0 +1,523 @@
+{
+ "id": "K16",
+ "layer": "company",
+ "instance": "SP07",
+ "policy": "K16",
+ "change_type": "T10",
+ "size": 13,
+ "traps": [
+  "rujukan silang ke definisi Upah (Pasal 1 huruf f)",
+  "angka penting yang hanya ada di lampiran (Tunjangan Shift Malam)",
+  "ketentuan peralihan (Bonus Tahunan 2027 setengah bulan, 2028 satu bulan)",
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah (PPh 21 dipotong dari pekerja)",
+  "nilai dalam huruf dan angka yang harus dibaca bersama",
+  "syarat implisit (pekerja tetap, masa kerja)"
+ ],
+ "title": "PT Sentosa Ritel Prima: Perjanjian Kerja Bersama 2027-2028",
+ "header": "PERJANJIAN KERJA BERSAMA PT SENTOSA RITEL PRIMA",
+ "issued": "2026-12-15",
+ "effective_from": "2027-01-01",
+ "effective_until": "2028-12-31",
+ "retroactive": false,
+ "summary": "PKB 2027-2028 minimarket: Tunjangan Pelaksana Toko, tunjangan shift malam di lampiran, insentif penjualan dengan batas, batas lembur 40% Upah, THR 1/1,25 bulan Upah dengan batas 30 hari, Bonus Tahunan setengah bulan pada 2027 dan satu bulan pada 2028, simpanan koperasi 2%; PPh 21 tetap dipotong dari pekerja.",
+ "gold": {
+  "delta_id": "GOLD-K16",
+  "event_id": "K16",
+  "document": {
+   "id": "K16",
+   "title": "PT Sentosa Ritel Prima: Perjanjian Kerja Bersama 2027-2028",
+   "issued": "2026-12-15"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "fact",
+    "id": "k16_night_allowance",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "night shift allowance",
+    "source": [
+     {
+      "document": "K16",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "setiap hari kerja pada shift malam sebesar yang tercantum dalam Lampiran I"
+     }
+    ],
+    "recorded_on": "2026-12-15"
+   },
+   {
+    "kind": "fact",
+    "id": "k16_sales_incentive",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "store sales incentive, capped",
+    "source": [
+     {
+      "document": "K16",
+      "provision": "Pasal 8 ayat (2)",
+      "page": null,
+      "quote": "paling banyak Rp1.500.000,00 (satu juta lima ratus ribu rupiah) sebulan"
+     }
+    ],
+    "recorded_on": "2026-12-15"
+   },
+   {
+    "kind": "fact",
+    "id": "k16_thr_factor",
+    "fact_type": "exact",
+    "fact_scope": "period",
+    "output": false,
+    "label": "THR multiplier by length of service",
+    "source": [
+     {
+      "document": "K16",
+      "provision": "Pasal 10 ayat (4)",
+      "page": null,
+      "quote": "sebesar 1,25 (satu koma dua lima) bulan Upah"
+     }
+    ],
+    "recorded_on": "2026-12-15"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K16.FIXED_ALLOWANCE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "fixed_allowance",
+    "expression": "income('fixed_allowance') + (250000 if base_salary <= 6000000 else 0)",
+    "label": "store staff allowance of 250,000 for base salary up to 6,000,000; a fixed allowance",
+    "policy": "K16",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K16",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "Upah Pokok sampai dengan Rp6.000.000,00 (enam juta rupiah) sebulan"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "sebesar Rp250.000,00 (dua ratus lima puluh ribu rupiah) sebulan"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 6 ayat (2)",
+      "page": null,
+      "quote": "merupakan Tunjangan Tetap dan dibayarkan setiap bulan"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 15 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-15"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K16.NIGHT",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k16_night_allowance",
+    "expression": "hr('night_shift_days') * 35000",
+    "label": "night shift allowance per night shift day, rate in the annex",
+    "policy": "K16",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K16",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "setiap hari kerja pada shift malam sebesar yang tercantum dalam Lampiran I"
+     },
+     {
+      "document": "K16",
+      "provision": "Lampiran I",
+      "page": null,
+      "quote": "Tunjangan Shift Malam setiap hari kerja pada Rp35.000,00"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 15 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-15"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K16.INCENTIVE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k16_sales_incentive",
+    "expression": "min(hr('variable_sales_commission'), 1500000)",
+    "label": "sales commission paid up to 1,500,000 a month; the excess is forfeited",
+    "policy": "K16",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K16",
+      "provision": "Pasal 8 ayat (2)",
+      "page": null,
+      "quote": "paling banyak Rp1.500.000,00 (satu juta lima ratus ribu rupiah) sebulan"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 8 ayat (3)",
+      "page": null,
+      "quote": "tidak dibayarkan dan tidak dapat dibawa ke bulan berikutnya"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 15 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-15"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K16.OTHER_REGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + k16_night_allowance + k16_sales_incentive",
+    "label": "night shift allowance and sales incentive are paid with the monthly wage (regular), not fixed allowances",
+    "policy": "K16",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K16",
+      "provision": "Pasal 7 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan bersama Upah bulan yang bersangkutan dan bukan merupakan Tunjangan Tetap"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 8 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan bersama Upah bulan berjalan"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 15 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-15"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K16.OVERTIME",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "overtime_pay",
+    "expression": "min(income('overtime_pay'), round(dec('0.40') * (base_salary + fixed_allowance), 1, 'down'))",
+    "label": "overtime pay capped at 40% of the monthly wage (base salary plus fixed allowances)",
+    "policy": "K16",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K16",
+      "provision": "Pasal 9 ayat (2)",
+      "page": null,
+      "quote": "paling banyak 40% (empat puluh persen) dari Upah sebulan"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 1 huruf f",
+      "page": null,
+      "quote": "Upah adalah Upah Pokok ditambah Tunjangan Tetap"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 15 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-15"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K16.THR_FACTOR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k16_thr_factor",
+    "expression": "dec('1.25') if hr('months_of_service') >= 60 else 1",
+    "label": "1.25 months of wage from 60 months of service",
+    "policy": "K16",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K16",
+      "provision": "Pasal 10 ayat (4)",
+      "page": null,
+      "quote": "Pekerja dengan masa kerja 60 (enam puluh) bulan atau lebih menerima THR sebesar 1,25 (satu koma dua lima) bulan Upah"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 15 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-15"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K16.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "condition": "hr('thr_holiday') > 0",
+    "expression": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12 * k16_thr_factor, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0",
+    "label": "THR on the wage of Pasal 1 f including the store staff allowance; proportional below 12 months; none if employment ended more than 30 days before the holiday",
+    "policy": "K16",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K16",
+      "provision": "Pasal 10 ayat (2)",
+      "page": null,
+      "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1 (satu) bulan Upah"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 10 ayat (3)",
+      "page": null,
+      "quote": "yaitu masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan Upah"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 10 ayat (5)",
+      "page": null,
+      "quote": "berakhir lebih dari 30 (tiga puluh) hari sebelum hari raya keagamaan tidak berhak atas THR"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 10 ayat (6)",
+      "page": null,
+      "quote": "Tunjangan Pelaksana Toko termasuk di dalamnya"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 15 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-15"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K16.BONUS_2027",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "condition": "month == 12 and hr('months_of_service') >= 12",
+    "expression": "income('bonus') + round(dec('0.5') * base_salary, 1, 'half_up')",
+    "label": "annual bonus 2027: half a month of base salary in December",
+    "policy": "K16",
+    "valid_from": "2027-01-01",
+    "valid_until": "2027-12-31",
+    "source": [
+     {
+      "document": "K16",
+      "provision": "Pasal 11 ayat (1)",
+      "page": null,
+      "quote": "bersama Upah bulan Desember kepada Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 11 ayat (2)",
+      "page": null,
+      "quote": "Bonus Tahunan untuk tahun 2027 sebesar 0,5 (setengah) bulan Upah Pokok"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 15 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-15"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K16.BONUS_2028",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "condition": "month == 12 and hr('months_of_service') >= 12",
+    "expression": "income('bonus') + base_salary",
+    "label": "annual bonus from 2028: one month of base salary in December",
+    "policy": "K16",
+    "valid_from": "2028-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K16",
+      "provision": "Pasal 11 ayat (1)",
+      "page": null,
+      "quote": "bersama Upah bulan Desember kepada Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 11 ayat (2)",
+      "page": null,
+      "quote": "Mulai tanggal 1 Januari 2028 Bonus Tahunan sebesar 1 (satu) bulan Upah Pokok"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 15 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-15"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K16.COOP",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "company_deductions",
+    "expression": "income('deductions') + round(dec('0.02') * base_salary, 1, 'half_up')",
+    "label": "mandatory cooperative savings of 2% of base salary deducted from take-home pay",
+    "policy": "K16",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K16",
+      "provision": "Pasal 12",
+      "page": null,
+      "quote": "simpanan wajib Koperasi Karyawan sebesar 2% (dua persen) dari Upah Pokok setiap bulan, yang dipotong langsung dari Upah"
+     },
+     {
+      "document": "K16",
+      "provision": "Pasal 15 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-15"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 5500000,
+   "ptkp": "K/0",
+   "klu": "47111",
+   "hr": {
+    "night_shift_days": 8,
+    "variable_sales_commission": 1800000,
+    "months_of_service": 30
+   },
+   "income": {
+    "overtime_pay": 3000000
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 6000000,
+   "ptkp": "TK/0",
+   "klu": "47111",
+   "hr": {
+    "night_shift_days": 4,
+    "variable_sales_commission": 900000,
+    "months_of_service": 30
+   },
+   "income": {
+    "overtime_pay": 1000000
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "K/1",
+   "klu": "47111",
+   "hr": {
+    "months_of_service": 30
+   },
+   "income": {
+    "overtime_pay": 1000000
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 5000000,
+   "ptkp": "TK/0",
+   "klu": "47111",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 80
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 5000000,
+   "ptkp": "TK/0",
+   "klu": "47111",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 20,
+    "days_terminated_before_holiday": 45
+   }
+  },
+  {
+   "id": "T6",
+   "year": 2027,
+   "salary": 5200000,
+   "ptkp": "TK/0",
+   "klu": "47111",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 7
+   }
+  }
+ ]
+}

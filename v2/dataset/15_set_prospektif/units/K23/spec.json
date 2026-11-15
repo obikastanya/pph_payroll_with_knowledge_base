@@ -1,0 +1,245 @@
+{
+ "id": "K23",
+ "layer": "company",
+ "instance": "SP04",
+ "policy": "K23",
+ "change_type": "T10",
+ "size": 4,
+ "traps": [
+  "berlaku surut (seluruh Masa Pajak 2027 termasuk Januari sampai Maret)",
+  "ambang Upah Pokok Rp30.000.000 (di bawah, di, dan di atas)",
+  "rujukan silang (Upah Pokok pada bulan pertama bekerja, Pasal 4 ayat (3))",
+  "nilai dalam huruf dan angka yang harus dibaca bersama",
+  "syarat implisit (batas 30 hari untuk THR)"
+ ],
+ "title": "PT Arunika Energi Mandiri: Lampiran V Peraturan Perusahaan tentang Kebijakan Pajak dan Tunjangan Kantor Pusat",
+ "header": "LAMPIRAN V PERATURAN PERUSAHAAN PT ARUNIKA ENERGI MANDIRI",
+ "issued": "2027-04-06",
+ "effective_from": "2027-01-01",
+ "effective_until": "2028-12-31",
+ "retroactive": true,
+ "summary": "Lampiran kebijakan pajak kantor pusat (berlaku surut sejak 1 Januari 2027): PPh 21 ditanggung perusahaan bila Upah Pokok kurang dari Rp30.000.000, Tunjangan Pajak tunai (gross-up) bila Rp30.000.000 atau lebih; Tunjangan Perumahan Rp3.000.000 sebagai Tunjangan Tetap; THR 1,5 bulan Upah.",
+ "gold": {
+  "delta_id": "GOLD-K23",
+  "event_id": "K23",
+  "document": {
+   "id": "K23",
+   "title": "PT Arunika Energi Mandiri: Lampiran V Peraturan Perusahaan tentang Kebijakan Pajak dan Tunjangan Kantor Pusat",
+   "issued": "2027-04-06"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.K23.HOUSING",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "fixed_allowance",
+    "expression": "income('fixed_allowance') + 3000000",
+    "label": "housing allowance of 3,000,000 a month, a fixed allowance",
+    "policy": "K23",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K23",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "Tunjangan Perumahan sebesar Rp3.000.000,00 (tiga juta rupiah) sebulan"
+     },
+     {
+      "document": "K23",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "merupakan Tunjangan Tetap dan dibayarkan setiap bulan bersama Upah"
+     },
+     {
+      "document": "K23",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-04-06"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K23.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "condition": "hr('thr_holiday') > 0",
+    "expression": "round(dec('1.5') * (base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0",
+    "label": "THR of 1.5 months of wage including the housing allowance, proportional below 12 months",
+    "policy": "K23",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K23",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1,5 (satu setengah) bulan Upah"
+     },
+     {
+      "document": "K23",
+      "provision": "Pasal 3 ayat (3)",
+      "page": null,
+      "quote": "masa kerja dibagi 12 (dua belas) dikali 1,5 (satu setengah) bulan Upah"
+     },
+     {
+      "document": "K23",
+      "provision": "Pasal 3 ayat (4)",
+      "page": null,
+      "quote": "berakhir lebih dari 30 (tiga puluh) hari sebelum hari raya keagamaan tidak berhak atas THR"
+     },
+     {
+      "document": "K23",
+      "provision": "Pasal 1 ayat (2)",
+      "page": null,
+      "quote": "Upah adalah Upah Pokok ditambah Tunjangan Tetap"
+     },
+     {
+      "document": "K23",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-04-06"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K23.METHOD_BORNE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "condition": "value_in('base_salary', first_month) < 30000000",
+    "expression": "'employer_borne'",
+    "label": "PPh 21 borne by the company, not paid in cash, when base salary in the first month is below 30,000,000",
+    "policy": "K23",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K23",
+      "provision": "Pasal 4 ayat (1)",
+      "page": null,
+      "quote": "Upah Pokok kurang dari Rp30.000.000,00 (tiga puluh juta rupiah) sebulan ditanggung oleh Perusahaan dan tidak dibayarkan kepada Pekerja dalam bentuk uang tunai"
+     },
+     {
+      "document": "K23",
+      "provision": "Pasal 4 ayat (3)",
+      "page": null,
+      "quote": "adalah Upah Pokok pada bulan pertama Pekerja bekerja dalam tahun pajak yang bersangkutan"
+     },
+     {
+      "document": "K23",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "Ketentuan Pasal 4 berlaku untuk seluruh Masa Pajak tahun 2027"
+     },
+     {
+      "document": "K23",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-04-06"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K23.METHOD_GROSSUP",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "condition": "value_in('base_salary', first_month) >= 30000000",
+    "expression": "'gross_up'",
+    "label": "tax allowance equal to the PPh 21 due, paid in cash and counted in gross income, when base salary in the first month is 30,000,000 or more: gross-up",
+    "policy": "K23",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K23",
+      "provision": "Pasal 4 ayat (2)",
+      "page": null,
+      "quote": "Upah Pokok Rp30.000.000,00 (tiga puluh juta rupiah) sebulan atau lebih menerima Tunjangan Pajak setiap bulan sebesar Pajak Penghasilan Pasal 21 yang terutang"
+     },
+     {
+      "document": "K23",
+      "provision": "Pasal 4 ayat (3)",
+      "page": null,
+      "quote": "adalah Upah Pokok pada bulan pertama Pekerja bekerja dalam tahun pajak yang bersangkutan"
+     },
+     {
+      "document": "K23",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "Ketentuan Pasal 4 berlaku untuk seluruh Masa Pajak tahun 2027"
+     },
+     {
+      "document": "K23",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-04-06"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 29000000,
+   "ptkp": "K/2",
+   "klu": "09100",
+   "hr": {
+    "months_of_service": 48
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 30000000,
+   "ptkp": "K/1",
+   "klu": "09100",
+   "hr": {
+    "months_of_service": 48
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 31000000,
+   "ptkp": "TK/0",
+   "klu": "09100",
+   "hr": {
+    "months_of_service": 48
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 20000000,
+   "ptkp": "K/0",
+   "klu": "09100",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 9
+   }
+  }
+ ]
+}

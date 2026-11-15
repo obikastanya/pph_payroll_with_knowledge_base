@@ -1,0 +1,97 @@
+SALINAN
+
+PERATURAN MENTERI KEUANGAN REPUBLIK INDONESIA
+NOMOR 735 TAHUN 2027
+TENTANG
+PAJAK PENGHASILAN PASAL 21 DITANGGUNG PEMERINTAH SEBAGIAN ATAS PENGHASILAN PEGAWAI PADA INDUSTRI BERORIENTASI EKSPOR TAHUN ANGGARAN 2027
+
+DENGAN RAHMAT TUHAN YANG MAHA ESA
+
+MENTERI KEUANGAN REPUBLIK INDONESIA,
+
+Menimbang : a. bahwa untuk menjaga daya saing industri berorientasi ekspor dan mempertahankan penyerapan tenaga kerja, perlu diberikan insentif Pajak Penghasilan Pasal 21 atas penghasilan pegawai pada industri tertentu;
+b. bahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a, perlu menetapkan Peraturan Menteri Keuangan tentang Pajak Penghasilan Pasal 21 Ditanggung Pemerintah Sebagian atas Penghasilan Pegawai pada Industri Berorientasi Ekspor Tahun Anggaran 2027;
+
+Mengingat : 1. Undang-Undang Nomor 7 Tahun 1983 tentang Pajak Penghasilan sebagaimana telah beberapa kali diubah terakhir dengan Undang-Undang Nomor 7 Tahun 2021 tentang Harmonisasi Peraturan Perpajakan;
+2. Undang-Undang tentang Anggaran Pendapatan dan Belanja Negara Tahun Anggaran 2027;
+
+MEMUTUSKAN:
+
+Menetapkan : PERATURAN MENTERI KEUANGAN TENTANG PAJAK PENGHASILAN PASAL 21 DITANGGUNG PEMERINTAH SEBAGIAN ATAS PENGHASILAN PEGAWAI PADA INDUSTRI BERORIENTASI EKSPOR TAHUN ANGGARAN 2027.
+
+BAB I
+KETENTUAN UMUM
+
+Pasal 1
+Dalam Peraturan Menteri ini yang dimaksud dengan:
+1. Kawasan Berikat adalah tempat penimbunan berikat yang ditetapkan oleh menteri yang menyelenggarakan urusan pemerintahan di bidang keuangan.
+2. KITE adalah kemudahan impor tujuan ekspor yang diberikan kepada perusahaan industri berorientasi ekspor.
+3. Penghasilan Tetap dan Teratur adalah penjumlahan gaji pokok, tunjangan tetap, dan penghasilan teratur lainnya yang diterima pegawai setiap bulan.
+
+BAB II
+PEMBERI INSENTIF
+
+Pasal 2
+(1) Atas penghasilan pegawai tetap yang memenuhi kriteria dalam Peraturan Menteri ini diberikan insentif Pajak Penghasilan Pasal 21 yang ditanggung Pemerintah sebagian.
+(2) Pajak Penghasilan Pasal 21 yang ditanggung Pemerintah sebagaimana dimaksud pada ayat (1) tidak diperhitungkan sebagai penghasilan bagi pegawai yang bersangkutan.
+
+Pasal 3
+Pemberi kerja yang dapat memberikan insentif sebagaimana dimaksud dalam Pasal 2 harus memenuhi kriteria:
+a. memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran yang merupakan bagian tidak terpisahkan dari Peraturan Menteri ini; dan
+b. berlokasi di Kawasan Berikat atau memperoleh fasilitas KITE.
+
+Pasal 4
+(1) Pegawai yang dapat memperoleh insentif harus memenuhi kriteria:
+a. memiliki Nomor Pokok Wajib Pajak yang valid;
+b. menerima Penghasilan Tetap dan Teratur yang tidak melebihi Rp9.000.000,00 (sembilan juta rupiah) sebulan;
+c. tidak menerima insentif Pajak Penghasilan Pasal 21 yang ditanggung Pemerintah lainnya; dan
+d. Pajak Penghasilan Pasal 21 atas penghasilannya tidak ditanggung oleh pemberi kerja.
+(2) Besarnya Penghasilan Tetap dan Teratur sebagaimana dimaksud pada ayat (1) huruf b ditentukan berdasarkan Penghasilan Tetap dan Teratur yang diperjanjikan untuk Masa Pajak Maret 2027, atau untuk Masa Pajak pertama pegawai bekerja bagi pegawai yang mulai bekerja setelah Masa Pajak Maret 2027.
+(3) Dalam hal tidak terdapat perjanjian sebagaimana dimaksud pada ayat (2), besarnya Penghasilan Tetap dan Teratur adalah yang dibayarkan pada Masa Pajak yang bersangkutan.
+
+BAB III
+BESARNYA INSENTIF
+
+Pasal 5
+(1) Bagian Pajak Penghasilan Pasal 21 yang ditanggung Pemerintah adalah:
+a. 50% (lima puluh persen) dari Pajak Penghasilan Pasal 21 yang terutang, bagi pemberi kerja yang berlokasi di Kawasan Berikat; atau
+b. 25% (dua puluh lima persen) dari Pajak Penghasilan Pasal 21 yang terutang, bagi pemberi kerja yang memperoleh fasilitas KITE dan tidak berlokasi di Kawasan Berikat.
+(2) Pemberi kerja yang memenuhi kriteria sebagaimana dimaksud pada ayat (1) huruf a dan huruf b menggunakan besarnya bagian sebagaimana dimaksud pada ayat (1) huruf a.
+(3) Bagian Pajak Penghasilan Pasal 21 yang tidak ditanggung Pemerintah tetap dipotong dari penghasilan pegawai.
+
+Pasal 6
+(1) Insentif sebagaimana dimaksud dalam Pasal 2 diberikan untuk Masa Pajak Maret 2027 sampai dengan Masa Pajak Desember 2027.
+(2) Pada Masa Pajak Terakhir, bagian Pajak Penghasilan Pasal 21 yang ditanggung Pemerintah dihitung dari Pajak Penghasilan Pasal 21 yang terutang pada Masa Pajak Terakhir.
+(3) Kelebihan pemotongan Pajak Penghasilan Pasal 21 pada Masa Pajak Terakhir hanya dikembalikan kepada pegawai sebesar bagian yang tidak ditanggung Pemerintah.
+
+BAB IV
+KETENTUAN PENUTUP
+
+Pasal 7
+Peraturan Menteri ini mulai berlaku pada tanggal diundangkan dan berlaku surut mulai tanggal 1 Maret 2027.
+
+Agar setiap orang mengetahuinya, memerintahkan pengundangan Peraturan Menteri ini dengan penempatannya dalam Berita Negara Republik Indonesia.
+
+Ditetapkan di Jakarta
+pada tanggal 12 April 2027
+MENTERI KEUANGAN REPUBLIK INDONESIA,
+ttd.
+
+Diundangkan di Jakarta
+pada tanggal 14 April 2027
+
+LAMPIRAN
+PERATURAN MENTERI KEUANGAN REPUBLIK INDONESIA NOMOR 735 TAHUN 2027
+DAFTAR KODE KLASIFIKASI LAPANGAN USAHA INDUSTRI BERORIENTASI EKSPOR
+
+| Nomor | Kode KLU | Uraian kegiatan |
+| 1 | 26110 | Industri komponen elektronik dioda, transistor, dan semikonduktor |
+| 2 | 26120 | Industri papan elektronik |
+| 3 | 26210 | Industri komputer dan perlengkapannya |
+| 4 | 27101 | Industri motor listrik |
+| 5 | 27102 | Industri generator dan transformator |
+| 6 | 27311 | Industri kabel serat optik |
+| 7 | 28110 | Industri mesin penggerak mula |
+| 8 | 29101 | Industri kendaraan bermotor roda empat atau lebih |
+| 9 | 29301 | Industri suku cadang dan aksesori kendaraan bermotor roda empat atau lebih |
+| 10 | 32301 | Industri alat olahraga |

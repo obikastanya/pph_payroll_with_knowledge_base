@@ -113,7 +113,7 @@ def policy_by_article():
     text = (config.ROOT / "examples" / "documents" / f"{POLICY}.txt").read_text(encoding="utf-8")
     text = re.sub(r"^#+ (Pasal \d+) .*$", r"\1", text, flags=re.M)
     documents.add_document(POLICY, "Sample company regulation", "2023-08-01", text=text, company=True)
-    parts = [u for u in digest.units(POLICY) if u["kind"] not in digest.ALWAYS]
+    parts = [u for u in digest.units(POLICY) if not digest.always(u)]
     assert [u["label"] for u in parts] == ["Pasal 25", "Pasal 26", "Pasal 46"]
     return parts
 
@@ -166,6 +166,38 @@ def test_digest_falls_back_when_the_map_cannot_be_trusted(seed_kb, workspace):
     digest._path(POLICY).unlink()
     failed = digest.build(POLICY, mapper(workspace, draft.LLMError("down")))
     assert failed["failed_calls"] == 1 and not digest.usable(failed) and digest.load(POLICY) is None
+
+
+def test_long_core_and_long_opening_are_sent_whole(seed_kb, workspace):
+    body = "\n".join(f"Pasal {n}\n" + f"Iuran JKK sebesar 0,{n}% dari upah dibayar perusahaan. " * 900
+                     for n in range(1, 4))
+    documents.add_document("LONG", "Long policy", "2023-08-01", text="PERATURAN PERUSAHAAN\n" + "Menimbang. " * 4000
+                           + "\n" + body, company=True)
+    units = digest.units("LONG")
+    assert units[0]["kind"] == "opening" and not digest.always(units[0])
+    parts = [u for u in units if not digest.always(u)]
+    mapped = {"entries": [{"unit": u["key"], "level": "core", "summary": "-"} for u in parts]}
+    calls = [mapped] * len(digest._batches(parts))
+    text, info = pipeline.document_text([{"id": "LONG", "title": "Long policy"}], seed_kb.view(OMEGA),
+                                        pipeline.Config(digest_budget=1000), mapper(workspace, *calls))
+    assert info["LONG"]["over_budget"] and info["LONG"]["dropped"] == [] and "[... truncated]" not in text
+    assert all(f"Iuran JKK sebesar 0,{n}%" in text for n in range(1, 4))
+    full, info = pipeline.document_text([{"id": "LONG", "title": "Long policy"}], seed_kb.view(OMEGA),
+                                        pipeline.Config(fallback="full"))
+    assert info["LONG"]["reading"] == "full" and full.count("Menimbang.") == 4000
+
+
+def test_cleaning_drops_page_furniture_and_web_pages_keep_only_the_agreement():
+    pages = "\n".join(f"=== page {n} ===\nSK No 19002{n} A\nPasal {n}\nIsi pasal {n}.\n- {n} -" for n in range(1, 6))
+    cleaned = documents.clean(pages)
+    assert cleaned.count("SK No") == 1 and "- 3 -" not in cleaned
+    assert all(f"Pasal {n}\nIsi pasal {n}." in cleaned for n in range(1, 6)) and cleaned.count("=== page") == 5
+    web = ("=== page 1 ===\nBekerja di Indonesia\nPerjanjian Kerja Bersama\nPERJANJIAN KERJA BERSAMA ANTARA PT X "
+           "DENGAN SP\nPasal 1 PIHAK-PIHAK YANG MENGADAKAN PERJANJIAN\nIsi.\nIDN PT X - 2021\n"
+           "Tanggal dimulainya perjanjian: → 2021-01-08\nPembayaran tambahan: → 120 %\n© WageIndicator 2026")
+    kept = documents.clean(web)
+    assert kept.startswith("=== page 1 ===\nPERJANJIAN KERJA BERSAMA") and "120 %" not in kept and "IDN" not in kept
+    assert [s["id"] for s in documents.segment(kept, titled=True)] == ["opening", "Pasal 1"]
 
 
 def test_g6_rejects_an_input_the_payroll_data_does_not_have(seed_kb):

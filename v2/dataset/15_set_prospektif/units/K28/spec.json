@@ -1,0 +1,192 @@
+{
+ "id": "K28",
+ "layer": "company",
+ "instance": "SP11",
+ "policy": "K28",
+ "change_type": "T10",
+ "size": 3,
+ "traps": [
+  "ketentuan peralihan (berakhir sebelum 1 Juni 2027 tidak menerima Uang Penghargaan)",
+  "pengecualian (pengunduran diri atau sebab lain tidak menerima)",
+  "ambang masa kerja 240 bulan",
+  "rujukan silang (Pekerja Purna Bakti pada Pasal 1 huruf d)",
+  "nilai dalam huruf dan angka yang harus dibaca bersama"
+ ],
+ "title": "PT Bumi Konstruksi Persada: Peraturan Perusahaan tentang Purna Bakti, Bonus Pertengahan Tahun, dan Dana Kesejahteraan",
+ "header": "PERATURAN PERUSAHAAN PT BUMI KONSTRUKSI PERSADA",
+ "issued": "2027-05-18",
+ "effective_from": "2027-06-01",
+ "effective_until": "2028-12-31",
+ "retroactive": false,
+ "summary": "Peraturan berlaku 1 Juni 2027: Uang Penghargaan Purna Bakti 3 bulan Upah Pokok (4 bulan bila masa kerja 240 bulan atau lebih) bagi pekerja yang bulan terakhir bekerjanya sudah diketahui karena pensiun, Bonus Pertengahan Tahun setengah bulan Upah Pokok pada Juni, dan iuran Dana Kesejahteraan 3% Upah Pokok.",
+ "gold": {
+  "delta_id": "GOLD-K28",
+  "event_id": "K28",
+  "document": {
+   "id": "K28",
+   "title": "PT Bumi Konstruksi Persada: Peraturan Perusahaan tentang Purna Bakti, Bonus Pertengahan Tahun, dan Dana Kesejahteraan",
+   "issued": "2027-05-18"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.K28.PURNA_BAKTI",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_irregular_income",
+    "condition": "is_final_period and employee('known_last_month') != None",
+    "expression": "income('other_irregular') + 3 * base_salary + (base_salary if hr('months_of_service') >= 240 else 0)",
+    "label": "retirement award of 3 months of base salary (4 from 240 months of service) in the last month for a worker whose last month is known",
+    "policy": "K28",
+    "valid_from": "2027-06-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K28",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "Uang Penghargaan Purna Bakti sebesar 3 (tiga) bulan Upah Pokok yang dibayarkan bersama Upah bulan terakhir bekerja"
+     },
+     {
+      "document": "K28",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "masa kerja 240 (dua ratus empat puluh) bulan atau lebih menerima tambahan sebesar 1 (satu) bulan Upah Pokok"
+     },
+     {
+      "document": "K28",
+      "provision": "Pasal 1 huruf d",
+      "page": null,
+      "quote": "bulan terakhir bekerjanya sudah diketahui sebelumnya berdasarkan keputusan Perusahaan"
+     },
+     {
+      "document": "K28",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Juni 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-05-18"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K28.MIDYEAR_BONUS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "condition": "month == 6 and hr('months_of_service') >= 12",
+    "expression": "income('bonus') + round(dec('0.5') * base_salary, 1, 'half_up')",
+    "label": "mid-year bonus of half a month of base salary in June after 12 months of service",
+    "policy": "K28",
+    "valid_from": "2027-06-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K28",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "Bonus Pertengahan Tahun bersama Upah bulan Juni kepada Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih pada bulan Juni"
+     },
+     {
+      "document": "K28",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "Besar Bonus Pertengahan Tahun adalah 0,5 (setengah) bulan Upah Pokok"
+     },
+     {
+      "document": "K28",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Juni 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-05-18"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K28.WELFARE_FUND",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "company_deductions",
+    "expression": "income('deductions') + round(dec('0.03') * base_salary, 1, 'half_up')",
+    "label": "welfare fund contribution of 3% of base salary deducted every month",
+    "policy": "K28",
+    "valid_from": "2027-06-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K28",
+      "provision": "Pasal 4 ayat (2)",
+      "page": null,
+      "quote": "iuran Dana Kesejahteraan sebesar 3% (tiga persen) dari Upah Pokok setiap bulan yang dipotong dari Upah"
+     },
+     {
+      "document": "K28",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Juni 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-05-18"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 10000000,
+   "ptkp": "K/1",
+   "klu": "41012",
+   "end_month": 8,
+   "hr": {
+    "months_of_service": 300
+   },
+   "employee": {
+    "known_last_month": 8
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 10000000,
+   "ptkp": "K/1",
+   "klu": "41012",
+   "end_month": 8,
+   "hr": {
+    "months_of_service": 120
+   },
+   "employee": {
+    "known_last_month": 8
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 10000000,
+   "ptkp": "K/1",
+   "klu": "41012",
+   "end_month": 8,
+   "hr": {
+    "months_of_service": 120
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0",
+   "klu": "41012",
+   "hr": {
+    "months_of_service": 20
+   }
+  }
+ ]
+}

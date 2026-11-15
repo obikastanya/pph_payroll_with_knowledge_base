@@ -1,0 +1,617 @@
+{
+ "id": "K11",
+ "layer": "company",
+ "instance": "SP02",
+ "policy": "K11",
+ "change_type": "T10",
+ "size": 14,
+ "traps": [
+  "angka penting yang hanya ada di penjelasan",
+  "nilai dalam huruf dan angka",
+  "syarat implisit (pekerja tetap, masa kerja untuk THR dan bonus)",
+  "rujukan silang ke pasal lain",
+  "pencabutan peraturan lama"
+ ],
+ "title": "Peraturan Perusahaan PT Presisi Komponen Otomotif tentang Sistem Penggajian Tahun 2027-2028",
+ "header": "PT PRESISI KOMPONEN OTOMOTIF",
+ "issued": "2026-12-14",
+ "effective_from": "2027-01-01",
+ "effective_until": "2028-12-31",
+ "retroactive": false,
+ "summary": "Peraturan Perusahaan 2027-2028: tunjangan shift malam Rp55.000, batas uang lembur 50% upah (di penjelasan), THR 1 bulan upah dengan prorata, bonus tahunan prorata, penghargaan masa kerja 5 dan 10 tahun, iuran koperasi 2% maksimal Rp150.000, PPh 21 dibebankan pada pekerja.",
+ "gold": {
+  "delta_id": "GOLD-K11",
+  "event_id": "K11",
+  "document": {
+   "id": "K11",
+   "title": "Peraturan Perusahaan PT Presisi Komponen Otomotif tentang Sistem Penggajian Tahun 2027-2028",
+   "issued": "2026-12-14"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "fact",
+    "id": "pko_wage",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "monthly wage: base salary plus fixed allowance",
+    "source": [
+     {
+      "document": "K11",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "Upah sebulan adalah gaji pokok ditambah tunjangan tetap yang diterima pekerja setiap bulan."
+     }
+    ],
+    "recorded_on": "2026-12-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K11.WAGE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "pko_wage",
+    "expression": "income('base_salary') + income('fixed_allowance')",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K11",
+    "source": [
+     {
+      "document": "K11",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "Upah sebulan adalah gaji pokok ditambah tunjangan tetap yang diterima pekerja setiap bulan."
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K11.METHOD",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "expression": "'gross'",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K11",
+    "label": "withholding method stated by the policy: gross",
+    "source": [
+     {
+      "document": "K11",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "dipotong dari penghasilan pekerja setiap bulan dan menjadi beban pekerja"
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-14"
+   },
+   {
+    "kind": "fact",
+    "id": "pko_shift_allowance",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "night shift allowance",
+    "source": [
+     {
+      "document": "K11",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "sebesar Rp55.000,00 (lima puluh lima ribu rupiah) untuk setiap hari kerja shift malam"
+     }
+    ],
+    "recorded_on": "2026-12-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K11.SHIFT",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "pko_shift_allowance",
+    "expression": "55000 * hr('night_shift_days')",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K11",
+    "source": [
+     {
+      "document": "K11",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "sebesar Rp55.000,00 (lima puluh lima ribu rupiah) untuk setiap hari kerja shift malam"
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K11.OTHER_REGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + pko_shift_allowance",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K11",
+    "source": [
+     {
+      "document": "K11",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan setiap bulan bersama upah dan merupakan penghasilan teratur yang bukan bagian dari upah sebulan"
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-14"
+   },
+   {
+    "kind": "parameter",
+    "id": "PAR.K11.OVERTIME_CAP",
+    "name": "k11_overtime_cap",
+    "value": "0.5",
+    "value_type": "rate",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "label": "overtime cap as a share of the monthly wage",
+    "source": [
+     {
+      "document": "K11",
+      "provision": "Penjelasan Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "adalah 50% (lima puluh persen) dari upah sebulan"
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K11.OVERTIME",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "overtime_pay",
+    "expression": "min(income('overtime_pay'), round(param('k11_overtime_cap') * pko_wage, 1, 'down'))",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K11",
+    "label": "overtime pay capped at 50% of the monthly wage",
+    "source": [
+     {
+      "document": "K11",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "paling banyak sebesar persentase dari upah sebulan"
+     },
+     {
+      "document": "K11",
+      "provision": "Penjelasan Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "adalah 50% (lima puluh persen) dari upah sebulan"
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K11.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "expression": "(round(pko_wage * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 3 and hr('days_terminated_before_holiday') == 0 else 0) if hr('thr_holiday') == 1 else income('thr')",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K11",
+    "label": "THR of one month of wage, pro rata from 3 months of service, none under 3 months or after termination",
+    "source": [
+     {
+      "document": "K11",
+      "provision": "Pasal 4 ayat (2)",
+      "page": null,
+      "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1 (satu) bulan upah."
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 4 ayat (3)",
+      "page": null,
+      "quote": "menerima THR sebesar masa kerja dalam bulan dibagi 12 (dua belas) dikali 1 (satu) bulan upah"
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 4 ayat (4)",
+      "page": null,
+      "quote": "Pekerja yang hubungan kerjanya berakhir sebelum hari raya keagamaan tidak berhak atas THR tahun yang bersangkutan."
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K11.BONUS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "expression": "income('bonus') if hr('months_of_service') >= 12 else (round(income('bonus') * hr('months_of_service') / 12, 1, 'down') if hr('months_of_service') >= 3 else 0)",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K11",
+    "label": "annual bonus in full from 12 months, pro rata from 3 months, none under 3 months",
+    "source": [
+     {
+      "document": "K11",
+      "provision": "Pasal 5 ayat (3)",
+      "page": null,
+      "quote": "dikali masa kerja dalam bulan dibagi 12 (dua belas)"
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 5 ayat (4)",
+      "page": null,
+      "quote": "Pekerja dengan masa kerja kurang dari 3 (tiga) bulan tidak menerima bonus."
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K11.COOP_DUES",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "company_deductions",
+    "expression": "income('deductions') + min(round(dec('0.02') * income('base_salary'), 1, 'down'), 150000)",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K11",
+    "label": "cooperative dues of 2% of base salary, at most 150,000",
+    "source": [
+     {
+      "document": "K11",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "sebesar 2% (dua persen) dari gaji pokok setiap bulan, paling banyak Rp150.000,00 (seratus lima puluh ribu rupiah) sebulan"
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 7 ayat (2)",
+      "page": null,
+      "quote": "dipotong dari upah pada saat pembayaran upah"
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-14"
+   },
+   {
+    "kind": "fact",
+    "id": "pko_service_award",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "service award at 5 and 10 years",
+    "source": [
+     {
+      "document": "K11",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "genap bermasa kerja 5 (lima) tahun pada suatu bulan menerima penghargaan masa kerja sebesar 1 (satu) bulan upah"
+     }
+    ],
+    "recorded_on": "2026-12-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K11.SERVICE_AWARD",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "pko_service_award",
+    "expression": "(pko_wage * (2 if hr('months_of_service') == 120 else 1)) if hr('months_of_service') in (60, 120) else 0",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K11",
+    "source": [
+     {
+      "document": "K11",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "genap bermasa kerja 5 (lima) tahun pada suatu bulan menerima penghargaan masa kerja sebesar 1 (satu) bulan upah"
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "genap bermasa kerja 10 (sepuluh) tahun, yaitu 120 (seratus dua puluh) bulan, menerima penghargaan masa kerja sebesar 2 (dua) bulan upah"
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K11.OTHER_IRREGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_irregular_income",
+    "expression": "income('other_irregular') + pko_service_award",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K11",
+    "source": [
+     {
+      "document": "K11",
+      "provision": "Pasal 6 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan satu kali pada bulan pekerja genap bermasa kerja sebagaimana dimaksud pada ayat (1) dan bukan merupakan penghasilan teratur"
+     },
+     {
+      "document": "K11",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-14"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 7000000,
+   "ptkp": "K/1",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "method": "gross_up",
+   "income": {
+    "overtime_pay": 5000000
+   },
+   "hr": {
+    "night_shift_days": 12,
+    "months_of_service": 30
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 6000000,
+   "ptkp": "TK/0",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "income": {
+    "overtime_pay": 2000000
+   },
+   "hr": {
+    "months_of_service": 14
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "K/2",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "hr": {
+    "months_of_service": 40
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "TK/0",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 8,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "TK/0",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 2,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T6",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "TK/0",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 12,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T7",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "TK/0",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 20,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 7
+   }
+  },
+  {
+   "id": "T8",
+   "year": 2027,
+   "salary": 6800000,
+   "ptkp": "K/0",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "income": {
+    "bonus": 18000000
+   },
+   "income_months": [
+    3
+   ],
+   "hr": {
+    "months_of_service": 7
+   }
+  },
+  {
+   "id": "T9",
+   "year": 2027,
+   "salary": 6800000,
+   "ptkp": "K/0",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "income": {
+    "bonus": 18000000
+   },
+   "income_months": [
+    3
+   ],
+   "hr": {
+    "months_of_service": 2
+   }
+  },
+  {
+   "id": "T10",
+   "year": 2027,
+   "salary": 6800000,
+   "ptkp": "K/0",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "income": {
+    "bonus": 18000000
+   },
+   "income_months": [
+    3
+   ],
+   "hr": {
+    "months_of_service": 24
+   }
+  },
+  {
+   "id": "T11",
+   "year": 2027,
+   "salary": 7200000,
+   "ptkp": "K/1",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "start_month": 6,
+   "end_month": 6,
+   "hr": {
+    "months_of_service": 60
+   }
+  },
+  {
+   "id": "T12",
+   "year": 2027,
+   "salary": 7200000,
+   "ptkp": "K/1",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "start_month": 6,
+   "end_month": 6,
+   "hr": {
+    "months_of_service": 120
+   }
+  },
+  {
+   "id": "T13",
+   "year": 2027,
+   "salary": 7200000,
+   "ptkp": "K/1",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "start_month": 6,
+   "end_month": 6,
+   "hr": {
+    "months_of_service": 61
+   }
+  }
+ ]
+}

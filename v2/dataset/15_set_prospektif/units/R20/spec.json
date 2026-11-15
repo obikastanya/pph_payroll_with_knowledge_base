@@ -1,0 +1,233 @@
+{
+ "id": "R20",
+ "layer": "regulation",
+ "change_type": "T4",
+ "size": 4,
+ "traps": [
+  "syarat implisit: hanya pemberi kerja yang lolos verifikasi BPJS",
+  "tarif JKK setelah keringanan hanya ada di lampiran",
+  "iuran JKM memiliki tarif keringanan tersendiri, bukan persentase pengurangan",
+  "pengecualian: JHT, JP, dan JKN tidak mendapat keringanan",
+  "masa berlaku dinyatakan dengan bulan iuran Mei sampai Oktober 2027"
+ ],
+ "title": "PP 756/2027: Keringanan iuran JKK dan JKM bagi pemberi kerja industri tertentu Mei-Oktober 2027",
+ "header": "PRESIDEN REPUBLIK INDONESIA",
+ "issued": "2027-04-29",
+ "effective_from": "2027-05-01",
+ "effective_until": "2027-10-31",
+ "retroactive": false,
+ "summary": "Keringanan iuran JKK 40% (tarif lampiran) dan iuran JKM 0,18% untuk pemberi kerja industri tertentu hasil verifikasi, iuran bulan Mei sampai Oktober 2027.",
+ "gold": {
+  "delta_id": "GOLD-R20",
+  "event_id": "R20",
+  "document": {
+   "id": "R20",
+   "title": "PP 756/2027: Keringanan iuran JKK dan JKM bagi pemberi kerja industri tertentu Mei-Oktober 2027",
+   "issued": "2027-04-29"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "table",
+    "id": "TAB.JKK_RATES_RELIEF.2027",
+    "name": "jkk_rates_relief",
+    "table_kind": "lookup",
+    "valid_from": "2027-05-01",
+    "label_id": "tarif iuran JKK setelah keringanan",
+    "source": [
+     {
+      "document": "R20",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "Tarif Iuran Jaminan Kecelakaan Kerja setelah keringanan"
+     },
+     {
+      "document": "R20",
+      "provision": "Lampiran",
+      "page": null,
+      "quote": "Sangat rendah 0,24% 0,144% Rendah 0,54% 0,324% Sedang 0,89% 0,534% Tinggi 1,27% 0,762% Sangat tinggi 1,74% 1,044%"
+     },
+     {
+      "document": "R20",
+      "provision": "Pasal 6",
+      "page": null,
+      "quote": "berlaku untuk iuran bulan Mei 2027 sampai dengan iuran bulan Oktober 2027."
+     }
+    ],
+    "rows": [
+     {
+      "key": "very_low",
+      "value": "0.00144"
+     },
+     {
+      "key": "low",
+      "value": "0.00324"
+     },
+     {
+      "key": "medium",
+      "value": "0.00534"
+     },
+     {
+      "key": "high",
+      "value": "0.00762"
+     },
+     {
+      "key": "very_high",
+      "value": "0.01044"
+     }
+    ],
+    "recorded_on": "2027-04-29",
+    "valid_until": "2027-10-31"
+   },
+   {
+    "kind": "parameter",
+    "id": "PAR.JKM_RATE_RELIEF.2027",
+    "name": "jkm_rate_relief",
+    "value": "0.0018",
+    "value_type": "rate",
+    "valid_from": "2027-05-01",
+    "label_id": "iuran jaminan kematian setelah keringanan",
+    "source": [
+     {
+      "document": "R20",
+      "provision": "Pasal 3",
+      "page": null,
+      "quote": "keringanan Iuran Jaminan Kematian sehingga menjadi 0,18% (nol koma satu delapan persen) dari Upah sebulan."
+     },
+     {
+      "document": "R20",
+      "provision": "Pasal 6",
+      "page": null,
+      "quote": "berlaku untuk iuran bulan Mei 2027 sampai dengan iuran bulan Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-04-29",
+    "valid_until": "2027-10-31"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.JKK_RATE.RELIEF.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "jkk_rate",
+    "expression": "lookup('jkk_rates_relief', employer('jkk_risk_group'))",
+    "valid_from": "2027-05-01",
+    "source": [
+     {
+      "document": "R20",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "diberikan keringanan Iuran Jaminan Kecelakaan Kerja sebesar 40% (empat puluh persen)"
+     },
+     {
+      "document": "R20",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "dilakukan melalui verifikasi terhadap data kepesertaan Pemberi Kerja"
+     },
+     {
+      "document": "R20",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "Tarif Iuran Jaminan Kecelakaan Kerja setelah keringanan"
+     },
+     {
+      "document": "R20",
+      "provision": "Pasal 6",
+      "page": null,
+      "quote": "berlaku untuk iuran bulan Mei 2027 sampai dengan iuran bulan Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-04-29",
+    "condition": "employer('jkk_relief_eligible') == True",
+    "valid_until": "2027-10-31",
+    "overrides": [
+     "REG.BPJS.JKK_RATE"
+    ],
+    "label": "the relief rate is the premium of the contribution month for employers verified as recipients"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.JKM.RELIEF.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "jkm_premium",
+    "expression": "round(param('jkm_rate_relief') * bpjs_wage, 1, param('bpjs_round_mode'))",
+    "valid_from": "2027-05-01",
+    "source": [
+     {
+      "document": "R20",
+      "provision": "Pasal 3",
+      "page": null,
+      "quote": "keringanan Iuran Jaminan Kematian sehingga menjadi 0,18% (nol koma satu delapan persen) dari Upah sebulan."
+     },
+     {
+      "document": "R20",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "dilakukan melalui verifikasi terhadap data kepesertaan Pemberi Kerja"
+     },
+     {
+      "document": "R20",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "tidak berlaku untuk iuran Jaminan Hari Tua, iuran Jaminan Pensiun, dan iuran Jaminan Kesehatan."
+     },
+     {
+      "document": "R20",
+      "provision": "Pasal 6",
+      "page": null,
+      "quote": "berlaku untuk iuran bulan Mei 2027 sampai dengan iuran bulan Oktober 2027."
+     }
+    ],
+    "recorded_on": "2027-04-29",
+    "condition": "employer('premiums_as_billed') != True and employer('jkk_relief_eligible') == True",
+    "valid_until": "2027-10-31",
+    "overrides": [
+     "REG.BPJS.JKM"
+    ],
+    "label": "JKM relief rate applies to the same verified employers"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "relief": true,
+   "jkk_risk": "very_low"
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 20000000,
+   "ptkp": "K/1",
+   "relief": true,
+   "jkk_risk": "medium"
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "relief": false,
+   "jkk_risk": "very_low"
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "K/0",
+   "relief": true,
+   "jkk_risk": "very_high",
+   "start_month": 4
+  }
+ ]
+}

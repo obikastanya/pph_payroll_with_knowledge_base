@@ -1,0 +1,140 @@
+{
+ "id": "K05",
+ "layer": "company",
+ "instance": "SP06",
+ "policy": "SP06",
+ "change_type": "T10",
+ "size": 1,
+ "traps": [
+  "berlaku surut",
+  "ketentuan peralihan",
+  "syarat implisit (penghasilan tetap menurut perjanjian kerja)",
+  "nilai dalam huruf dan angka",
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah"
+ ],
+ "title": "Memo Direksi PT Mitra Niaga Sandang: pembatasan tunjangan Pajak Penghasilan Pasal 21",
+ "header": "PT MITRA NIAGA SANDANG",
+ "issued": "2026-03-02",
+ "effective_from": "2026-01-01",
+ "effective_until": "2026-12-31",
+ "retroactive": true,
+ "summary": "Memo bertanggal 2 Maret 2026 menghentikan tunjangan PPh 21 (gross-up) mulai Masa Pajak Januari 2026 (surut) bagi pekerja berpenghasilan tetap bulanan di atas Rp10.000.000 menurut perjanjian kerja; bagi yang Rp10.000.000 atau kurang tunjangan tetap diberikan.",
+ "gold": {
+  "delta_id": "GOLD-K05",
+  "event_id": "K05",
+  "document": {
+   "id": "K05",
+   "title": "Memo Direksi PT Mitra Niaga Sandang: pembatasan tunjangan Pajak Penghasilan Pasal 21",
+   "issued": "2026-03-02"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP06.METHOD.2026",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "condition": "(employee('contract_fixed_income') if employee('contract_fixed_income') != None else 0) > 10000000",
+    "expression": "'gross'",
+    "valid_from": "2026-01-01",
+    "valid_until": "2026-12-31",
+    "policy": "SP06",
+    "label": "no tax allowance from January 2026 for employees whose contract fixed monthly income exceeds 10,000,000",
+    "source": [
+     {
+      "document": "K05",
+      "provision": "Pasal 1 ayat (2)",
+      "page": null,
+      "quote": "lebih dari Rp10.000.000,00 (sepuluh juta rupiah), Pajak Penghasilan Pasal 21 mulai Masa Pajak Januari 2026 dipotong dari penghasilan pekerja setiap bulan dan menjadi beban pekerja"
+     },
+     {
+      "document": "K05",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "Ketentuan Pasal 1 berlaku surut mulai Masa Pajak Januari 2026."
+     },
+     {
+      "document": "K05",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku sampai dengan tanggal 31 Desember 2026"
+     }
+    ],
+    "recorded_on": "2026-03-02"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2026,
+   "salary": 9000000,
+   "ptkp": "K/1",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "income": {
+    "fixed_allowance": 999000
+   },
+   "employee": {
+    "contract_fixed_income": 9999000
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2026,
+   "salary": 9000000,
+   "ptkp": "K/1",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "income": {
+    "fixed_allowance": 1000000
+   },
+   "employee": {
+    "contract_fixed_income": 10000000
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2026,
+   "salary": 9000000,
+   "ptkp": "K/1",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "income": {
+    "fixed_allowance": 1001000
+   },
+   "employee": {
+    "contract_fixed_income": 10001000
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2026,
+   "salary": 16000000,
+   "ptkp": "K/2",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "income": {},
+   "employee": {
+    "contract_fixed_income": 17600000
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2026,
+   "salary": 5500000,
+   "ptkp": "TK/0",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "income": {},
+   "employee": {
+    "contract_fixed_income": 6050000
+   }
+  }
+ ]
+}

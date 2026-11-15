@@ -1,0 +1,46 @@
+SALINAN
+
+PERATURAN MENTERI KEUANGAN REPUBLIK INDONESIA
+NOMOR 772 TAHUN 2027
+TENTANG
+PENCABUTAN KETENTUAN PENENTUAN STATUS PENGHASILAN TIDAK KENA PAJAK BAGI KARYAWATI KAWIN
+
+DENGAN RAHMAT TUHAN YANG MAHA ESA
+
+MENTERI KEUANGAN REPUBLIK INDONESIA,
+
+Menimbang : a. bahwa penentuan status penghasilan tidak kena pajak bagi karyawati kawin yang membedakan perlakuan berdasarkan jenis kelamin tidak lagi sejalan dengan prinsip kesetaraan dalam pemenuhan hak dan kewajiban perpajakan suami dan istri;
+b. bahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a, ketentuan tersebut perlu dicabut;
+c. bahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a dan huruf b, perlu menetapkan Peraturan Menteri Keuangan tentang Pencabutan Ketentuan Penentuan Status Penghasilan Tidak Kena Pajak bagi Karyawati Kawin;
+
+Mengingat : 1. Undang-Undang Nomor 7 Tahun 1983 tentang Pajak Penghasilan sebagaimana telah beberapa kali diubah terakhir dengan Undang-Undang Nomor 7 Tahun 2021 tentang Harmonisasi Peraturan Perpajakan;
+2. Peraturan Direktur Jenderal Pajak Nomor PER-16/PJ/2016 tentang Pedoman Teknis Tata Cara Pemotongan, Penyetoran, dan Pelaporan Pajak Penghasilan Pasal 21 dan/atau Pajak Penghasilan Pasal 26 sehubungan dengan Pekerjaan, Jasa, dan Kegiatan Orang Pribadi;
+
+MEMUTUSKAN:
+
+Menetapkan : PERATURAN MENTERI KEUANGAN TENTANG PENCABUTAN KETENTUAN PENENTUAN STATUS PENGHASILAN TIDAK KENA PAJAK BAGI KARYAWATI KAWIN.
+
+Pasal 1
+Ketentuan Pasal 11 ayat (3) Peraturan Direktur Jenderal Pajak Nomor PER-16/PJ/2016 yang mengatur penentuan status penghasilan tidak kena pajak bagi karyawati kawin dicabut dan dinyatakan tidak berlaku.
+
+Pasal 2
+Status penghasilan tidak kena pajak bagi seluruh pegawai tetap, termasuk karyawati kawin, ditentukan berdasarkan status perkawinan dan jumlah tanggungan keluarga pada awal Tahun Pajak atau awal bulan pegawai mulai bekerja.
+
+Pasal 3
+Karyawati kawin yang memiliki surat keterangan bahwa suaminya tidak menerima atau memperoleh penghasilan tetap menggunakan status kawin sebagaimana ketentuan sebelum Peraturan Menteri ini berlaku.
+
+Pasal 4
+Kelebihan pemotongan Pajak Penghasilan Pasal 21 pada Masa Pajak Januari 2027 sampai dengan Masa Pajak sebelum Peraturan Menteri ini diundangkan diperhitungkan pada Masa Pajak berikutnya atau pada Masa Pajak Terakhir.
+
+Pasal 5
+Peraturan Menteri ini mulai berlaku pada tanggal diundangkan dan berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak Januari 2027.
+
+Agar setiap orang mengetahuinya, memerintahkan pengundangan Peraturan Menteri ini dengan penempatannya dalam Berita Negara Republik Indonesia.
+
+Ditetapkan di Jakarta
+pada tanggal 19 Februari 2027
+MENTERI KEUANGAN REPUBLIK INDONESIA,
+ttd.
+
+Diundangkan di Jakarta
+pada tanggal 23 Februari 2027

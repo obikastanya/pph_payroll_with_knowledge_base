@@ -1,0 +1,113 @@
+{
+ "id": "R43",
+ "layer": "regulation",
+ "change_type": "T5",
+ "size": 1,
+ "traps": [
+  "pengecualian (kupon dalam bentuk uang tidak termasuk)",
+  "syarat implisit (hanya pegawai tetap, ambang 14 hari kerja malam)",
+  "pasal yang menyatakan ulang ketentuan yang tidak berubah (batas Rp2.000.000 bagi pegawai di bawah 14 hari)",
+  "berlaku surut"
+ ],
+ "title": "PMK 741/2027: Perubahan PMK 66/2023: kupon makan pegawai shift malam tidak dikenai batas nilai",
+ "header": "MENTERI KEUANGAN REPUBLIK INDONESIA",
+ "issued": "2027-03-29",
+ "effective_from": "2027-01-01",
+ "effective_until": null,
+ "retroactive": true,
+ "summary": "Kupon makanan dan minuman bagi pegawai tetap yang bekerja malam sekurang-kurangnya 14 hari kerja sebulan bukan penghasilan dan tidak dibatasi nilainya (mulai Masa Januari 2027, surut); batas Rp2.000.000 tetap bagi pegawai lain dan kupon uang tetap objek.",
+ "gold": {
+  "add": [
+   {
+    "kind": "rule",
+    "id": "REG.NATURA.REGULAR.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "benefits_taxable_regular",
+    "expression": "benefit_housing_taxable + (0 if hr('night_shift_days') >= 14 else max(0, benefit('meal_coupon_field_duty') - max(param('natura_meal_coupon_cap'), (employer('workplace_meal_value') if employer('workplace_meal_value') != None else 0)))) + (benefit('company_vehicle') if (employee('has_equity_in_employer') == True or (employee('avg_monthly_gross_12m') if employee('avg_monthly_gross_12m') != None else base_salary + fixed_allowance) > param('natura_vehicle_gross_cap')) else 0) + benefit('other_benefit')",
+    "valid_from": "2027-01-01",
+    "label": "tafsir K12: monthly benefits are regular income",
+    "source": [
+     {
+      "document": "R43",
+      "provision": "Pasal I angka 1, Pasal 5 ayat (4a)",
+      "page": null,
+      "quote": "yang bekerja pada waktu malam hari sekurang-kurangnya 14 (empat belas) hari kerja dalam satu bulan bukan merupakan penghasilan bagi Pegawai"
+     },
+     {
+      "document": "R43",
+      "provision": "Pasal I angka 1, Pasal 5 ayat (4b)",
+      "page": null,
+      "quote": "tidak termasuk makanan dan/atau minuman yang diberikan dalam bentuk uang."
+     },
+     {
+      "document": "R43",
+      "provision": "Pasal II",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak Januari 2027."
+     }
+    ],
+    "recorded_on": "2027-03-29"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": "",
+  "delta_id": "GOLD-R43",
+  "event_id": "R43",
+  "document": {
+   "id": "R43",
+   "title": "PMK 741/2027: Perubahan PMK 66/2023: kupon makan pegawai shift malam tidak dikenai batas nilai",
+   "issued": "2027-03-29"
+  },
+  "relevant": true
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0",
+   "benefits": {
+    "meal_coupon_field_duty": 3000000
+   },
+   "hr": {
+    "night_shift_days": 14
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0",
+   "benefits": {
+    "meal_coupon_field_duty": 3000000
+   },
+   "hr": {
+    "night_shift_days": 13
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0",
+   "benefits": {
+    "meal_coupon_field_duty": 3000000
+   },
+   "hr": {
+    "night_shift_days": 22
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0",
+   "benefits": {
+    "meal_coupon_field_duty": 3000000
+   }
+  }
+ ]
+}

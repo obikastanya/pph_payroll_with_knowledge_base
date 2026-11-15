@@ -1,0 +1,372 @@
+{
+ "layer": "regulation",
+ "change_type": "T7",
+ "traps": [
+  "ketentuan peralihan (Januari sampai Maret tetap tarif efektif)",
+  "rujukan silang (biaya jabatan, iuran, PTKP menurut ketentuan lain)",
+  "penghasilan tidak teratur diatur di pasal terpisah",
+  "Masa Pajak Terakhir tidak berubah"
+ ],
+ "title": "PMK 757/2027: Metode akumulasi menggantikan tarif efektif bulanan",
+ "header": "MENTERI KEUANGAN REPUBLIK INDONESIA",
+ "issued": "2027-03-17",
+ "effective_from": "2027-04-01",
+ "effective_until": null,
+ "retroactive": false,
+ "summary": "Mulai Masa April 2027 PPh 21 bulanan (selain Masa Terakhir) dipotong dengan metode akumulasi: penghasilan bruto kumulatif disetahunkan, dikenai tarif Pasal 17, dikali bulan kumulatif per 12, dikurangi pajak yang sudah dipotong; tarif efektif bulanan tidak dipakai lagi.",
+ "gold": {
+  "add": [
+   {
+    "kind": "fact",
+    "id": "months_to_date",
+    "fact_type": "int",
+    "fact_scope": "period",
+    "output": false,
+    "label": "number of months from the first employment month up to this month",
+    "source": [
+     {
+      "document": "R36",
+      "provision": "Pasal 1 angka 2",
+      "page": null,
+      "quote": "Jumlah Bulan Kumulatif adalah jumlah bulan sejak Masa Pajak pertama"
+     }
+    ],
+    "recorded_on": "2027-03-17"
+   },
+   {
+    "kind": "fact",
+    "id": "taxable_cumulative",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "cumulative taxable income annualized",
+    "source": [
+     {
+      "document": "R36",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "Penghasilan Kena Pajak Kumulatif dihitung dengan cara:"
+     }
+    ],
+    "recorded_on": "2027-03-17"
+   },
+   {
+    "kind": "fact",
+    "id": "pph_cumulative_annual",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "annual tax on the cumulative taxable income",
+    "source": [
+     {
+      "document": "R36",
+      "provision": "Pasal 4 ayat (1)",
+      "page": null,
+      "quote": "Pajak Penghasilan Pasal 21 setahun yang disetahunkan dihitung"
+     }
+    ],
+    "recorded_on": "2027-03-17"
+   },
+   {
+    "kind": "fact",
+    "id": "pph_cumulative_to_date",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "tax up to this month under the cumulative method",
+    "source": [
+     {
+      "document": "R36",
+      "provision": "Pasal 4 ayat (2)",
+      "page": null,
+      "quote": "Pajak Penghasilan Pasal 21 sampai dengan Masa Pajak berjalan adalah hasil perkalian"
+     }
+    ],
+    "recorded_on": "2027-03-17"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.CUM.MONTHS",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "months_to_date",
+    "expression": "month - first_month + 1",
+    "valid_from": "2027-04-01",
+    "source": [
+     {
+      "document": "R36",
+      "provision": "Pasal 1 angka 2",
+      "page": null,
+      "quote": "Jumlah Bulan Kumulatif adalah jumlah bulan sejak Masa Pajak pertama"
+     },
+     {
+      "document": "R36",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "Metode akumulasi mulai diterapkan untuk pemotongan Pajak Penghasilan Pasal 21 Masa Pajak April 2027."
+     }
+    ],
+    "condition": "not is_final_period",
+    "recorded_on": "2027-03-17"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.CUM.TAXABLE",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "taxable_cumulative",
+    "expression": "max(0, round(sum_to_date('gross_income') * 12 / months_to_date - min(round(param('job_expense_rate') * sum_to_date('gross_income') * 12 / months_to_date, 1, 'down'), param('job_expense_max_year')) - sum_to_date('employee_pension_contributions') * 12 / months_to_date - ptkp_amount, 1000, 'down'))",
+    "valid_from": "2027-04-01",
+    "source": [
+     {
+      "document": "R36",
+      "provision": "Pasal 3 ayat (1) huruf a",
+      "page": null,
+      "quote": "Penghasilan Bruto Kumulatif dikalikan 12 (dua belas) dan dibagi dengan Jumlah Bulan Kumulatif;"
+     },
+     {
+      "document": "R36",
+      "provision": "Pasal 3 ayat (1) huruf c",
+      "page": null,
+      "quote": "dibulatkan ke bawah hingga kelipatan seribu rupiah penuh."
+     },
+     {
+      "document": "R36",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "diikutsertakan dalam Penghasilan Bruto Kumulatif pada Masa Pajak diterimanya penghasilan tersebut."
+     },
+     {
+      "document": "R36",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "Metode akumulasi mulai diterapkan untuk pemotongan Pajak Penghasilan Pasal 21 Masa Pajak April 2027."
+     }
+    ],
+    "condition": "not is_final_period",
+    "label": "biaya jabatan, iuran pensiun, and PTKP follow the existing rules (Pasal 3 ayat (2))",
+    "recorded_on": "2027-03-17"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.CUM.ANNUAL",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "pph_cumulative_annual",
+    "expression": "round(progressive('pasal17', taxable_cumulative), 1, 'down')",
+    "valid_from": "2027-04-01",
+    "source": [
+     {
+      "document": "R36",
+      "provision": "Pasal 4 ayat (1)",
+      "page": null,
+      "quote": "Pajak Penghasilan Pasal 21 setahun yang disetahunkan dihitung dengan menerapkan tarif Pasal 17"
+     },
+     {
+      "document": "R36",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "Metode akumulasi mulai diterapkan untuk pemotongan Pajak Penghasilan Pasal 21 Masa Pajak April 2027."
+     }
+    ],
+    "condition": "not is_final_period",
+    "recorded_on": "2027-03-17"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.CUM.TO_DATE",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "pph_cumulative_to_date",
+    "expression": "round(pph_cumulative_annual * months_to_date / 12, 1, 'down')",
+    "valid_from": "2027-04-01",
+    "source": [
+     {
+      "document": "R36",
+      "provision": "Pasal 4 ayat (2)",
+      "page": null,
+      "quote": "Jumlah Bulan Kumulatif dibagi 12 (dua belas), dibulatkan ke bawah hingga rupiah penuh."
+     },
+     {
+      "document": "R36",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "Metode akumulasi mulai diterapkan untuk pemotongan Pajak Penghasilan Pasal 21 Masa Pajak April 2027."
+     }
+    ],
+    "condition": "not is_final_period",
+    "recorded_on": "2027-03-17"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.CUM.RUNNING",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "pph21_running",
+    "expression": "max(0, pph_cumulative_to_date - sum_before('pph21_due'))",
+    "valid_from": "2027-04-01",
+    "source": [
+     {
+      "document": "R36",
+      "provision": "Pasal 4 ayat (3)",
+      "page": null,
+      "quote": "dikurangi seluruh Pajak Penghasilan Pasal 21 yang telah dipotong pada Masa Pajak sebelumnya dalam tahun pajak yang sama."
+     },
+     {
+      "document": "R36",
+      "provision": "Pasal 4 ayat (4)",
+      "page": null,
+      "quote": "Pajak Penghasilan Pasal 21 yang dipotong pada Masa Pajak berjalan adalah nol."
+     },
+     {
+      "document": "R36",
+      "provision": "Pasal 6 ayat (2)",
+      "page": null,
+      "quote": "diperhitungkan sebagai pajak yang telah dipotong pada Masa Pajak sebelumnya"
+     },
+     {
+      "document": "R36",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "Metode akumulasi mulai diterapkan untuk pemotongan Pajak Penghasilan Pasal 21 Masa Pajak April 2027."
+     }
+    ],
+    "condition": "not is_final_period",
+    "recorded_on": "2027-03-17"
+   }
+  ],
+  "change": [
+   {
+    "kind": "rule",
+    "id": "REG.TER.CATEGORY",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "ter_category",
+    "expression": "lookup('ter_category', ptkp_status_effective)",
+    "valid_from": "2024-01-01",
+    "valid_until": "2027-03-31",
+    "source": [
+     {
+      "document": "R36",
+      "provision": "Pasal 6 ayat (3)",
+      "page": null,
+      "quote": "Tarif efektif bulanan tidak digunakan lagi untuk pemotongan Pajak Penghasilan Pasal 21 mulai Masa Pajak April 2027."
+     }
+    ],
+    "recorded_on": "2027-03-17"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.TER.RATE",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "ter_rate",
+    "condition": "not is_final_period",
+    "expression": "bracket('ter_monthly', ter_category, gross_income)",
+    "valid_from": "2024-01-01",
+    "valid_until": "2027-03-31",
+    "source": [
+     {
+      "document": "R36",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "Metode akumulasi sebagaimana dimaksud pada ayat (1) menggantikan penggunaan tarif efektif bulanan."
+     },
+     {
+      "document": "R36",
+      "provision": "Pasal 6 ayat (3)",
+      "page": null,
+      "quote": "Tarif efektif bulanan tidak digunakan lagi untuk pemotongan Pajak Penghasilan Pasal 21 mulai Masa Pajak April 2027."
+     }
+    ],
+    "recorded_on": "2027-03-17"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.TER.RUNNING",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "pph21_running",
+    "condition": "not is_final_period",
+    "expression": "round(ter_rate * gross_income, 1, param('pph_round_mode'))",
+    "valid_from": "2024-01-01",
+    "valid_until": "2027-03-31",
+    "source": [
+     {
+      "document": "R36",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "Metode akumulasi sebagaimana dimaksud pada ayat (1) menggantikan penggunaan tarif efektif bulanan."
+     },
+     {
+      "document": "R36",
+      "provision": "Pasal 6 ayat (3)",
+      "page": null,
+      "quote": "Tarif efektif bulanan tidak digunakan lagi untuk pemotongan Pajak Penghasilan Pasal 21 mulai Masa Pajak April 2027."
+     }
+    ],
+    "recorded_on": "2027-03-17"
+   }
+  ],
+  "remove": [],
+  "delta_id": "GOLD-R36",
+  "event_id": "R36",
+  "document": {
+   "id": "R36",
+   "title": "PMK 757/2027: Metode akumulasi menggantikan tarif efektif bulanan",
+   "issued": "2027-03-17"
+  },
+  "relevant": true,
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "TK/0",
+   "income": {
+    "bonus": 20000000
+   },
+   "income_months": [
+    9
+   ]
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 15000000,
+   "ptkp": "K/1",
+   "income": {
+    "thr": 15000000
+   },
+   "income_months": [
+    4
+   ]
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 6000000,
+   "ptkp": "TK/0"
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 25000000,
+   "ptkp": "K/2",
+   "start_month": 5,
+   "end_month": 12
+  }
+ ],
+ "size": 12,
+ "id": "R36"
+}

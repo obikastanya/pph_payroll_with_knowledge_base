@@ -1,0 +1,198 @@
+{
+ "id": "R23",
+ "layer": "regulation",
+ "change_type": "T6",
+ "size": 2,
+ "traps": [
+  "berlaku surut (perpanjangan tanpa terputus sejak berakhirnya keringanan Januari 2026)",
+  "syarat implisit: hanya pemberi kerja yang terverifikasi sebagai penerima keringanan",
+  "pasal yang menyatakan ulang tarif keringanan yang tidak berubah (tarif tetap di PP 7/2025)",
+  "pengecualian: keringanan hanya untuk iuran JKK, tidak untuk JKM, JHT, JP, dan JKN",
+  "masa berakhir dinyatakan dengan bulan iuran (Juni 2027); mulai Juli 2027 tarif normal",
+  "ketentuan peralihan: iuran yang sudah dibayar normal diperhitungkan pada iuran berikutnya"
+ ],
+ "title": "PP 789/2027: Perpanjangan keringanan iuran JKK industri padat karya tertentu sampai iuran Juni 2027",
+ "header": "PRESIDEN REPUBLIK INDONESIA",
+ "issued": "2027-02-10",
+ "effective_from": "2027-01-01",
+ "effective_until": "2027-06-30",
+ "retroactive": true,
+ "summary": "Keringanan iuran JKK (tarif PP 7/2025 tetap) bagi pemberi kerja padat karya yang terverifikasi diperpanjang tanpa terputus sampai iuran Juni 2027; mulai Juli 2027 tarif normal; JKM, JHT, JP, dan JKN tidak mendapat keringanan.",
+ "gold": {
+  "delta_id": "GOLD-R23",
+  "event_id": "R23",
+  "document": {
+   "id": "R23",
+   "title": "PP 789/2027: Perpanjangan keringanan iuran JKK industri padat karya tertentu sampai iuran Juni 2027",
+   "issued": "2027-02-10"
+  },
+  "relevant": true,
+  "add": [],
+  "change": [
+   {
+    "kind": "table",
+    "id": "TAB.JKK_RATES_RELIEF.2025",
+    "name": "jkk_rates_relief",
+    "table_kind": "lookup",
+    "valid_from": "2025-02-01",
+    "rows": [
+     {
+      "key": "very_low",
+      "value": "3/2500"
+     },
+     {
+      "key": "low",
+      "value": "27/10000"
+     },
+     {
+      "key": "medium",
+      "value": "89/20000"
+     },
+     {
+      "key": "high",
+      "value": "127/20000"
+     },
+     {
+      "key": "very_high",
+      "value": "87/10000"
+     }
+    ],
+    "label_id": "tarif iuran JKK setelah keringanan",
+    "valid_until": "2027-06-30",
+    "source": [
+     {
+      "document": "R23",
+      "provision": "Pasal 10A ayat (1)",
+      "page": null,
+      "quote": "diperpanjang sampai dengan Iuran Jaminan Kecelakaan Kerja bulan Juni 2027."
+     },
+     {
+      "document": "R23",
+      "provision": "Pasal 10A ayat (3)",
+      "page": null,
+      "quote": "tidak berubah, yaitu sebesar 0,12% untuk kelompok sangat rendah, 0,27% untuk kelompok rendah, 0,445% untuk kelompok sedang, 0,635% untuk kelompok tinggi, dan 0,87% untuk kelompok sangat tinggi."
+     },
+     {
+      "document": "R23",
+      "provision": "Pasal 10A ayat (4)",
+      "page": null,
+      "quote": "Mulai Iuran Jaminan Kecelakaan Kerja bulan Juli 2027, Pemberi Kerja membayar Iuran Jaminan Kecelakaan Kerja sesuai dengan tarif"
+     }
+    ],
+    "recorded_on": "2027-02-10"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.JKK_RATE.RELIEF",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "jkk_rate",
+    "expression": "lookup('jkk_rates_relief', employer('jkk_risk_group'))",
+    "valid_from": "2025-02-01",
+    "condition": "employer('jkk_relief_eligible') == True",
+    "label": "tafsir K7: the relief rate is the premium of the contribution month",
+    "valid_until": "2027-06-30",
+    "source": [
+     {
+      "document": "R23",
+      "provision": "Pasal 10A ayat (1)",
+      "page": null,
+      "quote": "diperpanjang sampai dengan Iuran Jaminan Kecelakaan Kerja bulan Juni 2027."
+     },
+     {
+      "document": "R23",
+      "provision": "Pasal 10A ayat (2)",
+      "page": null,
+      "quote": "berlaku tanpa terputus sejak berakhirnya keringanan pada Iuran Jaminan Kecelakaan Kerja bulan Januari 2026"
+     },
+     {
+      "document": "R23",
+      "provision": "Pasal 10B ayat (1)",
+      "page": null,
+      "quote": "Pemberi Kerja yang tidak terverifikasi sebagai penerima keringanan"
+     },
+     {
+      "document": "R23",
+      "provision": "Pasal 10A ayat (4)",
+      "page": null,
+      "quote": "Mulai Iuran Jaminan Kecelakaan Kerja bulan Juli 2027, Pemberi Kerja membayar Iuran Jaminan Kecelakaan Kerja sesuai dengan tarif"
+     }
+    ],
+    "recorded_on": "2027-02-10"
+   }
+  ],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "relief": true,
+   "jkk_risk": "medium",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 20000000,
+   "ptkp": "K/1",
+   "relief": true,
+   "jkk_risk": "very_high",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "relief": false,
+   "jkk_risk": "medium",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "K/0",
+   "relief": true,
+   "jkk_risk": "low",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0",
+   "relief": true,
+   "jkk_risk": "high",
+   "start_month": 5,
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T6",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0",
+   "relief": true,
+   "jkk_risk": "high",
+   "start_month": 8,
+   "income": {
+    "fixed_allowance": 0
+   }
+  }
+ ]
+}

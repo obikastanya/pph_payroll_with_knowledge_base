@@ -1,0 +1,142 @@
+{
+ "id": "K01",
+ "layer": "company",
+ "instance": "SP02",
+ "policy": "SP02",
+ "change_type": "T10",
+ "size": 2,
+ "traps": [
+  "nilai dalam huruf dan angka",
+  "syarat implisit (masa kerja 3 bulan untuk iuran koperasi)",
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah"
+ ],
+ "title": "Memo Direksi PT Presisi Komponen Otomotif: tunjangan shift malam dan iuran koperasi",
+ "header": "PT PRESISI KOMPONEN OTOMOTIF",
+ "issued": "2024-07-01",
+ "effective_from": "2024-08-01",
+ "effective_until": "2024-12-31",
+ "retroactive": false,
+ "summary": "Mulai 1 Agustus 2024 pekerja shift malam menerima tunjangan Rp40.000 per hari kerja shift malam, dan pekerja dengan masa kerja 3 bulan atau lebih dipotong iuran koperasi 1% dari gaji pokok.",
+ "gold": {
+  "delta_id": "GOLD-K01",
+  "event_id": "K01",
+  "document": {
+   "id": "K01",
+   "title": "Memo Direksi PT Presisi Komponen Otomotif: tunjangan shift malam dan iuran koperasi",
+   "issued": "2024-07-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP02.NIGHT_SHIFT",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + 40000 * hr('night_shift_days')",
+    "valid_from": "2024-08-01",
+    "valid_until": "2024-12-31",
+    "policy": "SP02",
+    "label": "night shift allowance per night shift day, paid monthly as regular income",
+    "source": [
+     {
+      "document": "K01",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "sebesar Rp40.000,00 (empat puluh ribu rupiah) untuk setiap hari kerja shift malam"
+     },
+     {
+      "document": "K01",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Agustus 2024 sampai dengan berakhirnya masa berlaku Peraturan Perusahaan pada tanggal 31 Desember 2024"
+     }
+    ],
+    "recorded_on": "2024-07-01"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP02.COOP_DUES",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "company_deductions",
+    "condition": "hr('months_of_service') >= 3",
+    "expression": "income('deductions') + round(dec('0.01') * income('base_salary'), 1, 'down')",
+    "valid_from": "2024-08-01",
+    "valid_until": "2024-12-31",
+    "policy": "SP02",
+    "label": "cooperative dues of 1% of base salary after 3 months of service",
+    "source": [
+     {
+      "document": "K01",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "telah mempunyai masa kerja 3 (tiga) bulan atau lebih membayar iuran Koperasi Karyawan Presisi sebesar 1% (satu persen) dari gaji pokok"
+     },
+     {
+      "document": "K01",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Agustus 2024 sampai dengan berakhirnya masa berlaku Peraturan Perusahaan pada tanggal 31 Desember 2024"
+     }
+    ],
+    "recorded_on": "2024-07-01"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2024,
+   "salary": 6500000,
+   "ptkp": "K/1",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "hr": {
+    "night_shift_days": 10,
+    "months_of_service": 24
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2024,
+   "salary": 7800000,
+   "ptkp": "TK/0",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "hr": {
+    "night_shift_days": 0,
+    "months_of_service": 3
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2024,
+   "salary": 5800000,
+   "ptkp": "TK/0",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "hr": {
+    "night_shift_days": 12,
+    "months_of_service": 2
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2024,
+   "salary": 9200000,
+   "ptkp": "K/2",
+   "klu": "29300",
+   "jkk_risk": "low",
+   "hr": {
+    "night_shift_days": 14,
+    "months_of_service": 5
+   }
+  }
+ ]
+}

@@ -1,0 +1,192 @@
+{
+ "id": "K08",
+ "layer": "company",
+ "instance": "SP11",
+ "policy": "SP11",
+ "change_type": "T10",
+ "size": 2,
+ "traps": [
+  "syarat implisit (masa kerja 6 bulan untuk iuran, 12 bulan untuk bonus penuh)",
+  "nilai dalam huruf dan angka",
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah"
+ ],
+ "title": "Memo Direksi PT Bumi Konstruksi Persada: iuran Serikat Pekerja dan bonus penyelesaian proyek",
+ "header": "PT BUMI KONSTRUKSI PERSADA",
+ "issued": "2026-02-02",
+ "effective_from": "2026-03-01",
+ "effective_until": "2026-12-31",
+ "retroactive": false,
+ "summary": "Mulai 1 Maret 2026 pekerja dengan masa kerja 6 bulan atau lebih dipotong iuran Serikat Pekerja 0,5% dari gaji pokok, dan bonus penyelesaian proyek dibayar 50% bagi masa kerja di bawah 12 bulan.",
+ "gold": {
+  "delta_id": "GOLD-K08",
+  "event_id": "K08",
+  "document": {
+   "id": "K08",
+   "title": "Memo Direksi PT Bumi Konstruksi Persada: iuran Serikat Pekerja dan bonus penyelesaian proyek",
+   "issued": "2026-02-02"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP11.UNION_DUES",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "company_deductions",
+    "condition": "hr('months_of_service') >= 6",
+    "expression": "income('deductions') + round(dec('0.005') * income('base_salary'), 1, 'down')",
+    "valid_from": "2026-03-01",
+    "valid_until": "2026-12-31",
+    "policy": "SP11",
+    "label": "union dues of 0.5% of base salary deducted from wage after 6 months of service",
+    "source": [
+     {
+      "document": "K08",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "yang telah mempunyai masa kerja 6 (enam) bulan atau lebih membayar iuran Serikat Pekerja BKP sebesar 0,5% (nol koma lima persen) dari gaji pokok setiap bulan"
+     },
+     {
+      "document": "K08",
+      "provision": "Pasal 1 ayat (2)",
+      "page": null,
+      "quote": "dipotong oleh Perusahaan dari upah pada saat pembayaran upah"
+     },
+     {
+      "document": "K08",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Maret 2026 sampai dengan tanggal 31 Desember 2026"
+     }
+    ],
+    "recorded_on": "2026-02-02"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP11.PROJECT_BONUS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "condition": "hr('months_of_service') < 12",
+    "expression": "round(dec('0.5') * income('bonus'), 1, 'down')",
+    "valid_from": "2026-03-01",
+    "valid_until": "2026-12-31",
+    "policy": "SP11",
+    "label": "project completion bonus at 50% for employees under 12 months of service, full bonus from 12 months",
+    "source": [
+     {
+      "document": "K08",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "kurang dari 12 (dua belas) bulan pada bulan pembayaran menerima bonus penyelesaian proyek sebesar 50% (lima puluh persen) dari bonus penuh"
+     },
+     {
+      "document": "K08",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "dibayarkan sebesar penuh kepada pekerja dengan masa kerja 12 (dua belas) bulan atau lebih pada bulan pembayaran"
+     },
+     {
+      "document": "K08",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Maret 2026 sampai dengan tanggal 31 Desember 2026"
+     }
+    ],
+    "recorded_on": "2026-02-02"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2026,
+   "salary": 6200000,
+   "ptkp": "TK/0",
+   "klu": "41012",
+   "jkk_risk": "high",
+   "income": {
+    "bonus": 12000000
+   },
+   "income_months": [
+    6
+   ],
+   "hr": {
+    "months_of_service": 5
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2026,
+   "salary": 6200000,
+   "ptkp": "TK/0",
+   "klu": "41012",
+   "jkk_risk": "high",
+   "income": {
+    "bonus": 12000000
+   },
+   "income_months": [
+    6
+   ],
+   "hr": {
+    "months_of_service": 6
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2026,
+   "salary": 7500000,
+   "ptkp": "K/1",
+   "klu": "41012",
+   "jkk_risk": "high",
+   "income": {
+    "bonus": 12000000
+   },
+   "income_months": [
+    6
+   ],
+   "hr": {
+    "months_of_service": 11
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2026,
+   "salary": 7500000,
+   "ptkp": "K/1",
+   "klu": "41012",
+   "jkk_risk": "high",
+   "income": {
+    "bonus": 12000000
+   },
+   "income_months": [
+    6
+   ],
+   "hr": {
+    "months_of_service": 12
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2026,
+   "salary": 11000000,
+   "ptkp": "K/2",
+   "klu": "41012",
+   "jkk_risk": "high",
+   "income": {
+    "bonus": 12000000
+   },
+   "income_months": [
+    6
+   ],
+   "hr": {
+    "months_of_service": 30
+   }
+  }
+ ]
+}

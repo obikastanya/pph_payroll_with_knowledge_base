@@ -1,0 +1,203 @@
+{
+ "id": "R50",
+ "layer": "regulation",
+ "change_type": "T9",
+ "size": 4,
+ "traps": [
+  "pasal yang menyatakan ulang ketentuan yang tidak berubah (tarif JKK per kelompok risiko dan upah dasar JHT, JP, JKN tanpa lembur)",
+  "rujukan silang (Pasal 18 ayat (1) merujuk ke Pasal 1 angka 8)",
+  "ketentuan peralihan (iuran Maret 2027 tetap ketentuan lama)",
+  "syarat implisit (premi yang mengikuti tagihan BPJS tidak dihitung ulang)"
+ ],
+ "title": "PP 793/2027: Perubahan PP 44/2015: upah kerja lembur masuk dasar iuran JKK dan JKM",
+ "header": "PRESIDEN REPUBLIK INDONESIA",
+ "issued": "2027-03-16",
+ "effective_from": "2027-04-01",
+ "effective_until": null,
+ "retroactive": false,
+ "summary": "Dasar penghitungan iuran JKK dan JKM mencakup upah kerja lembur yang dibayar pada bulan berjalan, selain upah pokok dan tunjangan tetap, mulai 1 April 2027; tarif JKK dan JKM serta upah dasar JHT, JP, dan JKN tidak berubah.",
+ "gold": {
+  "add": [
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.JKK.2027",
+    "produces": "jkk_premium",
+    "expression": "round(jkk_rate * (bpjs_wage + overtime_pay), 1, param('bpjs_round_mode'))",
+    "valid_from": "2027-04-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "condition": "employer('premiums_as_billed') != True",
+    "source": [
+     {
+      "document": "R50",
+      "provision": "Pasal I angka 1, Pasal 1 angka 8",
+      "page": null,
+      "quote": "Upah sebagai dasar penghitungan Iuran Jaminan Kecelakaan Kerja adalah upah pokok ditambah tunjangan tetap dan upah kerja lembur yang dibayarkan pada bulan yang bersangkutan."
+     },
+     {
+      "document": "R50",
+      "provision": "Pasal IV",
+      "page": null,
+      "quote": "Peraturan Pemerintah ini mulai berlaku pada tanggal 1 April 2027."
+     }
+    ],
+    "recorded_on": "2027-03-16"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.JKM.2027",
+    "produces": "jkm_premium",
+    "expression": "round(param('jkm_rate') * (bpjs_wage + overtime_pay), 1, param('bpjs_round_mode'))",
+    "valid_from": "2027-04-01",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "condition": "employer('premiums_as_billed') != True",
+    "source": [
+     {
+      "document": "R50",
+      "provision": "Pasal I angka 1, Pasal 1 angka 8",
+      "page": null,
+      "quote": "Upah sebagai dasar penghitungan Iuran Jaminan Kecelakaan Kerja adalah upah pokok ditambah tunjangan tetap dan upah kerja lembur yang dibayarkan pada bulan yang bersangkutan."
+     },
+     {
+      "document": "R50",
+      "provision": "Pasal I angka 2, Pasal 18 ayat (1)",
+      "page": null,
+      "quote": "dari upah sebulan sebagaimana dimaksud dalam Pasal 1 angka 8."
+     },
+     {
+      "document": "R50",
+      "provision": "Pasal IV",
+      "page": null,
+      "quote": "Peraturan Pemerintah ini mulai berlaku pada tanggal 1 April 2027."
+     }
+    ],
+    "recorded_on": "2027-03-16"
+   }
+  ],
+  "change": [
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.JKK",
+    "produces": "jkk_premium",
+    "expression": "round(jkk_rate * bpjs_wage, 1, param('bpjs_round_mode'))",
+    "valid_from": "2015-07-01",
+    "valid_until": "2027-03-31",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "condition": "employer('premiums_as_billed') != True",
+    "source": [
+     {
+      "document": "R50",
+      "provision": "Pasal I angka 1, Pasal 1 angka 8",
+      "page": null,
+      "quote": "Upah sebagai dasar penghitungan Iuran Jaminan Kecelakaan Kerja adalah upah pokok ditambah tunjangan tetap dan upah kerja lembur yang dibayarkan pada bulan yang bersangkutan."
+     },
+     {
+      "document": "R50",
+      "provision": "Pasal IV",
+      "page": null,
+      "quote": "Peraturan Pemerintah ini mulai berlaku pada tanggal 1 April 2027."
+     }
+    ],
+    "recorded_on": "2027-03-16"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.BPJS.JKM",
+    "produces": "jkm_premium",
+    "expression": "round(param('jkm_rate') * bpjs_wage, 1, param('bpjs_round_mode'))",
+    "valid_from": "2015-07-01",
+    "valid_until": "2027-03-31",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "condition": "employer('premiums_as_billed') != True",
+    "source": [
+     {
+      "document": "R50",
+      "provision": "Pasal I angka 1, Pasal 1 angka 8",
+      "page": null,
+      "quote": "Upah sebagai dasar penghitungan Iuran Jaminan Kecelakaan Kerja adalah upah pokok ditambah tunjangan tetap dan upah kerja lembur yang dibayarkan pada bulan yang bersangkutan."
+     },
+     {
+      "document": "R50",
+      "provision": "Pasal I angka 2, Pasal 18 ayat (1)",
+      "page": null,
+      "quote": "dari upah sebulan sebagaimana dimaksud dalam Pasal 1 angka 8."
+     },
+     {
+      "document": "R50",
+      "provision": "Pasal IV",
+      "page": null,
+      "quote": "Peraturan Pemerintah ini mulai berlaku pada tanggal 1 April 2027."
+     }
+    ],
+    "recorded_on": "2027-03-16"
+   }
+  ],
+  "remove": [],
+  "note": "",
+  "delta_id": "GOLD-R50",
+  "event_id": "R50",
+  "document": {
+   "id": "R50",
+   "title": "PP 793/2027: Perubahan PP 44/2015: upah kerja lembur masuk dasar iuran JKK dan JKM",
+   "issued": "2027-03-16"
+  },
+  "relevant": true
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "jkk_risk": "high",
+   "income": {
+    "overtime_pay": 2000000
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 14000000,
+   "ptkp": "K/1",
+   "jkk_risk": "medium",
+   "income": {
+    "overtime_pay": 3500000
+   },
+   "income_months": [
+    3,
+    4,
+    5,
+    6
+   ]
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "jkk_risk": "high"
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "jkk_risk": "high",
+   "income": {
+    "overtime_pay": 2000000
+   },
+   "income_months": [
+    1,
+    2,
+    3
+   ]
+  }
+ ]
+}

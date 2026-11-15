@@ -1,0 +1,44 @@
+SALINAN
+
+PERATURAN DIREKTUR JENDERAL PAJAK
+NOMOR PER-779/PJ/2027
+TENTANG
+PEMBULATAN PAJAK PENGHASILAN PASAL 21 PADA PEMOTONGAN MASA
+
+DENGAN RAHMAT TUHAN YANG MAHA ESA
+
+DIREKTUR JENDERAL PAJAK,
+
+Menimbang : a. bahwa dalam rangka penyeragaman penghitungan pada sistem administrasi pemotongan Pajak Penghasilan Pasal 21, perlu diatur kembali cara pembulatan Pajak Penghasilan Pasal 21 yang dipotong setiap Masa Pajak;
+b. bahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a, perlu menetapkan Peraturan Direktur Jenderal Pajak tentang Pembulatan Pajak Penghasilan Pasal 21 pada Pemotongan Masa;
+
+Mengingat : 1. Undang-Undang Nomor 7 Tahun 1983 tentang Pajak Penghasilan sebagaimana telah beberapa kali diubah terakhir dengan Undang-Undang Nomor 7 Tahun 2021 tentang Harmonisasi Peraturan Perpajakan;
+2. Peraturan Menteri Keuangan Nomor 168 Tahun 2023 tentang Pelaksanaan Pemotongan Pajak Penghasilan Pasal 21 dan/atau Pajak Penghasilan Pasal 26 sehubungan dengan Pekerjaan, Jasa, dan Kegiatan Orang Pribadi;
+
+MEMUTUSKAN:
+
+Menetapkan : PERATURAN DIREKTUR JENDERAL PAJAK TENTANG PEMBULATAN PAJAK PENGHASILAN PASAL 21 PADA PEMOTONGAN MASA.
+
+Pasal 1
+(1) Jumlah Pajak Penghasilan Pasal 21 yang dipotong untuk setiap Masa Pajak dibulatkan ke atas ke dalam rupiah penuh.
+(2) Pembulatan ke atas sebagaimana dimaksud pada ayat (1) dilakukan terhadap seluruh bilangan yang memiliki angka di belakang koma, berapa pun nilainya.
+
+Pasal 2
+Penghitungan Pajak Penghasilan atas penghasilan kena pajak setahun dengan tarif sebagaimana dimaksud dalam Pasal 17 Undang-Undang Pajak Penghasilan tetap dibulatkan ke bawah ke dalam rupiah penuh, dan penghasilan kena pajak tetap dibulatkan ke bawah ke dalam ribuan rupiah penuh.
+
+Pasal 3
+Pembulatan sebagaimana dimaksud dalam Pasal 1 tidak berlaku untuk iuran program jaminan sosial.
+
+Pasal 4
+Ketentuan sebagaimana dimaksud dalam Pasal 1 mulai berlaku untuk pemotongan Pajak Penghasilan Pasal 21 Masa Pajak Juli 2027.
+
+Pasal 5
+Peraturan Direktur Jenderal Pajak ini mulai berlaku pada tanggal diundangkan.
+
+Ditetapkan di Jakarta
+pada tanggal 24 Mei 2027
+DIREKTUR JENDERAL PAJAK,
+ttd.
+
+Diundangkan di Jakarta
+pada tanggal 26 Mei 2027

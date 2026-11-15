@@ -1,0 +1,123 @@
+PERJANJIAN KERJA BERSAMA
+
+ANTARA
+
+PT SAMUDRA BIRU HOSPITALITY
+
+DENGAN
+
+SERIKAT PEKERJA PERHOTELAN SAMUDRA BIRU
+
+PERIODE 2027–2028
+
+Nomor: PKB/SBH/2027
+
+Didaftarkan pada Dinas Ketenagakerjaan Kota Denpasar Nomor 560/0305/PKB/XII/2026 (fiktif)
+
+Ditetapkan di Denpasar pada tanggal 11 Desember 2026
+
+BAB I KETENTUAN UMUM
+
+Pasal 1
+
+Dalam Perjanjian Kerja Bersama ini yang dimaksud dengan:
+
+a. Perusahaan adalah PT Samudra Biru Hospitality, pengelola hotel bintang di Bali.
+
+b. Serikat Pekerja adalah Serikat Pekerja Perhotelan Samudra Biru.
+
+c. Pekerja adalah pekerja tetap Perusahaan yang hubungan kerjanya didasarkan pada perjanjian kerja waktu tidak tertentu.
+
+d. Upah Pokok adalah imbalan dasar yang dibayarkan setiap bulan, tidak termasuk tunjangan.
+
+e. Tunjangan Tetap adalah tunjangan yang dibayarkan setiap bulan dengan jumlah yang tetap.
+
+f. Upah adalah Upah Pokok ditambah Tunjangan Tetap.
+
+BAB II WAKTU KERJA
+
+Pasal 2
+
+(1) Hotel beroperasi dua puluh empat jam sehari sehingga Pekerja bekerja dalam tiga shift, yaitu shift pagi, shift siang, dan shift malam.
+
+(2) Pekerja yang bekerja pada shift malam menerima Tunjangan Shift Malam sebesar Rp50.000,00 (lima puluh ribu rupiah) untuk setiap hari kerja pada shift malam, yang dibayarkan bersama Upah bulan yang bersangkutan.
+
+BAB III PENGUPAHAN DAN PENGHASILAN LAIN
+
+Pasal 3
+
+(1) Pekerja dengan Upah Pokok sampai dengan Rp7.000.000,00 (tujuh juta rupiah) sebulan menerima Tunjangan Jabatan sebesar Rp300.000,00 (tiga ratus ribu rupiah) sebulan.
+
+(2) Tunjangan Jabatan merupakan Tunjangan Tetap sebagaimana dimaksud dalam Pasal 1 huruf e.
+
+Pasal 4
+
+(1) Pekerja menerima Tunjangan Hari Raya Keagamaan (THR) satu kali dalam setahun menjelang hari raya keagamaan Pekerja yang bersangkutan.
+
+(2) Pekerja dengan masa kerja 1 (satu) bulan secara terus-menerus atau lebih menerima THR. Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1 (satu) bulan Upah.
+
+(3) Pekerja dengan masa kerja 1 (satu) bulan secara terus-menerus tetapi kurang dari 12 (dua belas) bulan menerima THR secara proporsional, yaitu masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan Upah.
+
+(4) Pekerja yang hubungan kerjanya berakhir lebih dari 30 (tiga puluh) hari sebelum hari raya keagamaan tidak berhak atas THR tahun yang bersangkutan.
+
+Pasal 5
+
+(1) Perusahaan membayarkan Bonus Musim Ramai kepada Pekerja dengan masa kerja 6 (enam) bulan atau lebih bersama Upah bulan Juli dan bulan Desember setiap tahun.
+
+(2) Besar Bonus Musim Ramai pada setiap pembayaran adalah 0,5 (setengah) bulan Upah Pokok.
+
+Pasal 6
+
+(1) Perusahaan membayarkan Penghargaan Masa Kerja bersama Upah bulan Desember kepada Pekerja menurut masa kerja Pekerja sebagaimana tercantum dalam Lampiran I.
+
+(2) Penghargaan Masa Kerja dihitung dari Upah Pokok bulan Desember.
+
+(3) Penghargaan Masa Kerja dibayarkan di samping Bonus Musim Ramai bulan Desember sebagaimana dimaksud dalam Pasal 5.
+
+BAB IV JAMINAN SOSIAL DAN PAJAK
+
+Pasal 7
+
+Iuran jaminan sosial ketenagakerjaan dan jaminan kesehatan dihitung dan dibayarkan sesuai tarif dan batas upah yang ditetapkan peraturan perundang-undangan.
+
+Pasal 8
+
+(1) Pajak Penghasilan Pasal 21 atas seluruh penghasilan Pekerja dipotong dari penghasilan Pekerja sesuai ketentuan perpajakan yang berlaku.
+
+(2) Fasilitas Pajak Penghasilan Pasal 21 yang ditanggung pemerintah, apabila diberikan oleh peraturan perundang-undangan, diterima seluruhnya oleh Pekerja dan tidak ditahan oleh Perusahaan.
+
+BAB V KETENTUAN PENUTUP
+
+Pasal 9
+
+(1) Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028.
+
+(2) Dengan berlakunya Perjanjian Kerja Bersama ini, Perjanjian Kerja Bersama PT Samudra Biru Hospitality periode 2025–2026 dinyatakan tidak berlaku lagi.
+
+(3) Hal-hal yang belum diatur dalam Perjanjian Kerja Bersama ini diatur lebih lanjut oleh Perusahaan setelah berunding dengan Serikat Pekerja.
+
+Ditetapkan di Denpasar pada tanggal 11 Desember 2026
+
+PT SAMUDRA BIRU HOSPITALITY
+
+Ketut Wirawan
+
+General Manager
+
+SERIKAT PEKERJA PERHOTELAN SAMUDRA BIRU
+
+Made Sugiarta
+
+Ketua Umum
+
+LAMPIRAN I PENGHARGAAN MASA KERJA
+
+Penghargaan Masa Kerja sebagaimana dimaksud dalam Pasal 6 ayat (1) dihitung menurut masa kerja Pekerja pada bulan Desember, sebagai berikut.
+
+1. Masa kerja sampai dengan 24 (dua puluh empat) bulan: tidak mendapat Penghargaan Masa Kerja.
+
+2. Masa kerja lebih dari 24 (dua puluh empat) bulan sampai dengan 60 (enam puluh) bulan: 0,5 (nol koma lima) bulan Upah Pokok.
+
+3. Masa kerja lebih dari 60 (enam puluh) bulan sampai dengan 120 (seratus dua puluh) bulan: 1 (satu) bulan Upah Pokok.
+
+4. Masa kerja lebih dari 120 (seratus dua puluh) bulan: 1,5 (satu setengah) bulan Upah Pokok.

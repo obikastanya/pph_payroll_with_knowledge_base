@@ -1,0 +1,197 @@
+{
+ "id": "R11",
+ "layer": "regulation",
+ "change_type": "T5",
+ "size": 3,
+ "traps": [
+  "pasal yang menyatakan ulang batas hadiah Rp3.000.000, perumahan, kupon makanan, kendaraan yang tidak berubah",
+  "pengecualian hanya sampai Rp1.000.000 sebulan: kelebihan dikenai sebesar selisih",
+  "berlaku untuk natura yang diberikan mulai 1 Juli 2027 (bukan sejak diundangkan Mei)",
+  "fasilitas olahraga bebas tanpa batas nilai (batas lama dihapus)",
+  "nilai dalam huruf dan angka"
+ ],
+ "title": "PMK 707/2027: Perubahan PMK 66/2023: perluasan natura dikecualikan (olahraga penuh, natura lain s.d. Rp1 jt)",
+ "header": "MENTERI KEUANGAN REPUBLIK INDONESIA",
+ "issued": "2027-05-14",
+ "effective_from": "2027-07-01",
+ "effective_until": null,
+ "retroactive": false,
+ "summary": "Cakupan natura yang dikecualikan diperluas mulai 1 Juli 2027: fasilitas olahraga bebas tanpa batas nilai dan natura lain dikecualikan sampai Rp1.000.000 sebulan; batas hadiah, perumahan, kupon, kendaraan tetap.",
+ "gold": {
+  "delta_id": "GOLD-R11",
+  "event_id": "R11",
+  "document": {
+   "id": "R11",
+   "title": "PMK 707/2027: Perubahan PMK 66/2023: perluasan natura dikecualikan (olahraga penuh, natura lain s.d. Rp1 jt)",
+   "issued": "2027-05-14"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "parameter",
+    "id": "PAR.NATURA_OTHER_CAP.2027",
+    "name": "natura_other_cap",
+    "value": 1000000,
+    "value_type": "money",
+    "valid_from": "2027-07-01",
+    "label_id": "batas natura dan kenikmatan lainnya sebulan",
+    "source": [
+     {
+      "document": "R11",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "dikecualikan dari penghasilan sampai dengan Rp1.000.000,00 (satu juta rupiah) sebulan untuk setiap pegawai."
+     },
+     {
+      "document": "R11",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku untuk natura dan/atau kenikmatan yang diberikan mulai tanggal 1 Juli 2027."
+     }
+    ],
+    "recorded_on": "2027-05-14"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.NATURA.REGULAR.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "benefits_taxable_regular",
+    "expression": "benefit_housing_taxable + max(0, benefit('meal_coupon_field_duty') - max(param('natura_meal_coupon_cap'), (employer('workplace_meal_value') if employer('workplace_meal_value') != None else 0))) + (benefit('company_vehicle') if (employee('has_equity_in_employer') == True or (employee('avg_monthly_gross_12m') if employee('avg_monthly_gross_12m') != None else base_salary + fixed_allowance) > param('natura_vehicle_gross_cap')) else 0) + max(0, benefit('other_benefit') - param('natura_other_cap'))",
+    "valid_from": "2027-07-01",
+    "overrides": [
+     "REG.NATURA.REGULAR"
+    ],
+    "label": "other benefits in kind are taxable only above Rp1.000.000 a month; housing, meal coupon and vehicle rules unchanged",
+    "source": [
+     {
+      "document": "R11",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "dikecualikan dari penghasilan sampai dengan Rp1.000.000,00 (satu juta rupiah) sebulan untuk setiap pegawai."
+     },
+     {
+      "document": "R11",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "merupakan penghasilan bagi pegawai yang bersangkutan sebesar selisihnya."
+     },
+     {
+      "document": "R11",
+      "provision": "Pasal 3",
+      "page": null,
+      "quote": "batas nilai fasilitas perumahan perseorangan, batas nilai kupon makanan, dan ketentuan mengenai fasilitas kendaraan tidak berubah dari ketentuan yang berlaku sebelumnya."
+     },
+     {
+      "document": "R11",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku untuk natura dan/atau kenikmatan yang diberikan mulai tanggal 1 Juli 2027."
+     }
+    ],
+    "recorded_on": "2027-05-14"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.NATURA.IRREGULAR.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "benefits_taxable_irregular",
+    "expression": "max(0, cumulative('benefit_gift_other') - param('natura_gift_other_cap')) - max(0, cumulative_before('benefit_gift_other') - param('natura_gift_other_cap'))",
+    "valid_from": "2027-07-01",
+    "overrides": [
+     "REG.NATURA.IRREGULAR"
+    ],
+    "label": "sports facilities are no longer taxable at all; the gift cap rule is unchanged",
+    "source": [
+     {
+      "document": "R11",
+      "provision": "Pasal 1",
+      "page": null,
+      "quote": "Fasilitas olahraga yang diberikan oleh Pemberi Kerja kepada pegawai bukan merupakan penghasilan bagi pegawai yang bersangkutan, tanpa batasan nilai."
+     },
+     {
+      "document": "R11",
+      "provision": "Pasal 3",
+      "page": null,
+      "quote": "Batas nilai hadiah dan/atau natura yang diberikan selain dalam bentuk uang sebesar Rp3.000.000,00 (tiga juta rupiah) setahun untuk setiap pegawai"
+     },
+     {
+      "document": "R11",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku untuk natura dan/atau kenikmatan yang diberikan mulai tanggal 1 Juli 2027."
+     }
+    ],
+    "recorded_on": "2027-05-14"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 12000000,
+   "benefits": {
+    "sports_facility": 2000000
+   },
+   "income_months": [
+    8
+   ]
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 12000000,
+   "benefits": {
+    "other_benefit": 1500000
+   },
+   "income_months": [
+    8,
+    9,
+    10
+   ],
+   "ptkp": "K/1"
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 9000000,
+   "benefits": {
+    "other_benefit": 800000
+   },
+   "income_months": [
+    9
+   ]
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 15000000,
+   "benefits": {
+    "gift_other": 4000000,
+    "sports_facility": 1000000
+   },
+   "income_months": [
+    8
+   ],
+   "ptkp": "TK/1"
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 10000000,
+   "benefits": {
+    "other_benefit": 1500000
+   },
+   "income_months": [
+    3
+   ]
+  }
+ ]
+}

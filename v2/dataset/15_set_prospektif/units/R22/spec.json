@@ -1,0 +1,151 @@
+{
+ "id": "R22",
+ "layer": "regulation",
+ "change_type": "T5",
+ "size": 2,
+ "traps": [
+  "batas penghasilan tetap 'tidak lebih dari' dan definisi penghasilan tetap di Pasal 1",
+  "pasal yang menyatakan ulang bahwa di atas batas tetap menjadi penghasilan",
+  "pengecualian: tunjangan pajak yang dibayar tunai bukan pajak yang ditanggung",
+  "berlaku juga untuk Masa Pajak Terakhir",
+  "mulai Masa Pajak September 2027"
+ ],
+ "title": "PER-768/PJ/2027: Pengecualian PPh Pasal 21 ditanggung pemberi kerja bagi pegawai berpenghasilan rendah",
+ "header": "DIREKTORAT JENDERAL PAJAK",
+ "issued": "2027-08-12",
+ "effective_from": "2027-09-01",
+ "effective_until": null,
+ "retroactive": false,
+ "summary": "PPh 21 yang ditanggung pemberi kerja tidak lagi menjadi penghasilan pegawai tetap berpenghasilan tetap sampai Rp5.500.000 sebulan, mulai Masa September 2027; tunjangan pajak tunai tetap penghasilan.",
+ "gold": {
+  "delta_id": "GOLD-R22",
+  "event_id": "R22",
+  "document": {
+   "id": "R22",
+   "title": "PER-768/PJ/2027: Pengecualian PPh Pasal 21 ditanggung pemberi kerja bagi pegawai berpenghasilan rendah",
+   "issued": "2027-08-12"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "parameter",
+    "id": "PAR.BORNE_TAX_EXEMPT_WAGE_CAP.2027",
+    "name": "borne_tax_exempt_wage_cap",
+    "value": 5500000,
+    "value_type": "money",
+    "valid_from": "2027-09-01",
+    "label_id": "batas penghasilan tetap pegawai untuk pajak ditanggung yang dikecualikan",
+    "source": [
+     {
+      "document": "R22",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "tidak diperhitungkan sebagai penghasilan bagi pegawai tetap yang penghasilan tetapnya sebulan tidak lebih dari Rp5.500.000,00"
+     },
+     {
+      "document": "R22",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak September 2027."
+     }
+    ],
+    "recorded_on": "2027-08-12"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.BORNE.EXEMPT.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "tax_allowance",
+    "expression": "0",
+    "valid_from": "2027-09-01",
+    "source": [
+     {
+      "document": "R22",
+      "provision": "Pasal 1",
+      "page": null,
+      "quote": "gaji pokok dan tunjangan yang sifatnya tetap yang diterima secara teratur setiap bulan oleh pegawai tetap."
+     },
+     {
+      "document": "R22",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "tidak diperhitungkan sebagai penghasilan bagi pegawai tetap yang penghasilan tetapnya sebulan tidak lebih dari Rp5.500.000,00"
+     },
+     {
+      "document": "R22",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "berlaku untuk seluruh Masa Pajak, termasuk Masa Pajak Terakhir."
+     },
+     {
+      "document": "R22",
+      "provision": "Pasal 3",
+      "page": null,
+      "quote": "melebihi Rp5.500.000,00 (lima juta lima ratus ribu rupiah) tetap diperhitungkan sebagai penghasilan bagi pegawai yang bersangkutan."
+     },
+     {
+      "document": "R22",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "bukan merupakan Pajak Penghasilan Pasal 21 yang ditanggung oleh pemberi kerja"
+     },
+     {
+      "document": "R22",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak September 2027."
+     }
+    ],
+    "recorded_on": "2027-08-12",
+    "condition": "withholding_method == 'employer_borne' and base_salary + fixed_allowance <= param('borne_tax_exempt_wage_cap')",
+    "overrides": [
+     "REG.BORNE.GROSSUP.RUNNING",
+     "REG.BORNE.GROSSUP.FINAL"
+    ],
+    "label": "tax borne by the employer is no benefit for employees whose fixed income does not exceed the cap; applies in all periods including the final one"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 4500000,
+   "ptkp": "TK/0",
+   "method": "employer_borne"
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 5000000,
+   "ptkp": "K/0",
+   "method": "employer_borne"
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 5100000,
+   "ptkp": "TK/0",
+   "method": "employer_borne"
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 4500000,
+   "ptkp": "TK/0",
+   "method": "gross_up"
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0",
+   "method": "employer_borne"
+  }
+ ]
+}

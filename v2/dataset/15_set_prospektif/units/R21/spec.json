@@ -1,0 +1,206 @@
+{
+ "id": "R21",
+ "layer": "regulation",
+ "change_type": "T5",
+ "size": 3,
+ "traps": [
+  "syarat sektor melalui KLU yang daftarnya hanya di lampiran",
+  "pasal yang menyatakan ulang batas Rp2.000.000 bagi pemberi kerja di luar daftar",
+  "nilai di atas batas tetap menjadi penghasilan",
+  "pasal sisipan (Pasal 3A) dalam peraturan perubahan",
+  "mulai Masa Pajak April 2027"
+ ],
+ "title": "PMK 761/2027: Perubahan PMK 66/2023: fasilitas tempat tinggal pegawai di lokasi kerja terpencil",
+ "header": "MENTERI KEUANGAN REPUBLIK INDONESIA",
+ "issued": "2027-03-30",
+ "effective_from": "2027-04-01",
+ "effective_until": null,
+ "retroactive": false,
+ "summary": "Batas fasilitas tempat tinggal individual yang bukan penghasilan naik menjadi Rp4.000.000 sebulan bagi pemberi kerja ber-KLU pertambangan, perkebunan sawit, dan kehutanan (lampiran); selain itu tetap Rp2.000.000. Mulai Masa April 2027.",
+ "gold": {
+  "delta_id": "GOLD-R21",
+  "event_id": "R21",
+  "document": {
+   "id": "R21",
+   "title": "PMK 761/2027: Perubahan PMK 66/2023: fasilitas tempat tinggal pegawai di lokasi kerja terpencil",
+   "issued": "2027-03-30"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "table",
+    "id": "TAB.NATURA_HOUSING_KLU.2027",
+    "name": "natura_housing_klu",
+    "table_kind": "set",
+    "valid_from": "2027-04-01",
+    "label_id": "kode klasifikasi lapangan usaha dengan tempat tinggal di lokasi terpencil",
+    "source": [
+     {
+      "document": "R21",
+      "provision": "Pasal I angka 1, Pasal 3A ayat (1)",
+      "page": null,
+      "quote": "kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran"
+     },
+     {
+      "document": "R21",
+      "provision": "Pasal II",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak April 2027."
+     }
+    ],
+    "rows": [
+     {
+      "key": "05101",
+      "sector": "pertambangan_batu_bara"
+     },
+     {
+      "key": "05102",
+      "sector": "pertambangan_batu_bara"
+     },
+     {
+      "key": "07101",
+      "sector": "pertambangan_bijih_logam"
+     },
+     {
+      "key": "07102",
+      "sector": "pertambangan_bijih_logam"
+     },
+     {
+      "key": "07291",
+      "sector": "pertambangan_bijih_logam"
+     },
+     {
+      "key": "01261",
+      "sector": "perkebunan_kelapa_sawit"
+     },
+     {
+      "key": "01262",
+      "sector": "perkebunan_kelapa_sawit"
+     },
+     {
+      "key": "02101",
+      "sector": "kehutanan"
+     }
+    ],
+    "recorded_on": "2027-03-30"
+   },
+   {
+    "kind": "parameter",
+    "id": "PAR.NATURA_HOUSING_REMOTE_CAP.2027",
+    "name": "natura_housing_remote_cap",
+    "value": 4000000,
+    "value_type": "money",
+    "valid_from": "2027-04-01",
+    "label_id": "batas fasilitas tempat tinggal di lokasi kerja terpencil",
+    "source": [
+     {
+      "document": "R21",
+      "provision": "Pasal I angka 1, Pasal 3A ayat (1)",
+      "page": null,
+      "quote": "dikecualikan dari penghasilan pegawai sampai dengan nilai Rp4.000.000,00 (empat juta rupiah) sebulan."
+     },
+     {
+      "document": "R21",
+      "provision": "Pasal II",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak April 2027."
+     }
+    ],
+    "recorded_on": "2027-03-30"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.NATURA.HOUSING.REMOTE.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "benefit_housing_taxable",
+    "expression": "max(0, benefit('housing_individual') - param('natura_housing_remote_cap'))",
+    "valid_from": "2027-04-01",
+    "source": [
+     {
+      "document": "R21",
+      "provision": "Pasal I angka 1, Pasal 3A ayat (1)",
+      "page": null,
+      "quote": "dikecualikan dari penghasilan pegawai sampai dengan nilai Rp4.000.000,00 (empat juta rupiah) sebulan."
+     },
+     {
+      "document": "R21",
+      "provision": "Pasal I angka 1, Pasal 3A ayat (1)",
+      "page": null,
+      "quote": "kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran"
+     },
+     {
+      "document": "R21",
+      "provision": "Pasal I angka 1, Pasal 3A ayat (2)",
+      "page": null,
+      "quote": "melebihi batas sebagaimana dimaksud pada ayat (1) merupakan penghasilan bagi pegawai yang bersangkutan."
+     },
+     {
+      "document": "R21",
+      "provision": "Pasal I angka 1, Pasal 3A ayat (3)",
+      "page": null,
+      "quote": "batas nilai fasilitas tempat tinggal yang dikecualikan dari penghasilan sebesar Rp2.000.000,00 (dua juta rupiah) sebulan tetap berlaku."
+     },
+     {
+      "document": "R21",
+      "provision": "Pasal II",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak April 2027."
+     }
+    ],
+    "recorded_on": "2027-03-30",
+    "condition": "in_table('natura_housing_klu', employer('klu'))",
+    "overrides": [
+     "REG.NATURA.HOUSING"
+    ],
+    "label": "employers with a listed KLU: housing up to the higher cap is excluded; other employers keep the general cap"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "TK/0",
+   "klu": "05101",
+   "benefits": {
+    "housing_individual": 3500000
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "TK/0",
+   "klu": "62019",
+   "benefits": {
+    "housing_individual": 3500000
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 15000000,
+   "ptkp": "K/1",
+   "klu": "07101",
+   "benefits": {
+    "housing_individual": 4500000
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "K/0",
+   "klu": "01261",
+   "benefits": {
+    "housing_individual": 4000000
+   }
+  }
+ ]
+}

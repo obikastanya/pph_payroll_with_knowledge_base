@@ -1,0 +1,91 @@
+PERATURAN PERUSAHAAN
+
+PT NUSA TEKNOLOGI PEMBAYARAN
+
+PERIODE 2027–2028
+
+Nomor: PP/NTP/2027/01
+
+Disahkan Kepala Suku Dinas Tenaga Kerja, Transmigrasi dan Energi Kota Administrasi Jakarta Selatan Nomor 0066/PP/I/2027 (fiktif)
+
+Ditetapkan di Jakarta pada tanggal 20 Januari 2027
+
+BAB I KETENTUAN UMUM
+
+Pasal 1
+
+Dalam Peraturan Perusahaan ini yang dimaksud dengan:
+
+a. Perusahaan adalah PT Nusa Teknologi Pembayaran, penyelenggara portal dan platform pembayaran digital.
+
+b. Pekerja adalah pekerja tetap Perusahaan yang hubungan kerjanya didasarkan pada perjanjian kerja waktu tidak tertentu.
+
+c. Upah Pokok adalah imbalan dasar yang dibayarkan setiap bulan, tidak termasuk tunjangan.
+
+d. Tunjangan Tetap adalah tunjangan yang dibayarkan setiap bulan dengan jumlah yang tetap, yaitu Tunjangan Kompetensi.
+
+e. Upah adalah Upah Pokok ditambah Tunjangan Tetap.
+
+BAB II PENGUPAHAN DAN TUNJANGAN
+
+Pasal 2
+
+(1) Upah dibayarkan paling lambat tanggal 26 setiap bulan melalui rekening bank atas nama Pekerja.
+
+(2) Peraturan Perusahaan ini mulai berlaku pada tanggal 1 Januari 2027, sehingga ketentuan pengupahan dalam Peraturan Perusahaan ini berlaku juga bagi Upah bulan Januari 2027 yang telah dibayarkan sebelum Peraturan Perusahaan ini disahkan.
+
+Pasal 3
+
+(1) Setiap Pekerja menerima Tunjangan Kompetensi sebesar 5% (lima persen) dari Upah Pokok setiap bulan.
+
+(2) Tunjangan Kompetensi merupakan Tunjangan Tetap sebagaimana dimaksud dalam Pasal 1 huruf d.
+
+Pasal 4
+
+(1) Pekerja yang ditugaskan siaga pada malam hari untuk memantau sistem pembayaran menerima Tunjangan Siaga sebesar Rp75.000,00 (tujuh puluh lima ribu rupiah) untuk setiap hari siaga malam.
+
+(2) Tunjangan Siaga dibayarkan bersama Upah bulan yang bersangkutan dan bukan merupakan Tunjangan Tetap.
+
+Pasal 5
+
+(1) Pekerja menerima Tunjangan Hari Raya Keagamaan (THR) satu kali dalam setahun menjelang hari raya keagamaan Pekerja yang bersangkutan.
+
+(2) Pekerja dengan masa kerja 1 (satu) bulan secara terus-menerus atau lebih menerima THR. Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1 (satu) bulan Upah.
+
+(3) Pekerja dengan masa kerja 1 (satu) bulan secara terus-menerus tetapi kurang dari 12 (dua belas) bulan menerima THR secara proporsional, yaitu masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan Upah.
+
+(4) Pekerja yang hubungan kerjanya berakhir lebih dari 30 (tiga puluh) hari sebelum hari raya keagamaan tidak berhak atas THR tahun yang bersangkutan.
+
+Pasal 6
+
+(1) Perusahaan membayarkan Bonus Kinerja bersama Upah bulan Februari setiap tahun atas kinerja tahun sebelumnya.
+
+(2) Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih pada bulan Februari menerima Bonus Kinerja sebesar 1,5 (satu setengah) bulan Upah Pokok.
+
+(3) Pekerja dengan masa kerja 6 (enam) bulan atau lebih tetapi kurang dari 12 (dua belas) bulan pada bulan Februari menerima Bonus Kinerja sebesar 0,75 (nol koma tujuh lima) bulan Upah Pokok.
+
+(4) Pekerja dengan masa kerja kurang dari 6 (enam) bulan pada bulan Februari tidak menerima Bonus Kinerja.
+
+BAB III PAJAK PENGHASILAN
+
+Pasal 7
+
+(1) Ketentuan tentang Tunjangan Pajak dalam Peraturan Perusahaan PT Nusa Teknologi Pembayaran Nomor PP/NTP/2024/02 tetap berlaku bagi seluruh Pekerja selama masa berlaku Peraturan Perusahaan ini.
+
+(2) Tunjangan Pajak adalah tunjangan yang besarnya sama dengan Pajak Penghasilan Pasal 21 yang terutang atas penghasilan Pekerja pada bulan yang bersangkutan, dan tunjangan tersebut turut dihitung dalam penghasilan bruto untuk penghitungan Pajak Penghasilan Pasal 21.
+
+BAB IV KETENTUAN PENUTUP
+
+Pasal 8
+
+(1) Peraturan Perusahaan ini berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028.
+
+(2) Hal-hal yang belum diatur dalam Peraturan Perusahaan ini diatur lebih lanjut oleh Perusahaan dengan berpedoman pada peraturan perundang-undangan yang berlaku.
+
+Ditetapkan di Jakarta pada tanggal 20 Januari 2027
+
+PT NUSA TEKNOLOGI PEMBAYARAN
+
+Intan Kusumawardani
+
+Direktur Utama

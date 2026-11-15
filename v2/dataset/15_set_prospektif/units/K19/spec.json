@@ -1,0 +1,372 @@
+{
+ "id": "K19",
+ "layer": "company",
+ "instance": "SP12",
+ "policy": "K19",
+ "change_type": "T10",
+ "size": 9,
+ "traps": [
+  "berlaku surut (mulai 1 Januari 2027, disahkan 20 Januari 2027)",
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah (Tunjangan Pajak dari PP/NTP/2024/02 tetap berlaku)",
+  "rujukan silang (Pasal 3 ayat (2) ke Pasal 1 huruf d)",
+  "nilai dalam huruf dan angka yang harus dibaca bersama",
+  "syarat implisit (masa kerja pada bulan Februari)"
+ ],
+ "title": "PT Nusa Teknologi Pembayaran: Peraturan Perusahaan 2027-2028",
+ "header": "PERATURAN PERUSAHAAN PT NUSA TEKNOLOGI PEMBAYARAN",
+ "issued": "2027-01-21",
+ "effective_from": "2027-01-01",
+ "effective_until": "2028-12-31",
+ "retroactive": true,
+ "summary": "Peraturan Perusahaan 2027-2028 (berlaku surut sejak 1 Januari 2027): Tunjangan Kompetensi 5% Upah Pokok sebagai Tunjangan Tetap, Tunjangan Siaga malam Rp75.000, THR 1 bulan Upah, Bonus Kinerja Februari 1,5 atau 0,75 bulan Upah Pokok menurut masa kerja, dan Tunjangan Pajak (gross-up) dilanjutkan dari peraturan lama.",
+ "gold": {
+  "delta_id": "GOLD-K19",
+  "event_id": "K19",
+  "document": {
+   "id": "K19",
+   "title": "PT Nusa Teknologi Pembayaran: Peraturan Perusahaan 2027-2028",
+   "issued": "2027-01-21"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "fact",
+    "id": "k19_oncall_allowance",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "night on-call allowance",
+    "source": [
+     {
+      "document": "K19",
+      "provision": "Pasal 4 ayat (1)",
+      "page": null,
+      "quote": "untuk setiap hari siaga malam"
+     }
+    ],
+    "recorded_on": "2027-01-21"
+   },
+   {
+    "kind": "fact",
+    "id": "k19_bonus_factor",
+    "fact_type": "exact",
+    "fact_scope": "period",
+    "output": false,
+    "label": "performance bonus in months of base salary by length of service",
+    "source": [
+     {
+      "document": "K19",
+      "provision": "Pasal 6 ayat (2)",
+      "page": null,
+      "quote": "menerima Bonus Kinerja sebesar 1,5 (satu setengah) bulan Upah Pokok"
+     }
+    ],
+    "recorded_on": "2027-01-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K19.COMPETENCY",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "fixed_allowance",
+    "expression": "income('fixed_allowance') + round(dec('0.05') * base_salary, 1, 'down')",
+    "label": "competency allowance of 5% of base salary, a fixed allowance",
+    "policy": "K19",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K19",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "Tunjangan Kompetensi sebesar 5% (lima persen) dari Upah Pokok setiap bulan"
+     },
+     {
+      "document": "K19",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "merupakan Tunjangan Tetap sebagaimana dimaksud dalam Pasal 1 huruf d"
+     },
+     {
+      "document": "K19",
+      "provision": "Pasal 8 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-01-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K19.ONCALL",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k19_oncall_allowance",
+    "expression": "hr('night_shift_days') * 75000",
+    "label": "75,000 per night on-call day",
+    "policy": "K19",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K19",
+      "provision": "Pasal 4 ayat (1)",
+      "page": null,
+      "quote": "Tunjangan Siaga sebesar Rp75.000,00 (tujuh puluh lima ribu rupiah) untuk setiap hari siaga malam"
+     },
+     {
+      "document": "K19",
+      "provision": "Pasal 8 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-01-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K19.OTHER_REGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + k19_oncall_allowance",
+    "label": "on-call allowance is regular income paid with the monthly wage",
+    "policy": "K19",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K19",
+      "provision": "Pasal 4 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan bersama Upah bulan yang bersangkutan dan bukan merupakan Tunjangan Tetap"
+     },
+     {
+      "document": "K19",
+      "provision": "Pasal 8 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-01-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K19.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "condition": "hr('thr_holiday') > 0",
+    "expression": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0",
+    "label": "THR of one month wage including the competency allowance, proportional below 12 months",
+    "policy": "K19",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K19",
+      "provision": "Pasal 5 ayat (2)",
+      "page": null,
+      "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1 (satu) bulan Upah"
+     },
+     {
+      "document": "K19",
+      "provision": "Pasal 5 ayat (3)",
+      "page": null,
+      "quote": "yaitu masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan Upah"
+     },
+     {
+      "document": "K19",
+      "provision": "Pasal 5 ayat (4)",
+      "page": null,
+      "quote": "berakhir lebih dari 30 (tiga puluh) hari sebelum hari raya keagamaan tidak berhak atas THR"
+     },
+     {
+      "document": "K19",
+      "provision": "Pasal 1 huruf e",
+      "page": null,
+      "quote": "Upah adalah Upah Pokok ditambah Tunjangan Tetap"
+     },
+     {
+      "document": "K19",
+      "provision": "Pasal 8 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-01-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K19.BONUS_FACTOR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k19_bonus_factor",
+    "expression": "dec('1.5') if hr('months_of_service') >= 12 else (dec('0.75') if hr('months_of_service') >= 6 else 0)",
+    "label": "1.5 months from 12 months of service, 0.75 from 6 months, none below",
+    "policy": "K19",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K19",
+      "provision": "Pasal 6 ayat (2)",
+      "page": null,
+      "quote": "masa kerja 12 (dua belas) bulan atau lebih pada bulan Februari menerima Bonus Kinerja sebesar 1,5 (satu setengah) bulan Upah Pokok"
+     },
+     {
+      "document": "K19",
+      "provision": "Pasal 6 ayat (3)",
+      "page": null,
+      "quote": "sebesar 0,75 (nol koma tujuh lima) bulan Upah Pokok"
+     },
+     {
+      "document": "K19",
+      "provision": "Pasal 6 ayat (4)",
+      "page": null,
+      "quote": "kurang dari 6 (enam) bulan pada bulan Februari tidak menerima Bonus Kinerja"
+     },
+     {
+      "document": "K19",
+      "provision": "Pasal 8 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-01-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K19.BONUS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "condition": "month == 2",
+    "expression": "income('bonus') + round(k19_bonus_factor * base_salary, 1, 'half_up')",
+    "label": "performance bonus paid with the February wage",
+    "policy": "K19",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K19",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "membayarkan Bonus Kinerja bersama Upah bulan Februari setiap tahun"
+     },
+     {
+      "document": "K19",
+      "provision": "Pasal 8 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-01-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K19.METHOD",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "expression": "'gross_up'",
+    "label": "tax allowance equal to the PPh 21 due, counted in gross income: gross-up continued",
+    "policy": "K19",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K19",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "Ketentuan tentang Tunjangan Pajak dalam Peraturan Perusahaan PT Nusa Teknologi Pembayaran Nomor PP/NTP/2024/02 tetap berlaku bagi seluruh Pekerja"
+     },
+     {
+      "document": "K19",
+      "provision": "Pasal 7 ayat (2)",
+      "page": null,
+      "quote": "besarnya sama dengan Pajak Penghasilan Pasal 21 yang terutang atas penghasilan Pekerja pada bulan yang bersangkutan"
+     },
+     {
+      "document": "K19",
+      "provision": "Pasal 8 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-01-21"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 15000000,
+   "ptkp": "K/1",
+   "klu": "63122",
+   "hr": {
+    "night_shift_days": 4,
+    "months_of_service": 40
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "klu": "63122",
+   "hr": {
+    "night_shift_days": 0,
+    "months_of_service": 8
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 11000000,
+   "ptkp": "TK/0",
+   "klu": "63122",
+   "hr": {
+    "months_of_service": 3
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "K/0",
+   "klu": "63122",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 14
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "K/0",
+   "klu": "63122",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 14,
+    "days_terminated_before_holiday": 31
+   }
+  }
+ ]
+}

@@ -1,0 +1,532 @@
+{
+ "id": "K22",
+ "layer": "company",
+ "instance": "SP03",
+ "policy": "K22",
+ "change_type": "T10",
+ "size": 14,
+ "traps": [
+  "angka penting yang hanya ada di lampiran (Penghargaan Masa Kerja menurut masa kerja)",
+  "rujukan silang (Pasal 6 ke Lampiran I; Pasal 3 ayat (2) ke Pasal 1 huruf e)",
+  "pengecualian (Bonus Musim Ramai hanya masa kerja 6 bulan atau lebih)",
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah (PPh 21 dipotong dari pekerja)",
+  "nilai dalam huruf dan angka yang harus dibaca bersama",
+  "ambang Upah Pokok Rp7.000.000 untuk Tunjangan Jabatan"
+ ],
+ "title": "PT Samudra Biru Hospitality: Perjanjian Kerja Bersama 2027-2028",
+ "header": "PERJANJIAN KERJA BERSAMA PT SAMUDRA BIRU HOSPITALITY",
+ "issued": "2026-12-12",
+ "effective_from": "2027-01-01",
+ "effective_until": "2028-12-31",
+ "retroactive": false,
+ "summary": "PKB 2027-2028 hotel: Tunjangan Shift Malam Rp50.000, Tunjangan Jabatan Rp300.000 untuk Upah Pokok sampai Rp7.000.000, THR 1 bulan Upah, Bonus Musim Ramai setengah bulan Upah Pokok pada Juli dan Desember, Penghargaan Masa Kerja pada Desember menurut tabel Lampiran I, dan fasilitas pajak ditanggung pemerintah diterima penuh oleh pekerja.",
+ "gold": {
+  "delta_id": "GOLD-K22",
+  "event_id": "K22",
+  "document": {
+   "id": "K22",
+   "title": "PT Samudra Biru Hospitality: Perjanjian Kerja Bersama 2027-2028",
+   "issued": "2026-12-12"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "parameter",
+    "id": "PAR.K22.SEASON_RATE",
+    "name": "k22_season_bonus_rate",
+    "value": "0.5",
+    "value_type": "exact",
+    "label": "peak season bonus in months of base salary",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K22",
+      "provision": "Pasal 5 ayat (2)",
+      "page": null,
+      "quote": "Besar Bonus Musim Ramai pada setiap pembayaran adalah 0,5 (setengah) bulan Upah Pokok"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-12"
+   },
+   {
+    "kind": "table",
+    "id": "TAB.K22.SERVICE_AWARD",
+    "name": "k22_service_award_months",
+    "table_kind": "bracket",
+    "rows": [
+     {
+      "key": null,
+      "lower": 0,
+      "upper": 24,
+      "value": "0"
+     },
+     {
+      "key": null,
+      "lower": 24,
+      "upper": 60,
+      "value": "0.5"
+     },
+     {
+      "key": null,
+      "lower": 60,
+      "upper": 120,
+      "value": "1"
+     },
+     {
+      "key": null,
+      "lower": 120,
+      "upper": null,
+      "value": "1.5"
+     }
+    ],
+    "label": "service award in months of base salary by months of service",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K22",
+      "provision": "Lampiran I angka 2",
+      "page": null,
+      "quote": "lebih dari 24 (dua puluh empat) bulan sampai dengan 60 (enam puluh) bulan: 0,5 (nol koma lima) bulan Upah Pokok"
+     },
+     {
+      "document": "K22",
+      "provision": "Lampiran I angka 3",
+      "page": null,
+      "quote": "lebih dari 60 (enam puluh) bulan sampai dengan 120 (seratus dua puluh) bulan: 1 (satu) bulan Upah Pokok"
+     },
+     {
+      "document": "K22",
+      "provision": "Lampiran I angka 4",
+      "page": null,
+      "quote": "lebih dari 120 (seratus dua puluh) bulan: 1,5 (satu setengah) bulan Upah Pokok"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-12"
+   },
+   {
+    "kind": "fact",
+    "id": "k22_night_allowance",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "night shift allowance",
+    "source": [
+     {
+      "document": "K22",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "untuk setiap hari kerja pada shift malam"
+     }
+    ],
+    "recorded_on": "2026-12-12"
+   },
+   {
+    "kind": "fact",
+    "id": "k22_season_bonus",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "peak season bonus in July and December",
+    "source": [
+     {
+      "document": "K22",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "bersama Upah bulan Juli dan bulan Desember setiap tahun"
+     }
+    ],
+    "recorded_on": "2026-12-12"
+   },
+   {
+    "kind": "fact",
+    "id": "k22_service_months",
+    "fact_type": "exact",
+    "fact_scope": "period",
+    "output": false,
+    "label": "service award in months of base salary",
+    "source": [
+     {
+      "document": "K22",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "menurut masa kerja Pekerja sebagaimana tercantum dalam Lampiran I"
+     }
+    ],
+    "recorded_on": "2026-12-12"
+   },
+   {
+    "kind": "fact",
+    "id": "k22_service_award",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "service award paid in December",
+    "source": [
+     {
+      "document": "K22",
+      "provision": "Pasal 6 ayat (2)",
+      "page": null,
+      "quote": "dihitung dari Upah Pokok bulan Desember"
+     }
+    ],
+    "recorded_on": "2026-12-12"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K22.NIGHT",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k22_night_allowance",
+    "expression": "hr('night_shift_days') * 50000",
+    "label": "50,000 per night shift day",
+    "policy": "K22",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K22",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "Tunjangan Shift Malam sebesar Rp50.000,00 (lima puluh ribu rupiah) untuk setiap hari kerja pada shift malam"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-12"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K22.OTHER_REGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + k22_night_allowance",
+    "label": "night shift allowance is regular income paid with the monthly wage",
+    "policy": "K22",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K22",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "yang dibayarkan bersama Upah bulan yang bersangkutan"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-12"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K22.FIXED_ALLOWANCE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "fixed_allowance",
+    "expression": "income('fixed_allowance') + (300000 if base_salary <= 7000000 else 0)",
+    "label": "position allowance of 300,000 for base salary up to 7,000,000, a fixed allowance",
+    "policy": "K22",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K22",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "Upah Pokok sampai dengan Rp7.000.000,00 (tujuh juta rupiah) sebulan menerima Tunjangan Jabatan sebesar Rp300.000,00 (tiga ratus ribu rupiah) sebulan"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "merupakan Tunjangan Tetap sebagaimana dimaksud dalam Pasal 1 huruf e"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-12"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K22.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "condition": "hr('thr_holiday') > 0",
+    "expression": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0",
+    "label": "THR of one month wage including the position allowance, proportional below 12 months",
+    "policy": "K22",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K22",
+      "provision": "Pasal 4 ayat (2)",
+      "page": null,
+      "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1 (satu) bulan Upah"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 4 ayat (3)",
+      "page": null,
+      "quote": "yaitu masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan Upah"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 4 ayat (4)",
+      "page": null,
+      "quote": "berakhir lebih dari 30 (tiga puluh) hari sebelum hari raya keagamaan tidak berhak atas THR"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 1 huruf f",
+      "page": null,
+      "quote": "Upah adalah Upah Pokok ditambah Tunjangan Tetap"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-12"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K22.SEASON_BONUS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k22_season_bonus",
+    "expression": "round(param('k22_season_bonus_rate') * base_salary, 1, 'half_up') if month in (7, 12) and hr('months_of_service') >= 6 else 0",
+    "label": "peak season bonus of half a month of base salary in July and December after 6 months of service",
+    "policy": "K22",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K22",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "kepada Pekerja dengan masa kerja 6 (enam) bulan atau lebih bersama Upah bulan Juli dan bulan Desember setiap tahun"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 5 ayat (2)",
+      "page": null,
+      "quote": "Besar Bonus Musim Ramai pada setiap pembayaran adalah 0,5 (setengah) bulan Upah Pokok"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-12"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K22.SERVICE_MONTHS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k22_service_months",
+    "expression": "bracket('k22_service_award_months', 'service', hr('months_of_service'))",
+    "label": "months of base salary of the service award, from the annex",
+    "policy": "K22",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K22",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "menurut masa kerja Pekerja sebagaimana tercantum dalam Lampiran I"
+     },
+     {
+      "document": "K22",
+      "provision": "Lampiran I angka 2",
+      "page": null,
+      "quote": "lebih dari 24 (dua puluh empat) bulan sampai dengan 60 (enam puluh) bulan: 0,5 (nol koma lima) bulan Upah Pokok"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-12"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K22.SERVICE_AWARD",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k22_service_award",
+    "expression": "round(k22_service_months * base_salary, 1, 'half_up') if month == 12 else 0",
+    "label": "service award paid in December on the December base salary",
+    "policy": "K22",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K22",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "membayarkan Penghargaan Masa Kerja bersama Upah bulan Desember"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 6 ayat (2)",
+      "page": null,
+      "quote": "Penghargaan Masa Kerja dihitung dari Upah Pokok bulan Desember"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-12"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K22.BONUS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "expression": "income('bonus') + k22_season_bonus + k22_service_award",
+    "label": "peak season bonus and service award together make the bonus",
+    "policy": "K22",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K22",
+      "provision": "Pasal 6 ayat (3)",
+      "page": null,
+      "quote": "dibayarkan di samping Bonus Musim Ramai bulan Desember"
+     },
+     {
+      "document": "K22",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-12"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "K/1",
+   "klu": "55110",
+   "hr": {
+    "night_shift_days": 5,
+    "months_of_service": 30
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 7000000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "hr": {
+    "night_shift_days": 0,
+    "months_of_service": 70
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 7500000,
+   "ptkp": "K/0",
+   "klu": "55110",
+   "hr": {
+    "night_shift_days": 8,
+    "months_of_service": 130
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 6000000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "hr": {
+    "months_of_service": 4
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 20
+   }
+  },
+  {
+   "id": "T6",
+   "year": 2027,
+   "salary": 6800000,
+   "ptkp": "K/2",
+   "klu": "55110",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 20,
+    "days_terminated_before_holiday": 31
+   }
+  }
+ ]
+}

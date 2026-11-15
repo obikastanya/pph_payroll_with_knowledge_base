@@ -1,0 +1,839 @@
+{
+ "id": "R35",
+ "layer": "regulation",
+ "change_type": "T6",
+ "size": 13,
+ "traps": [
+  "berlaku surut (Masa Pajak Januari 2027, terbit Februari)",
+  "rujukan silang ke Lampiran II PMK 72/2025 tanpa mencetak ulang daftar KLU pariwisata",
+  "pengecualian: industri padat karya tidak termasuk perpanjangan (ayat (6))",
+  "besaran turun bertahap: 100% Januari-Maret, 50% April-Juni; sisa 50% tetap dipotong",
+  "pasal yang menyatakan ulang batas Rp10.000.000 yang tidak berubah",
+  "kelebihan potong hanya sebagian dikembalikan (bagian yang tidak ditanggung pemerintah)",
+  "ketentuan peralihan: Januari 2027 yang sudah dipotong diperhitungkan kemudian",
+  "nilai dalam huruf dan angka"
+ ],
+ "title": "PMK 788/2027: Perpanjangan PPh 21 DTP sektor pariwisata sampai Masa Pajak Juni 2027 dengan besaran turun bertahap",
+ "header": "MENTERI KEUANGAN REPUBLIK INDONESIA",
+ "issued": "2027-02-04",
+ "effective_from": "2027-01-01",
+ "effective_until": "2027-06-30",
+ "retroactive": true,
+ "summary": "Insentif PPh 21 DTP hanya untuk sektor pariwisata (KLU Lampiran II PMK 72/2025) diperpanjang untuk Masa Pajak Januari-Juni 2027 (surut) dengan bagian yang ditanggung 100% pada Januari-Maret dan 50% pada April-Juni; batas Rp10.000.000 tetap; industri padat karya tidak diperpanjang.",
+ "gold": {
+  "delta_id": "GOLD-R35",
+  "event_id": "R35",
+  "document": {
+   "id": "R35",
+   "title": "PMK 788/2027: Perpanjangan PPh 21 DTP sektor pariwisata sampai Masa Pajak Juni 2027 dengan besaran turun bertahap",
+   "issued": "2027-02-04"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "parameter",
+    "id": "PAR.DTP_FIXED_INCOME_CAP.2027",
+    "name": "dtp_fixed_income_cap",
+    "value": 10000000,
+    "value_type": "money",
+    "valid_from": "2027-01-01",
+    "valid_until": "2027-06-30",
+    "label_id": "batas penghasilan tetap dan teratur",
+    "source": [
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (4)",
+      "page": null,
+      "quote": "tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) sebulan pada Masa Pajak Januari 2027"
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (5)",
+      "page": null,
+      "quote": "tidak berubah dari ketentuan yang berlaku untuk Tahun Anggaran 2026."
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (1)",
+      "page": null,
+      "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah untuk Masa Pajak Januari 2027 sampai dengan Masa Pajak Juni 2027."
+     }
+    ],
+    "recorded_on": "2027-02-04"
+   },
+   {
+    "kind": "parameter",
+    "id": "PAR.DTP_TOURISM_SHARE.2027A",
+    "name": "dtp_tourism_share",
+    "value": "1",
+    "value_type": "rate",
+    "valid_from": "2027-01-01",
+    "valid_until": "2027-03-31",
+    "label_id": "bagian pajak yang ditanggung pemerintah Januari-Maret",
+    "source": [
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (2) huruf a",
+      "page": null,
+      "quote": "100% (seratus persen) dari Pajak Penghasilan Pasal 21 yang terutang untuk Masa Pajak Januari 2027 sampai dengan Masa Pajak Maret 2027;"
+     }
+    ],
+    "recorded_on": "2027-02-04"
+   },
+   {
+    "kind": "parameter",
+    "id": "PAR.DTP_TOURISM_SHARE.2027B",
+    "name": "dtp_tourism_share",
+    "value": "0.5",
+    "value_type": "rate",
+    "valid_from": "2027-04-01",
+    "valid_until": "2027-06-30",
+    "label_id": "bagian pajak yang ditanggung pemerintah April-Juni",
+    "source": [
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (2) huruf b",
+      "page": null,
+      "quote": "50% (lima puluh persen) dari Pajak Penghasilan Pasal 21 yang terutang untuk Masa Pajak April 2027 sampai dengan Masa Pajak Juni 2027."
+     }
+    ],
+    "recorded_on": "2027-02-04"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.DTP.RUNNING.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "pph21_dtp",
+    "expression": "round(param('dtp_tourism_share') * pph21_due, 1, param('pph_round_mode')) if dtp_facility else 0",
+    "valid_from": "2027-01-01",
+    "valid_until": "2027-06-30",
+    "condition": "not is_final_period",
+    "source": [
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (2) huruf a",
+      "page": null,
+      "quote": "100% (seratus persen) dari Pajak Penghasilan Pasal 21 yang terutang untuk Masa Pajak Januari 2027 sampai dengan Masa Pajak Maret 2027;"
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (2) huruf b",
+      "page": null,
+      "quote": "50% (lima puluh persen) dari Pajak Penghasilan Pasal 21 yang terutang untuk Masa Pajak April 2027 sampai dengan Masa Pajak Juni 2027."
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "dihitung dari Pajak Penghasilan Pasal 21 yang terutang pada Masa Pajak yang bersangkutan."
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (1)",
+      "page": null,
+      "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah untuk Masa Pajak Januari 2027 sampai dengan Masa Pajak Juni 2027."
+     }
+    ],
+    "recorded_on": "2027-02-04"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.DTP.FINAL.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "pph21_dtp",
+    "expression": "round(param('dtp_tourism_share') * max(0, final_period_tax), 1, param('pph_round_mode')) if dtp_facility else 0",
+    "valid_from": "2027-01-01",
+    "valid_until": "2027-06-30",
+    "condition": "is_final_period",
+    "label": "the government bears the tabled share of the tax still due in the last period; only the part not borne by the government is refunded",
+    "source": [
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (2) huruf a",
+      "page": null,
+      "quote": "100% (seratus persen) dari Pajak Penghasilan Pasal 21 yang terutang untuk Masa Pajak Januari 2027 sampai dengan Masa Pajak Maret 2027;"
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (2) huruf b",
+      "page": null,
+      "quote": "50% (lima puluh persen) dari Pajak Penghasilan Pasal 21 yang terutang untuk Masa Pajak April 2027 sampai dengan Masa Pajak Juni 2027."
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 5 ayat (2)",
+      "page": null,
+      "quote": "dihitung dari Pajak Penghasilan Pasal 21 yang kurang dipotong pada Masa Pajak Terakhir."
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 5 ayat (3)",
+      "page": null,
+      "quote": "hanya dikembalikan kepada Pegawai Tertentu sebesar bagian yang tidak ditanggung pemerintah."
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (1)",
+      "page": null,
+      "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah untuk Masa Pajak Januari 2027 sampai dengan Masa Pajak Juni 2027."
+     }
+    ],
+    "recorded_on": "2027-02-04"
+   }
+  ],
+  "change": [
+   {
+    "kind": "table",
+    "id": "TAB.DTP_KLU_TOURISM.2025",
+    "name": "dtp_klu_tourism",
+    "table_kind": "set",
+    "valid_from": "2025-10-01",
+    "rows": [
+     {
+      "key": "49425",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "50113",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "50122",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "55110",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "55120",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "55130",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "55191",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "55192",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "55193",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "55194",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "55199",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "55900",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "56101",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "56102",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "56103",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "56104",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "56109",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "56210",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "56290",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "56301",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "56302",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "56303",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "56304",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "56306",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "68112",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "68120",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "70201",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "79111",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "79119",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "79121",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "79129",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "79911",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "79912",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "79921",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "79922",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "79990",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "82301",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "82302",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "90030",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "90040",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "91021",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "91022",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "91024",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "91029",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93111",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93112",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93113",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93114",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93115",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93116",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93119",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93191",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93193",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93195",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93211",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93219",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93221",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93222",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93223",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93224",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93229",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93231",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93239",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93241",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93242",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93243",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93244",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93245",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93246",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93249",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93291",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93292",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93293",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93294",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "93299",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "96121",
+      "sector": "pariwisata"
+     },
+     {
+      "key": "96122",
+      "sector": "pariwisata"
+     }
+    ],
+    "label_id": "kode klasifikasi lapangan usaha pariwisata",
+    "valid_until": "2027-06-30",
+    "source": [
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (1)",
+      "page": null,
+      "quote": "Pemberi Kerja sektor pariwisata yang memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran II Peraturan Menteri Keuangan Nomor 72 Tahun 2025"
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (1)",
+      "page": null,
+      "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah untuk Masa Pajak Januari 2027 sampai dengan Masa Pajak Juni 2027."
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (6)",
+      "page": null,
+      "quote": "tidak diberikan kepada Pemberi Kerja pada industri padat karya"
+     }
+    ],
+    "recorded_on": "2027-02-04"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.DTP.ELIGIBLE.TOURISM",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "dtp_eligible_tourism",
+    "expression": "in_table('dtp_klu_tourism', employer('klu')) and dtp_income_test <= param('dtp_fixed_income_cap') and employee('tax_id_valid') != False and employee('other_dtp_incentive') != True",
+    "valid_from": "2025-10-01",
+    "valid_until": "2027-06-30",
+    "source": [
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (1)",
+      "page": null,
+      "quote": "Pemberi Kerja sektor pariwisata yang memiliki kode klasifikasi lapangan usaha sebagaimana tercantum dalam Lampiran II Peraturan Menteri Keuangan Nomor 72 Tahun 2025"
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (4)",
+      "page": null,
+      "quote": "tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) sebulan pada Masa Pajak Januari 2027"
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (4)",
+      "page": null,
+      "quote": "yang memiliki Nomor Pokok Wajib Pajak atau Nomor Induk Kependudukan yang terintegrasi dengan sistem administrasi perpajakan dan tidak menerima insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah lainnya."
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (1)",
+      "page": null,
+      "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah untuk Masa Pajak Januari 2027 sampai dengan Masa Pajak Juni 2027."
+     }
+    ],
+    "recorded_on": "2027-02-04"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.DTP.FACILITY.TOURISM",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "dtp_facility",
+    "expression": "value_or('dtp_eligible', False) or dtp_eligible_tourism",
+    "valid_from": "2025-10-01",
+    "overrides": [
+     "REG.DTP.FACILITY"
+    ],
+    "valid_until": "2027-06-30",
+    "source": [
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (1)",
+      "page": null,
+      "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah untuk Masa Pajak Januari 2027 sampai dengan Masa Pajak Juni 2027."
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (6)",
+      "page": null,
+      "quote": "tidak diberikan kepada Pemberi Kerja pada industri padat karya"
+     }
+    ],
+    "recorded_on": "2027-02-04"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.DTP.FIXED_INCOME",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "dtp_fixed_income",
+    "expression": "base_salary + fixed_allowance + other_regular_income + benefit('housing_individual') + benefit('company_vehicle')",
+    "valid_from": "2025-01-01",
+    "label": "tafsir K5: fixed and regular pay including fixed benefits in kind; without employer premiums, incidental overtime, THR, bonus",
+    "valid_until": "2027-06-30",
+    "source": [
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (1)",
+      "page": null,
+      "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah untuk Masa Pajak Januari 2027 sampai dengan Masa Pajak Juni 2027."
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (4)",
+      "page": null,
+      "quote": "yang bersifat tetap dan teratur tidak lebih dari Rp10.000.000,00"
+     }
+    ],
+    "recorded_on": "2027-02-04"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.DTP.INCOME_TEST",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "dtp_income_test",
+    "expression": "employee('contract_fixed_income') if employee('contract_fixed_income') != None else value_in('dtp_fixed_income', first_month)",
+    "valid_from": "2025-01-01",
+    "label": "koreksi emas E0 (GT1 holdout PMK10-B-4): the criterion is the fixed regular income the contract gives for January or the first month (case attribute contract_fixed_income); without it, the fixed regular income paid in that month",
+    "valid_until": "2027-06-30",
+    "source": [
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (4)",
+      "page": null,
+      "quote": "tidak lebih dari Rp10.000.000,00 (sepuluh juta rupiah) sebulan pada Masa Pajak Januari 2027"
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (1)",
+      "page": null,
+      "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah untuk Masa Pajak Januari 2027 sampai dengan Masa Pajak Juni 2027."
+     }
+    ],
+    "recorded_on": "2027-02-04"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.DTP.REFUND",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "refund_to_employee",
+    "expression": "max(0, 0 - final_period_tax - sum_periods_before_final('pph21_dtp'))",
+    "valid_from": "2025-01-01",
+    "condition": "value_or('dtp_eligible', False) or value_or('dtp_eligible_tourism', False)",
+    "overrides": [
+     "REG.YEAR.REFUND"
+    ],
+    "label": "Pasal 5 ayat (5) and (5a): only the part not borne by the government is refunded",
+    "valid_until": "2027-06-30",
+    "source": [
+     {
+      "document": "R35",
+      "provision": "Pasal 5 ayat (3)",
+      "page": null,
+      "quote": "hanya dikembalikan kepada Pegawai Tertentu sebesar bagian yang tidak ditanggung pemerintah."
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 5 ayat (2)",
+      "page": null,
+      "quote": "dihitung dari Pajak Penghasilan Pasal 21 yang kurang dipotong pada Masa Pajak Terakhir."
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (1)",
+      "page": null,
+      "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah untuk Masa Pajak Januari 2027 sampai dengan Masa Pajak Juni 2027."
+     }
+    ],
+    "recorded_on": "2027-02-04"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.DTP.NO_GROSSUP",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "tax_allowance",
+    "expression": "0",
+    "valid_from": "2025-01-01",
+    "condition": "dtp_facility and withholding_method == 'employer_borne'",
+    "overrides": [
+     "REG.BORNE.GROSSUP.RUNNING",
+     "REG.BORNE.GROSSUP.FINAL"
+    ],
+    "label": "tafsir K18: under DTP the employer bears no tax, so a borne tax is no benefit to gross up; a tax allowance (gross_up method) stays income and the DTP is paid in cash on top",
+    "valid_until": "2027-06-30",
+    "source": [
+     {
+      "document": "R35",
+      "provision": "Pasal 5 ayat (4)",
+      "page": null,
+      "quote": "tunjangan atau tanggungan tersebut diperhitungkan sebagai penghasilan yang dikenai pajak, dan insentif dibayarkan secara tunai kepada Pegawai Tertentu."
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (1)",
+      "page": null,
+      "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah untuk Masa Pajak Januari 2027 sampai dengan Masa Pajak Juni 2027."
+     }
+    ],
+    "recorded_on": "2027-02-04"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.DTP.THP_CASH",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "employee_tax_burden",
+    "expression": "0 - pph21_dtp",
+    "valid_from": "2025-01-01",
+    "condition": "dtp_facility and withholding_method == 'employer_borne'",
+    "label": "Pasal 5 ayat (1): the DTP is paid in cash also when the employer bears the tax, so it is cash the employee receives on top (negative tax burden)",
+    "valid_until": "2027-06-30",
+    "source": [
+     {
+      "document": "R35",
+      "provision": "Pasal 5 ayat (4)",
+      "page": null,
+      "quote": "tunjangan atau tanggungan tersebut diperhitungkan sebagai penghasilan yang dikenai pajak, dan insentif dibayarkan secara tunai kepada Pegawai Tertentu."
+     },
+     {
+      "document": "R35",
+      "provision": "Pasal 4A ayat (1)",
+      "page": null,
+      "quote": "diberikan insentif Pajak Penghasilan Pasal 21 ditanggung pemerintah untuk Masa Pajak Januari 2027 sampai dengan Masa Pajak Juni 2027."
+     }
+    ],
+    "recorded_on": "2027-02-04"
+   }
+  ],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 10000000,
+   "ptkp": "K/1",
+   "klu": "56101",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 10500000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "klu": "13111",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "klu": "79111",
+   "income": {
+    "fixed_allowance": 0
+   },
+   "employee": {
+    "other_dtp_incentive": true
+   }
+  },
+  {
+   "id": "T6",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "K/2",
+   "klu": "55110",
+   "start_month": 4,
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T7",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "klu": "56101",
+   "income": {
+    "fixed_allowance": 0
+   },
+   "method": "employer_borne"
+  },
+  {
+   "id": "T8",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "end_month": 5,
+   "income": {
+    "fixed_allowance": 0
+   }
+  }
+ ]
+}

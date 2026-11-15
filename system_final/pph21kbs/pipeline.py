@@ -255,7 +255,8 @@ class Config:
     draft_effort: str = "high"
     budget_tokens: int = documents.TOKEN_BUDGET
     use_stored_map: bool = False       # read a document through its stored map (digest.py)
-    digest_budget: int = DIGEST_BUDGET
+    digest_budget: int = DIGEST_BUDGET # a mapped selection above this is sent whole and reported as over budget
+    fallback: str = "lexical"          # without a usable map: "lexical" selection within budget_tokens, or "full" text
     max_tokens: int = 32000            # per draft or repair call
     policy_omega: date = field(default_factory=date.today)    # knowledge date a company policy is checked against
 
@@ -328,7 +329,8 @@ def _messages(log):
 
 
 def document_text(docs, view, cfg, digester=None, call_prefix=""):
-    """(text for the drafting model, selection record). Without a usable map, the lexical selection is used."""
+    """(text for the drafting model, selection record). Without a usable map, cfg.fallback decides: the lexical
+    selection or the full text."""
     selections, info = [], {}
     for d in docs:
         record = None
@@ -341,10 +343,15 @@ def document_text(docs, view, cfg, digester=None, call_prefix=""):
             record = digest.load(d["id"])
         usable = record is not None and digest.usable(record)
         if usable:
-            sel = digest.select(d["id"], record, cfg.digest_budget)
+            sel = digest.select(d["id"], record)
+        elif cfg.fallback == "full":
+            sel = documents.full(d["id"])
         else:
             sel = documents.select(d["id"], view, cfg.budget_tokens)
-        info[d["id"]] = {"tokens": sel.tokens, "dropped": sel.dropped}
+        info[d["id"]] = {"tokens": sel.tokens, "dropped": sel.dropped,
+                         "reading": "map" if usable else cfg.fallback}
+        if usable and sel.tokens > cfg.digest_budget:
+            info[d["id"]]["over_budget"] = True
         if record:
             info[d["id"]]["digest"] = {"model": record["model"], "parts": digest.counts(record), "used": usable,
                                        "calls": record["calls"], "failed_calls": record["failed_calls"]}

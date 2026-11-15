@@ -1,0 +1,63 @@
+LAMPIRAN V PERATURAN PERUSAHAAN PT ARUNIKA ENERGI MANDIRI TENTANG KEBIJAKAN PAJAK DAN TUNJANGAN KANTOR PUSAT
+
+Nomor: PP/AEM/2027/05
+
+Disahkan Kepala Suku Dinas Tenaga Kerja, Transmigrasi dan Energi Kota Administrasi Jakarta Selatan Nomor 0452/PP/IV/2027 (fiktif)
+
+Ditetapkan di Jakarta pada tanggal 5 April 2027
+
+BAB I KETENTUAN UMUM
+
+Pasal 1
+
+(1) Lampiran ini berlaku bagi pekerja tetap Perusahaan di kantor pusat Jakarta.
+
+(2) Upah Pokok adalah imbalan dasar yang dibayarkan setiap bulan, tidak termasuk tunjangan. Tunjangan Tetap adalah tunjangan yang dibayarkan setiap bulan dengan jumlah yang tetap. Upah adalah Upah Pokok ditambah Tunjangan Tetap.
+
+BAB II TUNJANGAN
+
+Pasal 2
+
+(1) Pekerja kantor pusat menerima Tunjangan Perumahan sebesar Rp3.000.000,00 (tiga juta rupiah) sebulan.
+
+(2) Tunjangan Perumahan merupakan Tunjangan Tetap dan dibayarkan setiap bulan bersama Upah.
+
+Pasal 3
+
+(1) Pekerja menerima Tunjangan Hari Raya Keagamaan (THR) satu kali dalam setahun menjelang hari raya keagamaan Pekerja yang bersangkutan.
+
+(2) Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1,5 (satu setengah) bulan Upah.
+
+(3) Pekerja dengan masa kerja 1 (satu) bulan secara terus-menerus tetapi kurang dari 12 (dua belas) bulan menerima THR secara proporsional, yaitu masa kerja dibagi 12 (dua belas) dikali 1,5 (satu setengah) bulan Upah.
+
+(4) Pekerja yang hubungan kerjanya berakhir lebih dari 30 (tiga puluh) hari sebelum hari raya keagamaan tidak berhak atas THR tahun yang bersangkutan.
+
+BAB III PAJAK PENGHASILAN
+
+Pasal 4
+
+(1) Pajak Penghasilan Pasal 21 atas seluruh penghasilan Pekerja dengan Upah Pokok kurang dari Rp30.000.000,00 (tiga puluh juta rupiah) sebulan ditanggung oleh Perusahaan dan tidak dibayarkan kepada Pekerja dalam bentuk uang tunai.
+
+(2) Pekerja dengan Upah Pokok Rp30.000.000,00 (tiga puluh juta rupiah) sebulan atau lebih menerima Tunjangan Pajak setiap bulan sebesar Pajak Penghasilan Pasal 21 yang terutang, yang dibayarkan tunai bersama Upah dan turut dihitung dalam penghasilan bruto untuk penghitungan Pajak Penghasilan Pasal 21.
+
+(3) Upah Pokok sebagaimana dimaksud pada ayat (1) dan ayat (2) adalah Upah Pokok pada bulan pertama Pekerja bekerja dalam tahun pajak yang bersangkutan.
+
+Pasal 5
+
+Ketentuan Pasal 4 berlaku untuk seluruh Masa Pajak tahun 2027, termasuk Masa Pajak Januari sampai dengan Maret 2027 yang telah dilaporkan sebelum Lampiran ini ditetapkan. Kekurangan atau kelebihan pemotongan diperhitungkan pada Masa Pajak Terakhir tahun 2027.
+
+BAB IV KETENTUAN PENUTUP
+
+Pasal 6
+
+(1) Lampiran ini berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028.
+
+(2) Hal-hal yang belum diatur dalam Lampiran ini diatur lebih lanjut oleh Perusahaan dengan berpedoman pada peraturan perundang-undangan yang berlaku.
+
+Ditetapkan di Jakarta pada tanggal 5 April 2027
+
+PT ARUNIKA ENERGI MANDIRI
+
+Gunawan Setiadi
+
+Direktur Utama

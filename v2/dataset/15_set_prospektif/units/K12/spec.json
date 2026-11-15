@@ -1,0 +1,594 @@
+{
+ "id": "K12",
+ "layer": "company",
+ "instance": "SP03",
+ "policy": "K12",
+ "change_type": "T10",
+ "size": 13,
+ "traps": [
+  "angka penting yang hanya ada di lampiran",
+  "nilai dalam huruf dan angka",
+  "syarat implisit (penghasilan tetap menurut perjanjian kerja menentukan siapa yang pajaknya ditanggung)",
+  "rujukan silang ke pasal lain",
+  "pencabutan perjanjian lama"
+ ],
+ "title": "Perjanjian Kerja Bersama PT Samudra Biru Hospitality Periode 2027-2028",
+ "header": "PT SAMUDRA BIRU HOSPITALITY",
+ "issued": "2026-12-21",
+ "effective_from": "2027-01-01",
+ "effective_until": "2028-12-31",
+ "retroactive": false,
+ "summary": "PKB 2027-2028: PPh 21 ditanggung Perusahaan bagi penghasilan tetap bulanan sampai Rp7.500.000 dan dibebankan pada pekerja di atasnya, tunjangan shift malam Rp45.000, insentif penjualan 100% sampai Rp6.000.000 dan 60% di atasnya (lampiran), THR menurut masa kerja, iuran dana kesejahteraan 0,5%.",
+ "gold": {
+  "delta_id": "GOLD-K12",
+  "event_id": "K12",
+  "document": {
+   "id": "K12",
+   "title": "Perjanjian Kerja Bersama PT Samudra Biru Hospitality Periode 2027-2028",
+   "issued": "2026-12-21"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "fact",
+    "id": "sbh_wage",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "monthly wage: base salary plus fixed allowance",
+    "source": [
+     {
+      "document": "K12",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "Upah sebulan adalah gaji pokok ditambah tunjangan tetap yang diterima pekerja setiap bulan."
+     }
+    ],
+    "recorded_on": "2026-12-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K12.WAGE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "sbh_wage",
+    "expression": "income('base_salary') + income('fixed_allowance')",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K12",
+    "source": [
+     {
+      "document": "K12",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "Upah sebulan adalah gaji pokok ditambah tunjangan tetap yang diterima pekerja setiap bulan."
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K12.METHOD.BORNE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "condition": "(employee('contract_fixed_income') if employee('contract_fixed_income') != None else 0) <= 7500000",
+    "expression": "'employer_borne'",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K12",
+    "label": "tax borne by the company for contract fixed monthly income up to 7,500,000",
+    "source": [
+     {
+      "document": "K12",
+      "provision": "Pasal 8 ayat (1)",
+      "page": null,
+      "quote": "menurut perjanjian kerja sebesar Rp7.500.000,00 (tujuh juta lima ratus ribu rupiah) atau kurang ditanggung sepenuhnya oleh Perusahaan"
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K12.METHOD.GROSS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "condition": "(employee('contract_fixed_income') if employee('contract_fixed_income') != None else 0) > 7500000",
+    "expression": "'gross'",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K12",
+    "label": "tax withheld from the employee above 7,500,000",
+    "source": [
+     {
+      "document": "K12",
+      "provision": "Pasal 8 ayat (2)",
+      "page": null,
+      "quote": "lebih dari Rp7.500.000,00 (tujuh juta lima ratus ribu rupiah) dipotong dari penghasilan pekerja setiap bulan dan menjadi beban pekerja"
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-21"
+   },
+   {
+    "kind": "fact",
+    "id": "sbh_shift_allowance",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "night shift allowance",
+    "source": [
+     {
+      "document": "K12",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "sebesar Rp45.000,00 (empat puluh lima ribu rupiah) untuk setiap hari kerja shift malam"
+     }
+    ],
+    "recorded_on": "2026-12-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K12.SHIFT",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "sbh_shift_allowance",
+    "expression": "45000 * hr('night_shift_days')",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K12",
+    "source": [
+     {
+      "document": "K12",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "sebesar Rp45.000,00 (empat puluh lima ribu rupiah) untuk setiap hari kerja shift malam"
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-21"
+   },
+   {
+    "kind": "fact",
+    "id": "sbh_commission",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "sales incentive from the commission earned",
+    "source": [
+     {
+      "document": "K12",
+      "provision": "Lampiran I angka 1",
+      "page": null,
+      "quote": "Bagian komisi sampai dengan Rp6.000.000,00 (enam juta rupiah) dalam satu bulan dibayarkan sebesar 100% (seratus persen)."
+     },
+     {
+      "document": "K12",
+      "provision": "Lampiran I angka 2",
+      "page": null,
+      "quote": "Bagian komisi yang melebihi Rp6.000.000,00 (enam juta rupiah) dalam satu bulan dibayarkan sebesar 60% (enam puluh persen)."
+     }
+    ],
+    "recorded_on": "2026-12-21"
+   },
+   {
+    "kind": "parameter",
+    "id": "PAR.K12.COMMISSION_LIMIT",
+    "name": "sbh_commission_limit",
+    "value": 6000000,
+    "value_type": "money",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "label": "commission paid in full up to this amount a month",
+    "source": [
+     {
+      "document": "K12",
+      "provision": "Lampiran I angka 1",
+      "page": null,
+      "quote": "Bagian komisi sampai dengan Rp6.000.000,00 (enam juta rupiah) dalam satu bulan dibayarkan sebesar 100% (seratus persen)."
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-21"
+   },
+   {
+    "kind": "parameter",
+    "id": "PAR.K12.COMMISSION_RATE",
+    "name": "sbh_commission_rate_above",
+    "value": "0.6",
+    "value_type": "rate",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "label": "share of the commission above the limit that is paid",
+    "source": [
+     {
+      "document": "K12",
+      "provision": "Lampiran I angka 2",
+      "page": null,
+      "quote": "Bagian komisi yang melebihi Rp6.000.000,00 (enam juta rupiah) dalam satu bulan dibayarkan sebesar 60% (enam puluh persen)."
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K12.COMMISSION",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "sbh_commission",
+    "expression": "min(hr('variable_sales_commission'), param('sbh_commission_limit')) + round(param('sbh_commission_rate_above') * max(hr('variable_sales_commission') - param('sbh_commission_limit'), 0), 1, 'down')",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K12",
+    "source": [
+     {
+      "document": "K12",
+      "provision": "Lampiran I angka 1",
+      "page": null,
+      "quote": "Bagian komisi sampai dengan Rp6.000.000,00 (enam juta rupiah) dalam satu bulan dibayarkan sebesar 100% (seratus persen)."
+     },
+     {
+      "document": "K12",
+      "provision": "Lampiran I angka 2",
+      "page": null,
+      "quote": "Bagian komisi yang melebihi Rp6.000.000,00 (enam juta rupiah) dalam satu bulan dibayarkan sebesar 60% (enam puluh persen)."
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K12.OTHER_REGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + sbh_shift_allowance + sbh_commission",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K12",
+    "source": [
+     {
+      "document": "K12",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan setiap bulan bersama upah sebagai penghasilan teratur"
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 4 ayat (1)",
+      "page": null,
+      "quote": "dibayarkan sebagai insentif penjualan setiap bulan bersama upah bulan yang bersangkutan sebagai penghasilan teratur"
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K12.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "expression": "(round(sbh_wage * (dec('1.25') if hr('months_of_service') >= 60 else 1) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') == 0 else 0) if hr('thr_holiday') == 1 else income('thr')",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K12",
+    "label": "THR of 1.25 months from 60 months of service, 1 month from 12, pro rata from 1 month",
+    "source": [
+     {
+      "document": "K12",
+      "provision": "Pasal 5 ayat (2)",
+      "page": null,
+      "quote": "menerima THR sebesar 1,25 (satu koma dua puluh lima) kali upah satu bulan"
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 5 ayat (3)",
+      "page": null,
+      "quote": "menerima THR sebesar 1 (satu) bulan upah"
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 5 ayat (4)",
+      "page": null,
+      "quote": "menerima THR secara proporsional dengan perhitungan masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan upah"
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 5 ayat (5)",
+      "page": null,
+      "quote": "Pekerja yang hubungan kerjanya berakhir sebelum hari raya keagamaan tidak berhak atas THR tahun yang bersangkutan."
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-21"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K12.WELFARE_DUES",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "company_deductions",
+    "expression": "income('deductions') + round(dec('0.005') * income('base_salary'), 1, 'down')",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K12",
+    "label": "welfare fund dues of 0.5% of base salary",
+    "source": [
+     {
+      "document": "K12",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "sebesar 0,5% (nol koma lima persen) dari gaji pokok setiap bulan"
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 6 ayat (2)",
+      "page": null,
+      "quote": "dipotong dari upah pada saat pembayaran upah"
+     },
+     {
+      "document": "K12",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-21"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "employee": {
+    "contract_fixed_income": 7500000
+   },
+   "income": {
+    "fixed_allowance": 1000000
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "employee": {
+    "contract_fixed_income": 7501000
+   },
+   "income": {
+    "fixed_allowance": 1001000
+   },
+   "method": "gross_up"
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "employee": {
+    "contract_fixed_income": 7499000
+   },
+   "income": {
+    "fixed_allowance": 999000
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 7300000,
+   "ptkp": "K/1",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "employee": {
+    "contract_fixed_income": 8000000
+   },
+   "hr": {
+    "variable_sales_commission": 5500000
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 7300000,
+   "ptkp": "K/1",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "employee": {
+    "contract_fixed_income": 8000000
+   },
+   "hr": {
+    "variable_sales_commission": 6000000
+   }
+  },
+  {
+   "id": "T6",
+   "year": 2027,
+   "salary": 7300000,
+   "ptkp": "K/1",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "employee": {
+    "contract_fixed_income": 8000000
+   },
+   "hr": {
+    "variable_sales_commission": 9000000
+   }
+  },
+  {
+   "id": "T7",
+   "year": 2027,
+   "salary": 7000000,
+   "ptkp": "K/0",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "employee": {
+    "contract_fixed_income": 8000000
+   },
+   "hr": {
+    "night_shift_days": 10,
+    "months_of_service": 30
+   }
+  },
+  {
+   "id": "T8",
+   "year": 2027,
+   "salary": 6800000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "employee": {
+    "contract_fixed_income": 8000000
+   },
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 62,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T9",
+   "year": 2027,
+   "salary": 6800000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "employee": {
+    "contract_fixed_income": 8000000
+   },
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 60,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T10",
+   "year": 2027,
+   "salary": 6800000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "employee": {
+    "contract_fixed_income": 8000000
+   },
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 59,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T11",
+   "year": 2027,
+   "salary": 6800000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "employee": {
+    "contract_fixed_income": 8000000
+   },
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 6,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T12",
+   "year": 2027,
+   "salary": 6800000,
+   "ptkp": "TK/0",
+   "klu": "55110",
+   "jkk_risk": "low",
+   "employee": {
+    "contract_fixed_income": 8000000
+   },
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 40,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 3
+   }
+  }
+ ]
+}

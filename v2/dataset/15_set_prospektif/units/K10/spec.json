@@ -1,0 +1,263 @@
+{
+ "id": "K10",
+ "layer": "company",
+ "instance": "SP13",
+ "policy": "SP13",
+ "change_type": "T10",
+ "size": 3,
+ "traps": [
+  "syarat implisit (masa kerja, berhenti sebelum hari raya)",
+  "nilai dalam huruf dan angka",
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah"
+ ],
+ "title": "Memo Direksi PT Kencana Pelayaran Nusantara: Tunjangan Hari Raya Keagamaan dan uang lembur awak kapal",
+ "header": "PT KENCANA PELAYARAN NUSANTARA",
+ "issued": "2024-09-02",
+ "effective_from": "2024-10-01",
+ "effective_until": "2025-05-31",
+ "retroactive": false,
+ "summary": "Mulai 1 Oktober 2024 THR awak kapal menjadi 1,5 kali upah satu bulan untuk masa kerja 36 bulan atau lebih, 1 bulan untuk 12 sampai 35 bulan dan proporsional di bawah 12 bulan, dan uang lembur dikalikan faktor 1,2.",
+ "gold": {
+  "delta_id": "GOLD-K10",
+  "event_id": "K10",
+  "document": {
+   "id": "K10",
+   "title": "Memo Direksi PT Kencana Pelayaran Nusantara: Tunjangan Hari Raya Keagamaan dan uang lembur awak kapal",
+   "issued": "2024-09-02"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP13.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "expression": "(round((income('base_salary') + income('fixed_allowance')) * (dec('1.5') if hr('months_of_service') >= 36 else 1) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') == 0 else 0) if hr('thr_holiday') == 1 else income('thr')",
+    "valid_from": "2024-10-01",
+    "valid_until": "2025-05-31",
+    "policy": "SP13",
+    "label": "THR of 1.5 months of wage from 36 months of service, 1 month from 12, pro rata below, none after termination",
+    "source": [
+     {
+      "document": "K10",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "36 (tiga puluh enam) bulan secara terus-menerus atau lebih diberikan Tunjangan Hari Raya Keagamaan (THR) sebesar 1,5 (satu koma lima) kali upah satu bulan"
+     },
+     {
+      "document": "K10",
+      "provision": "Pasal 1 ayat (3)",
+      "page": null,
+      "quote": "tetapi kurang dari 12 (dua belas) bulan diberikan THR secara proporsional"
+     },
+     {
+      "document": "K10",
+      "provision": "Pasal 1 ayat (4)",
+      "page": null,
+      "quote": "terdiri atas gaji pokok dan tunjangan tetap"
+     },
+     {
+      "document": "K10",
+      "provision": "Pasal 1 ayat (5)",
+      "page": null,
+      "quote": "Pekerja yang hubungan kerjanya berakhir sebelum hari raya keagamaan, karena sebab apa pun, tidak berhak atas THR tahun yang bersangkutan."
+     },
+     {
+      "document": "K10",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Oktober 2024 sampai dengan tanggal 31 Mei 2025"
+     }
+    ],
+    "recorded_on": "2024-09-02"
+   },
+   {
+    "kind": "parameter",
+    "id": "PAR.SP13.OVERTIME_FACTOR",
+    "name": "sp13_overtime_factor",
+    "value": "1.2",
+    "value_type": "rate",
+    "valid_from": "2024-10-01",
+    "valid_until": "2025-05-31",
+    "label": "multiplier of crew overtime pay",
+    "source": [
+     {
+      "document": "K10",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "dibayarkan dengan faktor pengali sebesar 1,2 (satu koma dua) kali"
+     },
+     {
+      "document": "K10",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Oktober 2024 sampai dengan tanggal 31 Mei 2025"
+     }
+    ],
+    "recorded_on": "2024-09-02"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP13.OVERTIME",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "overtime_pay",
+    "expression": "round(income('overtime_pay') * param('sp13_overtime_factor'), 1, 'down')",
+    "valid_from": "2024-10-01",
+    "valid_until": "2025-05-31",
+    "policy": "SP13",
+    "label": "crew overtime pay multiplied by the factor of the memo",
+    "source": [
+     {
+      "document": "K10",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "dibayarkan dengan faktor pengali sebesar 1,2 (satu koma dua) kali"
+     },
+     {
+      "document": "K10",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "berlaku untuk seluruh jumlah uang lembur pada bulan yang bersangkutan"
+     },
+     {
+      "document": "K10",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Oktober 2024 sampai dengan tanggal 31 Mei 2025"
+     }
+    ],
+    "recorded_on": "2024-09-02"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2024,
+   "salary": 9500000,
+   "ptkp": "K/1",
+   "klu": "50131",
+   "jkk_risk": "high",
+   "start_month": 12,
+   "end_month": 12,
+   "hr": {
+    "months_of_service": 40,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2024,
+   "salary": 9500000,
+   "ptkp": "K/1",
+   "klu": "50131",
+   "jkk_risk": "high",
+   "start_month": 12,
+   "end_month": 12,
+   "hr": {
+    "months_of_service": 36,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2024,
+   "salary": 9500000,
+   "ptkp": "TK/0",
+   "klu": "50131",
+   "jkk_risk": "high",
+   "start_month": 12,
+   "end_month": 12,
+   "hr": {
+    "months_of_service": 35,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2024,
+   "salary": 7800000,
+   "ptkp": "TK/0",
+   "klu": "50131",
+   "jkk_risk": "high",
+   "start_month": 12,
+   "end_month": 12,
+   "hr": {
+    "months_of_service": 8,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2025,
+   "salary": 12000000,
+   "ptkp": "K/2",
+   "klu": "50131",
+   "jkk_risk": "high",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 40,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T6",
+   "year": 2024,
+   "salary": 9500000,
+   "ptkp": "K/1",
+   "klu": "50131",
+   "jkk_risk": "high",
+   "start_month": 12,
+   "end_month": 12,
+   "hr": {
+    "months_of_service": 40,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 5
+   }
+  },
+  {
+   "id": "T7",
+   "year": 2024,
+   "salary": 8800000,
+   "ptkp": "K/1",
+   "klu": "50131",
+   "jkk_risk": "high",
+   "income": {
+    "overtime_pay": 2000000
+   },
+   "income_months": [
+    10,
+    11,
+    12
+   ]
+  },
+  {
+   "id": "T8",
+   "year": 2024,
+   "salary": 8800000,
+   "ptkp": "K/1",
+   "klu": "50131",
+   "jkk_risk": "high",
+   "income": {
+    "overtime_pay": 2000000
+   },
+   "income_months": [
+    8,
+    9
+   ]
+  }
+ ]
+}

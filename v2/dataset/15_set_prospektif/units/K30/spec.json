@@ -1,0 +1,181 @@
+{
+ "id": "K30",
+ "layer": "company",
+ "instance": "SP13",
+ "policy": "K30",
+ "change_type": "T10",
+ "size": 3,
+ "traps": [
+  "ketentuan peralihan (Bonus Keselamatan Pelayaran 2027 hanya Desember)",
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah (PPh 21 ditanggung perusahaan)",
+  "nilai lama dan nilai baru dalam satu pasal (Rp85.000 menjadi Rp100.000)",
+  "rujukan silang (Pasal 4 ayat (1) PKB; Pasal 10 PKB)",
+  "syarat implisit (status kawin ditentukan dari status PTKP berawalan K)"
+ ],
+ "title": "PT Kencana Pelayaran Nusantara: Adendum I Perjanjian Kerja Bersama",
+ "header": "ADENDUM I PERJANJIAN KERJA BERSAMA PT KENCANA PELAYARAN NUSANTARA",
+ "issued": "2027-06-15",
+ "effective_from": "2027-07-01",
+ "effective_until": "2028-12-31",
+ "retroactive": false,
+ "summary": "Adendum I PKB berlaku 1 Juli 2027: Tunjangan Jaga Malam naik dari Rp85.000 menjadi Rp100.000, Tunjangan Keluarga 10% Upah Pokok untuk pekerja berstatus kawin (status PTKP berawalan K), Bonus Keselamatan Pelayaran Rp2.000.000 pada Juni dan Desember (2027 hanya Desember); PPh 21 ditanggung perusahaan tidak berubah.",
+ "gold": {
+  "delta_id": "GOLD-K30",
+  "event_id": "K30",
+  "document": {
+   "id": "K30",
+   "title": "PT Kencana Pelayaran Nusantara: Adendum I Perjanjian Kerja Bersama",
+   "issued": "2027-06-15"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.K30.NIGHT_WATCH",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + hr('night_shift_days') * 100000",
+    "label": "night watch allowance of 100,000 per night watch day, paid as regular income with the monthly wage",
+    "policy": "K30",
+    "valid_from": "2027-07-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K30",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "yang semula Rp85.000,00 (delapan puluh lima ribu rupiah) menjadi Rp100.000,00 (seratus ribu rupiah) untuk setiap hari tugas jaga malam"
+     },
+     {
+      "document": "K30",
+      "provision": "Pasal 1 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan bersama Upah bulan yang bersangkutan dan bukan merupakan Tunjangan Tetap"
+     },
+     {
+      "document": "K30",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Juli 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-06-15"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K30.FAMILY",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "fixed_allowance",
+    "expression": "income('fixed_allowance') + (round(dec('0.10') * base_salary, 1, 'down') if startswith(employee('ptkp_status'), 'K/') else 0)",
+    "label": "family allowance of 10% of base salary for PTKP statuses starting with K, a fixed allowance",
+    "policy": "K30",
+    "valid_from": "2027-07-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K30",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "Pekerja yang berstatus kawin menerima Tunjangan Keluarga sebesar 10% (sepuluh persen) dari Upah Pokok setiap bulan sebagai Tunjangan Tetap"
+     },
+     {
+      "document": "K30",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "status Penghasilan Tidak Kena Pajak yang diawali huruf K"
+     },
+     {
+      "document": "K30",
+      "provision": "Pasal 2 ayat (3)",
+      "page": null,
+      "quote": "berstatus tidak kawin tidak menerima Tunjangan Keluarga"
+     },
+     {
+      "document": "K30",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Juli 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-06-15"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K30.SAFETY_BONUS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "condition": "month in (6, 12) and hr('months_of_service') >= 12",
+    "expression": "income('bonus') + 2000000",
+    "label": "voyage safety bonus of 2,000,000 in June and December after 12 months of service (the June 2027 payment falls before the start)",
+    "policy": "K30",
+    "valid_from": "2027-07-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K30",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "Bonus Keselamatan Pelayaran sebesar Rp2.000.000,00 (dua juta rupiah) bersama Upah bulan Juni dan bulan Desember kepada Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih"
+     },
+     {
+      "document": "K30",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "tahun 2027 hanya dibayarkan pada bulan Desember 2027"
+     },
+     {
+      "document": "K30",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Juli 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-06-15"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "K/1",
+   "klu": "50131",
+   "hr": {
+    "night_shift_days": 8,
+    "months_of_service": 36
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "klu": "50131",
+   "hr": {
+    "night_shift_days": 8,
+    "months_of_service": 36
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 7500000,
+   "ptkp": "K/0",
+   "klu": "50131",
+   "hr": {
+    "night_shift_days": 0,
+    "months_of_service": 10
+   }
+  }
+ ]
+}

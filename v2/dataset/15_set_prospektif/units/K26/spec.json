@@ -1,0 +1,182 @@
+{
+ "id": "K26",
+ "layer": "company",
+ "instance": "SP07",
+ "policy": "K26",
+ "change_type": "T10",
+ "size": 3,
+ "traps": [
+  "berlaku surut (mulai 1 Januari 2027, ditetapkan 1 Maret 2027; triwulan pertama untuk Masa Pajak Maret 2027)",
+  "rujukan silang (Rata-rata Penghasilan Bruto pada Pasal 1 huruf d)",
+  "pengecualian (masa kerja kurang dari 6 bulan tidak menerima bonus dan membayar angsuran seragam)",
+  "nilai dalam huruf dan angka yang harus dibaca bersama"
+ ],
+ "title": "PT Sentosa Ritel Prima: Peraturan Perusahaan tentang Skema Bonus Kinerja Toko dan Komisi Penjualan",
+ "header": "PERATURAN PERUSAHAAN PT SENTOSA RITEL PRIMA",
+ "issued": "2027-03-02",
+ "effective_from": "2027-01-01",
+ "effective_until": "2028-12-31",
+ "retroactive": true,
+ "summary": "Peraturan skema bonus berlaku surut sejak 1 Januari 2027: Bonus Kinerja Toko triwulanan (Maret, Juni, September, Desember) 25% rata-rata penghasilan bruto sebulan 12 bulan terakhir bagi masa kerja 6 bulan atau lebih, Komisi Penjualan penuh sebagai penghasilan teratur, dan angsuran seragam Rp100.000 untuk masa kerja kurang dari 6 bulan.",
+ "gold": {
+  "delta_id": "GOLD-K26",
+  "event_id": "K26",
+  "document": {
+   "id": "K26",
+   "title": "PT Sentosa Ritel Prima: Peraturan Perusahaan tentang Skema Bonus Kinerja Toko dan Komisi Penjualan",
+   "issued": "2027-03-02"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.K26.STORE_BONUS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "condition": "month in (3, 6, 9, 12) and hr('months_of_service') >= 6 and employee('avg_monthly_gross_12m') != None",
+    "expression": "income('bonus') + round(dec('0.25') * employee('avg_monthly_gross_12m'), 1, 'down')",
+    "label": "quarterly store bonus of 25% of the average monthly gross income of the last 12 months, after 6 months of service",
+    "policy": "K26",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K26",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "Bonus Kinerja Toko setiap triwulan bersama Upah bulan Maret, bulan Juni, bulan September, dan bulan Desember"
+     },
+     {
+      "document": "K26",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "Besar Bonus Kinerja Toko adalah 25% (dua puluh lima persen)"
+     },
+     {
+      "document": "K26",
+      "provision": "Pasal 2 ayat (3)",
+      "page": null,
+      "quote": "telah mempunyai masa kerja 6 (enam) bulan atau lebih"
+     },
+     {
+      "document": "K26",
+      "provision": "Pasal 1 huruf d",
+      "page": null,
+      "quote": "Penghasilan Bruto Sebulan Pekerja yang dirata-ratakan selama 12 (dua belas) bulan terakhir"
+     },
+     {
+      "document": "K26",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "berlaku surut sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-03-02"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K26.COMMISSION",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + hr('variable_sales_commission')",
+    "label": "the whole sales commission is paid every month without a cap, as regular income",
+    "policy": "K26",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K26",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan seluruhnya bersama Upah bulan yang bersangkutan, tanpa batas atas, dan merupakan penghasilan yang dibayarkan setiap bulan"
+     },
+     {
+      "document": "K26",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "berlaku surut sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-03-02"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K26.UNIFORM",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "company_deductions",
+    "condition": "hr('months_of_service') < 6",
+    "expression": "income('deductions') + 100000",
+    "label": "uniform instalment of 100,000 a month deducted while service is below 6 months",
+    "policy": "K26",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K26",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "angsuran seragam sebesar Rp100.000,00 (seratus ribu rupiah) setiap bulan, yang dipotong dari Upah"
+     },
+     {
+      "document": "K26",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "berlaku surut sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-03-02"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 6000000,
+   "ptkp": "K/0",
+   "klu": "47111",
+   "hr": {
+    "months_of_service": 30,
+    "variable_sales_commission": 1200000
+   },
+   "employee": {
+    "avg_monthly_gross_12m": 8000000
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 5500000,
+   "ptkp": "TK/0",
+   "klu": "47111",
+   "hr": {
+    "months_of_service": 6
+   },
+   "employee": {
+    "avg_monthly_gross_12m": 7000000
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 5500000,
+   "ptkp": "TK/0",
+   "klu": "47111",
+   "hr": {
+    "months_of_service": 5
+   },
+   "employee": {
+    "avg_monthly_gross_12m": 7000000
+   }
+  }
+ ]
+}

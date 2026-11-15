@@ -1,0 +1,119 @@
+{
+ "id": "R24",
+ "layer": "regulation",
+ "change_type": "T8",
+ "size": 1,
+ "traps": [
+  "berlaku surut sejak Masa Pajak Januari 2027",
+  "pasal yang menyatakan ulang cara menentukan status PTKP yang tidak berubah",
+  "pengecualian: karyawati dengan surat keterangan suami tidak berpenghasilan",
+  "ketentuan peralihan kelebihan pemotongan"
+ ],
+ "title": "PMK 772/2027: Pencabutan ketentuan status PTKP karyawati kawin",
+ "header": "MENTERI KEUANGAN REPUBLIK INDONESIA",
+ "issued": "2027-02-23",
+ "effective_from": "2027-01-01",
+ "effective_until": null,
+ "retroactive": true,
+ "summary": "Ketentuan bahwa karyawati kawin tanpa surat keterangan memakai status TK/0 dicabut tanpa pengganti mulai Masa Januari 2027; status PTKP mengikuti status yang dilaporkan.",
+ "gold": {
+  "delta_id": "GOLD-R24",
+  "event_id": "R24",
+  "document": {
+   "id": "R24",
+   "title": "PMK 772/2027: Pencabutan ketentuan status PTKP karyawati kawin",
+   "issued": "2027-02-23"
+  },
+  "relevant": true,
+  "add": [],
+  "change": [
+   {
+    "kind": "rule",
+    "id": "REG.PTKP.STATUS.MARRIED_WOMAN",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "ptkp_status_effective",
+    "expression": "'TK/0'",
+    "valid_from": "2009-01-01",
+    "source": [
+     {
+      "document": "R24",
+      "provision": "Pasal 1",
+      "page": null,
+      "quote": "dicabut dan dinyatakan tidak berlaku."
+     },
+     {
+      "document": "R24",
+      "provision": "Pasal 2",
+      "page": null,
+      "quote": "termasuk karyawati kawin, ditentukan berdasarkan status perkawinan dan jumlah tanggungan keluarga"
+     },
+     {
+      "document": "R24",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak Januari 2027."
+     }
+    ],
+    "recorded_on": "2027-02-23",
+    "condition": "employee('sex') == 'F' and startswith(ptkp_status_input, 'K/') and not employee('husband_no_income_certified')",
+    "valid_until": "2026-12-31",
+    "overrides": [
+     "REG.PTKP.STATUS"
+    ],
+    "label": "repealed without replacement from the 2027 tax year: a married woman's PTKP status follows the status she reports"
+   }
+  ],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "K/1",
+   "employee": {
+    "sex": "F"
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "K/1",
+   "employee": {
+    "sex": "F",
+    "husband_no_income_certified": true
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "K/1",
+   "employee": {
+    "sex": "M"
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 15000000,
+   "ptkp": "K/2",
+   "employee": {
+    "sex": "F"
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "TK/0",
+   "employee": {
+    "sex": "F"
+   }
+  }
+ ]
+}

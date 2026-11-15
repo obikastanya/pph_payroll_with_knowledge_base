@@ -1,0 +1,166 @@
+{
+ "id": "R34",
+ "layer": "regulation",
+ "change_type": "T5",
+ "size": 2,
+ "traps": [
+  "pengecualian: pegawai yang mulai bekerja Januari atau Februari tidak tercakup (Pasal 3 ayat (1) huruf a), sehingga bulan paling awal yang tercakup (Maret) hanya ada di definisi Pasal 1 huruf a",
+  "pengecualian: pegawai yang berhenti bekerja sebelum Masa Pajak Desember tidak tercakup (Pasal 3 ayat (1) huruf b)",
+  "rujukan silang ke Pasal 15 ayat (3) PMK 168/2023: pegawai dengan saat mulai atau berhenti subjek pajak yang sudah ditentukan tetap memakai ketentuan lama (Pasal 3 ayat (1) huruf c)",
+  "pasal yang menyatakan ulang tarif Pasal 17, PTKP, biaya jabatan, dan tarif efektif bulanan yang tidak berubah (Pasal 4)",
+  "bulan mulai bekerja dihitung satu bulan penuh dan perubahan hanya terasa pada Masa Pajak Terakhir (Pasal 1 huruf b dan Pasal 2 ayat (3))",
+  "berlaku 1 Maret 2027 dan hanya untuk pegawai yang mulai bekerja sejak tanggal itu (Pasal 5)"
+ ],
+ "title": "PMK 790/2027: Perluasan penghitungan PPh Pasal 21 setahun bagi pegawai tetap yang mulai bekerja di tengah Tahun Pajak",
+ "header": "MENTERI KEUANGAN REPUBLIK INDONESIA",
+ "issued": "2027-02-24",
+ "effective_from": "2027-03-01",
+ "effective_until": null,
+ "retroactive": false,
+ "summary": "Penghitungan PPh Pasal 21 setahun yang disetahunkan menurut jumlah bulan bekerja diperluas ke pegawai tetap yang mulai bekerja bulan Maret sampai Desember dan bekerja sampai Masa Pajak Desember (PTKP dan pajak sebanding bulan bekerja), berlaku 1 Maret 2027; pegawai mulai Januari atau Februari, yang berhenti sebelum Desember, atau yang bulan subjek pajaknya sudah ditentukan dikecualikan.",
+ "gold": {
+  "delta_id": "GOLD-R34",
+  "event_id": "R34",
+  "document": {
+   "id": "R34",
+   "title": "PMK 790/2027: Perluasan penghitungan PPh Pasal 21 setahun bagi pegawai tetap yang mulai bekerja di tengah Tahun Pajak",
+   "issued": "2027-02-24"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "parameter",
+    "id": "PAR.ANNUALIZED_HIRE_FIRST_MONTH.2027",
+    "name": "annualized_hire_first_month",
+    "value": 3,
+    "value_type": "int",
+    "valid_from": "2027-03-01",
+    "label_id": "bulan mulai bekerja paling awal yang penghitungan setahunnya disetahunkan",
+    "source": [
+     {
+      "document": "R34",
+      "provision": "Pasal 1 huruf a",
+      "page": null,
+      "quote": "pegawai tetap baru adalah pegawai tetap yang mulai bekerja pada bulan Maret sampai dengan bulan Desember dalam Tahun Pajak yang bersangkutan;"
+     },
+     {
+      "document": "R34",
+      "provision": "Pasal 3 ayat (1) huruf a",
+      "page": null,
+      "quote": "pegawai tetap yang mulai bekerja pada bulan Januari atau bulan Februari;"
+     },
+     {
+      "document": "R34",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Maret 2027 dan diterapkan bagi pegawai tetap baru yang mulai bekerja sejak tanggal tersebut."
+     }
+    ],
+    "recorded_on": "2027-02-24"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.YEAR.SUBJECTIVE_MONTHS.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "subjective_months",
+    "expression": "(employee('subjective_end_month') if employee('subjective_end_month') != None else 12) - (employee('subjective_start_month') if employee('subjective_start_month') != None else (case('start_month') if (case('start_month') != None and case('start_month') >= param('annualized_hire_first_month') and employee('subjective_end_month') == None and (case('end_month') == None or case('end_month') == 12)) else 1)) + 1",
+    "valid_from": "2027-03-01",
+    "overrides": [
+     "REG.YEAR.SUBJECTIVE_MONTHS"
+    ],
+    "label": "a permanent employee who starts in March to December and works until the December period is annualized by the months worked; January and February starters, employees who leave before December, and employees with a subjective start or end month already set keep the previous count",
+    "source": [
+     {
+      "document": "R34",
+      "provision": "Pasal 1 huruf b",
+      "page": null,
+      "quote": "jumlah bulan bekerja adalah jumlah bulan sejak bulan pegawai tetap baru mulai bekerja sampai dengan Masa Pajak Desember, dengan bulan mulai bekerja dihitung satu bulan penuh."
+     },
+     {
+      "document": "R34",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "Penghasilan neto setahun pegawai tetap baru disetahunkan menurut jumlah bulan bekerja, dan Pajak Penghasilan Pasal 21 setahun dihitung sebanding dengan jumlah bulan bekerja tersebut."
+     },
+     {
+      "document": "R34",
+      "provision": "Pasal 3 ayat (1) huruf b",
+      "page": null,
+      "quote": "pegawai tetap yang berhenti bekerja sebelum Masa Pajak Desember; dan"
+     },
+     {
+      "document": "R34",
+      "provision": "Pasal 3 ayat (1) huruf c",
+      "page": null,
+      "quote": "pegawai tetap yang saat mulai atau saat berhenti menjadi subjek pajak dalam negeri telah ditentukan menurut Pasal 15 ayat (3) Peraturan Menteri Keuangan Nomor 168 Tahun 2023."
+     },
+     {
+      "document": "R34",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "Peraturan Menteri ini mulai berlaku pada tanggal 1 Maret 2027 dan diterapkan bagi pegawai tetap baru yang mulai bekerja sejak tanggal tersebut."
+     }
+    ],
+    "recorded_on": "2027-02-24"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "TK/0",
+   "start_month": 1,
+   "end_month": 12
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "TK/0",
+   "start_month": 2,
+   "end_month": 12
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "TK/0",
+   "start_month": 3,
+   "end_month": 12
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "K/1",
+   "start_month": 7,
+   "end_month": 12
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "TK/0",
+   "start_month": 7,
+   "end_month": 10
+  },
+  {
+   "id": "T6",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "TK/0",
+   "start_month": 7,
+   "end_month": 12,
+   "employee": {
+    "subjective_start_month": 9
+   }
+  }
+ ]
+}

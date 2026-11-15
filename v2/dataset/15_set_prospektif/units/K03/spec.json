@@ -1,0 +1,194 @@
+{
+ "id": "K03",
+ "layer": "company",
+ "instance": "SP04",
+ "policy": "SP04",
+ "change_type": "T10",
+ "size": 2,
+ "traps": [
+  "angka penting yang hanya ada di penjelasan",
+  "syarat implisit (masa kerja untuk bonus)",
+  "nilai dalam huruf dan angka",
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah"
+ ],
+ "title": "Memo Direksi PT Arunika Energi Mandiri: batas uang lembur dan bonus kinerja semester kedua",
+ "header": "PT ARUNIKA ENERGI MANDIRI",
+ "issued": "2024-04-01",
+ "effective_from": "2024-05-01",
+ "effective_until": "2024-12-31",
+ "retroactive": false,
+ "summary": "Mulai 1 Mei 2024 uang lembur dibatasi 40% dari upah sebulan (angka di penjelasan), dan bonus semester kedua dibayar penuh untuk masa kerja 12 bulan atau lebih, proporsional untuk 6 sampai 11 bulan, dan tidak dibayar di bawah 6 bulan.",
+ "gold": {
+  "delta_id": "GOLD-K03",
+  "event_id": "K03",
+  "document": {
+   "id": "K03",
+   "title": "Memo Direksi PT Arunika Energi Mandiri: batas uang lembur dan bonus kinerja semester kedua",
+   "issued": "2024-04-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP04.OVERTIME_CAP",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "overtime_pay",
+    "expression": "min(income('overtime_pay'), round(dec('0.4') * (income('base_salary') + income('fixed_allowance')), 1, 'down'))",
+    "valid_from": "2024-05-01",
+    "valid_until": "2024-12-31",
+    "policy": "SP04",
+    "label": "overtime pay capped at 40% of the monthly wage (base salary and fixed allowance)",
+    "source": [
+     {
+      "document": "K03",
+      "provision": "Penjelasan Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "Batas uang lembur sebagaimana dimaksud dalam Pasal 1 ayat (1) adalah 40% (empat puluh persen) dari upah sebulan."
+     },
+     {
+      "document": "K03",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "dihitung dari upah sebulan yang terdiri atas gaji pokok dan tunjangan tetap"
+     },
+     {
+      "document": "K03",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Mei 2024 sampai dengan berakhirnya masa berlaku Peraturan Perusahaan pada tanggal 31 Desember 2024"
+     }
+    ],
+    "recorded_on": "2024-04-01"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP04.BONUS_PRORATA",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "condition": "hr('months_of_service') < 12",
+    "expression": "round(income('bonus') * hr('months_of_service') / 12, 1, 'down') if hr('months_of_service') >= 6 else 0",
+    "valid_from": "2024-05-01",
+    "valid_until": "2024-12-31",
+    "policy": "SP04",
+    "label": "bonus pro rata for 6 to 11 months of service, none below 6 months, full at 12 months or more",
+    "source": [
+     {
+      "document": "K03",
+      "provision": "Pasal 2 ayat (3)",
+      "page": null,
+      "quote": "yaitu besaran penuh dikalikan masa kerja dalam bulan dibagi 12 (dua belas)"
+     },
+     {
+      "document": "K03",
+      "provision": "Pasal 2 ayat (4)",
+      "page": null,
+      "quote": "Pekerja dengan masa kerja kurang dari 6 (enam) bulan tidak menerima bonus."
+     },
+     {
+      "document": "K03",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Mei 2024 sampai dengan berakhirnya masa berlaku Peraturan Perusahaan pada tanggal 31 Desember 2024"
+     }
+    ],
+    "recorded_on": "2024-04-01"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2024,
+   "salary": 14000000,
+   "ptkp": "K/1",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "income": {
+    "overtime_pay": 7000000
+   },
+   "income_months": [
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  },
+  {
+   "id": "T2",
+   "year": 2024,
+   "salary": 14000000,
+   "ptkp": "K/1",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "income": {
+    "overtime_pay": 3000000
+   },
+   "income_months": [
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  },
+  {
+   "id": "T3",
+   "year": 2024,
+   "salary": 18000000,
+   "ptkp": "TK/0",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "income": {
+    "bonus": 24000000
+   },
+   "income_months": [
+    10
+   ],
+   "hr": {
+    "months_of_service": 8
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2024,
+   "salary": 18000000,
+   "ptkp": "TK/0",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "income": {
+    "bonus": 24000000
+   },
+   "income_months": [
+    10
+   ],
+   "hr": {
+    "months_of_service": 4
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2024,
+   "salary": 18000000,
+   "ptkp": "TK/0",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "income": {
+    "bonus": 24000000
+   },
+   "income_months": [
+    10
+   ],
+   "hr": {
+    "months_of_service": 12
+   }
+  }
+ ]
+}

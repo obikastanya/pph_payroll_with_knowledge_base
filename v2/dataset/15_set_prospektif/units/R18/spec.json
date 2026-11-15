@@ -1,0 +1,168 @@
+{
+ "id": "R18",
+ "layer": "regulation",
+ "change_type": "T3",
+ "size": 3,
+ "traps": [
+  "batas penghasilan tetap 'tidak lebih dari' (sama dengan batas termasuk)",
+  "definisi penghasilan tetap hanya di Pasal 1 (gaji pokok dan tunjangan tetap)",
+  "pasal yang menyatakan ulang bahwa uang lembur di atas batas tetap objek",
+  "pengecualian hanya sampai batas bulanan, kelebihannya tetap objek",
+  "mulai Masa Pajak Juli 2027"
+ ],
+ "title": "PER-742/PJ/2027: Perlakuan PPh Pasal 21 atas uang lembur pegawai tetap berpenghasilan rendah",
+ "header": "DIREKTORAT JENDERAL PAJAK",
+ "issued": "2027-06-09",
+ "effective_from": "2027-07-01",
+ "effective_until": null,
+ "retroactive": false,
+ "summary": "Uang lembur pegawai tetap dengan penghasilan tetap sampai Rp7.000.000 sebulan dikecualikan dari penghasilan bruto sampai Rp1.500.000 sebulan, mulai Masa Juli 2027.",
+ "gold": {
+  "delta_id": "GOLD-R18",
+  "event_id": "R18",
+  "document": {
+   "id": "R18",
+   "title": "PER-742/PJ/2027: Perlakuan PPh Pasal 21 atas uang lembur pegawai tetap berpenghasilan rendah",
+   "issued": "2027-06-09"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "parameter",
+    "id": "PAR.OVERTIME_EXEMPT_WAGE_CAP.2027",
+    "name": "overtime_exempt_wage_cap",
+    "value": 7000000,
+    "value_type": "money",
+    "valid_from": "2027-07-01",
+    "label_id": "batas penghasilan tetap pegawai penerima pengecualian lembur",
+    "source": [
+     {
+      "document": "R18",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "penghasilan tetapnya sebulan tidak lebih dari Rp7.000.000,00 (tujuh juta rupiah)"
+     },
+     {
+      "document": "R18",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "mulai Masa Pajak Juli 2027."
+     }
+    ],
+    "recorded_on": "2027-06-09"
+   },
+   {
+    "kind": "parameter",
+    "id": "PAR.OVERTIME_EXEMPT_CAP.2027",
+    "name": "overtime_exempt_cap",
+    "value": 1500000,
+    "value_type": "money",
+    "valid_from": "2027-07-01",
+    "label_id": "batas uang lembur yang dikecualikan sebulan",
+    "source": [
+     {
+      "document": "R18",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "paling banyak sebesar Rp1.500.000,00 (satu juta lima ratus ribu rupiah) sebulan."
+     },
+     {
+      "document": "R18",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "mulai Masa Pajak Juli 2027."
+     }
+    ],
+    "recorded_on": "2027-06-09"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.GROSS.REGULAR.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "regular_gross",
+    "expression": "base_salary + fixed_allowance + other_regular_income + (max(0, overtime_pay - param('overtime_exempt_cap')) if base_salary + fixed_allowance <= param('overtime_exempt_wage_cap') else overtime_pay) + employer_premiums_taxable + benefits_taxable_regular + tax_allowance",
+    "valid_from": "2027-07-01",
+    "source": [
+     {
+      "document": "R18",
+      "provision": "Pasal 1",
+      "page": null,
+      "quote": "gaji pokok dan tunjangan yang sifatnya tetap yang diterima secara teratur setiap bulan"
+     },
+     {
+      "document": "R18",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "dikecualikan dari penghasilan bruto paling banyak sebesar Rp1.500.000,00"
+     },
+     {
+      "document": "R18",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "tetap diperhitungkan sebagai penghasilan bruto."
+     },
+     {
+      "document": "R18",
+      "provision": "Pasal 3",
+      "page": null,
+      "quote": "seluruhnya diperhitungkan sebagai penghasilan bruto."
+     },
+     {
+      "document": "R18",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "mulai Masa Pajak Juli 2027."
+     }
+    ],
+    "recorded_on": "2027-06-09",
+    "overrides": [
+     "REG.GROSS.REGULAR"
+    ],
+    "label": "overtime up to the monthly cap is excluded from regular gross for employees whose fixed income (base salary plus fixed allowance) does not exceed the wage cap"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 5000000,
+   "ptkp": "TK/0",
+   "income": {
+    "overtime_pay": 2500000
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 6363637,
+   "ptkp": "K/1",
+   "income": {
+    "overtime_pay": 2500000
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 6400000,
+   "ptkp": "TK/0",
+   "income": {
+    "overtime_pay": 2500000
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 4000000,
+   "ptkp": "K/0",
+   "income": {
+    "overtime_pay": 1200000
+   }
+  }
+ ]
+}

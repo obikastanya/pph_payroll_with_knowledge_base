@@ -1,0 +1,240 @@
+{
+ "id": "K17",
+ "layer": "company",
+ "instance": "SP08",
+ "policy": "K17",
+ "change_type": "T10",
+ "size": 4,
+ "traps": [
+  "rujukan silang ke definisi Tunjangan Tetap (Pasal 1 huruf d)",
+  "ambang Upah Pokok Rp8.000.000 dengan pengecualian di atasnya",
+  "nilai dalam huruf dan angka yang harus dibaca bersama",
+  "syarat implisit (masa kerja pada bulan Maret)"
+ ],
+ "title": "PT Kreasi Digital Nusantara: Peraturan Perusahaan 2027-2028",
+ "header": "PERATURAN PERUSAHAAN PT KREASI DIGITAL NUSANTARA",
+ "issued": "2026-12-19",
+ "effective_from": "2027-01-01",
+ "effective_until": "2028-12-31",
+ "retroactive": false,
+ "summary": "Peraturan Perusahaan 2027-2028: Tunjangan Kerja Jarak Jauh Rp400.000 di luar Upah, THR 1,5 bulan Upah Pokok, Bonus Kinerja Tahunan 2 bulan Upah Pokok pada Maret, dan PPh 21 ditanggung perusahaan untuk Upah Pokok sampai Rp8.000.000.",
+ "gold": {
+  "delta_id": "GOLD-K17",
+  "event_id": "K17",
+  "document": {
+   "id": "K17",
+   "title": "PT Kreasi Digital Nusantara: Peraturan Perusahaan 2027-2028",
+   "issued": "2026-12-19"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.K17.REMOTE_ALLOWANCE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + 400000",
+    "label": "remote-work allowance of 400,000 a month, not a fixed allowance, so outside the contribution and THR base",
+    "policy": "K17",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K17",
+      "provision": "Pasal 4 ayat (1)",
+      "page": null,
+      "quote": "Tunjangan Kerja Jarak Jauh sebesar Rp400.000,00 (empat ratus ribu rupiah) sebulan"
+     },
+     {
+      "document": "K17",
+      "provision": "Pasal 4 ayat (2)",
+      "page": null,
+      "quote": "bukan merupakan Tunjangan Tetap sebagaimana dimaksud dalam Pasal 1 huruf d"
+     },
+     {
+      "document": "K17",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-19"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K17.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "condition": "hr('thr_holiday') > 0",
+    "expression": "round(dec('1.5') * base_salary * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0",
+    "label": "THR of 1.5 months of base salary, proportional below 12 months, none if employment ended more than 30 days before the holiday",
+    "policy": "K17",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K17",
+      "provision": "Pasal 5 ayat (2)",
+      "page": null,
+      "quote": "menerima THR sebesar 1,5 (satu setengah) bulan Upah Pokok"
+     },
+     {
+      "document": "K17",
+      "provision": "Pasal 5 ayat (3)",
+      "page": null,
+      "quote": "masa kerja dibagi 12 (dua belas) dikali 1,5 (satu setengah) bulan Upah Pokok"
+     },
+     {
+      "document": "K17",
+      "provision": "Pasal 5 ayat (4)",
+      "page": null,
+      "quote": "berakhir lebih dari 30 (tiga puluh) hari sebelum hari raya keagamaan tidak berhak atas THR"
+     },
+     {
+      "document": "K17",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-19"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K17.BONUS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "condition": "month == 3 and hr('months_of_service') >= 12",
+    "expression": "income('bonus') + 2 * base_salary",
+    "label": "annual performance bonus of 2 months of base salary in March after 12 months of service",
+    "policy": "K17",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K17",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "bersama Upah bulan Maret kepada Pekerja yang pada bulan Maret telah mempunyai masa kerja 12 (dua belas) bulan atau lebih"
+     },
+     {
+      "document": "K17",
+      "provision": "Pasal 6 ayat (2)",
+      "page": null,
+      "quote": "Besar Bonus Kinerja Tahunan adalah 2 (dua) bulan Upah Pokok"
+     },
+     {
+      "document": "K17",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-19"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K17.METHOD_BORNE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "condition": "value_in('base_salary', first_month) <= 8000000",
+    "expression": "'employer_borne'",
+    "label": "PPh 21 borne by the company for base salary up to 8,000,000; above it the tax is withheld from the employee (case method)",
+    "policy": "K17",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K17",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "Upah Pokok sampai dengan Rp8.000.000,00 (delapan juta rupiah) sebulan ditanggung oleh Perusahaan"
+     },
+     {
+      "document": "K17",
+      "provision": "Pasal 7 ayat (3)",
+      "page": null,
+      "quote": "tidak diberikan dalam bentuk uang tunai kepada Pekerja"
+     },
+     {
+      "document": "K17",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-19"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 7900000,
+   "ptkp": "TK/0",
+   "klu": "62019",
+   "hr": {
+    "months_of_service": 36
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "K/1",
+   "klu": "62019",
+   "hr": {
+    "months_of_service": 36
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 8100000,
+   "ptkp": "TK/0",
+   "klu": "62019",
+   "hr": {
+    "months_of_service": 36
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 7000000,
+   "ptkp": "TK/0",
+   "klu": "62019",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 24
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "K/0",
+   "klu": "62019",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 18,
+    "days_terminated_before_holiday": 40
+   }
+  }
+ ]
+}

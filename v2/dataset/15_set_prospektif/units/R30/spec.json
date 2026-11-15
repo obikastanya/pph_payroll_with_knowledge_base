@@ -1,0 +1,103 @@
+{
+ "layer": "regulation",
+ "change_type": "T3",
+ "traps": [
+  "pasal yang menyatakan ulang ketentuan lama: premi JKK dan JKM tetap penghasilan",
+  "syarat implisit: hanya iuran untuk pegawai tetap",
+  "iuran yang dibayar pegawai tidak diatur (batas lingkup)",
+  "berlaku mulai Masa Juli 2027, bukan sejak terbit"
+ ],
+ "title": "PMK 726/2027: Iuran jaminan kesehatan yang dibayar pemberi kerja bukan penghasilan pegawai",
+ "header": "MENTERI KEUANGAN REPUBLIK INDONESIA",
+ "issued": "2027-05-19",
+ "effective_from": "2027-07-01",
+ "effective_until": null,
+ "retroactive": false,
+ "summary": "Mulai Masa Juli 2027 iuran JKN yang dibayar pemberi kerja bukan lagi penghasilan pegawai; premi JKK dan JKM yang dibayar pemberi kerja tetap penghasilan.",
+ "gold": {
+  "add": [
+   {
+    "kind": "rule",
+    "id": "REG.PREMIUMS.TAXABLE.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "period",
+    "produces": "employer_premiums_taxable",
+    "expression": "jkk_premium + jkm_premium",
+    "valid_from": "2027-07-01",
+    "overrides": [
+     "REG.PREMIUMS.TAXABLE"
+    ],
+    "label": "employer-paid JKN premium is no longer income; JKK and JKM premiums stay income",
+    "source": [
+     {
+      "document": "R30",
+      "provision": "Pasal 2",
+      "page": null,
+      "quote": "bukan merupakan penghasilan bagi pegawai yang bersangkutan"
+     },
+     {
+      "document": "R30",
+      "provision": "Pasal 3",
+      "page": null,
+      "quote": "tetap merupakan penghasilan bagi pegawai yang bersangkutan"
+     },
+     {
+      "document": "R30",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak Juli 2027."
+     }
+    ],
+    "recorded_on": "2027-05-19"
+   }
+  ],
+  "delta_id": "GOLD-R30",
+  "event_id": "R30",
+  "document": {
+   "id": "R30",
+   "title": "PMK 726/2027: Iuran jaminan kesehatan yang dibayar pemberi kerja bukan penghasilan pegawai",
+   "issued": "2027-05-19"
+  },
+  "relevant": true,
+  "note": "",
+  "change": [],
+  "remove": []
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0"
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "K/1"
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 20000000,
+   "ptkp": "K/0",
+   "income": {
+    "bonus": 20000000
+   },
+   "income_months": [
+    12
+   ]
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 10000000,
+   "ptkp": "TK/1",
+   "start_month": 3,
+   "end_month": 12
+  }
+ ],
+ "size": 1,
+ "id": "R30"
+}

@@ -1,0 +1,51 @@
+SALINAN
+
+PERATURAN MENTERI KEUANGAN REPUBLIK INDONESIA
+NOMOR 784 TAHUN 2027
+TENTANG
+PERUBAHAN PERSENTASE BIAYA JABATAN DALAM PEMOTONGAN PAJAK PENGHASILAN PASAL 21
+
+DENGAN RAHMAT TUHAN YANG MAHA ESA
+
+MENTERI KEUANGAN REPUBLIK INDONESIA,
+
+Menimbang : a. bahwa untuk menyesuaikan besarnya biaya jabatan dengan biaya yang dikeluarkan pegawai tetap dalam mendapatkan, menagih, dan memelihara penghasilan, perlu dilakukan perubahan atas persentase biaya jabatan yang dapat dikurangkan dari penghasilan bruto;
+b. bahwa berdasarkan ketentuan Pasal 21 Undang-Undang Nomor 7 Tahun 1983 tentang Pajak Penghasilan sebagaimana telah beberapa kali diubah terakhir dengan Undang-Undang Nomor 7 Tahun 2021 tentang Harmonisasi Peraturan Perpajakan, besarnya biaya jabatan diatur dengan Peraturan Menteri Keuangan;
+c. bahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a dan huruf b, perlu menetapkan Peraturan Menteri Keuangan tentang Perubahan Persentase Biaya Jabatan dalam Pemotongan Pajak Penghasilan Pasal 21;
+
+Mengingat : 1. Undang-Undang Nomor 7 Tahun 1983 tentang Pajak Penghasilan sebagaimana telah beberapa kali diubah terakhir dengan Undang-Undang Nomor 7 Tahun 2021 tentang Harmonisasi Peraturan Perpajakan;
+2. Peraturan Pemerintah Nomor 58 Tahun 2023 tentang Tarif Pemotongan Pajak Penghasilan Pasal 21 atas Penghasilan Sehubungan dengan Pekerjaan, Jasa, atau Kegiatan Wajib Pajak Orang Pribadi;
+
+MEMUTUSKAN:
+
+Menetapkan : PERATURAN MENTERI KEUANGAN TENTANG PERUBAHAN PERSENTASE BIAYA JABATAN DALAM PEMOTONGAN PAJAK PENGHASILAN PASAL 21.
+
+Pasal 1
+Dalam Peraturan Menteri ini yang dimaksud dengan biaya jabatan adalah biaya untuk mendapatkan, menagih, dan memelihara penghasilan yang dapat dikurangkan dari penghasilan bruto pegawai tetap.
+
+Pasal 2
+Besarnya biaya jabatan ditetapkan sebesar 6% (enam persen) dari penghasilan bruto.
+
+Pasal 3
+Batas tertinggi biaya jabatan sebesar Rp6.000.000,00 (enam juta rupiah) setahun atau Rp500.000,00 (lima ratus ribu rupiah) sebulan tidak berubah dari ketentuan yang berlaku sebelumnya. Biaya jabatan yang dihitung dengan persentase sebagaimana dimaksud dalam Pasal 2 tetap tidak boleh melebihi batas tertinggi tersebut.
+
+Pasal 4
+Persentase dan batas tertinggi biaya pensiun bagi penerima uang pensiun tidak berubah.
+
+Pasal 5
+(1) Persentase biaya jabatan sebagaimana dimaksud dalam Pasal 2 diterapkan untuk penghitungan Pajak Penghasilan Pasal 21 mulai Tahun Pajak 2027.
+(2) Pemotongan Pajak Penghasilan Pasal 21 pada Masa Pajak selain Masa Pajak Terakhir yang menggunakan tarif efektif bulanan tidak berubah.
+(3) Kelebihan atau kekurangan pemotongan akibat perubahan persentase biaya jabatan diperhitungkan pada penghitungan Pajak Penghasilan Pasal 21 Masa Pajak Terakhir.
+
+Pasal 6
+Peraturan Menteri ini mulai berlaku pada tanggal diundangkan.
+
+Agar setiap orang mengetahuinya, memerintahkan pengundangan Peraturan Menteri ini dengan penempatannya dalam Berita Negara Republik Indonesia.
+
+Ditetapkan di Jakarta
+pada tanggal 10 Maret 2027
+MENTERI KEUANGAN REPUBLIK INDONESIA,
+ttd.
+
+Diundangkan di Jakarta
+pada tanggal 12 Maret 2027

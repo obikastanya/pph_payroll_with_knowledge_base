@@ -275,8 +275,9 @@ def _sent_text(p, record):
         return
     sel = info[p["doc"]]
     used = (sel.get("digest") or {}).get("used")
-    notes = [f"About {sel['tokens']:,} tokens of the "
-             f"{cfg.digest_budget if used else cfg.budget_tokens:,} allowed."]
+    notes = [f"About {sel['tokens']:,} tokens"
+             + (" (over the usual size; nothing about PPh 21 is cut)." if sel.get("over_budget") else
+                f" of the {cfg.digest_budget if used else cfg.budget_tokens:,} allowed.")]
     if used:
         notes.append("Chosen from the AI map.")
     elif record is not None:
@@ -297,10 +298,10 @@ def _map_table(record):
         return
     c = digest.counts(record)
     st.caption(f"Made by {record['model']} in {record['calls']} call(s), USD {record['cost_usd']:.3f}: {c['core']} "
-               f"parts about PPh 21, {c['general']} general, {c['none']} not about PPh 21. The opening and closing "
+               f"parts about PPh 21, {c['general']} general, {c['none']} not about PPh 21. A short opening and closing "
                "are always sent.")
     rows = [{"Part": u["label"], "Characters": u["chars"],
-             "Level": "always sent" if u["kind"] in digest.ALWAYS else LEVEL_NAMES[digest.level(record, u["key"])],
+             "Level": "always sent" if digest.always(u) else LEVEL_NAMES[digest.level(record, u["key"])],
              "Summary": (record["entries"].get(u["key"]) or {}).get("summary", "")}
             for u in record["units"]]
     st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch", height=480)

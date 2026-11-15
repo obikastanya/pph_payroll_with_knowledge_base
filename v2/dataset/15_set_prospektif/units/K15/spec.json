@@ -1,0 +1,355 @@
+{
+ "id": "K15",
+ "layer": "company",
+ "instance": "SP06",
+ "policy": "K15",
+ "change_type": "T10",
+ "size": 5,
+ "traps": [
+  "nilai dalam huruf dan angka",
+  "syarat implisit (penghasilan tetap menurut perjanjian kerja menentukan metode pajak)",
+  "pengecualian (pekerja yang berhenti 30 hari atau kurang sebelum hari raya tetap berhak THR)",
+  "pencabutan perjanjian dan memo lama"
+ ],
+ "title": "Perjanjian Kerja Bersama PT Mitra Niaga Sandang Periode 2027-2028",
+ "header": "PT MITRA NIAGA SANDANG",
+ "issued": "2026-12-16",
+ "effective_from": "2027-01-01",
+ "effective_until": "2028-12-31",
+ "retroactive": false,
+ "summary": "PKB 2027-2028: tunjangan PPh 21 (gross-up) hanya bagi penghasilan tetap bulanan Rp12.000.000 atau kurang, THR 1 bulan upah dengan pengecualian berhenti 30 hari atau kurang sebelum hari raya, komisi penjualan paling banyak Rp4.000.000, bonus akhir tahun hanya masa kerja 12 bulan atau lebih.",
+ "gold": {
+  "delta_id": "GOLD-K15",
+  "event_id": "K15",
+  "document": {
+   "id": "K15",
+   "title": "Perjanjian Kerja Bersama PT Mitra Niaga Sandang Periode 2027-2028",
+   "issued": "2026-12-16"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.K15.METHOD.GROSSUP",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "condition": "(employee('contract_fixed_income') if employee('contract_fixed_income') != None else 0) <= 12000000",
+    "expression": "'gross_up'",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K15",
+    "label": "tax allowance by gross-up for contract fixed monthly income up to 12,000,000",
+    "source": [
+     {
+      "document": "K15",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "yang penghasilan tetap bulanannya menurut perjanjian kerja sebesar Rp12.000.000,00 (dua belas juta rupiah) atau kurang, dan tunjangan itu dihitung dengan metode gross-up"
+     },
+     {
+      "document": "K15",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-16"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K15.METHOD.GROSS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "condition": "(employee('contract_fixed_income') if employee('contract_fixed_income') != None else 0) > 12000000",
+    "expression": "'gross'",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K15",
+    "label": "tax withheld from the employee above 12,000,000",
+    "source": [
+     {
+      "document": "K15",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "lebih dari Rp12.000.000,00 (dua belas juta rupiah) dipotong dari penghasilan pekerja setiap bulan dan menjadi beban pekerja"
+     },
+     {
+      "document": "K15",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-16"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K15.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "expression": "(round((income('base_salary') + income('fixed_allowance')) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0) if hr('thr_holiday') == 1 else income('thr')",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K15",
+    "label": "THR of one month of wage, pro rata under 12 months, termination more than 30 days before the holiday loses it",
+    "source": [
+     {
+      "document": "K15",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "menerima Tunjangan Hari Raya Keagamaan (THR) sebesar 1 (satu) bulan upah"
+     },
+     {
+      "document": "K15",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "menerima THR sebesar masa kerja dalam bulan dibagi 12 (dua belas) dikali 1 (satu) bulan upah"
+     },
+     {
+      "document": "K15",
+      "provision": "Pasal 3 ayat (3)",
+      "page": null,
+      "quote": "berakhir 30 (tiga puluh) hari atau kurang sebelum hari raya keagamaan tetap berhak atas THR"
+     },
+     {
+      "document": "K15",
+      "provision": "Pasal 3 ayat (3)",
+      "page": null,
+      "quote": "berakhir lebih dari 30 (tiga puluh) hari sebelum hari raya keagamaan tidak berhak atas THR tahun yang bersangkutan"
+     },
+     {
+      "document": "K15",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-16"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K15.COMMISSION",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + min(hr('variable_sales_commission'), 4000000)",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K15",
+    "label": "sales commission paid monthly as regular income up to 4,000,000",
+    "source": [
+     {
+      "document": "K15",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "dibayarkan bersama upah bulan yang bersangkutan sebagai penghasilan teratur, paling banyak Rp4.000.000,00 (empat juta rupiah) sebulan"
+     },
+     {
+      "document": "K15",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-16"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K15.BONUS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "expression": "income('bonus') if hr('months_of_service') >= 12 else 0",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K15",
+    "label": "year-end bonus only from 12 months of service",
+    "source": [
+     {
+      "document": "K15",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "kepada pekerja dengan masa kerja 12 (dua belas) bulan atau lebih pada bulan pembayaran, dan pekerja dengan masa kerja kurang dari 12 (dua belas) bulan tidak menerima bonus akhir tahun"
+     },
+     {
+      "document": "K15",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-16"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 10000000,
+   "ptkp": "K/1",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "income": {
+    "fixed_allowance": 2000000
+   },
+   "employee": {
+    "contract_fixed_income": 12000000
+   },
+   "method": "gross"
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 10000000,
+   "ptkp": "K/1",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "income": {
+    "fixed_allowance": 2001000
+   },
+   "employee": {
+    "contract_fixed_income": 12001000
+   },
+   "method": "gross_up"
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 10000000,
+   "ptkp": "K/1",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "income": {
+    "fixed_allowance": 1999000
+   },
+   "employee": {
+    "contract_fixed_income": 11999000
+   },
+   "method": "gross"
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "TK/0",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 14,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "TK/0",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 9,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 30
+   }
+  },
+  {
+   "id": "T6",
+   "year": 2027,
+   "salary": 6500000,
+   "ptkp": "TK/0",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 9,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 31
+   }
+  },
+  {
+   "id": "T7",
+   "year": 2027,
+   "salary": 7000000,
+   "ptkp": "K/0",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "hr": {
+    "variable_sales_commission": 3500000
+   }
+  },
+  {
+   "id": "T8",
+   "year": 2027,
+   "salary": 7000000,
+   "ptkp": "K/0",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "hr": {
+    "variable_sales_commission": 4000000
+   }
+  },
+  {
+   "id": "T9",
+   "year": 2027,
+   "salary": 7000000,
+   "ptkp": "K/0",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "hr": {
+    "variable_sales_commission": 6000000
+   }
+  },
+  {
+   "id": "T10",
+   "year": 2027,
+   "salary": 6800000,
+   "ptkp": "K/0",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "income": {
+    "bonus": 8000000
+   },
+   "income_months": [
+    12
+   ],
+   "hr": {
+    "months_of_service": 12
+   }
+  },
+  {
+   "id": "T11",
+   "year": 2027,
+   "salary": 6800000,
+   "ptkp": "K/0",
+   "klu": "46411",
+   "jkk_risk": "low",
+   "income": {
+    "bonus": 8000000
+   },
+   "income_months": [
+    12
+   ],
+   "hr": {
+    "months_of_service": 11
+   }
+  }
+ ]
+}

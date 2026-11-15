@@ -1,0 +1,200 @@
+{
+ "layer": "regulation",
+ "change_type": "T9",
+ "traps": [
+  "pengecualian: pegawai yang bekerja kurang dari 12 bulan tidak terkena pembulatan baru (Pasal 4)",
+  "pembulatan berbeda untuk tiap besaran (pajak ke atas, penghasilan kena pajak ke bawah, biaya jabatan ke terdekat)",
+  "nilai 0,5 atau lebih dibulatkan ke atas",
+  "berlaku surut ke Masa Januari 2027"
+ ],
+ "title": "PER-728/PJ/2027: Pembulatan dalam penghitungan PPh Pasal 21",
+ "header": "DIREKTORAT JENDERAL PAJAK",
+ "issued": "2027-05-24",
+ "effective_from": "2027-01-01",
+ "effective_until": null,
+ "retroactive": true,
+ "summary": "Mulai Masa Januari 2027 (surut) PPh 21 dibulatkan ke atas ke rupiah penuh, penghasilan kena pajak setahun pegawai setahun penuh tidak lagi dibulatkan ke ribuan, dan biaya jabatan dibulatkan ke rupiah terdekat; pegawai kurang dari 12 bulan dikecualikan dari pembulatan penghasilan kena pajak baru.",
+ "gold": {
+  "add": [
+   {
+    "kind": "parameter",
+    "id": "PAR.PPH_ROUND_MODE.2027",
+    "name": "pph_round_mode",
+    "value": "up",
+    "value_type": "category",
+    "valid_from": "2027-01-01",
+    "label_id": "mode pembulatan PPh 21",
+    "source": [
+     {
+      "document": "R37",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "dibulatkan ke atas hingga rupiah penuh."
+     },
+     {
+      "document": "R37",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak Januari 2027."
+     }
+    ],
+    "recorded_on": "2027-05-24"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.YEAR.PPH.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "annual_pph21",
+    "expression": "round(progressive('pasal17', taxable_income), 1, param('pph_round_mode'))",
+    "valid_from": "2027-01-01",
+    "source": [
+     {
+      "document": "R37",
+      "provision": "Pasal 1 ayat (2)",
+      "page": null,
+      "quote": "dibulatkan ke atas hingga rupiah penuh."
+     },
+     {
+      "document": "R37",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak Januari 2027."
+     }
+    ],
+    "condition": "subjective_months >= 12",
+    "overrides": [
+     "REG.YEAR.PPH"
+    ],
+    "recorded_on": "2027-05-24"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.YEAR.TAXABLE.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "taxable_income",
+    "expression": "max(0, round(annual_net - ptkp_amount, 1, 'down'))",
+    "valid_from": "2027-01-01",
+    "source": [
+     {
+      "document": "R37",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "tidak lagi dibulatkan ke bawah hingga ribuan rupiah penuh."
+     },
+     {
+      "document": "R37",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "dibulatkan ke bawah hingga rupiah penuh."
+     },
+     {
+      "document": "R37",
+      "provision": "Pasal 4 ayat (1)",
+      "page": null,
+      "quote": "tidak berlaku bagi pegawai tetap yang bekerja kurang dari 12 (dua belas) bulan dalam tahun pajak."
+     },
+     {
+      "document": "R37",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak Januari 2027."
+     }
+    ],
+    "condition": "subjective_months >= 12",
+    "overrides": [
+     "REG.YEAR.TAXABLE"
+    ],
+    "recorded_on": "2027-05-24"
+   },
+   {
+    "kind": "rule",
+    "id": "REG.YEAR.JOB_EXPENSE.2027",
+    "layer": "regulation",
+    "modality": "mandatory",
+    "scope": "year",
+    "produces": "job_expense",
+    "expression": "min(round(param('job_expense_rate') * annual_gross, 1, 'half_up'), param('job_expense_max_month') * months_employed, param('job_expense_max_year'))",
+    "valid_from": "2027-01-01",
+    "source": [
+     {
+      "document": "R37",
+      "provision": "Pasal 3",
+      "page": null,
+      "quote": "dibulatkan ke rupiah penuh terdekat, dengan ketentuan nilai 0,5 (nol koma lima) atau lebih dibulatkan ke atas."
+     },
+     {
+      "document": "R37",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "berlaku untuk penghitungan Pajak Penghasilan Pasal 21 mulai Masa Pajak Januari 2027."
+     }
+    ],
+    "overrides": [
+     "REG.YEAR.JOB_EXPENSE"
+    ],
+    "recorded_on": "2027-05-24"
+   }
+  ],
+  "delta_id": "GOLD-R37",
+  "event_id": "R37",
+  "document": {
+   "id": "R37",
+   "title": "PER-728/PJ/2027: Pembulatan dalam penghitungan PPh Pasal 21",
+   "issued": "2027-05-24"
+  },
+  "relevant": true,
+  "note": "",
+  "change": [],
+  "remove": []
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 9300000,
+   "ptkp": "TK/0",
+   "income": {
+    "fixed_allowance": 0
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 7650000,
+   "ptkp": "K/1",
+   "income": {
+    "fixed_allowance": 350000
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 18000000,
+   "ptkp": "K/2",
+   "income": {
+    "bonus": 12345678
+   },
+   "income_months": [
+    12
+   ]
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 9300000,
+   "ptkp": "TK/0",
+   "income": {
+    "fixed_allowance": 0
+   },
+   "employee": {
+    "subjective_start_month": 4
+   }
+  }
+ ],
+ "size": 4,
+ "id": "R37"
+}

@@ -165,11 +165,26 @@ def reads(text):
     return out
 
 
+def payroll_dictionary():
+    """Payroll data kept beyond the case schema, {accessor: {key: meaning}}: the standard dictionary shipped with the
+    starting knowledge base and the company's own (config.PAYROLL_INPUTS), declared when it installs."""
+    out = {a: {} for a in ACCESSORS}
+    for path in (config.DATA / "kb" / "payroll_inputs.json", config.PAYROLL_INPUTS):
+        if path.exists():
+            for a, entries in json.loads(path.read_text(encoding="utf-8")).items():
+                if a in out:
+                    out[a].update(entries)
+    return out
+
+
 def known(view):
-    """Attributes that exist at the knowledge date: schema fields plus keys read by the base rules."""
+    """Attributes that exist at the knowledge date: schema fields, the payroll data dictionary, and keys read by the
+    base rules."""
     k = {a: set() for a in ACCESSORS}
     for a, fields in schema_fields().items():
         k[a] |= fields
+    for a, entries in payroll_dictionary().items():
+        k[a] |= set(entries)
     for r in view.records:
         if isinstance(r, (Rule, Constraint)):
             for e in (getattr(r, "expression", None), getattr(r, "condition", None), getattr(r, "assertion", None)):
@@ -180,10 +195,11 @@ def known(view):
 
 
 def case_data_text(view):
-    k = known(view)
+    k, meaning = known(view), payroll_dictionary()
     lines = ["CASE DATA (the payroll inputs that exist; rules read them with these accessors and exact names):"]
     for a in ACCESSORS:
-        lines.append(f"- {a}(...): " + (", ".join(f"'{x}'" for x in sorted(k[a])) or "(none yet)"))
+        names = [f"'{x}' ({meaning[a][x]})" if x in meaning[a] else f"'{x}'" for x in sorted(k[a])]
+        lines.append(f"- {a}(...): " + (", ".join(names) or "(none yet)"))
     lines.append("Use these names exactly. If the document needs an input that is not listed (for example a company "
                  "allowance or an eligibility status), you may introduce it with a plain descriptive name; it will be "
                  "reported to the reviewer as a new payroll input.")
@@ -501,6 +517,13 @@ class Client:
             reply = Reply("", "error", self.model, {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0})
             error = f"{type(e).__name__}: {e}"[:500]
         reply.seconds = round(time.time() - t0, 2)
+        return self.finish(reply, error, sha, pfile, effort=effort, step=step, document=document, event=event,
+                           draft_no=draft_no, call_id=call_id)
+
+    def finish(self, reply, error, sha, pfile, *, effort, step, document, event, draft_no, call_id, discount=1.0,
+               extra=None):
+        """Parse a reply, log the call, and return (Reply, parsed JSON or None, log entry). discount: the price
+        factor of the route (0.5 for a batch request)."""
         error = error or reply.error or None
         parsed = None
         if reply.text:
@@ -513,8 +536,9 @@ class Client:
                  "model_requested": self.model, "model_reported": reply.model, "provider": self.provider,
                  "effort": effort, "step": step, "document": document, "event": event, "draft_no": draft_no,
                  "prompt_sha256": sha, "prompt_file": pfile, "output_raw": reply.text,
-                 "stop_reason": reply.stop_reason, "usage": reply.usage, "cost_usd": cost(self.model, reply.usage),
-                 "seconds": reply.seconds, "error": error}
+                 "stop_reason": reply.stop_reason, "usage": reply.usage,
+                 "cost_usd": cost(self.model, reply.usage) * discount, "seconds": reply.seconds, "error": error}
+        entry.update(extra or {})
         self.ledger.log(entry)
         return reply, parsed, entry
 
@@ -540,7 +564,8 @@ class AnthropicClient(Client):
         self.model = priced(model)
         self.api = anthropic.Anthropic(api_key=key, max_retries=3)
 
-    def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens, cache=True):
+    def request(self, system, prefix, user, schema, schema_name, effort, max_tokens, cache=True):
+        """The Messages API parameters of one call (also the body of a batch request)."""
         blocks = [{"type": "text", "text": t} for t in prefix]
         if blocks and cache:
             blocks[-1]["cache_control"] = {"type": "ephemeral"}
@@ -548,11 +573,19 @@ class AnthropicClient(Client):
         sys_block = {"type": "text", "text": system}
         if cache:
             sys_block["cache_control"] = {"type": "ephemeral"}
-        params = {"model": self.model, "max_tokens": max_tokens, "system": [sys_block],
-                  "messages": [{"role": "user", "content": blocks}],
-                  "output_config": {"effort": effort, "format": {"type": "json_schema", "schema": schema}}}
+        return {"model": self.model, "max_tokens": max_tokens, "system": [sys_block],
+                "messages": [{"role": "user", "content": blocks}],
+                "output_config": {"effort": effort, "format": {"type": "json_schema", "schema": schema}}}
+
+    def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens, cache=True):
+        params = self.request(system, prefix, user, schema, schema_name, effort, max_tokens, cache)
         with self.api.messages.stream(**params) as stream:
             msg = stream.get_final_message()
+        return self.reply(msg)
+
+    @staticmethod
+    def reply(msg):
+        """A Reply from a Messages API message."""
         u = msg.usage
         usage = {"input": u.input_tokens or 0, "output": u.output_tokens or 0,
                  "cache_read": getattr(u, "cache_read_input_tokens", 0) or 0,
@@ -577,13 +610,22 @@ class OpenAIClient(Client):
         self.model = priced(model)
         self.api = openai.OpenAI(api_key=key, max_retries=3)
 
-    def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens, cache=True):
+    def request(self, system, prefix, user, schema, schema_name, effort, max_tokens, cache=True):
+        """The Responses API parameters of one call (also the body of a batch request)."""
         content = [{"type": "input_text", "text": t} for t in prefix] + [{"type": "input_text", "text": user}]
-        resp = self.api.responses.create(
-            model=self.model, instructions=system, input=[{"role": "user", "content": content}],
-            reasoning={"effort": effort}, max_output_tokens=max_tokens,
-            text={"format": {"type": "json_schema", "name": schema_name, "schema": strict_schema(schema),
-                             "strict": True}})
+        return {"model": self.model, "instructions": system, "input": [{"role": "user", "content": content}],
+                "reasoning": {"effort": effort}, "max_output_tokens": max_tokens,
+                "text": {"format": {"type": "json_schema", "name": schema_name, "schema": strict_schema(schema),
+                                    "strict": True}}}
+
+    def _call(self, system, prefix, user, schema, schema_name, effort, max_tokens, cache=True):
+        resp = self.api.responses.create(**self.request(system, prefix, user, schema, schema_name, effort,
+                                                        max_tokens, cache))
+        return self.reply(resp)
+
+    @staticmethod
+    def reply(resp):
+        """A Reply from a Responses API response."""
         u = resp.usage
         cached = getattr(getattr(u, "input_tokens_details", None), "cached_tokens", 0) or 0
         usage = {"input": (u.input_tokens or 0) - cached, "output": u.output_tokens or 0, "cache_read": cached,

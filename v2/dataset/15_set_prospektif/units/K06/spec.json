@@ -1,0 +1,271 @@
+{
+ "id": "K06",
+ "layer": "company",
+ "instance": "SP07",
+ "policy": "SP07",
+ "change_type": "T10",
+ "size": 3,
+ "traps": [
+  "ketentuan peralihan",
+  "syarat implisit (masa kerja paling singkat 3 bulan, berhenti sebelum hari raya)",
+  "nilai dalam huruf dan angka",
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah"
+ ],
+ "title": "Memo Direksi PT Sentosa Ritel Prima: Tunjangan Hari Raya Keagamaan dan komisi penjualan toko",
+ "header": "PT SENTOSA RITEL PRIMA",
+ "issued": "2025-04-01",
+ "effective_from": "2025-06-01",
+ "effective_until": "2025-12-31",
+ "retroactive": false,
+ "summary": "Mulai 1 Juni 2025 THR menjadi 1,1 kali upah satu bulan untuk masa kerja 24 bulan atau lebih, 1 bulan untuk 12 sampai 23 bulan, proporsional untuk 3 sampai 11 bulan dan tidak ada di bawah 3 bulan; komisi penjualan toko dibayar paling banyak Rp3.000.000 sebulan. Aturan THR lama berakhir 31 Mei 2025.",
+ "gold": {
+  "delta_id": "GOLD-K06",
+  "event_id": "K06",
+  "document": {
+   "id": "K06",
+   "title": "Memo Direksi PT Sentosa Ritel Prima: Tunjangan Hari Raya Keagamaan dan komisi penjualan toko",
+   "issued": "2025-04-01"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP07.THR.2025",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "expression": "(round((base_salary + fixed_allowance) * (dec('1.1') if hr('months_of_service') >= 24 else 1) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 3 and hr('days_terminated_before_holiday') == 0 else 0) if hr('thr_holiday') == 1 else income('thr')",
+    "valid_from": "2025-06-01",
+    "valid_until": "2025-12-31",
+    "policy": "SP07",
+    "label": "THR from June 2025: 1.1 months from 24 months of service, 1 month from 12, pro rata from 3, none below 3",
+    "source": [
+     {
+      "document": "K06",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "sebesar 1,1 (satu koma satu) kali upah satu bulan"
+     },
+     {
+      "document": "K06",
+      "provision": "Pasal 1 ayat (3)",
+      "page": null,
+      "quote": "tetapi kurang dari 12 (dua belas) bulan diberikan THR secara proporsional"
+     },
+     {
+      "document": "K06",
+      "provision": "Pasal 1 ayat (4)",
+      "page": null,
+      "quote": "Pekerja dengan masa kerja kurang dari 3 (tiga) bulan tidak berhak atas THR."
+     },
+     {
+      "document": "K06",
+      "provision": "Pasal 1 ayat (5)",
+      "page": null,
+      "quote": "Pekerja yang hubungan kerjanya berakhir sebelum hari raya keagamaan, karena sebab apa pun, tidak berhak atas THR tahun yang bersangkutan."
+     },
+     {
+      "document": "K06",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Juni 2025 sampai dengan tanggal 31 Desember 2025"
+     }
+    ],
+    "recorded_on": "2025-04-01"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.SP07.COMMISSION",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + min(hr('variable_sales_commission'), 3000000)",
+    "valid_from": "2025-06-01",
+    "valid_until": "2025-12-31",
+    "policy": "SP07",
+    "label": "store sales commission paid monthly as regular income up to 3,000,000",
+    "source": [
+     {
+      "document": "K06",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "paling banyak Rp3.000.000,00 (tiga juta rupiah) sebulan"
+     },
+     {
+      "document": "K06",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "dibayarkan bersama upah bulan yang bersangkutan sebagai penghasilan teratur"
+     },
+     {
+      "document": "K06",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "berlaku mulai tanggal 1 Juni 2025 sampai dengan tanggal 31 Desember 2025"
+     }
+    ],
+    "recorded_on": "2025-04-01"
+   }
+  ],
+  "change": [
+   {
+    "kind": "rule",
+    "id": "PRS.SP07.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "expression": "(round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') == 0 else 0) if hr('thr_holiday') == 1 else income('thr')",
+    "valid_from": "2024-02-01",
+    "valid_until": "2025-05-31",
+    "policy": "SP07",
+    "conflict_code": "C10",
+    "label": "THR of the policy in the holiday period; other periods keep the THR recorded in the case",
+    "source": [
+     {
+      "document": "K06",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "Ketentuan Pasal 52 ayat (2) dan ayat (3) Perjanjian Kerja Bersama tidak berlaku lagi mulai tanggal 1 Juni 2025."
+     },
+     {
+      "document": "K06",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "THR untuk hari raya keagamaan yang jatuh sebelum tanggal 1 Juni 2025 tetap dihitung menurut Pasal 52 ayat (2) dan ayat (3)"
+     }
+    ],
+    "recorded_on": "2025-04-01"
+   }
+  ],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2025,
+   "salary": 5600000,
+   "ptkp": "K/0",
+   "klu": "47111",
+   "jkk_risk": "low",
+   "start_month": 12,
+   "end_month": 12,
+   "hr": {
+    "months_of_service": 30,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2025,
+   "salary": 6200000,
+   "ptkp": "K/1",
+   "klu": "47111",
+   "jkk_risk": "low",
+   "start_month": 12,
+   "end_month": 12,
+   "hr": {
+    "months_of_service": 24,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2025,
+   "salary": 5600000,
+   "ptkp": "K/0",
+   "klu": "47111",
+   "jkk_risk": "low",
+   "start_month": 12,
+   "end_month": 12,
+   "hr": {
+    "months_of_service": 23,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2025,
+   "salary": 5300000,
+   "ptkp": "TK/0",
+   "klu": "47111",
+   "jkk_risk": "low",
+   "start_month": 12,
+   "end_month": 12,
+   "hr": {
+    "months_of_service": 8,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2025,
+   "salary": 5300000,
+   "ptkp": "TK/0",
+   "klu": "47111",
+   "jkk_risk": "low",
+   "start_month": 12,
+   "end_month": 12,
+   "hr": {
+    "months_of_service": 2,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T6",
+   "year": 2025,
+   "salary": 5300000,
+   "ptkp": "TK/0",
+   "klu": "47111",
+   "jkk_risk": "low",
+   "start_month": 4,
+   "end_month": 4,
+   "hr": {
+    "months_of_service": 2,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T7",
+   "year": 2025,
+   "salary": 5400000,
+   "ptkp": "TK/0",
+   "klu": "47111",
+   "jkk_risk": "low",
+   "hr": {
+    "variable_sales_commission": 2500000
+   }
+  },
+  {
+   "id": "T8",
+   "year": 2025,
+   "salary": 5400000,
+   "ptkp": "TK/0",
+   "klu": "47111",
+   "jkk_risk": "low",
+   "hr": {
+    "variable_sales_commission": 3000000
+   }
+  },
+  {
+   "id": "T9",
+   "year": 2025,
+   "salary": 5400000,
+   "ptkp": "TK/0",
+   "klu": "47111",
+   "jkk_risk": "low",
+   "hr": {
+    "variable_sales_commission": 4200000
+   }
+  }
+ ]
+}

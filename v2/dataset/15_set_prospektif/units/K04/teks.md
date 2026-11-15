@@ -1,0 +1,53 @@
+PT BENANG SUTRA LESTARI
+
+Jalan Raya Majalaya Nomor 77, Kabupaten Bandung
+
+MEMO DIREKSI
+
+Nomor: 021/MD-DIR/BSL/VI/2025
+
+Tanggal: 2 Juni 2025
+
+Kepada: Seluruh Pekerja PT Benang Sutra Lestari dan Pimpinan Unit Kerja Serikat Pekerja Tekstil Sandang dan Kulit
+
+Dari: Direktur
+
+Perihal: Perubahan ketentuan Tunjangan Hari Raya Keagamaan selama masa berlaku Perjanjian Kerja Bersama Nomor PKB-BSL/VI/2024
+
+Menimbang bahwa dalam perundingan bipartit tanggal 20 Mei 2025 Perusahaan dan Pimpinan Unit Kerja Serikat Pekerja sepakat meningkatkan besaran Tunjangan Hari Raya Keagamaan pekerja selama sisa masa berlaku Perjanjian Kerja Bersama.
+
+Mengingat Pasal 67 ayat (2) Perjanjian Kerja Bersama Nomor PKB-BSL/VI/2024, yang menyatakan bahwa hal-hal yang belum diatur dalam Perjanjian Kerja Bersama diatur lebih lanjut oleh Perusahaan.
+
+Direktur menetapkan hal-hal berikut.
+
+Pasal 1
+Besaran Tunjangan Hari Raya Keagamaan
+
+(1) Mulai tanggal 1 Juli 2025, pekerja dengan masa kerja 12 (dua belas) bulan secara terus-menerus atau lebih menerima Tunjangan Hari Raya Keagamaan (THR) sebesar 1,25 (satu koma dua puluh lima) kali upah satu bulan.
+
+(2) Pekerja dengan masa kerja 1 (satu) bulan secara terus-menerus tetapi kurang dari 12 (dua belas) bulan menerima THR secara proporsional, yaitu masa kerja dalam bulan dibagi 12 (dua belas) dikalikan 1,25 (satu koma dua puluh lima) kali upah satu bulan.
+
+(3) Upah satu bulan sebagaimana dimaksud pada ayat (1) dan ayat (2) terdiri atas gaji pokok dan tunjangan tetap.
+
+Pasal 2
+Syarat Penerima
+
+Pekerja yang hubungan kerjanya berakhir sebelum hari raya keagamaan, karena sebab apa pun, tidak berhak atas THR tahun yang bersangkutan.
+
+Pasal 3
+Ketentuan yang Tidak Berubah
+
+Ketentuan Pasal 45 tentang iuran BPJS Ketenagakerjaan, Pasal 46 tentang perlakuan pajak iuran, dan Pasal 47 tentang pemotongan Pajak Penghasilan Pasal 21 dalam Perjanjian Kerja Bersama tetap berlaku dan tidak diubah oleh Memo Direksi ini.
+
+Pasal 4
+Masa Berlaku
+
+Memo Direksi ini berlaku mulai tanggal 1 Juli 2025 sampai dengan tanggal 30 Juni 2026, yaitu berakhirnya masa berlaku Perjanjian Kerja Bersama.
+
+Kabupaten Bandung, 2 Juni 2025
+
+PT BENANG SUTRA LESTARI
+
+Wijaya Kusumah
+
+Direktur

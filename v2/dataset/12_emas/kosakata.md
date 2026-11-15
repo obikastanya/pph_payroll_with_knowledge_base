@@ -1,6 +1,6 @@
 # Kosakata KB emas
 
-Dihasilkan oleh `system/tools/build_gold.py`. Fakta bertanda keluaran membentuk $F_\mathit{nilai}$ (dibekukan, representasi.md bagian 4).
+Kosakata fakta KB acuan (`kb.trig`). Fakta bertanda keluaran adalah nilai yang dibandingkan saat penilaian.
 
 | Fakta | Tipe | Lingkup | Keluaran | Label | Label Indonesia |
 |---|---|---|---|---|---|

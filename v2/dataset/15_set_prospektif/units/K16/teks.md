@@ -1,0 +1,158 @@
+PERJANJIAN KERJA BERSAMA
+
+ANTARA
+
+PT SENTOSA RITEL PRIMA
+
+DENGAN
+
+SERIKAT PEKERJA RITEL SENTOSA
+
+PERIODE 2027–2028
+
+Nomor: PKB/SRP/2027
+
+Didaftarkan pada Dinas Ketenagakerjaan Kota Tangerang Nomor 560/0121/PKB/XII/2026 (fiktif)
+
+Ditetapkan di Tangerang pada tanggal 14 Desember 2026
+
+BAB I KETENTUAN UMUM
+
+Pasal 1
+
+Dalam Perjanjian Kerja Bersama ini yang dimaksud dengan:
+
+a. Perusahaan adalah PT Sentosa Ritel Prima, yang mengelola jaringan minimarket di wilayah Banten dan Jakarta.
+
+b. Serikat Pekerja adalah Serikat Pekerja Ritel Sentosa yang tercatat pada Dinas Ketenagakerjaan Kota Tangerang.
+
+c. Pekerja adalah pekerja tetap Perusahaan yang hubungan kerjanya didasarkan pada perjanjian kerja waktu tidak tertentu.
+
+d. Upah Pokok adalah imbalan dasar yang dibayarkan kepada Pekerja setiap bulan menurut jabatannya, tidak termasuk tunjangan.
+
+e. Tunjangan Tetap adalah tunjangan yang dibayarkan setiap bulan dengan jumlah yang sama tanpa dikaitkan dengan kehadiran atau pencapaian target.
+
+f. Upah adalah Upah Pokok ditambah Tunjangan Tetap.
+
+Pasal 2
+
+Perjanjian Kerja Bersama ini berlaku bagi seluruh Pekerja Perusahaan, termasuk Pekerja yang bertugas di toko, pusat distribusi, dan kantor pusat.
+
+BAB II HUBUNGAN KERJA
+
+Pasal 3
+
+(1) Waktu kerja Pekerja toko adalah 40 (empat puluh) jam seminggu yang dibagi dalam tiga shift, yaitu shift pagi, shift siang, dan shift malam.
+
+(2) Shift malam adalah shift yang jam kerjanya dimulai pukul 22.00 dan berakhir pukul 06.00.
+
+(3) Pembagian shift ditetapkan oleh kepala toko dan diumumkan paling lambat 7 (tujuh) hari sebelum jadwal berlaku.
+
+Pasal 4
+
+Masa percobaan paling lama 3 (tiga) bulan. Selama masa percobaan Pekerja menerima Upah Pokok yang sama dengan Pekerja tetap pada jabatan yang sama.
+
+BAB III PENGUPAHAN
+
+Pasal 5
+
+(1) Upah Pokok ditetapkan menurut skala jabatan yang ditetapkan oleh Direksi dan tidak boleh lebih rendah dari upah minimum kota yang berlaku.
+
+(2) Upah dibayarkan paling lambat pada tanggal 28 setiap bulan melalui rekening bank atas nama Pekerja.
+
+Pasal 6
+
+(1) Pekerja pelaksana toko dengan Upah Pokok sampai dengan Rp6.000.000,00 (enam juta rupiah) sebulan menerima Tunjangan Pelaksana Toko sebesar Rp250.000,00 (dua ratus lima puluh ribu rupiah) sebulan.
+
+(2) Tunjangan Pelaksana Toko sebagaimana dimaksud pada ayat (1) merupakan Tunjangan Tetap dan dibayarkan setiap bulan.
+
+(3) Pekerja dengan Upah Pokok di atas Rp6.000.000,00 (enam juta rupiah) sebulan tidak menerima Tunjangan Pelaksana Toko.
+
+Pasal 7
+
+(1) Pekerja yang bekerja pada shift malam menerima Tunjangan Shift Malam untuk setiap hari kerja pada shift malam sebesar yang tercantum dalam Lampiran I.
+
+(2) Tunjangan Shift Malam dibayarkan bersama Upah bulan yang bersangkutan dan bukan merupakan Tunjangan Tetap.
+
+Pasal 8
+
+(1) Pekerja toko menerima Insentif Penjualan apabila target penjualan toko pada bulan yang bersangkutan tercapai.
+
+(2) Insentif Penjualan dibayarkan bersama Upah bulan berjalan sebesar hasil perhitungan komisi penjualan, paling banyak Rp1.500.000,00 (satu juta lima ratus ribu rupiah) sebulan.
+
+(3) Komisi penjualan yang melebihi batas sebagaimana dimaksud pada ayat (2) tidak dibayarkan dan tidak dapat dibawa ke bulan berikutnya.
+
+Pasal 9
+
+(1) Pekerja yang diminta bekerja melebihi waktu kerja menerima upah lembur sesuai peraturan perundang-undangan.
+
+(2) Jumlah upah lembur yang dibayarkan kepada seorang Pekerja dalam satu bulan paling banyak 40% (empat puluh persen) dari Upah sebulan.
+
+(3) Waktu kerja lembur yang upahnya melampaui batas pada ayat (2) diberikan sebagai waktu istirahat pengganti.
+
+Pasal 10
+
+(1) Pekerja menerima Tunjangan Hari Raya Keagamaan (THR) satu kali dalam setahun menjelang hari raya keagamaan Pekerja yang bersangkutan.
+
+(2) Pekerja dengan masa kerja 1 (satu) bulan secara terus-menerus atau lebih menerima THR. Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1 (satu) bulan Upah.
+
+(3) Pekerja dengan masa kerja 1 (satu) bulan secara terus-menerus tetapi kurang dari 12 (dua belas) bulan menerima THR secara proporsional, yaitu masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan Upah.
+
+(4) Pekerja dengan masa kerja 60 (enam puluh) bulan atau lebih menerima THR sebesar 1,25 (satu koma dua lima) bulan Upah.
+
+(5) Pekerja yang hubungan kerjanya berakhir lebih dari 30 (tiga puluh) hari sebelum hari raya keagamaan tidak berhak atas THR tahun yang bersangkutan.
+
+(6) Upah sebagaimana dimaksud pada ayat (2), ayat (3), dan ayat (4) adalah Upah sebagaimana didefinisikan dalam Pasal 1 huruf f, sehingga Tunjangan Pelaksana Toko termasuk di dalamnya.
+
+Pasal 11
+
+(1) Perusahaan membayarkan Bonus Tahunan bersama Upah bulan Desember kepada Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih.
+
+(2) Bonus Tahunan untuk tahun 2027 sebesar 0,5 (setengah) bulan Upah Pokok. Mulai tanggal 1 Januari 2028 Bonus Tahunan sebesar 1 (satu) bulan Upah Pokok.
+
+Pasal 12
+
+Seluruh Pekerja wajib membayar simpanan wajib Koperasi Karyawan sebesar 2% (dua persen) dari Upah Pokok setiap bulan, yang dipotong langsung dari Upah.
+
+BAB IV JAMINAN SOSIAL DAN PAJAK
+
+Pasal 13
+
+(1) Perusahaan mengikutsertakan seluruh Pekerja dalam program jaminan sosial ketenagakerjaan dan jaminan kesehatan nasional sesuai peraturan perundang-undangan.
+
+(2) Iuran bagian Pekerja dipotong dari Upah dan iuran bagian Perusahaan dibayar oleh Perusahaan sesuai ketentuan yang berlaku.
+
+Pasal 14
+
+Pajak Penghasilan Pasal 21 atas seluruh penghasilan Pekerja dipotong dari penghasilan Pekerja dan disetorkan oleh Perusahaan sesuai ketentuan perpajakan yang berlaku.
+
+BAB V KETENTUAN PENUTUP
+
+Pasal 15
+
+(1) Perjanjian Kerja Bersama ini berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028.
+
+(2) Dengan berlakunya Perjanjian Kerja Bersama ini, Perjanjian Kerja Bersama PT Sentosa Ritel Prima periode 2024–2025 dinyatakan tidak berlaku lagi.
+
+(3) Hal-hal yang belum diatur dalam Perjanjian Kerja Bersama ini diatur lebih lanjut oleh Perusahaan setelah berunding dengan Serikat Pekerja.
+
+Ditetapkan di Tangerang pada tanggal 14 Desember 2026
+
+PT SENTOSA RITEL PRIMA
+
+Darmawan Hadi
+
+Direktur SDM
+
+SERIKAT PEKERJA RITEL SENTOSA
+
+Rahmat Hidayat
+
+Ketua Umum
+
+LAMPIRAN I BESAR TUNJANGAN SHIFT MALAM
+
+Berikut besar Tunjangan Shift Malam sebagaimana dimaksud dalam Pasal 7 ayat (1).
+
+| Jenis tunjangan | Satuan | Besar |
+| Tunjangan Shift Malam | setiap hari kerja pada shift malam | Rp35.000,00 (tiga puluh lima ribu rupiah) |

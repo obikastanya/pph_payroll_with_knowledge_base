@@ -1,0 +1,423 @@
+{
+ "id": "K29",
+ "layer": "company",
+ "instance": "SP12",
+ "policy": "K29",
+ "change_type": "T10",
+ "size": 12,
+ "traps": [
+  "ambang komisi Rp2.000.000 (di bawah, di, dan di atas)",
+  "ketentuan peralihan (April 2027 menurut ketentuan lama)",
+  "rujukan silang (Pasal 2 ayat (4) ke ayat (2) dan (3); Upah pada Pasal 1 ayat (2))",
+  "batas atas Tunjangan Operasional Malam Rp1.800.000",
+  "nilai dalam huruf dan angka yang harus dibaca bersama"
+ ],
+ "title": "PT Nusa Teknologi Pembayaran: Lampiran III Peraturan Perusahaan tentang Penghasilan Variabel dan Tunjangan Operasional",
+ "header": "LAMPIRAN III PERATURAN PERUSAHAAN PT NUSA TEKNOLOGI PEMBAYARAN",
+ "issued": "2027-04-14",
+ "effective_from": "2027-05-01",
+ "effective_until": "2028-12-31",
+ "retroactive": false,
+ "summary": "Lampiran berlaku 1 Mei 2027: Komisi Mitra sampai Rp2.000.000 sebagai penghasilan teratur dan kelebihannya sebagai insentif tidak teratur, Tunjangan Operasional Malam Rp90.000 per hari paling banyak Rp1.800.000, THR 1,5 bulan Upah, dan Bonus Akhir Tahun 1 bulan Upah Pokok.",
+ "gold": {
+  "delta_id": "GOLD-K29",
+  "event_id": "K29",
+  "document": {
+   "id": "K29",
+   "title": "PT Nusa Teknologi Pembayaran: Lampiran III Peraturan Perusahaan tentang Penghasilan Variabel dan Tunjangan Operasional",
+   "issued": "2027-04-14"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "parameter",
+    "id": "PAR.K29.COMMISSION_LIMIT",
+    "name": "k29_commission_limit",
+    "value": 2000000,
+    "value_type": "money",
+    "label": "monthly commission paid as regular income",
+    "valid_from": "2027-05-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K29",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "Komisi Mitra sampai dengan Rp2.000.000,00 (dua juta rupiah) sebulan dibayarkan bersama Upah bulan yang bersangkutan"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Mei 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-04-14"
+   },
+   {
+    "kind": "parameter",
+    "id": "PAR.K29.THR_MONTHS",
+    "name": "k29_thr_months",
+    "value": "1.5",
+    "value_type": "exact",
+    "label": "THR in months of wage",
+    "valid_from": "2027-05-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K29",
+      "provision": "Pasal 4 ayat (2)",
+      "page": null,
+      "quote": "menerima THR sebesar 1,5 (satu setengah) bulan Upah"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Mei 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-04-14"
+   },
+   {
+    "kind": "fact",
+    "id": "k29_commission_regular",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "commission up to the limit, regular income",
+    "source": [
+     {
+      "document": "K29",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan bersama Upah bulan yang bersangkutan"
+     }
+    ],
+    "recorded_on": "2027-04-14"
+   },
+   {
+    "kind": "fact",
+    "id": "k29_commission_excess",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "commission above the limit, irregular incentive",
+    "source": [
+     {
+      "document": "K29",
+      "provision": "Pasal 2 ayat (3)",
+      "page": null,
+      "quote": "dibayarkan sebagai Insentif Kelebihan Komisi bersama Upah bulan yang sama"
+     }
+    ],
+    "recorded_on": "2027-04-14"
+   },
+   {
+    "kind": "fact",
+    "id": "k29_night_ops_allowance",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "night operations allowance with a monthly cap",
+    "source": [
+     {
+      "document": "K29",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "dalam satu bulan paling banyak Rp1.800.000,00 (satu juta delapan ratus ribu rupiah)"
+     }
+    ],
+    "recorded_on": "2027-04-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K29.COMMISSION_REGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k29_commission_regular",
+    "expression": "min(hr('variable_sales_commission'), param('k29_commission_limit'))",
+    "label": "commission up to 2,000,000 a month is regular income",
+    "policy": "K29",
+    "valid_from": "2027-05-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K29",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "Komisi Mitra sampai dengan Rp2.000.000,00 (dua juta rupiah) sebulan dibayarkan bersama Upah bulan yang bersangkutan"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 2 ayat (4)",
+      "page": null,
+      "quote": "merupakan penghasilan yang dibayarkan setiap bulan"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Mei 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-04-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K29.COMMISSION_EXCESS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k29_commission_excess",
+    "expression": "max(0, hr('variable_sales_commission') - param('k29_commission_limit'))",
+    "label": "the part of the commission above 2,000,000 is an irregular incentive",
+    "policy": "K29",
+    "valid_from": "2027-05-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K29",
+      "provision": "Pasal 2 ayat (3)",
+      "page": null,
+      "quote": "yang melebihi Rp2.000.000,00 (dua juta rupiah) sebulan dibayarkan sebagai Insentif Kelebihan Komisi bersama Upah bulan yang sama"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 2 ayat (4)",
+      "page": null,
+      "quote": "bukan merupakan penghasilan yang dibayarkan setiap bulan karena hanya timbul apabila target terlampaui"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Mei 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-04-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K29.NIGHT_OPS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k29_night_ops_allowance",
+    "expression": "min(hr('night_shift_days') * 90000, 1800000)",
+    "label": "90,000 per night duty day, at most 1,800,000 a month",
+    "policy": "K29",
+    "valid_from": "2027-05-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K29",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "Tunjangan Operasional Malam sebesar Rp90.000,00 (sembilan puluh ribu rupiah) untuk setiap hari bertugas malam"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "dalam satu bulan paling banyak Rp1.800.000,00 (satu juta delapan ratus ribu rupiah)"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Mei 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-04-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K29.OTHER_REGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + k29_commission_regular + k29_night_ops_allowance",
+    "label": "commission up to the limit and the night operations allowance are regular income",
+    "policy": "K29",
+    "valid_from": "2027-05-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K29",
+      "provision": "Pasal 3 ayat (3)",
+      "page": null,
+      "quote": "dibayarkan bersama Upah bulan yang bersangkutan dan bukan merupakan Tunjangan Tetap"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 2 ayat (4)",
+      "page": null,
+      "quote": "merupakan penghasilan yang dibayarkan setiap bulan"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Mei 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-04-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K29.OTHER_IRREGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_irregular_income",
+    "expression": "income('other_irregular') + k29_commission_excess",
+    "label": "the excess commission incentive is irregular income",
+    "policy": "K29",
+    "valid_from": "2027-05-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K29",
+      "provision": "Pasal 2 ayat (4)",
+      "page": null,
+      "quote": "bukan merupakan penghasilan yang dibayarkan setiap bulan karena hanya timbul apabila target terlampaui"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Mei 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-04-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K29.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "condition": "hr('thr_holiday') > 0",
+    "expression": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12 * param('k29_thr_months'), 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0",
+    "label": "THR of 1.5 months of wage, proportional below 12 months",
+    "policy": "K29",
+    "valid_from": "2027-05-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K29",
+      "provision": "Pasal 4 ayat (2)",
+      "page": null,
+      "quote": "masa kerja dibagi 12 (dua belas) dikali 1,5 (satu setengah) bulan Upah"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 4 ayat (3)",
+      "page": null,
+      "quote": "berakhir lebih dari 30 (tiga puluh) hari sebelum hari raya keagamaan tidak berhak atas THR"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 1 ayat (2)",
+      "page": null,
+      "quote": "Upah adalah Upah Pokok ditambah Tunjangan Tetap"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Mei 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-04-14"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K29.BONUS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "condition": "month == 12 and hr('months_of_service') >= 12",
+    "expression": "income('bonus') + base_salary",
+    "label": "year-end bonus of one month of base salary in December after 12 months of service",
+    "policy": "K29",
+    "valid_from": "2027-05-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K29",
+      "provision": "Pasal 5",
+      "page": null,
+      "quote": "Bonus Akhir Tahun bersama Upah bulan Desember sebesar 1 (satu) bulan Upah Pokok kepada Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih"
+     },
+     {
+      "document": "K29",
+      "provision": "Pasal 6 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Mei 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2027-04-14"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 14000000,
+   "ptkp": "K/0",
+   "klu": "63122",
+   "hr": {
+    "variable_sales_commission": 1500000,
+    "night_shift_days": 10,
+    "months_of_service": 30
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 14000000,
+   "ptkp": "TK/0",
+   "klu": "63122",
+   "hr": {
+    "variable_sales_commission": 2000000,
+    "night_shift_days": 20,
+    "months_of_service": 30
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 14000000,
+   "ptkp": "K/1",
+   "klu": "63122",
+   "hr": {
+    "variable_sales_commission": 3500000,
+    "night_shift_days": 25,
+    "months_of_service": 30
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 10000000,
+   "ptkp": "TK/0",
+   "klu": "63122",
+   "start_month": 12,
+   "end_month": 12,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 9
+   }
+  }
+ ]
+}

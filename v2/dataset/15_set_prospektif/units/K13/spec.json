@@ -1,0 +1,637 @@
+{
+ "id": "K13",
+ "layer": "company",
+ "instance": "SP04",
+ "policy": "K13",
+ "change_type": "T10",
+ "size": 13,
+ "traps": [
+  "nilai dalam huruf dan angka",
+  "syarat implisit (masa kerja dan penghasilan tetap menurut perjanjian kerja)",
+  "rujukan silang ke pasal lain (fasilitas apartemen Pasal 27 peraturan lama digantikan)",
+  "pencabutan peraturan lama",
+  "ketentuan yang hanya berlaku untuk sebagian pekerja (tunjangan pajak di atas Rp25.000.000)"
+ ],
+ "title": "Peraturan Perusahaan PT Arunika Energi Mandiri Tahun 2027-2028",
+ "header": "PT ARUNIKA ENERGI MANDIRI",
+ "issued": "2026-12-10",
+ "effective_from": "2027-01-01",
+ "effective_until": "2028-12-31",
+ "retroactive": false,
+ "summary": "Peraturan Perusahaan 2027-2028: tunjangan perumahan 10% gaji pokok menggantikan apartemen, tunjangan kerja malam Rp75.000, batas lembur 60% upah, THR 1,5 kali upah, bonus 50% bagi masa kerja 6-11 bulan, penghargaan masa kerja 10 dan 15 tahun, tunjangan pajak (gross-up) bagi penghasilan tetap di atas Rp25.000.000.",
+ "gold": {
+  "delta_id": "GOLD-K13",
+  "event_id": "K13",
+  "document": {
+   "id": "K13",
+   "title": "Peraturan Perusahaan PT Arunika Energi Mandiri Tahun 2027-2028",
+   "issued": "2026-12-10"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "fact",
+    "id": "aem_wage",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "monthly wage: base salary plus fixed allowance",
+    "source": [
+     {
+      "document": "K13",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "Upah sebulan adalah gaji pokok ditambah tunjangan tetap yang diterima pekerja setiap bulan."
+     }
+    ],
+    "recorded_on": "2026-12-10"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K13.WAGE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "aem_wage",
+    "expression": "base_salary + fixed_allowance",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K13",
+    "source": [
+     {
+      "document": "K13",
+      "provision": "Pasal 1 ayat (1)",
+      "page": null,
+      "quote": "Upah sebulan adalah gaji pokok ditambah tunjangan tetap yang diterima pekerja setiap bulan."
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-10"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K13.METHOD",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "condition": "(employee('contract_fixed_income') if employee('contract_fixed_income') != None else 0) > 25000000",
+    "expression": "'gross_up'",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K13",
+    "label": "tax allowance by gross-up for contract fixed monthly income above 25,000,000",
+    "source": [
+     {
+      "document": "K13",
+      "provision": "Pasal 9 ayat (1)",
+      "page": null,
+      "quote": "kepada pekerja yang penghasilan tetap bulanannya menurut perjanjian kerja lebih dari Rp25.000.000,00 (dua puluh lima juta rupiah), dan tunjangan itu dihitung dengan metode gross-up"
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-10"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K13.HOUSING",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "fixed_allowance",
+    "condition": "hr('months_of_service') >= 12",
+    "expression": "income('fixed_allowance') + round(dec('0.1') * income('base_salary'), 1, 'down')",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K13",
+    "label": "housing allowance of 10% of base salary from 12 months of service, a fixed allowance",
+    "source": [
+     {
+      "document": "K13",
+      "provision": "Pasal 2 ayat (1)",
+      "page": null,
+      "quote": "yang telah mempunyai masa kerja 12 (dua belas) bulan atau lebih menerima tunjangan perumahan sebesar 10% (sepuluh persen) dari gaji pokok setiap bulan"
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 2 ayat (2)",
+      "page": null,
+      "quote": "Tunjangan perumahan merupakan tunjangan tetap dan dibayarkan tunai bersama upah setiap bulan."
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-10"
+   },
+   {
+    "kind": "fact",
+    "id": "aem_shift_allowance",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "night and rotation allowance",
+    "source": [
+     {
+      "document": "K13",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "sebesar Rp75.000,00 (tujuh puluh lima ribu rupiah) untuk setiap hari kerja shift malam"
+     }
+    ],
+    "recorded_on": "2026-12-10"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K13.SHIFT",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "aem_shift_allowance",
+    "expression": "75000 * hr('night_shift_days')",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K13",
+    "source": [
+     {
+      "document": "K13",
+      "provision": "Pasal 3 ayat (1)",
+      "page": null,
+      "quote": "sebesar Rp75.000,00 (tujuh puluh lima ribu rupiah) untuk setiap hari kerja shift malam"
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-10"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K13.OTHER_REGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + aem_shift_allowance",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K13",
+    "source": [
+     {
+      "document": "K13",
+      "provision": "Pasal 3 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan setiap bulan bersama upah sebagai penghasilan teratur yang bukan merupakan tunjangan tetap"
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-10"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K13.OVERTIME",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "overtime_pay",
+    "expression": "min(income('overtime_pay'), round(dec('0.6') * aem_wage, 1, 'down'))",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K13",
+    "label": "overtime pay capped at 60% of the monthly wage",
+    "source": [
+     {
+      "document": "K13",
+      "provision": "Pasal 4",
+      "page": null,
+      "quote": "paling banyak sebesar 60% (enam puluh persen) dari upah sebulan, dan bagian yang melebihi batas itu tidak dibayarkan"
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-10"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K13.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "expression": "(round(aem_wage * dec('1.5') * min(hr('months_of_service'), 12) / 12, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') == 0 else 0) if hr('thr_holiday') == 1 else income('thr')",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K13",
+    "label": "THR of 1.5 months of wage, pro rata under 12 months, none after termination",
+    "source": [
+     {
+      "document": "K13",
+      "provision": "Pasal 5 ayat (2)",
+      "page": null,
+      "quote": "menerima THR sebesar 1,5 (satu koma lima) kali upah satu bulan"
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 5 ayat (3)",
+      "page": null,
+      "quote": "menerima THR sebesar masa kerja dalam bulan dibagi 12 (dua belas) dikali 1,5 (satu koma lima) kali upah satu bulan"
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 5 ayat (4)",
+      "page": null,
+      "quote": "Pekerja yang hubungan kerjanya berakhir sebelum hari raya keagamaan tidak berhak atas THR tahun yang bersangkutan."
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-10"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K13.BONUS",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "bonus",
+    "expression": "income('bonus') if hr('months_of_service') >= 12 else (round(dec('0.5') * income('bonus'), 1, 'down') if hr('months_of_service') >= 6 else 0)",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K13",
+    "label": "performance bonus in full from 12 months, 50% from 6 months, none under 6 months",
+    "source": [
+     {
+      "document": "K13",
+      "provision": "Pasal 6 ayat (3)",
+      "page": null,
+      "quote": "menerima bonus sebesar 50% (lima puluh persen) dari nilai yang ditetapkan Direksi"
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 6 ayat (4)",
+      "page": null,
+      "quote": "Pekerja dengan masa kerja kurang dari 6 (enam) bulan tidak menerima bonus."
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-10"
+   },
+   {
+    "kind": "fact",
+    "id": "aem_service_award",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "service award at 10 and 15 years",
+    "source": [
+     {
+      "document": "K13",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "genap bermasa kerja 10 (sepuluh) tahun, yaitu 120 (seratus dua puluh) bulan, pada suatu bulan menerima penghargaan masa kerja sebesar 3 (tiga) kali upah satu bulan"
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "genap bermasa kerja 15 (lima belas) tahun, yaitu 180 (seratus delapan puluh) bulan, menerima penghargaan masa kerja sebesar 4 (empat) kali upah satu bulan"
+     }
+    ],
+    "recorded_on": "2026-12-10"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K13.SERVICE_AWARD",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "aem_service_award",
+    "expression": "(aem_wage * (4 if hr('months_of_service') == 180 else 3)) if hr('months_of_service') in (120, 180) else 0",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K13",
+    "source": [
+     {
+      "document": "K13",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "genap bermasa kerja 10 (sepuluh) tahun, yaitu 120 (seratus dua puluh) bulan, pada suatu bulan menerima penghargaan masa kerja sebesar 3 (tiga) kali upah satu bulan"
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "genap bermasa kerja 15 (lima belas) tahun, yaitu 180 (seratus delapan puluh) bulan, menerima penghargaan masa kerja sebesar 4 (empat) kali upah satu bulan"
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-10"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K13.OTHER_IRREGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_irregular_income",
+    "expression": "income('other_irregular') + aem_service_award",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "policy": "K13",
+    "source": [
+     {
+      "document": "K13",
+      "provision": "Pasal 7 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan satu kali pada bulan pekerja genap bermasa kerja sebagaimana dimaksud pada ayat (1) dan merupakan penghasilan tidak teratur"
+     },
+     {
+      "document": "K13",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-10"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 20000000,
+   "ptkp": "K/1",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "income": {
+    "fixed_allowance": 5000000
+   },
+   "employee": {
+    "contract_fixed_income": 25000000
+   },
+   "hr": {
+    "months_of_service": 6
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 20000000,
+   "ptkp": "K/1",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "income": {
+    "fixed_allowance": 5001000
+   },
+   "employee": {
+    "contract_fixed_income": 25001000
+   },
+   "hr": {
+    "months_of_service": 6
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 20000000,
+   "ptkp": "K/1",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "income": {
+    "fixed_allowance": 4999000
+   },
+   "employee": {
+    "contract_fixed_income": 24999000
+   },
+   "hr": {
+    "months_of_service": 6
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 15000000,
+   "ptkp": "TK/0",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "hr": {
+    "months_of_service": 11
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 15000000,
+   "ptkp": "TK/0",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "hr": {
+    "months_of_service": 12
+   }
+  },
+  {
+   "id": "T6",
+   "year": 2027,
+   "salary": 16000000,
+   "ptkp": "K/2",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "hr": {
+    "months_of_service": 30,
+    "night_shift_days": 8
+   }
+  },
+  {
+   "id": "T7",
+   "year": 2027,
+   "salary": 14000000,
+   "ptkp": "TK/0",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "income": {
+    "overtime_pay": 12000000
+   },
+   "hr": {
+    "months_of_service": 6
+   }
+  },
+  {
+   "id": "T8",
+   "year": 2027,
+   "salary": 13000000,
+   "ptkp": "TK/0",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 14,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T9",
+   "year": 2027,
+   "salary": 13000000,
+   "ptkp": "TK/0",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 5,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 0
+   }
+  },
+  {
+   "id": "T10",
+   "year": 2027,
+   "salary": 13000000,
+   "ptkp": "TK/0",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "months_of_service": 36,
+    "thr_holiday": 1,
+    "days_terminated_before_holiday": 2
+   }
+  },
+  {
+   "id": "T11",
+   "year": 2027,
+   "salary": 13000000,
+   "ptkp": "K/1",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "income": {
+    "bonus": 30000000
+   },
+   "income_months": [
+    3
+   ],
+   "hr": {
+    "months_of_service": 24
+   }
+  },
+  {
+   "id": "T12",
+   "year": 2027,
+   "salary": 13000000,
+   "ptkp": "K/1",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "income": {
+    "bonus": 30000000
+   },
+   "income_months": [
+    3
+   ],
+   "hr": {
+    "months_of_service": 8
+   }
+  },
+  {
+   "id": "T13",
+   "year": 2027,
+   "salary": 13000000,
+   "ptkp": "K/1",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "income": {
+    "bonus": 30000000
+   },
+   "income_months": [
+    3
+   ],
+   "hr": {
+    "months_of_service": 4
+   }
+  },
+  {
+   "id": "T14",
+   "year": 2027,
+   "salary": 17000000,
+   "ptkp": "K/1",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "start_month": 6,
+   "end_month": 6,
+   "hr": {
+    "months_of_service": 120
+   }
+  },
+  {
+   "id": "T15",
+   "year": 2027,
+   "salary": 17000000,
+   "ptkp": "K/1",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "start_month": 6,
+   "end_month": 6,
+   "hr": {
+    "months_of_service": 180
+   }
+  },
+  {
+   "id": "T16",
+   "year": 2027,
+   "salary": 17000000,
+   "ptkp": "K/1",
+   "klu": "09100",
+   "jkk_risk": "low",
+   "start_month": 6,
+   "end_month": 6,
+   "hr": {
+    "months_of_service": 121
+   }
+  }
+ ]
+}

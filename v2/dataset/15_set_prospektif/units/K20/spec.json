@@ -1,0 +1,480 @@
+{
+ "id": "K20",
+ "layer": "company",
+ "instance": "SP13",
+ "policy": "K20",
+ "change_type": "T10",
+ "size": 13,
+ "traps": [
+  "pasal yang menyatakan ulang ketentuan lama yang tidak berubah (mes dan makan di kapal disediakan tanpa pemotongan)",
+  "rujukan silang (Pasal 3 ke Pasal 1 huruf e; Pasal 5 ayat (2) ke ayat (1))",
+  "pengecualian (upah lembur menurut jam sebenarnya bila lebih besar)",
+  "nilai dalam huruf dan angka yang harus dibaca bersama",
+  "syarat implisit (masa kerja 12 bulan untuk Tunjangan Cuti Tahunan, 24 bulan untuk THR 1,5 bulan)"
+ ],
+ "title": "PT Kencana Pelayaran Nusantara: Perjanjian Kerja Bersama 2027-2028",
+ "header": "PERJANJIAN KERJA BERSAMA PT KENCANA PELAYARAN NUSANTARA",
+ "issued": "2026-12-05",
+ "effective_from": "2027-01-01",
+ "effective_until": "2028-12-31",
+ "retroactive": false,
+ "summary": "PKB 2027-2028 pelayaran: Tunjangan Pelayaran 8% Upah Pokok sebagai Tunjangan Tetap, Tunjangan Jaga Malam Rp85.000, upah lembur tetap paling sedikit 30% Upah Pokok, THR 1 atau 1,5 bulan Upah, Tunjangan Cuti Tahunan 1 bulan Upah Pokok pada Juli, premi asuransi jiwa Rp50.000 dipotong, dan PPh 21 ditanggung perusahaan; mes tetap disediakan tanpa potongan.",
+ "gold": {
+  "delta_id": "GOLD-K20",
+  "event_id": "K20",
+  "document": {
+   "id": "K20",
+   "title": "PT Kencana Pelayaran Nusantara: Perjanjian Kerja Bersama 2027-2028",
+   "issued": "2026-12-05"
+  },
+  "relevant": true,
+  "add": [
+   {
+    "kind": "fact",
+    "id": "k20_night_watch_allowance",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "night watch allowance",
+    "source": [
+     {
+      "document": "K20",
+      "provision": "Pasal 4 ayat (1)",
+      "page": null,
+      "quote": "untuk setiap hari tugas jaga malam"
+     }
+    ],
+    "recorded_on": "2026-12-05"
+   },
+   {
+    "kind": "fact",
+    "id": "k20_leave_allowance",
+    "fact_type": "money",
+    "fact_scope": "period",
+    "output": false,
+    "label": "annual leave allowance paid in July",
+    "source": [
+     {
+      "document": "K20",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "yang dibayarkan bersama Upah bulan Juli"
+     }
+    ],
+    "recorded_on": "2026-12-05"
+   },
+   {
+    "kind": "fact",
+    "id": "k20_thr_factor",
+    "fact_type": "exact",
+    "fact_scope": "period",
+    "output": false,
+    "label": "THR multiplier by length of service",
+    "source": [
+     {
+      "document": "K20",
+      "provision": "Pasal 6 ayat (4)",
+      "page": null,
+      "quote": "menerima THR sebesar 1,5 (satu setengah) bulan Upah"
+     }
+    ],
+    "recorded_on": "2026-12-05"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K20.FIXED_ALLOWANCE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "fixed_allowance",
+    "expression": "income('fixed_allowance') + round(dec('0.08') * base_salary, 1, 'down')",
+    "label": "voyage allowance of 8% of base salary, a fixed allowance",
+    "policy": "K20",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K20",
+      "provision": "Pasal 3",
+      "page": null,
+      "quote": "Tunjangan Pelayaran sebesar 8% (delapan persen) dari Upah Pokok setiap bulan sebagai Tunjangan Tetap sebagaimana dimaksud dalam Pasal 1 huruf e"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 11 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-05"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K20.NIGHT",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k20_night_watch_allowance",
+    "expression": "hr('night_shift_days') * 85000",
+    "label": "85,000 per night watch day",
+    "policy": "K20",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K20",
+      "provision": "Pasal 4 ayat (1)",
+      "page": null,
+      "quote": "Tunjangan Jaga Malam sebesar Rp85.000,00 (delapan puluh lima ribu rupiah) untuk setiap hari tugas jaga malam"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 11 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-05"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K20.OTHER_REGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_regular_income",
+    "expression": "income('other_regular') + k20_night_watch_allowance",
+    "label": "night watch allowance is regular income paid with the monthly wage",
+    "policy": "K20",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K20",
+      "provision": "Pasal 4 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan bersama Upah bulan yang bersangkutan dan bukan merupakan Tunjangan Tetap"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 11 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-05"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K20.OVERTIME",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "overtime_pay",
+    "expression": "max(income('overtime_pay'), round(dec('0.30') * base_salary, 1, 'down'))",
+    "label": "fixed overtime pay of at least 30% of base salary; the actual amount if larger",
+    "policy": "K20",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K20",
+      "provision": "Pasal 5 ayat (1)",
+      "page": null,
+      "quote": "paling sedikit 30% (tiga puluh persen) dari Upah Pokok"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 5 ayat (2)",
+      "page": null,
+      "quote": "melebihi jumlah sebagaimana dimaksud pada ayat (1), Perusahaan membayar jumlah yang lebih besar tersebut"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 11 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-05"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K20.THR_FACTOR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k20_thr_factor",
+    "expression": "dec('1.5') if hr('months_of_service') >= 24 else 1",
+    "label": "1.5 months of wage from 24 months of service",
+    "policy": "K20",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K20",
+      "provision": "Pasal 6 ayat (4)",
+      "page": null,
+      "quote": "Pekerja dengan masa kerja 24 (dua puluh empat) bulan atau lebih menerima THR sebesar 1,5 (satu setengah) bulan Upah"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 11 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-05"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K20.THR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "thr",
+    "condition": "hr('thr_holiday') > 0",
+    "expression": "round((base_salary + fixed_allowance) * min(hr('months_of_service'), 12) / 12 * k20_thr_factor, 1, 'down') if hr('months_of_service') >= 1 and hr('days_terminated_before_holiday') <= 30 else 0",
+    "label": "THR on the wage including the voyage allowance, proportional below 12 months",
+    "policy": "K20",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K20",
+      "provision": "Pasal 6 ayat (2)",
+      "page": null,
+      "quote": "Pekerja dengan masa kerja 12 (dua belas) bulan atau lebih menerima THR sebesar 1 (satu) bulan Upah"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 6 ayat (3)",
+      "page": null,
+      "quote": "yaitu masa kerja dibagi 12 (dua belas) dikali 1 (satu) bulan Upah"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 6 ayat (5)",
+      "page": null,
+      "quote": "berakhir lebih dari 30 (tiga puluh) hari sebelum hari raya keagamaan tidak berhak atas THR"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 1 huruf f",
+      "page": null,
+      "quote": "Upah adalah Upah Pokok ditambah Tunjangan Tetap"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 11 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-05"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K20.LEAVE_ALLOWANCE",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "k20_leave_allowance",
+    "expression": "base_salary if month == 7 and hr('months_of_service') >= 12 else 0",
+    "label": "annual leave allowance of one month of base salary in July after 12 months of service",
+    "policy": "K20",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K20",
+      "provision": "Pasal 7 ayat (1)",
+      "page": null,
+      "quote": "masa kerja 12 (dua belas) bulan atau lebih menerima Tunjangan Cuti Tahunan sebesar 1 (satu) bulan Upah Pokok yang dibayarkan bersama Upah bulan Juli"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 11 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-05"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K20.OTHER_IRREGULAR",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "other_irregular_income",
+    "expression": "income('other_irregular') + k20_leave_allowance",
+    "label": "annual leave allowance is irregular income, paid once a year",
+    "policy": "K20",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K20",
+      "provision": "Pasal 7 ayat (2)",
+      "page": null,
+      "quote": "dibayarkan satu kali dalam setahun"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 11 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-05"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K20.DEDUCTION",
+    "layer": "company",
+    "modality": "default",
+    "scope": "period",
+    "produces": "company_deductions",
+    "expression": "income('deductions') + 50000",
+    "label": "group life insurance premium deducted every month",
+    "policy": "K20",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K20",
+      "provision": "Pasal 8",
+      "page": null,
+      "quote": "premi Rp50.000,00 (lima puluh ribu rupiah) sebulan yang dipotong dari Upah Pekerja"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 11 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-05"
+   },
+   {
+    "kind": "rule",
+    "id": "PRS.K20.METHOD",
+    "layer": "company",
+    "modality": "default",
+    "scope": "year",
+    "produces": "withholding_method",
+    "expression": "'employer_borne'",
+    "label": "PPh 21 on all income borne by the company, not paid in cash",
+    "policy": "K20",
+    "valid_from": "2027-01-01",
+    "valid_until": "2028-12-31",
+    "source": [
+     {
+      "document": "K20",
+      "provision": "Pasal 10 ayat (1)",
+      "page": null,
+      "quote": "atas seluruh penghasilan Pekerja ditanggung oleh Perusahaan"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 10 ayat (2)",
+      "page": null,
+      "quote": "tidak dibayarkan kepada Pekerja dalam bentuk uang tunai"
+     },
+     {
+      "document": "K20",
+      "provision": "Pasal 11 ayat (1)",
+      "page": null,
+      "quote": "berlaku sejak tanggal 1 Januari 2027 sampai dengan tanggal 31 Desember 2028"
+     }
+    ],
+    "recorded_on": "2026-12-05"
+   }
+  ],
+  "change": [],
+  "remove": [],
+  "note": ""
+ },
+ "triggers": [
+  {
+   "id": "T1",
+   "year": 2027,
+   "salary": 9000000,
+   "ptkp": "K/1",
+   "klu": "50131",
+   "hr": {
+    "night_shift_days": 10,
+    "months_of_service": 60
+   },
+   "income": {
+    "overtime_pay": 1000000
+   }
+  },
+  {
+   "id": "T2",
+   "year": 2027,
+   "salary": 7000000,
+   "ptkp": "TK/0",
+   "klu": "50131",
+   "hr": {
+    "night_shift_days": 0,
+    "months_of_service": 10
+   },
+   "income": {
+    "overtime_pay": 3000000
+   }
+  },
+  {
+   "id": "T3",
+   "year": 2027,
+   "salary": 12000000,
+   "ptkp": "K/2",
+   "klu": "50131",
+   "hr": {
+    "night_shift_days": 5,
+    "months_of_service": 30
+   }
+  },
+  {
+   "id": "T4",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0",
+   "klu": "50131",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 30
+   }
+  },
+  {
+   "id": "T5",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0",
+   "klu": "50131",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 15
+   }
+  },
+  {
+   "id": "T6",
+   "year": 2027,
+   "salary": 8000000,
+   "ptkp": "TK/0",
+   "klu": "50131",
+   "start_month": 3,
+   "end_month": 3,
+   "hr": {
+    "thr_holiday": 1,
+    "months_of_service": 15,
+    "days_terminated_before_holiday": 31
+   }
+  }
+ ]
+}

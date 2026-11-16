@@ -1,0 +1,103 @@
+% ============================================================================
+\section{Proposed System}
+\label{sec:system}
+% ============================================================================
+The system separates two paths that meet in the knowledge base (Fig.~\ref{fig:architecture}). The update path runs when a regulation or company policy is issued and is the only path that uses a language model. The computation path runs at every payroll calculation and is deterministic. The figure marks the language model in orange, deterministic code in blue, and the human decision in green. One installation serves one company and holds only the policies of that company in its company layer. Every installation starts from the same validated regulation layer and keeps it current through its own updates.
+
+\begin{figure*}[!t]
+\centering
+\figArchitecture
+\caption{System architecture with the update path above and the computation path below.}
+\label{fig:architecture}
+\end{figure*}
+
+\subsection{Two-Layer Bitemporal Knowledge Base}
+\label{sec:representation}
+The knowledge base is an RDF and OWL knowledge graph with SHACL validation and SPARQL queries. It holds documents, provisions, quotes, rules, parameters, tables, company policies, change events, and updates. The ontology reuses the European Legislation Identifier for documents and provisions~\cite{publicationsoffice2026elien}, OWL-Time for validity intervals~\cite{cox2017owltime}, and PROV-O for the update that generated each element~\cite{lebo2013provo}. Each approved update becomes one named graph, so an earlier version of the knowledge base is a query over fewer graphs and not a restored backup.
+
+\begin{figure*}[!t]
+\centering
+\resizebox{0.95\textwidth}{!}{\input{figs/ontology}}
+\caption{Ontology of the knowledge base.}
+\label{fig:ontology}
+\end{figure*}
+
+In the ontology of Fig.~\ref{fig:ontology}, classes reused from external vocabularies are drawn dashed. The two layers appear as a property of each rule, which also records its modality, its scope (period or year), its expression, and its condition.
+
+Every rule belongs to one of two layers. Rules of the regulation layer state the law for all employers together with the conditions under which they apply, such as a list of business classification codes or a minimum number of workers. The engine checks these conditions against the profile of the company. Rules of the company layer belong to one policy of one company and may read any fact of the regulation layer. A rule also carries a modality (mandatory, default, or optional) with which the engine can let a company rule replace a default of the regulation while a mandatory provision always prevails. Calculation expressions are literal attributes of rules that the engine executes. A regulatory or policy change therefore touches only data in the graph. For example, the rounding rule of PER-11/PJ/2025 becomes a new version of the parameter \texttt{pph\_round\_mode} and not a change of code.
+
+Every element records the interval in which it is legally valid and the date on which it was recorded. The two dates make the knowledge base bitemporal: a question asked on knowledge date $\omega$ sees only the records with a recording date on or before $\omega$.
+
+An employer can compare the answers of two knowledge dates for the same month (Fig.~\ref{fig:bitemporal}). Employee B has status TK/0 and a monthly salary of Rp8,000,000 at an employer in a labor-intensive sector that is eligible under PMK 10/2025. The PPh 21 of this employee for January 2025 is Rp125,448. A question about January asked on 31 January returns no government-borne tax because PMK 10/2025 has not yet been issued. The same question asked on 10 February returns Rp125,448 borne by the government and paid to the employee in cash. Both answers stay available. Their difference is the correction that the employer owes for January. All values in the figure are engine output.
+
+\begin{figure}[!t]
+\centering
+\figBitemporal
+\caption{Two knowledge dates for the January 2025 tax of Employee B.}
+\label{fig:bitemporal}
+\end{figure}
+
+\subsection{Inference Engine and Recalculation}
+\label{sec:engine}
+The engine computes the tax of one employee for a full tax year at a knowledge date $\omega$. For each period and each output fact the engine collects the rules that produce the fact. It keeps those valid in the period and recorded on or before $\omega$ and then filters them by their conditions. When several rules remain, the engine applies \emph{lex superior} (mandatory regulation, then company rule, then adopted optional regulation, then default), \emph{lex specialis} through explicit \texttt{overrides} relations, and \emph{lex posterior}. A company rule that loses to a mandatory rule with a different value is reported as a conflict. The engine evaluates facts on demand with memoization, computes gross-up as the least fixed point of the tax allowance, and recomputes the year in the final period. A money value that is not a whole rupiah raises an error instead of being rounded silently because all arithmetic is exact. Every value also carries the rule and the quotes it rests on.
+
+The calculator of the application shows the rule behind a result for a sample employee of PT TKG Taekwang Indonesia (Fig.~\ref{fig:calc}). The result card of the final month lists the values that the winning rule reads and names the rule with its provision, and the table beside it gives the withholding of every month.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.9\textwidth]{figs/screen_calculator.png}
+\caption{PPh 21 calculator of the application with the result of the final month and its rule.}
+\label{fig:calc}
+\end{figure*}
+
+A retroactive rule needs no special code even when its update is recorded on date $\omega_1$ after a payroll has run on the knowledge of $\omega_0 < \omega_1$. The recalculation report then evaluates each employee at both knowledge dates and lists every value that differs in the months already paid. The employer receives the correction per employee and month. The payroll as computed on $\omega_0$ remains reproducible because no record is overwritten.
+
+\subsection{LLM-Assisted Update Pipeline}
+\label{sec:acquisition}
+The update pipeline turns one document into at most one proposed update (Fig.~\ref{fig:acqflow}). It locks the document text with SHA-256 and splits it into parts by article. A low-cost model first maps each part as core (sent word for word), general (sent as a summary), or none (left out). Core parts are never cut. A drafting model then judges whether the document changes the PPh 21 computation and must support its judgment with verbatim quotes. A document judged not relevant ends with an empty update. For a relevant document, the drafting model writes three independent drafts of the update as structured JSON. Each draft lists the elements to add, change, or remove with a quote from the provision of each element. The prompt carries the vocabulary of facts and functions, the payroll data dictionary of the company, and the related records of the knowledge base retrieved with SPARQL. The model never computes tax.
+
+\begin{figure*}[!t]
+\centering
+\figAcquisitionFlow
+\caption{Update pipeline for one document.}
+\label{fig:acqflow}
+\end{figure*}
+
+Six deterministic gates check every draft in the order of Table~\ref{tab:gates}. G1 applies the JSON schema, the application of the update to the knowledge base, and the SHACL shapes. G6 requires every case-data input that a new rule reads to exist in the payroll data of the company. Without this gate, a draft could invent an input such as an employee attribute that the generated test cases supply but real payroll data never contains. G2 requires each quote to occur in the document and every new number and date to occur in the quote of its element. G3 checks expressions, the dependency graph, and references. G4 runs the knowledge base before and after the update on a set $\SG$ of up to 300 cases generated from the draft and rejects new engine errors and changes before the start of validity.
+
+The set $\SG$ combines PTKP statuses, withholding methods, salary levels, and the thresholds of the changed elements and is filled with random combinations to about 250 cases. It is generated from the draft alone and never reads the reference knowledge base or the test cases. G5 reports elements that change no output on $\SG$ to the reviewer without rejecting the draft. A draft that fails receives the gate messages and one repair round. Among the 354 drafts of the isolated runs, 151 failed a gate at first, and 31 of them passed after the repair round.
+
+\begin{table}[!t]
+\caption{Verification gates and the first gate that failed among the 354 drafts of the isolated runs.}
+\label{tab:gates}
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}lLLr@{}}
+\toprule
+Gate & Checks & Example of a failure & Drafts \\
+\midrule
+G1 & schema, application, SHACL & a missing required validity date or an annex table that was not extracted & 39 \\
+G6 & inputs exist in payroll data & a rule reading an invented attribute for head-office staff & 96 \\
+G2 & quotes, numbers, dates & an end of validity that no quote supports & 9 \\
+G3 & expressions, references & a rule reading a table that is not yet valid & 2 \\
+G4 & regression on $\SG$ & a tax facility that changes months before its start of validity & 5 \\
+G5 & effect of each element & reported to the reviewer & 0 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The drafts that pass are grouped by their behavior on the union of their $\SG$ sets at the day before and the day of issue. Two drafts belong to the same group when they give the same output values, conflict report, and engine errors on every case of this union at both dates. The first draft of the largest group in a random order becomes the proposal. A single passing draft forms the largest group on its own. A tie or the absence of a passing draft ends in abstention, which sends the document to the HC software engineer without a proposal.
+
+\subsection{Review by an HC Software Engineer}
+\label{sec:review}
+The intended reviewer is an HC software engineer of the human capital division. This engineer builds and maintains the company's human capital information system (HCIS) with its payroll module and can therefore read both the payroll data and the rules. The role exists in companies that develop their own HCIS. The review page shows the proposal with its quotes, the gate results, before-and-after payslips for a fixed set of payroll scenarios, and the company policies whose rules read a fact that the update touches. The engineer approves, edits, or rejects the proposal or asks the model to repair it. After an abstention the engineer writes the update. In both cases the engineer handles a structured change with its sources instead of writing new program code.
+
+The application covers the upload of a document and the review of its proposal (Fig.~\ref{fig:manage}). A document is uploaded with its title, issue date, and type and waits on its card until the update pipeline is run. The review page lists the proposed changes with their quotes, the gate results, and the before-and-after results of the standard scenarios. The proposal in the figure was written by hand for illustration. The checks on this proposal report that its source document is not in the knowledge base.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.6\textwidth]{figs/screen_upload.png}\\[1pt]{\footnotesize (a)}\\[4pt]
+\includegraphics[width=0.6\textwidth]{figs/screen_review.png}\\[1pt]{\footnotesize (b)}
+\caption{Knowledge base management with (a) the upload of a document and (b) the review of a proposal.}
+\label{fig:manage}
+\end{figure*}

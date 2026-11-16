@@ -1,0 +1,119 @@
+% ============================================================================
+% An Adaptive LLM-Assisted Knowledge-Based System for Payroll Tax Calculation Under Retroactive Changes in
+% Government Regulations and Company Policies
+%
+% IEEE Access manuscript. Build in v2/paper/:
+%   pdflatex main && bibtex main && pdflatex main && pdflatex main
+% Data figures: env\Scripts\python v2\paper\make_figures.py (reads the analysis files under v2/work).
+% ============================================================================
+% ieeeaccess.cls redefines the TeX primitive \year, which pgf reads while loading; the primitive is restored
+% while TikZ loads.
+\let\primitiveyear\year
+\documentclass{ieeeaccess}
+\let\accessyear\year
+\let\year\primitiveyear
+\usepackage{tikz}
+\let\year\accessyear
+% pgf overwrites \pdfpageresources; the template's spot color space (used by the blue figure and table labels)
+% is registered again through pgf's own resource list.
+\makeatletter
+\expandafter\pgfutil@addpdfresource@colorspaces\expandafter{\the\PANTONE}
+\makeatother
+\usetikzlibrary{arrows.meta,positioning,fit,calc,shapes.geometric}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{url}
+\providecommand{\nolinkurl}[1]{\url{#1}}
+
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+\newcommand{\K}{\mathcal{K}}
+\newcommand{\SG}{S^{G}}
+
+\definecolor{cai}{RGB}{226,135,30}
+\definecolor{cdet}{RGB}{40,100,170}
+\definecolor{chum}{RGB}{40,140,80}
+\definecolor{cgr}{RGB}{140,140,140}
+\definecolor{cred}{RGB}{200,50,50}
+\definecolor{cpur}{RGB}{130,60,160}
+\tikzset{
+  b/.style={draw, rounded corners=2pt, align=center, font=\scriptsize, minimum height=0.8cm, inner sep=2pt},
+  bai/.style={b, fill=cai!18, draw=cai},
+  bdet/.style={b, fill=cdet!12, draw=cdet},
+  bhum/.style={b, fill=chum!15, draw=chum},
+  bsrc/.style={b, fill=white, draw=cgr},
+  ar/.style={-{Stealth[length=1.6mm]}, semithick}
+}
+\input{figs/diagrams}
+
+\begin{document}
+\bstctlcite{IEEEexample:BSTcontrol}
+\history{Date of publication xxxx 00, 0000, date of current version xxxx 00, 0000.}
+\doi{10.1109/ACCESS.2026.DOI}
+
+\title{An Adaptive LLM-Assisted Knowledge-Based System for Payroll Tax Calculation Under Retroactive Changes in Government Regulations and Company Policies}
+
+\author{\uppercase{Obi Kastanya}\authorrefmark{1},
+\uppercase{Mahathir Muhammad}\authorrefmark{1},
+AND \uppercase{Ratih Nur Esti Anggraini}\authorrefmark{1}}
+
+\address[1]{Department of Informatics, Institut Teknologi Sepuluh Nopember, Surabaya 60111, Indonesia
+(e-mail: 6025252015@student.its.ac.id; 6025252008@student.its.ac.id; ratih\_nea@if.its.ac.id)}
+\tfootnote{This work received no external funding.}
+
+\markboth
+{Kastanya \headeretal: Adaptive LLM-Assisted Knowledge-Based System for Payroll Tax Calculation}
+{Kastanya \headeretal: Adaptive LLM-Assisted Knowledge-Based System for Payroll Tax Calculation}
+
+\corresp{Corresponding author: Ratih Nur Esti Anggraini (e-mail: ratih\_nea@if.its.ac.id).}
+
+\input{sections/abstract}
+
+\titlepgskip=-21pt
+
+\maketitle
+
+\input{sections/introduction}
+\input{sections/background}
+\input{sections/related}
+\input{sections/system}
+\input{sections/design}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+\section*{Data and Code Availability}
+The code, the reference knowledge base, the regulation corpus, the prospective test units, the logs of every model call, the analysis scripts, and the scripts that draw the figures are available at \url{https://github.com/obikastanya/pph_payroll_with_knowledge_base}. The texts of the collective labor agreements and the prompts that contain them are excluded because the agreements belong to third parties. Indonesian regulations are not protected by copyright (Law 28/2014, Article 42). The study involved no human subjects and no personal data; all test employees are synthetic and were generated from published wage cells of Statistics Indonesia.
+
+\section*{Acknowledgment}
+The authors used the AI assistant Claude Code (Anthropic) to write the system code and the evaluation scripts, to draft the reference knowledge base and the prospective test units, and to draft the text, tables, figures, and LaTeX source of this article. The authors checked the material and take responsibility for the entire content.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references,references_extra,regulations_en}
+
+\begin{IEEEbiographynophoto}{Obi Kastanya}
+is a master's student in the Department of Informatics, Institut Teknologi Sepuluh Nopember, Surabaya, Indonesia, working on knowledge-based systems and the use of large language models for knowledge acquisition.
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Mahathir Muhammad}
+is a master's student in the Department of Informatics, Institut Teknologi Sepuluh Nopember, Surabaya, Indonesia.
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Ratih Nur Esti Anggraini}
+is a lecturer in the Department of Informatics, Institut Teknologi Sepuluh Nopember, Surabaya, Indonesia, and head of its Intelligent Information Management Laboratory for 2024--2029, and holds the S.Kom., M.Sc., and Ph.D. degrees and the professional engineer title (Ir.).
+\end{IEEEbiographynophoto}
+
+\EOD
+\end{document}

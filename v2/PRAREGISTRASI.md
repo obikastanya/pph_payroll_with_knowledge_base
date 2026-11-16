@@ -19,6 +19,15 @@ H1 gugur bila salah satu tidak terpenuhi.
 
 Analisis: *bootstrap* berklaster per peristiwa, 10.000 ulangan, pada 48 pasangan peristiwa-rantai. Daya disimulasikan dari run set pengembangan sebelum run uji; bila di bawah 0,80, H1 dilaporkan sebagai estimasi, dan keputusan itu dicatat di sini sebelum run uji.
 
+*Hasil simulasi daya (2026-11-16, sebelum run rantai; `v2/harness/analysis.py power`, `v2/work/analysis/power.json`):*
+- Daya 0,64 dengan laju set pengembangan akhir (16 benar, 1 abstain, 0 *silent error*; Dirichlet dengan prior Jeffreys).
+- Daya 0,10 dengan laju tag 3 sebagai sensitivitas.
+- Model kerugiannya konservatif: *silent error* dianggap tidak pernah dikoreksi, dan jangkauannya diambil dari *silent error* set pengembangan.
+- Keuntungan pembaruan tepat waktu terbatas pada slip yang tanggal payroll-nya jatuh dalam jeda 26 hari skenario kode.
+- Pasangan yang dihitung ada 54: 48 pasangan regulasi ditambah 6 PKB.
+
+Karena daya di bawah 0,80, **H1 dilaporkan sebagai estimasi** (selisih dan CI 95%), tidak sebagai uji konfirmatori.
+
 **RQ2 (pendukung), keamanan satu pembaruan.**
 
 *H2.* Pada set prospektif (80 unit, mode terisolasi):

@@ -22,8 +22,9 @@ from .replay import Recorded
 
 MEASURED = WORK / "measured"
 DRAFTER, MAPPER, ROBUST = "gpt-6.1-sol", "gpt-5.4-mini", "claude-sonnet-5-5"
-LIMITS = {"openai": 95.0, "anthropic": 17.0}
+LIMITS = {"openai": 101.0, "anthropic": 17.0}   # openai: 29.34 recorded on the first account + 90% of the second account's USD 80 (2026-11-16)
 SEED_UNITS = 20                    # prospective units for the Sonnet check, stratified by size
+DIRECT_TIMEOUT_S = 3600.0          # per request, direct calls (deviation logged 2026-11-16: 600 s cut off PKB drafts)
 
 
 def config_measured():
@@ -35,11 +36,38 @@ def ledger(stage, provider):
     return draft.Ledger(stage, root=MEASURED / "calls", total_limit_usd=LIMITS[provider])
 
 
+class Background:
+    """The Responses API in background mode: the same request body, created with background=True and polled until
+    done. A direct call held open for more than a few minutes never returns on this network (every attempt of a long
+    high-effort draft hung to its timeout on 2026-11-16 while short calls returned), so no connection is held open
+    while the model works. A failed or over-long response raises, which the client records as a failed draft."""
+
+    def __init__(self, api, poll_s=15.0, limit_s=DIRECT_TIMEOUT_S * 3):
+        self.api, self.poll_s, self.limit_s = api, poll_s, limit_s
+        self.responses = self
+
+    def create(self, **body):
+        import time
+        resp = self.api.responses.create(**body, background=True)
+        start = time.monotonic()
+        while resp.status in ("queued", "in_progress"):
+            if time.monotonic() - start > self.limit_s:
+                self.api.responses.cancel(resp.id)
+                raise TimeoutError(f"background response {resp.id} not done after {self.limit_s:.0f} s")
+            time.sleep(self.poll_s)
+            resp = self.api.responses.retrieve(resp.id)
+        if resp.status == "failed" or resp.usage is None:
+            raise RuntimeError(f"background response {resp.id} {resp.status}: {resp.error}")
+        return resp
+
+
 def client(model, stage, batch=True):
     """A batch client (half price), or a direct client with record and replay (a resumed stage re-reads answers)."""
     if model.startswith("gpt"):
         inner = draft.OpenAIClient(ledger(stage, "openai"), model=model)
         backend = OpenAIBatch(inner.api)
+        if not batch:      # direct calls go through background mode (see Background)
+            inner.api = Background(inner.api.with_options(timeout=120.0, max_retries=3))
     else:
         inner = draft.AnthropicClient(ledger(stage, "anthropic"), model=model)
         backend = AnthropicBatch(inner.api)

@@ -69,7 +69,7 @@ class Recorded(draft.Client):
             finally:
                 if held:
                     self.cpu.acquire()
-            if not entry.get("error"):
+            if not entry.get("error") or entry.get("output_raw"):   # the model answered (also unparseable JSON)
                 self._store({"key": k, "call_id": call_id, "output_raw": entry["output_raw"],
                              "stop_reason": entry["stop_reason"], "model_reported": entry["model_reported"],
                              "usage": entry["usage"]})
@@ -85,8 +85,14 @@ class Recorded(draft.Client):
                  "prompt_sha256": sha, "prompt_file": pfile, "output_raw": row["output_raw"],
                  "stop_reason": row["stop_reason"], "usage": row["usage"], "cost_usd": 0.0, "seconds": 0.0,
                  "error": None, "replayed": True}
+        parsed = None
+        if row["output_raw"]:
+            try:
+                parsed = json.loads(row["output_raw"])
+            except json.JSONDecodeError as e:     # a truncated answer replays as the same failed draft
+                entry["error"] = f"JSONDecodeError: {e}"
         self.ledger.log(entry)
-        return reply, json.loads(row["output_raw"]) if row["output_raw"] else None, entry
+        return reply, parsed, entry
 
     def _store(self, row):
         with self._lock:

@@ -1,0 +1,105 @@
+% ============================================================================
+\section{Evaluation Design}
+\label{sec:design}
+% ============================================================================
+The evaluation follows how the system is used: one company installs one system and uploads every document it receives in the order of issue. It measures whether the representation recalculates past months correctly when a retroactive rule arrives (Section~\ref{sec:res-retro}) and how often a single drafted update is correct, silently wrong, or replaced by an abstention (Section~\ref{sec:res-single}). Its third measure is the share of a company's payslips that stay correct while the system's own updates accumulate, compared with a code-based update (Section~\ref{sec:res-chain}).
+
+\subsection{Data}
+\label{sec:data}
+The test regulations are the 13 events of 2023--2026 that changed PPh 21 for permanent employees, five of them retroactive (Tables~\ref{tab:events} and~\ref{tab:data}). Twenty distractors are real regulations of the same period that do not change this computation, such as rules on other taxes. They stand for documents that a staff member uploads by mistake. Each was trimmed mechanically to its opening, the one article with the most PPh 21 terms, and its closing.
+
+The five real companies have public collective labor agreements and come from five sectors and four provinces. Each company starts at its installation date, which is the signing date of its agreement or 1 January 2023 for an agreement signed earlier. Century Textile replaces its 2021 agreement with a new one in March 2024. Payslips are counted as employee-months scored in the chained mode. Ten fictional companies with synthetic policies cover combinations of business classification, workforce size, and work-accident risk group that the real companies do not.
+
+\begin{table*}[!t]
+\caption{The 13 test regulations of 2023--2026.}
+\label{tab:events}
+\centering\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}llLll@{}}
+\toprule
+Event & Document & Change & Issued & Valid from \\
+\midrule
+E01 & BPJS letter B/77/022023 & pension wage cap 2023 & 2023-02-27 & 2023-03-01 \\
+E02 & PMK 66/2023 & tax on benefits in kind & 2023-06-27 & 2023-07-01 \\
+E03 & PP 58/2023 & TER withholding rates & 2023-12-27 & 2024-01-01 \\
+E04 & PMK 168/2023 & implementing rules for TER & 2023-12-29 & 2024-01-01 \\
+E05 & BPJS letter B/1387/022024 & pension wage cap 2024 & 2024-02-28 & 2024-03-01 \\
+E06 & PMK 10/2025 & DTP, labor-intensive industry & 2025-02-04 & 2025-01-01 \\
+E07 & PP 7/2025 & work-accident premium relief & 2025-02-07 & 2025-02-01 \\
+E08 & BPJS letter B/726/022025 & pension wage cap 2025 & 2025-02-27 & 2025-03-01 \\
+E09 & PP 36/2025 & extension of the premium relief & 2025-09-04 & 2025-08-01 \\
+E10 & PMK 72/2025 & DTP extended to tourism & 2025-10-28 & 2025-10-01 \\
+E11 & PMK 105/2025 & DTP for 2026 & 2025-12-31 & 2026-01-01 \\
+E12 & BPJS letter B/1226/022026 & pension wage cap 2026 & 2026-02-25 & 2026-03-01 \\
+E13 & PER-11/PJ/2025 & rounding to the nearest rupiah & 2025-05-22 & 2025-01-01 \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\begin{table}[!t]
+\caption{Documents, companies, payslips, and reference rows of the evaluation.}
+\label{tab:data}
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}lLr@{}}
+\toprule
+Item & Content & Count \\
+\midrule
+Test regulations & PPh 21 changes of 2023--2026, five retroactive & 13 \\
+Distractors & real regulations that do not change PPh 21 & 20 \\
+Real companies & Sansan (garment), Century Textile (textile), Taekwang (footwear), AVCO (aviation services), WIKA (construction) & 5 \\
+Labor agreements & public agreements of the five companies & 6 \\
+Fictional companies & synthetic policies, two simulation chains & 10 \\
+Prospective units & unseen changes: 50 regulations, 30 company policies & 80 \\
+Chain steps & documents processed in the seven chains & 224 \\
+Payslips, real & employee-months of the five real companies & 26,328 \\
+Payslips, simulation & employee-months of the fictional companies & 66,374 \\
+Reference check & payslip rows checked by a tax practitioner & 262 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Thirteen real changes are too few for statistical tests of single updates, so a prospective set adds 80 test units. Each unit describes a change that has not happened but could, such as a new PTKP amount, a new TER table, a new DTP sector, a new pension wage cap, or a new gross-up policy. Each unit follows the format of its source document type (letterhead, considerations, articles, annex tables) and passes through PDF rendering and the same extraction pipeline as the real documents. Traps such as a cross-reference, an exception, a transitional provision, or a number found only in an annex appear at least once in every unit. A mechanical check confirmed for each unit that its reference update passes the gates, that every quote is found in the extracted text, and that it changes at least one payslip. The units were written with a model from a different family than the drafting model.
+
+Each company has a panel of about 150 active employees per year in 2023--2026, including joiners and leavers. Their wages are drawn from the wage cells of Statistics Indonesia for the company's sector and province. Their pay components follow the company's labor agreement. Employees at, just below, and just above every threshold that a change touches are added so that every change reaches at least one payslip.
+
+\subsection{Reference Knowledge Base}
+\label{sec:reference}
+Every test document was encoded by hand in a reference knowledge base from which the engine computes every reference payslip. A tax practitioner checked the reference calculations row by row in a workbook organized by criterion. The workbook covers monthly withholding under TER (113 rows), the 2023 annualized method (39 rows), tax borne by the employer (59 rows), and final-period recomputations (20 rows). It also holds 21 examples from the clauses of the five labor agreements and 10 further employee-months. The practitioner confirmed all 262 rows without correction.
+
+\subsection{Evaluation Modes}
+\label{sec:modes}
+The evaluation has two main modes (Fig.~\ref{fig:protocol}). The isolated mode applies each document to the reference knowledge base as it stood just before the document and scores the drafted update on its own. The 13 real regulations were run twice in this mode. In the chained mode, each real company has its own independent chain that starts from the reference knowledge base on its installation date and receives the company's documents in the order of issue. Every update that the system makes stays in the knowledge base that the next document meets, so an error can carry forward. The figure marks a regulation with E and a distractor with D. It denotes the reference knowledge base by $\K^\star$, a drafted update by $\hat\Delta$, the scored result by $\K'$, and the system's own knowledge base by $\K^{\mathrm{sys}}$. The ten fictional companies share two further chains as a simulation, in which each regulation is drafted once for five companies as a provider of the regulation layer would do.
+
+\begin{figure*}[!t]
+\centering
+\figReplayProtocol
+\caption{Isolated and chained evaluation modes.}
+\label{fig:protocol}
+\end{figure*}
+
+A third mode tests late uploads. For each of the five retroactive events, the update drafted in the isolated mode is recorded one, two, and three months after the issue date when payrolls have already run. The recalculation report of the system is compared with that of the reference update recorded on the same day. The payroll as known before the upload is also checked to be unchanged.
+
+\subsection{Reviewer Conditions and the Code-Based Update}
+\label{sec:conditions}
+Three reviewer conditions reuse the results of the single model run of each chain. In the \emph{reviewer} condition, the HC software engineer approves every proposal as it is and writes the reference update 26 days after issue whenever the system abstains. Approving every proposal is the worst case for silent errors because a wrong proposal looks like any other. The \emph{careful-reviewer} condition also rejects a proposal whose review payslips differ from those of the reference update and writes the update 26 days after issue instead. This condition assumes that every error visible on the review page is noticed. The condition \emph{without reviewer} leaves the knowledge base unchanged after an abstention and gives a lower bound for full automation.
+
+The comparison is a \emph{code-based update} (baseline B1) that applies the correct update with the recalculation of past months 26 days after each issue. Twenty-six days is the fastest adoption of TER by an open-source PPh 21 calculator in its commit history. The other calculator took 915 days. The code-based update is therefore a favorable stand-in for current practice because it is always correct and only late. Its disadvantage is limited to the payslips whose payroll date falls within 26 days after an issue. The system is assumed to apply an approved update on the issue date.
+
+\subsection{Baselines for a Single Update}
+Three baselines use the same drafts as the system and differ only in how a draft is chosen. B2 takes the first draft in the random order that passes all gates, without consensus or abstention. B3 takes the first draft that passes the schema and quote checks before repair. B4 takes the behavioral majority of all drafts without gates, as in the closest work~\cite{goganikhiabani2025maintaining}. An upper bound counts a document as correct when any passing draft is correct.
+
+\subsection{Metrics and Statistics}
+\label{sec:metrics}
+A single update is \emph{correct} when every output value, the conflict report, and the engine errors equal those of the reference update on every test case. The comparison is made on the day before the document was issued and on the day of issue. The test cases are the employee-years of the affected tax years in a fixed test space that is separate from $\SG$. One value off by one rupiah makes the update a \emph{silent error}. Abstentions are reported separately. The silent-error rate (SER) is the share of documents with a silent error.
+
+Payslip accuracy is the share of employee-months whose payslip equals the reference payslip to the rupiah in every output of the engine, such as gross income, PPh 21 withheld, government-borne tax, and take-home pay. Each payslip is scored twice: as known on the payroll date of its month (the 25th) and as known at the end of the test window after every retroactive rule has been applied. The first score measures what the employee was paid. The second measures whether the company ends with correct books.
+
+Rates carry Clopper--Pearson intervals~\cite{clopper1934use}. The system and B3 are compared with the exact McNemar test~\cite{mcnemar1947note} and a Newcombe interval for paired proportions~\cite{newcombe1998improved}. The difference in payslip accuracy between the system and the code-based update carries a 95\% bootstrap interval with 10,000 resamples over the 54 event--chain pairs of the real companies~\cite{field2007bootstrapping}. These pairs are the resampling clusters because the payslips that one event affects are not independent. Agreement between drafting models uses Cohen's kappa~\cite{cohen1960coefficient}.
+
+\subsection{Hypotheses and Procedure}
+Two hypotheses and their thresholds were fixed in an analysis plan before the measured runs. H1 states that payslip accuracy on the payroll date in the reviewer condition is not lower than that of the code-based update by more than 0.01. Its test requires the lower bound of the 95\% interval of the difference to lie above $-0.01$. H1 also states that no error propagates systematically: no event may be correct in both isolated runs but wrong in at least two chains. H1 is reported as an estimate with its interval because a power simulation from the development runs gave 0.64, below the planned 0.80. H2 concerns single updates on the prospective set: a one-sided 95\% upper bound of SER of at most 0.15, a lower SER than B3, and an abstention rate of at most 0.50.
+
+The system drafts with \texttt{gpt-6.1-sol} at high reasoning effort and maps documents with \texttt{gpt-5.4-mini}. Claude Sonnet 5.5 repeats the real set as a robustness check. The system was frozen after prompts and gates had been tuned only on development data, namely the events of 2012--2022 and four synthetic policies. Every number in Section~\ref{sec:results} can be recomputed from the logs without calling a model because every model call of the measured runs was logged.
+
+The analysis plan also listed a cross-layer impact analysis, a full-text reading of long documents, a baseline in which an LLM patches calculator code, and a timing study of the engineer. These analyses were not carried out within the budget of the study. One relevance call in the WIKA chain timed out. The system then drafted the distractor because it treats a timed-out relevance call as a judgment of relevance, as it does in operation. Runs interrupted by network failures were resumed from the logged model answers without changing them.

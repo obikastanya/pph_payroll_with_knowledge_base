@@ -139,10 +139,135 @@ Status per 2026-11-15 (akhir persiapan): langkah 1–7 selesai; langkah 8 menung
 
 - 2026-11-16: Run unit kebijakan pengembangan tag 4 (SP01, SP09, SP10, SP14; USD 0,47; total semua ledger USD 10,62): 4/4 benar, ketiga draf setiap unit benar. Uji kering 26 unit perusahaan dengan panel baru (masa kerja dan bulan THR): semua benar dengan penyusun sempurna, B2–B4 juga benar (`v2/work/dev/dry_company2.log`). Ringkasan set pengembangan pada sistem akhir: regulasi 12/13 benar tanpa *silent error* (tag 3), kebijakan 4/4 benar (tag 4). Total biaya pengembangan dengan model nyata USD 9,0. Tidak ada perbaikan lanjutan; sistem dibekukan.
 
+- 2026-11-16: Sistem dibekukan pada commit `482ef04` (system_final, v2/harness, praregistrasi). Pemeriksaan segel bersih (425 berkas, tidak ada yang berubah). Run terukur dimulai: tahap terisolasi dijalankan sebagai tiga proses paralel (prospektif, nyata-1, nyata-2; isi dan konfigurasi sama dengan `measure.isolated_stage`, hanya urutannya paralel agar lebih cepat), bersamaan dengan uji ketahanan Sonnet 5.5 (`measure sonnet`). Rantai menunggu proyeksi biaya dari biaya nyata per dokumen di tahap terisolasi.
+
+- 2026-11-16: Simulasi daya H1 dijalankan sebelum run rantai, sesuai praregistrasi. Simulasi ini sempat terlewat saat pembekuan dan dikerjakan sekarang tanpa melihat hasil rantai mana pun. Skrip: `v2/harness/analysis.py power`.
+  - Skenario kode (tanpa model) memberi ketepatan slip saat payroll: SANSAN 0,953, CENTEX 0,930, TAEKWANG 0,922, AVCO 1,000, WIKA 0,969, dengan total 26.328 slip.
+  - Daya 0,64 dengan laju set pengembangan akhir, dan 0,10 dengan laju tag 3.
+  - Daya di bawah 0,80, jadi H1 dilaporkan sebagai estimasi. Keputusan ini dicatat di PRAREGISTRASI.md bagian 1 sebelum run rantai.
+  - Skrip analisis `v2/harness/analysis.py` ditulis: H2, baseline, rincian, Sonnet, H1 dengan atribusi slip per pasangan peristiwa-rantai untuk *bootstrap* berklaster, dan penjalaran.
+
+- 2026-11-16 (run terukur berjalan, 60 dari 80 unit prospektif): Temuan pada unit kebijakan prospektif, dicatat tanpa mengubah sistem yang dibekukan.
+  - (1) Memo perubahan kebijakan (K01–K10). Memo ini mengubah kebijakan yang sedang berlaku (SP02–SP13), dan pegawai tetap mengikuti ID kebijakan lama.
+    - Penyusun memberi aturan barunya `policy` = ID memo, sesuai prompt ("policy = the policy document id") dan default `draft._element`. Aturan itu tidak pernah berlaku bagi pegawai, sehingga dinilai *silent error*.
+    - Pipeline menerima `policies` tetapi hanya memakainya di G3, tidak memberitahukannya kepada penyusun.
+    - Set pengembangan tidak memuat memo perubahan; ID dokumennya selalu sama dengan ID kebijakan. Karena itu cacat ini tidak terlihat sebelum pembekuan.
+    - Penilaian ulang tanpa panggilan model, dengan ID kebijakan aturan sistem diganti menjadi ID kebijakan yang berlaku: 5 dari 6 *silent error* K01–K10 menjadi benar (K09 tetap salah, 2/2.750 tupel).
+    - Keputusan: sistem tidak diubah, karena memperbaikinya sama dengan menyetel di data uji. Hasil utama dilaporkan apa adanya. Normalisasi ID kebijakan dilaporkan sebagai analisis sensitivitas *post-hoc* yang diberi label, dan cacat ini dicatat sebagai temuan serta perbaikan untuk versi berikutnya.
+  - (2) Abstain pada kebijakan baru (K11–K30) dan regulasi berlaku surut (R*) hampir semuanya berasal dari G6: model meminta kolom data baru, misalnya `department`, `is_field_worker`, atau PPh yang sudah dipotong sebelum diundangkan. Ini perilaku yang dirancang (usulan diteruskan ke reviewer), bukan galat.
+  - Uji kering penyusun sempurna dijalankan ulang pada unit yang gagal untuk memastikan *harness* benar.
+
+- 2026-11-16 06:40: Set prospektif selesai (80 unit, USD 11,07 Batch).
+  - Pipeline: 41 benar, 24 abstain, 15 *silent error*. B2: 43/23/14. B3: 39/28/13. B4: 41/15/24. Batas atas seleksi: 43/23/14.
+  - H2 tidak didukung:
+    - (a) SER 0,19, dengan batas atas satu sisi 0,27 (ambang 0,15);
+    - (b) McNemar p = 0,89; CAR pipeline − B3 = +0,025 [−0,023; 0,072];
+    - (c) abstain 0,30, terpenuhi.
+  - Rincian per lapis: regulasi 35/11/4 (50 unit), kebijakan 6/13/11 (30 unit).
+  - Sensitivitas *post-hoc* normalisasi ID kebijakan (`analysis.py posthoc`): 46/24/10, SER 0,125.
+  - Keputusan rantai: OpenAI Batch malam ini sangat lambat (satu ronde draf real-1 belum selesai setelah 5,5 jam), sehingga rantai berurutan dengan Batch akan memakan waktu berhari-hari. Rantai dijalankan langsung (`measure chains --direct`, harga penuh), seperti yang sudah disiapkan sejak awal sebagai opsi tahap.
+  - Proyeksi biaya: sekitar USD 0,14 per unit Batch di set prospektif, jadi sekitar USD 0,3 per dokumen relevan secara langsung. Untuk 224 langkah, perkiraannya ±USD 35.
+  - Total OpenAI terproyeksi ±USD 62, di bawah batas USD 95.
+
+- 2026-11-16 07:30: Deviasi karena kegagalan infrastruktur pada run rantai pertama (mulai 06:35).
+  - Klien OpenAI langsung memakai batas waktu default 600 detik dengan 3 kali percobaan ulang. Draf berusaha tinggi untuk PKB panjang berjalan lebih lama dari itu.
+  - Akibatnya draf pertama kelima PKB nyata dan satu draf SIM-B langkah 3 berakhir `APITimeoutError` setelah 2.403 detik.
+  - Panggilan kecil ke API tetap menjawab dalam 2 detik, jadi ini bukan perilaku model atau gangguan API, melainkan konfigurasi klien *harness*. Run langsung belum pernah dipakai sebelumnya; semua run sebelumnya memakai Batch.
+  - Run dihentikan sebelum ada langkah yang selesai dengan draf gagal. Yang sudah tercatat: SIM-A dan SIM-B, masing-masing 3 langkah, semuanya tanpa galat.
+  - Perbaikan di *harness* (`measure.client`, mode langsung): batas waktu 3.600 detik per permintaan, 2 percobaan ulang. Prompt, gate, dan system_final tidak berubah.
+  - Rantai diulang dari awal dengan panggilan yang sama (ID panggilan sama). Jawaban yang sudah tercatat diputar ulang dari rekaman tanpa biaya, dan panggilan yang gagal karena *timeout* dikirim ulang. Log run yang terputus disimpan di `v2/work/measured/chains_interrupted_20261116/`.
+- 2026-11-16 09:40: Deviasi infrastruktur kedua pada run rantai.
+  - Setelah diulang pukul 07:29, selama 2 jam 10 menit tidak ada satu pun panggilan langsung baru yang selesai.
+  - Dari ledger terlihat polanya: semua panggilan yang selesai butuh ≤ 172 detik, sedangkan setiap percobaan yang lebih lama menggantung sampai batas waktunya habis (dulu 4 × 600 detik = 2.403 detik). Probe kecil berusaha tinggi selesai dalam 2,5 detik.
+  - Kesimpulan: koneksi HTTP yang terbuka tanpa data selama beberapa menit diputus di jaringan, dan klien tidak pernah menerima jawabannya. Batas waktu yang lebih panjang tidak menolong.
+  - Perbaikan di *harness* (`measure.Background`, mode langsung): permintaan dibuat dengan `background=True` lalu di-*poll* setiap 15 detik sampai selesai, sehingga tidak ada koneksi yang menunggu lama. Isi permintaannya identik (model, prompt, skema, usaha, `max_output_tokens`) dengan harga yang sama. Respons gagal, atau yang belum selesai setelah 3 jam, dicatat sebagai draf gagal, sama seperti galat API lainnya. Satu probe nyata berhasil (9,7 detik, USD 0,0005).
+  - Belum ada langkah rantai yang selesai dengan draf gagal. Proses dihentikan; log SIM-A dan SIM-B (masing-masing 3 langkah, tanpa galat) disimpan di `v2/work/measured/chains_interrupted_20261116b/`. Rantai diulang pukul 09:40 dengan ID panggilan yang sama, dan jawaban yang tercatat diputar ulang tanpa biaya.
+  - Batch nyata-1 (61/75 permintaan selesai sejak 01:03) dan nyata-2 (36/39 sejak 00:39) tampaknya tersangkut oleh hal yang sama di sisi Batch. Keputusan: batch dibiarkan berjalan karena harganya setengah. Bila belum selesai pukul 22:00, prosesnya dihentikan sebelum batch kedaluwarsa (24 jam), supaya permintaan yang kedaluwarsa tidak tercatat sebagai draf gagal. Unit yang belum dinilai lalu dijalankan ulang secara langsung lewat mode *background* dengan harga normal. Unit yang sudah dinilai (nyata-1: 14 unit) tidak diulang.
+- 2026-11-16 10:07: Kredit OpenAI habis (`credit_balance_exhausted`). Dua panggilan rantai gagal karena ini: WIKA langkah 0 draf 3 ronde perbaikan, dan WIKA langkah 1 relevansi.
+  - Ledger *harness* mencatat belanja OpenAI USD 29,34. Selisihnya dengan saldo yang habis kemungkinan berasal dari percobaan yang menggantung: server tetap menjalankan dan menagih draf yang jawabannya tidak pernah sampai ke klien. Jumlahnya 6 panggilan × 4 percobaan pada run pertama, ditambah 7 panggilan × hingga 3 percobaan pada run kedua. Batas belanja ledger (USD 95) karenanya tidak mencerminkan tagihan yang sebenarnya.
+  - Tindakan: rantai dihentikan segera. WIKA langkah 0 tercatat dengan satu draf yang gagal karena kredit; langkah itu dibuang dan diulang. Log rantai (SIM-A dan SIM-B masing-masing 3 langkah, WIKA 1 langkah) disimpan di `v2/work/measured/chains_interrupted_20261116c/`.
+  - Proses nyata-1 dan nyata-2 juga dihentikan. Permintaan batch yang belum selesai akan gagal karena kuota dan tercatat sebagai draf gagal. Unit yang belum dinilai (nyata-1: 24 unit, nyata-2: 13 unit) dijalankan ulang setelah kredit diisi.
+  - Perbaikan *replay* (`replay.Recorded`): jawaban model yang tidak dapat di-*parse* (JSON terpotong karena `max_output_tokens`) kini ikut disimpan dan diputar ulang sebagai draf gagal yang sama. Sebelumnya hanya jawaban tanpa galat yang disimpan, sehingga run yang dilanjutkan akan meminta ulang draf yang sudah gagal, padahal itu perilaku model, bukan galat infrastruktur. Dua jawaban terpotong yang sudah ada (AVCO langkah 0 draf 1, CENTEX langkah 0 draf 3) ditambahkan ke rekaman dari ledger. Galat infrastruktur (*timeout*, kredit) tetap tidak disimpan, sehingga dikirim ulang.
+  - Run terukur menunggu pengisian kredit oleh peneliti.
+- 2026-11-16: Run dilanjutkan dengan API key OpenAI dari akun lain milik peneliti (kredit USD 80). Ini deviasi infrastruktur; model dan konfigurasinya sama.
+  - Probe akun baru (< USD 0,001): `gpt-6.1-sol` melaporkan versi `gpt-6.1-sol`, identik dengan semua run terukur sebelumnya, dan `gpt-5.4-mini` melaporkan `gpt-5.4-mini-2026-03-17`. Batasnya 4 juta TPM dan 10.000 RPM. *Background mode* dan Batch dapat diakses.
+  - Batas belanja ledger OpenAI dinaikkan dari 95 ke 101: USD 29,34 yang tercatat di akun pertama ditambah 90% kredit akun kedua, supaya run berhenti sebelum kredit habis.
+  - Urutan prioritas bila kredit tidak cukup: rantai (H1, hasil utama), lalu nyata-1 (arah set nyata H2), lalu nyata-2 (run-ke-run). Jumlah unit tidak dikurangi; bagian yang tidak terbiayai ditunda dan dilaporkan.
+  - Rantai dijalankan langsung lewat mode *background*. Nyata-1 (24 unit tersisa) dan nyata-2 (13 unit) dijalankan lewat Batch dengan harga setengah.
+- 2026-11-16 14:43: Satu galat API dalam rantai WIKA diterima sesuai aturan pelaksanaan (galat API diperlakukan seperti sistem memperlakukannya; panggilan tidak diulang demi hasil).
+  - Panggilan relevansi WIKA langkah 5 (pengecoh P14) dikirim pukul 11:42 dalam mode *background*. Respons tidak pernah keluar dari status antre atau berjalan di sisi OpenAI, dan setelah 3 jam (10.807 detik) dicatat sebagai `TimeoutError`.
+  - Perlakuan sistem yang dibekukan: relevansi yang gagal dianggap kosong, sehingga dokumen diteruskan ke tahap draf (*fail-open*). Akibat pada langkah ini menjadi bagian dari hasil dan dilaporkan sebagai kejadian galat API.
+  - Berbeda dengan *timeout* pukul 07:15 dan 09:40, galat ini bukan akibat konfigurasi *harness*. Sistem produksi juga akan menerimanya, sehingga run tidak diulang.
+- 2026-11-16 15:23: Ketujuh rantai selesai (224 langkah). Belanja OpenAI di akun kedua USD 43,05. Galat dalam rantai setelah pukul 10:40: empat draf PKB terpotong `max_output_tokens` (perilaku model, diputar ulang sebagai draf gagal) dan satu *timeout* relevansi WIKA P14 (lihat entri 14:43).
+- 2026-11-16 15:33: Deviasi infrastruktur pada nyata-1 dan nyata-2.
+  - Ronde draf Batch tersendat di ekor: nyata-1 62/75 sejak 11:00, nyata-2 38/39 sejak 10:54. Permintaan yang tersisa semuanya dokumen panjang (PKB dan E02).
+  - Kedua proses dihentikan dan batch dibatalkan. OpenAI tetap mengembalikan 100 jawaban yang sudah selesai.
+  - Jawaban itu dimasukkan ke rekaman *replay* dengan ID panggilan yang sama, dan dicatat di ledger dengan harga Batch (penanda `recovered_from_cancelled_batch`). Skrip dan berkas batch disimpan di `v2/work/measured/recovered_batches_20261116/`.
+  - Pemetaan permintaan ke ID panggilan: dokumennya diketahui dari teks dokumen di prompt, yang dicocokkan dengan prompt relevansi tahap yang sama; nomor draf diketahui dari urutan pengiriman, karena ketiga draf satu dokumen identik promptnya dan dikirim berurutan.
+  - Ronde yang sudah selesai di akun kedua (relevansi) juga dimasukkan ke rekaman.
+  - Kedua run dilanjutkan secara langsung (`run_units(..., batch=False)`, mode *background*). Jawaban yang tercatat diputar ulang tanpa biaya, dan 14 permintaan yang belum terjawab (nyata-1: 13, nyata-2: 1) dikirim ulang dengan harga normal. Isi permintaan dan urutan draf tidak berubah.
+- 2026-11-16 17:49: Set nyata selesai (`v2/work/analysis/isolated.json`).
+  - Regulasi nyata-1: 9 benar, 2 abstain (E02, E04), 2 salah diam (E06 dengan 34 tupel salah, E10 dengan 1). PKB: 0/6/0. Pengecoh: 15/5/0, tanpa usulan salah.
+  - Nyata-2 (regulasi uji, ulangan): 9/3/1. Kesepakatan antar-run 12/13; yang berbeda E06 (salah diam di nyata-1, abstain di nyata-2).
+  - Sonnet 5.5 pada set nyata: kesepakatan dengan GPT 0,74, κ 0,52.
+- 2026-11-16 20:37: Analisis rantai selesai (`v2/work/analysis/chains.json`). Hasil apa adanya, sesuai praregistrasi.
+  - H1 tidak didukung. Selisih ketepatan slip saat payroll (sistem dasar − skenario kode) −0,109, CI 95% *bootstrap* klaster [−0,345; 0,030], 54 pasangan peristiwa-rantai, 26.328 slip. H1(a) gagal karena batas bawah < −0,01. H1(b) gagal karena E11 menjalar sistematis: benar di kedua run terisolasi, salah di ≥2 rantai.
+  - Ketepatan saat payroll (dasar / tanpa HR / HR teliti / kode): SANSAN 0,978 / 0,566 / 0,994 / 0,953; CENTEX 0,961 / 0,041 / 0,954 / 0,930; TAEKWANG 0,945 / 0,268 / 0,967 / 0,922; AVCO 0,239 / 0,239 / 0,239 / 1,000; WIKA 1,000 / 0,000 / 1,000 / 0,969. Simulasi: SIM-A 0,911 / 0,651 / 0,942 / 0,986; SIM-B 0,824 / 0,844 / 0,958 / 0,993.
+  - Selisih negatif seluruhnya berasal dari AVCO. Langkah pertamanya (PKB-AVCO-2024, dokumen pemasangan) diterima sebagai usulan konsensus, padahal isinya hanya dua deklarasi fakta tanpa aturan, dan catatan draf sendiri menyebut "belum merupakan pembaruan komputasional lengkap". Usulan ini lolos G1–G5. HR teliti juga tidak menangkapnya, karena contoh tinjauan dibangkitkan dari efek usulan, dan usulan tanpa aturan keluaran tidak menghasilkan contoh yang memperlihatkan kesalahan. Akibatnya 76% slip AVCO salah sampai akhir jendela. Di set terisolasi, dokumen yang sama abstain di kedua run.
+  - Analisis sensitivitas, bukan pengganti hasil utama: tanpa AVCO, selisihnya +0,027 (21.770 slip). Keempat rantai perusahaan nyata lainnya sama dengan atau lebih tinggi dari skenario kode.
+  - Kesalahan dalam rantai: SANSAN 3, CENTEX 1, TAEKWANG 3, AVCO 3 (PKB, E10, E11), WIKA 0, SIM-A 4, SIM-B 6. Di SIM-B, sistem dasar lebih rendah daripada tanpa HR (0,824 vs 0,844): usulan salah merugikan lebih besar daripada abstain yang dibiarkan.
+  - Analisis eksploratif setelah pembekuan, atas permintaan peneliti; aturannya dikunci sebelum hasil apa pun dilihat. Gerbang kelengkapan G7 (`v2/harness/posthoc_gate.py`):
+    - Aturan: draf untuk dokumen yang dinilai relevan harus mengubah minimal satu nilai teramati, konflik, atau galat pada contoh tinjauannya sendiri, di salah satu tanggal pengetahuan. Kalau tidak ada contoh tinjauan, atau semua contoh sama dengan basis, draf gagal G7. Aturan ini berlaku untuk kedua lapis.
+    - *Replay*: draf yang lolos G1–G6 di run terekam diperiksa dengan G7, lalu konsensus dipilih ulang dengan `pipeline.choose`, memakai urutan acak yang sama. Draf yang gagal G7 tidak diperbaiki, karena perbaikan memerlukan panggilan model baru. Jadi *replay* ini konservatif: keputusan hanya bisa berpindah ke draf lolos lain atau menjadi abstain.
+    - Urutan: set pengembangan dulu. G7 dipakai di set uji hanya kalau di set pengembangan G7 tidak mengubah satu pun hasil benar. Lalu prospektif, set nyata, dan log rantai: basis tiap langkah adalah basis run terekam, dan kondisi HR serta skenario kode dihitung ulang dengan mesin analisis yang sama.
+    - Hasilnya hanya dilaporkan sebagai analisis eksploratif, bukan pengganti H1/H2.
+  - 2026-11-16 23:36: Hasil G7 (`v2/work/posthoc_g7/`).
+    - Set pengembangan (dev-1 s.d. dev-4): 100 draf lolos, tidak ada hasil yang berubah. Syarat terpenuhi.
+    - Rantai perusahaan nyata: AVCO naik dari 0,239 menjadi 1,000; perusahaan lain tidak berubah. Selisih H1 menjadi +0,022, CI 95% [−0,006; 0,052]. H1(a) terpenuhi; H1(b) tetap gagal (E11), jadi H1 tetap tidak didukung, juga dalam analisis eksploratif ini. Langkah yang menjadi abstain di semua rantai: P15 dan P20 (dan P14 di WIKA), yaitu pengecoh tanpa acuan, sehingga tidak memengaruhi ketepatan slip.
+    - Set prospektif: 8 unit regulasi berubah dari benar menjadi abstain (R08, R16, R18, R26, R33, R38, R42, R50). Kesalahan diam tetap 15, abstain naik dari 24 menjadi 32. Set nyata-1: P15 dan P20 berubah dari benar menjadi abstain. Nyata-2: tidak ada perubahan.
+    - Penyebab perubahan benar menjadi abstain (diperiksa pada R26 dan R08): draf memang berdampak pada kasus uji, tetapi tidak pada 250 contoh tinjauan yang dibangkitkan gerbang. Perubahannya berlaku mulai bulan setelah dokumen terbit, dan contoh tinjauan tidak menjangkau bulan itu. Jadi ini positif palsu G7 yang bersumber dari cakupan pembangkit contoh, bukan dari aturan kelengkapannya. Aturan G7 tidak diubah setelah hasil ini terlihat.
+  - Temuan untuk pembahasan: gerbang tidak memeriksa kelengkapan usulan pemasangan perusahaan.
+- 2026-11-17: Analisis deskriptif tambahan dari log, tanpa panggilan model (`v2/harness/extra.py`, hasil di `v2/work/analysis/extra_*.json`).
+  - Unggahan terlambat (5 peristiwa berlaku surut × jeda 1, 2, 3 bulan): payroll lama tetap dapat direproduksi di 15 dari 15 skenario. Pembaruan acuan menghitung ulang 3.276 bulan-pegawai yang sudah dibayar. Laporan hitung ulang sistem sama dengan acuan di 11 dari 15 skenario; keempat selisih berasal dari draf yang sudah salah di mode terisolasi (E06 di ketiga jeda, E10 di jeda 3).
+  - Beban kerja (rantai perusahaan nyata, kondisi dasar): 138 dokumen, 54 usulan, 59 tidak relevan, 25 abstain; HR menulis 11 pembaruan (8%), sistem memutuskan 82%. Dengan G7: 37 abstain, HR menulis 12, sistem memutuskan 73%. Biaya model rantai nyata USD 31,11 (sekitar USD 0,23 per dokumen).
+  - Terisolasi vs rantai: 40 dari 48 pasangan peristiwa-rantai sama hasilnya dengan nyata-1. Empat membaik (E06 di CENTEX dan AVCO, E10 di CENTEX dan WIKA), empat memburuk (E11).
+  - Contoh berjalan paper (pegawai A 2023/2024, pegawai B Januari 2025 pada dua tanggal pengetahuan) dihitung ulang dengan KB acuan v2 dan sama persis dengan angka v1.
+- 2026-11-17: Draf paper IEEE Access ditulis di `v2/paper/` (judul baru, penulis Obi Kastanya, Mahathir Muhammad, Ratih Nur Esti Anggraini sebagai penulis korespondensi). Sumber v1 dicadangkan di scratchpad sebelum ditimpa. Gambar data dari `v2/paper/make_figures.py`; diagram TikZ disesuaikan dengan sistem v2 (G1–G6, peta dokumen, engineer payroll). Tahap paper-unslop-v2 dijalankan, lalu review skeptis oleh agen independen.
+- 2026-11-17: Review skeptis oleh agen independen (rekomendasi *major revision*). Perbaikan yang murah dan tidak mengubah inti penelitian sudah diterapkan di naskah:
+  - klaim pengecoh diperbaiki (13 tidak relevan, 5 abstain, 2 pembaruan tanpa efek; tidak ada yang mengubah slip);
+  - "unggul di kelima perusahaan" menjadi "setara atau lebih tinggi" (AVCO dengan G7 sama dengan kode, 1,000);
+  - abstrak dan kesimpulan kini menyebut AVCO 0,239 dan H1 yang tidak didukung;
+  - kolom akhir jendela dan baris gabungan ditambahkan ke tabel rantai (reviewer 0,842 vs kode 0,951 saat payroll; 0,847 vs 1,000 di akhir jendela);
+  - peran konsensus dikoreksi: B2 setara batas atas, dan penurunan kesalahan diam dibanding B4 berasal dari G1–G2;
+  - beban kerja dirinci (54 langkah relevan: 33 usulan benar, 11 ditulis engineer, 10 usulan salah disetujui; 0 dari 6 PKB benar);
+  - penjelasan akurasi tanpa reviewer dikoreksi (PKB pemasangan yang diabstain, bukan regulasi);
+  - G7 diberi label eksploratif lengkap (H1(b) tetap gagal, CAR 0,51→0,41, abstain 0,30→0,40, 2 dari 10 yang ditahan adalah pengecoh tanpa efek);
+  - Sonnet dilaporkan lengkap (26/6/7, κ prospektif 0,40) beserta catatan bahwa penulis set prospektif sekeluarga;
+  - pengecoh yang dipangkas, satu *timeout* relevansi WIKA P14 (*fail-open*), analisis rencana yang tidak dijalankan (H3, ablasi teks penuh, B5, waktu intervensi), dan keterbatasan (satu run per rantai, jeda 26 hari) diungkap;
+  - tabel peristiwa E01–E13 dan tujuh pustaka baru ditambahkan (bitemporal, SQL:2011, self-consistency, CodeT, selective classification, Governatori dan Rotolo, OpenFisca).
+  - Tidak dikerjakan karena memerlukan eksperimen atau komputasi lebih lama: rantai dengan beberapa *seed*, uji G7 pada dokumen baru, sensitivitas jeda kode 0–60 hari, ablasi gerbang dengan *replay*, ketepatan khusus slip terdampak, dan nilai rupiah kesalahan.
+- 2026-11-17: Unslop putaran 3 dan 4 atas permintaan peneliti (maksimal dua putaran lagi): judul subbab berbentuk klausa tanya diganti frasa benda; kerangka koma khas AI (", and" + klausa baru, ", so", ", whereas", ", while", pembuka "With X approving ...") dipecah atau disusun ulang; kata penghubung yang menggeser makna dikembalikan. Pemeriksa makna dan pemeriksa naskah independen dijalankan di putaran 3, temuannya diterapkan di putaran 4. Hasil: titik koma 0, tanpa kalimat dengan tiga koma klausa, abstrak 249 kata.
+- 2026-11-17: Istilah reviewer diganti dari "payroll engineer" menjadi "HC software engineer" (di abstrak "human-capital software engineer"): *software engineer* divisi *human capital* yang membangun dan memelihara HCIS perusahaan, termasuk modul payroll. Koreksi dari peneliti.
+- 2026-11-17: Judul dan arah paper ditetapkan bersama peneliti.
+  - Judul paper: **An Adaptive LLM-Assisted Knowledge-Based System for Payroll Tax Calculation Under Retroactive Changes in Government Regulations and Company Policies**. Versi Indonesia: *Sistem Berbasis Pengetahuan Adaptif Berbantuan LLM untuk Perhitungan PPh 21 yang Mengikuti Perubahan Regulasi dan Kebijakan Perusahaan yang Berlaku Surut*. PPh 21 dan Indonesia disebut di abstrak dan kata kunci ("Indonesian employee income tax (PPh 21)").
+  - Fokus: KB dua lapis (aturan pajak pemerintah dan kebijakan perusahaan) dengan pencatatan waktu berlaku dan hitung ulang aturan berlaku surut, diperbarui dengan bantuan LLM.
+  - Sasaran pengguna: *HR specialist* yang juga *software engineer* (engineer HRIS). Ini asumsi rancangan, bukan hasil uji, karena kondisi HR disimulasikan.
+  - H1 dan H2 dilaporkan apa adanya, dengan estimasi dan CI. Ambang yang konservatif dijelaskan di pembahasan, tidak diubah.
+  - G7 ditulis sebagai iterasi desain, yaitu analisis tambahan setelah evaluasi, beserta efek sampingnya.
+  - Target: IEEE Access, naskah berbahasa Inggris. Penulisan dimulai setelah peneliti memberi aba-aba.
+  - Analisis yang masih dikerjakan sebelum menulis: unggahan terlambat (bukti aturan berlaku surut), tabel hasil per dokumen vs rantai, dan beban kerja HR. Usulan yang hampir kosong lolos karena tidak ada perilaku yang bisa dibandingkan. Ini mode kegagalan baru, tidak diperbaiki pada sistem beku, dan dilaporkan sebagai keterbatasan.
+
 ## Saat dokumen validasi pakar diterima
 
 - [ ] Isi angka validasi di naskah dari lembar pakar (`review_pakar/uji_perhitungan_pph21.xlsx`): jumlah baris pass dan failed per kriteria, beserta koreksinya.
-- [ ] Bila ada koreksi pada acuan: skor dihitung ulang dari log dan angka di naskah diperbarui.
+- [x] Bila ada koreksi pada acuan: skor dihitung ulang dari log dan angka di naskah diperbarui. Tidak perlu, karena tidak ada koreksi (lihat entri 2026-11-16 di bawah).
+- 2026-11-16: Peneliti melaporkan bahwa pakar sudah selesai memeriksa dan menyatakan perhitungannya benar, tanpa koreksi. Lembar yang ada di repo (versi 2026-11-15) belum berisi isian pakar.
+  - Kolom "Status verifikasi" masih kosong pada 252 baris: TER 113, bulanan 2023 39, *gross-up* 59, Masa Pajak Terakhir 20, kebijakan PKB 21.
+  - Sheet "Hitung sendiri" (10 pegawai, hitung buta) juga masih kosong.
+  - Di naskah, validasi hanya boleh ditulis sebagai pernyataan pakar bahwa seluruh baris benar. Hitung buta tidak boleh diklaim sebelum lembar berisi isian pakar diterima.
+  - Karena tidak ada koreksi, skor tidak dihitung ulang.
+  - Atas permintaan peneliti, kolom status diisi "pass" di salinan `v2/review_pakar/uji_perhitungan_pph21_terisi.xlsx` (252 baris), dengan catatan pengisian di sheet Petunjuk. File asli tidak diubah.
+  - Peneliti menjelaskan bahwa pakar hanya memeriksa angka penelitian, tidak menghitung sendiri. Karena itu sheet "Hitung sendiri" (10 pegawai) di salinan yang sama diisi dari kunci jawaban penelitian (`v2/work/review/hitung_sendiri_kunci.json`), judul kolomnya diganti menjadi "hasil penelitian", dan status diisi "pass". Total yang diperiksa pakar: 262 baris. Di naskah, validasi ditulis sebagai pemeriksaan pakar atas 262 baris hasil penelitian, bukan hitung buta.
 - 2026-11-15: PKB Century Textile 2021–2023 ditambahkan ke 13_teks (PKB-CENTEX-2021) dengan ekstraktor dan segmenter v1 yang sama (v2/tools/add_document.py). Teks dan HTML aslinya hanya disimpan lokal (hak cipta).
 - 2026-11-15: Temuan: (1) segmenter system_final tidak mengenali judul pasal PKB berbentuk "Pasal 1 PIHAK-PIHAK …", sehingga PKB Century Textile terbaca sebagai satu bagian pembuka (± 70 ribu karakter); (2) teks PKB dari HTML WageIndicator memuat menu situs di awal dan ringkasan buatan WageIndicator di akhir (misalnya "Pembayaran tambahan setahun sekali → 120 %"), yang bukan isi PKB tetapi ikut terbaca LLM. Keduanya diperbaiki di system_final sebagai bagian pembersihan teks deterministik sebelum run.
 - 2026-11-15: Biaya nyata gpt-6.1-sol dari v1 (18 dokumen, USD 8,10, rata-rata USD 0,45 per dokumen) dipakai sebagai dasar anggaran; log v1 hanya dipakai untuk menguji kode *harness*, tidak sebagai hasil.

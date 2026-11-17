@@ -8,7 +8,7 @@ The evaluation follows how the system is used: one company installs one system a
 \label{sec:data}
 The test regulations are the 13 events of 2023--2026 that changed PPh 21 for permanent employees, five of them retroactive (Tables~\ref{tab:events} and~\ref{tab:data}). Twenty distractors are real regulations of the same period that do not change this computation, such as rules on other taxes. They stand for documents that a staff member uploads by mistake. Each was trimmed mechanically to its opening, the one article with the most PPh 21 terms, and its closing.
 
-The five real companies have public collective labor agreements and come from five sectors and four provinces. Each company starts at its installation date, which is the signing date of its agreement or 1 January 2023 for an agreement signed earlier. Century Textile replaces its 2021 agreement with a new one in March 2024. Payslips are counted as employee-months scored in the chained mode. Ten fictional companies with synthetic policies cover combinations of business classification, workforce size, and work-accident risk group that the real companies do not.
+The five real companies have public collective labor agreements and come from five sectors and four provinces. This study refers to them as Companies A to E (Table~\ref{tab:data}). The scores of a company evaluate the proposed system on its public agreement and not the payroll that the company runs. Each company starts at its installation date, which is the signing date of its agreement or 1 January 2023 for an agreement signed earlier. Company B replaces its 2021 agreement with a new one in March 2024. Payslips are counted as employee-months scored in the chained mode. Ten fictional companies with synthetic policies cover combinations of business classification, workforce size, and work-accident risk group that the real companies do not.
 
 \begin{table*}[!t]
 \caption{The 13 test regulations of 2023--2026.}
@@ -47,7 +47,7 @@ Item & Content & Count \\
 \midrule
 Test regulations & PPh 21 changes of 2023--2026, five retroactive & 13 \\
 Distractors & real regulations that do not change PPh 21 & 20 \\
-Real companies & Sansan (garment), Century Textile (textile), Taekwang (footwear), AVCO (aviation services), WIKA (construction) & 5 \\
+Real companies & Company A (garment), B (textile), C (footwear), D (aviation services), and E (construction) & 5 \\
 Labor agreements & public agreements of the five companies & 6 \\
 Fictional companies & synthetic policies, two simulation chains & 10 \\
 Prospective units & unseen changes: 50 regulations, 30 company policies & 80 \\
@@ -102,4 +102,4 @@ Two hypotheses and their thresholds were fixed in an analysis plan before the me
 
 The system drafts with \texttt{gpt-6.1-sol} at high reasoning effort and maps documents with \texttt{gpt-5.4-mini}. Claude Sonnet 5.5 repeats the real set as a robustness check. The system was frozen after prompts and gates had been tuned only on development data, namely the events of 2012--2022 and four synthetic policies. Every number in Section~\ref{sec:results} can be recomputed from the logs without calling a model because every model call of the measured runs was logged.
 
-The analysis plan also listed a cross-layer impact analysis, a full-text reading of long documents, a baseline in which an LLM patches calculator code, and a timing study of the engineer. These analyses were not carried out within the budget of the study. One relevance call in the WIKA chain timed out. The system then drafted the distractor because it treats a timed-out relevance call as a judgment of relevance, as it does in operation. Runs interrupted by network failures were resumed from the logged model answers without changing them.
+The analysis plan also listed a cross-layer impact analysis, a full-text reading of long documents, a baseline in which an LLM patches calculator code, and a timing study of the engineer. These analyses were not carried out within the budget of the study. One relevance call in the chain of Company E timed out. The system then drafted the distractor because it treats a timed-out relevance call as a judgment of relevance, as it does in operation. Runs interrupted by network failures were resumed from the logged model answers without changing them.

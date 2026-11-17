@@ -37,7 +37,7 @@
 \node[bsrc, minimum width=2.7cm] (doc) {New regulation or\\company policy (PDF)};
 \node[bai, right=of doc, minimum width=2.7cm] (llm) {LLM drafts three updates $\Delta$\\with quoted sources};
 \node[bdet, right=of llm, minimum width=2.7cm] (gate) {Gates G1--G6,\\consensus or abstain};
-\node[bhum, right=of gate, minimum width=2.7cm] (rev) {HC software engineer\\approves or rejects};
+\node[bhum, right=of gate, minimum width=2.7cm] (rev) {HC software engineer:\\approve, edit, or write $\Delta$};
 \draw[ar] (doc)--(llm); \draw[ar] (llm)--(gate); \draw[ar] (gate)--(rev);
 \node[draw=cdet, fill=cdet!6, thick, rounded corners, minimum width=9.4cm, minimum height=1.55cm,
   below=12mm of $(llm)!0.5!(gate)$] (kb) {};
@@ -47,11 +47,11 @@
   knowledge dates per element};
 \draw[ar] (rev.south) |- node[pos=0.3, right, font=\scriptsize]{approve} (kb.east);
 \node[bsrc, below=27mm of doc, minimum width=2.7cm] (emp) {Employee data,\\one tax year};
-\node[bdet, right=of emp, minimum width=2.7cm] (sel) {Select rules valid in $t$\\and known on $\omega$};
+\node[bdet, right=of emp, minimum width=2.7cm] (sel) {Select rules valid in $t$: regulation\\known on $\omega$, current policies};
 \node[bdet, right=of sel, minimum width=2.7cm] (calc) {Exact evaluation,\\final-period recalculation};
 \node[bsrc, right=of calc, minimum width=2.7cm] (out) {PPh 21 per period,\\trace to provisions};
 \draw[ar] (emp)--(sel); \draw[ar] (sel)--(calc); \draw[ar] (calc)--(out);
-\draw[ar] ($(kb.south)+(-2.3,0)$) -- node[left, font=\scriptsize]{read} (sel.north);
+\draw[ar] (kb.south -| sel.north) -- node[left, font=\scriptsize]{read both layers} (sel.north);
 \node[font=\scriptsize, anchor=west] at ($(doc.north west)+(0,0.35)$) {Knowledge update (when a document is issued)};
 \node[font=\scriptsize, anchor=west] at ($(emp.south west)+(0,-0.35)$) {Computation (every payroll run, no LLM)};
 \end{tikzpicture}}}
@@ -85,13 +85,15 @@
 \foreach \g/\n [count=\i] in {G1/form: schema and SHACL,G6/inputs in the payroll data,G2/quotes: text and numbers,
   G3/expressions and references,G4/regression on $S^G$,G5/effect of each element}{
   \node[bdet, minimum width=3.3cm, minimum height=0.52cm] (g\i) at ($(conv.east)+(3.0,1.95-\i*0.62)$) {\g\ \n};}
-\node[bdet, right=8mm of g3, minimum width=2.2cm] (cons) {Behavioral\\consensus on $S^G$};
+\node[draw=cdet, dashed, rounded corners, inner sep=2pt, fit=(g1)(g6)] (gates) {};
+\node[bdet, right=14mm of g3, minimum width=2.2cm] (cons) {Behavioral\\consensus on $S^G$};
 \node[bhum, above right=3mm and 6mm of cons, minimum width=2cm] (sel) {Selected $\Delta$\\to the reviewer};
 \node[b, below right=3mm and 6mm of cons, minimum width=2cm, fill=cgr!15] (abs) {Abstain};
 \draw[ar] (seg)--(tab); \draw[ar] (tab.east)--(rel.west); \draw[ar] (voc.east)--(dr.west);
 \draw[ar] (rec.east)--(dr.west);
 \draw[ar] (rel)--(dr); \draw[ar] (dr)--(conv); \draw[ar] (conv.east)--(g1.west);
-\draw[ar] (g6.south) -- ++(0,-0.45) -| node[pos=0.25, below, font=\scriptsize]{gate messages: one repair round} (dr.south);
-\draw[ar] ($(g3.east)!0.5!(g4.east)$)--(cons); \draw[ar] (cons)--(sel); \draw[ar] (cons)--node[below left, pos=0.6, font=\scriptsize]{tie or none} (abs);
+\draw[ar] (gates.south) -- ++(0,-0.35) -| node[pos=0.25, below, font=\scriptsize]{a gate fails: its messages go to one repair round} (dr.south);
+\draw[ar] (gates.east |- cons.west) -- node[above, font=\scriptsize]{passed} (cons.west); \draw[ar] (cons)--(sel); \draw[ar] (cons)--node[below left, pos=0.6, font=\scriptsize]{tie or none} (abs);
+\draw[ar] (abs.east) -- ++(0.5,0) node[right, font=\scriptsize, align=left]{to the engineer\\without a proposal};
 \end{tikzpicture}}}
 

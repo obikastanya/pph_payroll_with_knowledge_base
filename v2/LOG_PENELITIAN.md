@@ -1,6 +1,6 @@
 # Log penelitian v2
 
-Kerangka: [research_proposal.docx](research_proposal.docx). Data: [index.xlsx](index.xlsx). Gaya naskah: [paper_example/](paper_example/).
+Kerangka: [research_proposal.docx](research_proposal.docx). Data: [index.xlsx](index.xlsx).
 
 Prinsip kerja: efisien tetapi valid. Bagian inti dokumen tidak pernah dipangkas; jumlah unit tidak dikurangi demi biaya; data uji tidak dipakai untuk menyetel; semua panggilan model dicatat dan bisa diputar ulang; akun Claude lokal hanya untuk menulis data dan *debugging*.
 

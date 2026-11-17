@@ -26,7 +26,7 @@ In the ontology of Fig.~\ref{fig:ontology}, classes reused from external vocabul
 
 Every rule belongs to one of two layers. Rules of the regulation layer state the law for all employers together with the conditions under which they apply, such as a list of business classification codes or a minimum number of workers. The engine checks these conditions against the profile of the company. Rules of the company layer belong to one policy of one company and may read any fact of the regulation layer. A rule also carries a modality (mandatory, default, or optional) with which the engine can let a company rule replace a default of the regulation while a mandatory provision always prevails. Calculation expressions are literal attributes of rules that the engine executes. A regulatory or policy change therefore touches only data in the graph. For example, the rounding rule of PER-11/PJ/2025 becomes a new version of the parameter \texttt{pph\_round\_mode} and not a change of code.
 
-Every element records the interval in which it is legally valid and the date on which it was recorded. The two dates make the knowledge base bitemporal: a question asked on knowledge date $\omega$ sees only the records with a recording date on or before $\omega$.
+Every element records the interval in which it is legally valid and the date on which it was recorded. The two dates make the knowledge base bitemporal: a question asked on knowledge date $\omega$ sees only the regulation records with a recording date on or before $\omega$. Company records belong to the policies that a case names, and the engine reads the latest version of each.
 
 An employer can compare the answers of two knowledge dates for the same month (Fig.~\ref{fig:bitemporal}). Employee B has status TK/0 and a monthly salary of Rp8,000,000 at an employer in a labor-intensive sector that is eligible under PMK 10/2025. The PPh 21 of this employee for January 2025 is Rp125,448. A question about January asked on 31 January returns no government-borne tax because PMK 10/2025 has not yet been issued. The same question asked on 10 February returns Rp125,448 borne by the government and paid to the employee in cash. Both answers stay available. Their difference is the correction that the employer owes for January. All values in the figure are engine output.
 
@@ -39,7 +39,37 @@ An employer can compare the answers of two knowledge dates for the same month (F
 
 \subsection{Inference Engine and Recalculation}
 \label{sec:engine}
-The engine computes the tax of one employee for a full tax year at a knowledge date $\omega$. For each period and each output fact the engine collects the rules that produce the fact. It keeps those valid in the period and recorded on or before $\omega$ and then filters them by their conditions. When several rules remain, the engine applies \emph{lex superior} (mandatory regulation, then company rule, then adopted optional regulation, then default), \emph{lex specialis} through explicit \texttt{overrides} relations, and \emph{lex posterior}. A company rule that loses to a mandatory rule with a different value is reported as a conflict. The engine evaluates facts on demand with memoization, computes gross-up as the least fixed point of the tax allowance, and recomputes the year in the final period. A money value that is not a whole rupiah raises an error instead of being rounded silently because all arithmetic is exact. Every value also carries the rule and the quotes it rests on.
+The engine computes the tax of one employee for a full tax year at a knowledge date $\omega$. It applies Algorithm~\ref{alg:engine} to every output fact of every period and then to the year facts of the final period. The algorithm works backward from the requested fact and stores each result, so an input is computed only once and only when a rule reads it. Conflicts between rules are resolved in the legal order of \emph{lex superior}, \emph{lex specialis}, and \emph{lex posterior}. Gross-up is computed as the least fixed point of the tax allowance because the allowance depends on the tax that it covers. A money value that is not a whole rupiah raises an error instead of being rounded silently because all arithmetic is exact.
+
+\begin{algorithm}[!t]
+\caption{Evaluation of one fact by the inference engine}
+\label{alg:engine}
+\footnotesize
+\begin{algorithmic}[1]
+\REQUIRE fact $f$, period or year $p$, knowledge date $\omega$, case data of one employee
+\ENSURE value of $f$ in $p$ with its rule and quotes
+\IF{a value of $f$ in $p$ is stored}
+\RETURN the stored value
+\ENDIF
+\STATE $V \gets$ regulation records recorded on or before $\omega$ and the latest records of the policies that the case names
+\STATE $A \gets$ rules in $V$ that produce $f$ and are valid in $p$, without optional regulation that the company has not adopted
+\STATE remove from $A$ every rule whose condition does not hold in $p$
+\IF{$A$ is empty}
+\STATE raise an engine error
+\ENDIF
+\STATE keep in $A$ the rules of the highest rank (\emph{lex superior}: mandatory regulation, company rule, adopted optional regulation, default)
+\STATE report a conflict for each company rule that lost to a mandatory rule with a different value
+\STATE remove from $A$ every rule that another rule in $A$ overrides (\emph{lex specialis})
+\STATE keep in $A$ the rules with the latest start of validity and then the latest recording (\emph{lex posterior})
+\IF{the rules in $A$ give different values}
+\STATE raise an engine error
+\ENDIF
+\STATE $r \gets$ the first rule in $A$
+\STATE $v \gets$ the value of the expression of $r$, or its least fixed point for gross-up, where every fact that the expression reads is evaluated with this algorithm
+\STATE check the type of $v$, store $v$ for $f$ in $p$, and record $r$ with its quotes
+\RETURN $v$
+\end{algorithmic}
+\end{algorithm}
 
 The calculator of the application shows the rule behind a result for a sample employee of Company C (Fig.~\ref{fig:calc}). The result card of the final month lists the values that the winning rule reads and names the rule with its provision, and the table beside it gives the withholding of every month.
 
@@ -63,9 +93,9 @@ The update pipeline turns one document into at most one proposed update (Fig.~\r
 \label{fig:acqflow}
 \end{figure*}
 
-Six deterministic gates check every draft in the order of Table~\ref{tab:gates}. G1 applies the JSON schema, the application of the update to the knowledge base, and the SHACL shapes. G6 requires every case-data input that a new rule reads to exist in the payroll data of the company. Without this gate, a draft could invent an input such as an employee attribute that the generated test cases supply but real payroll data never contains. G2 requires each quote to occur in the document and every new number and date to occur in the quote of its element. G3 checks expressions, the dependency graph, and references. G4 runs the knowledge base before and after the update on a set $\SG$ of up to 300 cases generated from the draft and rejects new engine errors and changes before the start of validity.
+Six deterministic gates check every draft in the order of Table~\ref{tab:gates} and stop at the first failure. The static checks run first because G4 and G5 must execute the engine on generated cases. G6 is static and therefore runs second although it is numbered last. G1 applies the JSON schema, the application of the update to the knowledge base, and the SHACL shapes. G6 requires every case-data input that a new rule reads to exist in the payroll data of the company. Without this gate, a draft could invent an input such as an employee attribute that the generated test cases supply but real payroll data never contains. G2 requires each quote to occur in the document and every new number and date to occur in the quote of its element. G3 checks expressions, the dependency graph, and references. G4 runs the knowledge base before and after the update on a set $\SG$ of up to 300 cases generated from the draft and rejects new engine errors and changes before the start of validity.
 
-The set $\SG$ combines PTKP statuses, withholding methods, salary levels, and the thresholds of the changed elements and is filled with random combinations to about 250 cases. It is generated from the draft alone and never reads the reference knowledge base or the test cases. G5 reports elements that change no output on $\SG$ to the reviewer without rejecting the draft. A draft that fails receives the gate messages and one repair round. Among the 354 drafts of the isolated runs, 151 failed a gate at first, and 31 of them passed after the repair round.
+The set $\SG$ combines PTKP statuses, withholding methods, salary levels, and the thresholds of the changed elements and is filled with random combinations to about 250 cases. It is generated from the draft alone and never reads the reference knowledge base or the test cases. G5 reports elements that change no output on $\SG$ to the reviewer without rejecting the draft. A draft that fails receives the gate messages and one repair round. Among the 354 drafts of the isolated runs, 151 failed a gate at first, and 31 of them passed after the repair round. A completeness gate G7 was defined after the evaluation and is reported separately in Section~\ref{sec:res-gate}.
 
 \begin{table}[!t]
 \caption{Verification gates and the first gate that failed among the 354 drafts of the isolated runs.}
